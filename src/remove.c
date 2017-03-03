@@ -1,5 +1,5 @@
 /* remove.c -- core functions for removing files and directories
-   Copyright (C) 88, 90, 91, 1994-2007 Free Software Foundation, Inc.
+   Copyright (C) 88, 90, 91, 1994-2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,7 +33,6 @@
 #include "hash-pjw.h"
 #include "lstat.h"
 #include "obstack.h"
-#include "openat.h"
 #include "quote.h"
 #include "remove.h"
 #include "root-dev-ino.h"
@@ -172,16 +171,19 @@ static size_t g_n_allocated;
 
 /* Like fstatat, but cache the result.  If ST->st_size is -1, the
    status has not been gotten yet.  If less than -1, fstatat failed
-   with errno == -1 - ST->st_size.  Otherwise, the status has already
+   with errno == ST->st_ino.  Otherwise, the status has already
    been gotten, so return 0.  */
 static int
 cache_fstatat (int fd, char const *file, struct stat *st, int flag)
 {
   if (st->st_size == -1 && fstatat (fd, file, st, flag) != 0)
-    st->st_size = -1 - errno;
+    {
+      st->st_size = -2;
+      st->st_ino = errno;
+    }
   if (0 <= st->st_size)
     return 0;
-  errno = -1 - st->st_size;
+  errno = (int) st->st_ino;
   return -1;
 }
 
@@ -726,39 +728,9 @@ AD_is_removable (Dirstack_state const *ds, char const *file)
   return ! (top->unremovable && hash_lookup (top->unremovable, file));
 }
 
-/* Return true if DIR is determined to be an empty directory.  */
-static bool
-is_empty_dir (int fd_cwd, char const *dir)
-{
-  DIR *dirp;
-  struct dirent const *dp;
-  int saved_errno;
-  int fd = openat (fd_cwd, dir,
-		   (O_RDONLY | O_DIRECTORY
-		    | O_NOCTTY | O_NOFOLLOW | O_NONBLOCK));
-
-  if (fd < 0)
-    return false;
-
-  dirp = fdopendir (fd);
-  if (dirp == NULL)
-    {
-      close (fd);
-      return false;
-    }
-
-  errno = 0;
-  dp = readdir_ignoring_dot_and_dotdot (dirp);
-  saved_errno = errno;
-  closedir (dirp);
-  if (dp != NULL)
-    return false;
-  return saved_errno == 0 ? true : false;
-}
-
-/* Return -1 if FILE is an unwritable non-symlink,
+/* Return 1 if FILE is an unwritable non-symlink,
    0 if it is writable or some other type of file,
-   a positive error number if there is some problem in determining the answer.
+   -1 and set errno if there is some problem in determining the answer.
    Set *BUF to the file status.
    This is to avoid calling euidaccess when FILE is a symlink.  */
 static int
@@ -770,7 +742,7 @@ write_protected_non_symlink (int fd_cwd,
   if (can_write_any_file ())
     return 0;
   if (cache_fstatat (fd_cwd, file, buf, AT_SYMLINK_NOFOLLOW) != 0)
-    return errno;
+    return -1;
   if (S_ISLNK (buf->st_mode))
     return 0;
   /* Here, we know FILE is not a symbolic link.  */
@@ -827,15 +799,18 @@ write_protected_non_symlink (int fd_cwd,
       = obstack_object_size (&ds->dir_stack) + strlen (file);
 
     if (MIN (PATH_MAX, 8192) <= file_name_len)
-      return - euidaccess_stat (buf, W_OK);
+      return ! euidaccess_stat (buf, W_OK);
     if (euidaccess (xfull_filename (ds, file), W_OK) == 0)
       return 0;
     if (errno == EACCES)
-      return -1;
+      {
+	errno = 0;
+	return 1;
+      }
 
     /* Perhaps some other process has removed the file, or perhaps this
        is a buggy NFS client.  */
-    return errno;
+    return -1;
   }
 }
 
@@ -867,14 +842,19 @@ prompt (int fd_cwd, Dirstack_state const *ds, char const *filename,
   if (x->interactive == RMI_NEVER)
     return RM_OK;
 
+  int wp_errno = 0;
+
   if (!x->ignore_missing_files
       && ((x->interactive == RMI_ALWAYS) || x->stdin_tty)
       && dirent_type != DT_LNK)
-    write_protected = write_protected_non_symlink (fd_cwd, filename, ds, sbuf);
+    {
+      write_protected = write_protected_non_symlink (fd_cwd, filename, ds, sbuf);
+      wp_errno = errno;
+    }
 
   if (write_protected || x->interactive == RMI_ALWAYS)
     {
-      if (write_protected <= 0 && dirent_type == DT_UNKNOWN)
+      if (0 <= write_protected && dirent_type == DT_UNKNOWN)
 	{
 	  if (cache_fstatat (fd_cwd, filename, sbuf, AT_SYMLINK_NOFOLLOW) == 0)
 	    {
@@ -888,11 +868,12 @@ prompt (int fd_cwd, Dirstack_state const *ds, char const *filename,
 	  else
 	    {
 	      /* This happens, e.g., with `rm '''.  */
-	      write_protected = errno;
+	      write_protected = -1;
+	      wp_errno = errno;
 	    }
 	}
 
-      if (write_protected <= 0)
+      if (0 <= write_protected)
 	switch (dirent_type)
 	  {
 	  case DT_LNK:
@@ -903,15 +884,18 @@ prompt (int fd_cwd, Dirstack_state const *ds, char const *filename,
 
 	  case DT_DIR:
 	    if (!x->recursive)
-	      write_protected = EISDIR;
+	      {
+		write_protected = -1;
+		wp_errno = EISDIR;
+	      }
 	    break;
 	  }
 
       char const *quoted_name = quote (full_filename (filename));
 
-      if (0 < write_protected)
+      if (write_protected < 0)
 	{
-	  error (0, write_protected, _("cannot remove %s"), quoted_name);
+	  error (0, wp_errno, _("cannot remove %s"), quoted_name);
 	  return RM_ERROR;
 	}
 

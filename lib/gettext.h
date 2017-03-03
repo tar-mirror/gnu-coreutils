@@ -1,5 +1,6 @@
 /* -*- buffer-read-only: t -*- vi: set ro: */
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
+#line 1
 /* Convenience header for conditional use of GNU <libintl.h>.
    Copyright (C) 1995-1998, 2000-2002, 2004-2006 Free Software Foundation, Inc.
 

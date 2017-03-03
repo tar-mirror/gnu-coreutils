@@ -1,5 +1,6 @@
 /* -*- buffer-read-only: t -*- vi: set ro: */
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
+#line 1
 /* Provide a more complete sys/stat header file.
    Copyright (C) 2006, 2007 Free Software Foundation, Inc.
 

@@ -1,5 +1,6 @@
 /* -*- buffer-read-only: t -*- vi: set ro: */
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
+#line 1
 /* Test setting the error indicator of a stream.
    Copyright (C) 2007 Free Software Foundation, Inc.
 

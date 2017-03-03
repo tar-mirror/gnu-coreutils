@@ -2,7 +2,7 @@
 # copy files/directories across file system boundaries
 # and make sure acls are preserved appropriately
 
-# Copyright (C) 2005-2007 Free Software Foundation, Inc.
+# Copyright (C) 2005-2008 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,16 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-. $srcdir/../acl
 # Make sure we get English translations.
 . $srcdir/../lang-default
-
-# Skip this test if cp was built without ACL support:
-grep '^#define USE_ACL 0' $CONFIG_HEADER > /dev/null && \
-  {
-    echo 1>&2 "$0: insufficient ACL support, so skipping this test"
-    (exit 77); exit 77
-  }
 
 if test "$VERBOSE" = yes; then
   set -x
@@ -36,6 +28,11 @@ if test "$VERBOSE" = yes; then
 fi
 
 . $srcdir/../test-lib.sh
+require_acl_
+
+# Skip this test if cp was built without ACL support:
+grep '^#define USE_ACL 0' $CONFIG_HEADER > /dev/null &&
+  skip_test_ "insufficient ACL support"
 
 mkdir -p a b || framework_failure
 touch a/file || framework_failure
@@ -47,11 +44,7 @@ acl1=`cd a && getfacl file | grep -v ':bin:' | grep -v 'mask::'` \
   || skip=yes
 
 test $skip = yes &&
-  {
-    echo "$0: '.' is not on a suitable file system for this test" 1>&2
-    echo "$0: skipping this test" 1>&2
-    (exit 77); exit 77
-  }
+  skip_test_ "'.' is not on a suitable file system for this test"
 
 # copy a file without preserving permissions
 cp a/file b/ || fail=1
@@ -68,4 +61,4 @@ cp -p a/file b/ || fail=1
 acl2=`cd b && getfacl file` || framework_failure
 test "$acl1" = "$acl2" || fail=1
 
-exit $fail
+(exit $fail); exit $fail

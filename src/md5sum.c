@@ -1,5 +1,5 @@
 /* Compute MD5, SHA1, SHA224, SHA256, SHA384 or SHA512 checksum of files or strings
-   Copyright (C) 1995-2007 Free Software Foundation, Inc.
+   Copyright (C) 1995-2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -205,6 +205,9 @@ bsd_split_3 (char *s, size_t s_len, unsigned char **hex_digest, char **file_name
 {
   size_t i;
 
+  if (s_len == 0)
+    return false;
+
   *file_name = s;
 
   /* Find end of filename. The BSD 'md5' and 'sha1' commands do not escape
@@ -340,16 +343,19 @@ split_3 (char *s, size_t s_len,
   return true;
 }
 
+/* Return true if S is a NUL-terminated string of DIGEST_HEX_BYTES hex digits.
+   Otherwise, return false.  */
 static bool
 hex_digits (unsigned char const *s)
 {
-  while (*s)
+  unsigned int i;
+  for (i = 0; i < digest_hex_bytes; i++)
     {
       if (!isxdigit (*s))
         return false;
       ++s;
     }
-  return true;
+  return *s == '\0';
 }
 
 /* An interface to the function, DIGEST_STREAM.
@@ -446,7 +452,7 @@ digest_check (const char *checkfile_name)
   line_chars_allocated = 0;
   do
     {
-      char *filename;
+      char *filename IF_LINT (= NULL);
       int binary;
       unsigned char *hex_digest IF_LINT (= NULL);
       ssize_t line_length;

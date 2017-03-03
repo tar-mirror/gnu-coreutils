@@ -1,7 +1,8 @@
 # -*- buffer-read-only: t -*- vi: set ro:
 # DO NOT EDIT! GENERATED AUTOMATICALLY!
+#line 1
 # DO NOT EDIT! GENERATED AUTOMATICALLY!
-# Copyright (C) 2004-2007 Free Software Foundation, Inc.
+# Copyright (C) 2002-2008 Free Software Foundation, Inc.
 #
 # This file is free software, distributed under the terms of the GNU
 # General Public License.  As a special exception to the GNU General
@@ -52,7 +53,9 @@ AC_DEFUN([gl_INIT],
   m4_pushdef([AC_LIBOBJ], m4_defn([gl_LIBOBJ]))
   m4_pushdef([AC_REPLACE_FUNCS], m4_defn([gl_REPLACE_FUNCS]))
   m4_pushdef([AC_LIBSOURCES], m4_defn([gl_LIBSOURCES]))
+  gl_COMMON
   gl_source_base='lib'
+  gl_EOVERFLOW
   gl_FUNC_ACL
   gl_FUNC_ALLOCA
   gl_ARGMATCH
@@ -90,6 +93,8 @@ AC_DEFUN([gl_INIT],
   gl_DOUBLE_SLASH_ROOT
   gl_FUNC_DUP2
   gl_UNISTD_MODULE_INDICATOR([dup2])
+  gl_ENVIRON
+  gl_UNISTD_MODULE_INDICATOR([environ])
   gl_ERROR
   m4_ifdef([AM_XGETTEXT_OPTION],
     [AM_XGETTEXT_OPTION([--flag=error:3:c-format])
@@ -118,7 +123,6 @@ AC_DEFUN([gl_INIT],
   gl_FPRINTFTIME
   gl_FUNC_FPURGE
   gl_FUNC_FREADING
-  gl_FUNC_FREE
   gl_FUNC_FREXP_NO_LIBM
   gl_MATH_MODULE_INDICATOR([frexp])
   gl_FUNC_FREXPL_NO_LIBM
@@ -158,6 +162,16 @@ AC_DEFUN([gl_INIT],
   gl_GETUGROUPS
   gl_FUNC_GETUSERSHELL
   gl_GNU_MAKE
+  # Autoconf 2.61a.99 and earlier don't support linking a file only
+  # in VPATH builds.  But since GNUmakefile is for maintainer use
+  # only, it does not matter if we skip the link with older autoconf.
+  # Automake 1.10.1 and earlier try to remove GNUmakefile in non-VPATH
+  # builds, so use a shell variable to bypass this.
+  GNUmakefile=GNUmakefile
+  m4_if(m4_version_compare([2.61a.100],
+  	m4_defn([m4_PACKAGE_VERSION])), [1], [],
+        [AC_CONFIG_LINKS([$GNUmakefile:$GNUmakefile], [],
+  	[GNUmakefile=$GNUmakefile])])
   gl_FUNC_GROUP_MEMBER
   gl_HARD_LOCALE
   gl_HASH
@@ -173,7 +187,7 @@ AC_DEFUN([gl_INIT],
   gl_INTTOSTR
   gl_INTTYPES_H
   gl_ISAPIPE
-  gl_FUNC_ISNAN_NO_LIBM
+  gl_FUNC_ISNAND_NO_LIBM
   gl_FUNC_ISNANF_NO_LIBM
   gl_FUNC_ISNANL_NO_LIBM
   gl_FUNC_LCHMOD
@@ -276,6 +290,8 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_SETENV
   gl_STDLIB_MODULE_INDICATOR([setenv])
   gl_SETTIME
+  gl_SHA256
+  gl_SHA512
   gl_FUNC_SIG2STR
   gl_SIGNBIT
   gl_MATH_MODULE_INDICATOR([signbit])
@@ -310,6 +326,7 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_STRPBRK
   gl_STRING_MODULE_INDICATOR([strpbrk])
   gl_FUNC_STRTOD
+  gl_STDLIB_MODULE_INDICATOR([strtod])
   gl_FUNC_STRTOIMAX
   gl_INTTYPES_MODULE_INDICATOR([strtoimax])
   gl_FUNC_STRTOL
@@ -398,6 +415,7 @@ AC_DEFUN([gl_INIT],
   m4_pushdef([AC_LIBOBJ], m4_defn([gltests_LIBOBJ]))
   m4_pushdef([AC_REPLACE_FUNCS], m4_defn([gltests_REPLACE_FUNCS]))
   m4_pushdef([AC_LIBSOURCES], m4_defn([gltests_LIBSOURCES]))
+  gl_COMMON
   gl_source_base='gnulib-tests'
   gt_LOCALE_FR
   gt_LOCALE_TR_UTF8
@@ -512,8 +530,11 @@ AC_DEFUN([gl_FILE_LIST], [
   build-aux/announce-gen
   build-aux/config.rpath
   build-aux/git-version-gen
+  build-aux/gitlog-to-changelog
   build-aux/gnupload
   build-aux/link-warning.h
+  build-aux/useless-if-before-free
+  build-aux/vc-list-files
   doc/fdl.texi
   doc/getdate.texi
   lib/acl-internal.h
@@ -619,7 +640,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/freadahead.h
   lib/freading.c
   lib/freading.h
-  lib/free.c
   lib/frexp.c
   lib/frexpl.c
   lib/fseeko.c
@@ -697,7 +717,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/isapipe.c
   lib/isapipe.h
   lib/isnan.c
-  lib/isnan.h
+  lib/isnand.c
+  lib/isnand.h
   lib/isnanf.c
   lib/isnanf.h
   lib/isnanl-nolibm.h
@@ -838,6 +859,10 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/settime.c
   lib/sha1.c
   lib/sha1.h
+  lib/sha256.c
+  lib/sha256.h
+  lib/sha512.c
+  lib/sha512.h
   lib/sig2str.c
   lib/sig2str.h
   lib/signbitd.c
@@ -847,6 +872,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/snprintf.c
   lib/stat-macros.h
   lib/stat-time.h
+  lib/stdarg.in.h
   lib/stdbool.in.h
   lib/stdint.in.h
   lib/stdio--.h
@@ -887,6 +913,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/time.in.h
   lib/time_r.c
   lib/timespec.h
+  lib/u64.h
   lib/uinttostr.c
   lib/umaxtostr.c
   lib/unicodeio.c
@@ -951,7 +978,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/xtime.h
   lib/yesno.c
   lib/yesno.h
-  m4/absolute-header.m4
   m4/acl.m4
   m4/alloca.m4
   m4/argmatch.m4
@@ -984,6 +1010,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/double-slash-root.m4
   m4/dup2.m4
   m4/eealloc.m4
+  m4/environ.m4
   m4/eoverflow.m4
   m4/error.m4
   m4/euidaccess.m4
@@ -1006,7 +1033,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/fprintftime.m4
   m4/fpurge.m4
   m4/freading.m4
-  m4/free.m4
   m4/frexp.m4
   m4/frexpl.m4
   m4/fseeko.m4
@@ -1063,7 +1089,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/inttypes.m4
   m4/inttypes_h.m4
   m4/isapipe.m4
-  m4/isnan.m4
+  m4/isnand.m4
   m4/isnanf.m4
   m4/isnanl.m4
   m4/jm-winsz1.m4
@@ -1156,6 +1182,8 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/setenv.m4
   m4/settime.m4
   m4/sha1.m4
+  m4/sha256.m4
+  m4/sha512.m4
   m4/sig2str.m4
   m4/signbit.m4
   m4/size_max.m4
@@ -1235,6 +1263,8 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/xstrtod.m4
   m4/xstrtol.m4
   m4/yesno.m4
+  tests/nan.h
+  tests/test-EOVERFLOW.c
   tests/test-alloca-opt.c
   tests/test-argmatch.c
   tests/test-arpa_inet.c
@@ -1251,8 +1281,11 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-closein.c
   tests/test-closein.sh
   tests/test-dirname.c
+  tests/test-environ.c
   tests/test-fcntl.c
   tests/test-fflush.c
+  tests/test-fflush2.c
+  tests/test-fflush2.sh
   tests/test-filenamecat.c
   tests/test-fpending.c
   tests/test-fpending.sh
@@ -1276,7 +1309,7 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-i-ring.c
   tests/test-iconv.c
   tests/test-inttypes.c
-  tests/test-isnan.c
+  tests/test-isnand.c
   tests/test-isnanf.c
   tests/test-isnanl-nolibm.c
   tests/test-isnanl.h
@@ -1292,6 +1325,8 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-printf-frexpl.c
   tests/test-printf-posix.h
   tests/test-printf-posix.output
+  tests/test-quotearg.c
+  tests/test-sha1.c
   tests/test-signbit.c
   tests/test-snprintf.c
   tests/test-stat-time.c
@@ -1301,6 +1336,7 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-stdlib.c
   tests/test-strerror.c
   tests/test-string.c
+  tests/test-strtod.c
   tests/test-sys_socket.c
   tests/test-sys_stat.c
   tests/test-sys_time.c
@@ -1332,4 +1368,5 @@ AC_DEFUN([gl_FILE_LIST], [
   tests=lib/binary-io.h
   tests=lib/progname.c
   tests=lib/progname.h
+  top/GNUmakefile
 ])

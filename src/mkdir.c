@@ -1,5 +1,5 @@
 /* mkdir -- make directories
-   Copyright (C) 90, 1995-2002, 2004-2007 Free Software Foundation, Inc.
+   Copyright (C) 90, 1995-2002, 2004-2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 #include "lchmod.h"
 #include "mkdir-p.h"
 #include "modechange.h"
+#include "prog-fprintf.h"
 #include "quote.h"
 #include "savewd.h"
 
@@ -105,7 +106,7 @@ announce_mkdir (char const *dir, void *options)
 {
   struct mkdir_options const *o = options;
   if (o->created_directory_format)
-    error (0, 0, o->created_directory_format, quote (dir));
+    prog_fprintf (stdout, o->created_directory_format, quote (dir));
 }
 
 /* Make ancestor directory DIR, whose last component is COMPONENT,
@@ -191,7 +192,7 @@ main (int argc, char **argv)
   if (scontext && setfscreatecon (scontext) < 0)
     error (EXIT_FAILURE, errno,
 	   _("failed to set default file creation context to %s"),
-	   quote (optarg));
+	   quote (scontext));
 
   if (options.make_ancestor_function || specified_mode)
     {

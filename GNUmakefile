@@ -1,11 +1,12 @@
 # Having a separate GNUmakefile lets me `include' the dynamically
-# generated rules created via Makefile.maint as well as Makefile.maint itself.
+# generated rules created via cfg.mk (package-local configuration)
+# as well as maint.mk (generic maintainer rules).
 # This makefile is used only if you run GNU Make.
 # It is necessary if you want to build targets usually of interest
 # only to the maintainer.
 
-# Copyright (C) 2001, 2003, 2006-2007 Free Software Foundation, Inc.
-#
+# Copyright (C) 2001, 2003, 2006-2008 Free Software Foundation, Inc.
+
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -29,36 +30,56 @@ else
 SHELL = sh
 endif
 
-have-Makefile := $(shell test -f Makefile && echo yes)
-
 # If the user runs GNU make but has not yet run ./configure,
 # give them a diagnostic.
-ifeq ($(have-Makefile),yes)
+_have-Makefile := $(shell test -f Makefile && echo yes)
+ifeq ($(_have-Makefile),yes)
 
 # Make tar archive easier to reproduce.
 export TAR_OPTIONS = --owner=0 --group=0 --numeric-owner
 
 include Makefile
 
+# Some projects override e.g., _autoreconf here.
+-include $(srcdir)/cfg.mk
+include $(srcdir)/maint.mk
+
+# Allow cfg.mk to override these.
+_build-aux ?= build-aux
+_autoreconf ?= autoreconf
+
 # Ensure that $(VERSION) is up to date for dist-related targets, but not
-# for others: running autoreconf and recompiling everything isn't cheap.
-ifeq (0,$(MAKELEVEL))
-  _is-dist-target = $(filter dist% alpha beta major,$(MAKECMDGOALS))
+# for others: rerunning autoreconf and recompiling everything isn't cheap.
+_have-git-version-gen := \
+  $(shell test -f $(srcdir)/$(_build-aux)/git-version-gen && echo yes)
+ifeq ($(_have-git-version-gen)0,yes$(MAKELEVEL))
+  _is-dist-target = $(filter-out %clean, \
+    $(filter maintainer-% dist% alpha beta major,$(MAKECMDGOALS)))
   ifneq (,$(_is-dist-target))
-    _curr-ver := $(shell build-aux/git-version-gen .version)
+    _curr-ver := $(shell cd $(srcdir) && ./$(_build-aux)/git-version-gen \
+                   $(srcdir)/.tarball-version)
     ifneq ($(_curr-ver),$(VERSION))
       $(info INFO: running autoreconf for new version string: $(_curr-ver))
-      dummy := $(shell rm -rf autom4te.cache; autoreconf)
+      _dummy := $(shell cd $(srcdir) && rm -rf autom4te.cache .version \
+        && $(_autoreconf))
     endif
   endif
 endif
 
-include $(srcdir)/Makefile.cfg
-include $(srcdir)/Makefile.maint
-
 else
 
-all:
+.DEFAULT_GOAL := abort-due-to-no-makefile
+srcdir = .
+
+# The package can override .DEFAULT_GOAL to run actions like autoreconf.
+-include ./cfg.mk
+include ./maint.mk
+
+ifeq ($(.DEFAULT_GOAL),abort-due-to-no-makefile)
+$(MAKECMDGOALS): abort-due-to-no-makefile
+endif
+
+abort-due-to-no-makefile:
 	@echo There seems to be no Makefile in this directory.   1>&2
 	@echo "You must run ./configure before running \`make'." 1>&2
 	@exit 1

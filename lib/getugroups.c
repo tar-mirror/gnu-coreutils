@@ -1,6 +1,6 @@
 /* getugroups.c -- return a list of the groups a user is in
 
-   Copyright (C) 1990, 1991, 1998-2000, 2003-2007 Free Software Foundation.
+   Copyright (C) 1990, 1991, 1998-2000, 2003-2008 Free Software Foundation.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,15 +21,13 @@
 
 #include "getugroups.h"
 
+#include <limits.h>
 #include <stdio.h> /* grp.h on alpha OSF1 V2.0 uses "FILE *". */
 #include <grp.h>
 
 #include <unistd.h>
 
 #include <errno.h>
-#ifndef EOVERFLOW
-# define EOVERFLOW EINVAL
-#endif
 
 /* Some old header files might not declare setgrent, getgrent, and endgrent.
    If you don't have them at all, we can't implement this function.
@@ -92,12 +90,12 @@ getugroups (int maxcount, GETGROUPS_T *grouplist, char const *username,
 		    goto done;
 		  grouplist[count] = grp->gr_gid;
 		}
-	      count++;
-	      if (count < 0)
+	      if (count == INT_MAX)
 		{
 		  errno = EOVERFLOW;
 		  goto done;
 		}
+	      count++;
 	    }
 	}
     }

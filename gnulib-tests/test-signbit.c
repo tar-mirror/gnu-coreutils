@@ -1,7 +1,8 @@
 /* -*- buffer-read-only: t -*- vi: set ro: */
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
+#line 1
 /* Test of signbit() substitute.
-   Copyright (C) 2007 Free Software Foundation, Inc.
+   Copyright (C) 2007, 2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -32,6 +33,7 @@
       if (!(expr))							     \
         {								     \
           fprintf (stderr, "%s:%d: assertion failed\n", __FILE__, __LINE__); \
+          fflush (stderr);						     \
           abort ();							     \
         }								     \
     }									     \
@@ -40,6 +42,9 @@
 float zerof = 0.0f;
 double zerod = 0.0;
 long double zerol = 0.0L;
+/* We cannot use the expression '-zerol' here, because on HP-UX/hppa it
+   evaluates to 0.0L, not -0.0L.  */
+long double minus_zerol = -0.0L;
 
 static void
 test_signbitf ()
@@ -51,6 +56,12 @@ test_signbitf ()
   ASSERT (signbit (-2.718f));
   ASSERT (signbit (-2.718e30f));
   ASSERT (signbit (-2.718e-30f));
+  /* Zeros.  */
+  ASSERT (!signbit (0.0f));
+  if (1.0f / -zerof < 0)
+    ASSERT (signbit (-0.0f));
+  else
+    ASSERT (!signbit (-0.0f));
   /* Infinite values.  */
   ASSERT (!signbit (1.0f / 0.0f));
   ASSERT (signbit (-1.0f / 0.0f));
@@ -90,6 +101,12 @@ test_signbitd ()
   ASSERT (signbit (-2.718));
   ASSERT (signbit (-2.718e30));
   ASSERT (signbit (-2.718e-30));
+  /* Zeros.  */
+  ASSERT (!signbit (0.0));
+  if (1.0 / -zerod < 0)
+    ASSERT (signbit (-0.0));
+  else
+    ASSERT (!signbit (-0.0));
   /* Infinite values.  */
   ASSERT (!signbit (1.0 / 0.0));
   ASSERT (signbit (-1.0 / 0.0));
@@ -127,6 +144,12 @@ test_signbitl ()
   ASSERT (signbit (-2.718L));
   ASSERT (signbit (-2.718e30L));
   ASSERT (signbit (-2.718e-30L));
+  /* Zeros.  */
+  ASSERT (!signbit (0.0L));
+  if (1.0L / minus_zerol < 0)
+    ASSERT (signbit (-0.0L));
+  else
+    ASSERT (!signbit (-0.0L));
   /* Infinite values.  */
   ASSERT (!signbit (1.0L / 0.0L));
   ASSERT (signbit (-1.0L / 0.0L));

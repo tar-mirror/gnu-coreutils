@@ -7146,8 +7146,80 @@ else
   esac
 fi
 test -s neg-page.E || rm -f neg-page.E
+$xx --date-format="-- Date/Time --" -h x -t -e $srcdir/neg-inp-pos1.I > neg-inp-pos1.O 2> neg-inp-pos1.E
+code=$?
+if test $code != 0; then
+  $echo "Test neg-inp-pos1 failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp neg-inp-pos1.O $srcdir/neg-inp-pos1.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed neg-inp-pos1"; fi;;
+    1) $echo "Test neg-inp-pos1 failed: files neg-inp-pos1.O and $srcdir/neg-inp-pos1.X differ" 1>&2
+       (diff -c neg-inp-pos1.O $srcdir/neg-inp-pos1.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test neg-inp-pos1 may have failed." 1>&2
+       $echo The command "cmp neg-inp-pos1.O $srcdir/neg-inp-pos1.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s neg-inp-pos1.E || rm -f neg-inp-pos1.E
+$xx --date-format="-- Date/Time --" -h x -t -e $srcdir/neg-inp-pos2.I > neg-inp-pos2.O 2> neg-inp-pos2.E
+code=$?
+if test $code != 0; then
+  $echo "Test neg-inp-pos2 failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp neg-inp-pos2.O $srcdir/neg-inp-pos2.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed neg-inp-pos2"; fi;;
+    1) $echo "Test neg-inp-pos2 failed: files neg-inp-pos2.O and $srcdir/neg-inp-pos2.X differ" 1>&2
+       (diff -c neg-inp-pos2.O $srcdir/neg-inp-pos2.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test neg-inp-pos2 may have failed." 1>&2
+       $echo The command "cmp neg-inp-pos2.O $srcdir/neg-inp-pos2.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s neg-inp-pos2.E || rm -f neg-inp-pos2.E
+$xx --date-format="-- Date/Time --" -h x -t -e300 $srcdir/smash-heap.I > smash-heap.O 2> smash-heap.E
+code=$?
+if test $code != 0; then
+  $echo "Test smash-heap failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp smash-heap.O $srcdir/smash-heap.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed smash-heap"; fi;;
+    1) $echo "Test smash-heap failed: files smash-heap.O and $srcdir/smash-heap.X differ" 1>&2
+       (diff -c smash-heap.O $srcdir/smash-heap.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test smash-heap may have failed." 1>&2
+       $echo The command "cmp smash-heap.O $srcdir/smash-heap.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s smash-heap.E || rm -f smash-heap.E
+$xx --date-format="-- Date/Time --" -h x -t -e $srcdir/smash-heap8.I > smash-heap8.O 2> smash-heap8.E
+code=$?
+if test $code != 0; then
+  $echo "Test smash-heap8 failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp smash-heap8.O $srcdir/smash-heap8.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed smash-heap8"; fi;;
+    1) $echo "Test smash-heap8 failed: files smash-heap8.O and $srcdir/smash-heap8.X differ" 1>&2
+       (diff -c smash-heap8.O $srcdir/smash-heap8.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test smash-heap8 may have failed." 1>&2
+       $echo The command "cmp smash-heap8.O $srcdir/smash-heap8.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s smash-heap8.E || rm -f smash-heap8.E
 if test $errors = 0; then
-  $echo Passed all 396 tests. 1>&2
+  $echo Passed all 400 tests. 1>&2
 else
   $echo Failed $errors tests. 1>&2
 fi

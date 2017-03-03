@@ -30,6 +30,7 @@ TERM dtterm
 TERM eterm-color
 TERM gnome
 TERM gnome-256color
+TERM jfbterm
 TERM konsole
 TERM kterm
 TERM linux
@@ -62,8 +63,9 @@ TERM xterm-debian
 # 30=black 31=red 32=green 33=yellow 34=blue 35=magenta 36=cyan 37=white
 # Background color codes:
 # 40=black 41=red 42=green 43=yellow 44=blue 45=magenta 46=cyan 47=white
-NORMAL 00	# global default, although everything should be something.
-FILE 00		# normal file
+#NORMAL 00	# no color code at all
+#FILE 00	# regular file: use no color at all
+RESET 0		# reset to "normal" color
 DIR 01;34	# directory
 LINK 01;36	# symbolic link.  (If you set this to 'target' instead of a
 		# numerical value, the color is as for the file pointed to.)
@@ -100,7 +102,6 @@ EXEC 01;32
  # archives or compressed (bright red)
 .tar 01;31
 .tgz 01;31
-.svgz 01;31
 .arj 01;31
 .taz 01;31
 .lzh 01;31
@@ -139,6 +140,7 @@ EXEC 01;32
 .tiff 01;35
 .png 01;35
 .svg 01;35
+.svgz 01;35
 .mng 01;35
 .pcx 01;35
 .mov 01;35
@@ -160,6 +162,7 @@ EXEC 01;32
 .flc 01;35
 .avi 01;35
 .fli 01;35
+.flv 01;35
 .gl 01;35
 .dl 01;35
 .xcf 01;35

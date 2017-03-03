@@ -1,6 +1,6 @@
 ## DO NOT EDIT! GENERATED AUTOMATICALLY!
 ## Process this file with automake to produce Makefile.in.
-# Copyright (C) 2004-2007 Free Software Foundation, Inc.
+# Copyright (C) 2002-2008 Free Software Foundation, Inc.
 #
 # This file is free software, distributed under the terms of the GNU
 # General Public License.  As a special exception to the GNU General
@@ -41,6 +41,14 @@ libtests_a_LIBADD = $(gltests_LIBOBJS)
 libtests_a_DEPENDENCIES = $(gltests_LIBOBJS)
 EXTRA_libtests_a_SOURCES =
 AM_LIBTOOLFLAGS = --preserve-dup-deps
+
+## begin gnulib module EOVERFLOW-tests
+
+TESTS += test-EOVERFLOW
+check_PROGRAMS += test-EOVERFLOW
+EXTRA_DIST += test-EOVERFLOW.c
+
+## end   gnulib module EOVERFLOW-tests
 
 ## begin gnulib module alloca-opt-tests
 
@@ -141,6 +149,14 @@ EXTRA_DIST += test-md5.c
 
 ## end   gnulib module crypto/md5-tests
 
+## begin gnulib module crypto/sha1-tests
+
+TESTS += test-sha1
+check_PROGRAMS += test-sha1
+EXTRA_DIST += test-sha1.c
+
+## end   gnulib module crypto/sha1-tests
+
 ## begin gnulib module dirname-tests
 
 TESTS += test-dirname
@@ -149,6 +165,15 @@ test_dirname_LDADD = $(LDADD) @LIBINTL@
 EXTRA_DIST += test-dirname.c
 
 ## end   gnulib module dirname-tests
+
+## begin gnulib module environ-tests
+
+TESTS += test-environ
+check_PROGRAMS += test-environ
+
+EXTRA_DIST += test-environ.c
+
+## end   gnulib module environ-tests
 
 ## begin gnulib module fcntl-tests
 
@@ -161,10 +186,11 @@ EXTRA_DIST += test-fcntl.c
 
 ## begin gnulib module fflush-tests
 
-TESTS += test-fflush
-check_PROGRAMS += test-fflush
+TESTS += test-fflush test-fflush2.sh
+TESTS_ENVIRONMENT += EXEEXT='@EXEEXT@' srcdir='$(srcdir)'
+check_PROGRAMS += test-fflush test-fflush2
 MOSTLYCLEANFILES += test-fflush.txt
-EXTRA_DIST += test-fflush.c
+EXTRA_DIST += test-fflush.c test-fflush2.sh test-fflush2.c
 
 ## end   gnulib module fflush-tests
 
@@ -263,6 +289,7 @@ EXTRA_DIST += test-ftello.c test-ftello.sh
 
 TESTS += test-getaddrinfo
 check_PROGRAMS += test-getaddrinfo
+test_getaddrinfo_LDADD = $(LDADD) @LIBINTL@
 
 EXTRA_DIST += test-getaddrinfo.c
 
@@ -330,21 +357,21 @@ EXTRA_DIST += test-inttypes.c
 
 ## end   gnulib module inttypes-tests
 
-## begin gnulib module isnan-nolibm-tests
+## begin gnulib module isnand-nolibm-tests
 
-TESTS += test-isnan
-check_PROGRAMS += test-isnan
+TESTS += test-isnand
+check_PROGRAMS += test-isnand
 
-EXTRA_DIST += test-isnan.c
+EXTRA_DIST += test-isnand.c nan.h
 
-## end   gnulib module isnan-nolibm-tests
+## end   gnulib module isnand-nolibm-tests
 
 ## begin gnulib module isnanf-nolibm-tests
 
 TESTS += test-isnanf
 check_PROGRAMS += test-isnanf
 
-EXTRA_DIST += test-isnanf.c
+EXTRA_DIST += test-isnanf.c nan.h
 
 ## end   gnulib module isnanf-nolibm-tests
 
@@ -427,6 +454,15 @@ libtests_a_SOURCES += progname.h progname.c
 
 ## end   gnulib module progname
 
+## begin gnulib module quotearg-tests
+
+TESTS += test-quotearg
+check_PROGRAMS += test-quotearg
+test_quotearg_LDADD = $(LDADD) @LIBINTL@
+EXTRA_DIST += test-quotearg.c
+
+## end   gnulib module quotearg-tests
+
 ## begin gnulib module signbit-tests
 
 TESTS += test-signbit
@@ -506,6 +542,15 @@ EXTRA_DIST += test-string.c
 
 ## end   gnulib module string-tests
 
+## begin gnulib module strtod-tests
+
+LIBS += $(POW_LIB)
+TESTS += test-strtod
+check_PROGRAMS += test-strtod
+EXTRA_DIST += test-strtod.c
+
+## end   gnulib module strtod-tests
+
 ## begin gnulib module sys_socket-tests
 
 TESTS += test-sys_socket
@@ -575,7 +620,7 @@ EXTRA_DIST += test-vasnprintf.c
 TESTS += test-vasprintf-posix
 check_PROGRAMS += test-vasprintf-posix
 
-EXTRA_DIST += test-vasprintf-posix.c
+EXTRA_DIST += test-vasprintf-posix.c nan.h
 
 ## end   gnulib module vasprintf-posix-tests
 

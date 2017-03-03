@@ -1,5 +1,5 @@
 /* dd -- convert a file while copying it.
-   Copyright (C) 85, 90, 91, 1995-2007 Free Software Foundation, Inc.
+   Copyright (C) 85, 90, 91, 1995-2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
 #include "human.h"
 #include "long-options.h"
 #include "quote.h"
+#include "quotearg.h"
 #include "xstrtol.h"
 #include "xtime.h"
 
@@ -390,6 +391,25 @@ static char const ebcdic_to_ascii[] =
   '\060', '\061', '\062', '\063', '\064', '\065', '\066', '\067',
   '\070', '\071', '\372', '\373', '\374', '\375', '\376', '\377'
 };
+
+/* True if we need to close the standard output *stream*.  */
+static bool close_stdout_required = true;
+
+/* The only reason to close the standard output *stream* is if
+   parse_long_options fails (as it does for --help or --version).
+   In any other case, dd uses only the STDOUT_FILENO file descriptor,
+   and the "cleanup" function calls "close (STDOUT_FILENO)".
+   Closing the file descriptor and then letting the usual atexit-run
+   close_stdout function call "fclose (stdout)" would result in a
+   harmless failure of the close syscall (with errno EBADF).
+   This function serves solely to avoid the unnecessary close_stdout
+   call, once parse_long_options has succeeded.  */
+static void
+maybe_close_stdout (void)
+{
+  if (close_stdout_required)
+    close_stdout ();
+}
 
 void
 usage (int status)
@@ -796,41 +816,50 @@ write_output (void)
   oc = 0;
 }
 
+/* Return true if STR is of the form "PATTERN" or "PATTERNDELIM...".  */
+
+static bool
+operand_matches (char const *str, char const *pattern, char delim)
+{
+  while (*pattern)
+    if (*str++ != *pattern++)
+      return false;
+  return !*str || *str == delim;
+}
+
 /* Interpret one "conv=..." or similar operand STR according to the
    symbols in TABLE, returning the flags specified.  If the operand
-   cannot be parsed, use ERROR_MSGID to generate a diagnostic.
-   As a by product, this function replaces each `,' in STR with a NUL byte.  */
+   cannot be parsed, use ERROR_MSGID to generate a diagnostic.  */
 
 static int
-parse_symbols (char *str, struct symbol_value const *table,
+parse_symbols (char const *str, struct symbol_value const *table,
 	       char const *error_msgid)
 {
   int value = 0;
 
-  do
+  for (;;)
     {
+      char const *strcomma = strchr (str, ',');
       struct symbol_value const *entry;
-      char *new = strchr (str, ',');
-      if (new != NULL)
-	*new++ = '\0';
-      for (entry = table; ; entry++)
+
+      for (entry = table;
+	   ! (operand_matches (str, entry->symbol, ',') && entry->value);
+	   entry++)
 	{
 	  if (! entry->symbol[0])
 	    {
-	      error (0, 0, _(error_msgid), quote (str));
+	      size_t slen = strcomma ? strcomma - str : strlen (str);
+	      error (0, 0, "%s: %s", _(error_msgid),
+		     quotearg_n_style_mem (0, locale_quoting_style, str, slen));
 	      usage (EXIT_FAILURE);
 	    }
-	  if (STREQ (entry->symbol, str))
-	    {
-	      if (! entry->value)
-		error (EXIT_FAILURE, 0, _(error_msgid), quote (str));
-	      value |= entry->value;
-	      break;
-	    }
 	}
-      str = new;
+
+      value |= entry->value;
+      if (!strcomma)
+	break;
+      str = strcomma + 1;
     }
-  while (str);
 
   return value;
 }
@@ -867,78 +896,84 @@ parse_integer (const char *str, bool *invalid)
   return n;
 }
 
+/* OPERAND is of the form "X=...".  Return true if X is NAME.  */
+
+static bool
+operand_is (char const *operand, char const *name)
+{
+  return operand_matches (operand, name, '=');
+}
+
 static void
-scanargs (int argc, char **argv)
+scanargs (int argc, char *const *argv)
 {
   int i;
   size_t blocksize = 0;
 
   for (i = optind; i < argc; i++)
     {
-      char *name, *val;
+      char const *name = argv[i];
+      char const *val = strchr (name, '=');
 
-      name = argv[i];
-      val = strchr (name, '=');
       if (val == NULL)
 	{
 	  error (0, 0, _("unrecognized operand %s"), quote (name));
 	  usage (EXIT_FAILURE);
 	}
-      *val++ = '\0';
+      val++;
 
-      if (STREQ (name, "if"))
+      if (operand_is (name, "if"))
 	input_file = val;
-      else if (STREQ (name, "of"))
+      else if (operand_is (name, "of"))
 	output_file = val;
-      else if (STREQ (name, "conv"))
+      else if (operand_is (name, "conv"))
 	conversions_mask |= parse_symbols (val, conversions,
-					   N_("invalid conversion: %s"));
-      else if (STREQ (name, "iflag"))
+					   N_("invalid conversion"));
+      else if (operand_is (name, "iflag"))
 	input_flags |= parse_symbols (val, flags,
-				      N_("invalid input flag: %s"));
-      else if (STREQ (name, "oflag"))
+				      N_("invalid input flag"));
+      else if (operand_is (name, "oflag"))
 	output_flags |= parse_symbols (val, flags,
-				       N_("invalid output flag: %s"));
-      else if (STREQ (name, "status"))
+				       N_("invalid output flag"));
+      else if (operand_is (name, "status"))
 	status_flags |= parse_symbols (val, statuses,
-				       N_("invalid status flag: %s"));
+				       N_("invalid status flag"));
       else
 	{
 	  bool invalid = false;
 	  uintmax_t n = parse_integer (val, &invalid);
 
-	  if (STREQ (name, "ibs"))
+	  if (operand_is (name, "ibs"))
 	    {
 	      invalid |= ! (0 < n && n <= MAX_BLOCKSIZE (INPUT_BLOCK_SLOP));
 	      input_blocksize = n;
 	      conversions_mask |= C_TWOBUFS;
 	    }
-	  else if (STREQ (name, "obs"))
+	  else if (operand_is (name, "obs"))
 	    {
 	      invalid |= ! (0 < n && n <= MAX_BLOCKSIZE (OUTPUT_BLOCK_SLOP));
 	      output_blocksize = n;
 	      conversions_mask |= C_TWOBUFS;
 	    }
-	  else if (STREQ (name, "bs"))
+	  else if (operand_is (name, "bs"))
 	    {
 	      invalid |= ! (0 < n && n <= MAX_BLOCKSIZE (INPUT_BLOCK_SLOP));
 	      blocksize = n;
 	    }
-	  else if (STREQ (name, "cbs"))
+	  else if (operand_is (name, "cbs"))
 	    {
 	      invalid |= ! (0 < n && n <= SIZE_MAX);
 	      conversion_blocksize = n;
 	    }
-	  else if (STREQ (name, "skip"))
+	  else if (operand_is (name, "skip"))
 	    skip_records = n;
-	  else if (STREQ (name, "seek"))
+	  else if (operand_is (name, "seek"))
 	    seek_records = n;
-	  else if (STREQ (name, "count"))
+	  else if (operand_is (name, "count"))
 	    max_records = n;
 	  else
 	    {
-	      error (0, 0, _("unrecognized operand %s=%s"),
-		     quote_n (0, name), quote_n (1, val));
+	      error (0, 0, _("unrecognized operand %s"), quote (name));
 	      usage (EXIT_FAILURE);
 	    }
 
@@ -1639,12 +1674,14 @@ main (int argc, char **argv)
   textdomain (PACKAGE);
 
   /* Arrange to close stdout if parse_long_options exits.  */
-  atexit (close_stdout);
+  atexit (maybe_close_stdout);
 
   page_size = getpagesize ();
 
   parse_long_options (argc, argv, PROGRAM_NAME, PACKAGE, VERSION,
 		      usage, AUTHORS, (char const *) NULL);
+  close_stdout_required = false;
+
   if (getopt_long (argc, argv, "", NULL, NULL) != -1)
     usage (EXIT_FAILURE);
 

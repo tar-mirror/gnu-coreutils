@@ -1,5 +1,6 @@
 /* -*- buffer-read-only: t -*- vi: set ro: */
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
+#line 1
 /* malloc() function that is glibc compatible.
 
    Copyright (C) 1997, 1998, 2006, 2007 Free Software Foundation, Inc.

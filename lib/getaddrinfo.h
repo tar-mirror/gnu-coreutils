@@ -1,5 +1,6 @@
 /* -*- buffer-read-only: t -*- vi: set ro: */
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
+#line 1
 /* Get address information.
    Copyright (C) 1996-2002, 2003, 2004, 2005, 2006
                  Free Software Foundation, Inc.

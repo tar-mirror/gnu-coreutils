@@ -1,5 +1,6 @@
 /* -*- buffer-read-only: t -*- vi: set ro: */
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
+#line 1
 /* Provide gettimeofday for systems that don't have it or for which it's broken.
 
    Copyright (C) 2001, 2002, 2003, 2005, 2006, 2007 Free Software

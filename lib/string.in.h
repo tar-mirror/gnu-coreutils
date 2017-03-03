@@ -1,5 +1,6 @@
 /* -*- buffer-read-only: t -*- vi: set ro: */
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
+#line 1
 /* A GNU-like <string.h>.
 
    Copyright (C) 1995-1996, 2001-2008 Free Software Foundation, Inc.

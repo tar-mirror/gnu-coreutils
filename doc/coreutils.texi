@@ -1178,7 +1178,7 @@ or @option{-P} is specified.
 
 
 @node Treating / specially
-@section Treating / specially
+@section Treating @file{/} specially
 
 Certain commands can operate destructively on entire hierarchies.
 For example, if a user with appropriate privileges mistakenly runs
@@ -1668,7 +1668,7 @@ hexadecimal; otherwise, if it begins with @samp{0}, in octal; otherwise,
 in decimal.  Appending @samp{b} multiplies @var{bytes} by 512,
 @samp{kB} by 1000, @samp{K} by 1024,
 @samp{MB} by 1000*1000, @samp{M} by 1024*1024,
-@samp{GB} by 1000*1000*1000, @samp{GB} by 1024*1024*1024,
+@samp{GB} by 1000*1000*1000, @samp{G} by 1024*1024*1024,
 and so on for @samp{T}, @samp{P}, @samp{E}, @samp{Z}, and @samp{Y}.
 
 @item -N @var{bytes}
@@ -2170,9 +2170,9 @@ e.g., @option{--date-format="Monday morning"}.
 
 @vindex POSIXLY_CORRECT
 @vindex LC_TIME
-Normally the date
-format defaults to @samp{%Y-%m-%d %H:%M} (for example, @samp{2001-12-04
-23:59}); but if the @env{POSIXLY_CORRECT} environment variable is set
+The default date format is @samp{%Y-%m-%d %H:%M} (for example,
+@samp{2001-12-04 23:59});
+but if the @env{POSIXLY_CORRECT} environment variable is set
 and the @env{LC_TIME} locale category specifies the @acronym{POSIX}
 locale, the default is @samp{%b %e %H:%M %Y} (for example,
 @samp{Dec@ @ 4 23:59 2001}.
@@ -2181,7 +2181,7 @@ locale, the default is @samp{%b %e %H:%M %Y} (for example,
 Time stamps are listed according to the time zone rules specified by
 the @env{TZ} environment variable, or by the system default rules if
 @env{TZ} is not set.  @xref{TZ Variable,, Specifying the Time Zone
-with @env{TZ}, libc, The GNU C Library}.
+with @env{TZ}, libc, The GNU C Library Reference Manual}.
 
 @item -e[@var{in-tabchar}[@var{in-tabwidth}]]
 @itemx --expand-tabs[=@var{in-tabchar}[@var{in-tabwidth}]]
@@ -2501,7 +2501,7 @@ print all but the last @var{n} bytes of each file.
 Appending @samp{b} multiplies @var{n} by 512,
 @samp{kB} by 1000, @samp{K} by 1024,
 @samp{MB} by 1000*1000, @samp{M} by 1024*1024,
-@samp{GB} by 1000*1000*1000, @samp{GB} by 1024*1024*1024,
+@samp{GB} by 1000*1000*1000, @samp{G} by 1024*1024*1024,
 and so on for @samp{T}, @samp{P}, @samp{E}, @samp{Z}, and @samp{Y}.
 
 @itemx -n @var{n}
@@ -2590,7 +2590,7 @@ However, if @var{n} starts with a @samp{+}, start printing with the
 Appending @samp{b} multiplies @var{bytes} by 512,
 @samp{kB} by 1000, @samp{K} by 1024,
 @samp{MB} by 1000*1000, @samp{M} by 1024*1024,
-@samp{GB} by 1000*1000*1000, @samp{GB} by 1024*1024*1024,
+@samp{GB} by 1000*1000*1000, @samp{G} by 1024*1024*1024,
 and so on for @samp{T}, @samp{P}, @samp{E}, @samp{Z}, and @samp{Y}.
 
 @item -f
@@ -2838,7 +2838,7 @@ Use digits in suffixes rather than lower-case letters.
 
 @itemx --verbose
 @opindex --verbose
-Write a diagnostic to standard error just before each output file is opened.
+Write a diagnostic just before each output file is opened.
 
 @end table
 
@@ -3074,27 +3074,33 @@ Print only the newline counts.
 @opindex --max-line-length
 Print only the maximum line lengths.
 
+@macro filesZeroFromOption{cmd,withTotalOption}
 @itemx --files0-from=@var{FILE}
 @opindex --files0-from=@var{FILE}
-@cindex including files from @command{du}
+@c This is commented out to avoid a texi2dvi failure.
+@c texi2dvi (GNU Texinfo 4.11) 1.104
+@c @cindex including files from @command{\cmd\}
 Rather than processing files named on the command line, process those
 named in file @var{FILE}; each name is terminated by a null byte.
-This is useful when
-the list of file names is so long that it may exceed a command line
+This is useful \withTotalOption\
+when the list of file names is so long that it may exceed a command line
 length limitation.
-In such cases, running @command{wc} via @command{xargs} is undesirable
-because it splits the list into pieces and makes @command{wc} print a
+In such cases, running @command{\cmd\} via @command{xargs} is undesirable
+because it splits the list into pieces and makes @command{\cmd\} print a
 total for each sublist rather than for the entire list.
 One way to produce a list of null-byte-terminated file names is with @sc{gnu}
-@command{find}, using its @option{-print0} predicate.  For example, to find
-the length of the longest line in any @file{.c} or @file{.h} file in the
-current hierarchy, do this:
+@command{find}, using its @option{-print0} predicate.
+Do not specify any @var{FILE} on the command line when using this option.
+@end macro
+@filesZeroFromOption{wc,}
+
+For example, to find the length of the longest line in any @file{.c} or
+@file{.h} file in the current hierarchy, do this:
 
 @example
-find . -name '*.[ch]' -print0 | wc -L --files0-from=- | tail -n1
+find . -name '*.[ch]' -print0 |
+  wc -L --files0-from=- | tail -n1
 @end example
-
-Do not specify any @var{FILE} on the command line when using this option.
 
 @end table
 
@@ -3536,8 +3542,10 @@ The @env{LC_CTYPE} locale determines character types.
 
 @item -g
 @itemx --general-numeric-sort
+@itemx --sort=general-numeric
 @opindex -g
 @opindex --general-numeric-sort
+@opindex --sort
 @cindex general numeric sort
 @vindex LC_NUMERIC
 Sort numerically, using the standard C function @code{strtod} to convert
@@ -3580,8 +3588,10 @@ This option has no effect if the stronger @option{--dictionary-order}
 
 @item -M
 @itemx --month-sort
+@itemx --sort=month
 @opindex -M
 @opindex --month-sort
+@opindex --sort
 @cindex months, sorting by
 @vindex LC_TIME
 An initial string, consisting of any amount of blanks, followed
@@ -3594,8 +3604,10 @@ can change this.
 
 @item -n
 @itemx --numeric-sort
+@itemx --sort=numeric
 @opindex -n
 @opindex --numeric-sort
+@opindex --sort
 @cindex numeric sort
 @vindex LC_NUMERIC
 Sort numerically.  The number begins each line and consists
@@ -3623,8 +3635,10 @@ appear earlier in the output instead of later.
 
 @item -R
 @itemx --random-sort
+@itemx --sort=random
 @opindex -R
 @opindex --random-sort
+@opindex --sort
 @cindex random sort
 Sort by hashing the input keys and then sorting the hash values.
 Choose the hash function at random, ensuring that it is free of
@@ -3655,7 +3669,7 @@ standard input to standard output.
 
 Terminate with an error if @var{prog} exits with nonzero status.
 
-Whitespace and the backslash character should not appear in
+White space and the backslash character should not appear in
 @var{prog}; they are reserved for future use.
 
 @item -k @var{pos1}[,@var{pos2}]
@@ -5149,10 +5163,10 @@ sort a file on its default join field, but if you select a non-default
 locale, join field, separator, or comparison options, then you should
 do so consistently between @command{join} and @command{sort}.
 
-As a @acronym{GNU} extension, if the input has no unpairable lines the
-sort order can be any order that considers two fields to be equal if and
-only if the sort comparison described above considers them to be equal.
-For example:
+If the input has no unpairable lines, a @acronym{GNU} extension is
+available; the sort order can be any order that considers two fields
+to be equal if and only if the sort comparison described above
+considers them to be equal.  For example:
 
 @example
 $ cat file1
@@ -5168,6 +5182,19 @@ a a1 a2
 c c1 c2
 b b1 b2
 @end example
+
+If the @option{--check-order} option is given, unsorted inputs will
+cause a fatal error message.  If the option @option{--nocheck-order}
+is given, unsorted inputs will never cause an error message.  If
+neither of these options is given, wrongly sorted inputs are diagnosed
+only if an input file is found to contain unpairable lines.  If an
+input file is diagnosed as being unsorted, the @command{join} command
+will exit with a nonzero status (and the output should not be used).
+
+Forcing @command{join} to process wrongly sorted input files
+containing unpairable lines by specifying @option{--nocheck-order} is
+not guaranteed to produce any particular output.  The output will
+probably not correspond with whatever you hoped it would be.
 
 The defaults are:
 @itemize
@@ -5187,6 +5214,12 @@ The program accepts the following options.  Also see @ref{Common options}.
 @opindex -a
 Print a line for each unpairable line in file @var{file-number} (either
 @samp{1} or @samp{2}), in addition to the normal output.
+
+@item --check-order
+Fail with an error message if either input file is wrongly ordered.
+
+@item --nocheck-order
+Do not check that both input files are in sorted order.  This is the default.
 
 @item -e @var{string}
 @opindex -e
@@ -5894,6 +5927,8 @@ directories and the files separately using the selected sort key
 (see --sort option).
 That is, this option specifies a primary sort key,
 and the --sort option specifies a secondary key.
+However, any use of @option{--sort=none}
+(@option{-U}) disables this option altogether.
 
 @item --hide=PATTERN
 @opindex --hide=@var{pattern}
@@ -6555,7 +6590,7 @@ programs like @command{make} that rely on file timestamps.
 Time stamps are listed according to the time zone rules specified by
 the @env{TZ} environment variable, or by the system default rules if
 @env{TZ} is not set.  @xref{TZ Variable,, Specifying the Time Zone
-with @env{TZ}, libc, The GNU C Library}.
+with @env{TZ}, libc, The GNU C Library Reference Manual}.
 
 The following option changes how file timestamps are printed.
 
@@ -7559,7 +7594,8 @@ process makes it print I/O statistics to standard error
 and then resume copying.  In the example below,
 @command{dd} is run in the background to copy 10 million blocks.
 The @command{kill} command makes it output intermediate I/O statistics,
-and when @command{dd} completes, it outputs the final statistics.
+and when @command{dd} completes normally or is killed by the
+@code{SIGINT} signal, it outputs the final statistics.
 
 @example
 $ dd if=/dev/zero of=/dev/null count=10MB & pid=$!
@@ -7773,10 +7809,14 @@ is a terminal, and the @option{-f} or @option{--force} option is not given,
 own the file, or have write permission on its directory.)  If the
 response is not affirmative, the file is skipped.
 
-@emph{Warning}: If you try to move a symlink that points to a directory,
-and you specify the symlink with a trailing slash, then @command{mv}
-doesn't move the symlink but instead moves the directory referenced
-by the symlink.  @xref{Trailing slashes}.
+@emph{Warning}: Avoid specifying a source name with a trailing slash,
+when it might be a symlink to a directory.
+Otherwise, @command{mv} may do something very surprising, since
+its behavior depends on the underlying rename system call.
+On modern Linux systems, it fails with @code{errno=ENOTDIR}.
+However, on other systems (at least FreeBSD 6.1 and Solaris 10) it silently
+renames not the symlink but rather the directory referenced by the symlink.
+@xref{Trailing slashes}.
 
 The program accepts the following options.  Also see @ref{Common options}.
 
@@ -7921,7 +7961,7 @@ removal is requested.  Equivalent to @option{-I}.
 @vindex always @r{interactive option}
 - Prompt for every file being removed.  Equivalent to @option{-i}.
 @end itemize
-Specifying @option{--interactive} and no @var{when} is equivalent to
+@option{--interactive} with no @var{when} is equivalent to
 @option{--interactive=always}.
 
 @itemx --one-file-system
@@ -8156,7 +8196,7 @@ If a file has multiple links, only the named links will be removed.
 @itemx --verbose
 @opindex -v
 @opindex --verbose
-Display status updates as sterilization proceeds.
+Display to standard error all status updates as sterilization proceeds.
 
 @item -x
 @itemx --exact
@@ -9319,7 +9359,8 @@ operations, for a user to change the ctime field to a user-specified value.
 Time stamps assume the time zone rules specified by the @env{TZ}
 environment variable, or by the system default rules if @env{TZ} is
 not set.  @xref{TZ Variable,, Specifying the Time Zone with @env{TZ},
-libc, The GNU C Library}.  You can avoid ambiguities during
+libc, The GNU C Library Reference Manual}.
+You can avoid ambiguities during
 daylight saving transitions by using @sc{utc} time stamps.
 
 The program accepts the following options.  Also see @ref{Common options}.
@@ -9652,6 +9693,11 @@ directory.  Normally the disk space is printed in units of
 1024 bytes, but this can be overridden (@pxref{Block size}).
 Non-integer quantities are rounded up to the next higher unit.
 
+If two or more hard links point to the same file, only one of the hard
+links is counted.  The @var{file} argument order affects which links
+are counted, and changing the argument order may change the numbers
+that @command{du} outputs.
+
 The program accepts the following options.  Also see @ref{Common options}.
 
 @table @samp
@@ -9713,20 +9759,8 @@ Does not affect other symbolic links.  This is helpful for finding
 out the disk usage of directories, such as @file{/usr/tmp}, which
 are often symbolic links.
 
-@itemx --files0-from=@var{FILE}
-@opindex --files0-from=@var{FILE}
-@cindex including files from @command{du}
-Rather than processing files named on the command line, process those
-named in file @var{FILE}; each name is terminated by a null byte.
-This is useful with the @option{--total} (@option{-c}) option when
-the list of file names is so long that it may exceed a command line
-length limitation.
-In such cases, running @command{du} via @command{xargs} is undesirable
-because it splits the list into pieces and makes @command{du} print a
-total for each sublist rather than for the entire list.
-One way to produce a list of null-byte-terminated file names is with @sc{gnu}
-@command{find}, using its @option{-print0} predicate.
-Do not specify any @var{FILE} on the command line when using this option.
+@c --files0-from=FILE
+@filesZeroFromOption{du, with the @option{--total} (@option{-c}) option}
 
 @optHumanReadable
 
@@ -10038,7 +10072,7 @@ The valid format sequences for file systems are:
 Time stamps are listed according to the time zone rules specified by
 the @env{TZ} environment variable, or by the system default rules if
 @env{TZ} is not set.  @xref{TZ Variable,, Specifying the Time Zone
-with @env{TZ}, libc, The GNU C Library}.
+with @env{TZ}, libc, The GNU C Library Reference Manual}.
 @end table
 
 @exitstatus
@@ -10186,8 +10220,10 @@ printf @var{format} [@var{argument}]@dots{}
 
 @command{printf} prints the @var{format} string, interpreting @samp{%}
 directives and @samp{\} escapes to format numeric and string arguments
-in a way that is mostly similar to the C @samp{printf} function.  The
-differences are as follows:
+in a way that is mostly similar to the C @samp{printf} function.
+@xref{Output Conversion Syntax,, @command{printf} format directives,
+libc, The GNU C Library Reference Manual}, for details.
+The differences are as follows:
 
 @itemize @bullet
 
@@ -12221,6 +12257,15 @@ Print only the user ID.
 
 @exitstatus
 
+@macro primaryAndSupplementaryGroups{cmd,arg}
+Primary and supplementary groups for a process are normally inherited
+from its parent and are usually unchanged since login.  This means
+that if you change the group database after logging in, @command{\cmd\}
+will not reflect your changes within your existing login session.
+Running @command{\cmd\} with a \arg\ causes the user and group
+database to be consulted afresh, and so will give a different result.
+@end macro
+@primaryAndSupplementaryGroups{id,user argument}
 
 @node logname invocation
 @section @command{logname}: Print current login name
@@ -12270,13 +12315,16 @@ options}.
 groups for each given @var{username}, or the current process if no names
 are given.  If more than one name is given, the name of each user is
 printed before
-the list of that user's groups.  Synopsis:
+the list of that user's groups and the user name is separated from the
+group list by a colon.  Synopsis:
 
 @example
 groups [@var{username}]@dots{}
 @end example
 
 The group lists are equivalent to the output of the command @samp{id -Gn}.
+
+@primaryAndSupplementaryGroups{groups,list of users}
 
 The only options are @option{--help} and @option{--version}.  @xref{Common
 options}.
@@ -12355,7 +12403,7 @@ i}, as in @samp{who am i}.
 Time stamps are listed according to the time zone rules specified by
 the @env{TZ} environment variable, or by the system default rules if
 @env{TZ} is not set.  @xref{TZ Variable,, Specifying the Time Zone
-with @env{TZ}, libc, The GNU C Library}.
+with @env{TZ}, libc, The GNU C Library Reference Manual}.
 
 The program accepts the following options.  Also see @ref{Common options}.
 
@@ -12495,7 +12543,7 @@ so the output looks like @samp{Thu Mar @ 3 13:47:51 PST 2005}.
 Normally, @command{date} uses the time zone rules indicated by the
 @env{TZ} environment variable, or the system default rules if @env{TZ}
 is not set.  @xref{TZ Variable,, Specifying the Time Zone with
-@env{TZ}, libc, The GNU C Library}.
+@env{TZ}, libc, The GNU C Library Reference Manual}.
 
 @findex strftime @r{and @command{date}}
 @cindex time formats

@@ -738,8 +738,134 @@ else
   esac
 fi
 test -s invalid-j.E || rm -f invalid-j.E
+$xx --check-order $srcdir/chkodr-1.I1 $srcdir/chkodr-1.I2 > chkodr-1.O 2> chkodr-1.E
+code=$?
+if test $code != 0; then
+  $echo "Test chkodr-1 failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp chkodr-1.O $srcdir/chkodr-1.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed chkodr-1"; fi;;
+    1) $echo "Test chkodr-1 failed: files chkodr-1.O and $srcdir/chkodr-1.X differ" 1>&2
+       (diff -c chkodr-1.O $srcdir/chkodr-1.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test chkodr-1 may have failed." 1>&2
+       $echo The command "cmp chkodr-1.O $srcdir/chkodr-1.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s chkodr-1.E || rm -f chkodr-1.E
+$xx --nocheck-order $srcdir/chkodr-2.I1 $srcdir/chkodr-2.I2 > chkodr-2.O 2> chkodr-2.E
+code=$?
+if test $code != 0; then
+  $echo "Test chkodr-2 failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp chkodr-2.O $srcdir/chkodr-2.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed chkodr-2"; fi;;
+    1) $echo "Test chkodr-2 failed: files chkodr-2.O and $srcdir/chkodr-2.X differ" 1>&2
+       (diff -c chkodr-2.O $srcdir/chkodr-2.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test chkodr-2 may have failed." 1>&2
+       $echo The command "cmp chkodr-2.O $srcdir/chkodr-2.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s chkodr-2.E || rm -f chkodr-2.E
+$xx --nocheck-order $srcdir/chkodr-3.I1 $srcdir/chkodr-3.I2 > chkodr-3.O 2> chkodr-3.E
+code=$?
+if test $code != 0; then
+  $echo "Test chkodr-3 failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp chkodr-3.O $srcdir/chkodr-3.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed chkodr-3"; fi;;
+    1) $echo "Test chkodr-3 failed: files chkodr-3.O and $srcdir/chkodr-3.X differ" 1>&2
+       (diff -c chkodr-3.O $srcdir/chkodr-3.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test chkodr-3 may have failed." 1>&2
+       $echo The command "cmp chkodr-3.O $srcdir/chkodr-3.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s chkodr-3.E || rm -f chkodr-3.E
+$xx  $srcdir/chkodr-4.I1 $srcdir/chkodr-4.I2 > chkodr-4.O 2> chkodr-4.E
+code=$?
+if test $code != 0; then
+  $echo "Test chkodr-4 failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp chkodr-4.O $srcdir/chkodr-4.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed chkodr-4"; fi;;
+    1) $echo "Test chkodr-4 failed: files chkodr-4.O and $srcdir/chkodr-4.X differ" 1>&2
+       (diff -c chkodr-4.O $srcdir/chkodr-4.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test chkodr-4 may have failed." 1>&2
+       $echo The command "cmp chkodr-4.O $srcdir/chkodr-4.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s chkodr-4.E || rm -f chkodr-4.E
+$xx --check-order $srcdir/chkodr-5.I1 $srcdir/chkodr-5.I2 > chkodr-5.O 2> chkodr-5.E
+code=$?
+if test $code != 1; then
+  $echo "Test chkodr-5 failed: $xx return code $code differs from expected value 1" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp chkodr-5.O $srcdir/chkodr-5.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed chkodr-5"; fi;;
+    1) $echo "Test chkodr-5 failed: files chkodr-5.O and $srcdir/chkodr-5.X differ" 1>&2
+       (diff -c chkodr-5.O $srcdir/chkodr-5.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test chkodr-5 may have failed." 1>&2
+       $echo The command "cmp chkodr-5.O $srcdir/chkodr-5.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s chkodr-5.E || rm -f chkodr-5.E
+$xx --nocheck-order $srcdir/chkodr-6.I1 $srcdir/chkodr-6.I2 > chkodr-6.O 2> chkodr-6.E
+code=$?
+if test $code != 0; then
+  $echo "Test chkodr-6 failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp chkodr-6.O $srcdir/chkodr-6.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed chkodr-6"; fi;;
+    1) $echo "Test chkodr-6 failed: files chkodr-6.O and $srcdir/chkodr-6.X differ" 1>&2
+       (diff -c chkodr-6.O $srcdir/chkodr-6.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test chkodr-6 may have failed." 1>&2
+       $echo The command "cmp chkodr-6.O $srcdir/chkodr-6.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s chkodr-6.E || rm -f chkodr-6.E
+$xx -12 $srcdir/chkodr-7.I1 $srcdir/chkodr-7.I2 > chkodr-7.O 2> chkodr-7.E
+code=$?
+if test $code != 0; then
+  $echo "Test chkodr-7 failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp chkodr-7.O $srcdir/chkodr-7.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed chkodr-7"; fi;;
+    1) $echo "Test chkodr-7 failed: files chkodr-7.O and $srcdir/chkodr-7.X differ" 1>&2
+       (diff -c chkodr-7.O $srcdir/chkodr-7.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test chkodr-7 may have failed." 1>&2
+       $echo The command "cmp chkodr-7.O $srcdir/chkodr-7.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s chkodr-7.E || rm -f chkodr-7.E
 if test $errors = 0; then
-  $echo Passed all 40 tests. 1>&2
+  $echo Passed all 47 tests. 1>&2
 else
   $echo Failed $errors tests. 1>&2
 fi

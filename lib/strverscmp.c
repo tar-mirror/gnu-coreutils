@@ -1,5 +1,6 @@
 /* -*- buffer-read-only: t -*- vi: set ro: */
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
+#line 1
 /* Compare strings while treating digits characters numerically.
    Copyright (C) 1997, 2000, 2002, 2004, 2006 Free Software Foundation, Inc.
    This file is part of the GNU C Library.

@@ -2,7 +2,7 @@
 # move files/directories across file system boundaries
 # and make sure acls are preserved
 
-# Copyright (C) 2005-2007 Free Software Foundation, Inc.
+# Copyright (C) 2005-2008 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,15 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-. $srcdir/../acl
-
-# Skip this test if cp was built without ACL support:
-grep '^#define USE_ACL 0' $CONFIG_HEADER > /dev/null && \
-  {
-    echo 1>&2 "$0: insufficient ACL support, so skipping this test"
-    (exit 77); exit 77
-  }
-
 if test "$VERBOSE" = yes; then
   set -x
   mv --version
@@ -35,6 +26,12 @@ fi
 
 . $srcdir/../lang-default
 . $srcdir/../test-lib.sh
+require_acl_
+
+# Skip this test if cp was built without ACL support:
+grep '^#define USE_ACL 0' $CONFIG_HEADER > /dev/null &&
+  skip_test_ "insufficient ACL support"
+
 cleanup_() { rm -rf "$other_partition_tmpdir"; }
 . "$abs_top_srcdir/tests/other-fs-tmpdir"
 
@@ -42,19 +39,15 @@ touch file || framework_failure
 t1=$other_partition_tmpdir/t1
 touch $t1 || framework_failure
 
-skip=no
+skip_partition=none
 # Ensure that setfacl and getfacl work on this file system.
-setfacl -m user:bin:rw file 2> /dev/null || skip=.
+setfacl -m user:bin:rw file 2> /dev/null || skip_partition=.
 # And on the destination file system.
-setfacl -m user:bin:rw $t1 || skip=$other_partition_tmpdir
-acl1=`getfacl file` || skip=yes
+setfacl -m user:bin:rw $t1 || skip_partition=$other_partition_tmpdir
+acl1=`getfacl file` || skip_partition=.
 
-test $skip != no &&
-  {
-    echo "$0: '$skip' is not on a suitable file system for this test" 1>&2
-    echo "$0: skipping this test" 1>&2
-    (exit 77); exit 77
-  }
+test $skip_partition != none &&
+  skip_test_ "'$skip' is not on a suitable file system for this test"
 
 # move the access acl of a file
 mv file $other_partition_tmpdir || fail=1
@@ -77,4 +70,4 @@ mv dir2 $other_partition_tmpdir || fail=1
 acl2=`cd $other_partition_tmpdir && getfacl dir2` || framework_failure
 test "$acl1" = "$acl2" || fail=1
 
-exit $fail
+(exit $fail); exit $fail

@@ -1,5 +1,5 @@
 /* seq - print sequence of numbers to standard output.
-   Copyright (C) 1994-2007 Free Software Foundation, Inc.
+   Copyright (C) 1994-2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@
 #include <getopt.h>
 #include <stdio.h>
 #include <sys/types.h>
+#include <math.h>
+#include <float.h>
 
 #include "system.h"
 #include "c-strtod.h"
@@ -177,6 +179,33 @@ scan_arg (const char *arg)
   return ret;
 }
 
+/* Validate the format, FMT.  Print a diagnostic and exit
+   if there is not exactly one %-directive.  */
+
+static void
+validate_format (char const *fmt)
+{
+  unsigned int n_directives = 0;
+  char const *p;
+
+  for (p = fmt; *p; p++)
+    {
+      if (p[0] == '%' && p[1] != '%' && p[1] != '\0')
+	{
+	  ++n_directives;
+	  ++p;
+	}
+    }
+  if (n_directives == 0)
+    {
+      error (0, 0, _("no %% directive in format string %s"), quote (fmt));
+      usage (EXIT_FAILURE);
+    }
+  else if (1 < n_directives)
+    error (EXIT_FAILURE, 0, _("too many %% directives in format string %s"),
+	   quote (fmt));
+}
+
 /* If FORMAT is a valid printf format for a double argument, return
    its long double equivalent, possibly allocated from dynamic
    storage, and store into *LAYOUT a description of the output layout;
@@ -209,7 +238,8 @@ long_double_format (char const *fmt, struct layout *layout)
   length_modifier_offset = i;
   has_L = (fmt[i] == 'L');
   i += has_L;
-  if (! strchr ("efgaEFGA", fmt[i]))
+  /* In a valid format string, fmt[i] must be one of these specifiers.  */
+  if (fmt[i] == '\0' || ! strchr ("efgaEFGA", fmt[i]))
     return NULL;
 
   for (i++; ! (fmt[i] == '%' && fmt[i + 1] != '%'); i += (fmt[i] == '%') + 1)
@@ -229,6 +259,14 @@ long_double_format (char const *fmt, struct layout *layout)
       }
 
   return NULL;
+}
+
+/* Return the absolute relative difference from x to y.  */
+static double
+abs_rel_diff (double x, double y)
+{
+  double s = (y == 0.0 ? 1 : y);
+  return fabs ((y - x) / s);
 }
 
 /* Actually print the sequence of numbers in the specified range, with the
@@ -272,7 +310,7 @@ print_numbers (char const *fmt, struct layout layout,
 	      x_str[x_strlen - layout.suffix_len] = '\0';
 
 	      if (xstrtold (x_str + layout.prefix_len, NULL, &x_val, c_strtold)
-		  && x_val == last)
+		  && abs_rel_diff (x_val, last) < DBL_EPSILON)
 		{
 		  char *x0_str = NULL;
 		  if (asprintf (&x0_str, fmt, x0) < 0)
@@ -405,6 +443,7 @@ main (int argc, char **argv)
 
   if (format_str)
     {
+      validate_format (format_str);
       char const *f = long_double_format (format_str, &layout);
       if (! f)
 	{

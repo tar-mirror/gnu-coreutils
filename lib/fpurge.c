@@ -1,5 +1,5 @@
 /* Flushing buffers of a FILE stream.
-   Copyright (C) 2007 Free Software Foundation, Inc.
+   Copyright (C) 2007-2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ fpurge (FILE *fp)
   /* Most systems provide FILE as a struct and the necessary bitmask in
      <stdio.h>, because they need it for implementing getc() and putc() as
      fast macros.  */
-# if defined _IO_ferror_unlocked    /* GNU libc, BeOS */
+# if defined _IO_ferror_unlocked || __GNU_LIBRARY__ == 1 /* GNU libc, BeOS, Linux libc5 */
   fp->_IO_read_end = fp->_IO_read_ptr;
   fp->_IO_write_ptr = fp->_IO_write_base;
   /* Avoid memory leak when there is an active ungetc buffer.  */
@@ -90,7 +90,18 @@ fpurge (FILE *fp)
       fp_ub._base = NULL;
     }
   return 0;
-# elif defined _IOERR               /* AIX, HP-UX, IRIX, OSF/1, Solaris, mingw */
+# elif defined __EMX__              /* emx+gcc */
+  fp->_ptr = fp->_buffer;
+  fp->_rcount = 0;
+  fp->_wcount = 0;
+  fp->_ungetc_count = 0;
+  return 0;
+# elif defined _IOERR               /* AIX, HP-UX, IRIX, OSF/1, Solaris, OpenServer, mingw */
+#  if defined _SCO_DS               /* OpenServer */
+#   define _base __base
+#   define _ptr __ptr
+#   define _cnt __cnt
+#  endif
   fp->_ptr = fp->_base;
   if (fp->_ptr != NULL)
     fp->_cnt = 0;

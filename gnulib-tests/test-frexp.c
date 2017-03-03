@@ -1,7 +1,8 @@
 /* -*- buffer-read-only: t -*- vi: set ro: */
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
+#line 1
 /* Test of splitting a double into fraction and mantissa.
-   Copyright (C) 2007 Free Software Foundation, Inc.
+   Copyright (C) 2007-2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,7 +27,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "isnan.h"
+#include "isnand.h"
+#include "nan.h"
+
+/* Avoid some warnings from "gcc -Wshadow".
+   This file doesn't use the exp() function.  */
+#undef exp
+#define exp exponent
 
 #define ASSERT(expr) \
   do									     \
@@ -34,22 +41,11 @@
       if (!(expr))							     \
         {								     \
           fprintf (stderr, "%s:%d: assertion failed\n", __FILE__, __LINE__); \
+          fflush (stderr);						     \
           abort ();							     \
         }								     \
     }									     \
   while (0)
-
-/* The Compaq (ex-DEC) C 6.4 compiler chokes on the expression 0.0 / 0.0.  */
-#ifdef __DECC
-static double
-NaN ()
-{
-  static double zero = 0.0;
-  return zero / zero;
-}
-#else
-# define NaN() (0.0 / 0.0)
-#endif
 
 static double
 my_ldexp (double x, int d)
@@ -75,9 +71,9 @@ main ()
   { /* NaN.  */
     int exp = -9999;
     double mantissa;
-    x = NaN ();
+    x = NaNd ();
     mantissa = frexp (x, &exp);
-    ASSERT (isnan (mantissa));
+    ASSERT (isnand (mantissa));
   }
 
   { /* Positive infinity.  */

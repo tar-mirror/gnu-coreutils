@@ -1,6 +1,6 @@
 /* Declarations of functions and data types used for SHA512 and SHA384 sum
    library functions.
-   Copyright (C) 2005, 2006 Free Software Foundation, Inc.
+   Copyright (C) 2005, 2006, 2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -32,6 +32,8 @@ struct sha512_ctx
   u64 buffer[32];
 };
 
+enum { SHA384_DIGEST_SIZE = 48 };
+enum { SHA512_DIGEST_SIZE = 64 };
 
 /* Initialize structure containing state of computation. */
 extern void sha512_init_ctx (struct sha512_ctx *ctx);
@@ -54,10 +56,7 @@ extern void sha512_process_bytes (const void *buffer, size_t len,
 /* Process the remaining bytes in the buffer and put result from CTX
    in first 64 (48) bytes following RESBUF.  The result is always in little
    endian byte order, so that a byte-wise output yields to the wanted
-   ASCII representation of the message digest.
-
-   IMPORTANT: On some systems it is required that RESBUF be correctly
-   aligned for a 64 bits value.  */
+   ASCII representation of the message digest.  */
 extern void *sha512_finish_ctx (struct sha512_ctx *ctx, void *resbuf);
 extern void *sha384_finish_ctx (struct sha512_ctx *ctx, void *resbuf);
 

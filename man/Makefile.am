@@ -1,6 +1,6 @@
 # Make coreutils man pages.				-*-Makefile-*-
 
-# Copyright (C) 2002-2007 Free Software Foundation, Inc.
+# Copyright (C) 2002-2008 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,15 +15,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-dist_man_MANS = groups.1 $(MAN)
+dist_man1_MANS = $(MAN)
 
-man_aux = $(dist_man_MANS:.1=.x)
+man_aux = $(dist_man1_MANS:.1=.x)
 
 EXTRA_DIST = $(man_aux) $(NO_INSTALL_PROGS_DEFAULT:%=%.x) help2man
-MAINTAINERCLEANFILES = $(dist_man_MANS)
+MAINTAINERCLEANFILES = $(dist_man1_MANS)
 
-# Depend on configure.ac to get version number changes.
-common_dep = $(top_srcdir)/configure.ac
+# Depend on ../.version to get version number changes.
+common_dep = ../.version
 
 # Note that arch depends on uname.c
 arch.1:		$(common_dep)	$(srcdir)/arch.x	../src/uname.c
@@ -59,7 +59,7 @@ factor.1:	$(common_dep)	$(srcdir)/factor.x	../src/factor.c
 false.1:	$(common_dep)	$(srcdir)/false.x	../src/false.c
 fmt.1:		$(common_dep)	$(srcdir)/fmt.x		../src/fmt.c
 fold.1:		$(common_dep)	$(srcdir)/fold.x	../src/fold.c
-groups.1:	$(common_dep)	$(srcdir)/groups.x	../src/groups.sh
+groups.1:	$(common_dep)	$(srcdir)/groups.x	../src/groups.c
 head.1:		$(common_dep)	$(srcdir)/head.x	../src/head.c
 hostid.1:	$(common_dep)	$(srcdir)/hostid.x	../src/hostid.c
 hostname.1:	$(common_dep)	$(srcdir)/hostname.x	../src/hostname.c
@@ -171,7 +171,7 @@ distcheck-hook: check-x-vs-1 check-programs-vs-x
 ASSORT = LC_ALL=C sort
 
 # Ensure that for each .x file in this directory, there is a
-# corresponding .1 file in the definition of $(dist_man_MANS) above.
+# corresponding .1 file in the definition of $(dist_man1_MANS) above.
 # But since that expansion usually lacks programs like su and arch,
 # add them here manually.
 .PHONY: check-x-vs-1
@@ -179,7 +179,7 @@ check-x-vs-1:
 	PATH=../src$(PATH_SEPARATOR)$$PATH; export PATH;		\
 	t=ls-files.$$$$;						\
 	(cd $(srcdir) && ls -1 *.x) | sed 's/\.x$$//' | $(ASSORT) > $$t;\
-	(echo $(dist_man_MANS) $(NO_INSTALL_PROGS_DEFAULT)		\
+	(echo $(dist_man1_MANS) $(NO_INSTALL_PROGS_DEFAULT)		\
 	  | tr -s ' ' '\n' | sed 's/\.1$$//')				\
 	  | $(ASSORT) -u | diff - $$t || { rm $$t; exit 1; };		\
 	rm $$t

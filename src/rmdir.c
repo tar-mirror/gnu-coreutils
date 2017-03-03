@@ -1,6 +1,6 @@
 /* rmdir -- remove directories
 
-   Copyright (C) 90, 91, 1995-2002, 2004, 2005, 2006, 2007 Free Software
+   Copyright (C) 90, 91, 1995-2002, 2004-2008 Free Software
    Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@
 
 #include "system.h"
 #include "error.h"
+#include "prog-fprintf.h"
 #include "quote.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
@@ -74,11 +75,39 @@ static struct option const longopts[] =
 
 /* Return true if ERROR_NUMBER is one of the values associated
    with a failed rmdir due to non-empty target directory.  */
-
 static bool
 errno_rmdir_non_empty (int error_number)
 {
   return (error_number == RMDIR_ERRNO_NOT_EMPTY);
+}
+
+/* Return true if when rmdir fails with errno == ERROR_NUMBER
+   the directory may be empty.  */
+static bool
+errno_may_be_empty (int error_number)
+{
+  switch (error_number)
+    {
+    case EACCES:
+    case EPERM:
+    case EROFS:
+    case EEXIST:
+    case EBUSY:
+      return true;
+    default:
+      return false;
+    }
+}
+
+/* Return true if an rmdir failure with errno == error_number
+   for DIR is ignorable.  */
+static bool
+ignorable_failure (int error_number, char const *dir)
+{
+  return (ignore_fail_on_non_empty
+	  && (errno_rmdir_non_empty (error_number)
+	      || (errno_may_be_empty (error_number)
+		  && is_empty_dir (AT_FDCWD, dir))));
 }
 
 /* Remove any empty parent directories of DIR.
@@ -106,15 +135,14 @@ remove_parents (char *dir)
 
       /* Give a diagnostic for each attempted removal if --verbose.  */
       if (verbose)
-	error (0, 0, _("removing directory, %s"), quote (dir));
+	prog_fprintf (stdout, _("removing directory, %s"), quote (dir));
 
       ok = (rmdir (dir) == 0);
 
       if (!ok)
 	{
 	  /* Stop quietly if --ignore-fail-on-non-empty. */
-	  if (ignore_fail_on_non_empty
-	      && errno_rmdir_non_empty (errno))
+	  if (ignorable_failure (errno, dir))
 	    {
 	      ok = true;
 	    }
@@ -206,12 +234,11 @@ main (int argc, char **argv)
 
       /* Give a diagnostic for each attempted removal if --verbose.  */
       if (verbose)
-	error (0, 0, _("removing directory, %s"), dir);
+	prog_fprintf (stdout, _("removing directory, %s"), quote (dir));
 
       if (rmdir (dir) != 0)
 	{
-	  if (ignore_fail_on_non_empty
-	      && errno_rmdir_non_empty (errno))
+	  if (ignorable_failure (errno, dir))
 	    continue;
 
 	  /* Here, the diagnostic is less precise, since we have no idea

@@ -1,7 +1,8 @@
 /* -*- buffer-read-only: t -*- vi: set ro: */
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
+#line 1
 /* Test of <math.h> substitute.
-   Copyright (C) 2007 Free Software Foundation, Inc.
+   Copyright (C) 2007, 2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,8 +23,34 @@
 
 #include <math.h>
 
+#ifndef NAN
+# error NAN should be defined
+choke me
+#endif
+
+#if 0
+/* Check that NAN expands into a constant expression.  */
+static float n = NAN;
+#endif
+
+/* Compare two numbers with ==.
+   This is a separate function because IRIX 6.5 "cc -O" miscompiles an
+   'x == x' test.  */
+static int
+numeric_equal (double x, double y)
+{
+  return x == y;
+}
+
 int
 main ()
 {
+  double d = NAN;
+  double zero = 0.0;
+  if (numeric_equal (d, d))
+    return 1;
+  d = HUGE_VAL;
+  if (!numeric_equal (d, 1.0 / zero))
+    return 1;
   return 0;
 }

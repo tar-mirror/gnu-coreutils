@@ -1,7 +1,8 @@
 /* -*- buffer-read-only: t -*- vi: set ro: */
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
+#line 1
 /* An fseeko() function that, together with fflush(), is POSIX compliant.
-   Copyright (C) 2007 Free Software Foundation, Inc.
+   Copyright (C) 2007-2008 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -41,7 +42,7 @@ rpl_fseeko (FILE *fp, off_t offset, int whence)
 #endif
 
   /* These tests are based on fpurge.c.  */
-#if defined _IO_ferror_unlocked     /* GNU libc, BeOS */
+#if defined _IO_ferror_unlocked || __GNU_LIBRARY__ == 1 /* GNU libc, BeOS, Linux libc5 */
   if (fp->_IO_read_end == fp->_IO_read_ptr
       && fp->_IO_write_ptr == fp->_IO_write_base
       && fp->_IO_save_base == NULL)
@@ -72,7 +73,12 @@ rpl_fseeko (FILE *fp, off_t offset, int whence)
 		    ? fp->_bf._size
 		    : 0)
       && fp_ub._base == NULL)
-#elif defined _IOERR                /* AIX, HP-UX, IRIX, OSF/1, Solaris, mingw */
+#elif defined __EMX__               /* emx+gcc */
+  if (fp->_ptr == fp->_buffer
+      && fp->_rcount == 0
+      && fp->_wcount == 0
+      && fp->_ungetc_count == 0)
+#elif defined _IOERR                /* AIX, HP-UX, IRIX, OSF/1, Solaris, OpenServer, mingw */
 # if defined __sun && defined _LP64 /* Solaris/{SPARC,AMD64} 64-bit */
 #  define fp_ ((struct { unsigned char *_ptr; \
 			 unsigned char *_base; \
@@ -84,6 +90,11 @@ rpl_fseeko (FILE *fp, off_t offset, int whence)
   if (fp_->_ptr == fp_->_base
       && (fp_->_ptr == NULL || fp_->_cnt == 0))
 # else
+#  if defined _SCO_DS               /* OpenServer */
+#   define _base __base
+#   define _ptr __ptr
+#   define _cnt __cnt
+#  endif
   if (fp->_ptr == fp->_base
       && (fp->_ptr == NULL || fp->_cnt == 0))
 # endif
@@ -114,7 +125,12 @@ rpl_fseeko (FILE *fp, off_t offset, int whence)
 	  fp->_offset = pos;
 	  fp->_flags |= __SOFF;
 	  fp->_flags &= ~__SEOF;
-#elif defined _IOERR                /* AIX, HP-UX, IRIX, OSF/1, Solaris, mingw */
+#elif defined __EMX__               /* emx+gcc */
+          fp->_flags &= ~_IOEOF;
+#elif defined _IOERR                /* AIX, HP-UX, IRIX, OSF/1, Solaris, OpenServer, mingw */
+# if defined _SCO_DS                /* OpenServer */
+#  define _flag __flag
+# endif
           fp->_flag &= ~_IOEOF;
 #endif
 	  return 0;

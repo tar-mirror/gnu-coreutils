@@ -1,5 +1,6 @@
 /* -*- buffer-read-only: t -*- vi: set ro: */
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
+#line 1
 /* Convert a `struct tm' to a time_t value.
    Copyright (C) 1993-1999, 2002-2005, 2006, 2007 Free Software Foundation, Inc.
    This file is part of the GNU C Library.

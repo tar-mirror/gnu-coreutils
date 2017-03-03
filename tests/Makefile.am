@@ -5,14 +5,11 @@
 # current locale considers to be equal.
 ASSORT = LC_ALL=C sort
 
-built_programs = (cd ../src && MAKEFLAGS= $(MAKE) -s built_programs.list)
-
 EXTRA_DIST =		\
   Coreutils.pm		\
   CuTmpdir.pm		\
   Makefile.am.in	\
   README		\
-  acl			\
   check.mk		\
   envvar-check		\
   expensive		\
@@ -21,15 +18,13 @@ EXTRA_DIST =		\
   lang-default		\
   mk-script		\
   other-fs-tmpdir	\
-  priv-check		\
+  require-perl		\
   rwx-to-mode		\
   sample-test		\
   setgid-check		\
   sparse-file		\
-  strace		\
   test-lib.sh		\
-  umask-check		\
-  very-expensive
+  umask-check
 
 # Regarding ordering in SUBDIRS, place early in the list the tools that
 # are most commonly used in test scripts.  Every test script uses rm

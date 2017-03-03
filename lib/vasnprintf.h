@@ -1,5 +1,6 @@
 /* -*- buffer-read-only: t -*- vi: set ro: */
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
+#line 1
 /* vsprintf with automatic memory allocation.
    Copyright (C) 2002-2004, 2007-2008 Free Software Foundation, Inc.
 

@@ -1,5 +1,6 @@
 /* -*- buffer-read-only: t -*- vi: set ro: */
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
+#line 1
 /* Optimized string comparison.
    Copyright (C) 2001-2002, 2007 Free Software Foundation, Inc.
 

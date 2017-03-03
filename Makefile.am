@@ -1,6 +1,6 @@
 # Make coreutils.					-*-Makefile-*-
 
-# Copyright (C) 1990, 1993-2007 Free Software Foundation, Inc.
+# Copyright (C) 1990, 1993-2008 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,8 +16,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 SUBDIRS = lib src doc man po tests gnulib-tests
-EXTRA_DIST = Makefile.cfg Makefile.maint GNUmakefile \
+EXTRA_DIST = cfg.mk maint.mk \
   .prev-version THANKS-to-translators THANKStt.in \
+  .version \
   .vg-suppressions \
   .x-po-check \
   .x-sc_GPL_version \
@@ -30,6 +31,9 @@ EXTRA_DIST = Makefile.cfg Makefile.maint GNUmakefile \
   .x-sc_unmarked_diagnostics \
   .x-sc_useless_cpp_parens \
   ChangeLog-2005 \
+  ChangeLog-2006 \
+  ChangeLog-2007 \
+  ChangeLog-2008 \
   bootstrap \
   bootstrap.conf \
   build-aux/cvsu \
@@ -65,17 +69,32 @@ check-root:
 rm_subst = \
   s!(rm -f (rm\b|\$$\(bin_PROGRAMS\)$$))!$$1 > /dev/null 2>&1 || /bin/$$1!
 
-# Arrange so that .version appears only in distribution tarballs,
-# never in a checked-out repository.
+BUILT_SOURCES = .version
+.version:
+	echo $(VERSION) > $@-t && mv $@-t $@
+
+# Arrange so that .tarball-version appears only in the distribution
+# tarball, and never in a checked-out repository.
 # The perl substitution is to change some key uses of "rm" to "/bin/rm".
 # See the rm_subst comment for details.
-dist-hook:
-	echo $(VERSION) > $(distdir)/.version
+dist-hook: gen-ChangeLog
+	echo $(VERSION) > $(distdir)/.tarball-version
 	perl -pi -e '$(rm_subst)' $(distdir)/src/Makefile.in
 
-distcheck-hook:
+gen_start_date = 2008-02-08
+.PHONY: gen-ChangeLog
+gen-ChangeLog:
+	if test -d .git; then						\
+	  $(top_srcdir)/build-aux/gitlog-to-changelog			\
+	    --since=$(gen_start_date) > $(distdir)/cl-t;		\
+	  rm -f $(distdir)/ChangeLog;					\
+	  mv $(distdir)/cl-t $(distdir)/ChangeLog;			\
+	fi
+
+distcheck-hook: check-ls-dircolors
 	$(MAKE) my-distcheck
 
+DISTCLEANFILES = VERSION
 MAINTAINERCLEANFILES = THANKS-to-translators
 THANKS-to-translators: po/LINGUAS THANKStt.in
 	(								\
@@ -84,3 +103,17 @@ THANKS-to-translators: po/LINGUAS THANKStt.in
 	    echo http://www.iro.umontreal.ca/contrib/po/HTML/team-$$lang.html; \
 	  done;								\
 	) > $@-tmp && mv $@-tmp $@
+
+# Ensure that the sets of two-letter codes in ls.c and dircolors.c
+# remain in sync.
+.PHONY: check-ls-dircolors
+check-ls-dircolors:
+	dc=$$(sed -n '/static.*ls_codes\[/,/};'/p		\
+	    $(srcdir)/src/dircolors.c				\
+	  |sed -n '/^  *"/p'|tr , '\n'|sed 's/^  *//'		\
+	  |sed -n 's/^"\(..\)"/\1/p'|sort -u);			\
+	ls=$$(sed -n '/static.*indicator_name\[/,/};'/\p	\
+	    $(srcdir)/src/ls.c					\
+	  |sed -n '/^  *"/p'|tr , '\n'|sed 's/^  *//'		\
+	  |sed -n 's/^"\(..\)"/\1/p'|sort -u);			\
+	test "$$dc" = "$$ls"

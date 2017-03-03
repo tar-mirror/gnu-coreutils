@@ -1,5 +1,5 @@
 /* mknod -- make special files
-   Copyright (C) 90, 91, 1995-2007 Free Software Foundation, Inc.
+   Copyright (C) 90, 91, 1995-2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -83,6 +83,7 @@ otherwise, as decimal.  TYPE may be:\n\
   c, u   create a character (unbuffered) special file\n\
   p      create a FIFO\n\
 "), stdout);
+      printf (USAGE_BUILTIN_WARNING, PROGRAM_NAME);
       emit_bug_reporting_address ();
     }
   exit (status);
@@ -168,7 +169,7 @@ main (int argc, char **argv)
   if (scontext && setfscreatecon (scontext) < 0)
     error (EXIT_FAILURE, errno,
 	   _("failed to set default file creation context to %s"),
-	   quote (optarg));
+	   quote (scontext));
 
   /* Only check the first character, to allow mnemonic usage like
      `mknod /dev/rst0 character 18 0'. */

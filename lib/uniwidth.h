@@ -1,5 +1,6 @@
 /* -*- buffer-read-only: t -*- vi: set ro: */
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
+#line 1
 /* Display width functions.
    Copyright (C) 2001-2002, 2005, 2007 Free Software Foundation, Inc.
 

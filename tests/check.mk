@@ -24,7 +24,8 @@ vc_exe_in_TESTS: Makefile
 	  sed -n '/^$(_v) = \\$$/,/[^\]$$/p' $(srcdir)/Makefile.am	\
 	    | sed 's/^  *//;/^\$$.*/d;/^$(_v) =/d'			\
 	    | tr -s '\012\\' '  ' | fmt -1 | sort -u > t1 &&		\
-	  for f in `$(top_srcdir)/build-aux/vc-list-files .`; do	\
+	  for f in `cd $(top_srcdir) && build-aux/vc-list-files $(subdir)`; do \
+	    f=`echo $$f|sed 's!^$(subdir)/!!'`;				\
 	    test -f "$$f" && test -x "$$f" && echo "$$f";		\
 	  done | sort -u > t2 &&					\
 	  diff -u t1 t2 || exit 1;					\
@@ -43,7 +44,7 @@ TESTS_ENVIRONMENT =				\
   host_triplet='$(host_triplet)'		\
   srcdir='$(srcdir)'				\
   top_srcdir='$(top_srcdir)'			\
-  CONFIG_HEADER='$(CONFIG_HEADER)'		\
+  CONFIG_HEADER='$(abs_top_builddir)/lib/config.h' \
   CU_TEST_NAME=`basename '$(abs_srcdir)'`,$$tst	\
   EGREP='$(EGREP)'				\
   EXEEXT='$(EXEEXT)'				\
@@ -58,3 +59,5 @@ TEST_LOGS = $(TESTS:=.log)
 
 # Parallel replacement of Automake's check-TESTS target.
 include $(top_srcdir)/build-aux/check.mk
+
+VERBOSE = yes

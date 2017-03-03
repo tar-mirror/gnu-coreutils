@@ -1,5 +1,6 @@
 /* -*- buffer-read-only: t -*- vi: set ro: */
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
+#line 1
 /* Get address information (partial implementation).
    Copyright (C) 1997, 2001, 2002, 2004, 2005, 2006, 2007 Free Software
    Foundation, Inc.
@@ -328,7 +329,7 @@ freeaddrinfo (struct addrinfo *ai)
       cur = ai;
       ai = ai->ai_next;
 
-      if (cur->ai_canonname) free (cur->ai_canonname);
+      free (cur->ai_canonname);
       free (cur);
     }
 }

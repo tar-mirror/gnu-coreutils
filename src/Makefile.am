@@ -33,7 +33,7 @@ EXTRA_PROGRAMS = \
   ginstall link ln dir vdir ls mkdir \
   mkfifo mknod mktemp \
   mv nohup readlink rm rmdir shred stat sync touch unlink \
-  cat cksum comm csplit cut expand fmt fold head join md5sum \
+  cat cksum comm csplit cut expand fmt fold head join groups md5sum \
   nl od paste pr ptx sha1sum sha224sum sha256sum sha384sum sha512sum \
   shuf sort split sum tac tail tr tsort unexpand uniq wc \
   basename date dirname echo env expr factor false \
@@ -42,7 +42,6 @@ EXTRA_PROGRAMS = \
   test true tty whoami yes \
   base64
 
-bin_SCRIPTS = groups
 bin_PROGRAMS = $(OPTIONAL_BIN_PROGS)
 
 noinst_PROGRAMS = setuidgid
@@ -53,7 +52,9 @@ noinst_HEADERS = \
   cp-hash.h \
   dircolors.h \
   fs.h \
+  group-list.h \
   ls.h \
+  prog-fprintf.h \
   remove.h \
   system.h \
   wheel-size.h \
@@ -61,7 +62,7 @@ noinst_HEADERS = \
   uname.h
 
 EXTRA_DIST = dcgen dircolors.hin tac-pipe.c \
-  groups.sh wheel-gen.pl extract-magic c99-to-c89.diff
+  wheel-gen.pl extract-magic c99-to-c89.diff
 BUILT_SOURCES =
 CLEANFILES = $(SCRIPTS) su
 
@@ -94,10 +95,11 @@ dd_LDADD = $(LDADD) $(LIB_GETHRXTIME) $(LIB_FDATASYNC)
 dir_LDADD = $(LDADD) $(LIB_CLOCK_GETTIME) $(LIB_SELINUX)
 id_LDADD = $(LDADD) $(LIB_SELINUX)
 ls_LDADD = $(LDADD) $(LIB_CLOCK_GETTIME) $(LIB_SELINUX)
+mktemp_LDADD = $(LDADD) $(LIB_GETHRXTIME)
 pr_LDADD = $(LDADD) $(LIB_CLOCK_GETTIME)
 shred_LDADD = $(LDADD) $(LIB_GETHRXTIME) $(LIB_FDATASYNC)
 shuf_LDADD = $(LDADD) $(LIB_GETHRXTIME)
-mktemp_LDADD = $(LDADD) $(LIB_GETHRXTIME)
+tac_LDADD = $(LDADD) $(LIB_CLOCK_GETTIME)
 vdir_LDADD = $(LDADD) $(LIB_CLOCK_GETTIME) $(LIB_SELINUX)
 
 ## If necessary, add -lm to resolve use of pow in lib/strtod.c.
@@ -142,20 +144,6 @@ RELEASE_YEAR = \
   `sed -n '/.*COPYRIGHT_YEAR = \([0-9][0-9][0-9][0-9]\) };/s//\1/p' \
     $(top_srcdir)/lib/version-etc.c`
 
-# This depends on 'Makefile', so that version changes
-#(reflected in Makefile's VERSION definition)
-# are reflected into groups --version also between releases.
-groups: groups.sh Makefile
-	rm -f $@ $@-t
-	sed \
-	  -e 's!@''bindir''@!$(bindir)!' \
-	  -e 's/@''RELEASE_YEAR'@/$(RELEASE_YEAR)/ \
-	  -e 's/@''PACKAGE_NAME''@/$(PACKAGE_NAME)/' \
-	  -e 's/@''PACKAGE_BUGREPORT''@/$(PACKAGE_BUGREPORT)/' \
-	  -e 's/@''VERSION''@/$(VERSION)/' $(srcdir)/groups.sh > $@-t
-	chmod +x $@-t
-	mv $@-t $@
-
 all-local: su$(EXEEXT)
 
 installed_su = $(DESTDIR)$(bindir)/`echo su|sed '$(transform)'`
@@ -170,7 +158,7 @@ install_su =						\
     echo " chown root $(installed_su)";			\
     chown root $(installed_su);				\
     echo " chmod $(setuid_root_mode) $(installed_su)";	\
-    chmod $(setuid_root_mode) $(installed_su)		\
+    chmod $(setuid_root_mode) $(installed_su);		\
   else							\
     :;							\
   fi
@@ -217,7 +205,7 @@ copy_sources = copy.c cp-hash.c
 # to install before applying any user-specified name transformations.
 
 transform = s/ginstall/install/; @program_transform_name@
-ginstall_SOURCES = install.c $(copy_sources)
+ginstall_SOURCES = install.c prog-fprintf.c $(copy_sources)
 
 # This is for the '[' program.  Automake transliterates '[' to '_'.
 __SOURCES = lbracket.c
@@ -225,6 +213,8 @@ __SOURCES = lbracket.c
 cp_SOURCES = cp.c $(copy_sources)
 dir_SOURCES = ls.c ls-dir.c
 vdir_SOURCES = ls.c ls-vdir.c
+id_SOURCES = id.c group-list.c
+groups_SOURCES = groups.c group-list.c
 ln_SOURCES = ln.c
 ls_SOURCES = ls.c ls-ls.c
 chown_SOURCES = chown.c chown-core.c
@@ -232,6 +222,9 @@ chgrp_SOURCES = chgrp.c chown-core.c
 
 mv_SOURCES = mv.c remove.c $(copy_sources)
 rm_SOURCES = rm.c remove.c
+
+mkdir_SOURCES = mkdir.c prog-fprintf.c
+rmdir_SOURCES = rmdir.c prog-fprintf.c
 
 uname_SOURCES = uname.c uname-uname.c
 arch_SOURCES = uname.c uname-arch.c
@@ -300,7 +293,7 @@ all_programs = \
 
 built_programs.list:
 	@echo $(bin_PROGRAMS) $(bin_SCRIPTS) | tr ' ' '\n' \
-	  | sed -e 's,$(EXEEXT)$$,,' | $(ASSORT) -u
+	  | sed -e 's,$(EXEEXT)$$,,' | $(ASSORT) -u | tr '\n' ' '
 
 all_programs.list:
 	@echo $(all_programs) | tr ' ' '\n' | sed -e 's,$(EXEEXT)$$,,' \
@@ -400,9 +393,12 @@ s2 = '/^\#define AUTHORS \\\\/{;n;$(sed_filter);p;q;}'
 sc_tight_scope: $(all_programs)
 	@t=exceptions-$$$$;						\
 	trap "s=$$?; rm -f $$t; exit $$s" 0 1 2 13 15;			\
-	( printf '^main$$\n^usage$$\n';					\
+	( printf 'main\nusage\n';					\
 	  grep -h -A1 '^extern .*[^;]$$' $(SOURCES)			\
-	    | grep -vE '^(extern |--)' |sed 's/^/^/;s/ .*/$$/' ) > $$t;	\
+	    | grep -vE '^(extern |--)' | sed 's/ .*//';			\
+	  perl -ne '/^extern \S+ (\S*) \(/ and print "$$1\n"'		\
+	    $(noinst_HEADERS);						\
+	) | $(ASSORT) -u | sed 's/^/^/;s/$$/$$/' > $$t;			\
 	nm -e *.$(OBJEXT)						\
 	    | sed -n 's/.* T //p'					\
 	    | grep -Ev -f $$t &&					\

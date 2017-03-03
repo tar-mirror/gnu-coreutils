@@ -1,5 +1,6 @@
 /* -*- buffer-read-only: t -*- vi: set ro: */
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
+#line 1
 /* memset.c -- set an area of memory to a given value
    Copyright (C) 1991, 2003 Free Software Foundation, Inc.
 

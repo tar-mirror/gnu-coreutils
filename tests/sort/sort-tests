@@ -2178,6 +2178,24 @@ else
   esac
 fi
 test -s incompat6.E || rm -f incompat6.E
+_POSIX2_VERSION=199209 $xx --sort=random -n $srcdir/incompat7.I > incompat7.O 2> incompat7.E
+code=$?
+if test $code != 2; then
+  $echo "Test incompat7(_POSIX2_VERSION=199209) failed: $xx return code $code differs from expected value 2" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp incompat7.O $srcdir/incompat7.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed incompat7(_POSIX2_VERSION=199209)"; fi;;
+    1) $echo "Test incompat7(_POSIX2_VERSION=199209) failed: files incompat7.O and $srcdir/incompat7.X differ" 1>&2
+       (diff -c incompat7.O $srcdir/incompat7.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test incompat7(_POSIX2_VERSION=199209) may have failed." 1>&2
+       $echo The command "cmp incompat7.O $srcdir/incompat7.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s incompat7.E || rm -f incompat7.E
 _POSIX2_VERSION=199209 $xx -k2,2 -t '\0' $srcdir/nul-tab.I > nul-tab.O 2> nul-tab.E
 code=$?
 if test $code != 0; then
@@ -2250,8 +2268,44 @@ else
   esac
 fi
 test -s realloc-buf.E || rm -f realloc-buf.E
+_POSIX2_VERSION=199209 $xx --sort=numeric $srcdir/sort-numeric.I > sort-numeric.O 2> sort-numeric.E
+code=$?
+if test $code != 0; then
+  $echo "Test sort-numeric(_POSIX2_VERSION=199209) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp sort-numeric.O $srcdir/sort-numeric.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed sort-numeric(_POSIX2_VERSION=199209)"; fi;;
+    1) $echo "Test sort-numeric(_POSIX2_VERSION=199209) failed: files sort-numeric.O and $srcdir/sort-numeric.X differ" 1>&2
+       (diff -c sort-numeric.O $srcdir/sort-numeric.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test sort-numeric(_POSIX2_VERSION=199209) may have failed." 1>&2
+       $echo The command "cmp sort-numeric.O $srcdir/sort-numeric.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s sort-numeric.E || rm -f sort-numeric.E
+_POSIX2_VERSION=199209 $xx --sort=general-numeric $srcdir/sort-gennum.I > sort-gennum.O 2> sort-gennum.E
+code=$?
+if test $code != 0; then
+  $echo "Test sort-gennum(_POSIX2_VERSION=199209) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp sort-gennum.O $srcdir/sort-gennum.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed sort-gennum(_POSIX2_VERSION=199209)"; fi;;
+    1) $echo "Test sort-gennum(_POSIX2_VERSION=199209) failed: files sort-gennum.O and $srcdir/sort-gennum.X differ" 1>&2
+       (diff -c sort-gennum.O $srcdir/sort-gennum.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test sort-gennum(_POSIX2_VERSION=199209) may have failed." 1>&2
+       $echo The command "cmp sort-gennum.O $srcdir/sort-gennum.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s sort-gennum.E || rm -f sort-gennum.E
 if test $errors = 0; then
-  $echo Passed all 124 tests. 1>&2
+  $echo Passed all 127 tests. 1>&2
 else
   $echo Failed $errors tests. 1>&2
 fi

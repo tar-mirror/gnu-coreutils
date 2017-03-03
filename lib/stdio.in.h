@@ -1,5 +1,6 @@
 /* -*- buffer-read-only: t -*- vi: set ro: */
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
+#line 1
 /* A GNU-like <stdio.h>.
 
    Copyright (C) 2004, 2007-2008 Free Software Foundation, Inc.

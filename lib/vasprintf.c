@@ -1,7 +1,8 @@
 /* -*- buffer-read-only: t -*- vi: set ro: */
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
+#line 1
 /* Formatted output to strings.
-   Copyright (C) 1999, 2002, 2006-2007 Free Software Foundation, Inc.
+   Copyright (C) 1999, 2002, 2006-2008 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,11 +32,6 @@
 #include <stdlib.h>
 
 #include "vasnprintf.h"
-
-/* Some systems, like OSF/1 4.0 and Woe32, don't have EOVERFLOW.  */
-#ifndef EOVERFLOW
-# define EOVERFLOW E2BIG
-#endif
 
 int
 vasprintf (char **resultp, const char *format, va_list args)

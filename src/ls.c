@@ -1,5 +1,5 @@
 /* `dir', `vdir' and `ls' directory listing programs for GNU.
-   Copyright (C) 85, 88, 90, 91, 1995-2007 Free Software Foundation, Inc.
+   Copyright (C) 85, 88, 90, 91, 1995-2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -207,7 +207,7 @@ static bool file_ignored (char const *name);
 static uintmax_t gobble_file (char const *name, enum filetype type,
 			      ino_t inode, bool command_line_arg,
 			      char const *dirname);
-static void print_color_indicator (const char *name, mode_t mode, int linkok,
+static bool print_color_indicator (const char *name, mode_t mode, int linkok,
 				   bool stat_ok, enum filetype type);
 static void put_indicator (const struct bin_str *ind);
 static void add_ignore_pattern (const char *pattern);
@@ -311,8 +311,7 @@ static struct pending *pending_dirs;
 /* Current time in seconds and nanoseconds since 1970, updated as
    needed when deciding whether a file is recent.  */
 
-static time_t current_time = TYPE_MINIMUM (time_t);
-static int current_time_ns = -1;
+static struct timespec current_time;
 
 static bool print_scontext;
 static char UNKNOWN_SECURITY_CONTEXT[] = "?";
@@ -489,6 +488,12 @@ ARGMATCH_VERIFY (indicator_style_args, indicator_style_types);
 
 static bool print_with_color;
 
+/* Whether we used any colors in the output so far.  If so, we will
+   need to restore the default color later.  If not, we will need to
+   call prep_non_filename_text before using color for the first time. */
+
+static bool used_color = false;
+
 enum color_type
   {
     color_never,		/* 0: default or --color=never */
@@ -507,14 +512,15 @@ enum Dereference_symlink
 
 enum indicator_no
   {
-    C_LEFT, C_RIGHT, C_END, C_NORM, C_FILE, C_DIR, C_LINK, C_FIFO, C_SOCK,
+    C_LEFT, C_RIGHT, C_END, C_RESET, C_NORM, C_FILE, C_DIR, C_LINK,
+    C_FIFO, C_SOCK,
     C_BLK, C_CHR, C_MISSING, C_ORPHAN, C_EXEC, C_DOOR, C_SETUID, C_SETGID,
     C_STICKY, C_OTHER_WRITABLE, C_STICKY_OTHER_WRITABLE
   };
 
 static const char *const indicator_name[]=
   {
-    "lc", "rc", "ec", "no", "fi", "di", "ln", "pi", "so",
+    "lc", "rc", "ec", "rs", "no", "fi", "di", "ln", "pi", "so",
     "bd", "cd", "mi", "or", "ex", "do", "su", "sg", "st",
     "ow", "tw", NULL
   };
@@ -531,8 +537,9 @@ static struct bin_str color_indicator[] =
     { LEN_STR_PAIR ("\033[") },		/* lc: Left of color sequence */
     { LEN_STR_PAIR ("m") },		/* rc: Right of color sequence */
     { 0, NULL },			/* ec: End color (replaces lc+no+rc) */
-    { LEN_STR_PAIR ("0") },		/* no: Normal */
-    { LEN_STR_PAIR ("0") },		/* fi: File: default */
+    { LEN_STR_PAIR ("0") },		/* rs: Reset to ordinary colors */
+    { 0, NULL },			/* no: Normal */
+    { 0, NULL },			/* fi: File: default */
     { LEN_STR_PAIR ("01;34") },		/* di: Directory: bright blue */
     { LEN_STR_PAIR ("01;36") },		/* ln: Symlink: bright cyan */
     { LEN_STR_PAIR ("33") },		/* pi: Pipe: yellow/brown */
@@ -1072,7 +1079,8 @@ process_signals (void)
       int stops;
       sigset_t oldset;
 
-      restore_default_color ();
+      if (used_color)
+	restore_default_color ();
       fflush (stdout);
 
       sigprocmask (SIG_BLOCK, &caught_signals, &oldset);
@@ -1155,6 +1163,9 @@ main (int argc, char **argv)
   print_dir_name = true;
   pending_dirs = NULL;
 
+  current_time.tv_sec = TYPE_MINIMUM (time_t);
+  current_time.tv_nsec = -1;
+
   i = decode_switches (argc, argv);
 
   if (print_with_color)
@@ -1209,8 +1220,6 @@ main (int argc, char **argv)
 	    }
 #endif
 	}
-
-      prep_non_filename_text ();
     }
 
   if (dereference == DEREF_UNDEFINED)
@@ -1325,7 +1334,8 @@ main (int argc, char **argv)
     {
       int j;
 
-      restore_default_color ();
+      if (used_color)
+	restore_default_color ();
       fflush (stdout);
 
       /* Restore the default signal handling.  */
@@ -2667,6 +2677,17 @@ gobble_file (char const *name, enum filetype type, ino_t inode,
 			  : lgetfilecon (absolute_name, &f->scontext));
 	  err = (attr_len < 0);
 
+	  /* Contrary to its documented API, getfilecon may return 0,
+	     yet set f->scontext to NULL (on at least Debian's libselinux1
+	     2.0.15-2+b1), so work around that bug.
+	     FIXME: remove this work-around in 2011, or whenever affected
+	     versions of libselinux are long gone.  */
+	  if (attr_len == 0)
+	    {
+	      err = 0;
+	      f->scontext = xstrdup ("unlabeled");
+	    }
+
 	  if (err == 0)
 	    have_acl = ! STREQ ("unlabeled", f->scontext);
 	  else
@@ -3295,42 +3316,6 @@ long_time_expected_width (void)
   return width;
 }
 
-/* Get the current time.  */
-
-static void
-get_current_time (void)
-{
-#if HAVE_CLOCK_GETTIME && defined CLOCK_REALTIME
-  {
-    struct timespec timespec;
-    if (clock_gettime (CLOCK_REALTIME, &timespec) == 0)
-      {
-	current_time = timespec.tv_sec;
-	current_time_ns = timespec.tv_nsec;
-	return;
-      }
-  }
-#endif
-
-  /* The clock does not have nanosecond resolution, so get the maximum
-     possible value for the current time that is consistent with the
-     reported clock.  That way, files are not considered to be in the
-     future merely because their time stamps have higher resolution
-     than the clock resolution.  */
-
-#if HAVE_GETTIMEOFDAY
-  {
-    struct timeval timeval;
-    gettimeofday (&timeval, NULL);
-    current_time = timeval.tv_sec;
-    current_time_ns = timeval.tv_usec * 1000 + 999;
-  }
-#else
-  current_time = time (NULL);
-  current_time_ns = 999999999;
-#endif
-}
-
 /* Print the user or group name NAME, with numeric id ID, using a
    print width of WIDTH columns.  */
 
@@ -3430,8 +3415,6 @@ print_long_format (const struct fileinfo *f)
      ];
   size_t s;
   char *p;
-  time_t when;
-  int when_ns;
   struct timespec when_timespec;
   struct tm *when_local;
 
@@ -3464,9 +3447,6 @@ print_long_format (const struct fileinfo *f)
     default:
       abort ();
     }
-
-  when = when_timespec.tv_sec;
-  when_ns = when_timespec.tv_nsec;
 
   p = buf;
 
@@ -3568,35 +3548,37 @@ print_long_format (const struct fileinfo *f)
 
   if (f->stat_ok && when_local)
     {
-      time_t six_months_ago;
+      struct timespec six_months_ago;
       bool recent;
       char const *fmt;
 
       /* If the file appears to be in the future, update the current
 	 time, in case the file happens to have been modified since
 	 the last time we checked the clock.  */
-      if (current_time < when
-	  || (current_time == when && current_time_ns < when_ns))
+      if (timespec_cmp (current_time, when_timespec) < 0)
 	{
-	  /* Note that get_current_time calls gettimeofday which, on some non-
+	  /* Note that gettime may call gettimeofday which, on some non-
 	     compliant systems, clobbers the buffer used for localtime's result.
 	     But it's ok here, because we use a gettimeofday wrapper that
 	     saves and restores the buffer around the gettimeofday call.  */
-	  get_current_time ();
+	  gettime (&current_time);
 	}
 
       /* Consider a time to be recent if it is within the past six
 	 months.  A Gregorian year has 365.2425 * 24 * 60 * 60 ==
 	 31556952 seconds on the average.  Write this value as an
 	 integer constant to avoid floating point hassles.  */
-      six_months_ago = current_time - 31556952 / 2;
-      recent = (six_months_ago <= when
-		&& (when < current_time
-		    || (when == current_time && when_ns <= current_time_ns)));
+      six_months_ago.tv_sec = current_time.tv_sec - 31556952 / 2;
+      six_months_ago.tv_nsec = current_time.tv_nsec;
+
+      recent = (timespec_cmp (six_months_ago, when_timespec) < 0
+		&& (timespec_cmp (when_timespec, current_time) < 0));
       fmt = long_time_format[recent];
 
+      /* We assume here that all time zones are offset from UTC by a
+	 whole number of seconds.  */
       s = nstrftime (p, TIME_STAMP_LEN_MAXIMUM + 1, fmt,
-		     when_local, 0, when_ns);
+		     when_local, 0, when_timespec.tv_nsec);
     }
 
   if (s || !*p)
@@ -3616,8 +3598,9 @@ print_long_format (const struct fileinfo *f)
 	       (! f->stat_ok
 		? "?"
 		: (TYPE_SIGNED (time_t)
-		   ? imaxtostr (when, hbuf)
-		   : umaxtostr (when, hbuf))));
+		   ? imaxtostr (when_timespec.tv_sec, hbuf)
+		   : umaxtostr (when_timespec.tv_sec, hbuf))));
+      /* FIXME: (maybe) We discarded when_timespec.tv_nsec. */
       p += strlen (p);
     }
 
@@ -3815,8 +3798,9 @@ print_name_with_quoting (const char *p, mode_t mode, int linkok,
 			 bool stat_ok, enum filetype type,
 			 struct obstack *stack)
 {
-  if (print_with_color)
-    print_color_indicator (p, mode, linkok, stat_ok, type);
+  bool used_color_this_time
+    = (print_with_color
+       && print_color_indicator (p, mode, linkok, stat_ok, type));
 
   if (stack)
     PUSH_CURRENT_DIRED_POS (stack);
@@ -3826,7 +3810,7 @@ print_name_with_quoting (const char *p, mode_t mode, int linkok,
   if (stack)
     PUSH_CURRENT_DIRED_POS (stack);
 
-  if (print_with_color)
+  if (used_color_this_time)
     {
       process_signals ();
       prep_non_filename_text ();
@@ -3841,7 +3825,7 @@ prep_non_filename_text (void)
   else
     {
       put_indicator (&color_indicator[C_LEFT]);
-      put_indicator (&color_indicator[C_NORM]);
+      put_indicator (&color_indicator[C_RESET]);
       put_indicator (&color_indicator[C_RIGHT]);
     }
 }
@@ -3916,7 +3900,8 @@ print_type_indicator (bool stat_ok, mode_t mode, enum filetype type)
     DIRED_PUTCHAR (c);
 }
 
-static void
+/* Returns whether any color sequence was printed. */
+static bool
 print_color_indicator (const char *name, mode_t mode, int linkok,
 		       bool stat_ok, enum filetype filetype)
 {
@@ -3993,22 +3978,32 @@ print_color_indicator (const char *name, mode_t mode, int linkok,
 	}
     }
 
-  put_indicator (&color_indicator[C_LEFT]);
-  put_indicator (ext ? &(ext->seq) : &color_indicator[type]);
-  put_indicator (&color_indicator[C_RIGHT]);
+  {
+    const struct bin_str *const s
+      = ext ? &(ext->seq) : &color_indicator[type];
+    if (s->string != NULL)
+      {
+	put_indicator (&color_indicator[C_LEFT]);
+	put_indicator (s);
+	put_indicator (&color_indicator[C_RIGHT]);
+	return true;
+      }
+    else
+      return false;
+  }
 }
 
 /* Output a color indicator (which may contain nulls).  */
 static void
 put_indicator (const struct bin_str *ind)
 {
-  size_t i;
-  const char *p;
+  if (! used_color)
+    {
+      used_color = true;
+      prep_non_filename_text ();
+    }
 
-  p = ind->string;
-
-  for (i = ind->len; i != 0; --i)
-    putchar (*(p++));
+  fwrite (ind->string, ind->len, 1, stdout);
 }
 
 static size_t
@@ -4375,7 +4370,9 @@ Mandatory arguments to long options are mandatory for short options too.\n\
 "), stdout);
       fputs (_("\
       --group-directories-first\n\
-                             group directories before files\n\
+                             group directories before files.\n\
+                               augment with a --sort option, but any\n\
+                               use of --sort=none (-U) disables grouping\n\
 "), stdout);
       fputs (_("\
   -G, --no-group             in a long listing, don't print group names\n\

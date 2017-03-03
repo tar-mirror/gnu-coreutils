@@ -1,7 +1,7 @@
 # -*-perl-*-
 # Test "sort".
 
-# Copyright (C) 1996-1999, 2001-2007 Free Software Foundation, Inc.
+# Copyright (C) 1996-1999, 2001-2008 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -128,8 +128,9 @@ my @tv = (
 ["10e", '-k 1.2,1.2', "ab\nba\n", "ba\nab\n", 0],
 #
 # The way sort works on these inputs (10f and 10g) seems wrong to me.
-# See May 30 ChangeLog entry.  POSIX doesn't seem to say one way or
-# the other, but that's the way all other sort implementations work.
+# See http://git.sv.gnu.org/gitweb/?p=coreutils.git;a=commitdiff;h=3c467c0d223
+# POSIX doesn't seem to say one way or the other, but that's the way all
+# other sort implementations work.
 ["10f", '-t : -k 1.3,1.3', ":ab\n:ba\n", ":ba\n:ab\n", 0],
 ["10g", '-k 1.4,1.4', "a ab\nb ba\n", "b ba\na ab\n", 0],
 #
@@ -273,6 +274,7 @@ my @tv = (
 ["incompat4", '-c -o /dev/null', '', '', 2],
 ["incompat5", '-C -o /dev/null', '', '', 2],
 ["incompat6", '-cC', '', '', 2],
+["incompat7", '--sort=random -n', '', '', 2],
 
 # -t '\0' is accepted, as of coreutils-5.0.91
 ['nul-tab', "-k2,2 -t '\\0'", "a\0z\01\nb\0y\02\n", "b\0y\02\na\0z\01\n", 0],
@@ -288,6 +290,9 @@ my @tv = (
 # Exercise the code that enlarges the line buffer.  See the thread here:
 # http://thread.gmane.org/gmane.comp.gnu.coreutils.bugs/11006
 ['realloc-buf', '-S1', 'a'x4000 ."\n", 'a'x4000 ."\n", 0],
+
+["sort-numeric", '--sort=numeric', ".01\n0\n", "0\n.01\n", 0],
+["sort-gennum", '--sort=general-numeric', "1e2\n2e1\n", "2e1\n1e2\n", 0],
 );
 
 sub test_vector

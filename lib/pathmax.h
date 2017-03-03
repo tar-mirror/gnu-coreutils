@@ -1,5 +1,6 @@
 /* -*- buffer-read-only: t -*- vi: set ro: */
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
+#line 1
 /* Define PATH_MAX somehow.  Requires sys/types.h.
    Copyright (C) 1992, 1999, 2001, 2003, 2005 Free Software Foundation, Inc.
 

@@ -1,6 +1,6 @@
 /* A GNU-like <math.h>.
 
-   Copyright (C) 2002-2003, 2007 Free Software Foundation, Inc.
+   Copyright (C) 2002-2003, 2007-2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,6 +31,34 @@
 extern "C" {
 #endif
 
+
+/* POSIX allows platforms that don't support NAN.  But all major
+   machines in the past 15 years have supported something close to
+   IEEE NaN, so we define this unconditionally.  We also must define
+   it on platforms like Solaris 10, where NAN is present but defined
+   as a function pointer rather than a floating point constant.  */
+#if !defined NAN || @REPLACE_NAN@
+# undef NAN
+  /* The Compaq (ex-DEC) C 6.4 compiler chokes on the expression 0.0 / 0.0.  */
+# ifdef __DECC
+static float
+_NaN ()
+{
+  static float zero = 0.0f;
+  return zero / zero;
+}
+#  define NAN (_NaN())
+# else
+#  define NAN (0.0f / 0.0f)
+# endif
+#endif
+
+/* Solaris 10 defines HUGE_VAL, but as a function pointer rather
+   than a floating point constant.  */
+#if @REPLACE_HUGE_VAL@
+# undef HUGE_VAL
+# define HUGE_VAL (1.0 / 0.0)
+#endif
 
 /* Write x as
      x = mantissa * 2^exp
@@ -323,7 +351,8 @@ extern double trunc (double x);
 #endif
 
 #if @GNULIB_TRUNCL@
-# if !@HAVE_DECL_TRUNCL@
+# if @REPLACE_TRUNCL@
+#  undef truncl
 #  define truncl rpl_truncl
 extern long double truncl (long double x);
 # endif
@@ -353,6 +382,14 @@ extern int gl_isfinitel (long double x);
 
 
 #if @GNULIB_SIGNBIT@
+# if @REPLACE_SIGNBIT_USING_GCC@
+#  undef signbit
+   /* GCC 4.0 and newer provides three built-ins for signbit.  */
+#  define signbit(x) \
+   (sizeof (x) == sizeof (long double) ? __builtin_signbitl (x) : \
+    sizeof (x) == sizeof (double) ? __builtin_signbit (x) : \
+    __builtin_signbitf (x))
+# endif
 # if @REPLACE_SIGNBIT@
 #  undef signbit
 extern int gl_signbitf (float arg);

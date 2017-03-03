@@ -1,5 +1,6 @@
 /* -*- buffer-read-only: t -*- vi: set ro: */
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
+#line 1
 /* Supplemental information about the floating-point formats.
    Copyright (C) 2007 Free Software Foundation, Inc.
    Written by Bruno Haible <bruno@clisp.org>, 2007.

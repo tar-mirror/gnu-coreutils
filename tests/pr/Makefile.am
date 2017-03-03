@@ -45,7 +45,9 @@ ncut-b.I ncut-b.X margin-0.I margin-0.X dbl-sp-a.I dbl-sp-a.X dbl-sp-b.I \
 dbl-sp-b.X narrow-1.I narrow-1.X col-last.I col-last.X col-02.I col-02.X \
 col-02.C.I col-02.C.X col-2.I col-2.X col-2.C.I col-2.C.X col-long.I \
 col-long.X col-long.C.I col-long.C.X col-0.I col-0.X col-0.C.I col-0.C.X \
-col-inval.I col-inval.X col-inval.C.I col-inval.C.X neg-page.I neg-page.X
+col-inval.I col-inval.X col-inval.C.I col-inval.C.X neg-page.I neg-page.X \
+neg-inp-pos1.I neg-inp-pos1.X neg-inp-pos2.I neg-inp-pos2.X smash-heap.I \
+smash-heap.X smash-heap8.I smash-heap8.X
 run_gen = 1a.O 1a.E 1b.O 1b.E 1c.O 1c.E 1d.O 1d.E 1e.O 1e.E 1e.C.O 1e.C.E \
 1f.O 1f.E 1f.C.O 1f.C.E 1g.O 1g.E 1g.C.O 1g.C.E 1h.O 1h.E 1h.C.O 1h.C.E 1i.O \
 1i.E 1i.C.O 1i.C.E 1j.O 1j.E 1j.C.O 1j.C.E 1k.O 1k.E 1k.C.O 1k.C.E 1l.O 1l.E \
@@ -119,7 +121,9 @@ margin-0.E dbl-sp-a.O dbl-sp-a.E dbl-sp-b.O dbl-sp-b.E narrow-1.O narrow-1.E \
 col-last.O col-last.E col-02.O col-02.E col-02.C.O col-02.C.E col-2.O col-2.E \
 col-2.C.O col-2.C.E col-long.O col-long.E col-long.C.O col-long.C.E col-0.O \
 col-0.E col-0.C.O col-0.C.E col-inval.O col-inval.E col-inval.C.O \
-col-inval.C.E neg-page.O neg-page.E
+col-inval.C.E neg-page.O neg-page.E neg-inp-pos1.O neg-inp-pos1.E \
+neg-inp-pos2.O neg-inp-pos2.E smash-heap.O smash-heap.E smash-heap8.O \
+smash-heap8.E
 ##test-files-end
 
 EXTRA_DIST = Test.pm $x-tests $(explicit) $(maint_gen)

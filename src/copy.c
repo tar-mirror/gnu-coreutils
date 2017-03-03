@@ -1,5 +1,5 @@
 /* copy.c -- core functions for copying files and directories
-   Copyright (C) 89, 90, 91, 1995-2007 Free Software Foundation.
+   Copyright (C) 89, 90, 91, 1995-2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -63,6 +63,16 @@
 #ifndef HAVE_LCHOWN
 # define HAVE_LCHOWN false
 # define lchown(name, uid, gid) chown (name, uid, gid)
+#endif
+
+#ifndef HAVE_MKFIFO
+static int
+rpl_mkfifo (char const *file, mode_t mode)
+{
+  errno = ENOTSUP;
+  return -1;
+}
+#define mkfifo rpl_mkfifo
 #endif
 
 #ifndef USE_ACL
@@ -1339,11 +1349,12 @@ copy_internal (char const *src_name, char const *dst_name,
 	      new_dst = true;
 	    }
 	  else if (! S_ISDIR (dst_sb.st_mode)
+		   /* Never unlink dst_name when in move mode.  */
+		   && ! x->move_mode
 		   && (x->unlink_dest_before_opening
 		       || (x->preserve_links && 1 < dst_sb.st_nlink)
-		       || (!x->move_mode
-			   && x->dereference == DEREF_NEVER
-			   && S_ISLNK (src_sb.st_mode))
+		       || (x->dereference == DEREF_NEVER
+			   && ! S_ISREG (src_sb.st_mode))
 		       ))
 	    {
 	      if (unlink (dst_name) != 0 && errno != ENOENT)
@@ -1827,9 +1838,7 @@ copy_internal (char const *src_name, char const *dst_name,
 	 does not.  But fall back on mkfifo, because on some BSD systems,
 	 mknod always fails when asked to create a FIFO.  */
       if (mknod (dst_name, src_mode & ~omitted_permissions, 0) != 0)
-#if HAVE_MKFIFO
 	if (mkfifo (dst_name, src_mode & ~S_IFIFO & ~omitted_permissions) != 0)
-#endif
 	  {
 	    error (0, errno, _("cannot create fifo %s"), quote (dst_name));
 	    goto un_backup;

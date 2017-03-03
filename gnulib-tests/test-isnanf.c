@@ -1,7 +1,8 @@
 /* -*- buffer-read-only: t -*- vi: set ro: */
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
+#line 1
 /* Test of isnanf() substitute.
-   Copyright (C) 2007 Free Software Foundation, Inc.
+   Copyright (C) 2007-2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,28 +27,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "nan.h"
+
 #define ASSERT(expr) \
   do									     \
     {									     \
       if (!(expr))							     \
         {								     \
           fprintf (stderr, "%s:%d: assertion failed\n", __FILE__, __LINE__); \
+          fflush (stderr);						     \
           abort ();							     \
         }								     \
     }									     \
   while (0)
-
-/* The Compaq (ex-DEC) C 6.4 compiler chokes on the expression 0.0 / 0.0.  */
-#ifdef __DECC
-static float
-NaN ()
-{
-  static float zero = 0.0f;
-  return zero / zero;
-}
-#else
-# define NaN() (0.0f / 0.0f)
-#endif
 
 int
 main ()
@@ -65,7 +57,7 @@ main ()
   ASSERT (!isnanf (1.0f / 0.0f));
   ASSERT (!isnanf (-1.0f / 0.0f));
   /* Quiet NaN.  */
-  ASSERT (isnanf (NaN ()));
+  ASSERT (isnanf (NaNf ()));
 #if defined FLT_EXPBIT0_WORD && defined FLT_EXPBIT0_BIT
   /* Signalling NaN.  */
   {
@@ -73,7 +65,7 @@ main ()
       ((sizeof (float) + sizeof (unsigned int) - 1) / sizeof (unsigned int))
     typedef union { float value; unsigned int word[NWORDS]; } memory_float;
     memory_float m;
-    m.value = NaN ();
+    m.value = NaNf ();
 # if FLT_EXPBIT0_BIT > 0
     m.word[FLT_EXPBIT0_WORD] ^= (unsigned int) 1 << (FLT_EXPBIT0_BIT - 1);
 # else

@@ -89,6 +89,14 @@ tput sgr0 >/dev/null 2>&1 &&			\
 # by disabling -e (using the XSI extension "set +e") if it's set.
 SH_E_WORKAROUND = case $$- in *e*) set +e;; esac
 
+# Emulate dirname with sed.
+_d_no_slash       = s,^[^/]*$$,.,
+_d_strip_trailing = s,\([^/]\)//*$$,\1,
+_d_abs_trivial    = s,^//*[^/]*$$,/,
+_d_rm_basename    = s,\([^/]\)//*[^/]*$$,\1,
+_dirname = \
+  sed '$(_d_no_slash);$(_d_strip_trailing);$(_d_abs_trivial);$(_d_rm_basename)'
+
 # To be inserted before the command running the test.  Creates the
 # directory for the log if needed.  Stores in $dir the directory
 # containing $src, and passes TESTS_ENVIRONMENT.
@@ -96,7 +104,7 @@ am__check_pre =					\
 $(SH_E_WORKAROUND);				\
 tst=`echo "$$src" | sed 's|^.*/||'`;		\
 rm -f $@-t;					\
-$(mkdir_p) "$$(dirname $@)" || exit;		\
+$(mkdir_p) "$$(echo '$@'|$(_dirname))" || exit;	\
 if test -f "./$$src"; then dir=./;		\
 elif test -f "$$src"; then dir=;		\
 else dir="$(srcdir)/"; fi;			\

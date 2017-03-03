@@ -23,7 +23,8 @@ AC_PREREQ(2.61)
 # Make inter-release version strings look like, e.g., v6.9-219-g58ddd, which
 # indicates that it is built from the 219th delta (in _some_ repository)
 # following the v6.9 tag, and that 58ddd is a prefix of the commit SHA1.
-AC_INIT([GNU coreutils], m4_esyscmd([build-aux/git-version-gen .version]),
+AC_INIT([GNU coreutils],
+	m4_esyscmd([build-aux/git-version-gen .tarball-version]),
 	[bug-coreutils@gnu.org])
 
 AC_CONFIG_SRCDIR(src/ls.c)
@@ -32,7 +33,7 @@ AC_CONFIG_AUX_DIR(build-aux)
 AC_CONFIG_HEADERS([lib/config.h:lib/config.hin])
 
 AB_INIT()
-AM_INIT_AUTOMAKE([1.10 dist-lzma])
+AM_INIT_AUTOMAKE([1.10.1 dist-lzma])
 
 AC_PROG_CC_STDC
 AM_PROG_CC_C_O
@@ -267,7 +268,7 @@ done
 v=no_install__progs
 t=`sed -n '/^'$v' =/,/[[^\]]$/p' $mk \
     | sed 's/^  *//;/^\$.*/d;/^'$v' =/d' \
-    | tr -s '\\012\\\\' '  '`
+    | tr -s '\\015\\012\\\\' '   '`
 # Remove any trailing space.
 no_install_progs_default=`echo "$t"|sed 's/ $//'`
 
@@ -279,7 +280,8 @@ no_install_progs_default=`echo "$t"|sed 's/ $//'`
 # The compromise is to ensure that the space-separated list extracted
 # above matches the literal 2nd argument below.
 c="$srcdir/configure.ac"
-t=`sed -n '/^g''l_INCLUDE_EXCLUDE_PROG(.* [\[\(.*\)\]])/{s//\1/;s/,/ /gp
+re='^g''l_INCLUDE_EXCLUDE_PROG(.* [\[\(.*\)\]])'
+t=`sed -n '/'"$re"'/{s/'"$re"'/\1/;s/,/ /gp
 }' $c`
 case $t in
   $no_install_progs_default) ;;

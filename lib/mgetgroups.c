@@ -1,6 +1,6 @@
 /* mgetgroups.c -- return a list of the groups a user is in
 
-   Copyright (C) 2007 Free Software Foundation.
+   Copyright (C) 2007-2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,12 +21,29 @@
 
 #include "mgetgroups.h"
 
+#include <stdlib.h>
 #include <unistd.h>
 #include <stdint.h>
+#include <string.h>
 #include <errno.h>
-
+#if HAVE_GETGROUPLIST
+# include <grp.h>
+#endif
 #include "getugroups.h"
 #include "xalloc.h"
+
+
+static void *
+allocate_groupbuf (int size)
+{
+  if (xalloc_oversized (size, sizeof (GETGROUPS_T)))
+    {
+      errno = ENOMEM;
+      return NULL;
+    }
+
+  return malloc (size * sizeof (GETGROUPS_T));
+}
 
 /* Like getugroups, but store the result in malloc'd storage.
    Set *GROUPS to the malloc'd list of all group IDs of which USERNAME
@@ -37,11 +54,67 @@
    the number of groups.  */
 
 int
-mgetgroups (const char *username, gid_t gid, GETGROUPS_T **groups)
+mgetgroups (char const *username, gid_t gid, GETGROUPS_T **groups)
 {
   int max_n_groups;
   int ng;
   GETGROUPS_T *g;
+
+#if HAVE_GETGROUPLIST
+  /* We prefer to use getgrouplist if available, because it has better
+     performance characteristics.
+
+     In glibc 2.3.2, getgrouplist is buggy.  If you pass a zero as the
+     size of the output buffer, getgrouplist will still write to the
+     buffer.  Contrary to what some versions of the getgrouplist
+     manpage say, this doesn't happen with nonzero buffer sizes.
+     Therefore our usage here just avoids a zero sized buffer.  */
+  if (username)
+    {
+      enum { N_GROUPS_INIT = 10 };
+      GETGROUPS_T smallbuf[N_GROUPS_INIT];
+
+      max_n_groups = N_GROUPS_INIT;
+      ng = getgrouplist (username, gid, smallbuf, &max_n_groups);
+
+      g = allocate_groupbuf (max_n_groups);
+      if (g == NULL)
+	return -1;
+
+      if (max_n_groups <= N_GROUPS_INIT)
+	{
+	  /* smallbuf was big enough, so we already have our data */
+	  memcpy (g, smallbuf, max_n_groups * sizeof *g);
+	  *groups = g;
+	  return max_n_groups;
+	}
+
+      while (1)
+	{
+	  GETGROUPS_T *h;
+	  ng = getgrouplist (username, gid, g, &max_n_groups);
+	  if (0 <= ng)
+	    {
+	      *groups = g;
+	      return ng;
+	    }
+
+	  /* When getgrouplist fails, it guarantees that
+	     max_n_groups reflects the new number of groups.  */
+
+	  if (xalloc_oversized (max_n_groups, sizeof *h)
+	      || (h = realloc (g, max_n_groups * sizeof *h)) == NULL)
+	    {
+	      int saved_errno = errno;
+	      free (g);
+	      errno = saved_errno;
+	      return -1;
+	    }
+	  g = h;
+	}
+    }
+  /* else no username, so fall through and use getgroups. */
+#endif
 
   max_n_groups = (username
 		  ? getugroups (0, NULL, username, gid)
@@ -52,13 +125,7 @@ mgetgroups (const char *username, gid_t gid, GETGROUPS_T **groups)
   if (max_n_groups < 0)
       max_n_groups = 5;
 
-  if (xalloc_oversized (max_n_groups, sizeof *g))
-    {
-      errno = ENOMEM;
-      return -1;
-    }
-
-  g = malloc (max_n_groups * sizeof *g);
+  g = allocate_groupbuf (max_n_groups);
   if (g == NULL)
     return -1;
 

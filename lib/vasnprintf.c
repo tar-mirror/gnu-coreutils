@@ -1,7 +1,8 @@
 /* -*- buffer-read-only: t -*- vi: set ro: */
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
+#line 1
 /* vsprintf with automatic memory allocation.
-   Copyright (C) 1999, 2002-2007 Free Software Foundation, Inc.
+   Copyright (C) 1999, 2002-2008 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -97,7 +98,7 @@
 
 #if (NEED_PRINTF_DOUBLE || NEED_PRINTF_INFINITE_DOUBLE) && !defined IN_LIBINTL
 # include <math.h>
-# include "isnan.h"
+# include "isnand.h"
 #endif
 
 #if (NEED_PRINTF_LONG_DOUBLE || NEED_PRINTF_INFINITE_LONG_DOUBLE) && !defined IN_LIBINTL
@@ -108,7 +109,7 @@
 
 #if (NEED_PRINTF_DIRECTIVE_A || NEED_PRINTF_DOUBLE) && !defined IN_LIBINTL
 # include <math.h>
-# include "isnan.h"
+# include "isnand.h"
 # include "printf-frexp.h"
 #endif
 
@@ -117,11 +118,6 @@
 # include "isnanl-nolibm.h"
 # include "printf-frexpl.h"
 # include "fpucw.h"
-#endif
-
-/* Some systems, like OSF/1 4.0 and Woe32, don't have EOVERFLOW.  */
-#ifndef EOVERFLOW
-# define EOVERFLOW E2BIG
 #endif
 
 #if HAVE_WCHAR_T
@@ -238,7 +234,7 @@ decimal_point_char ()
 static int
 is_infinite_or_zero (double x)
 {
-  return isnan (x) || x + x == x;
+  return isnand (x) || x + x == x;
 }
 
 #endif
@@ -2329,7 +2325,7 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
 # if NEED_PRINTF_DIRECTIVE_A || NEED_PRINTF_DOUBLE
 		    double arg = a.arg[dp->arg_index].a.a_double;
 
-		    if (isnan (arg))
+		    if (isnand (arg))
 		      {
 			if (dp->conversion == 'A')
 			  {
@@ -2678,7 +2674,7 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
 		  if (dp->conversion == 'f' || dp->conversion == 'F')
 		    {
 		      double arg = a.arg[dp->arg_index].a.a_double;
-		      if (!(isnan (arg) || arg + arg == arg))
+		      if (!(isnand (arg) || arg + arg == arg))
 			{
 			  /* arg is finite and nonzero.  */
 			  int exponent = floorlog10 (arg < 0 ? -arg : arg);
@@ -3082,7 +3078,7 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
 		  {
 		    double arg = a.arg[dp->arg_index].a.a_double;
 
-		    if (isnan (arg))
+		    if (isnand (arg))
 		      {
 			if (dp->conversion >= 'A' && dp->conversion <= 'Z')
 			  {
@@ -3568,7 +3564,7 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
 	      {
 		arg_type type = a.arg[dp->arg_index].type;
 		int flags = dp->flags;
-#if !USE_SNPRINTF || !DCHAR_IS_TCHAR || ENABLE_UNISTDIO || NEED_PRINTF_FLAG_ZERO || NEED_PRINTF_UNBOUNDED_PRECISION
+#if !USE_SNPRINTF || !DCHAR_IS_TCHAR || ENABLE_UNISTDIO || NEED_PRINTF_FLAG_LEFTADJUST || NEED_PRINTF_FLAG_ZERO || NEED_PRINTF_UNBOUNDED_PRECISION
 		int has_width;
 		size_t width;
 #endif
@@ -3581,7 +3577,9 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
 #else
 #		define prec_ourselves 0
 #endif
-#if !DCHAR_IS_TCHAR || ENABLE_UNISTDIO || NEED_PRINTF_FLAG_ZERO || NEED_PRINTF_UNBOUNDED_PRECISION
+#if NEED_PRINTF_FLAG_LEFTADJUST
+#		define pad_ourselves 1
+#elif !DCHAR_IS_TCHAR || ENABLE_UNISTDIO || NEED_PRINTF_FLAG_ZERO || NEED_PRINTF_UNBOUNDED_PRECISION
 		int pad_ourselves;
 #else
 #		define pad_ourselves 0
@@ -3595,7 +3593,7 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
 		TCHAR_T *tmp;
 #endif
 
-#if !USE_SNPRINTF || !DCHAR_IS_TCHAR || ENABLE_UNISTDIO || NEED_PRINTF_FLAG_ZERO || NEED_PRINTF_UNBOUNDED_PRECISION
+#if !USE_SNPRINTF || !DCHAR_IS_TCHAR || ENABLE_UNISTDIO || NEED_PRINTF_FLAG_LEFTADJUST || NEED_PRINTF_FLAG_ZERO || NEED_PRINTF_UNBOUNDED_PRECISION
 		has_width = 0;
 		width = 0;
 		if (dp->width_start != dp->width_end)
@@ -3658,6 +3656,44 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
 			  precision = xsum (xtimes (precision, 10), *digitp++ - '0');
 			has_precision = 1;
 		      }
+		  }
+#endif
+
+		/* Decide whether to handle the precision ourselves.  */
+#if NEED_PRINTF_UNBOUNDED_PRECISION
+		switch (dp->conversion)
+		  {
+		  case 'd': case 'i': case 'u':
+		  case 'o':
+		  case 'x': case 'X': case 'p':
+		    prec_ourselves = has_precision && (precision > 0);
+		    break;
+		  default:
+		    prec_ourselves = 0;
+		    break;
+		  }
+#endif
+
+		/* Decide whether to perform the padding ourselves.  */
+#if !NEED_PRINTF_FLAG_LEFTADJUST && (!DCHAR_IS_TCHAR || ENABLE_UNISTDIO || NEED_PRINTF_FLAG_ZERO || NEED_PRINTF_UNBOUNDED_PRECISION)
+		switch (dp->conversion)
+		  {
+# if !DCHAR_IS_TCHAR || ENABLE_UNISTDIO
+		  /* If we need conversion from TCHAR_T[] to DCHAR_T[], we need
+		     to perform the padding after this conversion.  Functions
+		     with unistdio extensions perform the padding based on
+		     character count rather than element count.  */
+		  case 'c': case 's':
+# endif
+# if NEED_PRINTF_FLAG_ZERO
+		  case 'f': case 'F': case 'e': case 'E': case 'g': case 'G':
+		  case 'a': case 'A':
+# endif
+		    pad_ourselves = 1;
+		    break;
+		  default:
+		    pad_ourselves = prec_ourselves;
+		    break;
 		  }
 #endif
 
@@ -3837,18 +3873,22 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
 		      abort ();
 		    }
 
+		  if (!pad_ourselves)
+		    {
 # if ENABLE_UNISTDIO
-		  /* Padding considers the number of characters, therefore the
-		     number of elements after padding may be
-		       > max (tmp_length, width)
-		     but is certainly
-		       <= tmp_length + width.  */
-		  tmp_length = xsum (tmp_length, width);
+		      /* Padding considers the number of characters, therefore
+			 the number of elements after padding may be
+			   > max (tmp_length, width)
+			 but is certainly
+			   <= tmp_length + width.  */
+		      tmp_length = xsum (tmp_length, width);
 # else
-		  /* Padding considers the number of elements, says POSIX.  */
-		  if (tmp_length < width)
-		    tmp_length = width;
+		      /* Padding considers the number of elements,
+			 says POSIX.  */
+		      if (tmp_length < width)
+			tmp_length = width;
 # endif
+		    }
 
 		  tmp_length = xsum (tmp_length, 1); /* account for trailing NUL */
 		}
@@ -3866,44 +3906,6 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
 		    if (tmp == NULL)
 		      /* Out of memory.  */
 		      goto out_of_memory;
-		  }
-#endif
-
-		/* Decide whether to handle the precision ourselves.  */
-#if NEED_PRINTF_UNBOUNDED_PRECISION
-		switch (dp->conversion)
-		  {
-		  case 'd': case 'i': case 'u':
-		  case 'o':
-		  case 'x': case 'X': case 'p':
-		    prec_ourselves = has_precision && (precision > 0);
-		    break;
-		  default:
-		    prec_ourselves = 0;
-		    break;
-		  }
-#endif
-
-		/* Decide whether to perform the padding ourselves.  */
-#if !DCHAR_IS_TCHAR || ENABLE_UNISTDIO || NEED_PRINTF_FLAG_ZERO || NEED_PRINTF_UNBOUNDED_PRECISION
-		switch (dp->conversion)
-		  {
-# if !DCHAR_IS_TCHAR || ENABLE_UNISTDIO
-		  /* If we need conversion from TCHAR_T[] to DCHAR_T[], we need
-		     to perform the padding after this conversion.  Functions
-		     with unistdio extensions perform the padding based on
-		     character count rather than element count.  */
-		  case 'c': case 's':
-# endif
-# if NEED_PRINTF_FLAG_ZERO
-		  case 'f': case 'F': case 'e': case 'E': case 'g': case 'G':
-		  case 'a': case 'A':
-# endif
-		    pad_ourselves = 1;
-		    break;
-		  default:
-		    pad_ourselves = prec_ourselves;
-		    break;
 		  }
 #endif
 
@@ -4010,7 +4012,7 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
 #endif
 		  *fbp = dp->conversion;
 #if USE_SNPRINTF
-# if !(__GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 3))
+# if !(__GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 3) || ((defined _WIN32 || defined __WIN32__) && ! defined __CYGWIN__))
 		fbp[1] = '%';
 		fbp[2] = 'n';
 		fbp[3] = '\0';
@@ -4023,6 +4025,21 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
 		   in format strings in writable memory may crash the program
 		   (if compiled with _FORTIFY_SOURCE=2), so we should avoid it
 		   in this situation.  */
+		/* On native Win32 systems (such as mingw), we can avoid using
+		   %n because:
+		     - Although the gl_SNPRINTF_TRUNCATION_C99 test fails,
+		       snprintf does not write more than the specified number
+		       of bytes. (snprintf (buf, 3, "%d %d", 4567, 89) writes
+		       '4', '5', '6' into buf, not '4', '5', '\0'.)
+		     - Although the gl_SNPRINTF_RETVAL_C99 test fails, snprintf
+		       allows us to recognize the case of an insufficient
+		       buffer size: it returns -1 in this case.
+		   On native Win32 systems (such as mingw) where the OS is
+		   Windows Vista, the use of %n in format strings by default
+		   crashes the program. See
+		     <http://gcc.gnu.org/ml/gcc/2007-06/msg00122.html> and
+		     <http://msdn2.microsoft.com/en-us/library/ms175782(VS.80).aspx>
+		   So we should avoid %n in this situation.  */
 		fbp[1] = '\0';
 # endif
 #else
@@ -4329,7 +4346,7 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
 		    if (prec_ourselves)
 		      {
 			/* Handle the precision.  */
-			TCHAR_T *prec_ptr = 
+			TCHAR_T *prec_ptr =
 # if USE_SNPRINTF
 			  (TCHAR_T *) (result + length);
 # else
@@ -4388,14 +4405,14 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
 		      }
 #endif
 
-#if !DCHAR_IS_TCHAR
-# if !USE_SNPRINTF
+#if !USE_SNPRINTF
 		    if (count >= tmp_length)
 		      /* tmp_length was incorrectly calculated - fix the
 			 code above!  */
 		      abort ();
-# endif
+#endif
 
+#if !DCHAR_IS_TCHAR
 		    /* Convert from TCHAR_T[] to DCHAR_T[].  */
 		    if (dp->conversion == 'c' || dp->conversion == 's')
 		      {
@@ -4496,7 +4513,7 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
 		    /* Here count <= allocated - length.  */
 
 		    /* Perform padding.  */
-#if !DCHAR_IS_TCHAR || ENABLE_UNISTDIO || NEED_PRINTF_FLAG_ZERO || NEED_PRINTF_UNBOUNDED_PRECISION
+#if !DCHAR_IS_TCHAR || ENABLE_UNISTDIO || NEED_PRINTF_FLAG_LEFTADJUST || NEED_PRINTF_FLAG_ZERO || NEED_PRINTF_UNBOUNDED_PRECISION
 		    if (pad_ourselves && has_width)
 		      {
 			size_t w;
@@ -4513,7 +4530,7 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
 			if (w < width)
 			  {
 			    size_t pad = width - w;
-# if USE_SNPRINTF
+
 			    /* Make room for the result.  */
 			    if (xsum (count, pad) > allocated - length)
 			      {
@@ -4523,12 +4540,16 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
 				  xmax (xsum3 (length, count, pad),
 					xtimes (allocated, 2));
 
+# if USE_SNPRINTF
 				length += count;
 				ENSURE_ALLOCATION (n);
 				length -= count;
+# else
+				ENSURE_ALLOCATION (n);
+# endif
 			      }
 			    /* Here count + pad <= allocated - length.  */
-# endif
+
 			    {
 # if !DCHAR_IS_TCHAR || USE_SNPRINTF
 			      DCHAR_T * const rp = result + length;
@@ -4537,15 +4558,14 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
 # endif
 			      DCHAR_T *p = rp + count;
 			      DCHAR_T *end = p + pad;
-# if NEED_PRINTF_FLAG_ZERO
 			      DCHAR_T *pad_ptr;
-#  if !DCHAR_IS_TCHAR
+# if !DCHAR_IS_TCHAR || ENABLE_UNISTDIO
 			      if (dp->conversion == 'c'
 				  || dp->conversion == 's')
 				/* No zero-padding for string directives.  */
 				pad_ptr = NULL;
 			      else
-#  endif
+# endif
 				{
 				  pad_ptr = (*rp == '-' ? rp + 1 : rp);
 				  /* No zero-padding of "inf" and "nan".  */
@@ -4553,7 +4573,6 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
 				      || (*pad_ptr >= 'a' && *pad_ptr <= 'z'))
 				    pad_ptr = NULL;
 				}
-# endif
 			      /* The generated string now extends from rp to p,
 				 with the zero padding insertion point being at
 				 pad_ptr.  */
@@ -4566,7 +4585,6 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
 				  for (; pad > 0; pad--)
 				    *p++ = ' ';
 				}
-# if NEED_PRINTF_FLAG_ZERO
 			      else if ((flags & FLAG_ZERO) && pad_ptr != NULL)
 				{
 				  /* Pad with zeroes.  */
@@ -4577,7 +4595,6 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
 				  for (; pad > 0; pad--)
 				    *p++ = '0';
 				}
-# endif
 			      else
 				{
 				  /* Pad with spaces on the left.  */
@@ -4591,13 +4608,6 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
 			    }
 			  }
 		      }
-#endif
-
-#if DCHAR_IS_TCHAR && !USE_SNPRINTF
-		    if (count >= tmp_length)
-		      /* tmp_length was incorrectly calculated - fix the
-			 code above!  */
-		      abort ();
 #endif
 
 		    /* Here still count <= allocated - length.  */
@@ -4656,6 +4666,7 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
        not have this limitation.  */
     return result;
 
+#if USE_SNPRINTF
   overflow:
     if (!(result == resultbuf || result == NULL))
       free (result);
@@ -4664,6 +4675,7 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
     CLEANUP ();
     errno = EOVERFLOW;
     return NULL;
+#endif
 
   out_of_memory:
     if (!(result == resultbuf || result == NULL))

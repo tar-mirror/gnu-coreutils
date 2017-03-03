@@ -1,5 +1,6 @@
 /* -*- buffer-read-only: t -*- vi: set ro: */
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
+#line 1
 /* Test of wcwidth() function.
    Copyright (C) 2007-2008 Free Software Foundation, Inc.
 
@@ -35,6 +36,7 @@
       if (!(expr))							     \
         {								     \
           fprintf (stderr, "%s:%d: assertion failed\n", __FILE__, __LINE__); \
+          fflush (stderr);						     \
           abort ();							     \
         }								     \
     }									     \
