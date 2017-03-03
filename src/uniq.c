@@ -1,5 +1,5 @@
 /* uniq -- remove duplicate lines from a sorted file
-   Copyright (C) 86, 91, 1995-2007 Free Software Foundation, Inc.
+   Copyright (C) 86, 91, 1995-2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -36,7 +36,9 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "uniq"
 
-#define AUTHORS "Richard Stallman", "David MacKenzie"
+#define AUTHORS \
+  proper_name ("Richard Stallman"), \
+  proper_name ("David MacKenzie")
 
 #define SWAP_LINES(A, B)			\
   do						\
@@ -165,8 +167,8 @@ Mandatory arguments to long options are mandatory for short options too.\n\
      fputs (VERSION_OPTION_DESCRIPTION, stdout);
      fputs (_("\
 \n\
-A field is a run of whitespace, then non-whitespace characters.\n\
-Fields are skipped before chars.\n\
+A field is a run of blanks (usually spaces and/or TABs), then non-blank\n\
+characters.  Fields are skipped before chars.\n\
 "), stdout);
      fputs (_("\
 \n\
@@ -213,9 +215,9 @@ find_field (const struct linebuffer *line)
 
   for (count = 0; count < skip_fields && i < size; count++)
     {
-      while (i < size && isblank (lp[i]))
+      while (i < size && isblank (to_uchar (lp[i])))
 	i++;
-      while (i < size && !isblank (lp[i]))
+      while (i < size && !isblank (to_uchar (lp[i])))
 	i++;
     }
 

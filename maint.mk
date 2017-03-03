@@ -42,6 +42,7 @@ endif
 
 PREV_VERSION := $(shell cat $(prev_version_file))
 VERSION_REGEXP = $(subst .,\.,$(VERSION))
+PREV_VERSION_REGEXP = $(subst .,\.,$(PREV_VERSION))
 
 ifeq ($(VC),$(GIT))
 this-vc-tag = v$(VERSION)
@@ -101,7 +102,7 @@ sc_avoid_if_before_free:
 	    exit 1; } || :
 
 sc_cast_of_argument_to_free:
-	@grep -nE '\<free \(\(' $$($(VC_LIST_EXCEPT)) &&		\
+	@grep -nE '\<free *\( *\(' $$($(VC_LIST_EXCEPT)) &&		\
 	  { echo '$(ME): don'\''t cast free argument' 1>&2;		\
 	    exit 1; } || :
 
@@ -130,7 +131,7 @@ sc_prohibit_atoi_atof:
 
 # Use STREQ rather than comparing strcmp == 0, or != 0.
 sc_prohibit_strcmp:
-	@grep -nE '! *str''cmp \(|\<str''cmp \([^)]+\) *=='		\
+	@grep -nE '! *str''cmp *\(|\<str''cmp *\([^)]+\) *=='		\
 	    $$($(VC_LIST_EXCEPT)) &&					\
 	  { echo '$(ME): use STREQ in place of the above uses of str''cmp' \
 		1>&2; exit 1; } || :
@@ -149,6 +150,7 @@ sc_file_system:
 	    'rewrite to use "file system"' 1>&2;			\
 	    exit 1; } || :
 
+# Don't use cpp tests of this symbol.  All code assumes config.h is included.
 sc_no_have_config_h:
 	@grep -n '^# *if.*HAVE''_CONFIG_H' $$($(VC_LIST_EXCEPT)) &&	\
 	  { echo '$(ME): found use of HAVE''_CONFIG_H; remove'		\
@@ -266,14 +268,17 @@ sc_prohibit_jm_in_m4:
 	    { echo '$(ME): do not use jm_ in m4 macro names'		\
 	      1>&2; exit 1; } || :
 
+# Ensure that each root-requiring test is run via the "check-root" rule.
 sc_root_tests:
 	@if test -d tests \
 	      && grep check-root tests/Makefile.am>/dev/null 2>&1; then \
 	t1=sc-root.expected; t2=sc-root.actual;				\
 	grep -nl '^require_root_$$'					\
-	  $$($(VC_LIST) tests) |sed s,tests,., |sort > $$t1;		\
-	sed -n 's,	cd \([^ ]*\) .*MAKE..check TESTS=\(.*\),./\1/\2,p' \
-	  $(srcdir)/tests/Makefile.am |sort > $$t2;			\
+	  $$($(VC_LIST) tests) |sed s,tests/,, |sort > $$t1;		\
+	sed -n '/^root_tests =[	 ]*\\$$/,/[^\]$$/p'			\
+	  $(srcdir)/tests/Makefile.am					\
+	    | sed 's/^  *//;/^root_tests =/d'				\
+	    | tr -s '\012\\' '  ' | fmt -1 | sort > $$t2;		\
 	diff -u $$t1 $$t2 || diff=1;					\
 	rm -f $$t1 $$t2;						\
 	test "$$diff"							\
@@ -403,6 +408,41 @@ sc_useless_cpp_parens:
 sc_GPL_version:
 	@grep -n 'either ''version [^3]' $$($(VC_LIST_EXCEPT)) &&	\
 	  { echo '$(ME): GPL vN, N!=3' 1>&2; exit 1; } || :
+
+exec_perl_re = \
+  exec \$$PERL -w -I\$$top_srcdir/tests -MCoreutils \
+    -M"CuTmpdir qw(\$$me)" -- - <<\\EOF
+# Ensure that each test invoking $PERL with -MCoreutils uses the same line.
+sc_perl_coreutils_test:
+	@if test -f $(srcdir)/tests/Coreutils.pm; then			\
+	  die=0;							\
+	  for i in $$(grep -l '^exec  *\$$PERL.*MCoreutils'		\
+		$$($(VC_LIST) tests)); do				\
+	    grep '$(exec_perl_re)' $$i > /dev/null			\
+	      && : || { die=1; echo $$i; }				\
+	  done;								\
+	  test $$die = 1 &&						\
+	    { echo 1>&2 '$(ME): each of the above execs PERL differently:'; \
+	      echo 1>&2 '(exit $$fail); exit $$fail';			\
+	      exit 1; } || :;						\
+	fi
+
+NEWS_hash = \
+  $$(sed -n '/^\*.* $(PREV_VERSION_REGEXP) ([0-9-]*)/,$$p' \
+     $(srcdir)/NEWS | md5sum -)
+
+# Ensure that we don't accidentally insert an entry into an old NEWS block.
+sc_immutable_NEWS:
+	@if test -f $(srcdir)/NEWS; then				\
+	  test "$(NEWS_hash)" = '$(old_NEWS_hash)' && : ||		\
+	    { echo '$(ME): you have modified old NEWS' 1>&2; exit 1; };	\
+	fi
+
+# Update the hash stored above.  Do this after each release and
+# for any corrections to old entries.
+update-NEWS-hash: NEWS
+	perl -pi -e 's/^(old_NEWS_hash = ).*/$${1}'"$(NEWS_hash)/" \
+	  $(srcdir)/cfg.mk
 
 # Ensure that the c99-to-c89 patch applies cleanly.
 patch-check:
@@ -589,31 +629,62 @@ bin=bin-$$$$
 
 write_loser = printf '\#!%s\necho $$0: bad path 1>&2; exit 1\n' '$(SHELL)'
 
+TMPDIR ?= /tmp
+t=$(TMPDIR)/$(PACKAGE)/test
+pfx=$(t)/i
+
+# Verify that a twisted use of --program-transform-name=PROGRAM works.
+define install-transform-check
+  rm -rf $(pfx);					\
+  $(MAKE) program_transform_name='s/.*/zyx/'		\
+      prefix=$(pfx) install				\
+    && test "$$(echo $(pfx)/bin/*)" = "$(pfx)/bin/zyx"	\
+    && test "$$(echo $(pfx)/share/man/man1/*)" =	\
+                    "$(pfx)/share/man/man1/zyx.1"
+endef
+
+# Install, then verify that all binaries and man pages are in place.
+# Note that neither the binary, ginstall, nor the ].1 man page is installed.
+define my-instcheck
+  $(MAKE) prefix=$(pfx) install				\
+    && test ! -f $(pfx)/bin/ginstall			\
+    && { fail=0;					\
+      for i in $(built_programs); do			\
+        test "$$i" = ginstall && i=install;		\
+        for j in "$(pfx)/bin/$$i"			\
+                 "$(pfx)/share/man/man1/$$i.1"; do	\
+          case $$j in *'[.1') continue;; esac;		\
+          test -f "$$j" && :				\
+            || { echo "$$j not installed"; fail=1; };	\
+        done;						\
+      done;						\
+      test $$fail = 1 && exit 1 || :;			\
+    }
+endef
+
 # Use -Wformat -Werror to detect format-string/arg-list mismatches.
 # Also, check for shadowing problems with -Wshadow, and for pointer
 # arithmetic problems with -Wpointer-arith.
 # These CFLAGS are pretty strict.  If you build this target, you probably
 # have to have a recent version of gcc and glibc headers.
-# The for-loop below ensures that there is a bin/ directory full of all
-# of the programs under test (except the few that are required for basic
-# Makefile rules), all symlinked to the just-built "false" program.
+# The hard-linking for-loop below ensures that there is a bin/ directory
+# full of all of the programs under test (except the ones that are required
+# for basic Makefile rules), all symlinked to the just-built "false" program.
 # This is to ensure that if ever a test neglects to make PATH include
 # the build srcdir, these always-failing programs will run.
 # Otherwise, it is too easy to test the wrong programs.
 # Note that "false" itself is a symlink to true, so it too will malfunction.
-TMPDIR ?= /tmp
-t=$(TMPDIR)/$(PACKAGE)/test
-my-distcheck: $(local-check) check
+my-distcheck: $(DIST_ARCHIVES) $(local-check) check
 	-rm -rf $(t)
 	mkdir -p $(t)
 	GZIP=$(GZIP_ENV) $(AMTAR) -C $(t) -zxf $(distdir).tar.gz
 	cd $(t)/$(distdir)				\
-	  && ./configure --disable-nls --prefix=$(t)/i	\
+	  && ./configure --disable-nls			\
 	  && $(MAKE) CFLAGS='$(warn_cflags)'		\
 	      AM_MAKEFLAGS='$(null_AM_MAKEFLAGS)'	\
 	  && $(MAKE) dvi				\
-	  && $(MAKE) install				\
-	  && test -f $(mandir)/man1/ls.1		\
+	  && $(install-transform-check)			\
+	  && $(my-instcheck)				\
 	  && mkdir $(bin)				\
 	  && ($(write_loser)) > $(bin)/loser            \
 	  && chmod a+x $(bin)/loser                     \
@@ -626,7 +697,9 @@ my-distcheck: $(local-check) check
 	     done					\
 	  && ln -sf ../src/true $(bin)/false		\
 	  && PATH=`pwd`/$(bin):$$PATH $(MAKE) -C tests check \
-	  && $(MAKE) -C gnulib-tests check		\
+	  && { test -d gnulib-tests			\
+	         && $(MAKE) -C gnulib-tests check	\
+	         || :; }				\
 	  && rm -rf $(bin)				\
 	  && $(MAKE) distclean
 	(cd $(t) && mv $(distdir) $(distdir).old	\

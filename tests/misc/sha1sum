@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/perl
 # Test "sha1sum".
 
 # Copyright (C) 2000, 2003, 2005-2008 Free Software Foundation, Inc.
@@ -16,17 +16,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-: ${srcdir=.}
-. $srcdir/../require-perl
-
-me=`echo $0|sed 's,.*/,,'`
-exec $PERL -w -I$srcdir/.. -MCoreutils -M"CuTmpdir qw($me)" -- - <<\EOF
-require 5.003;
 use strict;
 
 my $prog = 'sha1sum';
 
-# Turn off localisation of executable's ouput.
+# Turn off localization of executable's output.
 @ENV{qw(LANGUAGE LANG LC_ALL)} = ('C') x 3;
 
 my $sha_degenerate = "da39a3ee5e6b4b0d3255bfef95601890afd80709";
@@ -82,4 +76,3 @@ my $verbose = $ENV{VERBOSE};
 
 my $fail = run_tests ($prog, $prog, \@Tests, $save_temps, $verbose);
 exit $fail;
-EOF

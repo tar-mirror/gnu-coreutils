@@ -34,7 +34,9 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "id"
 
-#define AUTHORS "Arnold Robbins", "David MacKenzie"
+#define AUTHORS \
+  proper_name ("Arnold Robbins"), \
+  proper_name ("David MacKenzie")
 
 /* If nonzero, output only the SELinux context. -Z */
 static int just_context = 0;
@@ -179,11 +181,11 @@ main (int argc, char **argv)
 cannot display context when selinux not enabled or when displaying the id\n\
 of a different user"));
 
-  /* If we are on a selinux-enabled kernel, get our context.
-     Otherwise, leave the context variable alone - it has
-     been initialized known invalid value; if we see this invalid
-     value later, we will know we are on a non-selinux kernel.  */
-  if (selinux_enabled)
+  /* If we are on a selinux-enabled kernel and no user is specified,
+     get our context. Otherwise, leave the context variable alone -
+     it has been initialized known invalid value and will be not
+     displayed in print_full_info() */
+  if (selinux_enabled && argc == optind)
     {
       if (getcon (&context) && just_context)
         error (EXIT_FAILURE, 0, _("can't get process context"));
@@ -196,22 +198,17 @@ of a different user"));
     error (EXIT_FAILURE, 0,
 	   _("cannot print only names or real IDs in default format"));
 
-  char const *user_name;
   if (argc - optind == 1)
     {
-      struct passwd const *pwd = getpwnam (argv[optind]);
+      struct passwd *pwd = getpwnam (argv[optind]);
       if (pwd == NULL)
 	error (EXIT_FAILURE, 0, _("%s: No such user"), argv[optind]);
-      user_name = argv[optind];
       ruid = euid = pwd->pw_uid;
       rgid = egid = pwd->pw_gid;
     }
   else
     {
-      struct passwd const *pwd;
       euid = geteuid ();
-      pwd = getpwuid (euid);
-      user_name = pwd ? xstrdup (pwd->pw_name) : NULL;
       ruid = getuid ();
       egid = getegid ();
       rgid = getgid ();
@@ -228,7 +225,7 @@ of a different user"));
     }
   else if (just_group_list)
     {
-      if (!print_group_list (user_name, ruid, rgid, egid, use_name))
+      if (!print_group_list (argv[optind], ruid, rgid, egid, use_name))
 	ok = false;
     }
   else if (just_context)
@@ -237,7 +234,7 @@ of a different user"));
     }
   else
     {
-      print_full_info (user_name);
+      print_full_info (argv[optind]);
     }
   putchar ('\n');
 

@@ -1,5 +1,5 @@
 /* cut - remove parts of lines of files
-   Copyright (C) 1997-2007 Free Software Foundation, Inc.
+   Copyright (C) 1997-2008 Free Software Foundation, Inc.
    Copyright (C) 1984 David M. Ihnat
 
    This program is free software: you can redistribute it and/or modify
@@ -39,7 +39,10 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "cut"
 
-#define AUTHORS "David Ihnat", "David MacKenzie", "Jim Meyering"
+#define AUTHORS \
+  proper_name ("David Ihnat"), \
+  proper_name ("David MacKenzie"), \
+  proper_name ("Jim Meyering")
 
 #define FATAL_ERROR(Message)						\
   do									\
@@ -372,7 +375,8 @@ set_fields (const char *fieldstr)
 	  initial = (lhs_specified ? value : 1);
 	  value = 0;
 	}
-      else if (*fieldstr == ',' || isblank (*fieldstr) || *fieldstr == '\0')
+      else if (*fieldstr == ',' ||
+	       isblank (to_uchar (*fieldstr)) || *fieldstr == '\0')
 	{
 	  in_digits = false;
 	  /* Ending the string, or this field/byte sublist. */

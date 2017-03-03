@@ -1,7 +1,7 @@
 /* whoami -- print effective userid
 
-   Copyright (C) 89,90, 1991-1997, 1999-2002, 2004, 2005, 2007 Free Software
-   Foundation, Inc.
+   Copyright (C) 89,90, 1991-1997, 1999-2002, 2004, 2005, 2007-2008
+   Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "whoami"
 
-#define AUTHORS "Richard Mlynarik"
+#define AUTHORS proper_name ("Richard Mlynarik")
 
 /* The name this program was run with. */
 char *program_name;

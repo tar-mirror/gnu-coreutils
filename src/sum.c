@@ -1,5 +1,6 @@
 /* sum -- checksum and count the blocks in a file
-   Copyright (C) 86, 89, 91, 1995-2002, 2004, 2005 Free Software Foundation, Inc.
+   Copyright (C) 86, 89, 91, 1995-2002, 2004, 2005, 2008
+   Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,7 +32,9 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "sum"
 
-#define AUTHORS "Kayvan Aghaiepour", "David MacKenzie"
+#define AUTHORS \
+  proper_name ("Kayvan Aghaiepour"), \
+  proper_name ("David MacKenzie")
 
 /* The name this program was run with. */
 char *program_name;

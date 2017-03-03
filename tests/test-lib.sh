@@ -86,6 +86,39 @@ uid_is_privileged_()
   esac
 }
 
+# Convert an ls-style permission string, like drwxr----x and -rw-r-x-wx
+# to the equivalent chmod --mode (-m) argument, (=,u=rwx,g=r,o=x and
+# =,u=rw,g=rx,o=wx).  Ignore ACLs.
+rwx_to_mode_()
+{
+  case $# in
+    1) rwx=$1;;
+    *) echo "$0: wrong number of arguments" 1>&2
+      echo "Usage: $0 ls-style-mode-string" 1>&2
+      return;;
+  esac
+
+  case $rwx in
+    [ld-][rwx-][rwx-][rwxsS-][rwx-][rwx-][rwxsS-][rwx-][rwx-][rwxtT-]) ;;
+    [ld-][rwx-][rwx-][rwxsS-][rwx-][rwx-][rwxsS-][rwx-][rwx-][rwxtT-]+) ;;
+    *) echo "$0: invalid mode string: $rwx" 1>&2; return;;
+  esac
+
+  # Perform these conversions:
+  # S  s
+  # s  xs
+  # T  t
+  # t  xt
+  # The `T' and `t' ones are only valid for `other'.
+  s='s/S/@/;s/s/x@/;s/@/s/'
+  t='s/T/@/;s/t/x@/;s/@/t/'
+
+  u=`echo $rwx|sed 's/^.\(...\).*/,u=\1/;s/-//g;s/^,u=$//;'$s`
+  g=`echo $rwx|sed 's/^....\(...\).*/,g=\1/;s/-//g;s/^,g=$//;'$s`
+  o=`echo $rwx|sed 's/^.......\(...\).*/,o=\1/;s/-//g;s/^,o=$//;'$s';'$t`
+  echo "=$u$g$o"
+}
+
 skip_if_()
 {
   case $1 in
@@ -118,6 +151,19 @@ environment variable set to yes.  E.g.,
   fi
 }
 
+expensive_()
+{
+  if test "$RUN_EXPENSIVE_TESTS" != yes; then
+    skip_test_ '
+This test is relatively expensive, so it is disabled by default.
+To run it anyway, rerun make check with the RUN_EXPENSIVE_TESTS
+environment variable set to yes.  E.g.,
+
+  env RUN_EXPENSIVE_TESTS=yes make check
+'
+  fi
+}
+
 require_root_()
 {
   uid_is_privileged_ || skip_test_ "must be run as root"
@@ -127,6 +173,46 @@ require_root_()
 skip_if_root_() { uid_is_privileged_ && skip_test_ "must be run as non-root"; }
 error_() { echo "$0: $@" 1>&2; (exit 1); exit 1; }
 framework_failure() { error_ 'failure in testing framework'; }
+
+# Set `groups' to a space-separated list of at least two groups
+# of which the user is a member.
+require_membership_in_two_groups_()
+{
+  test $# = 0 || framework_failure
+
+  groups=${COREUTILS_GROUPS-`(id -G || /usr/xpg4/bin/id -G) 2>/dev/null`}
+  case "$groups" in
+    *' '*) ;;
+    *) skip_test_ '
+$0: this test requires that you be a member of more than one group,
+but running `id -G'\'' either failed or found just one.  If you really
+are a member of at least two groups, then rerun this test with
+COREUTILS_GROUPS set in your environment to the space-separated list
+of group names or numbers.  E.g.,
+
+  env COREUTILS_GROUPS='users cdrom' make check
+
+'
+     ;;
+  esac
+}
+
+# Does the current (working-dir) file system support sparse files?
+require_sparse_support_()
+{
+  test $# = 0 || framework_failure
+  # Test whether we can create a sparse file.
+  # For example, on Darwin6.5 with a file system of type hfs, it's not possible.
+  # NTFS requires 128K before a hole appears in a sparse file.
+  t=sparse.$$
+  dd bs=1 seek=128K of=$t < /dev/null 2> /dev/null
+  set x `du -sk $t`
+  kb_size=$2
+  rm -f $t
+  if test $kb_size -ge 128; then
+    skip_test_ 'this file system does not support sparse files'
+  fi
+}
 
 mkfifo_or_skip_()
 {
@@ -140,12 +226,42 @@ mkfifo_or_skip_()
   fi
 }
 
+skip_if_mcstransd_is_running_()
+{
+  test $# = 0 || framework_failure
+
+  # When mcstransd is running, you'll see only the 3-component
+  # version of file-system context strings.  Detect that,
+  # and if it's running, skip this test.
+  local ctx=$(stat --printf='%C\n' .) || framework_failure
+  case $ctx in
+    *:*:*:*) ;; # four components is ok
+    *) # anything else probably means mcstransd is running
+        skip_test_ "unexpected context '$ctx'; turn off mcstransd" ;;
+  esac
+}
+
+# Skip the current test if umask doesn't work as usual.
+# This test should be run in the temporary directory that ends
+# up being removed via the trap commands.
+working_umask_or_skip_()
+{
+  umask 022
+  touch file1 file2
+  chmod 644 file2
+  perms=`ls -l file1 file2 | sed 's/ .*//' | uniq`
+  rm -f file1 file2
+
+  case $perms in
+  *'
+  '*) skip_test_ 'your build directory has unusual umask semantics'
+  esac
+}
+
 test_dir_=$(pwd)
 
 this_test_() { echo "./$0" | sed 's,.*/,,'; }
 this_test=$(this_test_)
-
-. $srcdir/../envvar-check
 
 # This is a stub function that is run upon trap (upon regular exit and
 # interrupt).  Override it with a per-test function, e.g., to unmount

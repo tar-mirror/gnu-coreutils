@@ -1,5 +1,5 @@
 /* expr -- evaluate expressions.
-   Copyright (C) 86, 1991-1997, 1999-2007 Free Software Foundation, Inc.
+   Copyright (C) 86, 1991-1997, 1999-2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "expr"
 
-#define AUTHORS "Mike Parker"
+#define AUTHORS proper_name ("Mike Parker")
 
 /* Exit statuses.  */
 enum

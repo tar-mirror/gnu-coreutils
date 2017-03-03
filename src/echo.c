@@ -1,5 +1,5 @@
 /* echo.c, derived from code echo.c in Bash.
-   Copyright (C) 87,89, 1991-1997, 1999-2005, 2007 Free Software
+   Copyright (C) 87,89, 1991-1997, 1999-2005, 2007-2008 Free Software
    Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "echo"
 
-#define AUTHORS "FIXME unknown"
+#define AUTHORS proper_name ("FIXME unknown")
 
 /* echo [-neE] [arg ...]
 Output the ARGs.  If -n is specified, the trailing newline is

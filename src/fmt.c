@@ -1,5 +1,5 @@
 /* GNU fmt -- simple text formatter.
-   Copyright (C) 1994-2006 Free Software Foundation, Inc.
+   Copyright (C) 1994-2006, 2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "fmt"
 
-#define AUTHORS "Ross Paterson"
+#define AUTHORS proper_name ("Ross Paterson")
 
 /* The following parameters represent the program's idea of what is
    "best".  Adjust to taste, subject to the caveats given.  */

@@ -1,5 +1,5 @@
 /* tac - concatenate and print files in reverse
-   Copyright (C) 1988-1991, 1995-2006 Free Software Foundation, Inc.
+   Copyright (C) 1988-1991, 1995-2006, 2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -52,7 +52,9 @@ tac -r -s '.\|
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "tac"
 
-#define AUTHORS "Jay Lepreau", "David MacKenzie"
+#define AUTHORS \
+  proper_name ("Jay Lepreau"), \
+  proper_name ("David MacKenzie")
 
 #if defined __MSDOS__ || defined _WIN32
 /* Define this to non-zero on systems for which the regular mechanism
@@ -110,6 +112,7 @@ static size_t G_buffer_size;
 /* The compiled regular expression representing `separator'. */
 static struct re_pattern_buffer compiled_separator;
 static char compiled_separator_fastmap[UCHAR_MAX + 1];
+static struct re_registers regs;
 
 static struct option const longopts[] =
 {
@@ -212,7 +215,6 @@ tac_seekable (int input_fd, const char *file)
   char first_char = *separator;	/* Speed optimization, non-regexp. */
   char const *separator1 = separator + 1; /* Speed optimization, non-regexp. */
   size_t match_length1 = match_length - 1; /* Speed optimization, non-regexp. */
-  struct re_registers regs;
 
   /* Find the size of the input file. */
   file_pos = lseek (input_fd, (off_t) 0, SEEK_END);

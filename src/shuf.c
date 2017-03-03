@@ -1,6 +1,6 @@
 /* Shuffle lines of text.
 
-   Copyright (C) 2006, 2007 Free Software Foundation, Inc.
+   Copyright (C) 2006, 2007-2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "shuf"
 
-#define AUTHORS "Paul Eggert"
+#define AUTHORS proper_name ("Paul Eggert")
 
 /* The name this program was run with. */
 char *program_name;

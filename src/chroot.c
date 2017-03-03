@@ -1,5 +1,6 @@
 /* chroot -- run command or shell with special root directory
-   Copyright (C) 95, 96, 1997, 1999-2004, 2007 Free Software Foundation, Inc.
+   Copyright (C) 95, 96, 1997, 1999-2004, 2007-2008
+   Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,7 +30,7 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "chroot"
 
-#define AUTHORS "Roland McGrath"
+#define AUTHORS proper_name ("Roland McGrath")
 
 /* The name this program was run with, for error messages. */
 char *program_name;

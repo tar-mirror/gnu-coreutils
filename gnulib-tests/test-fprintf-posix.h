@@ -2,7 +2,7 @@
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 #line 1
 /* Test of POSIX compatible vsprintf() and sprintf() functions.
-   Copyright (C) 2007 Free Software Foundation, Inc.
+   Copyright (C) 2007-2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -68,6 +68,12 @@ test_function (int (*my_fprintf) (FILE *, const char *, ...))
   /* Precision.  */
   my_fprintf (stdout, "%.f %d\n", 1234.0, 33, 44, 55);
 
+  /* Precision with no rounding.  */
+  my_fprintf (stdout, "%.2f %d\n", 999.95, 33, 44, 55);
+
+  /* Precision with rounding.  */
+  my_fprintf (stdout, "%.2f %d\n", 999.996, 33, 44, 55);
+
   /* A positive number.  */
   my_fprintf (stdout, "%Lf %d\n", 12.75L, 33, 44, 55);
 
@@ -85,6 +91,12 @@ test_function (int (*my_fprintf) (FILE *, const char *, ...))
 
   /* Precision.  */
   my_fprintf (stdout, "%.Lf %d\n", 1234.0L, 33, 44, 55);
+
+  /* Precision with no rounding.  */
+  my_fprintf (stdout, "%.2Lf %d\n", 999.95L, 33, 44, 55);
+
+  /* Precision with rounding.  */
+  my_fprintf (stdout, "%.2Lf %d\n", 999.996L, 33, 44, 55);
 
   /* Test the support of the %F format directive.  */
 
@@ -106,6 +118,12 @@ test_function (int (*my_fprintf) (FILE *, const char *, ...))
   /* Precision.  */
   my_fprintf (stdout, "%.F %d\n", 1234.0, 33, 44, 55);
 
+  /* Precision with no rounding.  */
+  my_fprintf (stdout, "%.2F %d\n", 999.95, 33, 44, 55);
+
+  /* Precision with rounding.  */
+  my_fprintf (stdout, "%.2F %d\n", 999.996, 33, 44, 55);
+
   /* A positive number.  */
   my_fprintf (stdout, "%LF %d\n", 12.75L, 33, 44, 55);
 
@@ -123,6 +141,12 @@ test_function (int (*my_fprintf) (FILE *, const char *, ...))
 
   /* Precision.  */
   my_fprintf (stdout, "%.LF %d\n", 1234.0L, 33, 44, 55);
+
+  /* Precision with no rounding.  */
+  my_fprintf (stdout, "%.2LF %d\n", 999.95L, 33, 44, 55);
+
+  /* Precision with rounding.  */
+  my_fprintf (stdout, "%.2LF %d\n", 999.996L, 33, 44, 55);
 
   /* Test the support of the POSIX/XSI format strings with positions.  */
 

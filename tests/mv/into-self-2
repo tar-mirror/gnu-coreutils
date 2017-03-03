@@ -23,10 +23,9 @@ if test "$VERBOSE" = yes; then
   mv --version
 fi
 
-. $srcdir/../lang-default
-. $srcdir/../test-lib.sh
+. $srcdir/test-lib.sh
 cleanup_() { rm -rf "$other_partition_tmpdir"; }
-. "$abs_top_srcdir/tests/other-fs-tmpdir"
+. "$abs_srcdir/other-fs-tmpdir"
 
 file="$other_partition_tmpdir/file"
 symlink=symlink

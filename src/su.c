@@ -1,5 +1,5 @@
 /* su for GNU.  Run a shell with substitute user and group IDs.
-   Copyright (C) 1992-2006 Free Software Foundation, Inc.
+   Copyright (C) 1992-2006, 2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -92,7 +92,7 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "su"
 
-#define AUTHORS "David MacKenzie"
+#define AUTHORS proper_name ("David MacKenzie")
 
 #if HAVE_PATHS_H
 # include <paths.h>

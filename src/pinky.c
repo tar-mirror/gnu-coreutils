@@ -1,5 +1,5 @@
 /* GNU's pinky.
-   Copyright (C) 1992-1997, 1999-2006 Free Software Foundation, Inc.
+   Copyright (C) 1992-1997, 1999-2006, 2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,7 +33,10 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "pinky"
 
-#define AUTHORS "Joseph Arceneaux", "David MacKenzie", "Kaveh Ghazi"
+#define AUTHORS \
+  proper_name ("Joseph Arceneaux"), \
+  proper_name ("David MacKenzie"), \
+  proper_name ("Kaveh Ghazi")
 
 #ifndef MAXHOSTNAMELEN
 # define MAXHOSTNAMELEN 64

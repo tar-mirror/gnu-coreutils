@@ -1,4 +1,923 @@
+2008-05-31  Jim Meyering  <meyering@redhat.com>
+
+	Version 6.12.
+	* NEWS: Record release date.
+
+	install: reenable matchpathcon-related code
+	The underlying performance problem is being dealt with in Automake
+	by limiting the number of install invocations, and in SELinux with
+	incremental changes as well as a potential new implementation.
+	* src/Makefile.am (ginstall_CPPFLAGS) [ENABLE_MATCHPATHCON]: Define.
+	* src/install.c [ENABLE_WHEN_MATCHPATHCON_IS_MORE_EFFICIENT]:
+	Rename to ENABLE_MATCHPATHCON.
+	* NEWS: mention this change
+
+2008-05-30  Jim Meyering  <meyering@redhat.com>
+
+	configure.ac: remove explicit use of AB_INIT
+	* configure.ac: Don't invoke AB_INIT directly, now that it's
+	done automatically via gl_INIT.
+
+	tests: ignore known failure on all Darwin 8.x / Mac OS X v10.4.x
+	* tests/chgrp/basic: Update comment and host_triplet version test.
+
+	tests: avoid failure with older version of Perl's File::Temp
+	* tests/CuTmpdir.pm (import): Use &File::Temp::cleanup only
+	if it is defined.  Reported by Bruno Haible in
+	http://thread.gmane.org/gmane.comp.gnu.coreutils.bugs/13652
+
+	NEWS: mention that cp -p copies permissions more portably
+	Based on wording suggested by Bruno Haible.
+
+2008-05-29  Jim Meyering  <meyering@redhat.com>
+
+	improve description of du's--separate-dirs option
+	* coreutils.texi (du invocation): Prompted by Volker Badziong's
+	report in http://thread.gmane.org/gmane.comp.gnu.coreutils.bugs/13646
+
+	du.c: tiny cleanup (no semantic change)
+	* src/du.c (process_file): Use "file", rather than
+	equivalent "ent->fts_path".
+
+2008-05-27  Jim Meyering  <meyering@redhat.com>
+
+	in 280+ tests/* files, use $srcdir, not $top_srcdir/tests
+
+	prefer abs_srcdir over abs_top_srcdir, ...
+	so that e.g., tests/* may refer to absolute names without
+	hard-coding the name of the containing directory (tests/, here).
+	* tests/check.mk (TESTS_ENVIRONMENT): Define abs_srcdir.
+	* tests/pr/pr-tests: Use $abs_srcdir/pr not $abs_top_srcdir/tests/pr.
+	* tests/chmod/c-option: Use $abs_srcdir, not $abs_top_srcdir/tests.
+	* tests/cp/cp-parents: Likewise.
+	* tests/mkdir/parents: Likewise.
+	* tests/mkdir/perm: Likewise.
+	* tests/mv/acl: Likewise.
+	* tests/mv/backup-is-src: Likewise.
+	* tests/mv/hard-link-1: Likewise.
+	* tests/mv/into-self-2: Likewise.
+	* tests/mv/leak-fd: Likewise.
+	* tests/mv/mv-special-1: Likewise.
+	* tests/mv/part-fail: Likewise.
+	* tests/mv/part-hardlink: Likewise.
+	* tests/mv/part-rename: Likewise.
+	* tests/mv/part-symlink: Likewise.
+	* tests/mv/partition-perm: Likewise.
+	* tests/mv/sticky-to-xpart: Likewise.
+	* tests/mv/to-symlink: Likewise.
+	* tests/rm/one-file-system: Likewise.
+	* tests/sample-test: Likewise.
+
+	tests: generalize my-distcheck
+	* maint.mk (my-distcheck): Accommodate missing gnulib-tests.
+
+2008-05-26  Jim Meyering  <meyering@redhat.com>
+
+	reflect renaming of acl.c in gnulib
+	* POTFILES.in: s/acl.c/set-mode-acl.c/
+
+	test installation results more thoroughly
+	* maint.mk (my-distcheck): Ensure that properly-named binaries
+	are installed.  Also check all man pages, except [.1.
+	Move configure-time --prefix= to install-time prefix=.
+	(my-instcheck, install-transform-check): Define.
+
+	install many binaries at once, when possible
+	* src/Makefile.am (install-exec-am): Override the standard
+	automake-generated target, so we can decide whether to use
+	the usual install-one-by-one rule, or whether we can use
+	the new install-many-at-once rule:
+	(cu-install-binPROGRAMS): New rule.
+
+	* src/runcon.c: Add copyright comment.
+
+	adjust AUTHORS and check-AUTHORS rule to accommodate
+	* AUTHORS: Add coding: utf-8 comment at end.
+	Spell François' and Torbjörn's names properly.
+	* src/Makefile.am: Parse AUTHORS file more carefully.
+	Use perl to join now-split lines.
+	Use en_US.UTF-8 to generate --version output.
+
+	* src/c99-to-c89.diff: Adjust offsets.
+
+	adjust copyright dates
+
+	convert the rest to use proper_name -- manually
+	* src/base64.c (AUTHORS): Rename from AUTHOR, for consistency.
+
+	convert 3-author programs to use proper_name
+	g grep -E -l 'define AUTHORS "[^,]+", "[^,]+", "[^,]+"$'|xargs perl -pi -e \
+	  's/(define AUTHORS) ("[^,]+"), ("[^,]+"), ("[^,]+")$/$1 \\\n  proper_name ($2), \\\n  proper_name ($3), \\\n  proper_name ($4)/'
+
+	convert 2-author programs to use proper_name
+	g grep -E -l 'define AUTHORS "[^,]+", "[^,]+"$'|xargs perl -pi -e \
+	  's/(define AUTHORS) ("[^,]+"), ("[^,]+")$/$1 \\\n  proper_name ($2), \\\n  proper_name ($3)/'
+
+	convert single-author programs to use proper_name
+	g grep -E -l 'define AUTHORS "[^,]+"$'|xargs perl -pi -e \
+	  's/(define AUTHORS) ("[^,]+")$/$1 proper_name ($2)/'
+
+	use gnulib's proper_name_utf8 function, but *not* proper_name
+	* bootstrap.conf (gnulib_modules): Add propername.
+	(XGETTEXT_OPTIONS): Add options to tell xgettext about the functions.
+	* src/cat.c, src/cp.c, src/df.c, src/du.c, src/split.c:
+	Mark Torbjörn Granlund's name.
+	* src/ptx.c: Mark François Pinard's name.
+	Use "TRANSLATORS:" comment marker, rather than "Note to translators:".
+	* src/system.h: Include propername.h.
+	(proper_name): Define away.
+	* src/Makefile.am (cat_LDADD, df_LDADD, du_LDADD, ptx_LDADD, split_LDADD):
+	Initialize, so we can...
+	(cat_LDADD, cp_LDADD, df_LDADD, du_LDADD, ptx_LDADD, split_LDADD):
+	...Use "+=" to append $(LIBICONV) for each program that uses
+	proper_name_utf8.
+
+2008-05-24  Jim Meyering  <meyering@redhat.com>
+
+	* POTFILES.in: Add lib/copy-acl.c.
+
+2008-05-20  Jim Meyering  <meyering@redhat.com>
+
+	install: avoid a leak in currently-ifdef'd-out code
+	* src/install.c (setdefaultfilecon)
+	[ENABLE_WHEN_MATCHPATHCON_IS_MORE_EFFICIENT]:
+	Call matchpathcon_init_prefix only once.
+	Suggestion from Stephen Smalley.  Reported by Ben Webb in
+	<http://bugzilla.redhat.com/447410>.
+
+2008-05-19  Jim Meyering  <meyering@redhat.com>
+
+	use gnulib's base64 module, now that it's sync'd to match this one
+	* gl/lib/base64.c: Remove file.
+	* gl/lib/base64.h: Remove file.
+
+2008-05-19  Pádraig Brady  <P@draigBrady.com>
+
+	doc: clarify field delimiter description in uniq --help output
+	* src/uniq.c: Clarify in help output that field delimiters are
+	blanks and not the larger set of whitespace characters.
+
+2008-05-17  Jim Meyering  <meyering@redhat.com>
+
+	tests: skip when a debian libc6-2.7-11 bug makes printf segfault
+	* tests/misc/printf-surprise: Detect case of a low-memory-provoked
+	segfault and skip the test (this is actually a bug in snprintf).
+	For details, see http://bugs.debian.org/481543
+
+	tests: sync and update wc and du --files0-from tests
+	* tests/du/files0-from: Sync from tests/misc/wc-files0-from.
+	(minus-in-minus): New test.
+	Adjust for new diagnostics.
+	* tests/misc/wc-files0-from: Adjust for new diagnostics.
+
+	du, wc: merge improved --files0-from=F-related diagnostics
+	du gave a better diagnostic for one unusual case,
+	and wc gave a better diagnostic for a different one.
+	Now each diagnoses both unusual cases.
+	* src/du.c (main): Disallow '-' as file name when reading from stdin.
+	* src/wc.c (main): Give a better diagnostic for a zero-length file name.
+
+	test invalid-option handling in all programs
+	* tests/Makefile.am (TESTS): Add misc/invalid-opt.
+	* tests/misc/invalid-opt: New file.
+
+	tests: remove ugly /bin/sh wrapper around each perl-based test script
+	* tests/check.mk (TESTS_ENVIRONMENT): Save and restore TMPDIR around
+	envvar-check, so that the few scripts that require $TMPDIR don't fail.
+	This is also good to let a user's default TMPDIR setting be used e.g.,
+	in the search for an 'other-partition'.
+	FIXME: this is pretty ugly.  maybe undo it and find a better way.
+	(TESTS_ENVIRONMENT): Invoke perl scripts with $(PERL), and use -T
+	if the script requires that.  Otherwise, use $(SHELL).
+
+	* tests/misc/md5sum-newline: Create a file whose name contains
+	a newline in Perl (resort to using "system", since open refuses).
+
+	Fix old brokenness exposed by this change:
+	* tests/du/files0-from: Correct test not to rely on stdin
+	being attached to a non-tty.
+	* tests/misc/sort (3g, 3h, 3i): Likewise: add explicit empty input file.
+	Avoid warnings about using qw()-around-commas.
+
+	* tests/rm/fail-eperm: Now that this test is run from a temporary
+	subdirectory, adjust the full name of the "rm" program we're going
+	to run.
+
+	Change #!/bin/sh to #!/usr/bin/perl, and factor out the few lines
+	of boilerplate code to invoke perl.  Do not "require 5.00x";
+	a configure-time Perl test handles that
+	* tests/dd/skip-seek:
+	* tests/misc/base64:
+	* tests/misc/basename:
+	* tests/misc/cut:
+	* tests/misc/date:
+	* tests/misc/dircolors:
+	* tests/misc/dirname:
+	* tests/misc/expand:
+	* tests/misc/expr:
+	* tests/misc/factor:
+	* tests/misc/fmt:
+	* tests/misc/fold:
+	* tests/misc/head:
+	* tests/misc/head-elide-tail:
+	* tests/misc/join:
+	* tests/misc/ls-misc:
+	* tests/misc/md5sum:
+	* tests/misc/md5sum-newline:
+	* tests/misc/mktemp:
+	* tests/misc/od:
+	* tests/misc/paste:
+	* tests/misc/pr:
+	* tests/misc/printf-cov:
+	* tests/misc/seq:
+	* tests/misc/sha1sum:
+	* tests/misc/sha1sum-vec:
+	* tests/misc/sha224sum:
+	* tests/misc/sha256sum:
+	* tests/misc/sha384sum:
+	* tests/misc/sha512sum:
+	* tests/misc/sort-merge:
+	* tests/misc/stat-printf:
+	* tests/misc/sum:
+	* tests/misc/tac:
+	* tests/misc/tail:
+	* tests/misc/test:
+	* tests/misc/test-diag:
+	* tests/misc/tr:
+	* tests/misc/tsort:
+	* tests/misc/tty-eof:
+	* tests/misc/unexpand:
+	* tests/misc/uniq:
+	* tests/misc/wc:
+	* tests/misc/wc-files0-from:
+	* tests/misc/xstrtol:
+	* tests/mv/i-1:
+	* tests/pr/pr-tests:
+	* tests/rm/empty-name:
+	* tests/rm/fail-eperm:
+	* tests/rm/unreadable:
+
+2008-05-16  Jim Meyering  <meyering@redhat.com>
+
+	tests: allow to run Perl tests more cleanly
+	Before this change, perl tests were run via a #!/bin/sh script
+	in which perl was invoked via $(PERL) ... -- - <<\EOF.
+	That made some stty tests fail due to the way stdin was usurped.
+	* build-aux/check.mk (am__check_pre): Don't append $(SHELL) to this
+	nominally automake-internal variable.
+	* tests/check.mk (TESTS_ENVIRONMENT): Instead, define a shell function
+	here, and append it to the more user-visible $(TESTS_ENVIRONMENT).
+
+	tests: env-related clean up
+	* tests/Coreutils.pm: tiny clean-up: s/env/env --/
+	* tests/misc/help-version: Use "env" rather than an absolute file
+	name prefix.
+	* tests/misc/printf-surprise: Likewise.
+
+	tests: improve coverage of printf.c
+	* tests/misc/printf-cov: New file.
+	* tests/Makefile.am (TESTS): Add misc/printf-cov.
+	* tests/misc/help-version: Use env rather than abs file name prefix.
+
+	make HACKING slightly more generic
+	* HACKING: remove some uses of "coreutils"
+	Point to git's own SubmittingPatches URL.
+
+2008-05-15  Bruno Haible  <bruno@clisp.org>
+
+	doc: some Unicode characters cannot be specified via \u or \U
+	* doc/coreutils.texi (printf invocation): Clarify invalid ranges for
+	Unicode character escape syntax.
+
+2008-05-11  Jim Meyering  <meyering@redhat.com>
+
+	move sha256 and sha512 modules to gnulib
+	* bootstrap.conf (gnulib_modules) [sha256, sha512]: Add "crypto/"
+	prefix to module name, now that they come from gnulib.
+	* gl/lib/sha256.c: Remove file.
+	* gl/lib/sha256.h: Likewise.
+	* gl/lib/sha512.c: Likewise.
+	* gl/lib/sha512.h: Likewise.
+	* gl/lib/u64.h: Likewise.
+	* gl/m4/sha256.m4: Likewise.
+	* gl/m4/sha512.m4: Likewise.
+	* gl/modules/sha256: Likewise.
+	* gl/modules/sha512: Likewise.
+
+2008-05-10  Jim Meyering  <meyering@redhat.com>
+
+	now that the last of the mk-script-using tests is gone...
+	* tests/Makefile.am (EXTRA_DIST): Remove Makefile.am.in and mk-script.
+	Move/adjust SUBDIRS-related comments.
+	* tests/Makefile.am.in: Remove file, no longer used.
+	* tests/mk-script: Likewise.
+	* bootstrap: Remove coreutils-specific SUBDIRS-related code.
+
+	tests: remove directory, tests/join/
+	* configure.ac (AC_CONFIG_FILES): Remove tests/join/Makefile.
+	* tests/misc/join: New file, with tests from...
+	* tests/join/Test.pm: ...here.  Remove file.
+	* tests/Makefile.am (SUBDIRS): Remove definition.
+
+	* tests/misc/tac: Also perform stdin and piped tests.
+
+	tests: convert pr tests
+	* configure.ac (AC_CONFIG_FILES): Remove tests/pr/Makefile.
+	* tests/Makefile.am (SUBDIRS): Remove pr.
+	* tests/pr/pr-tests: New file, with tests from...
+	* tests/pr/Test.pm: ...here.  Remove file.
+	* tests/Makefile.am (EXTRA_DIST): Add $(pr_data).
+	(pr_data): List all of the pr's test-related data files.
+
+	tests: remove directory, tests/tail/
+	* configure.ac (AC_CONFIG_FILES): Remove tests/tail/Makefile.
+	* tests/Makefile.am (SUBDIRS): Remove tail.
+	* tests/misc/tail: New file, with tests from...
+	* tests/tail/Test.pm: ...here.  Remove file.
+
+2008-05-09  Bernhard Marx  <berny@bernhard-marx.de>
+
+	doc: improve description of "niceness" values
+	* doc/coreutils.texi (nice invocation):
+
+2008-05-09  Jim Meyering  <meyering@redhat.com>
+
+	tests: remove directory, tests/sort/
+	* configure.ac (AC_CONFIG_FILES): Remove tests/sort/Makefile.
+	* tests/Makefile.am (SUBDIRS): Remove sort.
+	* tests/misc/sort: New file, with tests from...
+	* tests/sort/Test.pm: ...here.  Remove file.
+
+2008-05-08  Bruno Haible  <bruno@clisp.org>
+
+	Speed up "wc -m" and "wc -w" in multibyte case.
+	* src/wc.c: Include mbchar.h.
+	(wc): New variable in_shift. Use it to avoid calling mbrtowc for most
+	ASCII characters.  Reported via Jan Engelhardt in
+	http://bugzilla.novell.com/381873 with discussion here
+	http://thread.gmane.org/gmane.comp.gnu.coreutils.bugs/13520
+
+2008-05-08  Jim Meyering  <meyering@redhat.com>
+
+	tests: remove directory, tests/tac/
+	* configure.ac (AC_CONFIG_FILES): Remove tests/tac/Makefile.
+	* tests/Makefile.am (SUBDIRS): Remove tac.
+	* tests/misc/tac: Many new tests, from...
+	* tests/tac/Test.pm: ...here.  Remove file.
+
+	tests: remove directory, tests/test/
+	* configure.ac (AC_CONFIG_FILES): Remove tests/test/Makefile.
+	* tests/Makefile.am (SUBDIRS): Remove test.
+	* tests/misc/test: Many new tests, from...
+	* tests/test/Test.pm: ...here.  Remove file.
+
+	tests: Coreutils.pm: support running a program that is a shell built-in
+	* tests/Coreutils.pm (run_tests): Add support for running a
+	program like 'test', that is a shell built-in.
+
+2008-05-06  Jim Meyering  <meyering@redhat.com>
+
+	* TODO: Bo Borgerson is rewriting support for cp --recursive
+
+	tests: remove directory, tests/tr/
+	* configure.ac (AC_CONFIG_FILES): Remove tests/tr/Makefile.
+	* tests/Makefile.am (SUBDIRS): Remove tr.
+	* tests/misc/tr: Many new tests, from...
+	* tests/tr/Test.pm: ...here.  Remove file.
+	* tests/tr/failures: Remove file.
+	* tests/tr/TODO: Remove file.
+
+	tests: skip another test if mcstransd is running
+	* tests/test-lib.sh (skip_if_mcstransd_is_running_): New function,
+	extracted from...
+	* tests/misc/chcon: ...here.  Use function, not open-coded test.
+	* tests/misc/selinux: Use the function here, too.
+	Require root, not non-root.
+	* tests/Makefile.am (root_tests): Add misc/selinux.
+
+	tests: translate uniq-z-test-adding code to new framework
+	* tests/misc/uniq (add-z-variants): New function.
+	Use it.
+
+	tests: remove directory, tests/uniq/
+	* configure.ac (AC_CONFIG_FILES): Remove tests/uniq/Makefile.
+	* tests/Makefile.am (SUBDIRS): Remove uniq.
+	* tests/misc/uniq: Many new tests, from...
+	* tests/uniq/Test.pm: ...here.  Remove file.
+
+	tests: remove directory, tests/cut/
+	* configure.ac (AC_CONFIG_FILES): Remove tests/cut/Makefile.
+	* tests/Makefile.am (SUBDIRS): Remove cut.
+	* tests/misc/cut: Many new tests, from...
+	* tests/cut/Test.pm: ...here.  Remove file.
+
+	tests: remove directory, tests/head/
+	* configure.ac (AC_CONFIG_FILES): Remove tests/head/Makefile.
+	* tests/Makefile.am (SUBDIRS): Remove head.
+	* tests/misc/head: New file, derived from ...
+	* tests/head/Test.pm: ...this.  Remove file.
+	* tests/head/in: Remove file.
+	* tests/head/in-1024: Remove file.
+	* tests/Coreutils.pm (triple_test): New function.
+
+	tests: Coreutils.pm improvements
+	* tests/Coreutils.pm: Allow test names longer than 12.
+	Print a useful diagnostic for bogus spec entry.
+
+	Handle the combination of IN_PIPE and ENV properly.
+	* tests/Coreutils.pm (run_tests): Put ENV right before command,
+	not before the "cat INPUT_FILE |" prefix.
+
+	tests: move "sparse-file" into test-lib.sh
+	* tests/sparse-file: Remove file  Move contents into ...
+	* tests/test-lib.sh (require_sparse_support_): ...here.  New function.
+	* tests/cp/sparse: Use the function, not the file.
+	* tests/du/8gb: Likewise.
+	* tests/Makefile.am (EXTRA_DIST): Remove sparse-file.
+
+	tests: move "group-names" into test-lib.sh
+	* tests/group-names: Remove file  Move contents into ...
+	* tests/test-lib.sh (require_membership_in_two_groups_): ...here.  New function.
+	* tests/chgrp/basic: Use the function, not the file.
+	* tests/chgrp/default-no-deref: Likewise.
+	* tests/chgrp/deref: Likewise.
+	* tests/chgrp/no-x: Likewise.
+	* tests/chgrp/posix-H: Likewise.
+	* tests/chgrp/recurse: Likewise.
+	* tests/cp/existing-perm-race: Likewise.
+	* tests/Makefile.am (EXTRA_DIST): Remove group-names.
+
+	tests: use printf+sed rather than yes+head+tr
+	* tests/misc/fmt-long-line: Minor clean-up.
+	Using "yes" like that has caused trouble in the past.
+
+	tests: save and restore TERM around use of TESTS_ENVIRONMENT,
+	now that TESTS_ENVIRONMENT unsets it.
+	* check.mk (am__check_pre): Save $TERM.
+	(am__check_post): Restore saved value of TERM and export.
+
+	tests: hoist the sourcing of "lang-default"
+	* tests/check.mk (TESTS_ENVIRONMENT): Source lang-default here, ...
+	... rather than in each of 100+ test scripts.
+	* tests/chgrp/basic:
+	* tests/chgrp/no-x:
+	* tests/chmod/c-option:
+	* tests/chmod/no-x:
+	* tests/chmod/setgid:
+	* tests/chmod/thru-dangling:
+	* tests/chmod/umask-x:
+	* tests/chmod/usage:
+	* tests/chown/basic:
+	* tests/chown/deref:
+	* tests/chown/preserve-root:
+	* tests/cp/abuse:
+	* tests/cp/acl:
+	* tests/cp/backup-is-src:
+	* tests/cp/cp-a-selinux:
+	* tests/cp/cp-i:
+	* tests/cp/cp-mv-backup:
+	* tests/cp/deref-slink:
+	* tests/cp/fail-perm:
+	* tests/cp/into-self:
+	* tests/cp/link-preserve:
+	* tests/cp/preserve-gid:
+	* tests/cp/same-file:
+	* tests/cp/slink-2-slink:
+	* tests/cp/special-f:
+	* tests/cp/symlink-slash:
+	* tests/cp/thru-dangling:
+	* tests/du/basic:
+	* tests/du/hard-link:
+	* tests/du/inacc-dest:
+	* tests/du/long-sloop:
+	* tests/du/no-x:
+	* tests/install/basic-1:
+	* tests/ln/hard-backup:
+	* tests/ln/sf-1:
+	* tests/ls/file-type:
+	* tests/ls/infloop:
+	* tests/ls/nameless-uid:
+	* tests/ls/rt-1:
+	* tests/ls/stat-failed:
+	* tests/ls/symlink-slash:
+	* tests/ls/x-option:
+	* tests/misc/chcon:
+	* tests/misc/chcon-fail:
+	* tests/misc/csplit:
+	* tests/misc/df-P:
+	* tests/misc/groups-dash:
+	* tests/misc/groups-version:
+	* tests/misc/nohup:
+	* tests/misc/printf-surprise:
+	* tests/misc/runcon-no-reorder:
+	* tests/misc/selinux:
+	* tests/misc/split-a:
+	* tests/misc/split-fail:
+	* tests/misc/tac-continue:
+	* tests/misc/wc-files0:
+	* tests/mkdir/p-v:
+	* tests/mkdir/selinux:
+	* tests/mv/acl:
+	* tests/mv/backup-dir:
+	* tests/mv/backup-is-src:
+	* tests/mv/childproof:
+	* tests/mv/diag:
+	* tests/mv/dir2dir:
+	* tests/mv/dup-source:
+	* tests/mv/force:
+	* tests/mv/hard-link-1:
+	* tests/mv/hard-verbose:
+	* tests/mv/i-2:
+	* tests/mv/i-3:
+	* tests/mv/i-4:
+	* tests/mv/i-5:
+	* tests/mv/i-link-no:
+	* tests/mv/into-self:
+	* tests/mv/into-self-2:
+	* tests/mv/into-self-3:
+	* tests/mv/mv-special-1:
+	* tests/mv/part-fail:
+	* tests/mv/part-symlink:
+	* tests/mv/partition-perm:
+	* tests/mv/perm-1:
+	* tests/mv/reply-no:
+	* tests/mv/sticky-to-xpart:
+	* tests/mv/update:
+	* tests/rm/cycle:
+	* tests/rm/dir-no-w:
+	* tests/rm/dir-nonrecur:
+	* tests/rm/fail-2eperm:
+	* tests/rm/fail-eacces:
+	* tests/rm/inaccessible:
+	* tests/rm/interactive-always:
+	* tests/rm/interactive-once:
+	* tests/rm/isatty:
+	* tests/rm/one-file-system:
+	* tests/rm/r-1:
+	* tests/rm/r-2:
+	* tests/rm/rm1:
+	* tests/rm/rm2:
+	* tests/rm/rm3:
+	* tests/rm/rm4:
+	* tests/rm/rm5:
+	* tests/rm/unread2:
+	* tests/rm/v-slash:
+	* tests/touch/fail-diag:
+	* tests/touch/not-owner:
+
+	tests: hoist envvar-check so it is run for every test
+	I.e., also for Perl-based tests; not just the ones using test-lib.sh.
+	* tests/check.mk (TESTS_ENVIRONMENT): Source envvar-check here, ...
+	* tests/test-lib.sh: ...not here.
+
+	fix typo in comments: s/ouput/output/
+	adjust spelling in that same comment: s/localisation/localization/
+
+	* tests/touch/Makefile.am: Remove now-unused file.
+
+	tests: test split more thoroughly
+	* tests/misc/split-a: Clean up.  Catch more failures.
+
+	* tests/misc/wc: Remove an unused variable.
+
+	tests: detect and check more uses of strcmp
+	* maint.mk (sc_prohibit_strcmp): Relax regexp to recognize other
+	formatting styles.
+
+	avoid problems with sign-extended "char" operand to is* functions
+	* src/cut.c (set_fields): Apply to_uchar to isblank operands.
+	* src/uniq.c (find_field): Likewise.
+	* src/seq.c (scan_arg): Likewise, for isspace.
+	* tests/misc/uniq: New file.  Test for the above, but only
+	when isspace(0240).
+	* tests/Makefile.am (TESTS): Add misc/uniq.
+	* configure.ac: Use gt_LOCALE_FR.
+	* tests/check.mk (TESTS_ENVIRONMENT): Propagate LOCALE_FR to scripts.
+	* NEWS: Mention the bug fixes.
+
+	Before this patch, on FreeBSD 6:
+
+	  $ printf 'x y z\nx \xa0 y z\n' > in
+	  $ LC_ALL=fr_FR.UTF-8 uniq -f2 in|tr ' ' .
+	  x.y.z
+	  x. .y.z
+
+	With the patch:
+
+	  $ LC_ALL=fr_FR.UTF-8 uniq -f2 in|tr ' ' .
+	  x.y.z
+
+	This also affected many other locales:
+	for i in $(locale -a); do test $(LC_ALL=$i ./uniq -f1 in|wc -l)
+	  = $(LC_ALL=$i uniq -f1 in|wc -l) || echo $i ; done
+	...
+	en_GB.ISO8859-1
+	en_GB.ISO8859-15
+	en_GB.UTF-8
+	en_IE.UTF-8
+	en_NZ.ISO8859-1
+	en_NZ.ISO8859-15
+	en_NZ.UTF-8
+	en_US.ISO8859-1
+	en_US.ISO8859-15
+	en_US.UTF-8
+	...
+
+2008-05-06  Bo Borgerson  <gigabo@gmail.com>
+
+	base64: remove some unused/redundant getopt code
+	* src/base64.c (struct option long_option): Remove redundant help/version
+	option items.
+	(main): Remove unused 'q' from short options.
+
+2008-05-06  Jim Meyering  <meyering@redhat.com>
+
+	help2man: fix perl 5.10 problem properly
+	* man/help2man: Do pull LC_ALL via "use POSIX".
+	Instead, limit the importing of gettext-related symbols
+	to just those two we'll use: gettext and textdomain.
+
+2008-05-05  Jim Meyering  <meyering@redhat.com>
+
+	help2man: avoid failure with Debian unstable's Perl 5.10.0
+	Avoid failure that produced this diagnostic:
+	Constant subroutine main::LC_ALL redefined at /.../Exporter.pm
+	* man/help2man: Don't include LC_ALL in the "use POSIX" list,
+	since Locale::gettext->import will get it.
+
+2008-05-05  Bo Borgerson  <gigabo@gmail.com>
+
+	base64 module: adjust API so it's compatible with gnulib's
+	* gl/lib/base64.c (base64_decode_ctx): If no context structure was passed in,
+	treat newlines as garbage (this is the historical behavior).  Formerly
+	base64_decode.
+	(base64_decode_alloc_ctx): Formerly base64_decode_alloc.
+	* gl/lib/base64.h (base64_decode): Macro for four-argument calls.
+	(base64_decode_alloc): Likewise.
+	* src/base64.c (do_decode): Call base64_decode_ctx instead of base64_decode.
+
+2008-05-05  Jim Meyering  <meyering@redhat.com>
+
+	* tests/misc/tac: Set execute bit.
+
+	tac: avoid segfault for e.g., "echo > x; tac -r x x"
+	* src/tac.c (tac_seekable): Move local "regs" declaration out
+	to file scope, so its values aren't clobbered between calls.
+	Discovered by Cristian Cadar, Daniel Dunbar and Dawson Engler,
+	reported in http://thread.gmane.org/gmane.comp.gnu.coreutils.bugs/13501
+	* NEWS: Mention the bug fix.
+	* tests/Makefile.am (TESTS): Add misc/tac.
+	* tests/misc/tac: New file.  Test for the above.
+
+2008-04-30  Jim Meyering  <meyering@redhat.com>
+
+	tests: avoid a "make check-root" failure when mcstransd is running
+	* tests/misc/chcon: Skip this test if mcstransd seems to be running.
+
+	tests: avoid spurious "make check-root" failure
+	* README (Running tests as root): Also set PATH in suggested "sudo"
+	command.  This avoids failure of at least tests/cp/cp-a-selinux
+	when the default PATH does not contain /sbin.
+	* tests/cp/cp-a-selinux: Don't redirect stderr to /dev/null.
+	"mkfs" was failing due to /sbin not being in PATH.
+
+2008-04-30  Bo Borgerson  <gigabo@gmail.com>
+
+	Add Daniel Dunbar's lcov instructions to HACKING
+	* HACKING: New section `Finding things to do', points to TODO file and
+	gives instructions on generating an html coverage report as provided by
+	Daniel Dunbar.
+	* TODO: Add item for improving test coverage.  Point back to HACKING.
+
+2008-04-29  Jim Meyering  <meyering@redhat.com>
+
+	chcon, runcon: make --help print the bug-reporting address
+	* src/chcon.c (usage): Use emit_bug_reporting_address.
+	* src/runcon.c (usage): Likewise.
+	* tests/misc/help-version: Don't exempt chcon and runcon.
+	* NEWS: Mention this.
+
+2008-04-28  Jim Meyering  <meyering@redhat.com>
+
+	tests: don't hard-code coreutils list of tests/ SUBDIRS in bootstrap
+	* bootstrap: Extract the list from tests/Makefile.am, and die
+	when it is empty -- it will be, eventually.
+
+2008-04-28  Bo Borgerson  <gigabo@gmail.com>
+
+	tests: remove references to tests/wc from bootstrap
+	* bootstrap: Don't try to initialize anything in tests/wc.
+
+2008-04-28  Jim Meyering  <meyering@redhat.com>
+
+	tests: slightly relax sc_cast_of_argument_to_free syntax check
+	* maint.mk (sc_cast_of_argument_to_free): Relax regexp slightly.
+	(sc_no_have_config_h): Add a comment.
+
+2008-04-28  Bo Borgerson  <gigabo@gmail.com>
+
+	tests: don't chmod after a failed chdir in cleanup
+	* tests/CuTmpdir.pm (chmod_tree): Don't chmod if chdir failed.
+
+	Only cleanup test dirs from the process that created them.
+	* tests/CuTmpdir.pm (import): Use closure around current PID to avoid cleanup races.
+
+2008-04-27  Jim Meyering  <meyering@redhat.com>
+
+	move wc tests from own subdir into a single script
+	* configure.ac (AC_CONFIG_FILES): Remove wc/Makefile from the list.
+	* tests/Makefile.am (SUBDIRS): Remove wc from the list.
+	(TESTS): Add misc/wc.
+	* tests/misc/wc: New file, derived from tests/wc/Tests.pm.
+	* tests/wc/Test.pm: Remove file.
+
+	tests: remove temporary log file upon catchable signal
+	* check.mk (am__check_pre): Add signal handler to remove $@-t.
+
+	tests: don't source envvar-check manually, test-lib.sh does it
+	* tests/cp/abuse: Remove ". $top_srcdir/tests/envvar-check".
+	* tests/cp/parent-perm: Likewise.
+	* tests/cp/special-f: Likewise.
+	* tests/ls/proc-selinux-segfault: Likewise.
+	* tests/misc/help-version: Likewise.
+	* tests/mkdir/selinux: Likewise.
+	* tests/mv/sticky-to-xpart: Likewise.
+	* tests/touch/now-owned-by-other: Likewise.
+	* tests/sample-test: Remove commented out suggestion.
+
+	tests: ensure at least one failure when $built_programs is empty
+	Before, this test and others would pass with empty $built_programs.
+	* tests/misc/help-version: Fail if built_programs is empty.
+
+	tests: improve perl-based tempdir handling
+	Before, upon interrupt, directories would be left behind.
+	* tests/CuTmpdir.pm: Remove temporary directory on interrupt.
+
+	tests: reorder some tests in the long list
+	* tests/Makefile.am (TESTS): Move some tests that use sleep
+	"up" in the list so that they don't delay even a little the
+	completion of "make check".  Also run a chmod test early.
+
+	tests: put root-only (usually skipped) tests at the end
+	* tests/Makefile.am (TESTS): Don't list root-only tests explicitly.
+	Instead, just use $(root_tests).
+	* tests/check.mk (vc_exe_in_TESTS): Now that root_tests are separate,
+	parse out the union of $(TESTS) and $(root_tests).
+
+	tests: move another file (expensive) into test-lib.sh
+	* tests/expensive: Remove file.  Move contents into ...
+	* tests/test-lib.sh (expensive_): ...here.  New function.
+	* tests/du/fd-leak: Update caller to use the new function.
+	* tests/mv/leak-fd: Likewise.
+	* tests/rm/hash: Likewise.
+	* tests/tail-2/big-4gb: Likewise.
+	* tests/Makefile.am (EXTRA_DIST): Remove its name.
+
+	tests: cp/perm (usually not run) was failing on systems with SELinux
+	* tests/cp/perm: Use stat to get the permission string, not ls.
+	This test was run only when RUN_VERY_EXPENSIVE_TESTS=yes was set
+	in the environment.  It would fail on SELinux-enable systems
+	because ls-generated permission strings would not match, e.g.,
+	"test _-rw-r--r--+ = _-rw-r--r--" would fail.
+
+	tweak HACKING advice
+
+2008-04-24  Jim Meyering  <meyering@redhat.com>
+
+	tests: do define built_programs
+	* tests/check.mk (built_programs): Define here, where it's used.
+	This definition was in now-removed tests/misc/Makefile.am.
+
+2008-04-23  Jim Meyering  <meyering@redhat.com>
+
+	tests: update commented-out examples in sample-test, too
+	* tests/sample-test: Use $top_srcdir/tests/SCRIPT_NAME, not
+	$top_srcdir/../SCRIPT_NAME here, too.
+
+2008-04-23  Ondřej Vašík  <ovasik@redhat.com>
+
+	tests: don't fail in a non-English locale
+	* tests/chmod/thru-dangling: Source lang-default.
+	* tests/cp/thru-dangling: Likewise.
+	* tests/misc/printf-surprise: Likewise.
+
+2008-04-23  Jim Meyering  <meyering@redhat.com>
+
+	tests: remove now-unused Makefile.am
+	* tests/misc/Makefile.am: Remove file.
+
+2008-04-23  Ondřej Vašík  <ovasik@redhat.com>
+
+	id: do not print SELinux context when invoked with a USERNAME argument
+	* NEWS: Mention new behaviour.
+	* src/id.c (main): Do not print SELinux context when user is specified.
+	* tests/Makefile.am: Add the new test.
+	* tests/misc/id-context: New file.  Test for the fix.
+	Problem reported by Ronny Buchmann in http://bugzilla.redhat.com/443485.
+
+2008-04-23  Jim Meyering  <meyering@redhat.com>
+
+	id: do print the AFS-specific nameless group ID (called a PAG)
+	In 6.11, we mistakenly suppressed the printing of certain group IDs,
+	thinking they were useless AFS-specific artifacts.
+	This change reverts that, so now they are printed once again.
+	http://thread.gmane.org/gmane.org.fsf.announce/867/focus=13345
+	This also reverts the bug-fix that applied solely to the new code
+	used to avoid printing those IDs
+
+	Revert "id bug fix: don't point to potentially clobbered static storage"
+	This reverts commit f7d1c59c224f81a8bab5fa2afcaf815988f50467.
+	Revert "Work around AFS bug: id and groups would print invalid group number."
+	This reverts commit b7a836c0a3524cda8ef79c30c3fe7ea759ae4656.
+	Revert "* src/c99-to-c89.diff: Accommodate a C99-ism in id.c."
+	This reverts commit d44893c5dba4150b4ded9cf6aad316c1ef620c9f.
+
+2008-04-22  Jim Meyering  <meyering@redhat.com>
+
+	build: move a project-specific definition to cfg.mk
+	* cfg.mk (old_NEWS_hash): Define here, ...
+	* maint.mk: ... not here.
+	(update-NEWS-hash): Update comment.
+	Suggestion from Eric Blake.
+
+	Accommodate building on OS/2 (www.ecomstation.com Ecs v2 rc4)
+	* configure.ac: Filter out carriage returns in more places.
+	Reported by Elbert Pol, details here:
+	http://thread.gmane.org/gmane.org.fsf.announce/867/focus=13332
+
+	guard against inserting a NEWS entry into a block for a prior release
+	Without a guard like this, it is far too easy to apply a patch
+	prepared against a preceding release, and not notice that a NEWS
+	entry is inserted into the wrong block.
+	* maint.mk (sc_immutable_NEWS): New rule.
+	(update-NEWS-hash): New rule to update the hard-coded hash.
+
+	tests: ensure that all exec-$PERL lines are the same
+	* maint.mk (sc_perl_coreutils_test): New rule.
+
+2008-04-21  Jim Meyering  <meyering@redhat.com>
+
+	tests: skip (don't fail) rm/one-file-system when mount --bind fails
+	* tests/rm/one-file-system: Reported by Allen Hewes.
+
+	tests: convert umask-check to a function
+	* tests/test-lib.sh (working_umask_or_skip_): New function, from...
+	* tests/umask-check: ...here.  Remove file.
+	* tests/Makefile.am (EXTRA_DIST): Remove umask-check.
+	* tests/mkdir/perm: Use the function rather than sourcing the file.
+	* tests/cp/cp-parents: Likewise.
+	* tests/cp/parent-perm: Likewise.
+	Bruno Haible reported that parent-perm was failing to run umask-check.
+
+	tests: adjust perl -I to use $top_srcdir/tests, not $srcdir/..
+
+	tests: clean up root tests; adapt to new layout
+	* tests/Makefile.am (root_tests): New list.
+	(check-root): Add 'SUBDIRS='.
+	(root-hint): Point to README.
+	* Makefile.am (check-root): Add 'SUBDIRS=' here, too.
+	* maint.mk (sc_root_tests): Adapt rule to new syntax used
+	in tests/Makefile.am.
+
+	Revamp test-related Makefiles.
+	One side-effect of this change is that "make check" now works even if
+	you put "." early in your shell's search PATH (don't do that!).
+
+	Remove all test-related Makefile.am files, except those generated
+	by mk-script.  Instead, tests/Makefile.am now lists not only the
+	tests directly under tests/, but also those in tests/*/ that are
+	not generated by mk-script, e.g., cp/abuse, cp/acl, mv/i-1, etc.
+
+	A lot of these changes are like this:
+
+	-. $srcdir/../lang-default
+	+. $top_srcdir/tests/lang-default
+
+	-. $srcdir/../test-lib.sh
+	+. $top_srcdir/tests/test-lib.sh
+
+	* configure.ac (AC_CONFIG_FILES): Remove corresponding Makefiles.
+	* tests/check.mk (vc_exe_in_TESTS): Relax syntax requirements.
+	* tests/rwx-to-mode: Remove file.  Rewritten as...
+	* tests/test-lib.sh (rwx_to_mode_): ...this new function.
+	* tests/Makefile.am (EXTRA_DIST): Remove rwx-to-mode.
+	(SUBDIRS): Remove each dir with a removed Makefile.am.
+	(EXTRA_DIST): Add $(TESTS).
+	(TESTS): Add over 300 entries.
+
+2008-04-20  Jim Meyering  <meyering@redhat.com>
+
+	* tests/misc/Makefile.am (built_programs): Remove.  Unused.
+
+	Use "env" to invoke potential built-ins.
+	* tests/misc/pwd-unreadable-parent: Invoke pwd via "env -- pwd",
+	rather than via an absolute name.
+	* tests/touch/not-owner: Likewise for test.
+	* tests/chmod/setgid: Likewise.
+
 2008-04-19  Jim Meyering  <meyering@redhat.com>
+
+	* .prev-version: Record previous version: 6.11.
 
 	Version 6.11.
 	* NEWS: Record release date.

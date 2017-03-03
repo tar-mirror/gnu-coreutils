@@ -1,5 +1,5 @@
 /* unexpand - convert blanks to tabs
-   Copyright (C) 89, 91, 1995-2006 Free Software Foundation, Inc.
+   Copyright (C) 89, 91, 1995-2006, 2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "unexpand"
 
-#define AUTHORS "David MacKenzie"
+#define AUTHORS proper_name ("David MacKenzie")
 
 /* The number of bytes added at a time to the amount of memory
    allocated for the output line.  */

@@ -1,5 +1,36 @@
 GNU coreutils NEWS                                    -*- outline -*-
 
+* Noteworthy changes in release 6.12 (2008-05-31) [stable]
+
+** Bug fixes
+
+  chcon, runcon: --help output now includes the bug-reporting address
+
+  cp -p copies permissions more portably.  For example, on MacOS X 10.5,
+  "cp -p some-fifo some-file" no longer fails while trying to copy the
+  permissions from the some-fifo argument.
+
+  id with no options now prints the SELinux context only when invoked
+  with no USERNAME argument.
+
+  id and groups once again print the AFS-specific nameless group-ID (PAG).
+  Printing of such large-numbered, kernel-only (not in /etc/group) group-IDs
+  was suppressed in 6.11 due to ignorance that they are useful.
+
+  uniq: avoid subtle field-skipping malfunction due to isblank misuse.
+  In some locales on some systems, isblank(240) (aka &nbsp) is nonzero.
+  On such systems, uniq --skip-fields=N would fail to skip the proper
+  number of fields for some inputs.
+
+  tac: avoid segfault with --regex (-r) and multiple files, e.g.,
+  "echo > x; tac -r x x".  [bug present at least in textutils-1.8b, from 1992]
+
+** Changes in behavior
+
+  install once again sets SELinux context, when possible
+  [it was deliberately disabled in 6.9.90]
+
+
 * Noteworthy changes in release 6.11 (2008-04-19) [stable]
 
 ** Bug fixes

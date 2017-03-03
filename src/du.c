@@ -1,5 +1,5 @@
 /* du -- summarize disk usage
-   Copyright (C) 1988-1991, 1995-2007 Free Software Foundation, Inc.
+   Copyright (C) 1988-1991, 1995-2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -50,7 +50,10 @@ extern bool fts_debug;
 #define PROGRAM_NAME "du"
 
 #define AUTHORS \
-  "Torbjorn Granlund", "David MacKenzie, Paul Eggert", "Jim Meyering"
+  proper_name_utf8 ("Torbjorn Granlund", "Torbj\303\266rn Granlund"), \
+  proper_name ("David MacKenzie"), \
+  proper_name ("Paul Eggert"), \
+  proper_name ("Jim Meyering")
 
 #if DU_DEBUG
 # define FTS_CROSS_CHECK(Fts) fts_cross_check (Fts)
@@ -479,7 +482,7 @@ process_file (FTS *fts, FTSENT *ent)
   bool skip;
 
   /* If necessary, set FTS_SKIP before returning.  */
-  skip = excluded_file_name (exclude, ent->fts_path);
+  skip = excluded_file_name (exclude, file);
   if (skip)
     fts_set (fts, ent, FTS_SKIP);
 
@@ -977,10 +980,22 @@ main (int argc, char **argv)
 	if ( ! files[i])
 	  break;
 
+	if (files_from && STREQ (files_from, "-") && STREQ (files[i], "-"))
+	  {
+	    /* Give a better diagnostic in an unusual case:
+	       printf - | du --files0-from=- */
+	    error (0, 0, _("when reading file names from stdin, "
+			   "no file name of %s allowed"),
+		   quote ("-"));
+	    continue;
+	  }
+
 	if (files[i][0])
 	  i++;
 	else
 	  {
+	    /* Diagnose a zero-length file name.  When it's one
+	       among many, knowing the record number may help.  */
 	    if (files_from)
 	      {
 		/* Using the standard `filename:line-number:' prefix here is

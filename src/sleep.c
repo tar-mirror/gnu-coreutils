@@ -1,5 +1,6 @@
 /* sleep - delay for a specified amount of time.
-   Copyright (C) 84, 1991-1997, 1999-2005, 2007 Free Software Foundation, Inc.
+   Copyright (C) 84, 1991-1997, 1999-2005, 2007-2008
+   Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,7 +31,9 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "sleep"
 
-#define AUTHORS "Jim Meyering", "Paul Eggert"
+#define AUTHORS \
+  proper_name ("Jim Meyering"), \
+  proper_name ("Paul Eggert")
 
 /* The name by which this program was run. */
 char *program_name;

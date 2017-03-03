@@ -2,7 +2,7 @@
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 #line 1
 /* Provide a more complete sys/stat header file.
-   Copyright (C) 2006, 2007 Free Software Foundation, Inc.
+   Copyright (C) 2006-2008 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,6 +31,12 @@
 
 #ifndef _GL_SYS_STAT_H
 #define _GL_SYS_STAT_H
+
+/* Before doing "#define mkdir rpl_mkdir" below, we need to include all
+   headers that may declare mkdir().  */
+#if (defined _WIN32 || defined __WIN32__) && ! defined __CYGWIN__
+# include <io.h>
+#endif
 
 #ifndef S_IFMT
 # define S_IFMT 0170000
@@ -264,11 +270,15 @@
 # define lstat stat
 #endif
 
+#if @REPLACE_MKDIR@
+# undef mkdir
+# define mkdir rpl_mkdir
+extern int mkdir (char const *name, mode_t mode);
+#else
 /* mingw's _mkdir() function has 1 argument, but we pass 2 arguments.
    Additionally, it declares _mkdir (and depending on compile flags, an
-   alias mkdir), only in the nonstandard io.h.  */
-#if ! @HAVE_DECL_MKDIR@ && @HAVE_IO_H@
-# include <io.h>
+   alias mkdir), only in the nonstandard <io.h>, which is included above.  */
+# if (defined _WIN32 || defined __WIN32__) && ! defined __CYGWIN__
 
 static inline int
 rpl_mkdir (char const *name, mode_t mode)
@@ -276,7 +286,8 @@ rpl_mkdir (char const *name, mode_t mode)
   return _mkdir (name);
 }
 
-# define mkdir rpl_mkdir
+#  define mkdir rpl_mkdir
+# endif
 #endif
 
 #endif /* _GL_SYS_STAT_H */

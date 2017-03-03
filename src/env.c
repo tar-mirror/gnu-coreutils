@@ -1,5 +1,5 @@
 /* env - run a program in a modified environment
-   Copyright (C) 1986, 1991-2005, 2007 Free Software Foundation, Inc.
+   Copyright (C) 1986, 1991-2005, 2007-2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -88,7 +88,9 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "env"
 
-#define AUTHORS "Richard Mlynarik", "David MacKenzie"
+#define AUTHORS \
+  proper_name ("Richard Mlynarik"), \
+  proper_name ("David MacKenzie")
 
 int putenv ();
 

@@ -180,10 +180,12 @@ local_wcslen (const wchar_t *s)
 # endif
 #else
   /* TCHAR_T is char.  */
-# /* Use snprintf if it exists under the name 'snprintf' or '_snprintf'.
+  /* Use snprintf if it exists under the name 'snprintf' or '_snprintf'.
      But don't use it on BeOS, since BeOS snprintf produces no output if the
-     size argument is >= 0x3000000.  */
-# if (HAVE_DECL__SNPRINTF || HAVE_SNPRINTF) && !defined __BEOS__
+     size argument is >= 0x3000000.
+     Also don't use it on Linux libc5, since there snprintf with size = 1
+     writes any output without bounds, like sprintf.  */
+# if (HAVE_DECL__SNPRINTF || HAVE_SNPRINTF) && !defined __BEOS__ && !(__GNU_LIBRARY__ == 1)
 #  define USE_SNPRINTF 1
 # else
 #  define USE_SNPRINTF 0
@@ -200,6 +202,21 @@ local_wcslen (const wchar_t *s)
 #endif
 /* Here we need to call the native sprintf, not rpl_sprintf.  */
 #undef sprintf
+
+/* GCC >= 4.0 with -Wall emits unjustified "... may be used uninitialized"
+   warnings in this file.  Use -Dlint to suppress them.  */
+#ifdef lint
+# define IF_LINT(Code) Code
+#else
+# define IF_LINT(Code) /* empty */
+#endif
+
+/* Avoid some warnings from "gcc -Wshadow".
+   This file doesn't use the exp() and remainder() functions.  */
+#undef exp
+#define exp expo
+#undef remainder
+#define remainder rem
 
 #if (NEED_PRINTF_DIRECTIVE_A || NEED_PRINTF_LONG_DOUBLE || NEED_PRINTF_DOUBLE || NEED_PRINTF_INFINITE_DOUBLE) && !defined IN_LIBINTL
 /* Determine the decimal-point character according to the current locale.  */
@@ -1199,7 +1216,7 @@ scale10_round_decimal_decoded (int e, mpn_t m, void *memory, int n)
 static char *
 scale10_round_decimal_long_double (long double x, int n)
 {
-  int e;
+  int e IF_LINT(= 0);
   mpn_t m;
   void *memory = decode_long_double (x, &e, &m);
   return scale10_round_decimal_decoded (e, m, memory, n);
@@ -1217,7 +1234,7 @@ scale10_round_decimal_long_double (long double x, int n)
 static char *
 scale10_round_decimal_double (double x, int n)
 {
-  int e;
+  int e IF_LINT(= 0);
   mpn_t m;
   void *memory = decode_double (x, &e, &m);
   return scale10_round_decimal_decoded (e, m, memory, n);
@@ -1304,9 +1321,9 @@ floorlog10l (long double x)
     }
   /* Now 0.95 <= z <= 1.01.  */
   z = 1 - z;
-  /* log(1-z) = - z - z^2/2 - z^3/3 - z^4/4 - ...
+  /* log2(1-z) = 1/log(2) * (- z - z^2/2 - z^3/3 - z^4/4 - ...)
      Four terms are enough to get an approximation with error < 10^-7.  */
-  l -= z * (1.0 + z * (0.5 + z * ((1.0 / 3) + z * 0.25)));
+  l -= 1.4426950408889634074 * z * (1.0 + z * (0.5 + z * ((1.0 / 3) + z * 0.25)));
   /* Finally multiply with log(2)/log(10), yields an approximation for
      log10(x).  */
   l *= 0.30102999566398119523;
@@ -1395,9 +1412,9 @@ floorlog10 (double x)
     }
   /* Now 0.95 <= z <= 1.01.  */
   z = 1 - z;
-  /* log(1-z) = - z - z^2/2 - z^3/3 - z^4/4 - ...
+  /* log2(1-z) = 1/log(2) * (- z - z^2/2 - z^3/3 - z^4/4 - ...)
      Four terms are enough to get an approximation with error < 10^-7.  */
-  l -= z * (1.0 + z * (0.5 + z * ((1.0 / 3) + z * 0.25)));
+  l -= 1.4426950408889634074 * z * (1.0 + z * (0.5 + z * ((1.0 / 3) + z * 0.25)));
   /* Finally multiply with log(2)/log(10), yields an approximation for
      log10(x).  */
   l *= 0.30102999566398119523;
@@ -1406,6 +1423,20 @@ floorlog10 (double x)
 }
 
 # endif
+
+/* Tests whether a string of digits consists of exactly PRECISION zeroes and
+   a single '1' digit.  */
+static int
+is_borderline (const char *digits, size_t precision)
+{
+  for (; precision > 0; precision--, digits++)
+    if (*digits != '0')
+      return 0;
+  if (*digits != '1')
+    return 0;
+  digits++;
+  return *digits == '\0';
+}
 
 #endif
 
@@ -2856,8 +2887,32 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
 					  exponent += 1;
 					adjusted = 1;
 				      }
-
 				    /* Here ndigits = precision+1.  */
+				    if (is_borderline (digits, precision))
+				      {
+					/* Maybe the exponent guess was too high
+					   and a smaller exponent can be reached
+					   by turning a 10...0 into 9...9x.  */
+					char *digits2 =
+					  scale10_round_decimal_long_double (arg,
+									     (int)precision - exponent + 1);
+					if (digits2 == NULL)
+					  {
+					    free (digits);
+					    END_LONG_DOUBLE_ROUNDING ();
+					    goto out_of_memory;
+					  }
+					if (strlen (digits2) == precision + 1)
+					  {
+					    free (digits);
+					    digits = digits2;
+					    exponent -= 1;
+					  }
+					else
+					  free (digits2);
+				      }
+				    /* Here ndigits = precision+1.  */
+
 				    *p++ = digits[--ndigits];
 				    if ((flags & FLAG_ALT) || precision > 0)
 				      {
@@ -2967,6 +3022,30 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
 					else
 					  exponent += 1;
 					adjusted = 1;
+				      }
+				    /* Here ndigits = precision.  */
+				    if (is_borderline (digits, precision - 1))
+				      {
+					/* Maybe the exponent guess was too high
+					   and a smaller exponent can be reached
+					   by turning a 10...0 into 9...9x.  */
+					char *digits2 =
+					  scale10_round_decimal_long_double (arg,
+									     (int)(precision - 1) - exponent + 1);
+					if (digits2 == NULL)
+					  {
+					    free (digits);
+					    END_LONG_DOUBLE_ROUNDING ();
+					    goto out_of_memory;
+					  }
+					if (strlen (digits2) == precision)
+					  {
+					    free (digits);
+					    digits = digits2;
+					    exponent -= 1;
+					  }
+					else
+					  free (digits2);
 				      }
 				    /* Here ndigits = precision.  */
 
@@ -3209,8 +3288,31 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
 					  exponent += 1;
 					adjusted = 1;
 				      }
-
 				    /* Here ndigits = precision+1.  */
+				    if (is_borderline (digits, precision))
+				      {
+					/* Maybe the exponent guess was too high
+					   and a smaller exponent can be reached
+					   by turning a 10...0 into 9...9x.  */
+					char *digits2 =
+					  scale10_round_decimal_double (arg,
+									(int)precision - exponent + 1);
+					if (digits2 == NULL)
+					  {
+					    free (digits);
+					    goto out_of_memory;
+					  }
+					if (strlen (digits2) == precision + 1)
+					  {
+					    free (digits);
+					    digits = digits2;
+					    exponent -= 1;
+					  }
+					else
+					  free (digits2);
+				      }
+				    /* Here ndigits = precision+1.  */
+
 				    *p++ = digits[--ndigits];
 				    if ((flags & FLAG_ALT) || precision > 0)
 				      {
@@ -3333,6 +3435,29 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
 					else
 					  exponent += 1;
 					adjusted = 1;
+				      }
+				    /* Here ndigits = precision.  */
+				    if (is_borderline (digits, precision - 1))
+				      {
+					/* Maybe the exponent guess was too high
+					   and a smaller exponent can be reached
+					   by turning a 10...0 into 9...9x.  */
+					char *digits2 =
+					  scale10_round_decimal_double (arg,
+									(int)(precision - 1) - exponent + 1);
+					if (digits2 == NULL)
+					  {
+					    free (digits);
+					    goto out_of_memory;
+					  }
+					if (strlen (digits2) == precision)
+					  {
+					    free (digits);
+					    digits = digits2;
+					    exponent -= 1;
+					  }
+					else
+					  free (digits2);
 				      }
 				    /* Here ndigits = precision.  */
 
@@ -3586,7 +3711,7 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
 #endif
 		TCHAR_T *fbp;
 		unsigned int prefix_count;
-		int prefixes[2];
+		int prefixes[2] IF_LINT (= { 0 });
 #if !USE_SNPRINTF
 		size_t tmp_length;
 		TCHAR_T tmpbuf[700];

@@ -1,5 +1,5 @@
 /* link utility for GNU.
-   Copyright (C) 2001, 2002, 2004, 2007 Free Software Foundation, Inc.
+   Copyright (C) 2001, 2002, 2004, 2007-2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "link"
 
-#define AUTHORS "Michael Stone"
+#define AUTHORS proper_name ("Michael Stone")
 
 /* Name this program was run with.  */
 char *program_name;

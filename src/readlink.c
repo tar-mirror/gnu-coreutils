@@ -1,5 +1,5 @@
 /* readlink -- display value of a symbolic link.
-   Copyright (C) 2002-2007 Free Software Foundation, Inc.
+   Copyright (C) 2002-2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "readlink"
 
-#define AUTHORS "Dmitry V. Levin"
+#define AUTHORS proper_name ("Dmitry V. Levin")
 
 /* Name this program was run with.  */
 char *program_name;

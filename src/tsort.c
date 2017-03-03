@@ -1,5 +1,5 @@
 /* tsort - topological sort.
-   Copyright (C) 1998-2005, 2007 Free Software Foundation, Inc.
+   Copyright (C) 1998-2005, 2007-2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "tsort"
 
-#define AUTHORS "Mark Kettenis"
+#define AUTHORS proper_name ("Mark Kettenis")
 
 /* Token delimiters when reading from a file.  */
 #define DELIM " \t\n"

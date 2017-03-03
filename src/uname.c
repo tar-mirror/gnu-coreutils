@@ -1,6 +1,6 @@
 /* uname -- print system information
 
-   Copyright (C) 1989, 1992, 1993, 1996, 1997, 1999-2005, 2007
+   Copyright (C) 1989, 1992, 1993, 1996, 1997, 1999-2005, 2007-2008
    Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
@@ -58,7 +58,7 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME (uname_mode == UNAME_UNAME ? "uname" : "arch")
 
-#define AUTHORS "David MacKenzie"
+#define AUTHORS proper_name ("David MacKenzie")
 #define ARCH_AUTHORS "David MacKenzie", "Karel Zak"
 
 /* Values that are bitwise or'd into `toprint'. */

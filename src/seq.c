@@ -38,7 +38,7 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "seq"
 
-#define AUTHORS "Ulrich Drepper"
+#define AUTHORS proper_name ("Ulrich Drepper")
 
 /* If true print all number with equal width.  */
 static bool equal_width;
@@ -145,7 +145,7 @@ scan_arg (const char *arg)
     }
 
   /* We don't output spaces or '+' so don't include in width */
-  while (isspace (*arg) || *arg == '+')
+  while (isspace (to_uchar (*arg)) || *arg == '+')
     arg++;
 
   ret.width = strlen (arg);

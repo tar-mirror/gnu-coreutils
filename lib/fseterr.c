@@ -21,6 +21,8 @@
 
 #include <errno.h>
 
+#include "stdio-impl.h"
+
 void
 fseterr (FILE *fp)
 {
@@ -29,26 +31,12 @@ fseterr (FILE *fp)
      fast macros.  */
 #if defined _IO_ferror_unlocked || __GNU_LIBRARY__ == 1 /* GNU libc, BeOS, Linux libc5 */
   fp->_flags |= _IO_ERR_SEEN;
-#elif defined __sferror             /* FreeBSD, NetBSD, OpenBSD, MacOS X, Cygwin */
-  fp->_flags |= __SERR;
+#elif defined __sferror || defined __DragonFly__ /* FreeBSD, NetBSD, OpenBSD, DragonFly, MacOS X, Cygwin */
+  fp_->_flags |= __SERR;
 #elif defined __EMX__               /* emx+gcc */
   fp->_flags |= _IOERR;
 #elif defined _IOERR                /* AIX, HP-UX, IRIX, OSF/1, Solaris, OpenServer, mingw */
-# if defined __sun && defined _LP64 /* Solaris/{SPARC,AMD64} 64-bit */
-#  define fp_ ((struct { unsigned char *_ptr; \
-			 unsigned char *_base; \
-			 unsigned char *_end; \
-			 long _cnt; \
-			 int _file; \
-			 unsigned int _flag; \
-		       } *) fp)
   fp_->_flag |= _IOERR;
-# else
-#  if defined _SCO_DS               /* OpenServer */
-#   define _flag __flag
-#  endif
-  fp->_flag |= _IOERR;
-# endif
 #elif defined __UCLIBC__            /* uClibc */
   fp->__modeflags |= __FLAG_ERROR;
 #elif defined __QNX__               /* QNX */

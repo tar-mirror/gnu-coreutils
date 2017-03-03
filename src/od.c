@@ -1,5 +1,5 @@
 /* od -- dump files in octal and other formats
-   Copyright (C) 92, 1995-2007 Free Software Foundation, Inc.
+   Copyright (C) 92, 1995-2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "od"
 
-#define AUTHORS "Jim Meyering"
+#define AUTHORS proper_name ("Jim Meyering")
 
 #include <float.h>
 

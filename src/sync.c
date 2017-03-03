@@ -1,5 +1,5 @@
 /* sync - update the super block
-   Copyright (C) 1994-2004 Free Software Foundation, Inc.
+   Copyright (C) 1994-2004, 2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "sync"
 
-#define AUTHORS "Jim Meyering"
+#define AUTHORS proper_name ("Jim Meyering")
 
 /* The name this program was run with. */
 char *program_name;

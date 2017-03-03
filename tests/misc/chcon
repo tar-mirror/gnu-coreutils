@@ -6,10 +6,10 @@ if test "$VERBOSE" = yes; then
   chcon --version
 fi
 
-. $srcdir/../lang-default
-. $srcdir/../test-lib.sh
+. $srcdir/test-lib.sh
 require_root_
 require_selinux_
+skip_if_mcstransd_is_running_
 
 mkdir -p d/sub/s2 || framework_failure
 touch f g d/sub/1 d/sub/2 || framework_failure

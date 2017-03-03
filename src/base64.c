@@ -1,5 +1,5 @@
 /* Base64 encode/decode strings or files.
-   Copyright (C) 2004, 2005, 2006, 2007 Free Software Foundation, Inc.
+   Copyright (C) 2004-2008 Free Software Foundation, Inc.
 
    This file is part of Base64.
 
@@ -35,7 +35,7 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "base64"
 
-#define AUTHOR "Simon Josefsson"
+#define AUTHORS proper_name ("Simon Josefsson")
 
 /* The invocation name of this program.  */
 char *program_name;
@@ -44,8 +44,6 @@ static const struct option long_options[] = {
   {"decode", no_argument, 0, 'd'},
   {"wrap", required_argument, 0, 'w'},
   {"ignore-garbage", no_argument, 0, 'i'},
-  {"help", no_argument, 0, GETOPT_HELP_CHAR},
-  {"version", no_argument, 0, GETOPT_VERSION_CHAR},
 
   {GETOPT_HELP_OPTION_DECL},
   {GETOPT_VERSION_OPTION_DECL},
@@ -223,7 +221,7 @@ do_decode (FILE *in, FILE *out, bool ignore_garbage)
 	  if (k == 1 && ctx.i == 0)
 	    break;
 	  n = BLOCKSIZE;
-	  ok = base64_decode (&ctx, inbuf, (k == 0 ? sum : 0), outbuf, &n);
+	  ok = base64_decode_ctx (&ctx, inbuf, (k == 0 ? sum : 0), outbuf, &n);
 
 	  if (fwrite (outbuf, 1, n, out) < n)
 	    error (EXIT_FAILURE, errno, _("write error"));
@@ -257,7 +255,7 @@ main (int argc, char **argv)
 
   atexit (close_stdout);
 
-  while ((opt = getopt_long (argc, argv, "dqiw:", long_options, NULL)) != -1)
+  while ((opt = getopt_long (argc, argv, "diw:", long_options, NULL)) != -1)
     switch (opt)
       {
       case 'd':
@@ -276,7 +274,7 @@ main (int argc, char **argv)
 
 	case_GETOPT_HELP_CHAR;
 
-	case_GETOPT_VERSION_CHAR (PROGRAM_NAME, AUTHOR);
+	case_GETOPT_VERSION_CHAR (PROGRAM_NAME, AUTHORS);
 
       default:
 	usage (EXIT_FAILURE);

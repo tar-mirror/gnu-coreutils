@@ -1,5 +1,5 @@
 /* Exit with a status code indicating success.
-   Copyright (C) 1999-2003, 2005, 2007 Free Software Foundation, Inc.
+   Copyright (C) 1999-2003, 2005, 2007-2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 # define PROGRAM_NAME "false"
 #endif
 
-#define AUTHORS "Jim Meyering"
+#define AUTHORS proper_name ("Jim Meyering")
 
 /* The name this program was run with. */
 char *program_name;

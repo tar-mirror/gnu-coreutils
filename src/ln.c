@@ -1,5 +1,5 @@
 /* `ln' program to create links between files.
-   Copyright (C) 1986, 1989-1991, 1995-2007 Free Software Foundation, Inc.
+   Copyright (C) 1986, 1989-1991, 1995-2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,7 +35,9 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "ln"
 
-#define AUTHORS "Mike Parker", "David MacKenzie"
+#define AUTHORS \
+  proper_name ("Mike Parker"), \
+  proper_name ("David MacKenzie")
 
 #ifndef ENABLE_HARD_LINK_TO_SYMLINK_WARNING
 # define ENABLE_HARD_LINK_TO_SYMLINK_WARNING 0

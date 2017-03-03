@@ -53,6 +53,8 @@ AC_DEFUN([gl_INIT],
   m4_pushdef([AC_LIBOBJ], m4_defn([gl_LIBOBJ]))
   m4_pushdef([AC_REPLACE_FUNCS], m4_defn([gl_REPLACE_FUNCS]))
   m4_pushdef([AC_LIBSOURCES], m4_defn([gl_LIBSOURCES]))
+  m4_pushdef([gl_LIBSOURCES_LIST], [])
+  m4_pushdef([gl_LIBSOURCES_DIR], [])
   gl_COMMON
   gl_source_base='lib'
   gl_EOVERFLOW
@@ -63,6 +65,7 @@ AC_DEFUN([gl_INIT],
   AC_PROG_MKDIR_P
   gl_ASSERT
   gl_FUNC_ATEXIT
+  AB_INIT
   gl_BACKUPFILE
   gl_FUNC_BASE64
   gl_C_STRTOD
@@ -85,6 +88,8 @@ AC_DEFUN([gl_INIT],
   gl_CONFIG_H
   gl_MD5
   gl_SHA1
+  gl_SHA256
+  gl_SHA512
   gl_CYCLE_CHECK
   gl_CHECK_TYPE_STRUCT_DIRENT_D_INO
   gl_CHECK_TYPE_STRUCT_DIRENT_D_TYPE
@@ -123,6 +128,7 @@ AC_DEFUN([gl_INIT],
   gl_FPRINTFTIME
   gl_FUNC_FPURGE
   gl_FUNC_FREADING
+  AC_REQUIRE([AC_C_INLINE])
   gl_FUNC_FREXP_NO_LIBM
   gl_MATH_MODULE_INDICATOR([frexp])
   gl_FUNC_FREXPL_NO_LIBM
@@ -183,6 +189,7 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_ICONV_OPEN
   gl_IDCACHE
   gl_INET_NTOP
+  gl_ARPA_INET_MODULE_INDICATOR([inet_ntop])
   gl_INLINE
   gl_INTTOSTR
   gl_INTTYPES_H
@@ -209,8 +216,13 @@ AC_DEFUN([gl_INIT],
   gl_MALLOCA
   gl_MATH_H
   gl_MBCHAR
+  gl_MBITER
   gl_FUNC_MBSCASECMP
   gl_STRING_MODULE_INDICATOR([mbscasecmp])
+  gl_FUNC_MBSLEN
+  gl_STRING_MODULE_INDICATOR([mbslen])
+  gl_FUNC_MBSSTR
+  gl_STRING_MODULE_INDICATOR([mbsstr])
   gl_MBSWIDTH
   gl_MBITER
   gl_MEMCASECMP
@@ -249,6 +261,9 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_PRINTF_FREXP
   gl_FUNC_PRINTF_FREXPL
   m4_divert_text([INIT_PREPARE], [gl_printf_safe=yes])
+  m4_ifdef([AM_XGETTEXT_OPTION],
+    [AM_XGETTEXT_OPTION([--keyword='proper_name:1,\"This is a proper name. See the gettext manual, section Names.\"'])
+     AM_XGETTEXT_OPTION([--keyword='proper_name_utf8:1,\"This is a proper name. See the gettext manual, section Names.\"'])])
   gl_FUNC_PUTENV
   gl_STDLIB_MODULE_INDICATOR([putenv])
   gl_QUOTE
@@ -269,6 +284,7 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_RMDIR_NOTEMPTY
   gl_ROOT_DEV_INO
   gl_FUNC_RPMATCH
+  gl_STDLIB_MODULE_INDICATOR([rpmatch])
   gl_SAFE_READ
   gl_SAFE_WRITE
   gl_SAME
@@ -290,8 +306,6 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_SETENV
   gl_STDLIB_MODULE_INDICATOR([setenv])
   gl_SETTIME
-  gl_SHA256
-  gl_SHA512
   gl_FUNC_SIG2STR
   gl_SIGNBIT
   gl_MATH_MODULE_INDICATOR([signbit])
@@ -318,6 +332,10 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_STRERROR
   gl_STRING_MODULE_INDICATOR([strerror])
   gl_FUNC_GNU_STRFTIME
+  if test $gl_cond_libtool = false; then
+    gl_ltlibdeps="$gl_ltlibdeps $LTLIBICONV"
+    gl_libdeps="$gl_libdeps $LIBICONV"
+  fi
   gl_HEADER_STRING_H
   gl_FUNC_STRNDUP
   gl_STRING_MODULE_INDICATOR([strndup])
@@ -346,6 +364,7 @@ AC_DEFUN([gl_INIT],
   gl_HEADER_TIME_H
   gl_TIME_R
   gl_TIMESPEC
+  gl_FUNC_MBRTOWC
   gl_FUNC_TZSET_CLOBBER
   gl_UNICODEIO
   gl_UNISTD_H
@@ -393,6 +412,19 @@ AC_DEFUN([gl_INIT],
   gl_XSTRTOL
   gl_XSTRTOLD
   gl_YESNO
+  m4_ifval(gl_LIBSOURCES_LIST, [
+    m4_syscmd([test ! -d ]gl_LIBSOURCES_DIR[ ||
+      for gl_file in ]gl_LIBSOURCES_LIST[ ; do
+        if test ! -r ]gl_LIBSOURCES_DIR[/$gl_file ; then
+          echo "missing file ]gl_LIBSOURCES_DIR[/$gl_file" >&2
+          exit 1
+        fi
+      done])dnl
+      m4_if(m4_sysval, [0], [],
+        [AC_FATAL([expected source file, required through AC_LIBSOURCES, not found])])
+  ])
+  m4_popdef([gl_LIBSOURCES_DIR])
+  m4_popdef([gl_LIBSOURCES_LIST])
   m4_popdef([AC_LIBSOURCES])
   m4_popdef([AC_REPLACE_FUNCS])
   m4_popdef([AC_LIBOBJ])
@@ -415,6 +447,8 @@ AC_DEFUN([gl_INIT],
   m4_pushdef([AC_LIBOBJ], m4_defn([gltests_LIBOBJ]))
   m4_pushdef([AC_REPLACE_FUNCS], m4_defn([gltests_REPLACE_FUNCS]))
   m4_pushdef([AC_LIBSOURCES], m4_defn([gltests_LIBSOURCES]))
+  m4_pushdef([gltests_LIBSOURCES_LIST], [])
+  m4_pushdef([gltests_LIBSOURCES_DIR], [])
   gl_COMMON
   gl_source_base='gnulib-tests'
   gt_LOCALE_FR
@@ -423,12 +457,31 @@ AC_DEFUN([gl_INIT],
   gl_FLOAT_EXPONENT_LOCATION
   gl_LONG_DOUBLE_EXPONENT_LOCATION
   gt_LOCALE_TR_UTF8
+  gt_LOCALE_FR_UTF8
+  gt_LOCALE_ZH_CN
   AC_REQUIRE([gl_FLOAT_EXPONENT_LOCATION])
   AC_REQUIRE([gl_DOUBLE_EXPONENT_LOCATION])
   AC_REQUIRE([gl_LONG_DOUBLE_EXPONENT_LOCATION])
+  gl_FUNC_SLEEP
+  gl_UNISTD_MODULE_INDICATOR([sleep])
   gt_TYPE_WCHAR_T
   gt_TYPE_WINT_T
   AC_CHECK_FUNCS([shutdown])
+  abs_aux_dir=`cd "$ac_aux_dir"; pwd`
+  AC_SUBST([abs_aux_dir])
+  m4_ifval(gltests_LIBSOURCES_LIST, [
+    m4_syscmd([test ! -d ]gltests_LIBSOURCES_DIR[ ||
+      for gl_file in ]gltests_LIBSOURCES_LIST[ ; do
+        if test ! -r ]gltests_LIBSOURCES_DIR[/$gl_file ; then
+          echo "missing file ]gltests_LIBSOURCES_DIR[/$gl_file" >&2
+          exit 1
+        fi
+      done])dnl
+      m4_if(m4_sysval, [0], [],
+        [AC_FATAL([expected source file, required through AC_LIBSOURCES, not found])])
+  ])
+  m4_popdef([gltests_LIBSOURCES_DIR])
+  m4_popdef([gltests_LIBSOURCES_LIST])
   m4_popdef([AC_LIBSOURCES])
   m4_popdef([AC_REPLACE_FUNCS])
   m4_popdef([AC_LIBOBJ])
@@ -461,13 +514,6 @@ AC_DEFUN([gl_LIBOBJ], [
   gl_LIBOBJS="$gl_LIBOBJS $1.$ac_objext"
 ])
 
-# m4_foreach_w is provided by autoconf-2.59c and later.
-# This definition is to accommodate developers using versions
-# of autoconf older than that.
-m4_ifndef([m4_foreach_w],
-  [m4_define([m4_foreach_w],
-    [m4_foreach([$1], m4_split(m4_normalize([$2]), [ ]), [$3])])])
-
 # Like AC_REPLACE_FUNCS, except that the module name goes
 # into gl_LIBOBJS instead of into LIBOBJS.
 AC_DEFUN([gl_REPLACE_FUNCS], [
@@ -476,15 +522,14 @@ AC_DEFUN([gl_REPLACE_FUNCS], [
 ])
 
 # Like AC_LIBSOURCES, except the directory where the source file is
-# expected is derived from the gnulib-tool parametrization,
+# expected is derived from the gnulib-tool parameterization,
 # and alloca is special cased (for the alloca-opt module).
 # We could also entirely rely on EXTRA_lib..._SOURCES.
 AC_DEFUN([gl_LIBSOURCES], [
   m4_foreach([_gl_NAME], [$1], [
     m4_if(_gl_NAME, [alloca.c], [], [
-      m4_syscmd([test -r lib/]_gl_NAME[ || test ! -d lib])dnl
-      m4_if(m4_sysval, [0], [],
-        [AC_FATAL([missing lib/]_gl_NAME)])
+      m4_define([gl_LIBSOURCES_DIR], [lib])
+      m4_append([gl_LIBSOURCES_LIST], _gl_NAME, [ ])
     ])
   ])
 ])
@@ -496,13 +541,6 @@ AC_DEFUN([gltests_LIBOBJ], [
   gltests_LIBOBJS="$gltests_LIBOBJS $1.$ac_objext"
 ])
 
-# m4_foreach_w is provided by autoconf-2.59c and later.
-# This definition is to accommodate developers using versions
-# of autoconf older than that.
-m4_ifndef([m4_foreach_w],
-  [m4_define([m4_foreach_w],
-    [m4_foreach([$1], m4_split(m4_normalize([$2]), [ ]), [$3])])])
-
 # Like AC_REPLACE_FUNCS, except that the module name goes
 # into gltests_LIBOBJS instead of into LIBOBJS.
 AC_DEFUN([gltests_REPLACE_FUNCS], [
@@ -511,15 +549,14 @@ AC_DEFUN([gltests_REPLACE_FUNCS], [
 ])
 
 # Like AC_LIBSOURCES, except the directory where the source file is
-# expected is derived from the gnulib-tool parametrization,
+# expected is derived from the gnulib-tool parameterization,
 # and alloca is special cased (for the alloca-opt module).
 # We could also entirely rely on EXTRA_lib..._SOURCES.
 AC_DEFUN([gltests_LIBSOURCES], [
   m4_foreach([_gl_NAME], [$1], [
     m4_if(_gl_NAME, [alloca.c], [], [
-      m4_syscmd([test -r gnulib-tests/]_gl_NAME[ || test ! -d gnulib-tests])dnl
-      m4_if(m4_sysval, [0], [],
-        [AC_FATAL([missing gnulib-tests/]_gl_NAME)])
+      m4_define([gltests_LIBSOURCES_DIR], [gnulib-tests])
+      m4_append([gltests_LIBSOURCES_LIST], _gl_NAME, [ ])
     ])
   ])
 ])
@@ -538,7 +575,6 @@ AC_DEFUN([gl_FILE_LIST], [
   doc/fdl.texi
   doc/getdate.texi
   lib/acl-internal.h
-  lib/acl.c
   lib/acl.h
   lib/acl_entries.c
   lib/alloca.c
@@ -547,6 +583,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/areadlink.h
   lib/argmatch.c
   lib/argmatch.h
+  lib/arpa_inet.in.h
   lib/asnprintf.c
   lib/asprintf.c
   lib/at-func.c
@@ -581,6 +618,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/closeout.c
   lib/closeout.h
   lib/config.charset
+  lib/copy-acl.c
   lib/creat-safer.c
   lib/cycle-check.c
   lib/cycle-check.h
@@ -640,6 +678,10 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/freadahead.h
   lib/freading.c
   lib/freading.h
+  lib/freadptr.c
+  lib/freadptr.h
+  lib/freadseek.c
+  lib/freadseek.h
   lib/frexp.c
   lib/frexpl.c
   lib/fseeko.c
@@ -709,7 +751,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/idcache.h
   lib/imaxtostr.c
   lib/inet_ntop.c
-  lib/inet_ntop.h
   lib/intprops.h
   lib/inttostr.c
   lib/inttostr.h
@@ -741,7 +782,10 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/math.in.h
   lib/mbchar.c
   lib/mbchar.h
+  lib/mbiter.h
   lib/mbscasecmp.c
+  lib/mbslen.c
+  lib/mbsstr.c
   lib/mbswidth.c
   lib/mbswidth.h
   lib/mbuiter.h
@@ -750,6 +794,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/memcasecmp.c
   lib/memcasecmp.h
   lib/memchr.c
+  lib/memchr2.c
+  lib/memchr2.h
   lib/memcmp.c
   lib/memcoll.c
   lib/memcoll.h
@@ -802,6 +848,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/printf-frexpl.h
   lib/printf-parse.c
   lib/printf-parse.h
+  lib/propername.c
+  lib/propername.h
   lib/putenv.c
   lib/quote.c
   lib/quote.h
@@ -855,6 +903,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/se-selinux.in.h
   lib/selinux-at.c
   lib/selinux-at.h
+  lib/set-mode-acl.c
   lib/setenv.c
   lib/settime.c
   lib/sha1.c
@@ -876,6 +925,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/stdbool.in.h
   lib/stdint.in.h
   lib/stdio--.h
+  lib/stdio-impl.h
   lib/stdio-safer.h
   lib/stdio.in.h
   lib/stdlib--.h
@@ -883,12 +933,15 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/stdlib.in.h
   lib/stpcpy.c
   lib/stpncpy.c
+  lib/str-kmp.h
   lib/strcspn.c
   lib/strdup.c
   lib/streq.h
   lib/strerror.c
   lib/strftime.c
   lib/strftime.h
+  lib/striconv.c
+  lib/striconv.h
   lib/string.in.h
   lib/stripslash.c
   lib/strndup.c
@@ -913,6 +966,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/time.in.h
   lib/time_r.c
   lib/timespec.h
+  lib/trim.c
+  lib/trim.h
   lib/u64.h
   lib/uinttostr.c
   lib/umaxtostr.c
@@ -964,6 +1019,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/xprintf.c
   lib/xprintf.h
   lib/xsize.h
+  lib/xstriconv.c
+  lib/xstriconv.h
   lib/xstrndup.c
   lib/xstrndup.h
   lib/xstrtod.c
@@ -1106,6 +1163,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/localcharset.m4
   m4/locale-fr.m4
   m4/locale-tr.m4
+  m4/locale-zh.m4
   m4/lock.m4
   m4/long-options.m4
   m4/longlong.m4
@@ -1119,6 +1177,8 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/mbiter.m4
   m4/mbrtowc.m4
   m4/mbscasecmp.m4
+  m4/mbslen.m4
+  m4/mbsstr.m4
   m4/mbstate_t.m4
   m4/mbswidth.m4
   m4/md5.m4
@@ -1187,6 +1247,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/sig2str.m4
   m4/signbit.m4
   m4/size_max.m4
+  m4/sleep.m4
   m4/snprintf.m4
   m4/socklen.m4
   m4/sockpfaf.m4
@@ -1270,6 +1331,7 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-arpa_inet.c
   tests/test-atexit.c
   tests/test-atexit.sh
+  tests/test-base64.c
   tests/test-binary-io.c
   tests/test-binary-io.sh
   tests/test-c-ctype.c
@@ -1294,6 +1356,12 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-freadahead.c
   tests/test-freadahead.sh
   tests/test-freading.c
+  tests/test-freadptr.c
+  tests/test-freadptr.sh
+  tests/test-freadptr2.c
+  tests/test-freadptr2.sh
+  tests/test-freadseek.c
+  tests/test-freadseek.sh
   tests/test-frexp.c
   tests/test-frexpl.c
   tests/test-fseeko.c
@@ -1305,6 +1373,7 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-getdelim.c
   tests/test-gethostname.c
   tests/test-getline.c
+  tests/test-getndelim2.c
   tests/test-gettimeofday.c
   tests/test-i-ring.c
   tests/test-iconv.c
@@ -1319,7 +1388,16 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-math.c
   tests/test-mbscasecmp.c
   tests/test-mbscasecmp.sh
+  tests/test-mbsstr1.c
+  tests/test-mbsstr2.c
+  tests/test-mbsstr2.sh
+  tests/test-mbsstr3.c
+  tests/test-mbsstr3.sh
   tests/test-md5.c
+  tests/test-memchr.c
+  tests/test-memchr2.c
+  tests/test-memcmp.c
+  tests/test-memrchr.c
   tests/test-netinet_in.c
   tests/test-printf-frexp.c
   tests/test-printf-frexpl.c
@@ -1328,6 +1406,7 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-quotearg.c
   tests/test-sha1.c
   tests/test-signbit.c
+  tests/test-sleep.c
   tests/test-snprintf.c
   tests/test-stat-time.c
   tests/test-stdbool.c
@@ -1335,6 +1414,7 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-stdio.c
   tests/test-stdlib.c
   tests/test-strerror.c
+  tests/test-striconv.c
   tests/test-string.c
   tests/test-strtod.c
   tests/test-sys_socket.c
@@ -1345,6 +1425,8 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-vasnprintf.c
   tests/test-vasprintf-posix.c
   tests/test-vasprintf.c
+  tests/test-vc-list-files-cvs.sh
+  tests/test-vc-list-files-git.sh
   tests/test-vfprintf-posix.c
   tests/test-vfprintf-posix.sh
   tests/test-vprintf-posix.c
@@ -1368,5 +1450,6 @@ AC_DEFUN([gl_FILE_LIST], [
   tests=lib/binary-io.h
   tests=lib/progname.c
   tests=lib/progname.h
+  tests=lib/sleep.c
   top/GNUmakefile
 ])

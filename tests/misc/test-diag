@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/usr/bin/perl
 # Test the diagnostics of "test".
 
-# Copyright (C) 2006, 2007 Free Software Foundation, Inc.
+# Copyright (C) 2006-2008 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,17 +16,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-: ${srcdir=.}
-. $srcdir/../require-perl
-
-me=`echo $0|sed 's,.*/,,'`
-exec $PERL -w -I$srcdir/.. -MCoreutils -M"CuTmpdir qw($me)" -- - <<\EOF
-require 5.003;
 use strict;
 
 (my $program_name = $0) =~ s|.*/||;
 
-# Turn off localisation of executable's ouput.
+# Turn off localization of executable's output.
 @ENV{qw(LANGUAGE LANG LC_ALL)} = ('C') x 3;
 
 my $prog = "$ENV{abs_top_builddir}/src/test";
@@ -43,4 +37,3 @@ my $verbose = $ENV{VERBOSE};
 
 my $fail = run_tests ($program_name, $prog, \@Tests, $save_temps, $verbose);
 exit $fail;
-EOF

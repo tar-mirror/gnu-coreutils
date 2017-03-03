@@ -1,5 +1,5 @@
 /* kill -- send a signal to a process
-   Copyright (C) 2002, 2003, 2004, 2005 Free Software Foundation, Inc.
+   Copyright (C) 2002, 2003, 2004, 2005, 2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "kill"
 
-#define AUTHORS "Paul Eggert"
+#define AUTHORS proper_name ("Paul Eggert")
 
 #if ! (HAVE_DECL_STRSIGNAL || defined strsignal)
 # if ! (HAVE_DECL_SYS_SIGLIST || defined sys_siglist)

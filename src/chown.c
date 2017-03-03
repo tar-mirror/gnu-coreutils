@@ -1,5 +1,5 @@
 /* chown -- change user and group ownership of files
-   Copyright (C) 89, 90, 91, 1995-2007 Free Software Foundation, Inc.
+   Copyright (C) 89, 90, 91, 1995-2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -43,7 +43,9 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "chown"
 
-#define AUTHORS "David MacKenzie", "Jim Meyering"
+#define AUTHORS \
+  proper_name ("David MacKenzie"), \
+  proper_name ("Jim Meyering")
 
 /* The name the program was run with. */
 char *program_name;

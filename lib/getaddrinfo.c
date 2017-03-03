@@ -2,7 +2,7 @@
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 #line 1
 /* Get address information (partial implementation).
-   Copyright (C) 1997, 2001, 2002, 2004, 2005, 2006, 2007 Free Software
+   Copyright (C) 1997, 2001, 2002, 2004, 2005, 2006, 2007, 2008 Free Software
    Foundation, Inc.
    Contributed by Simon Josefsson <simon@josefsson.org>.
 
@@ -28,6 +28,9 @@
 # include <netinet/in.h>
 #endif
 
+/* Get inet_ntop.  */
+#include <arpa/inet.h>
+
 /* Get calloc. */
 #include <stdlib.h>
 
@@ -42,8 +45,6 @@
 #include "gettext.h"
 #define _(String) gettext (String)
 #define N_(String) String
-
-#include "inet_ntop.h"
 
 /* BeOS has AF_INET, but not PF_INET.  */
 #ifndef PF_INET

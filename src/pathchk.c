@@ -1,5 +1,5 @@
 /* pathchk -- check whether file names are valid or portable
-   Copyright (C) 1991-2007 Free Software Foundation, Inc.
+   Copyright (C) 1991-2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,7 +35,10 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "pathchk"
 
-#define AUTHORS "Paul Eggert", "David MacKenzie", "Jim Meyering"
+#define AUTHORS \
+  proper_name ("Paul Eggert"), \
+  proper_name ("David MacKenzie"), \
+  proper_name ("Jim Meyering")
 
 #ifndef _POSIX_PATH_MAX
 # define _POSIX_PATH_MAX 256

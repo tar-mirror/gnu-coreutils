@@ -32,7 +32,6 @@ AC_CONFIG_SRCDIR(src/ls.c)
 AC_CONFIG_AUX_DIR(build-aux)
 AC_CONFIG_HEADERS([lib/config.h:lib/config.hin])
 
-AB_INIT()
 AM_INIT_AUTOMAKE([1.10.1 dist-lzma])
 
 AC_PROG_CC_STDC
@@ -259,7 +258,7 @@ mk="$srcdir/src/Makefile.am"
 v=EXTRA_PROGRAMS
 for gl_i in `sed -n '/^'$v' =/,/[[^\]]$/p' $mk \
     | sed 's/^  *//;/^\$.*/d;/^'$v' =/d' \
-    | tr -s '\\012\\\\' '  '`; do
+    | tr -s '\\015\\012\\\\' '  '`; do
   gl_ADD_PROG([optional_bin_progs], $gl_i)
 done
 
@@ -310,10 +309,11 @@ case " $optional_bin_progs " in
   *)        INSTALL_SU=no ;;
 esac
 
-MAN=`echo "$optional_bin_progs "|sed 's/ /.1 /g;s/ $//'`
+MAN=`echo "$optional_bin_progs "|sed 's/ /.1 /g;s/ $//'|tr -d '\\015\\012'`
 
 # Change ginstall.1 to "install.h" in $MAN.
-MAN=`for m in $MAN; do test $m = ginstall.1 && m=install.1; echo $m; done | tr '\012' ' '; echo`
+MAN=`for m in $MAN; do test $m = ginstall.1 && m=install.1; echo $m; done \
+  | tr '\015\012' ' '; echo`
 
 # Remove [.1, since writing a portable rule for it in man/Makefile.am
 # is not practical.  The sed LHS below uses the autoconf quadrigraph
@@ -334,6 +334,9 @@ AC_SUBST([CONFIG_STATUS_DEPENDENCIES])
 AM_GNU_GETTEXT([external], [need-formatstring-macros])
 AM_GNU_GETTEXT_VERSION([0.15])
 
+# For a test of uniq: it uses the $LOCALE_FR envvar.
+gt_LOCALE_FR
+
 AC_CONFIG_FILES(
   Makefile
   doc/Makefile
@@ -343,33 +346,5 @@ AC_CONFIG_FILES(
   src/Makefile
   tests/Makefile
   gnulib-tests/Makefile
-  tests/chgrp/Makefile
-  tests/chmod/Makefile
-  tests/chown/Makefile
-  tests/cp/Makefile
-  tests/cut/Makefile
-  tests/dd/Makefile
-  tests/du/Makefile
-  tests/head/Makefile
-  tests/install/Makefile
-  tests/join/Makefile
-  tests/ln/Makefile
-  tests/ls/Makefile
-  tests/misc/Makefile
-  tests/mkdir/Makefile
-  tests/mv/Makefile
-  tests/pr/Makefile
-  tests/readlink/Makefile
-  tests/rm/Makefile
-  tests/rmdir/Makefile
-  tests/sort/Makefile
-  tests/tac/Makefile
-  tests/tail-2/Makefile
-  tests/tail/Makefile
-  tests/test/Makefile
-  tests/touch/Makefile
-  tests/tr/Makefile
-  tests/uniq/Makefile
-  tests/wc/Makefile
   )
 AC_OUTPUT

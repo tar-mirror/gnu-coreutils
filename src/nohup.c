@@ -1,5 +1,5 @@
 /* nohup -- run a command immune to hangups, with output to a non-tty
-   Copyright (C) 2003, 2004, 2005, 2007 Free Software Foundation, Inc.
+   Copyright (C) 2003, 2004, 2005, 2007-2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@
 
 #define PROGRAM_NAME "nohup"
 
-#define AUTHORS "Jim Meyering"
+#define AUTHORS proper_name ("Jim Meyering")
 
 /* Exit statuses.  */
 enum

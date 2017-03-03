@@ -1,5 +1,5 @@
 /* cksum -- calculate and print POSIX checksums and sizes of files
-   Copyright (C) 92, 1995-2006 Free Software Foundation, Inc.
+   Copyright (C) 92, 1995-2006, 2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "cksum"
 
-#define AUTHORS "Q. Frank Xia"
+#define AUTHORS proper_name ("Q. Frank Xia")
 
 #include <stdio.h>
 #include <sys/types.h>

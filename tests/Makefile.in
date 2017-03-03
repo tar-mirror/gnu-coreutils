@@ -13,6 +13,22 @@
 # PARTICULAR PURPOSE.
 
 @SET_MAKE@
+
+# Include this file at the end of each tests/*/Makefile.am.
+# Copyright (C) 2007, 2008 Free Software Foundation, Inc.
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -32,8 +48,9 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
+	$(srcdir)/check.mk $(top_srcdir)/build-aux/check.mk
 subdir = tests
-DIST_COMMON = README $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/acl.m4 \
 	$(top_srcdir)/m4/alloca.m4 $(top_srcdir)/m4/argmatch.m4 \
@@ -105,31 +122,32 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acl.m4 \
 	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
 	$(top_srcdir)/m4/link-follow.m4 \
 	$(top_srcdir)/m4/localcharset.m4 $(top_srcdir)/m4/locale-fr.m4 \
-	$(top_srcdir)/m4/locale-tr.m4 $(top_srcdir)/m4/long-options.m4 \
-	$(top_srcdir)/m4/longlong.m4 $(top_srcdir)/m4/ls-mntd-fs.m4 \
-	$(top_srcdir)/m4/lseek.m4 $(top_srcdir)/m4/lstat.m4 \
-	$(top_srcdir)/m4/malloc.m4 $(top_srcdir)/m4/malloca.m4 \
-	$(top_srcdir)/m4/math_h.m4 $(top_srcdir)/m4/mbchar.m4 \
-	$(top_srcdir)/m4/mbiter.m4 $(top_srcdir)/m4/mbrtowc.m4 \
-	$(top_srcdir)/m4/mbscasecmp.m4 $(top_srcdir)/m4/mbstate_t.m4 \
-	$(top_srcdir)/m4/mbswidth.m4 $(top_srcdir)/m4/md5.m4 \
-	$(top_srcdir)/m4/memcasecmp.m4 $(top_srcdir)/m4/memchr.m4 \
-	$(top_srcdir)/m4/memcmp.m4 $(top_srcdir)/m4/memcoll.m4 \
-	$(top_srcdir)/m4/memcpy.m4 $(top_srcdir)/m4/memmove.m4 \
-	$(top_srcdir)/m4/mempcpy.m4 $(top_srcdir)/m4/memrchr.m4 \
-	$(top_srcdir)/m4/memset.m4 $(top_srcdir)/m4/memxfrm.m4 \
-	$(top_srcdir)/m4/mgetgroups.m4 $(top_srcdir)/m4/mkancesdirs.m4 \
-	$(top_srcdir)/m4/mkdir-p.m4 $(top_srcdir)/m4/mkdir-slash.m4 \
-	$(top_srcdir)/m4/mkstemp.m4 $(top_srcdir)/m4/mktime.m4 \
-	$(top_srcdir)/m4/modechange.m4 $(top_srcdir)/m4/mountlist.m4 \
-	$(top_srcdir)/m4/mpsort.m4 $(top_srcdir)/m4/nanosleep.m4 \
-	$(top_srcdir)/m4/netinet_in_h.m4 $(top_srcdir)/m4/nls.m4 \
-	$(top_srcdir)/m4/nocrash.m4 $(top_srcdir)/m4/openat.m4 \
-	$(top_srcdir)/m4/pathmax.m4 $(top_srcdir)/m4/perl.m4 \
-	$(top_srcdir)/m4/physmem.m4 $(top_srcdir)/m4/po.m4 \
-	$(top_srcdir)/m4/posix-shell.m4 $(top_srcdir)/m4/posixtm.m4 \
-	$(top_srcdir)/m4/posixver.m4 $(top_srcdir)/m4/prereq.m4 \
-	$(top_srcdir)/m4/printf-frexp.m4 \
+	$(top_srcdir)/m4/locale-tr.m4 $(top_srcdir)/m4/locale-zh.m4 \
+	$(top_srcdir)/m4/long-options.m4 $(top_srcdir)/m4/longlong.m4 \
+	$(top_srcdir)/m4/ls-mntd-fs.m4 $(top_srcdir)/m4/lseek.m4 \
+	$(top_srcdir)/m4/lstat.m4 $(top_srcdir)/m4/malloc.m4 \
+	$(top_srcdir)/m4/malloca.m4 $(top_srcdir)/m4/math_h.m4 \
+	$(top_srcdir)/m4/mbchar.m4 $(top_srcdir)/m4/mbiter.m4 \
+	$(top_srcdir)/m4/mbrtowc.m4 $(top_srcdir)/m4/mbscasecmp.m4 \
+	$(top_srcdir)/m4/mbslen.m4 $(top_srcdir)/m4/mbsstr.m4 \
+	$(top_srcdir)/m4/mbstate_t.m4 $(top_srcdir)/m4/mbswidth.m4 \
+	$(top_srcdir)/m4/md5.m4 $(top_srcdir)/m4/memcasecmp.m4 \
+	$(top_srcdir)/m4/memchr.m4 $(top_srcdir)/m4/memcmp.m4 \
+	$(top_srcdir)/m4/memcoll.m4 $(top_srcdir)/m4/memcpy.m4 \
+	$(top_srcdir)/m4/memmove.m4 $(top_srcdir)/m4/mempcpy.m4 \
+	$(top_srcdir)/m4/memrchr.m4 $(top_srcdir)/m4/memset.m4 \
+	$(top_srcdir)/m4/memxfrm.m4 $(top_srcdir)/m4/mgetgroups.m4 \
+	$(top_srcdir)/m4/mkancesdirs.m4 $(top_srcdir)/m4/mkdir-p.m4 \
+	$(top_srcdir)/m4/mkdir-slash.m4 $(top_srcdir)/m4/mkstemp.m4 \
+	$(top_srcdir)/m4/mktime.m4 $(top_srcdir)/m4/modechange.m4 \
+	$(top_srcdir)/m4/mountlist.m4 $(top_srcdir)/m4/mpsort.m4 \
+	$(top_srcdir)/m4/nanosleep.m4 $(top_srcdir)/m4/netinet_in_h.m4 \
+	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/nocrash.m4 \
+	$(top_srcdir)/m4/openat.m4 $(top_srcdir)/m4/pathmax.m4 \
+	$(top_srcdir)/m4/perl.m4 $(top_srcdir)/m4/physmem.m4 \
+	$(top_srcdir)/m4/po.m4 $(top_srcdir)/m4/posix-shell.m4 \
+	$(top_srcdir)/m4/posixtm.m4 $(top_srcdir)/m4/posixver.m4 \
+	$(top_srcdir)/m4/prereq.m4 $(top_srcdir)/m4/printf-frexp.m4 \
 	$(top_srcdir)/m4/printf-frexpl.m4 $(top_srcdir)/m4/printf.m4 \
 	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/m4/putenv.m4 \
 	$(top_srcdir)/m4/quote.m4 $(top_srcdir)/m4/quotearg.m4 \
@@ -149,23 +167,24 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/acl.m4 \
 	$(top_srcdir)/m4/sha1.m4 $(top_srcdir)/m4/sha256.m4 \
 	$(top_srcdir)/m4/sha512.m4 $(top_srcdir)/m4/sig2str.m4 \
 	$(top_srcdir)/m4/signbit.m4 $(top_srcdir)/m4/size_max.m4 \
-	$(top_srcdir)/m4/snprintf.m4 $(top_srcdir)/m4/socklen.m4 \
-	$(top_srcdir)/m4/sockpfaf.m4 $(top_srcdir)/m4/ssize_t.m4 \
-	$(top_srcdir)/m4/st_dm_mode.m4 $(top_srcdir)/m4/stat-prog.m4 \
-	$(top_srcdir)/m4/stat-time.m4 $(top_srcdir)/m4/stdarg.m4 \
-	$(top_srcdir)/m4/stdbool.m4 $(top_srcdir)/m4/stdint.m4 \
-	$(top_srcdir)/m4/stdint_h.m4 $(top_srcdir)/m4/stdio-safer.m4 \
-	$(top_srcdir)/m4/stdio_h.m4 $(top_srcdir)/m4/stdlib-safer.m4 \
-	$(top_srcdir)/m4/stdlib_h.m4 $(top_srcdir)/m4/stpcpy.m4 \
-	$(top_srcdir)/m4/stpncpy.m4 $(top_srcdir)/m4/strcspn.m4 \
-	$(top_srcdir)/m4/strdup.m4 $(top_srcdir)/m4/strerror.m4 \
-	$(top_srcdir)/m4/strftime.m4 $(top_srcdir)/m4/string_h.m4 \
-	$(top_srcdir)/m4/strndup.m4 $(top_srcdir)/m4/strnlen.m4 \
-	$(top_srcdir)/m4/strnumcmp.m4 $(top_srcdir)/m4/strpbrk.m4 \
-	$(top_srcdir)/m4/strtod.m4 $(top_srcdir)/m4/strtoimax.m4 \
-	$(top_srcdir)/m4/strtol.m4 $(top_srcdir)/m4/strtoll.m4 \
-	$(top_srcdir)/m4/strtoul.m4 $(top_srcdir)/m4/strtoull.m4 \
-	$(top_srcdir)/m4/strtoumax.m4 $(top_srcdir)/m4/strverscmp.m4 \
+	$(top_srcdir)/m4/sleep.m4 $(top_srcdir)/m4/snprintf.m4 \
+	$(top_srcdir)/m4/socklen.m4 $(top_srcdir)/m4/sockpfaf.m4 \
+	$(top_srcdir)/m4/ssize_t.m4 $(top_srcdir)/m4/st_dm_mode.m4 \
+	$(top_srcdir)/m4/stat-prog.m4 $(top_srcdir)/m4/stat-time.m4 \
+	$(top_srcdir)/m4/stdarg.m4 $(top_srcdir)/m4/stdbool.m4 \
+	$(top_srcdir)/m4/stdint.m4 $(top_srcdir)/m4/stdint_h.m4 \
+	$(top_srcdir)/m4/stdio-safer.m4 $(top_srcdir)/m4/stdio_h.m4 \
+	$(top_srcdir)/m4/stdlib-safer.m4 $(top_srcdir)/m4/stdlib_h.m4 \
+	$(top_srcdir)/m4/stpcpy.m4 $(top_srcdir)/m4/stpncpy.m4 \
+	$(top_srcdir)/m4/strcspn.m4 $(top_srcdir)/m4/strdup.m4 \
+	$(top_srcdir)/m4/strerror.m4 $(top_srcdir)/m4/strftime.m4 \
+	$(top_srcdir)/m4/string_h.m4 $(top_srcdir)/m4/strndup.m4 \
+	$(top_srcdir)/m4/strnlen.m4 $(top_srcdir)/m4/strnumcmp.m4 \
+	$(top_srcdir)/m4/strpbrk.m4 $(top_srcdir)/m4/strtod.m4 \
+	$(top_srcdir)/m4/strtoimax.m4 $(top_srcdir)/m4/strtol.m4 \
+	$(top_srcdir)/m4/strtoll.m4 $(top_srcdir)/m4/strtoul.m4 \
+	$(top_srcdir)/m4/strtoull.m4 $(top_srcdir)/m4/strtoumax.m4 \
+	$(top_srcdir)/m4/strverscmp.m4 \
 	$(top_srcdir)/m4/sys_socket_h.m4 \
 	$(top_srcdir)/m4/sys_stat_h.m4 $(top_srcdir)/m4/sys_time_h.m4 \
 	$(top_srcdir)/m4/tempname.m4 $(top_srcdir)/m4/time_h.m4 \
@@ -198,44 +217,7 @@ CONFIG_HEADER = $(top_builddir)/lib/config.h
 CONFIG_CLEAN_FILES =
 SOURCES =
 DIST_SOURCES =
-RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
-	html-recursive info-recursive install-data-recursive \
-	install-dvi-recursive install-exec-recursive \
-	install-html-recursive install-info-recursive \
-	install-pdf-recursive install-ps-recursive install-recursive \
-	installcheck-recursive installdirs-recursive pdf-recursive \
-	ps-recursive uninstall-recursive
-RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
-  distclean-recursive maintainer-clean-recursive
-ETAGS = etags
-CTAGS = ctags
-DIST_SUBDIRS = $(SUBDIRS)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-am__relativize = \
-  dir0=`pwd`; \
-  sed_first='s,^\([^/]*\)/.*$$,\1,'; \
-  sed_rest='s,^[^/]*/*,,'; \
-  sed_last='s,^.*/\([^/]*\)$$,\1,'; \
-  sed_butlast='s,/*[^/]*$$,,'; \
-  while test -n "$$dir1"; do \
-    first=`echo "$$dir1" | sed -e "$$sed_first"`; \
-    if test "$$first" != "."; then \
-      if test "$$first" = ".."; then \
-        dir2=`echo "$$dir0" | sed -e "$$sed_last"`/"$$dir2"; \
-        dir0=`echo "$$dir0" | sed -e "$$sed_butlast"`; \
-      else \
-        first2=`echo "$$dir2" | sed -e "$$sed_first"`; \
-        if test "$$first2" = "$$first"; then \
-          dir2=`echo "$$dir2" | sed -e "$$sed_rest"`; \
-        else \
-          dir2="../$$dir2"; \
-        fi; \
-        dir0="$$dir0"/"$$first"; \
-      fi; \
-    fi; \
-    dir1=`echo "$$dir1" | sed -e "$$sed_rest"`; \
-  done; \
-  reldir="$$dir2"
 ACLOCAL = @ACLOCAL@
 ALLOCA = @ALLOCA@
 ALLOCA_H = @ALLOCA_H@
@@ -304,6 +286,8 @@ GNULIB_GETPAGESIZE = @GNULIB_GETPAGESIZE@
 GNULIB_GETSUBOPT = @GNULIB_GETSUBOPT@
 GNULIB_IMAXABS = @GNULIB_IMAXABS@
 GNULIB_IMAXDIV = @GNULIB_IMAXDIV@
+GNULIB_INET_NTOP = @GNULIB_INET_NTOP@
+GNULIB_INET_PTON = @GNULIB_INET_PTON@
 GNULIB_ISFINITE = @GNULIB_ISFINITE@
 GNULIB_LCHOWN = @GNULIB_LCHOWN@
 GNULIB_LDEXPL = @GNULIB_LDEXPL@
@@ -332,11 +316,13 @@ GNULIB_MKSTEMP = @GNULIB_MKSTEMP@
 GNULIB_OPEN = @GNULIB_OPEN@
 GNULIB_PRINTF_POSIX = @GNULIB_PRINTF_POSIX@
 GNULIB_PUTENV = @GNULIB_PUTENV@
+GNULIB_RAWMEMCHR = @GNULIB_RAWMEMCHR@
 GNULIB_READLINK = @GNULIB_READLINK@
 GNULIB_REALLOC_POSIX = @GNULIB_REALLOC_POSIX@
 GNULIB_ROUND = @GNULIB_ROUND@
 GNULIB_ROUNDF = @GNULIB_ROUNDF@
 GNULIB_ROUNDL = @GNULIB_ROUNDL@
+GNULIB_RPMATCH = @GNULIB_RPMATCH@
 GNULIB_SETENV = @GNULIB_SETENV@
 GNULIB_SIGNBIT = @GNULIB_SIGNBIT@
 GNULIB_SLEEP = @GNULIB_SLEEP@
@@ -369,6 +355,7 @@ GNULIB_VSNPRINTF = @GNULIB_VSNPRINTF@
 GNULIB_VSPRINTF_POSIX = @GNULIB_VSPRINTF_POSIX@
 GNULIB_WCWIDTH = @GNULIB_WCWIDTH@
 GREP = @GREP@
+HAVE_ARPA_INET_H = @HAVE_ARPA_INET_H@
 HAVE_CALLOC_POSIX = @HAVE_CALLOC_POSIX@
 HAVE_DECL_ACOSL = @HAVE_DECL_ACOSL@
 HAVE_DECL_ASINL = @HAVE_DECL_ASINL@
@@ -382,11 +369,12 @@ HAVE_DECL_GETLINE = @HAVE_DECL_GETLINE@
 HAVE_DECL_GETLOGIN_R = @HAVE_DECL_GETLOGIN_R@
 HAVE_DECL_IMAXABS = @HAVE_DECL_IMAXABS@
 HAVE_DECL_IMAXDIV = @HAVE_DECL_IMAXDIV@
+HAVE_DECL_INET_NTOP = @HAVE_DECL_INET_NTOP@
+HAVE_DECL_INET_PTON = @HAVE_DECL_INET_PTON@
 HAVE_DECL_LDEXPL = @HAVE_DECL_LDEXPL@
 HAVE_DECL_LOGL = @HAVE_DECL_LOGL@
 HAVE_DECL_MEMMEM = @HAVE_DECL_MEMMEM@
 HAVE_DECL_MEMRCHR = @HAVE_DECL_MEMRCHR@
-HAVE_DECL_MKDIR = @HAVE_DECL_MKDIR@
 HAVE_DECL_SINL = @HAVE_DECL_SINL@
 HAVE_DECL_SNPRINTF = @HAVE_DECL_SNPRINTF@
 HAVE_DECL_SQRTL = @HAVE_DECL_SQRTL@
@@ -410,7 +398,6 @@ HAVE_FTRUNCATE = @HAVE_FTRUNCATE@
 HAVE_GETPAGESIZE = @HAVE_GETPAGESIZE@
 HAVE_GETSUBOPT = @HAVE_GETSUBOPT@
 HAVE_INTTYPES_H = @HAVE_INTTYPES_H@
-HAVE_IO_H = @HAVE_IO_H@
 HAVE_ISWCNTRL = @HAVE_ISWCNTRL@
 HAVE_LONG_LONG_INT = @HAVE_LONG_LONG_INT@
 HAVE_LSTAT = @HAVE_LSTAT@
@@ -419,8 +406,10 @@ HAVE_MEMPCPY = @HAVE_MEMPCPY@
 HAVE_MKDTEMP = @HAVE_MKDTEMP@
 HAVE_NETINET_IN_H = @HAVE_NETINET_IN_H@
 HAVE_OS_H = @HAVE_OS_H@
+HAVE_RAWMEMCHR = @HAVE_RAWMEMCHR@
 HAVE_READLINK = @HAVE_READLINK@
 HAVE_REALLOC_POSIX = @HAVE_REALLOC_POSIX@
+HAVE_RPMATCH = @HAVE_RPMATCH@
 HAVE_SETENV = @HAVE_SETENV@
 HAVE_SIGNED_SIG_ATOMIC_T = @HAVE_SIGNED_SIG_ATOMIC_T@
 HAVE_SIGNED_WCHAR_T = @HAVE_SIGNED_WCHAR_T@
@@ -476,7 +465,6 @@ LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTESTS_LIBDEPS = @LIBTESTS_LIBDEPS@
 LIB_ACL = @LIB_ACL@
-LIB_ACL_TRIVIAL = @LIB_ACL_TRIVIAL@
 LIB_CLOCK_GETTIME = @LIB_CLOCK_GETTIME@
 LIB_CRYPT = @LIB_CRYPT@
 LIB_EACCESS = @LIB_EACCESS@
@@ -487,7 +475,9 @@ LIB_SELINUX = @LIB_SELINUX@
 LN_S = @LN_S@
 LOCALCHARSET_TESTS_ENVIRONMENT = @LOCALCHARSET_TESTS_ENVIRONMENT@
 LOCALE_FR = @LOCALE_FR@
+LOCALE_FR_UTF8 = @LOCALE_FR_UTF8@
 LOCALE_TR_UTF8 = @LOCALE_TR_UTF8@
+LOCALE_ZH_CN = @LOCALE_ZH_CN@
 LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
@@ -499,6 +489,7 @@ MSGFMT_015 = @MSGFMT_015@
 MSGMERGE = @MSGMERGE@
 NEED_SETGID = @NEED_SETGID@
 NETINET_IN_H = @NETINET_IN_H@
+NEXT_ARPA_INET_H = @NEXT_ARPA_INET_H@
 NEXT_DIRENT_H = @NEXT_DIRENT_H@
 NEXT_FCNTL_H = @NEXT_FCNTL_H@
 NEXT_FLOAT_H = @NEXT_FLOAT_H@
@@ -562,11 +553,13 @@ REPLACE_ICONV = @REPLACE_ICONV@
 REPLACE_ICONV_OPEN = @REPLACE_ICONV_OPEN@
 REPLACE_ICONV_UTF = @REPLACE_ICONV_UTF@
 REPLACE_ISFINITE = @REPLACE_ISFINITE@
+REPLACE_ISWCNTRL = @REPLACE_ISWCNTRL@
 REPLACE_LCHOWN = @REPLACE_LCHOWN@
 REPLACE_LDEXPL = @REPLACE_LDEXPL@
 REPLACE_LOCALTIME_R = @REPLACE_LOCALTIME_R@
 REPLACE_LSEEK = @REPLACE_LSEEK@
 REPLACE_MEMMEM = @REPLACE_MEMMEM@
+REPLACE_MKDIR = @REPLACE_MKDIR@
 REPLACE_MKSTEMP = @REPLACE_MKSTEMP@
 REPLACE_NAN = @REPLACE_NAN@
 REPLACE_NANOSLEEP = @REPLACE_NANOSLEEP@
@@ -598,7 +591,11 @@ SELINUX_CONTEXT_H = @SELINUX_CONTEXT_H@
 SELINUX_SELINUX_H = @SELINUX_SELINUX_H@
 SEQ_LIBM = @SEQ_LIBM@
 SET_MAKE = @SET_MAKE@
-SHELL = @SHELL@
+
+# Use a POSIX-compatible shell if available, as this file uses
+# features of the POSIX shell that are not supported by some standard
+# shell implementations (e.g., Solaris 10 /bin/sh).
+SHELL = $(PREFERABLY_POSIX_SHELL)
 SIG_ATOMIC_T_SUFFIX = @SIG_ATOMIC_T_SUFFIX@
 SIZE_T_SUFFIX = @SIZE_T_SUFFIX@
 STDARG_H = @STDARG_H@
@@ -625,6 +622,7 @@ XGETTEXT_015 = @XGETTEXT_015@
 XGETTEXT_EXTRA_OPTIONS = @XGETTEXT_EXTRA_OPTIONS@
 YACC = @YACC@
 YFLAGS = @YFLAGS@
+abs_aux_dir = @abs_aux_dir@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -684,46 +682,706 @@ top_srcdir = @top_srcdir@
 # otherwise we may get into trouble with distinct strings that the
 # current locale considers to be equal.
 ASSORT = LC_ALL=C sort
-EXTRA_DIST = \
-  Coreutils.pm		\
-  CuTmpdir.pm		\
-  Makefile.am.in	\
-  README		\
-  check.mk		\
-  envvar-check		\
-  expensive		\
-  group-names		\
-  input-tty		\
-  lang-default		\
-  mk-script		\
-  other-fs-tmpdir	\
-  require-perl		\
-  rwx-to-mode		\
-  sample-test		\
-  setgid-check		\
-  sparse-file		\
-  test-lib.sh		\
-  umask-check
+EXTRA_DIST = Coreutils.pm CuTmpdir.pm README check.mk envvar-check \
+	input-tty lang-default other-fs-tmpdir require-perl \
+	sample-test setgid-check test-lib.sh $(pr_data) $(TESTS)
+root_tests = \
+  chown/basic					\
+  cp/cp-a-selinux				\
+  cp/preserve-gid				\
+  cp/special-bits				\
+  ls/nameless-uid				\
+  misc/chcon					\
+  misc/selinux					\
+  mkdir/writable-under-readonly			\
+  mv/sticky-to-xpart				\
+  rm/fail-2eperm				\
+  rm/no-give-up					\
+  rm/one-file-system				\
+  tail-2/append-only				\
+  touch/now-owned-by-other
 
 
-# Regarding ordering in SUBDIRS, place early in the list the tools that
-# are most commonly used in test scripts.  Every test script uses rm
-# and chmod, so they have to be very early.
-# Ordering within misc/ should handle the rest.
-SUBDIRS = \
-  rm \
-  chmod \
-  misc \
-  chgrp chown cp cut dd du head \
-  install join ln ls mkdir mv pr readlink rmdir \
-  sort tac tail tail-2 test touch tr \
-  uniq wc
+# Do not choose a name that is a shell keyword like 'if', or a
+# commonly-used utility like 'cat' or 'test', as the name of a test.
+# Otherwise, VPATH builds will fail on hosts like Solaris, since they
+# will expand 'if test ...' to 'if .../test ...', and the '.../test'
+# will execute the test script rather than the standard utility.
 
-all_t = t1 t2 t3 t4 t5 t6 t7 t8 t9 ta tb tc td
-all: all-recursive
+# Notes on the ordering of these tests:
+# Place early in the list tests of the tools that
+# are most commonly used in test scripts themselves.
+# E.g., nearly every test script uses rm and chmod.
+# help-version comes early because it's a basic sanity test.
+# Put seq early, since lots of other tests use it.
+# Put tests that sleep early, but not all together, so in parallel builds
+# they share time with tests that burn CPU, not with others that sleep.
+# Put head-elide-tail early, because it's long-running.
+TESTS = \
+  misc/help-version				\
+  misc/invalid-opt				\
+  rm/cycle					\
+  chmod/no-x					\
+  chgrp/basic					\
+  rm/dangling-symlink				\
+  misc/ls-time					\
+  rm/deep-1					\
+  rm/deep-2					\
+  rm/dir-no-w					\
+  rm/dir-nonrecur				\
+  rm/dot-rel					\
+  rm/isatty					\
+  rm/empty-inacc				\
+  rm/empty-name					\
+  rm/f-1					\
+  rm/fail-eacces				\
+  rm/fail-eperm					\
+  tail-2/assert					\
+  rm/hash					\
+  rm/i-1					\
+  rm/i-never					\
+  rm/i-no-r					\
+  tail-2/infloop-1				\
+  rm/ignorable					\
+  rm/inaccessible				\
+  rm/interactive-always				\
+  rm/interactive-once				\
+  rm/ir-1					\
+  rm/r-1					\
+  rm/r-2					\
+  rm/r-3					\
+  rm/r-4					\
+  rm/readdir-bug				\
+  rm/rm1					\
+  touch/empty-file				\
+  rm/rm2					\
+  rm/rm3					\
+  rm/rm4					\
+  rm/rm5					\
+  rm/sunos-1					\
+  rm/unread2					\
+  rm/unread3					\
+  rm/unreadable					\
+  rm/v-slash					\
+  chgrp/default-no-deref			\
+  chgrp/deref					\
+  chgrp/no-x					\
+  chgrp/posix-H					\
+  chgrp/recurse					\
+  misc/test					\
+  misc/seq					\
+  misc/head					\
+  misc/head-elide-tail				\
+  tail-2/tail-n0f				\
+  misc/ls-misc					\
+  misc/date					\
+  misc/ptx-overrun				\
+  misc/xstrtol					\
+  misc/od					\
+  misc/mktemp					\
+  misc/arch					\
+  misc/pr					\
+  misc/join					\
+  pr/pr-tests					\
+  misc/df-P					\
+  misc/pwd-unreadable-parent			\
+  misc/chcon-fail				\
+  misc/selinux					\
+  misc/cut					\
+  misc/wc					\
+  misc/wc-files0-from				\
+  misc/wc-files0				\
+  misc/cat-proc					\
+  misc/base64					\
+  misc/basename					\
+  misc/close-stdout				\
+  misc/csplit					\
+  misc/date-sec					\
+  misc/dircolors				\
+  misc/df					\
+  misc/dirname					\
+  misc/expand					\
+  misc/expr					\
+  misc/factor					\
+  misc/false-status				\
+  misc/fmt					\
+  misc/fmt-long-line				\
+  misc/fold					\
+  misc/groups-dash				\
+  misc/groups-version				\
+  misc/head-c					\
+  misc/head-pos					\
+  misc/id-context				\
+  misc/md5sum					\
+  misc/md5sum-newline				\
+  misc/mknod					\
+  misc/nice					\
+  misc/nl					\
+  misc/nohup					\
+  misc/od-N					\
+  misc/od-x8					\
+  misc/paste					\
+  misc/pathchk1					\
+  misc/printf					\
+  misc/printf-cov				\
+  misc/printf-hex				\
+  misc/printf-surprise				\
+  misc/pwd-long					\
+  misc/readlink-fp-loop				\
+  misc/runcon-no-reorder			\
+  misc/sha1sum					\
+  misc/sha1sum-vec				\
+  misc/sha224sum				\
+  misc/sha256sum				\
+  misc/sha384sum				\
+  misc/sha512sum				\
+  misc/shred-exact				\
+  misc/shred-remove				\
+  misc/shuf					\
+  misc/sort					\
+  misc/sort-compress				\
+  misc/sort-merge				\
+  misc/sort-rand				\
+  misc/split-a					\
+  misc/split-fail				\
+  misc/split-l					\
+  misc/stat-fmt					\
+  misc/stat-printf				\
+  misc/stty					\
+  misc/stty-invalid				\
+  misc/stty-row-col				\
+  misc/sum					\
+  misc/sum-sysv					\
+  misc/tac					\
+  misc/tac-continue				\
+  misc/tail					\
+  misc/tee					\
+  misc/tee-dash					\
+  misc/test-diag				\
+  misc/tr					\
+  misc/tsort					\
+  misc/tty-eof					\
+  misc/unexpand					\
+  misc/uniq					\
+  chmod/c-option				\
+  chmod/equal-x					\
+  chmod/equals					\
+  chmod/inaccessible				\
+  chmod/octal					\
+  chmod/setgid					\
+  chmod/thru-dangling				\
+  chmod/umask-x					\
+  chmod/usage					\
+  chown/deref					\
+  chown/preserve-root				\
+  chown/separator				\
+  cp/abuse					\
+  cp/acl					\
+  cp/backup-1					\
+  cp/backup-dir					\
+  cp/backup-is-src				\
+  cp/cp-HL					\
+  cp/cp-deref					\
+  cp/cp-i					\
+  cp/cp-mv-backup				\
+  cp/cp-parents					\
+  cp/deref-slink				\
+  cp/dir-rm-dest				\
+  cp/dir-slash					\
+  cp/dir-vs-file				\
+  cp/existing-perm-race				\
+  cp/fail-perm					\
+  cp/file-perm-race				\
+  cp/into-self					\
+  cp/link					\
+  cp/link-no-deref				\
+  cp/link-preserve				\
+  cp/no-deref-link1				\
+  cp/no-deref-link2				\
+  cp/no-deref-link3				\
+  cp/parent-perm				\
+  cp/parent-perm-race				\
+  cp/perm					\
+  cp/preserve-2					\
+  cp/proc-zero-len				\
+  cp/r-vs-symlink				\
+  cp/same-file					\
+  cp/slink-2-slink				\
+  cp/sparse					\
+  cp/special-f					\
+  cp/src-base-dot				\
+  cp/symlink-slash				\
+  cp/thru-dangling				\
+  dd/misc					\
+  dd/not-rewound				\
+  dd/skip-seek					\
+  dd/skip-seek2					\
+  dd/unblock-sync				\
+  du/2g						\
+  du/8gb					\
+  du/basic					\
+  du/deref					\
+  du/deref-args					\
+  du/exclude					\
+  du/fd-leak					\
+  du/files0-from				\
+  du/hard-link					\
+  du/inacc-dest					\
+  du/inacc-dir					\
+  du/inaccessible-cwd				\
+  du/long-from-unreadable			\
+  du/long-sloop					\
+  du/no-deref					\
+  du/no-x					\
+  du/one-file-system				\
+  du/restore-wd					\
+  du/slash					\
+  du/slink					\
+  du/trailing-slash				\
+  du/two-args					\
+  install/basic-1				\
+  install/create-leading			\
+  install/d-slashdot				\
+  install/trap					\
+  ln/backup-1					\
+  ln/hard-backup				\
+  ln/misc					\
+  ln/sf-1					\
+  ln/target-1					\
+  ls/color-dtype-dir				\
+  ls/dangle					\
+  ls/dired					\
+  ls/file-type					\
+  ls/follow-slink				\
+  ls/infloop					\
+  ls/inode					\
+  ls/m-option					\
+  ls/no-arg					\
+  ls/proc-selinux-segfault			\
+  ls/recursive					\
+  ls/rt-1					\
+  ls/stat-dtype					\
+  ls/stat-failed				\
+  ls/stat-free-symlinks				\
+  ls/stat-vs-dirent				\
+  ls/symlink-slash				\
+  ls/x-option					\
+  mkdir/p-1					\
+  mkdir/p-2					\
+  mkdir/p-3					\
+  mkdir/p-slashdot				\
+  mkdir/p-thru-slink				\
+  mkdir/p-v					\
+  mkdir/parents					\
+  mkdir/perm					\
+  mkdir/selinux					\
+  mkdir/special-1				\
+  mkdir/t-slash					\
+  mv/acl					\
+  mv/atomic					\
+  mv/atomic2					\
+  mv/backup-dir					\
+  mv/backup-is-src				\
+  mv/childproof					\
+  mv/diag					\
+  mv/dir-file					\
+  mv/dir2dir					\
+  mv/dup-source					\
+  mv/force					\
+  mv/hard-2					\
+  mv/hard-3					\
+  mv/hard-4					\
+  mv/hard-link-1				\
+  mv/hard-verbose				\
+  mv/i-1					\
+  mv/i-2					\
+  mv/i-3					\
+  mv/i-4					\
+  mv/i-5					\
+  mv/i-link-no					\
+  mv/into-self					\
+  mv/into-self-2				\
+  mv/into-self-3				\
+  mv/into-self-4				\
+  mv/leak-fd					\
+  mv/mv-special-1				\
+  mv/no-target-dir				\
+  mv/part-fail					\
+  mv/part-hardlink				\
+  mv/part-rename				\
+  mv/part-symlink				\
+  mv/partition-perm				\
+  mv/perm-1					\
+  mv/reply-no					\
+  mv/to-symlink					\
+  mv/trailing-slash				\
+  mv/update					\
+  readlink/can-e				\
+  readlink/can-f				\
+  readlink/can-m				\
+  readlink/rl-1					\
+  rmdir/fail-perm				\
+  rmdir/ignore					\
+  rmdir/t-slash					\
+  tail-2/assert-2				\
+  tail-2/big-4gb				\
+  tail-2/proc-ksyms				\
+  tail-2/start-middle				\
+  touch/dangling-symlink			\
+  touch/dir-1					\
+  touch/fail-diag				\
+  touch/fifo					\
+  touch/no-create-missing			\
+  touch/no-rights				\
+  touch/not-owner				\
+  touch/obsolescent				\
+  touch/read-only				\
+  touch/relative				\
+  $(root_tests)
+
+pr_data = \
+  pr/0F						\
+  pr/0FF					\
+  pr/0FFnt					\
+  pr/0FFt					\
+  pr/0FnFnt					\
+  pr/0FnFt					\
+  pr/0Fnt					\
+  pr/0Ft					\
+  pr/2-S_f-t_notab				\
+  pr/2-Sf-t_notab				\
+  pr/2f-t_notab					\
+  pr/2s_f-t_notab				\
+  pr/2s_w60f-t_nota				\
+  pr/2sf-t_notab				\
+  pr/2sw60f-t_notab				\
+  pr/2w60f-t_notab				\
+  pr/3-0F					\
+  pr/3-5l24f-t					\
+  pr/3-FF					\
+  pr/3a2l17-FF					\
+  pr/3a3f-0F					\
+  pr/3a3l15-t					\
+  pr/3a3l15f-t					\
+  pr/3b2l17-FF					\
+  pr/3b3f-0F					\
+  pr/3b3f-0FF					\
+  pr/3b3f-FF					\
+  pr/3b3l15-t					\
+  pr/3b3l15f-t					\
+  pr/3f-0F					\
+  pr/3f-FF					\
+  pr/3l24-t					\
+  pr/3l24f-t					\
+  pr/3ml24-FF					\
+  pr/3ml24-t					\
+  pr/3ml24-t-FF					\
+  pr/3ml24f-t					\
+  pr/4-7l24-FF					\
+  pr/4l24-FF					\
+  pr/FF						\
+  pr/FFn					\
+  pr/FFtn					\
+  pr/FnFn					\
+  pr/Ja3l24f-lm					\
+  pr/Jb3l24f-lm					\
+  pr/Jml24f-lm-lo				\
+  pr/W-72l24f-ll				\
+  pr/W20l24f-ll					\
+  pr/W26l24f-ll					\
+  pr/W27l24f-ll					\
+  pr/W28l24f-ll					\
+  pr/W35Ja3l24f-lm				\
+  pr/W35Jb3l24f-lm				\
+  pr/W35Jml24f-lmlo				\
+  pr/W35a3l24f-lm				\
+  pr/W35b3l24f-lm				\
+  pr/W35ml24f-lm-lo				\
+  pr/W72Jl24f-ll				\
+  pr/a2l15-FF					\
+  pr/a2l17-FF					\
+  pr/a3-0F					\
+  pr/a3f-0F					\
+  pr/a3f-0FF					\
+  pr/a3f-FF					\
+  pr/a3l15-t					\
+  pr/a3l15f-t					\
+  pr/a3l24f-lm					\
+  pr/b2l15-FF					\
+  pr/b2l17-FF					\
+  pr/b3-0F					\
+  pr/b3f-0F					\
+  pr/b3f-0FF					\
+  pr/b3f-FF					\
+  pr/b3l15-t					\
+  pr/b3l15f-t					\
+  pr/b3l24f-lm					\
+  pr/l24-FF					\
+  pr/l24-t					\
+  pr/l24f-t					\
+  pr/loli					\
+  pr/ml20-FF-t					\
+  pr/ml24-FF					\
+  pr/ml24-t					\
+  pr/ml24-t-FF					\
+  pr/ml24f-0F					\
+  pr/ml24f-lm-lo				\
+  pr/ml24f-t					\
+  pr/ml24f-t-0F					\
+  pr/n+2-5l24f-0FF				\
+  pr/n+2l24f-0FF				\
+  pr/n+2l24f-bl					\
+  pr/n+3-7l24-FF				\
+  pr/n+3l24f-0FF				\
+  pr/n+3l24f-bl					\
+  pr/n+3ml20f-bl-FF				\
+  pr/n+3ml24f-bl-tn				\
+  pr/n+3ml24f-tn-bl				\
+  pr/n+4-8a2l17-FF				\
+  pr/n+4b2l17f-0FF				\
+  pr/n+5-8b3l17f-FF				\
+  pr/n+5a3l13f-0FF				\
+  pr/n+6a2l17-FF				\
+  pr/n+6b3l13f-FF				\
+  pr/n+7l24-FF					\
+  pr/n+8l20-FF					\
+  pr/nJml24f-lmlmlo				\
+  pr/nJml24f-lmlolm				\
+  pr/nN1+3l24f-bl				\
+  pr/nN15l24f-bl				\
+  pr/nSml20-bl-FF				\
+  pr/nSml20-t-t-FF				\
+  pr/nSml20-t-tFFFF				\
+  pr/nSml24-bl-FF				\
+  pr/nSml24-t-t-FF				\
+  pr/nSml24-t-tFFFF				\
+  pr/nl24f-bl					\
+  pr/o3Jml24f-lm-lo				\
+  pr/o3a3Sl24f-tn				\
+  pr/o3a3Snl24f-tn				\
+  pr/o3a3l24f-tn				\
+  pr/o3b3Sl24f-tn				\
+  pr/o3b3Snl24f-tn				\
+  pr/o3b3l24f-tn				\
+  pr/o3mSl24f-bl-tn				\
+  pr/o3mSnl24fbltn				\
+  pr/o3ml24f-bl-tn				\
+  pr/t-0FF					\
+  pr/t-FF					\
+  pr/t-bl					\
+  pr/t-t					\
+  pr/tFFn					\
+  pr/tFFt					\
+  pr/tFFt-bl					\
+  pr/tFFt-ll					\
+  pr/tFFt-lm					\
+  pr/tFnFt					\
+  pr/t_notab					\
+  pr/t_tab					\
+  pr/t_tab_					\
+  pr/ta3-0FF					\
+  pr/ta3-FF					\
+  pr/tb3-0FF					\
+  pr/tb3-FF					\
+  pr/tn						\
+  pr/tn2e5o3-t_tab				\
+  pr/tn2e8-t_tab				\
+  pr/tn2e8o3-t_tab				\
+  pr/tn_2e8-t_tab				\
+  pr/tn_2e8S-t_tab				\
+  pr/tne8-t_tab					\
+  pr/tne8o3-t_tab				\
+  pr/tt-0FF					\
+  pr/tt-FF					\
+  pr/tt-bl					\
+  pr/tt-t					\
+  pr/tta3-0FF					\
+  pr/tta3-FF					\
+  pr/ttb3-0FF					\
+  pr/ttb3-FF					\
+  pr/w72l24f-ll
+
+
+# Ensure that all version-controlled executable files are listed in TESTS.
+# Collect test names from the line matching /^TESTS = \\$$/ to the following
+# one that does not end in '\'.
+_v = TESTS
+_w = root_tests
+built_programs = \
+  (cd $(top_builddir)/src && MAKEFLAGS= $(MAKE) -s built_programs.list)
+
+
+# Note that the first lines are statements.  They ensures that environment
+# variables that can perturb tests are unset or set to expected values.
+# The rest are envvar settings that propagate build-related Makefile
+# variables to test scripts.
+TESTS_ENVIRONMENT = \
+  . $(srcdir)/lang-default;			\
+  tmp__=$$TMPDIR; test -d $tmp__ || tmp__=.;	\
+  . $(srcdir)/envvar-check;			\
+  TMPDIR=$$tmp__; export TMPDIR;		\
+  shell_or_perl_() {				\
+    if grep '^\#!/usr/bin/perl' "$$1" > /dev/null; then			\
+      if $(PERL) -e 'use warnings' > /dev/null 2>&1; then		\
+	grep '^\#!/usr/bin/perl -T' "$$1" > /dev/null && T_=T || T_=;	\
+        $(PERL) -w$$T_ -I$(srcdir) -MCoreutils				\
+	      -M"CuTmpdir qw($$tst)" -- "$$1";	\
+      else					\
+	echo 1>&2 "$$tst: configure did not find a usable version of Perl," \
+	  "so skipping this test";		\
+	(exit 77);				\
+      fi;					\
+    else					\
+      $(SHELL) "$$1";				\
+    fi;						\
+  };						\
+  LOCALE_FR='$(LOCALE_FR)'			\
+  abs_top_builddir='$(abs_top_builddir)'	\
+  abs_top_srcdir='$(abs_top_srcdir)'		\
+  abs_srcdir='$(abs_srcdir)'			\
+  built_programs="`$(built_programs)`"		\
+  host_os=$(host_os)				\
+  host_triplet='$(host_triplet)'		\
+  srcdir='$(srcdir)'				\
+  top_srcdir='$(top_srcdir)'			\
+  CONFIG_HEADER='$(abs_top_builddir)/lib/config.h' \
+  CU_TEST_NAME=`basename '$(abs_srcdir)'`,$$tst	\
+  EGREP='$(EGREP)'				\
+  EXEEXT='$(EXEEXT)'				\
+  MAKE=$(MAKE)					\
+  PACKAGE_BUGREPORT='$(PACKAGE_BUGREPORT)'	\
+  PACKAGE_VERSION=$(PACKAGE_VERSION)		\
+  PERL='$(PERL)'				\
+  REPLACE_GETCWD=$(REPLACE_GETCWD)		\
+  PATH='$(abs_top_builddir)/src$(PATH_SEPARATOR)'"$$PATH" \
+  shell_or_perl_
+
+TEST_LOGS = $(TESTS:=.log)
+
+# Set this to `false' to disable hard errors.
+ENABLE_HARD_ERRORS = :
+AUTOMAKE_OPTIONS = -Wno-portability -Wno-override
+
+# Restructured Text title and section.
+am__rst_title = sed 's/.*/   &   /;h;s/./=/g;p;x;p;g;p;s/.*//'
+am__rst_section = sed 'p;s/./=/g;p;g'
+
+# Put stdin (possibly several lines separated by ".  ") in a box.
+am__text_box = $(AWK) '{gsub ("\\.  ", "\n"); print $$0; }' |	\
+$(AWK) '							\
+max < length($$0) {						\
+  final= final (final ? "\n" : "") " " $$0;			\
+  max = length($$0);						\
+}								\
+END {								\
+  for (i = 0; i < max + 2 ; ++i)				\
+    line = line "=";						\
+  print line;							\
+  print final;							\
+  print line;							\
+}'
+
+
+# If stdout is a tty and TERM is smart then use colors.  If test -t or
+# tput are not supported then this fails; a conservative approach.  Of
+# course do not redirect stdout here, just stderr...
+am__tty_colors = \
+red=;						\
+grn=;						\
+lgn=;						\
+blu=;						\
+std=;						\
+test "X$$TERM" != Xdumb &&			\
+test -t 1 2>/dev/null &&			\
+tput bold 1 >/dev/null 2>&1 &&			\
+tput setaf 1 >/dev/null 2>&1 &&			\
+tput sgr0 >/dev/null 2>&1 &&			\
+{						\
+    red=$$(tput setaf 1);			\
+    grn=$$(tput setaf 2);			\
+    lgn=$$(tput bold)$$(tput setaf 2);		\
+    blu=$$(tput setaf 4);			\
+    std=$$(tput sgr0);				\
+}
+
+
+# Solaris 10 'make', and several other traditional 'make' implementations,
+# pass "-e" to $(SHELL).  This contradicts POSIX.  Work around the problem
+# by disabling -e (using the XSI extension "set +e") if it's set.
+SH_E_WORKAROUND = case $$- in *e*) set +e;; esac
+
+# Emulate dirname with sed.
+_d_no_slash = s,^[^/]*$$,.,
+_d_strip_trailing = s,\([^/]\)//*$$,\1,
+_d_abs_trivial = s,^//*[^/]*$$,/,
+_d_rm_basename = s,\([^/]\)//*[^/]*$$,\1,
+_dirname = \
+  sed '$(_d_no_slash);$(_d_strip_trailing);$(_d_abs_trivial);$(_d_rm_basename)'
+
+
+# To be inserted before the command running the test.  Creates the
+# directory for the log if needed.  Stores in $dir the directory
+# containing $src, and passes TESTS_ENVIRONMENT.
+# Save and restore TERM around use of TESTS_ENVIRONMENT,
+# in case that unsets it.
+am__check_pre = \
+$(SH_E_WORKAROUND);				\
+tst=`echo "$$src" | sed 's|^.*/||'`;		\
+rm -f $@-t;					\
+trap 'st=$$?; rm -f '\''$(abs_builddir)/$@-t'\''; (exit $$st); exit $$st' \
+  1 2 13 15;					\
+$(mkdir_p) "$$(echo '$@'|$(_dirname))" || exit;	\
+if test -f "./$$src"; then dir=./;		\
+elif test -f "$$src"; then dir=;		\
+else dir="$(srcdir)/"; fi;			\
+__SAVED_TERM=$$TERM;				\
+$(TESTS_ENVIRONMENT)
+
+
+# To be appended to the command running the test.  Handles the stdout
+# and stderr redirection, and catch the exit status.
+am__check_post = \
+>$@-t 2>&1;						\
+estatus=$$?;						\
+if test $$estatus -eq 177; then				\
+  $(ENABLE_HARD_ERRORS) || estatus=1;			\
+fi;							\
+TERM=$$__SAVED_TERM; export TERM;			\
+$(am__tty_colors);					\
+xfailed=PASS;						\
+for xfail in : $(XFAIL_TESTS); do			\
+  case $$src in						\
+    $$xfail | */$$xfail) xfailed=XFAIL; break;		\
+  esac;							\
+done;							\
+case $$estatus:$$xfailed in				\
+    0:XFAIL) col=$$red; res=XPASS;;			\
+    0:*)     col=$$grn; res=PASS ;;			\
+    77:*)    col=$$blu; res=SKIP ;;			\
+    177:*)   col=$$red; res=FAIL ;;			\
+    *:XFAIL) col=$$lgn; res=XFAIL;;			\
+    *:*)     col=$$red; res=FAIL ;;			\
+esac;							\
+echo "$${col}$$res$${std}: $@";				\
+echo "$$res: $@ (exit: $$estatus)" |			\
+  $(am__rst_section) >$@;				\
+cat $@-t >>$@;						\
+rm $@-t
+
+SUFFIXES = .html .log
+@GNU_MAKE_FALSE@DEPENDENCY = CHECK-FORCE
+
+#TEST_LOGS = $(TESTS:.test=.log)
+TEST_SUITE_LOG = test-suite.log
+TEST_SUITE_HTML = $(TEST_SUITE_LOG:.log=.html)
+
+# Parallel replacement of Automake's check-TESTS target.
+VERBOSE = yes
+all: all-am
 
 .SUFFIXES:
-$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
+.SUFFIXES: .html .log
+$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/check.mk $(top_srcdir)/build-aux/check.mk $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -753,141 +1411,12 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
-
-# This directory's subdirectories are mostly independent; you can cd
-# into them and run `make' without going through this Makefile.
-# To change the values of `make' variables: instead of editing Makefiles,
-# (1) if the variable is set in `config.status', edit `config.status'
-#     (which will cause the Makefiles to be regenerated when you run `make');
-# (2) otherwise, pass the desired values on the `make' command line.
-$(RECURSIVE_TARGETS):
-	@failcom='exit 1'; \
-	for f in x $$MAKEFLAGS; do \
-	  case $$f in \
-	    *=* | --[!k]*);; \
-	    *k*) failcom='fail=yes';; \
-	  esac; \
-	done; \
-	dot_seen=no; \
-	target=`echo $@ | sed s/-recursive//`; \
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-	  echo "Making $$target in $$subdir"; \
-	  if test "$$subdir" = "."; then \
-	    dot_seen=yes; \
-	    local_target="$$target-am"; \
-	  else \
-	    local_target="$$target"; \
-	  fi; \
-	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
-	  || eval $$failcom; \
-	done; \
-	if test "$$dot_seen" = "no"; then \
-	  $(MAKE) $(AM_MAKEFLAGS) "$$target-am" || exit 1; \
-	fi; test -z "$$fail"
-
-$(RECURSIVE_CLEAN_TARGETS):
-	@failcom='exit 1'; \
-	for f in x $$MAKEFLAGS; do \
-	  case $$f in \
-	    *=* | --[!k]*);; \
-	    *k*) failcom='fail=yes';; \
-	  esac; \
-	done; \
-	dot_seen=no; \
-	case "$@" in \
-	  distclean-* | maintainer-clean-*) list='$(DIST_SUBDIRS)' ;; \
-	  *) list='$(SUBDIRS)' ;; \
-	esac; \
-	rev=''; for subdir in $$list; do \
-	  if test "$$subdir" = "."; then :; else \
-	    rev="$$subdir $$rev"; \
-	  fi; \
-	done; \
-	rev="$$rev ."; \
-	target=`echo $@ | sed s/-recursive//`; \
-	for subdir in $$rev; do \
-	  echo "Making $$target in $$subdir"; \
-	  if test "$$subdir" = "."; then \
-	    local_target="$$target-am"; \
-	  else \
-	    local_target="$$target"; \
-	  fi; \
-	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
-	  || eval $$failcom; \
-	done && test -z "$$fail"
-tags-recursive:
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-	  test "$$subdir" = . || (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) tags); \
-	done
-ctags-recursive:
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-	  test "$$subdir" = . || (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) ctags); \
-	done
-
-ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
-	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
-	unique=`for i in $$list; do \
-	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
-	  done | \
-	  $(AWK) '{ files[$$0] = 1; nonempty = 1; } \
-	      END { if (nonempty) { for (i in files) print i; }; }'`; \
-	mkid -fID $$unique
 tags: TAGS
+TAGS:
 
-TAGS: tags-recursive $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
-		$(TAGS_FILES) $(LISP)
-	set x; \
-	here=`pwd`; \
-	if ($(ETAGS) --etags-include --version) >/dev/null 2>&1; then \
-	  include_option=--etags-include; \
-	  empty_fix=.; \
-	else \
-	  include_option=--include; \
-	  empty_fix=; \
-	fi; \
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-	  if test "$$subdir" = .; then :; else \
-	    test ! -f $$subdir/TAGS || \
-	      set "$$@" "$$include_option=$$here/$$subdir/TAGS"; \
-	  fi; \
-	done; \
-	list='$(SOURCES) $(HEADERS)  $(LISP) $(TAGS_FILES)'; \
-	unique=`for i in $$list; do \
-	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
-	  done | \
-	  $(AWK) '{ files[$$0] = 1; nonempty = 1; } \
-	      END { if (nonempty) { for (i in files) print i; }; }'`; \
-	shift; \
-	if test -z "$(ETAGS_ARGS)$$*$$unique"; then :; else \
-	  test -n "$$unique" || unique=$$empty_fix; \
-	  if test $$# -gt 0; then \
-	    $(ETAGS) $(ETAGSFLAGS) $(AM_ETAGSFLAGS) $(ETAGS_ARGS) \
-	      "$$@" $$unique; \
-	  else \
-	    $(ETAGS) $(ETAGSFLAGS) $(AM_ETAGSFLAGS) $(ETAGS_ARGS) \
-	      $$unique; \
-	  fi; \
-	fi
 ctags: CTAGS
-CTAGS: ctags-recursive $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
-		$(TAGS_FILES) $(LISP)
-	list='$(SOURCES) $(HEADERS)  $(LISP) $(TAGS_FILES)'; \
-	unique=`for i in $$list; do \
-	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
-	  done | \
-	  $(AWK) '{ files[$$0] = 1; nonempty = 1; } \
-	      END { if (nonempty) { for (i in files) print i; }; }'`; \
-	test -z "$(CTAGS_ARGS)$$unique" \
-	  || $(CTAGS) $(CTAGSFLAGS) $(AM_CTAGSFLAGS) $(CTAGS_ARGS) \
-	     $$unique
+CTAGS:
 
-GTAGS:
-	here=`$(am__cd) $(top_builddir) && pwd` \
-	  && cd $(top_srcdir) \
-	  && gtags -i $(GTAGS_ARGS) "$$here"
-
-distclean-tags:
-	-rm -f TAGS ID GTAGS GRTAGS GSYMS GPATH tags
 
 distdir: $(DISTFILES)
 	@srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*]/\\\\&/g'`; \
@@ -915,41 +1444,20 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
-	list='$(DIST_SUBDIRS)'; for subdir in $$list; do \
-	  if test "$$subdir" = .; then :; else \
-	    test -d "$(distdir)/$$subdir" \
-	    || $(MKDIR_P) "$(distdir)/$$subdir" \
-	    || exit 1; \
-	    dir1=$$subdir; dir2="$(distdir)/$$subdir"; \
-	    $(am__relativize); \
-	    new_distdir=$$reldir; \
-	    dir1=$$subdir; dir2="$(top_distdir)"; \
-	    $(am__relativize); \
-	    new_top_distdir=$$reldir; \
-	    (cd $$subdir && \
-	      $(MAKE) $(AM_MAKEFLAGS) \
-	        top_distdir="$$new_top_distdir" \
-	        distdir="$$new_distdir" \
-		am__remove_distdir=: \
-		am__skip_length_check=: \
-	        distdir) \
-	      || exit 1; \
-	  fi; \
-	done
 check-am: all-am
-check: check-recursive
+	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
+check: check-am
 all-am: Makefile
-installdirs: installdirs-recursive
-installdirs-am:
-install: install-recursive
-install-exec: install-exec-recursive
-install-data: install-data-recursive
-uninstall: uninstall-recursive
+installdirs:
+install: install-am
+install-exec: install-exec-am
+install-data: install-data-am
+uninstall: uninstall-am
 
 install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
 
-installcheck: installcheck-recursive
+installcheck: installcheck-am
 install-strip:
 	$(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
 	  install_sh_PROGRAM="$(INSTALL_STRIP_PROGRAM)" INSTALL_STRIP_FLAG=-s \
@@ -965,105 +1473,77 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-clean: clean-recursive
+clean: clean-am
 
-clean-am: clean-generic mostlyclean-am
+clean-am: clean-generic clean-local mostlyclean-am
 
-distclean: distclean-recursive
+distclean: distclean-am
 	-rm -f Makefile
-distclean-am: clean-am distclean-generic distclean-tags
+distclean-am: clean-am distclean-generic
 
-dvi: dvi-recursive
+dvi: dvi-am
 
 dvi-am:
 
-html: html-recursive
+html: html-am
 
-info: info-recursive
+info: info-am
 
 info-am:
 
 install-data-am:
 
-install-dvi: install-dvi-recursive
+install-dvi: install-dvi-am
 
 install-exec-am:
 
-install-html: install-html-recursive
+install-html: install-html-am
 
-install-info: install-info-recursive
+install-info: install-info-am
 
 install-man:
 
-install-pdf: install-pdf-recursive
+install-pdf: install-pdf-am
 
-install-ps: install-ps-recursive
+install-ps: install-ps-am
 
 installcheck-am:
 
-maintainer-clean: maintainer-clean-recursive
+maintainer-clean: maintainer-clean-am
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
-mostlyclean: mostlyclean-recursive
+mostlyclean: mostlyclean-am
 
 mostlyclean-am: mostlyclean-generic
 
-pdf: pdf-recursive
+pdf: pdf-am
 
 pdf-am:
 
-ps: ps-recursive
+ps: ps-am
 
 ps-am:
 
 uninstall-am:
 
-.MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) install-am \
-	install-strip
+.MAKE: install-am install-strip
 
-.PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
-	all all-am check check-am clean clean-generic ctags \
-	ctags-recursive distclean distclean-generic distclean-tags \
-	distdir dvi dvi-am html html-am info info-am install \
-	install-am install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	installdirs-am maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am tags \
-	tags-recursive uninstall uninstall-am
+.PHONY: all all-am check check-TESTS check-am clean clean-generic \
+	clean-local distclean distclean-generic distdir dvi dvi-am \
+	html html-am info info-am install install-am install-data \
+	install-data-am install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-man install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
+	pdf-am ps ps-am uninstall uninstall-am
 
-.PHONY: check-root $(all_t)
-check-root: $(all_t)
 
-t1:
-	cd chown && $(MAKE) check TESTS=basic
-t2:
-	cd cp    && $(MAKE) check TESTS=special-bits
-t3:
-	cd rm    && $(MAKE) check TESTS=no-give-up
-t4:
-	cd rm    && $(MAKE) check TESTS=fail-2eperm
-t5:
-	cd tail-2 && $(MAKE) check TESTS=append-only
-t6:
-	cd rm    && $(MAKE) check TESTS=one-file-system
-t7:
-	cd ls    && $(MAKE) check TESTS=nameless-uid
-t8:
-	cd misc  && $(MAKE) check TESTS=chcon
-t9:
-	cd cp    && $(MAKE) check TESTS=cp-a-selinux
-ta:
-	cd mkdir && $(MAKE) check TESTS=writable-under-readonly
-tb:
-	cd mv    && $(MAKE) check TESTS=sticky-to-xpart
-tc:
-	cd cp    && $(MAKE) check TESTS=preserve-gid
-td:
-	cd touch && $(MAKE) check TESTS=now-owned-by-other
+.PHONY: check-root
+check-root:
+	$(MAKE) check TESTS='$(root_tests)'
 
 check-recursive: root-hint
 
@@ -1072,8 +1552,143 @@ check-recursive: root-hint
 root-hint:
 	@echo '***********************************************************'
 	@echo "NOTICE: Some tests may be run only as root."
-	@echo "  Do \`make check-root' as \`root' to run these tests."
+	@echo "  See the 'Running tests as root' section in README."
 	@echo '***********************************************************'
+vc_exe_in_TESTS: Makefile
+	@rm -f t1 t2
+	@if test -d $(top_srcdir)/.git && test $(srcdir) = .; then	\
+	  { sed -n '/^$(_v) =[	 ]*\\$$/,/[^\]$$/p'			\
+		$(srcdir)/Makefile.am					\
+	    | sed 's/^  *//;/^\$$.*/d;/^$(_v) =/d';			\
+	    sed -n '/^$(_w) =[	 ]*\\$$/,/[^\]$$/p'			\
+		$(srcdir)/Makefile.am					\
+	    | sed 's/^  *//;/^\$$.*/d;/^$(_w) =/d'; }			\
+	    | tr -s '\012\\' '  ' | fmt -1 | sort -u > t1 &&		\
+	  for f in `cd $(top_srcdir) && build-aux/vc-list-files $(subdir)`; do \
+	    f=`echo $$f|sed 's!^$(subdir)/!!'`;				\
+	    test -f "$$f" && test -x "$$f" && echo "$$f";		\
+	  done | sort -u > t2 &&					\
+	  diff -u t1 t2 || exit 1;					\
+	  rm -f t1 t2;							\
+	else :; fi
+
+check: vc_exe_in_TESTS
+.PHONY: vc_exe_in_TESTS
+
+# From a test (with no extension) to a log file.
+@GNU_MAKE_TRUE@%.log: %
+@GNU_MAKE_TRUE@	@src='$<'; $(am__check_pre) "$$dir$$src" $(am__check_post)
+# With POSIX 'make', inference rules cannot have FOO.log depend on FOO.
+# Work around the problem by calculating the dependency dynamically, and
+# then invoking a submake with the calculated dependency.
+@GNU_MAKE_FALSE@CHECK-FORCE:
+@GNU_MAKE_FALSE@$(TEST_LOGS): $(DEPENDENCY)
+@GNU_MAKE_FALSE@	@if test '$(DEPENDENCY)' = CHECK-FORCE; then			\
+@GNU_MAKE_FALSE@	  dst=$@;							\
+@GNU_MAKE_FALSE@	  exec $(MAKE) $(AM_MAKEFLAGS) DEPENDENCY='$(srcdir)'/$${dst%.log} $@;\
+@GNU_MAKE_FALSE@	else								\
+@GNU_MAKE_FALSE@	  src='$(DEPENDENCY)';						\
+@GNU_MAKE_FALSE@	  $(am__check_pre) "$$dir$$src" $(am__check_post);		\
+@GNU_MAKE_FALSE@	fi
+
+$(TEST_SUITE_LOG): $(TEST_LOGS)
+	@$(SH_E_WORKAROUND);						\
+	results=$$(for f in $(TEST_LOGS); do sed 1q $$f; done);		\
+	all=$$(echo "$$results" | wc -l | sed -e 's/^[ \t]*//');	\
+	fail=$$(echo "$$results" | grep -c '^FAIL');			\
+	pass=$$(echo "$$results" | grep -c '^PASS');			\
+	skip=$$(echo "$$results" | grep -c '^SKIP');			\
+	xfail=$$(echo "$$results" | grep -c '^XFAIL');			\
+	xpass=$$(echo "$$results" | grep -c '^XPASS');			\
+	failures=$$(expr $$fail + $$xpass);				\
+	case fail=$$fail:xpass=$$xpass:xfail=$$xfail in			\
+	  fail=0:xpass=0:xfail=0)					\
+	    msg="All $$all tests passed.  ";				\
+	    exit=true;;							\
+	  fail=0:xpass=0:xfail=*)					\
+	    msg="All $$all tests behaved as expected";			\
+	    msg="$$msg ($$xfail expected failures).  ";			\
+	    exit=true;;							\
+	  fail=*:xpass=0:xfail=*)					\
+	    msg="$$fail of $$all tests failed.  ";			\
+	    exit=false;;						\
+	  fail=*:xpass=*:xfail=*)					\
+	    msg="$$failures of $$all tests did not behave as expected";	\
+	    msg="$$msg ($$xpass unexpected passes).  ";			\
+	    exit=false;;						\
+	  *)								\
+            echo >&2 "incorrect case"; exit 4;;				\
+	esac;								\
+	if test "$$skip" -ne 0; then					\
+	  msg="$$msg($$skip tests were not run).  ";			\
+	fi;								\
+	if test "$$failures" -ne 0; then				\
+	  {								\
+	    echo "$(PACKAGE_STRING): $(subdir)/$(TEST_SUITE_LOG)" |	\
+	      $(am__rst_title);						\
+	    echo "$$msg";						\
+	    echo;							\
+	    echo ".. contents:: :depth: 2";				\
+	    echo;							\
+	    for f in $(TEST_LOGS);					\
+	    do								\
+	      case $$(sed 1q $$f) in					\
+	        SKIP:*|PASS:*|XFAIL:*);;				\
+	        *) echo; cat $$f;;					\
+	      esac;							\
+	    done;							\
+	  } >$(TEST_SUITE_LOG).tmp;					\
+	  mv $(TEST_SUITE_LOG).tmp $(TEST_SUITE_LOG);			\
+	  msg="$${msg}See $(subdir)/$(TEST_SUITE_LOG).  ";		\
+	  if test -n "$(PACKAGE_BUGREPORT)"; then			\
+	    msg="$${msg}Please report it to $(PACKAGE_BUGREPORT).  ";	\
+	  fi;								\
+	fi;								\
+	$(am__tty_colors);						\
+	if $$exit; then echo $$grn; else echo $$red; fi;		\
+	  echo "$$msg" | $(am__text_box);				\
+	echo $$std;							\
+	test x"$$VERBOSE" = x || $$exit || cat $(TEST_SUITE_LOG);	\
+	$$exit
+
+# if test x"$$VERBOSE" != x && ! $exit; then
+
+# Run all the tests.
+check-TESTS:
+	@if test -z '$(LAZY_TEST_SUITE)'; then	\
+	  rm -f $(TEST_SUITE_LOG) $(TEST_LOGS);	\
+	fi
+	@$(MAKE) $(TEST_SUITE_LOG)
+
+.log.html:
+	@for r2h in $(RST2HTML) $$RST2HTML rst2html rst2html.py;	\
+	do								\
+	  if ($$r2h --version) >/dev/null 2>&1; then			\
+	    R2H=$$r2h;							\
+	  fi;								\
+	done;								\
+	if test -z "$$R2H"; then					\
+	  echo >&2 "cannot find rst2html, cannot create $@";		\
+	  exit 2;							\
+	fi;								\
+	$$R2H $< >$@.tmp
+	@mv $@.tmp $@
+
+# Be sure to run check-TESTS first, and then to convert the result.
+# Beware of concurrent executions.  And expect check-TESTS to fail.
+check-html:
+	@if $(MAKE) $(AM_MAKEFLAGS) check-TESTS; then :; else	\
+	  rv=$$?;						\
+	  $(MAKE) $(AM_MAKEFLAGS) $(TEST_SUITE_HTML);		\
+	  exit $$rv;						\
+	fi
+
+.PHONY: check-html
+
+check-clean:
+	rm -f $(CHECK_CLEANFILES) $(TEST_SUITE_LOG) $(TEST_SUITE_HTML) $(TEST_LOGS)
+.PHONY: check-clean
+clean-local: check-clean
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

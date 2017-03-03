@@ -1,5 +1,5 @@
 /* tty -- print the name of the terminal connected to standard input
-   Copyright (C) 1990-2005 Free Software Foundation, Inc.
+   Copyright (C) 1990-2005, 2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ enum
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "tty"
 
-#define AUTHORS "David MacKenzie"
+#define AUTHORS proper_name ("David MacKenzie")
 
 /* The name under which this program was run. */
 char *program_name;

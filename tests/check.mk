@@ -18,11 +18,16 @@
 # Collect test names from the line matching /^TESTS = \\$$/ to the following
 # one that does not end in '\'.
 _v = TESTS
+_w = root_tests
 vc_exe_in_TESTS: Makefile
 	@rm -f t1 t2
 	@if test -d $(top_srcdir)/.git && test $(srcdir) = .; then	\
-	  sed -n '/^$(_v) = \\$$/,/[^\]$$/p' $(srcdir)/Makefile.am	\
-	    | sed 's/^  *//;/^\$$.*/d;/^$(_v) =/d'			\
+	  { sed -n '/^$(_v) =[	 ]*\\$$/,/[^\]$$/p'			\
+		$(srcdir)/Makefile.am					\
+	    | sed 's/^  *//;/^\$$.*/d;/^$(_v) =/d';			\
+	    sed -n '/^$(_w) =[	 ]*\\$$/,/[^\]$$/p'			\
+		$(srcdir)/Makefile.am					\
+	    | sed 's/^  *//;/^\$$.*/d;/^$(_w) =/d'; }			\
 	    | tr -s '\012\\' '  ' | fmt -1 | sort -u > t1 &&		\
 	  for f in `cd $(top_srcdir) && build-aux/vc-list-files $(subdir)`; do \
 	    f=`echo $$f|sed 's!^$(subdir)/!!'`;				\
@@ -35,10 +40,37 @@ vc_exe_in_TESTS: Makefile
 check: vc_exe_in_TESTS
 .PHONY: vc_exe_in_TESTS
 
-# Append this, because automake does the same.
+built_programs = \
+  (cd $(top_builddir)/src && MAKEFLAGS= $(MAKE) -s built_programs.list)
+
+# Note that the first lines are statements.  They ensures that environment
+# variables that can perturb tests are unset or set to expected values.
+# The rest are envvar settings that propagate build-related Makefile
+# variables to test scripts.
 TESTS_ENVIRONMENT =				\
+  . $(srcdir)/lang-default;			\
+  tmp__=$$TMPDIR; test -d $tmp__ || tmp__=.;	\
+  . $(srcdir)/envvar-check;			\
+  TMPDIR=$$tmp__; export TMPDIR;		\
+  shell_or_perl_() {				\
+    if grep '^\#!/usr/bin/perl' "$$1" > /dev/null; then			\
+      if $(PERL) -e 'use warnings' > /dev/null 2>&1; then		\
+	grep '^\#!/usr/bin/perl -T' "$$1" > /dev/null && T_=T || T_=;	\
+        $(PERL) -w$$T_ -I$(srcdir) -MCoreutils				\
+	      -M"CuTmpdir qw($$tst)" -- "$$1";	\
+      else					\
+	echo 1>&2 "$$tst: configure did not find a usable version of Perl," \
+	  "so skipping this test";		\
+	(exit 77);				\
+      fi;					\
+    else					\
+      $(SHELL) "$$1";				\
+    fi;						\
+  };						\
+  LOCALE_FR='$(LOCALE_FR)'			\
   abs_top_builddir='$(abs_top_builddir)'	\
   abs_top_srcdir='$(abs_top_srcdir)'		\
+  abs_srcdir='$(abs_srcdir)'			\
   built_programs="`$(built_programs)`"		\
   host_os=$(host_os)				\
   host_triplet='$(host_triplet)'		\
@@ -53,7 +85,8 @@ TESTS_ENVIRONMENT =				\
   PACKAGE_VERSION=$(PACKAGE_VERSION)		\
   PERL='$(PERL)'				\
   REPLACE_GETCWD=$(REPLACE_GETCWD)		\
-  PATH='$(abs_top_builddir)/src$(PATH_SEPARATOR)'"$$PATH"
+  PATH='$(abs_top_builddir)/src$(PATH_SEPARATOR)'"$$PATH" \
+  shell_or_perl_
 
 TEST_LOGS = $(TESTS:=.log)
 

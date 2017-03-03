@@ -35,7 +35,9 @@ char *program_name;
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "groups"
 
-#define AUTHORS "David MacKenzie", "James Youngman"
+#define AUTHORS \
+  proper_name ("David MacKenzie"), \
+  proper_name ("James Youngman")
 
 
 static struct option const longopts[] =
@@ -102,7 +104,7 @@ main (int argc, char **argv)
       egid = getegid ();
       rgid = getgid ();
 
-      if (!print_group_list (getlogin (), ruid, rgid, egid, true))
+      if (!print_group_list (NULL, ruid, rgid, egid, true))
         ok = false;
       putchar ('\n');
     }

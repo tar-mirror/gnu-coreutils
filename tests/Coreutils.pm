@@ -16,7 +16,6 @@ package Coreutils;
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-require 5.003;
 use strict;
 use vars qw($VERSION @ISA @EXPORT);
 
@@ -25,7 +24,7 @@ use File::Compare qw(compare);
 
 @ISA = qw(Exporter);
 ($VERSION = '$Revision: 1.5 $ ') =~ tr/[0-9].//cd;
-@EXPORT = qw (run_tests);
+@EXPORT = qw (run_tests triple_test);
 
 my $debug = $ENV{DEBUG};
 
@@ -214,6 +213,11 @@ sub run_tests ($$$$$)
 {
   my ($program_name, $prog, $t_spec, $save_temps, $verbose) = @_;
 
+  # To indicate that $prog is a shell built-in, you'd make it a string 'ref'.
+  # E.g., call run_tests ($prog, \$prog, \@Tests, $save_temps, $verbose);
+  # If it's a ref, invoke it via "env":
+  my @prog = ref $prog ? (qw(env --), $$prog) : $prog;
+
   # Warn about empty t_spec.
   # FIXME
 
@@ -247,19 +251,20 @@ sub run_tests ($$$$$)
 	  $seen_8dot3{$t8} = $test_name;
 	}
 
-      # The test name may be no longer than 12 bytes,
-      # so that we can add a two-byte suffix without exceeding
-      # the maximum of 14 imposed on some old file systems.
-      if (14 < (length $test_name) + 2)
+      # The test name may be no longer than 30 bytes.
+      # Yes, this is an arbitrary limit.  If it causes trouble,
+      # consider removing it.
+      my $max = 30;
+      if ($max < length $test_name)
 	{
-	  warn "$program_name: $test_name: test name is too long (> 12)\n";
+	  warn "$program_name: $test_name: test name is too long (> $max)\n";
 	  $bad_test_name = 1;
 	}
     }
   return 1 if $bad_test_name;
 
   # FIXME check exit status
-  system ($prog, '--version') if $verbose;
+  system (@prog, '--version') if $verbose;
 
   my @junk_files;
   my $fail = 0;
@@ -288,8 +293,13 @@ sub run_tests ($$$$$)
 	      next;
 	    }
 
-	  die "$program_name: $test_name: invalid test spec\n"
-	    if ref $io_spec ne 'HASH';
+	  if (ref $io_spec ne 'HASH')
+	    {
+	      eval 'use Data::Dumper';
+	      die "$program_name: $test_name: invalid entry in test spec; "
+		. "expected HASH-ref,\nbut got this:\n"
+		  . Data::Dumper->Dump ([\$io_spec], ['$io_spec']) . "\n";
+	    }
 
 	  my $n = keys %$io_spec;
 	  die "$program_name: $test_name: spec has $n elements --"
@@ -439,10 +449,12 @@ sub run_tests ($$$$$)
       $actual{OUT} = "$test_name.O";
       $actual{ERR} = "$test_name.E";
       push @junk_files, $actual{OUT}, $actual{ERR};
-      my @cmd = ($prog, @args, "> $actual{OUT}", "2> $actual{ERR}");
+      my @cmd = (@prog, @args, "> $actual{OUT}", "2> $actual{ERR}");
+      $env_prefix
+	and unshift @cmd, $env_prefix;
       defined $input_pipe_cmd
 	and unshift @cmd, $input_pipe_cmd;
-      my $cmd_str = $env_prefix . join (' ', @cmd);
+      my $cmd_str = join (' ', @cmd);
 
       # Delete from the environment any symbols specified by syntax
       # like this: {ENV_DEL => 'TZ'}.
@@ -552,6 +564,47 @@ sub run_tests ($$$$$)
   unlink @junk_files if ! $save_temps;
 
   return $fail;
+}
+
+# For each test in @$TESTS, generate two additional tests,
+# one using stdin, the other using a pipe. I.e., given this one
+# ['idem-0', {IN=>''}, {OUT=>''}],
+# generate these:
+# ['idem-0.r', '<', {IN=>''}, {OUT=>''}],
+# ['idem-0.p', {IN_PIPE=>''}, {OUT=>''}],
+# Generate new tests only if there is exactly one input spec.
+# The returned list of tests contains each input test, followed
+# by zero or two derived tests.
+sub triple_test($)
+{
+  my ($tests) = @_;
+  my @new;
+  foreach my $t (@$tests)
+    {
+      push @new, $t;
+
+      my @in;
+      my @args;
+      my @list_of_hash;
+      foreach my $e (@$t)
+	{
+	  !ref $e
+	    and push (@args, $e), next;
+
+	  ref $e && ref $e eq 'HASH'
+	    or (warn "$0: $t->[0]: unexpected entry type\n"), next;
+	  defined $e->{IN}
+	    and (push @in, $e->{IN}), next;
+	  push @list_of_hash, $e;
+	}
+      # Add variants IFF there is exactly one input file.
+      @in == 1
+	or next;
+      shift @args; # discard test name
+      push @new, ["$t->[0].r", @args, '<', {IN => $in[0]}, @list_of_hash];
+      push @new, ["$t->[0].p", @args, {IN_PIPE => $in[0]}, @list_of_hash];
+    }
+  return @new;
 }
 
 ## package return

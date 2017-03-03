@@ -19,6 +19,8 @@
 /* Specification.  */
 #include "freading.h"
 
+#include "stdio-impl.h"
+
 /* Don't use glibc's __freading function in glibc < 2.7, see
    <http://sourceware.org/bugzilla/show_bug.cgi?id=4359>  */
 #if !(HAVE___FREADING && (!defined __GLIBC__ || __GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 7)))
@@ -33,14 +35,11 @@ freading (FILE *fp)
   return ((fp->_flags & _IO_NO_WRITES) != 0
 	  || ((fp->_flags & (_IO_NO_READS | _IO_CURRENTLY_PUTTING)) == 0
 	      && fp->_IO_read_base != NULL));
-#elif defined __sferror             /* FreeBSD, NetBSD, OpenBSD, MacOS X, Cygwin */
-  return (fp->_flags & __SRD) != 0;
+#elif defined __sferror || defined __DragonFly__ /* FreeBSD, NetBSD, OpenBSD, DragonFly, MacOS X, Cygwin */
+  return (fp_->_flags & __SRD) != 0;
 #elif defined __EMX__               /* emx+gcc */
   return (fp->_flags & _IOREAD) != 0;
 #elif defined _IOERR                /* AIX, HP-UX, IRIX, OSF/1, Solaris, OpenServer, mingw */
-# if defined _SCO_DS                /* OpenServer */
-#  define _flag __flag
-# endif
   return (fp->_flag & _IOREAD) != 0;
 #elif defined __UCLIBC__            /* uClibc */
   return (fp->__modeflags & (__FLAG_READONLY | __FLAG_READING)) != 0;

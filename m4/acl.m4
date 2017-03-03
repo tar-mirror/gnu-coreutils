@@ -1,5 +1,5 @@
 # acl.m4 - check for access control list (ACL) primitives
-# serial 2
+# serial 7
 
 # Copyright (C) 2002, 2004-2008 Free Software Foundation, Inc.
 # This file is free software; the Free Software Foundation
@@ -10,15 +10,13 @@
 
 AC_DEFUN([gl_FUNC_ACL],
 [
-  AC_LIBOBJ([acl])
-  AC_LIBOBJ([file-has-acl])
-
   AC_ARG_ENABLE([acl],
     AS_HELP_STRING([--disable-acl], [do not support ACLs]),
     , [enable_acl=auto])
 
   LIB_ACL=
   use_acl=0
+  AC_REQUIRE([AC_C_INLINE])
   if test "x$enable_acl" != "xno"; then
     dnl Prerequisites of lib/acl.c.
     AC_CHECK_HEADERS(sys/acl.h)
@@ -32,13 +30,17 @@ AC_DEFUN([gl_FUNC_ACL],
 	 AC_CHECK_FUNCS([acl_trivial])],
 	[AC_CHECK_FUNCS([acl_trivial])
 	 if test $ac_cv_func_acl_trivial != yes; then
-	   AC_SEARCH_LIBS([acl_get_file], [acl],
+	   dnl -lacl is needed on Linux, -lpacl is needed on OSF/1.
+	   AC_SEARCH_LIBS([acl_get_file], [acl pacl],
 	     [test "$ac_cv_search_acl_get_file" = "none required" ||
 	      LIB_ACL=$ac_cv_search_acl_get_file
 	      AC_CHECK_FUNCS(
 		[acl_get_file acl_get_fd acl_set_file acl_set_fd \
 		 acl_free acl_from_mode acl_from_text \
-		 acl_delete_def_file acl_extended_file])
+		 acl_delete_def_file acl_extended_file \
+		 acl_delete_fd_np acl_delete_file_np \
+		 acl_copy_ext_native acl_create_entry_np \
+		 acl_to_short_text acl_free_text])
 	      if test $ac_cv_func_acl_get_file = yes; then
 		# If the acl_get_file bug is detected, disable all ACL support.
 		gl_ACL_GET_FILE( , [use_acl=0])
@@ -62,10 +64,6 @@ AC_DEFUN([gl_FUNC_ACL],
   AC_SUBST([LIB_ACL])
   AC_DEFINE_UNQUOTED([USE_ACL], [$use_acl],
     [Define to nonzero if you want access control list support.])
-
-  # This is for backwards compatibility; remove this by the end of 2007.
-  LIB_ACL_TRIVIAL=
-  AC_SUBST([LIB_ACL_TRIVIAL])
 ])
 
 # gl_ACL_GET_FILE(IF-WORKS, IF-NOT)

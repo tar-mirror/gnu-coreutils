@@ -87,6 +87,14 @@ EXTRA_DIST += test-atexit.sh test-atexit.c
 
 ## end   gnulib module atexit-tests
 
+## begin gnulib module base64-tests
+
+TESTS += test-base64
+check_PROGRAMS += test-base64
+EXTRA_DIST += test-base64.c
+
+## end   gnulib module base64-tests
+
 ## begin gnulib module binary-io
 
 libtests_a_SOURCES += binary-io.h
@@ -240,6 +248,24 @@ EXTRA_DIST += test-freading.c
 
 ## end   gnulib module freading-tests
 
+## begin gnulib module freadptr-tests
+
+TESTS += test-freadptr.sh test-freadptr2.sh
+TESTS_ENVIRONMENT += EXEEXT='@EXEEXT@' srcdir='$(srcdir)'
+check_PROGRAMS += test-freadptr test-freadptr2
+EXTRA_DIST += test-freadptr.c test-freadptr.sh test-freadptr2.c test-freadptr2.sh
+
+## end   gnulib module freadptr-tests
+
+## begin gnulib module freadseek-tests
+
+TESTS += test-freadseek.sh
+TESTS_ENVIRONMENT += EXEEXT='@EXEEXT@' srcdir='$(srcdir)'
+check_PROGRAMS += test-freadseek
+EXTRA_DIST += test-freadseek.c test-freadseek.sh
+
+## end   gnulib module freadseek-tests
+
 ## begin gnulib module frexp-nolibm-tests
 
 TESTS += test-frexp
@@ -320,6 +346,15 @@ MOSTLYCLEANFILES += test-getline.txt
 EXTRA_DIST += test-getline.c
 
 ## end   gnulib module getline-tests
+
+## begin gnulib module getndelim2-tests
+
+TESTS += test-getndelim2
+check_PROGRAMS += test-getndelim2
+MOSTLYCLEANFILES += test-getndelim2.txt
+EXTRA_DIST += test-getndelim2.c
+
+## end   gnulib module getndelim2-tests
 
 ## begin gnulib module gettimeofday-tests
 
@@ -421,6 +456,48 @@ EXTRA_DIST += test-mbscasecmp.sh test-mbscasecmp.c
 
 ## end   gnulib module mbscasecmp-tests
 
+## begin gnulib module mbsstr-tests
+
+TESTS += test-mbsstr1 test-mbsstr2.sh test-mbsstr3.sh
+TESTS_ENVIRONMENT += EXEEXT='@EXEEXT@' LOCALE_FR_UTF8='@LOCALE_FR_UTF8@' LOCALE_ZH_CN='@LOCALE_ZH_CN@'
+check_PROGRAMS += test-mbsstr1 test-mbsstr2 test-mbsstr3
+
+EXTRA_DIST += test-mbsstr1.c test-mbsstr2.sh test-mbsstr2.c test-mbsstr3.sh test-mbsstr3.c
+
+## end   gnulib module mbsstr-tests
+
+## begin gnulib module memchr-tests
+
+TESTS += test-memchr
+check_PROGRAMS += test-memchr
+EXTRA_DIST += test-memchr.c
+
+## end   gnulib module memchr-tests
+
+## begin gnulib module memchr2-tests
+
+TESTS += test-memchr2
+check_PROGRAMS += test-memchr2
+EXTRA_DIST += test-memchr2.c
+
+## end   gnulib module memchr2-tests
+
+## begin gnulib module memcmp-tests
+
+TESTS += test-memcmp
+check_PROGRAMS += test-memcmp
+EXTRA_DIST += test-memcmp.c
+
+## end   gnulib module memcmp-tests
+
+## begin gnulib module memrchr-tests
+
+TESTS += test-memrchr
+check_PROGRAMS += test-memrchr
+EXTRA_DIST += test-memrchr.c
+
+## end   gnulib module memrchr-tests
+
 ## begin gnulib module netinet_in-tests
 
 TESTS += test-netinet_in
@@ -471,6 +548,24 @@ check_PROGRAMS += test-signbit
 EXTRA_DIST += test-signbit.c
 
 ## end   gnulib module signbit-tests
+
+## begin gnulib module sleep
+
+
+EXTRA_DIST += sleep.c
+
+EXTRA_libtests_a_SOURCES += sleep.c
+
+## end   gnulib module sleep
+
+## begin gnulib module sleep-tests
+
+TESTS += test-sleep
+check_PROGRAMS += test-sleep
+
+EXTRA_DIST += test-sleep.c
+
+## end   gnulib module sleep-tests
 
 ## begin gnulib module snprintf-tests
 
@@ -532,6 +627,16 @@ check_PROGRAMS += test-strerror
 EXTRA_DIST += test-strerror.c
 
 ## end   gnulib module strerror-tests
+
+## begin gnulib module striconv-tests
+
+TESTS += test-striconv
+check_PROGRAMS += test-striconv
+test_striconv_LDADD = $(LDADD) @LIBICONV@
+
+EXTRA_DIST += test-striconv.c
+
+## end   gnulib module striconv-tests
 
 ## begin gnulib module string-tests
 
@@ -632,6 +737,15 @@ check_PROGRAMS += test-vasprintf
 EXTRA_DIST += test-vasprintf.c
 
 ## end   gnulib module vasprintf-tests
+
+## begin gnulib module vc-list-files-tests
+
+TESTS += test-vc-list-files-git.sh
+TESTS += test-vc-list-files-cvs.sh
+TESTS_ENVIRONMENT += PATH='$(abs_aux_dir)':"$$PATH"
+EXTRA_DIST += test-vc-list-files-git.sh test-vc-list-files-cvs.sh
+
+## end   gnulib module vc-list-files-tests
 
 ## begin gnulib module vfprintf-posix-tests
 

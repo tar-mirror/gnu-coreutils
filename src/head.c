@@ -1,5 +1,5 @@
 /* head -- output first part of file(s)
-   Copyright (C) 89, 90, 91, 1995-2006 Free Software Foundation, Inc.
+   Copyright (C) 89, 90, 91, 1995-2006, 2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -42,7 +42,9 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "head"
 
-#define AUTHORS "David MacKenzie", "Jim Meyering"
+#define AUTHORS \
+  proper_name ("David MacKenzie"), \
+  proper_name ("Jim Meyering")
 
 /* Number of lines/chars/blocks to head. */
 #define DEFAULT_NUMBER 10

@@ -1,5 +1,5 @@
 /* nl -- number lines of files
-   Copyright (C) 89, 92, 1995-2007 Free Software Foundation, Inc.
+   Copyright (C) 89, 92, 1995-2008 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,7 +35,9 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "nl"
 
-#define AUTHORS "Scott Bartram", "David MacKenzie"
+#define AUTHORS \
+  proper_name ("Scott Bartram"), \
+  proper_name ("David MacKenzie")
 
 /* Line-number formats.  They are given an int width, an intmax_t
    value, and a string separator.  */
