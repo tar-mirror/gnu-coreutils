@@ -227,22 +227,27 @@ my @tv = (
 # be significant during comparison; but with GNU sort the newline is
 # insignificant.  Here is an example of the bug:
 #
-# 	$ od -c t
-# 	0000000  \n  \t  \n
-# 	0000003
-# 	$ sort t | od -c
-# 	0000000  \n  \t  \n
-# 	0000003
+#	$ od -c t
+#	0000000  \n  \t  \n
+#	0000003
+#	$ sort t | od -c
+#	0000000  \n  \t  \n
+#	0000003
 #
 # The correct output of the latter command should be
 #
-# 	0000000  \t  \n  \n
-# 	0000003
+#	0000000  \t  \n  \n
+#	0000003
 #
 # because \t comes before \n in the collating sequence, and the trailing
 # \n's are part of the input line.
 ["use-nl", '', "\n\t\n", "\n\t\n", 0],
 
+# Specifying two -o options should evoke a failure
+["o2", '-o x -o y', '', '', 2],
+
+# -t '\0' is accepted, as of coreutils-5.0.91
+['nul-tab', "-k2,2 -t '\\0'", "a\0z\01\nb\0y\02\n", "b\0y\02\na\0z\01\n", 0],
 );
 
 sub test_vector

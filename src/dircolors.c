@@ -1,6 +1,6 @@
 /* dircolors - output commands to set the LS_COLOR environment variable
-   Copyright (C) 1994, 1995, 1997, 1998, 1999, 2000, 2001, 2002 H. Peter Anvin
-   Copyright (C) 1996-2000 Free Software Foundation, Inc.
+   Copyright (C) 1996-2004 Free Software Foundation, Inc.
+   Copyright (C) 1994, 1995, 1997, 1998, 1999, 2000 H. Peter Anvin
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
 #include "getline.h"
 #include "obstack.h"
 #include "quote.h"
+#include "xstrndup.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "dircolors"
@@ -95,7 +96,7 @@ char *program_name;
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
              program_name);
   else
@@ -120,16 +121,7 @@ For details on the format of these files, run `dircolors --print-database'.\n\
       printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
     }
 
-  exit (status == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
-}
-
-static void *
-xstrndup (const char *s, size_t n)
-{
-  char *new = strndup (s, n);
-  if (new == NULL)
-    xalloc_die ();
-  return new;
+  exit (status);
 }
 
 /* If the SHELL environment variable is set to `csh' or `tcsh,'
@@ -426,6 +418,7 @@ main (int argc, char **argv)
   enum Shell_syntax syntax = SHELL_SYNTAX_UNKNOWN;
   int print_database = 0;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);

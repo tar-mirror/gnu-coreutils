@@ -1,4 +1,4 @@
-#serial 8
+#serial 9
 
 dnl From Jim Meyering.
 dnl Check for the nanosleep function.
@@ -11,13 +11,16 @@ AC_DEFUN([jm_FUNC_NANOSLEEP],
 
  # Solaris 2.5.1 needs -lposix4 to get the nanosleep function.
  # Solaris 7 prefers the library name -lrt to the obsolescent name -lposix4.
- AC_SEARCH_LIBS(nanosleep, [rt posix4], [LIB_NANOSLEEP=$ac_cv_search_nanosleep])
- AC_SUBST(LIB_NANOSLEEP)
+ AC_SEARCH_LIBS([nanosleep], [rt posix4],
+                [test "$ac_cv_search_nanosleep" = "none required" ||
+	         LIB_NANOSLEEP=$ac_cv_search_nanosleep])
+ AC_SUBST([LIB_NANOSLEEP])
 
  AC_CACHE_CHECK([whether nanosleep works],
   jm_cv_func_nanosleep_works,
   [
    AC_REQUIRE([AC_HEADER_TIME])
+   AC_CHECK_HEADERS_ONCE(sys/time.h)
    AC_TRY_RUN([
 #   if TIME_WITH_SYS_TIME
 #    include <sys/time.h>
@@ -48,7 +51,14 @@ AC_DEFUN([jm_FUNC_NANOSLEEP],
     AC_LIBOBJ(nanosleep)
     AC_DEFINE(nanosleep, rpl_nanosleep,
       [Define to rpl_nanosleep if the replacement function should be used.])
+    gl_PREREQ_NANOSLEEP
   fi
 
  LIBS=$nanosleep_save_libs
+])
+
+# Prerequisites of lib/nanosleep.c.
+AC_DEFUN([gl_PREREQ_NANOSLEEP],
+[
+  AC_CHECK_HEADERS_ONCE(unistd.h)
 ])

@@ -1,5 +1,5 @@
 /* factor -- print prime factors of n.
-   Copyright (C) 86, 1995-2002 Free Software Foundation, Inc.
+   Copyright (C) 86, 1995-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@
 #define NDEBUG 1
 
 #include "system.h"
-#include "closeout.h"
 #include "error.h"
 #include "inttostr.h"
 #include "long-options.h"
@@ -66,7 +65,7 @@ char *program_name;
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -148,10 +147,14 @@ print_factors (const char *s)
   int n_factors;
   int i;
   char buf[INT_BUFSIZE_BOUND (uintmax_t)];
+  strtol_error err;
 
-  if (xstrtoumax (s, NULL, 10, &n, "") != LONGINT_OK)
+  if ((err = xstrtoumax (s, NULL, 10, &n, "")) != LONGINT_OK)
     {
-      error (0, 0, _("`%s' is not a valid positive integer"), s);
+      if (err == LONGINT_OVERFLOW)
+	error (0, 0, _("`%s' is too large"), s);
+      else
+	error (0, 0, _("`%s' is not a valid positive integer"), s);
       return 1;
     }
   n_factors = factor (n, MAX_N_FACTORS, factors);
@@ -190,6 +193,7 @@ main (int argc, char **argv)
 {
   int fail;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -198,7 +202,7 @@ main (int argc, char **argv)
   atexit (close_stdout);
 
   parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
-		      AUTHORS, usage);
+		      usage, AUTHORS, (char const *) NULL);
   /* The above handles --help and --version.
      Since there is no other invocation of getopt, handle `--' here.  */
   if (argc > 1 && STREQ (argv[1], "--"))
@@ -215,9 +219,9 @@ main (int argc, char **argv)
       int i;
       for (i = 1; i < argc; i++)
 	fail |= print_factors (argv[i]);
+      if (fail)
+	usage (EXIT_FAILURE);
     }
-  if (fail)
-    usage (EXIT_FAILURE);
 
-  exit (fail);
+  exit (fail ? EXIT_FAILURE : EXIT_SUCCESS);
 }

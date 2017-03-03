@@ -1,5 +1,5 @@
 /* tail -- output the last part of file(s)
-   Copyright (C) 1989, 90, 91, 1995-2002 Free Software Foundation, Inc.
+   Copyright (C) 1989, 90, 91, 1995-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -32,11 +32,12 @@
 #include <signal.h>
 
 #include "system.h"
-#include "closeout.h"
 #include "argmatch.h"
+#include "c-strtod.h"
 #include "error.h"
 #include "inttostr.h"
 #include "posixver.h"
+#include "quote.h"
 #include "safe-read.h"
 #include "xnanosleep.h"
 #include "xstrtol.h"
@@ -46,7 +47,7 @@
 #define PROGRAM_NAME "tail"
 
 #define AUTHORS \
-  N_ ("Paul Rubin, David MacKenzie, Ian Lance Taylor, and Jim Meyering")
+  "Paul Rubin", "David MacKenzie, Ian Lance Taylor", "Jim Meyering"
 
 #ifndef ENOSYS
   /* Some systems don't have ENOSYS -- this should be a big enough
@@ -56,11 +57,6 @@
 
 /* Number of items to tail.  */
 #define DEFAULT_N_LINES 10
-
-/* Size of atomic reads.  */
-#ifndef BUFSIZ
-# define BUFSIZ (512 * 8)
-#endif
 
 /* A special value for dump_remainder's N_BYTES parameter.  */
 #define COPY_TO_EOF OFF_T_MAX
@@ -186,11 +182,17 @@ static pid_t pid;
 /* Nonzero if we have ever read standard input.  */
 static int have_read_stdin;
 
+/* If nonzero, skip the is-regular-file test used to determine whether
+   to use the lseek optimization.  Instead, use the more general (and
+   more expensive) code unconditionally. Intended solely for testing.  */
+static bool presume_input_pipe;
+
 /* For long options that have no equivalent short option, use a
    non-character as a pseudo short option, starting with CHAR_MAX + 1.  */
 enum
 {
   RETRY_OPTION = CHAR_MAX + 1,
+  ALLOW_MISSING_OPTION,   /* deprecated, FIXME: remove in late 2004 */
   MAX_UNCHANGED_STATS_OPTION,
 
   /* FIXME: remove this in 2001, unless someone can show a good
@@ -198,14 +200,14 @@ enum
   MAX_CONSECUTIVE_SIZE_CHANGES_OPTION,
 
   PID_OPTION,
+  PRESUME_INPUT_PIPE_OPTION,
   LONG_FOLLOW_OPTION
 };
 
 static struct option const long_options[] =
 {
-  /* --allow-missing is deprecated; use --retry instead
-     FIXME: remove it some day */
-  {"allow-missing", no_argument, NULL, RETRY_OPTION},
+  /* --allow-missing is deprecated; use --retry instead */
+  {"allow-missing", no_argument, NULL, ALLOW_MISSING_OPTION},
   {"bytes", required_argument, NULL, 'c'},
   {"follow", optional_argument, NULL, LONG_FOLLOW_OPTION},
   {"lines", required_argument, NULL, 'n'},
@@ -213,6 +215,8 @@ static struct option const long_options[] =
   {"max-consecutive-size-changes", required_argument, NULL,
    MAX_CONSECUTIVE_SIZE_CHANGES_OPTION},
   {"pid", required_argument, NULL, PID_OPTION},
+  {"presume-input-pipe", no_argument, NULL,
+   PRESUME_INPUT_PIPE_OPTION}, /* do not document */
   {"quiet", no_argument, NULL, 'q'},
   {"retry", no_argument, NULL, RETRY_OPTION},
   {"silent", no_argument, NULL, 'q'},
@@ -226,7 +230,7 @@ static struct option const long_options[] =
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -282,7 +286,7 @@ Mandatory arguments to long options are mandatory for short options too.\n\
 If the first character of N (the number of bytes or lines) is a `+',\n\
 print beginning with the Nth item from the start of each file, otherwise,\n\
 print the last N items in the file.  N may have a multiplier suffix:\n\
-b for 512, k for 1024, m for 1048576 (1 Meg).\n\
+b 512, k 1024, m 1024*1024.\n\
 \n\
 "), stdout);
      fputs (_("\
@@ -299,7 +303,7 @@ recreated by some other program.\n\
 "), stdout);
       printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
     }
-  exit (status == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
+  exit (status);
 }
 
 static int
@@ -345,21 +349,21 @@ write_header (const char *pretty_filename)
    position in FD.  If N_BYTES is COPY_TO_EOF, then copy until end of file.
    Return the number of bytes read from the file.  */
 
-static long
-dump_remainder (const char *pretty_filename, int fd, off_t n_bytes)
+static uintmax_t
+dump_remainder (const char *pretty_filename, int fd, uintmax_t n_bytes)
 {
-  char buffer[BUFSIZ];
-  size_t bytes_read;
-  long n_written;
-  off_t n_remaining = n_bytes;
+  uintmax_t n_written;
+  uintmax_t n_remaining = n_bytes;
 
   n_written = 0;
   while (1)
     {
-      long n = MIN (n_remaining, (off_t) BUFSIZ);
-      bytes_read = safe_read (fd, buffer, n);
+      char buffer[BUFSIZ];
+      size_t n = MIN (n_remaining, BUFSIZ);
+      size_t bytes_read = safe_read (fd, buffer, n);
       if (bytes_read == SAFE_READ_ERROR)
-	error (EXIT_FAILURE, errno, "%s", pretty_filename);
+	error (EXIT_FAILURE, errno, _("error reading %s"),
+	       quote (pretty_filename));
       if (bytes_read == 0)
 	break;
       xwrite (STDOUT_FILENO, buffer, bytes_read);
@@ -372,9 +376,10 @@ dump_remainder (const char *pretty_filename, int fd, off_t n_bytes)
 
 /* Call lseek with the specified arguments, where file descriptor FD
    corresponds to the file, FILENAME.
-   Give a diagnostic and exit nonzero if lseek fails.  */
+   Give a diagnostic and exit nonzero if lseek fails.
+   Otherwise, return the resulting offset.  */
 
-static void
+static off_t
 xlseek (int fd, off_t offset, int whence, char const *filename)
 {
   off_t new_offset = lseek (fd, offset, whence);
@@ -382,27 +387,28 @@ xlseek (int fd, off_t offset, int whence, char const *filename)
   char *s;
 
   if (0 <= new_offset)
-    return;
+    return new_offset;
 
   s = offtostr (offset, buf);
   switch (whence)
     {
     case SEEK_SET:
-      error (EXIT_FAILURE, errno, _("%s: cannot seek to offset %s"),
+      error (0, errno, _("%s: cannot seek to offset %s"),
 	     filename, s);
       break;
     case SEEK_CUR:
-      error (EXIT_FAILURE, errno, _("%s: cannot seek to relative offset %s"),
+      error (0, errno, _("%s: cannot seek to relative offset %s"),
 	     filename, s);
       break;
     case SEEK_END:
-      error (EXIT_FAILURE, errno,
-	     _("%s: cannot seek to end-relative offset %s"),
+      error (0, errno, _("%s: cannot seek to end-relative offset %s"),
 	     filename, s);
       break;
     default:
       abort ();
     }
+
+  exit (EXIT_FAILURE);
 }
 
 /* Print the last N_LINES lines from the end of file FD.
@@ -411,17 +417,16 @@ xlseek (int fd, off_t offset, int whence, char const *filename)
    read NUMBER newlines.
    START_POS is the starting position of the read pointer for the file
    associated with FD (may be nonzero).
-   FILE_LENGTH is the length of the file (one more than the offset of the
-   last byte of the file).
+   END_POS is the file offset of EOF (one larger than offset of last byte).
    Return 0 if successful, 1 if an error occurred.  */
 
 static int
-file_lines (const char *pretty_filename, int fd, long int n_lines,
-	    off_t start_pos, off_t file_length)
+file_lines (const char *pretty_filename, int fd, uintmax_t n_lines,
+	    off_t start_pos, off_t end_pos, uintmax_t *read_pos)
 {
   char buffer[BUFSIZ];
   size_t bytes_read;
-  off_t pos = file_length;
+  off_t pos = end_pos;
 
   if (n_lines == 0)
     return 0;
@@ -438,9 +443,10 @@ file_lines (const char *pretty_filename, int fd, long int n_lines,
   bytes_read = safe_read (fd, buffer, bytes_read);
   if (bytes_read == SAFE_READ_ERROR)
     {
-      error (0, errno, "%s", pretty_filename);
+      error (0, errno, _("error reading %s"), quote (pretty_filename));
       return 1;
     }
+  *read_pos = pos + bytes_read;
 
   /* Count the incomplete line on files that don't end with a newline.  */
   if (bytes_read && buffer[bytes_read - 1] != '\n')
@@ -464,8 +470,8 @@ file_lines (const char *pretty_filename, int fd, long int n_lines,
 	         output the part that is after it.  */
 	      if (n != bytes_read - 1)
 		xwrite (STDOUT_FILENO, nl + 1, bytes_read - (n + 1));
-	      dump_remainder (pretty_filename, fd,
-			      file_length - (pos + bytes_read));
+	      *read_pos += dump_remainder (pretty_filename, fd,
+					   end_pos - (pos + bytes_read));
 	      return 0;
 	    }
 	}
@@ -473,9 +479,11 @@ file_lines (const char *pretty_filename, int fd, long int n_lines,
       /* Not enough newlines in that bufferfull.  */
       if (pos == start_pos)
 	{
-	  /* Not enough lines in the file; print the entire file.  */
+	  /* Not enough lines in the file; print everything from
+	     start_pos to the end.  */
 	  xlseek (fd, start_pos, SEEK_SET, pretty_filename);
-	  dump_remainder (pretty_filename, fd, file_length);
+	  *read_pos = start_pos + dump_remainder (pretty_filename, fd,
+						  end_pos);
 	  return 0;
 	}
       pos -= BUFSIZ;
@@ -484,9 +492,11 @@ file_lines (const char *pretty_filename, int fd, long int n_lines,
       bytes_read = safe_read (fd, buffer, BUFSIZ);
       if (bytes_read == SAFE_READ_ERROR)
 	{
-	  error (0, errno, "%s", pretty_filename);
+	  error (0, errno, _("error reading %s"), quote (pretty_filename));
 	  return 1;
 	}
+
+      *read_pos = pos + bytes_read;
     }
   while (bytes_read > 0);
 
@@ -496,43 +506,55 @@ file_lines (const char *pretty_filename, int fd, long int n_lines,
 /* Print the last N_LINES lines from the end of the standard input,
    open for reading as pipe FD.
    Buffer the text as a linked list of LBUFFERs, adding them as needed.
-   Return 0 if successful, 1 if an error occured.  */
+   Return 0 if successful, 1 upon error.  */
 
 static int
-pipe_lines (const char *pretty_filename, int fd, long int n_lines)
+pipe_lines (const char *pretty_filename, int fd, uintmax_t n_lines,
+	    uintmax_t *read_pos)
 {
   struct linebuffer
   {
-    int nbytes, nlines;
     char buffer[BUFSIZ];
+    size_t nbytes;
+    size_t nlines;
     struct linebuffer *next;
   };
   typedef struct linebuffer LBUFFER;
   LBUFFER *first, *last, *tmp;
-  int i;			/* Index into buffers.  */
-  int total_lines = 0;		/* Total number of newlines in all buffers.  */
+  size_t total_lines = 0;	/* Total number of newlines in all buffers.  */
   int errors = 0;
-  int nbytes;			/* Size of most recent read */
+  size_t n_read;		/* Size in bytes of most recent read */
 
-  first = last = (LBUFFER *) xmalloc (sizeof (LBUFFER));
+  first = last = xmalloc (sizeof (LBUFFER));
   first->nbytes = first->nlines = 0;
   first->next = NULL;
-  tmp = (LBUFFER *) xmalloc (sizeof (LBUFFER));
+  tmp = xmalloc (sizeof (LBUFFER));
 
   /* Input is always read into a fresh buffer.  */
-  while ((nbytes = tmp->nbytes = safe_read (fd, tmp->buffer, BUFSIZ)) > 0)
+  while (1)
     {
+      n_read = safe_read (fd, tmp->buffer, BUFSIZ);
+      if (n_read == 0 || n_read == SAFE_READ_ERROR)
+	break;
+      tmp->nbytes = n_read;
+      *read_pos += n_read;
       tmp->nlines = 0;
       tmp->next = NULL;
 
       /* Count the number of newlines just read.  */
-      for (i = 0; i < tmp->nbytes; i++)
-	if (tmp->buffer[i] == '\n')
-	  ++tmp->nlines;
+      {
+	char const *buffer_end = tmp->buffer + n_read;
+	char const *p = tmp->buffer;
+	while ((p = memchr (p, '\n', buffer_end - p)))
+	  {
+	    ++p;
+	    ++tmp->nlines;
+	  }
+      }
       total_lines += tmp->nlines;
 
       /* If there is enough room in the last buffer read, just append the new
-         one to it.  This is because when reading from a pipe, `nbytes' can
+         one to it.  This is because when reading from a pipe, `n_read' can
          often be very small.  */
       if (tmp->nbytes + last->nbytes < BUFSIZ)
 	{
@@ -555,15 +577,15 @@ pipe_lines (const char *pretty_filename, int fd, long int n_lines)
 	      first = first->next;
 	    }
 	  else
-	    tmp = (LBUFFER *) xmalloc (sizeof (LBUFFER));
+	    tmp = xmalloc (sizeof (LBUFFER));
 	}
     }
 
-  free ((char *) tmp);
+  free (tmp);
 
-  if (nbytes < 0)
+  if (n_read == SAFE_READ_ERROR)
     {
-      error (0, errno, "%s", pretty_filename);
+      error (0, errno, _("error reading %s"), quote (pretty_filename));
       errors = 1;
       goto free_lbuffers;
     }
@@ -589,21 +611,24 @@ pipe_lines (const char *pretty_filename, int fd, long int n_lines)
     total_lines -= tmp->nlines;
 
   /* Find the correct beginning, then print the rest of the file.  */
-  if (total_lines > n_lines)
-    {
-      const char *cp;
+  {
+    char const *beg = tmp->buffer;
+    char const *buffer_end = tmp->buffer + tmp->nbytes;
+    if (total_lines > n_lines)
+      {
+	/* Skip `total_lines' - `n_lines' newlines.  We made sure that
+	   `total_lines' - `n_lines' <= `tmp->nlines'.  */
+	size_t j;
+	for (j = total_lines - n_lines; j; --j)
+	  {
+	    beg = memchr (beg, '\n', buffer_end - beg);
+	    assert (beg);
+	    ++beg;
+	  }
+      }
 
-      /* Skip `total_lines' - `n_lines' newlines.  We made sure that
-         `total_lines' - `n_lines' <= `tmp->nlines'.  */
-      cp = tmp->buffer;
-      for (i = total_lines - n_lines; i; --i)
-	while (*cp++ != '\n')
-	  /* Do nothing.  */ ;
-      i = cp - tmp->buffer;
-    }
-  else
-    i = 0;
-  xwrite (STDOUT_FILENO, &tmp->buffer[i], tmp->nbytes - i);
+    xwrite (STDOUT_FILENO, beg, buffer_end - beg);
+  }
 
   for (tmp = tmp->next; tmp; tmp = tmp->next)
     xwrite (STDOUT_FILENO, tmp->buffer, tmp->nbytes);
@@ -612,7 +637,7 @@ free_lbuffers:
   while (first)
     {
       tmp = first->next;
-      free ((char *) first);
+      free (first);
       first = tmp;
     }
   return errors;
@@ -623,28 +648,35 @@ free_lbuffers:
    Return 0 if successful, 1 if an error occurred.  */
 
 static int
-pipe_bytes (const char *pretty_filename, int fd, off_t n_bytes)
+pipe_bytes (const char *pretty_filename, int fd, uintmax_t n_bytes,
+	    uintmax_t *read_pos)
 {
   struct charbuffer
   {
-    int nbytes;
     char buffer[BUFSIZ];
+    size_t nbytes;
     struct charbuffer *next;
   };
   typedef struct charbuffer CBUFFER;
   CBUFFER *first, *last, *tmp;
-  int i;			/* Index into buffers.  */
-  int total_bytes = 0;		/* Total characters in all buffers.  */
+  size_t i;			/* Index into buffers.  */
+  size_t total_bytes = 0;	/* Total characters in all buffers.  */
   int errors = 0;
+  size_t n_read;
 
-  first = last = (CBUFFER *) xmalloc (sizeof (CBUFFER));
+  first = last = xmalloc (sizeof (CBUFFER));
   first->nbytes = 0;
   first->next = NULL;
-  tmp = (CBUFFER *) xmalloc (sizeof (CBUFFER));
+  tmp = xmalloc (sizeof (CBUFFER));
 
   /* Input is always read into a fresh buffer.  */
-  while ((tmp->nbytes = safe_read (fd, tmp->buffer, BUFSIZ)) > 0)
+  while (1)
     {
+      n_read = safe_read (fd, tmp->buffer, BUFSIZ);
+      if (n_read == 0 || n_read == SAFE_READ_ERROR)
+	break;
+      *read_pos += n_read;
+      tmp->nbytes = n_read;
       tmp->next = NULL;
 
       total_bytes += tmp->nbytes;
@@ -672,19 +704,19 @@ pipe_bytes (const char *pretty_filename, int fd, off_t n_bytes)
 	    }
 	  else
 	    {
-	      tmp = (CBUFFER *) xmalloc (sizeof (CBUFFER));
+	      tmp = xmalloc (sizeof (CBUFFER));
 	    }
 	}
     }
-  if (tmp->nbytes == -1)
+
+  free (tmp);
+
+  if (n_read == SAFE_READ_ERROR)
     {
-      error (0, errno, "%s", pretty_filename);
+      error (0, errno, _("error reading %s"), quote (pretty_filename));
       errors = 1;
-      free ((char *) tmp);
       goto free_cbuffers;
     }
-
-  free ((char *) tmp);
 
   /* Run through the list, printing characters.  First, skip over unneeded
      buffers.  */
@@ -706,7 +738,7 @@ free_cbuffers:
   while (first)
     {
       tmp = first->next;
-      free ((char *) first);
+      free (first);
       first = tmp;
     }
   return errors;
@@ -717,26 +749,32 @@ free_cbuffers:
    Return 1 on error, 0 if ok, -1 if EOF.  */
 
 static int
-start_bytes (const char *pretty_filename, int fd, off_t n_bytes)
+start_bytes (const char *pretty_filename, int fd, uintmax_t n_bytes,
+	     uintmax_t *read_pos)
 {
   char buffer[BUFSIZ];
-  size_t bytes_read = 0;
 
   while (0 < n_bytes)
     {
-      bytes_read = safe_read (fd, buffer, BUFSIZ);
+      size_t bytes_read = safe_read (fd, buffer, BUFSIZ);
       if (bytes_read == 0)
 	return -1;
       if (bytes_read == SAFE_READ_ERROR)
 	{
-	  error (0, errno, "%s", pretty_filename);
+	  error (0, errno, _("error reading %s"), quote (pretty_filename));
 	  return 1;
 	}
-      n_bytes -= bytes_read;
+      read_pos += bytes_read;
+      if (bytes_read <= n_bytes)
+	n_bytes -= bytes_read;
+      else
+	{
+	  size_t n_remaining = bytes_read - n_bytes;
+	  if (n_remaining)
+	    xwrite (STDOUT_FILENO, &buffer[n_bytes], n_remaining);
+	  break;
+	}
     }
-
-  if (n_bytes < 0)
-    xwrite (STDOUT_FILENO, &buffer[bytes_read + n_bytes], -n_bytes);
 
   return 0;
 }
@@ -746,39 +784,39 @@ start_bytes (const char *pretty_filename, int fd, off_t n_bytes)
    Return 1 on error, 0 if ok, -1 if EOF.  */
 
 static int
-start_lines (const char *pretty_filename, int fd, long int n_lines)
+start_lines (const char *pretty_filename, int fd, uintmax_t n_lines,
+	     uintmax_t *read_pos)
 {
-  char buffer[BUFSIZ];
-  size_t bytes_read = 0;
-  size_t bytes_to_skip = 0;
-
   if (n_lines == 0)
     return 0;
 
-  while (n_lines)
+  while (1)
     {
-      bytes_to_skip = 0;
-      bytes_read = safe_read (fd, buffer, BUFSIZ);
+      char buffer[BUFSIZ];
+      char *p = buffer;
+      size_t bytes_read = safe_read (fd, buffer, BUFSIZ);
+      char *buffer_end = buffer + bytes_read;
       if (bytes_read == 0) /* EOF */
 	return -1;
       if (bytes_read == SAFE_READ_ERROR) /* error */
 	{
-	  error (0, errno, "%s", pretty_filename);
+	  error (0, errno, _("error reading %s"), quote (pretty_filename));
 	  return 1;
 	}
 
-      while (bytes_to_skip < bytes_read)
-	if (buffer[bytes_to_skip++] == '\n' && --n_lines == 0)
-	  break;
-    }
+      *read_pos += bytes_read;
 
-  if (bytes_to_skip < bytes_read)
-    {
-      xwrite (STDOUT_FILENO, &buffer[bytes_to_skip],
-	      bytes_read - bytes_to_skip);
+      while ((p = memchr (p, '\n', buffer_end - p)))
+	{
+	  ++p;
+	  if (--n_lines == 0)
+	    {
+	      if (p < buffer_end)
+		xwrite (STDOUT_FILENO, p, buffer_end - p);
+	      return 0;
+	    }
+	}
     }
-
-  return 0;
 }
 
 /* FIXME: describe */
@@ -1046,7 +1084,8 @@ tail_forever (struct File_spec *f, int nfiles, double sleep_interval)
    Return 0 if successful, 1 if an error occurred.  */
 
 static int
-tail_bytes (const char *pretty_filename, int fd, off_t n_bytes)
+tail_bytes (const char *pretty_filename, int fd, uintmax_t n_bytes,
+	    uintmax_t *read_pos)
 {
   struct stat stats;
 
@@ -1056,65 +1095,59 @@ tail_bytes (const char *pretty_filename, int fd, off_t n_bytes)
 
   if (fstat (fd, &stats))
     {
-      error (0, errno, "%s", pretty_filename);
+      error (0, errno, _("cannot fstat %s"), quote (pretty_filename));
       return 1;
     }
 
   if (from_start)
     {
-      if (S_ISREG (stats.st_mode))
+      if ( ! presume_input_pipe
+	   && S_ISREG (stats.st_mode) && n_bytes <= OFF_T_MAX)
 	{
 	  xlseek (fd, n_bytes, SEEK_CUR, pretty_filename);
+	  *read_pos += n_bytes;
 	}
       else
 	{
 	  int t;
-	  if ((t = start_bytes (pretty_filename, fd, n_bytes)) < 0)
+	  if ((t = start_bytes (pretty_filename, fd, n_bytes, read_pos)) < 0)
 	    return 0;
 	  if (t)
 	    return 1;
 	}
-      dump_remainder (pretty_filename, fd, COPY_TO_EOF);
+      *read_pos += dump_remainder (pretty_filename, fd, COPY_TO_EOF);
     }
   else
     {
-      if (S_ISREG (stats.st_mode))
+      if ( ! presume_input_pipe
+	   && S_ISREG (stats.st_mode) && n_bytes <= OFF_T_MAX)
 	{
-	  off_t current_pos, end_pos;
-	  off_t bytes_remaining;
+	  off_t current_pos = xlseek (fd, 0, SEEK_CUR, pretty_filename);
+	  off_t end_pos = xlseek (fd, 0, SEEK_END, pretty_filename);
+	  off_t diff = end_pos - current_pos;
+	  /* Be careful here.  The current position may actually be
+	     beyond the end of the file.  */
+	  off_t bytes_remaining = (diff = end_pos - current_pos) < 0 ? 0 : diff;
+	  off_t nb = n_bytes;
 
-	  if ((current_pos = lseek (fd, (off_t) 0, SEEK_CUR)) != -1
-	      && (end_pos = lseek (fd, (off_t) 0, SEEK_END)) != -1)
-	    {
-	      off_t diff;
-	      /* Be careful here.  The current position may actually be
-		 beyond the end of the file.  */
-	      bytes_remaining = (diff = end_pos - current_pos) < 0 ? 0 : diff;
-	    }
-	  else
-	    {
-	      error (0, errno, "%s", pretty_filename);
-	      return 1;
-	    }
-
-	  if (bytes_remaining <= n_bytes)
+	  if (bytes_remaining <= nb)
 	    {
 	      /* From the current position to end of file, there are no
 		 more bytes than have been requested.  So reposition the
 		 file pointer to the incoming current position and print
 		 everything after that.  */
-	      xlseek (fd, current_pos, SEEK_SET, pretty_filename);
+	      *read_pos = xlseek (fd, current_pos, SEEK_SET, pretty_filename);
 	    }
 	  else
 	    {
 	      /* There are more bytes remaining than were requested.
 		 Back up.  */
-	      xlseek (fd, -n_bytes, SEEK_END, pretty_filename);
+	      *read_pos = xlseek (fd, -nb, SEEK_END, pretty_filename);
 	    }
-	  dump_remainder (pretty_filename, fd, n_bytes);
+	  *read_pos += dump_remainder (pretty_filename, fd, n_bytes);
 	}
       else
-	return pipe_bytes (pretty_filename, fd, n_bytes);
+	return pipe_bytes (pretty_filename, fd, n_bytes, read_pos);
     }
   return 0;
 }
@@ -1123,7 +1156,8 @@ tail_bytes (const char *pretty_filename, int fd, off_t n_bytes)
    Return 0 if successful, 1 if an error occurred.  */
 
 static int
-tail_lines (const char *pretty_filename, int fd, long int n_lines)
+tail_lines (const char *pretty_filename, int fd, uintmax_t n_lines,
+	    uintmax_t *read_pos)
 {
   struct stat stats;
 
@@ -1133,58 +1167,77 @@ tail_lines (const char *pretty_filename, int fd, long int n_lines)
 
   if (fstat (fd, &stats))
     {
-      error (0, errno, "%s", pretty_filename);
+      error (0, errno, _("cannot fstat %s"), quote (pretty_filename));
       return 1;
     }
 
   if (from_start)
     {
       int t;
-      if ((t = start_lines (pretty_filename, fd, n_lines)) < 0)
+      if ((t = start_lines (pretty_filename, fd, n_lines, read_pos)) < 0)
 	return 0;
       if (t)
 	return 1;
-      dump_remainder (pretty_filename, fd, COPY_TO_EOF);
+      *read_pos += dump_remainder (pretty_filename, fd, COPY_TO_EOF);
     }
   else
     {
-      off_t length;
-      off_t start_pos;
+      off_t start_pos = -1;
+      off_t end_pos;
 
       /* Use file_lines only if FD refers to a regular file for
 	 which lseek (... SEEK_END) works.  */
-      if (S_ISREG (stats.st_mode)
-	  && (start_pos = lseek (fd, (off_t) 0, SEEK_CUR)) != -1
-	  && start_pos < (length = lseek (fd, (off_t) 0, SEEK_END)))
+      if ( ! presume_input_pipe
+	   && S_ISREG (stats.st_mode)
+	   && (start_pos = lseek (fd, (off_t) 0, SEEK_CUR)) != -1
+	   && start_pos < (end_pos = lseek (fd, (off_t) 0, SEEK_END)))
 	{
-	  if (length != 0 && file_lines (pretty_filename, fd, n_lines,
-					 start_pos, length))
+	  *read_pos = end_pos;
+	  if (end_pos != 0 && file_lines (pretty_filename, fd, n_lines,
+					  start_pos, end_pos, read_pos))
 	    return 1;
 	}
       else
-	return pipe_lines (pretty_filename, fd, n_lines);
+	{
+	  /* Under very unlikely circumstances, it is possible to reach
+	     this point after positioning the file pointer to end of file
+	     via the `lseek (...SEEK_END)' above.  In that case, reposition
+	     the file pointer back to start_pos before calling pipe_lines.  */
+	  if (start_pos != -1)
+	    xlseek (fd, start_pos, SEEK_SET, pretty_filename);
+
+	  return pipe_lines (pretty_filename, fd, n_lines, read_pos);
+	}
     }
   return 0;
 }
 
 /* Display the last N_UNITS units of file FILENAME, open for reading
-   in FD.
+   via FD.  Set *READ_POS to the position of the input stream pointer.
+   *READ_POS is usually the number of bytes read and corresponds to an
+   offset from the beginning of a file.  However, it may be larger than
+   OFF_T_MAX (as for an input pipe), and may also be larger than the
+   number of bytes read (when an input pointer is initially not at
+   beginning of file), and may be far greater than the number of bytes
+   actually read for an input file that is seekable.
    Return 0 if successful, 1 if an error occurred.  */
 
 static int
-tail (const char *pretty_filename, int fd, off_t n_units)
+tail (const char *filename, int fd, uintmax_t n_units,
+      uintmax_t *read_pos)
 {
+  *read_pos = 0;
   if (count_lines)
-    return tail_lines (pretty_filename, fd, (long) n_units);
+    return tail_lines (filename, fd, n_units, read_pos);
   else
-    return tail_bytes (pretty_filename, fd, n_units);
+    return tail_bytes (filename, fd, n_units, read_pos);
 }
 
 /* Display the last N_UNITS units of the file described by F.
    Return 0 if successful, 1 if an error occurred.  */
 
 static int
-tail_file (struct File_spec *f, off_t n_units)
+tail_file (struct File_spec *f, uintmax_t n_units)
 {
   int fd, errors;
 
@@ -1212,24 +1265,33 @@ tail_file (struct File_spec *f, off_t n_units)
 	  f->ino = 0;
 	  f->dev = 0;
 	}
-      error (0, errno, "%s", pretty_name (f));
+      error (0, errno, _("cannot open %s for reading"),
+	     quote (pretty_name (f)));
       errors = 1;
     }
   else
     {
+      uintmax_t read_pos;
+
       if (print_headers)
 	write_header (pretty_name (f));
-      errors = tail (pretty_name (f), fd, n_units);
+      errors = tail (pretty_name (f), fd, n_units, &read_pos);
       if (forever)
 	{
 	  struct stat stats;
 
+#if TEST_RACE_BETWEEN_FINAL_READ_AND_INITIAL_FSTAT
+	  /* Before the tail function provided `read_pos', there was
+	     a race condition described in the URL below.  This sleep
+	     call made the window big enough to exercise the problem.  */
+	  sleep (1);
+#endif
 	  f->errnum = 0;
 	  if (fstat (fd, &stats) < 0)
 	    {
 	      errors = 1;
 	      f->errnum = errno;
-	      error (0, errno, "%s", pretty_name (f));
+	      error (0, errno, _("error reading %s"), quote (pretty_name (f)));
 	    }
 	  else if (!IS_TAILABLE_FILE_TYPE (stats.st_mode))
 	    {
@@ -1249,7 +1311,11 @@ tail_file (struct File_spec *f, off_t n_units)
 	  else
 	    {
 	      f->fd = fd;
-	      f->size = stats.st_size;
+
+	      /* Note: we must use read_pos here, not stats.st_size,
+		 to avoid a race condition described by Ken Raeburn:
+	http://mail.gnu.org/archive/html/bug-textutils/2003-05/msg00007.html */
+	      f->size = read_pos;
 	      f->dev = stats.st_dev;
 	      f->ino = stats.st_ino;
 	      f->n_unchanged_stats = 0;
@@ -1261,7 +1327,7 @@ tail_file (struct File_spec *f, off_t n_units)
 	{
 	  if (!is_stdin && close (fd))
 	    {
-	      error (0, errno, "%s", pretty_name (f));
+	      error (0, errno, _("error reading %s"), quote (pretty_name (f)));
 	      errors = 1;
 	    }
 	}
@@ -1281,7 +1347,7 @@ tail_file (struct File_spec *f, off_t n_units)
 
 static int
 parse_obsolescent_option (int argc, const char *const *argv,
-			  off_t *n_units, int *fail)
+			  uintmax_t *n_units, int *fail)
 {
   const char *p = argv[1];
   const char *n_string = NULL;
@@ -1353,7 +1419,7 @@ parse_obsolescent_option (int argc, const char *const *argv,
       if (t_from_start || n_string)
 	{
 	  error (0, 0,
-		 _("%c: invalid suffix character in obsolescent option" ), *p);
+		 _("%c: invalid suffix character in obsolescent option"), *p);
 	  *fail = 1;
 	  return 1;
 	}
@@ -1373,8 +1439,8 @@ parse_obsolescent_option (int argc, const char *const *argv,
 
       s_err = xstrtoumax (n_string, &end, 10, &tmp,
 			  *n_string_end == 'b' ? "b" : NULL);
-      if (s_err == LONGINT_OK && tmp <= OFF_T_MAX)
-	*n_units = (off_t) tmp;
+      if (s_err == LONGINT_OK)
+	*n_units = tmp;
       else
 	{
 	  /* Extract a NUL-terminated string for the error message.  */
@@ -1437,7 +1503,7 @@ option instead."), argv[1]);
 
 static void
 parse_options (int argc, char **argv,
-	       off_t *n_units, enum header_mode *header_mode,
+	       uintmax_t *n_units, enum header_mode *header_mode,
 	       double *sleep_interval)
 {
   int c;
@@ -1469,8 +1535,7 @@ parse_options (int argc, char **argv,
 
 	  {
 	    strtol_error s_err;
-	    uintmax_t n;
-	    s_err = xstrtoumax (optarg, NULL, 10, &n, "bkm");
+	    s_err = xstrtoumax (optarg, NULL, 10, n_units, "bkm");
 	    if (s_err != LONGINT_OK)
 	      {
 		error (EXIT_FAILURE, 0, "%s: %s", optarg,
@@ -1478,12 +1543,6 @@ parse_options (int argc, char **argv,
 			? _("invalid number of lines")
 			: _("invalid number of bytes")));
 	      }
-
-	    if (OFF_T_MAX < n)
-	      error (EXIT_FAILURE, 0,
-		   _("%s is larger than the maximum file size on this system"),
-		     optarg);
-	    *n_units = (off_t) n;
 	  }
 	  break;
 
@@ -1497,6 +1556,10 @@ parse_options (int argc, char **argv,
 				     follow_mode_string, follow_mode_map);
 	  break;
 
+	case ALLOW_MISSING_OPTION:
+	  error (0, 0,
+	   _("the --allow-missing option is deprecated; use --retry instead"));
+	  /* fall through */
 	case RETRY_OPTION:
 	  reopen_inaccessible_files = 1;
 	  break;
@@ -1513,7 +1576,7 @@ parse_options (int argc, char **argv,
 	  break;
 
 	case MAX_CONSECUTIVE_SIZE_CHANGES_OPTION:
-  	  /* --max-consecutive-size-changes=N */
+	  /* --max-consecutive-size-changes=N */
 	  if (xstrtoul (optarg, NULL, 10,
 			&max_n_consecutive_size_changes_between_opens, "")
 	      != LONGINT_OK)
@@ -1537,6 +1600,10 @@ parse_options (int argc, char **argv,
 	  }
 	  break;
 
+	case PRESUME_INPUT_PIPE_OPTION:
+	  presume_input_pipe = true;
+	  break;
+
 	case 'q':
 	  *header_mode = never;
 	  break;
@@ -1544,7 +1611,7 @@ parse_options (int argc, char **argv,
 	case 's':
 	  {
 	    double s;
-	    if (xstrtod (optarg, NULL, &s) || ! (0 <= s))
+	    if (xstrtod (optarg, NULL, &s, c_strtod) || ! (0 <= s))
 	      error (EXIT_FAILURE, 0,
 		     _("%s: invalid number of seconds"), optarg);
 	    *sleep_interval = s;
@@ -1585,7 +1652,7 @@ main (int argc, char **argv)
   /* If from_start, the number of items to skip before printing; otherwise,
      the number of items at the end of the file to print.  Although the type
      is signed, the value is never negative.  */
-  off_t n_units = DEFAULT_N_LINES;
+  uintmax_t n_units = DEFAULT_N_LINES;
   int n_files;
   char **file;
   struct File_spec *F;
@@ -1596,6 +1663,7 @@ main (int argc, char **argv)
      see if it has changed.  */
   double sleep_interval = 1.0;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -1631,17 +1699,38 @@ main (int argc, char **argv)
 	--n_units;
     }
 
-  n_files = argc - optind;
-  file = argv + optind;
-
-  if (n_files == 0)
+  if (optind < argc)
+    {
+      n_files = argc - optind;
+      file = argv + optind;
+    }
+  else
     {
       static char *dummy_stdin = "-";
       n_files = 1;
       file = &dummy_stdin;
     }
 
-  F = (struct File_spec *) xmalloc (n_files * sizeof (F[0]));
+  {
+    bool found_hyphen = false;
+
+    for (i = 0; i < n_files; i++)
+      if (STREQ (file[i], "-"))
+	found_hyphen = true;
+
+    /* When following by name, there must be a name.  */
+    if (found_hyphen && follow_mode == Follow_name)
+      error (EXIT_FAILURE, 0, _("cannot follow %s by name"), quote ("-"));
+
+    /* When following forever, warn if any file is `-'.
+       This is only a warning, since tail's output (before a failing seek,
+       and that from any non-stdin files) might still be useful.  */
+    if (forever && found_hyphen && isatty (STDIN_FILENO))
+      error (0, 0, _("warning: following standard input"
+		     " indefinitely is ineffective"));
+  }
+
+  F = xmalloc (n_files * sizeof (F[0]));
   for (i = 0; i < n_files; i++)
     F[i].name = file[i];
 
@@ -1654,7 +1743,7 @@ main (int argc, char **argv)
 
   if (forever)
     {
-      /* This fflush appears to be required only on Solaris2.7.  */
+      /* This fflush appears to be required only on Solaris 5.7.  */
       if (fflush (stdout) < 0)
 	error (EXIT_FAILURE, errno, _("write error"));
 

@@ -1,5 +1,5 @@
 /* GNU's uptime.
-   Copyright (C) 1992-2002 Free Software Foundation, Inc.
+   Copyright (C) 1992-2002, 2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,12 +31,11 @@
 #include "error.h"
 #include "long-options.h"
 #include "readutmp.h"
-#include "closeout.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "uptime"
 
-#define AUTHORS N_ ("Joseph Arceneaux, David MacKenzie, and Kaveh Ghazi")
+#define AUTHORS "Joseph Arceneaux", "David MacKenzie", "Kaveh Ghazi"
 
 int getloadavg ();
 
@@ -133,11 +132,14 @@ print_uptime (int n, const STRUCT_UTMP *this)
   uphours = (uptime - (updays * 86400)) / 3600;
   upmins = (uptime - (updays * 86400) - (uphours * 3600)) / 60;
   tmn = localtime (&time_now);
-  printf (_(" %2d:%02d%s  up "), ((tmn->tm_hour % 12) == 0
-				  ? 12 : tmn->tm_hour % 12),
-	  /* FIXME: use strftime, not am, pm.  Uli reports that
-	     the german translation is meaningless.  */
-	  tmn->tm_min, (tmn->tm_hour < 12 ? _("am") : _("pm")));
+  if (tmn)
+    printf (_(" %2d:%02d%s  up "),
+	    ((tmn->tm_hour % 12) == 0 ? 12 : tmn->tm_hour % 12),
+	    /* FIXME: use strftime, not am, pm.  Uli reports that
+	       the german translation is meaningless.  */
+	    tmn->tm_min, (tmn->tm_hour < 12 ? _("am") : _("pm")));
+  else
+    printf (_(" ??:????  up "));
   if (updays > 0)
     printf (ngettext("%d day", "%d days", updays), updays);
   printf (" %2d:%02d,  ", uphours, upmins);
@@ -183,7 +185,7 @@ uptime (const char *filename)
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -208,6 +210,7 @@ int
 main (int argc, char **argv)
 {
   int optc, longind;
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -216,7 +219,7 @@ main (int argc, char **argv)
   atexit (close_stdout);
 
   parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
-		      AUTHORS, usage);
+		      usage, AUTHORS, (char const *) NULL);
 
   while ((optc = getopt_long (argc, argv, "", longopts, &longind)) != -1)
     {

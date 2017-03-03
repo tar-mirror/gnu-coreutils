@@ -1,5 +1,5 @@
 /* `dir', `vdir' and `ls' directory listing programs for GNU.
-   Copyright (C) 85, 88, 90, 91, 1995-2003 Free Software Foundation, Inc.
+   Copyright (C) 85, 88, 90, 91, 1995-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -36,10 +36,6 @@
    Flaherty <dennisf@denix.elk.miles.com> based on original patches by
    Greg Lee <lee@uhunix.uhcc.hawaii.edu>.  */
 
-#ifdef _AIX
- #pragma alloca
-#endif
-
 #include <config.h>
 #include <sys/types.h>
 
@@ -63,11 +59,6 @@
 #include <pwd.h>
 #include <getopt.h>
 #include <signal.h>
-
-/* Get MB_CUR_MAX.  */
-#if HAVE_STDLIB_H
-# include <stdlib.h>
-#endif
 
 /* Get mbstate_t, mbrtowc(), mbsinit(), wcwidth().  */
 #if HAVE_WCHAR_H
@@ -128,7 +119,7 @@ int wcwidth ();
 		      : (ls_mode == LS_MULTI_COL \
 			 ? "dir" : "vdir"))
 
-#define AUTHORS N_ ("Richard Stallman and David MacKenzie")
+#define AUTHORS "Richard Stallman", "David MacKenzie"
 
 #define obstack_chunk_alloc malloc
 #define obstack_chunk_free free
@@ -136,13 +127,6 @@ int wcwidth ();
 /* Return an int indicating the result of comparing two integers.
    Subtracting doesn't always work, due to overflow.  */
 #define longdiff(a, b) ((a) < (b) ? -1 : (a) > (b))
-
-/* The field width for inode numbers.  On some hosts inode numbers are
-   64 bits, so columns won't line up exactly when a huge inode number
-   is encountered, but in practice 7 digits is usually enough.  */
-#ifndef INODE_DIGITS
-# define INODE_DIGITS 7
-#endif
 
 /* Arrange to make lstat calls go through the wrapper function
    on systems with an lstat function that does not dereference symlinks
@@ -159,12 +143,6 @@ int rpl_lstat (const char *, struct stat *);
 # define DT_INIT(Val) /* empty */
 #endif
 
-#ifdef ST_MTIM_NSEC
-# define TIMESPEC_NS(timespec) ((timespec).ST_MTIM_NSEC)
-#else
-# define TIMESPEC_NS(timespec) 0
-#endif
-
 #if ! HAVE_STRUCT_STAT_ST_AUTHOR
 # define st_author st_uid
 #endif
@@ -175,19 +153,6 @@ int rpl_lstat (const char *, struct stat *);
 #else
 # define ST_DM_MODE(Stat_buf) ((Stat_buf).st_mode)
 #endif
-
-#ifndef LOGIN_NAME_MAX
-# if _POSIX_LOGIN_NAME_MAX
-#  define LOGIN_NAME_MAX _POSIX_LOGIN_NAME_MAX
-# else
-#  define LOGIN_NAME_MAX 17
-# endif
-#endif
-
-/* The maximum length of a string representation of a user or group ID,
-   not counting any terminating NUL byte.  */
-#define ID_LENGTH_MAX \
-  MAX (LOGIN_NAME_MAX - 1, LONGEST_HUMAN_READABLE)
 
 enum filetype
   {
@@ -243,7 +208,7 @@ struct fileinfo
 
 struct bin_str
   {
-    int len;			/* Number of bytes */
+    size_t len;			/* Number of bytes */
     const char *string;		/* Pointer to the same */
   };
 
@@ -265,19 +230,20 @@ static uintmax_t gobble_file (const char *name, enum filetype type,
 static void print_color_indicator (const char *name, mode_t mode, int linkok);
 static void put_indicator (const struct bin_str *ind);
 static int put_indicator_direct (const struct bin_str *ind);
-static int length_of_file_name_and_frills (const struct fileinfo *f);
 static void add_ignore_pattern (const char *pattern);
 static void attach (char *dest, const char *dirname, const char *name);
 static void clear_files (void);
 static void extract_dirs_from_files (const char *dirname,
 				     int ignore_dot_and_dot_dot);
 static void get_link_name (const char *filename, struct fileinfo *f);
-static void indent (int from, int to);
-static void init_column_info (void);
+static void indent (size_t from, size_t to);
+static size_t calculate_columns (bool by_columns);
 static void print_current_files (void);
 static void print_dir (const char *name, const char *realname);
 static void print_file_name_and_frills (const struct fileinfo *f);
 static void print_horizontal (void);
+static int format_user_width (uid_t u);
+static int format_group_width (gid_t g);
 static void print_long_format (const struct fileinfo *f);
 static void print_many_per_line (void);
 static void print_name_with_quoting (const char *p, mode_t mode,
@@ -319,10 +285,10 @@ static Hash_table *active_dir_set;
 static struct fileinfo *files;  /* FIXME: rename this to e.g. cwd_file */
 
 /* Length of block that `files' points to, measured in files.  */
-static int nfiles;  /* FIXME: rename this to e.g. cwd_n_alloc */
+static size_t nfiles;  /* FIXME: rename this to e.g. cwd_n_alloc */
 
 /* Index of first unused in `files'.  */
-static int files_index;  /* FIXME: rename this to e.g. cwd_n_used */
+static size_t files_index;  /* FIXME: rename this to e.g. cwd_n_used */
 
 /* When nonzero, in a color listing, color each symlink name according to the
    type of file it points to.  Otherwise, color them according to the `ln'
@@ -357,10 +323,19 @@ static struct pending *pending_dirs;
 static time_t current_time = TYPE_MINIMUM (time_t);
 static int current_time_ns = -1;
 
-/* The number of digits to use for block sizes.
-   4, or more if needed for bigger numbers.  */
+/* The number of bytes to use for columns containing inode numbers,
+   block sizes, link counts, owners, groups, authors, major device
+   numbers, minor device numbers, and file sizes, respectively.  */
 
-static int block_size_size;
+static int inode_number_width;
+static int block_size_width;
+static int nlink_width;
+static int owner_width;
+static int group_width;
+static int author_width;
+static int major_device_number_width;
+static int minor_device_number_width;
+static int file_size_width;
 
 /* Option flags */
 
@@ -632,7 +607,7 @@ static struct quoting_options *dirname_quoting_options;
 
 /* The number of chars per hardware tab stop.  Setting this to zero
    inhibits the use of TAB characters for separating columns.  -T */
-static int tabsize;
+static size_t tabsize;
 
 /* Nonzero means we are listing the working directory because no
    non-option arguments were given. */
@@ -646,7 +621,7 @@ static int print_dir_name;
 /* The line length to use for breaking lines in many-per-line format.
    Can be set with -w.  */
 
-static int line_length;
+static size_t line_length;
 
 /* If nonzero, the file listing format requires that stat be called on
    each file. */
@@ -681,7 +656,7 @@ static char const *long_time_format[2] =
     N_("%b %e %H:%M")
   };
 
-/* The exit status to use if we don't get any fatal errors. */
+/* Nonzero if a non-fatal error has occurred.  */
 
 static int exit_status;
 
@@ -799,16 +774,16 @@ static enum color_type const color_types[] =
 /* Information about filling a column.  */
 struct column_info
 {
-  int valid_len;
-  int line_len;
-  int *col_arr;
+  bool valid_len;
+  size_t line_len;
+  size_t *col_arr;
 };
 
 /* Array with information about column filledness.  */
 static struct column_info *column_info;
 
 /* Maximum number of columns ever possible for this display.  */
-static int max_idx;
+static size_t max_idx;
 
 /* The minimum width of a colum is 3: 1 character for the name and 2
    for the separating white space.  */
@@ -904,24 +879,24 @@ dev_ino_pop (void)
 static void
 dired_dump_obstack (const char *prefix, struct obstack *os)
 {
-  int n_pos;
+  size_t n_pos;
 
   n_pos = obstack_object_size (os) / sizeof (dired_pos);
   if (n_pos > 0)
     {
-      int i;
+      size_t i;
       size_t *pos;
 
       pos = (size_t *) obstack_finish (os);
       fputs (prefix, stdout);
       for (i = 0; i < n_pos; i++)
-	printf (" %lu", (unsigned long) pos[i]);
+	printf (" %lu", (unsigned long int) pos[i]);
       putchar ('\n');
     }
 }
 
-static unsigned int
-dev_ino_hash (void const *x, unsigned int table_size)
+static size_t
+dev_ino_hash (void const *x, size_t table_size)
 {
   struct dev_ino const *p = x;
   return (uintmax_t) p->st_ino % table_size;
@@ -952,7 +927,7 @@ visit_dir (dev_t dev, ino_t ino)
   struct dev_ino *ent_from_table;
   int found_match;
 
-  ent = XMALLOC (struct dev_ino, 1);
+  ent = xmalloc (sizeof *ent);
   ent->st_ino = ino;
   ent->st_dev = dev;
 
@@ -1035,6 +1010,7 @@ main (int argc, char **argv)
   register struct pending *thispend;
   unsigned int n_files;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -1067,10 +1043,10 @@ main (int argc, char **argv)
 	check_symlink_color = 1;
 
       {
-	unsigned j;
+	unsigned int j;
 	static int const sigs[] = { SIGHUP, SIGINT, SIGPIPE,
 				    SIGQUIT, SIGTERM, SIGTSTP };
-	unsigned nsigs = sizeof sigs / sizeof *sigs;
+	unsigned int nsigs = sizeof sigs / sizeof *sigs;
 #ifdef SA_NOCLDSTOP
 	struct sigaction oldact, newact;
 	sigset_t caught_signals;
@@ -1134,7 +1110,7 @@ main (int argc, char **argv)
     }
 
   nfiles = 100;
-  files = XMALLOC (struct fileinfo, nfiles);
+  files = xnmalloc (nfiles, sizeof *files);
   files_index = 0;
 
   clear_files ();
@@ -1228,7 +1204,7 @@ main (int argc, char **argv)
       hash_free (active_dir_set);
     }
 
-  exit (exit_status);
+  exit (exit_status == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
 }
 
 /* Set all the option flags according to the switches specified.
@@ -1322,11 +1298,11 @@ decode_switches (int argc, char **argv)
     char const *p = getenv ("COLUMNS");
     if (p && *p)
       {
-	long int tmp_long;
-	if (xstrtol (p, NULL, 0, &tmp_long, NULL) == LONGINT_OK
-	    && 0 < tmp_long && tmp_long <= INT_MAX)
+	unsigned long int tmp_ulong;
+	if (xstrtoul (p, NULL, 0, &tmp_ulong, NULL) == LONGINT_OK
+	    && 0 < tmp_ulong && tmp_ulong <= SIZE_MAX)
 	  {
-	    line_length = (int) tmp_long;
+	    line_length = tmp_ulong;
 	  }
 	else
 	  {
@@ -1341,7 +1317,8 @@ decode_switches (int argc, char **argv)
   {
     struct winsize ws;
 
-    if (ioctl (STDOUT_FILENO, TIOCGWINSZ, &ws) != -1 && ws.ws_col != 0)
+    if (ioctl (STDOUT_FILENO, TIOCGWINSZ, &ws) != -1
+	&& 0 < ws.ws_col /* && ws.ws_col <= SIZE_MAX */ )
       line_length = ws.ws_col;
   }
 #endif
@@ -1353,11 +1330,11 @@ decode_switches (int argc, char **argv)
     tabsize = 8;
     if (!getenv ("POSIXLY_CORRECT") && (p = getenv ("TABSIZE")))
       {
-	long int tmp_long;
-	if (xstrtol (p, NULL, 0, &tmp_long, NULL) == LONGINT_OK
-	    && 0 <= tmp_long && tmp_long <= INT_MAX)
+	unsigned long int tmp_ulong;
+	if (xstrtoul (p, NULL, 0, &tmp_ulong, NULL) == LONGINT_OK
+	    && tmp_ulong <= SIZE_MAX)
 	  {
-	    tabsize = (int) tmp_long;
+	    tabsize = tmp_ulong;
 	  }
 	else
 	  {
@@ -1476,12 +1453,12 @@ decode_switches (int argc, char **argv)
 
 	case 'w':
 	  {
-	    long int tmp_long;
-	    if (xstrtol (optarg, NULL, 0, &tmp_long, NULL) != LONGINT_OK
-		|| tmp_long <= 0 || tmp_long > INT_MAX)
+	    unsigned long int tmp_ulong;
+	    if (xstrtoul (optarg, NULL, 0, &tmp_ulong, NULL) != LONGINT_OK
+		|| ! (0 < tmp_ulong && tmp_ulong <= SIZE_MAX))
 	      error (EXIT_FAILURE, 0, _("invalid line width: %s"),
 		     quotearg (optarg));
-	    line_length = (int) tmp_long;
+	    line_length = tmp_ulong;
 	    break;
 	  }
 
@@ -1550,12 +1527,12 @@ decode_switches (int argc, char **argv)
 
 	case 'T':
 	  {
-	    long int tmp_long;
-	    if (xstrtol (optarg, NULL, 0, &tmp_long, NULL) != LONGINT_OK
-		|| tmp_long < 0 || tmp_long > INT_MAX)
+	    unsigned long int tmp_ulong;
+	    if (xstrtoul (optarg, NULL, 0, &tmp_ulong, NULL) != LONGINT_OK
+		|| SIZE_MAX < tmp_ulong)
 	      error (EXIT_FAILURE, 0, _("invalid tab size: %s"),
 		     quotearg (optarg));
-	    tabsize = (int) tmp_long;
+	    tabsize = tmp_ulong;
 	    break;
 	  }
 
@@ -1661,6 +1638,8 @@ decode_switches (int argc, char **argv)
 	}
     }
 
+  max_idx = MAX (1, line_length / MIN_COLUMN_WIDTH);
+
   filename_quoting_options = clone_quoting_options (NULL);
   if (get_quoting_style (filename_quoting_options) == escape_quoting_style)
     set_char_quoting (filename_quoting_options, ' ', 1);
@@ -1762,7 +1741,8 @@ decode_switches (int argc, char **argv)
 /* Parse a string as part of the LS_COLORS variable; this may involve
    decoding all kinds of escape characters.  If equals_end is set an
    unescaped equal sign ends the string, otherwise only a : or \0
-   does.  Returns the number of characters output, or -1 on failure.
+   does.  Set *OUTPUT_COUNT to the number of bytes output.  Return
+   true if successful.
 
    The resulting string is *not* null-terminated, but may contain
    embedded nulls.
@@ -1771,11 +1751,12 @@ decode_switches (int argc, char **argv)
    the first free byte after the array and the character that ended
    the input string, respectively.  */
 
-static int
-get_funky_string (char **dest, const char **src, int equals_end)
+static bool
+get_funky_string (char **dest, const char **src, bool equals_end,
+		  size_t *output_count)
 {
   int num;			/* For numerical codes */
-  int count;			/* Something to count with */
+  size_t count;			/* Something to count with */
   enum {
     ST_GND, ST_BACKSLASH, ST_OCTAL, ST_HEX, ST_CARET, ST_END, ST_ERROR
   } state;
@@ -1960,8 +1941,9 @@ get_funky_string (char **dest, const char **src, int equals_end)
 
   *dest = q;
   *src = p;
+  *output_count = count;
 
-  return state == ST_ERROR ? -1 : count;
+  return state != ST_ERROR;
 }
 
 static void
@@ -2004,15 +1986,15 @@ parse_ls_color (void)
 		 override an earlier one, which can be useful for
 		 having terminal-specific defs override global).  */
 
-	      ext = XMALLOC (struct color_ext_type, 1);
+	      ext = xmalloc (sizeof *ext);
 	      ext->next = color_ext_list;
 	      color_ext_list = ext;
 
 	      ++p;
 	      ext->ext.string = buf;
 
-	      state = (ext->ext.len =
-		       get_funky_string (&buf, &p, 1)) < 0 ? -1 : 4;
+	      state = (get_funky_string (&buf, &p, true, &ext->ext.len)
+		       ? 4 : -1);
 	      break;
 
 	    case '\0':
@@ -2045,8 +2027,9 @@ parse_ls_color (void)
 		  if (STREQ (label, indicator_name[ind_no]))
 		    {
 		      color_indicator[ind_no].string = buf;
-		      state = ((color_indicator[ind_no].len =
-				get_funky_string (&buf, &p, 0)) < 0 ? -1 : 1);
+		      state = (get_funky_string (&buf, &p, false,
+						 &color_indicator[ind_no].len)
+			       ? 1 : -1);
 		      break;
 		    }
 		}
@@ -2059,8 +2042,8 @@ parse_ls_color (void)
 	  if (*(p++) == '=')
 	    {
 	      ext->seq.string = buf;
-	      state = (ext->seq.len =
-		       get_funky_string (&buf, &p, 0)) < 0 ? -1 : 1;
+	      state = (get_funky_string (&buf, &p, false, &ext->seq.len)
+		       ? 1 : -1);
 	    }
 	  else
 	    state = -1;
@@ -2104,7 +2087,7 @@ queue_directory (const char *name, const char *realname)
 {
   struct pending *new;
 
-  new = XMALLOC (struct pending, 1);
+  new = xmalloc (sizeof *new);
   new->realname = realname ? xstrdup (realname) : NULL;
   new->name = name ? xstrdup (name) : NULL;
   new->next = pending_dirs;
@@ -2259,7 +2242,7 @@ add_ignore_pattern (const char *pattern)
 {
   register struct ignore_pattern *ignore;
 
-  ignore = XMALLOC (struct ignore_pattern, 1);
+  ignore = xmalloc (sizeof *ignore);
   ignore->pattern = pattern;
   /* Add it to the head of the linked list. */
   ignore->next = ignore_patterns;
@@ -2287,6 +2270,16 @@ file_interesting (const struct dirent *next)
   return 0;
 }
 
+/* POSIX requires that a file size be printed without a sign, even
+   when negative.  Assume the typical case where negative sizes are
+   actually positive values that have wrapped around.  */
+
+static uintmax_t
+unsigned_file_size (off_t size)
+{
+  return size + (size < 0) * ((uintmax_t) OFF_T_MAX - OFF_T_MIN + 1);
+}
+
 /* Enter and remove entries in the table `files'.  */
 
 /* Empty the table of files. */
@@ -2294,7 +2287,7 @@ file_interesting (const struct dirent *next)
 static void
 clear_files (void)
 {
-  register int i;
+  register size_t i;
 
   for (i = 0; i < files_index; i++)
     {
@@ -2304,7 +2297,15 @@ clear_files (void)
     }
 
   files_index = 0;
-  block_size_size = 4;
+  inode_number_width = 0;
+  block_size_width = 0;
+  nlink_width = 0;
+  owner_width = 0;
+  group_width = 0;
+  author_width = 0;
+  major_device_number_width = 0;
+  minor_device_number_width = 0;
+  file_size_width = 0;
 }
 
 /* Add a file to the current table of files.
@@ -2317,16 +2318,18 @@ gobble_file (const char *name, enum filetype type, int explicit_arg,
 {
   register uintmax_t blocks;
   register char *path;
+  register struct fileinfo *f;
 
   if (files_index == nfiles)
     {
+      files = xnrealloc (files, nfiles, 2 * sizeof *files);
       nfiles *= 2;
-      files = XREALLOC (files, struct fileinfo, nfiles);
     }
 
-  files[files_index].linkname = 0;
-  files[files_index].linkmode = 0;
-  files[files_index].linkok = 0;
+  f = &files[files_index];
+  f->linkname = 0;
+  f->linkmode = 0;
+  f->linkok = 0;
 
   if (explicit_arg
       || format_needs_stat
@@ -2356,14 +2359,14 @@ gobble_file (const char *name, enum filetype type, int explicit_arg,
 	path = (char *) name;
       else
 	{
-	  path = (char *) alloca (strlen (name) + strlen (dirname) + 2);
+	  path = alloca (strlen (name) + strlen (dirname) + 2);
 	  attach (path, dirname, name);
 	}
 
       switch (dereference)
 	{
 	case DEREF_ALWAYS:
-	  err = stat (path, &files[files_index].stat);
+	  err = stat (path, &f->stat);
 	  break;
 
 	case DEREF_COMMAND_LINE_ARGUMENTS:
@@ -2371,14 +2374,14 @@ gobble_file (const char *name, enum filetype type, int explicit_arg,
 	  if (explicit_arg)
 	    {
 	      int need_lstat;
-	      err = stat (path, &files[files_index].stat);
+	      err = stat (path, &f->stat);
 
 	      if (dereference == DEREF_COMMAND_LINE_ARGUMENTS)
 		break;
 
 	      need_lstat = (err < 0
 			    ? errno == ENOENT
-			    : ! S_ISDIR (files[files_index].stat.st_mode));
+			    : ! S_ISDIR (f->stat.st_mode));
 	      if (!need_lstat)
 		break;
 
@@ -2389,7 +2392,7 @@ gobble_file (const char *name, enum filetype type, int explicit_arg,
 	    }
 
 	default: /* DEREF_NEVER */
-	  err = lstat (path, &files[files_index].stat);
+	  err = lstat (path, &f->stat);
 	  break;
 	}
 
@@ -2403,21 +2406,21 @@ gobble_file (const char *name, enum filetype type, int explicit_arg,
 #if HAVE_ACL
       if (format == long_format)
 	{
-	  int n = file_has_acl (path, &files[files_index].stat);
-	  files[files_index].have_acl = (0 < n);
+	  int n = file_has_acl (path, &f->stat);
+	  f->have_acl = (0 < n);
 	  if (n < 0)
 	    error (0, errno, "%s", quotearg_colon (path));
 	}
 #endif
 
-      if (S_ISLNK (files[files_index].stat.st_mode)
+      if (S_ISLNK (f->stat.st_mode)
 	  && (format == long_format || check_symlink_color))
 	{
 	  char *linkpath;
 	  struct stat linkstats;
 
-	  get_link_name (path, &files[files_index]);
-	  linkpath = make_link_path (path, files[files_index].linkname);
+	  get_link_name (path, f);
+	  linkpath = make_link_path (path, f->linkname);
 
 	  /* Avoid following symbolic links when possible, ie, when
 	     they won't be traced and when no indicator is needed. */
@@ -2425,7 +2428,7 @@ gobble_file (const char *name, enum filetype type, int explicit_arg,
 	      && (indicator_style != none || check_symlink_color)
 	      && stat (linkpath, &linkstats) == 0)
 	    {
-	      files[files_index].linkok = 1;
+	      f->linkok = 1;
 
 	      /* Symbolic links to directories that are mentioned on the
 	         command line are automatically traced if not being
@@ -2435,45 +2438,103 @@ gobble_file (const char *name, enum filetype type, int explicit_arg,
 		{
 		  /* Get the linked-to file's mode for the filetype indicator
 		     in long listings.  */
-		  files[files_index].linkmode = linkstats.st_mode;
-		  files[files_index].linkok = 1;
+		  f->linkmode = linkstats.st_mode;
+		  f->linkok = 1;
 		}
 	    }
 	  if (linkpath)
 	    free (linkpath);
 	}
 
-      if (S_ISLNK (files[files_index].stat.st_mode))
-	files[files_index].filetype = symbolic_link;
-      else if (S_ISDIR (files[files_index].stat.st_mode))
+      if (S_ISLNK (f->stat.st_mode))
+	f->filetype = symbolic_link;
+      else if (S_ISDIR (f->stat.st_mode))
 	{
 	  if (explicit_arg && !immediate_dirs)
-	    files[files_index].filetype = arg_directory;
+	    f->filetype = arg_directory;
 	  else
-	    files[files_index].filetype = directory;
+	    f->filetype = directory;
 	}
       else
-	files[files_index].filetype = normal;
+	f->filetype = normal;
 
-      blocks = ST_NBLOCKS (files[files_index].stat);
+      {
+	char buf[INT_BUFSIZE_BOUND (uintmax_t)];
+	int len = strlen (umaxtostr (f->stat.st_ino, buf));
+	if (inode_number_width < len)
+	  inode_number_width = len;
+      }
+
+      blocks = ST_NBLOCKS (f->stat);
       {
 	char buf[LONGEST_HUMAN_READABLE + 1];
 	int len = strlen (human_readable (blocks, buf, human_output_opts,
 					  ST_NBLOCKSIZE, output_block_size));
-	if (block_size_size < len)
-	  block_size_size = len < 7 ? len : 7;
+	if (block_size_width < len)
+	  block_size_width = len;
       }
+
+      if (print_owner)
+	{
+	  int len = format_user_width (f->stat.st_uid);
+	  if (owner_width < len)
+	    owner_width = len;
+	}
+
+      if (print_group)
+	{
+	  int len = format_group_width (f->stat.st_gid);
+	  if (group_width < len)
+	    group_width = len;
+	}
+
+      if (print_author)
+	{
+	  int len = format_user_width (f->stat.st_uid);
+	  if (author_width < len)
+	    author_width = len;
+	}
+
+      {
+	char buf[INT_BUFSIZE_BOUND (uintmax_t)];
+	int len = strlen (umaxtostr (f->stat.st_nlink, buf));
+	if (nlink_width < len)
+	  nlink_width = len;
+      }
+
+      if (S_ISCHR (f->stat.st_mode) || S_ISBLK (f->stat.st_mode))
+	{
+	  char buf[INT_BUFSIZE_BOUND (uintmax_t)];
+	  int len = strlen (umaxtostr (major (f->stat.st_rdev), buf));
+	  if (major_device_number_width < len)
+	    major_device_number_width = len;
+	  len = strlen (umaxtostr (minor (f->stat.st_rdev), buf));
+	  if (minor_device_number_width < len)
+	    minor_device_number_width = len;
+	  len = major_device_number_width + 2 + minor_device_number_width;
+	  if (file_size_width < len)
+	    file_size_width = len;
+	}
+      else
+	{
+	  char buf[LONGEST_HUMAN_READABLE + 1];
+	  uintmax_t size = unsigned_file_size (f->stat.st_size);
+	  int len = strlen (human_readable (size, buf, human_output_opts,
+					    1, file_output_block_size));
+	  if (file_size_width < len)
+	    file_size_width = len;
+	}
     }
   else
     {
-      files[files_index].filetype = type;
+      f->filetype = type;
 #if HAVE_STRUCT_DIRENT_D_TYPE
-      files[files_index].stat.st_mode = DTTOIF (type);
+      f->stat.st_mode = DTTOIF (type);
 #endif
       blocks = 0;
     }
 
-  files[files_index].name = xstrdup (name);
+  f->name = xstrdup (name);
   files_index++;
 
   return blocks;
@@ -2547,7 +2608,8 @@ basename_is_dot_or_dotdot (const char *name)
 static void
 extract_dirs_from_files (const char *dirname, int ignore_dot_and_dot_dot)
 {
-  register int i, j;
+  register size_t i;
+  register size_t j;
 
   if (*dirname && LOOP_DETECT)
     {
@@ -2559,7 +2621,7 @@ extract_dirs_from_files (const char *dirname, int ignore_dot_and_dot_dot)
 
   /* Queue the directories last one first, because queueing reverses the
      order.  */
-  for (i = files_index - 1; i >= 0; i--)
+  for (i = files_index; i-- != 0; )
     if ((files[i].filetype == directory || files[i].filetype == arg_directory)
 	&& (!ignore_dot_and_dot_dot
 	    || !basename_is_dot_or_dotdot (files[i].name)))
@@ -2582,8 +2644,14 @@ extract_dirs_from_files (const char *dirname, int ignore_dot_and_dot_dot)
      entries.  */
 
   for (i = 0, j = 0; i < files_index; i++)
-    if (files[i].filetype != arg_directory)
-      files[j++] = files[i];
+    {
+      if (files[i].filetype != arg_directory)
+	{
+	  if (j < i)
+	    files[j] = files[i];
+	  ++j;
+	}
+    }
   files_index = j;
 }
 
@@ -2701,7 +2769,9 @@ static int rev_str_extension (V a, V b) { return compstr_extension (b, a); }
 static void
 sort_files (void)
 {
-  int (*func) (V, V);
+  /* `func' must be `volatile', so it can't be
+     clobbered by a `longjmp' into this function.  */
+  int (* volatile func) (V, V);
 
   switch (sort_type)
     {
@@ -2786,7 +2856,7 @@ sort_files (void)
 static void
 print_current_files (void)
 {
-  register int i;
+  register size_t i;
 
   switch (format)
     {
@@ -2799,12 +2869,10 @@ print_current_files (void)
       break;
 
     case many_per_line:
-      init_column_info ();
       print_many_per_line ();
       break;
 
     case horizontal:
-      init_column_info ();
       print_horizontal ();
       break;
 
@@ -2896,20 +2964,77 @@ get_current_time (void)
   current_time_ns = 999999999;
 }
 
-/* Format into BUFFER the name or id of the user with id U.  Return
-   the length of the formatted buffer, not counting the terminating
-   null.  */
+/* Print the name or id of the user with id U, using a print width of
+   WIDTH.  */
 
-static size_t
-format_user (char *buffer, uid_t u)
+static void
+format_user (uid_t u, int width)
 {
   char const *name = (numeric_ids ? NULL : getuser (u));
   if (name)
-    sprintf (buffer, "%-8s ", name);
+    printf ("%-*s ", width, name);
   else
-    sprintf (buffer, "%-8lu ", (unsigned long) u);
-  return strlen (buffer);
+    printf ("%*lu ", width, (unsigned long int) u);
+  dired_pos += width;
+  dired_pos++;
 }
+
+/* Likewise, for groups.  */
+
+static void
+format_group (gid_t g, int width)
+{
+  char const *name = (numeric_ids ? NULL : getgroup (g));
+  if (name)
+    printf ("%-*s ", width, name);
+  else
+    printf ("%*lu ", width, (unsigned long int) g);
+  dired_pos += width;
+  dired_pos++;
+}
+
+/* Return the number of bytes that format_user will print.  */
+
+static int
+format_user_width (uid_t u)
+{
+  char const *name = (numeric_ids ? NULL : getuser (u));
+  char buf[INT_BUFSIZE_BOUND (unsigned long int)];
+  size_t len;
+
+  if (! name)
+    {
+      sprintf (buf, "%lu", (unsigned long int) u);
+      name = buf;
+    }
+
+  len = strlen (name);
+  if (INT_MAX < len)
+    error (EXIT_FAILURE, 0, _("User name too long"));
+  return len;
+}
+
+/* Likewise, for groups.  */
+
+static int
+format_group_width (gid_t g)
+{
+  char const *name = (numeric_ids ? NULL : getgroup (g));
+  char buf[INT_BUFSIZE_BOUND (unsigned long int)];
+  size_t len;
+
+  if (! name)
+    {
+      sprintf (buf, "%lu", (unsigned long int) g);
+      name = buf;
+    }
+
+  len = strlen (name);
+  if (INT_MAX < len)
+    error (EXIT_FAILURE, 0, _("Group name too long"));
+  return len;
+}
+
 
 /* Print information about F in long format.  */
 
@@ -2921,11 +3046,8 @@ print_long_format (const struct fileinfo *f)
     [LONGEST_HUMAN_READABLE + 1		/* inode */
      + LONGEST_HUMAN_READABLE + 1	/* size in blocks */
      + sizeof (modebuf) - 1 + 1		/* mode string */
-     + LONGEST_HUMAN_READABLE + 1	/* st_nlink */
-     + ID_LENGTH_MAX + 1		/* owner name */
-     + ID_LENGTH_MAX + 1		/* group name */
-     + ID_LENGTH_MAX + 1		/* author name */
-     + LONGEST_HUMAN_READABLE + 1	/* major device number */
+     + INT_BUFSIZE_BOUND (uintmax_t)	/* st_nlink */
+     + LONGEST_HUMAN_READABLE + 2	/* major device number */
      + LONGEST_HUMAN_READABLE + 1	/* minor device number */
      + 35 + 1	/* usual length of time/date -- may be longer; see below */
      ];
@@ -2965,61 +3087,71 @@ print_long_format (const struct fileinfo *f)
 
   if (print_inode)
     {
-      char hbuf[LONGEST_HUMAN_READABLE + 1];
-      sprintf (p, "%*s ", INODE_DIGITS, umaxtostr (f->stat.st_ino, hbuf));
-      p += strlen (p);
+      char hbuf[INT_BUFSIZE_BOUND (uintmax_t)];
+      sprintf (p, "%*s ", inode_number_width,
+	       umaxtostr (f->stat.st_ino, hbuf));
+      p += inode_number_width + 1;
     }
 
   if (print_block_size)
     {
       char hbuf[LONGEST_HUMAN_READABLE + 1];
-      sprintf (p, "%*s ", block_size_size,
+      sprintf (p, "%*s ", block_size_width,
 	       human_readable (ST_NBLOCKS (f->stat), hbuf, human_output_opts,
 			       ST_NBLOCKSIZE, output_block_size));
-      p += strlen (p);
+      p += block_size_width + 1;
     }
 
   /* The last byte of the mode string is the POSIX
      "optional alternate access method flag".  */
-  sprintf (p, "%s %3lu ", modebuf, (unsigned long) f->stat.st_nlink);
-  p += strlen (p);
+  {
+    char hbuf[INT_BUFSIZE_BOUND (uintmax_t)];
+    sprintf (p, "%s %*s ", modebuf, nlink_width,
+	     umaxtostr (f->stat.st_nlink, hbuf));
+  }
+  p += sizeof modebuf + nlink_width + 1;
 
-  if (print_owner)
-    p += format_user (p, f->stat.st_uid);
+  DIRED_INDENT ();
 
-  if (print_group)
+  if (print_owner | print_group | print_author)
     {
-      char const *group_name = (numeric_ids ? NULL : getgroup (f->stat.st_gid));
-      if (group_name)
-	sprintf (p, "%-8s ", group_name);
-      else
-	sprintf (p, "%-8lu ", (unsigned long) f->stat.st_gid);
-      p += strlen (p);
+      DIRED_FPUTS (buf, stdout, p - buf);
+
+      if (print_owner)
+	format_user (f->stat.st_uid, owner_width);
+
+      if (print_group)
+	format_group (f->stat.st_gid, group_width);
+
+      if (print_author)
+	format_user (f->stat.st_author, author_width);
+
+      p = buf;
     }
 
-  if (print_author)
-    p += format_user (p, f->stat.st_author);
-
   if (S_ISCHR (f->stat.st_mode) || S_ISBLK (f->stat.st_mode))
-    sprintf (p, "%3lu, %3lu ",
-	     (unsigned long) major (f->stat.st_rdev),
-	     (unsigned long) minor (f->stat.st_rdev));
+    {
+      char majorbuf[INT_BUFSIZE_BOUND (uintmax_t)];
+      char minorbuf[INT_BUFSIZE_BOUND (uintmax_t)];
+      int blanks_width = (file_size_width
+			  - (major_device_number_width + 2
+			     + minor_device_number_width));
+      sprintf (p, "%*s, %*s ",
+	       major_device_number_width + MAX (0, blanks_width),
+	       umaxtostr (major (f->stat.st_rdev), majorbuf),
+	       minor_device_number_width,
+	       umaxtostr (minor (f->stat.st_rdev), minorbuf));
+    }
   else
     {
       char hbuf[LONGEST_HUMAN_READABLE + 1];
-      uintmax_t size = f->stat.st_size;
-
-      /* POSIX requires that the size be printed without a sign, even
-	 when negative.  Assume the typical case where negative sizes
-	 are actually positive values that have wrapped around.  */
-      size += (f->stat.st_size < 0) * ((uintmax_t) OFF_T_MAX - OFF_T_MIN + 1);
-
-      sprintf (p, "%8s ",
+      uintmax_t size = unsigned_file_size (f->stat.st_size);
+      sprintf (p, "%*s ", file_size_width,
 	       human_readable (size, hbuf, human_output_opts,
 			       1, file_output_block_size));
     }
 
-  p += strlen (p);
+  p += file_size_width + 1;
 
   if ((when_local = localtime (&when)))
     {
@@ -3082,7 +3214,6 @@ print_long_format (const struct fileinfo *f)
       p += strlen (p);
     }
 
-  DIRED_INDENT ();
   DIRED_FPUTS (buf, stdout, p - buf);
   print_name_with_quoting (f->name, FILE_OR_LINK_MODE (f), f->linkok,
 			   &dired_obstack);
@@ -3121,7 +3252,7 @@ quote_name (FILE *out, const char *name, struct quoting_options const *options,
     buf = smallbuf;
   else
     {
-      buf = (char *) alloca (len + 1);
+      buf = alloca (len + 1);
       quotearg_buffer (buf, len + 1, name, -1, options);
     }
 
@@ -3315,10 +3446,11 @@ print_file_name_and_frills (const struct fileinfo *f)
   char buf[MAX (LONGEST_HUMAN_READABLE + 1, INT_BUFSIZE_BOUND (uintmax_t))];
 
   if (print_inode)
-    printf ("%*s ", INODE_DIGITS, umaxtostr (f->stat.st_ino, buf));
+    printf ("%*s ", format == with_commas ? 0 : inode_number_width,
+	    umaxtostr (f->stat.st_ino, buf));
 
   if (print_block_size)
-    printf ("%*s ", block_size_size,
+    printf ("%*s ", format == with_commas ? 0 : block_size_width,
 	    human_readable (ST_NBLOCKS (f->stat), buf, human_output_opts,
 			    ST_NBLOCKSIZE, output_block_size));
 
@@ -3405,7 +3537,7 @@ print_color_indicator (const char *name, mode_t mode, int linkok)
 	  name += len;		/* Pointer to final \0.  */
 	  for (ext = color_ext_list; ext != NULL; ext = ext->next)
 	    {
-	      if ((size_t) ext->ext.len <= len
+	      if (ext->ext.len <= len
 		  && strncmp (name - ext->ext.len, ext->ext.string,
 			      ext->ext.len) == 0)
 		break;
@@ -3422,12 +3554,12 @@ print_color_indicator (const char *name, mode_t mode, int linkok)
 static void
 put_indicator (const struct bin_str *ind)
 {
-  register int i;
+  register size_t i;
   register const char *p;
 
   p = ind->string;
 
-  for (i = ind->len; i > 0; --i)
+  for (i = ind->len; i != 0; --i)
     putchar (*(p++));
 }
 
@@ -3438,24 +3570,31 @@ static int
 put_indicator_direct (const struct bin_str *ind)
 {
   size_t len;
-  if (ind->len <= 0)
+  if (ind->len == 0)
     return 0;
 
   len = ind->len;
   return (full_write (STDOUT_FILENO, ind->string, len) != len);
 }
 
-static int
+static size_t
 length_of_file_name_and_frills (const struct fileinfo *f)
 {
-  register int len = 0;
+  register size_t len = 0;
   size_t name_width;
+  char buf[MAX (LONGEST_HUMAN_READABLE + 1, INT_BUFSIZE_BOUND (uintmax_t))];
 
   if (print_inode)
-    len += INODE_DIGITS + 1;
+    len += 1 + (format == with_commas
+		? strlen (umaxtostr (f->stat.st_ino, buf))
+		: inode_number_width);
 
   if (print_block_size)
-    len += 1 + block_size_size;
+    len += 1 + (format == with_commas
+		? strlen (human_readable (ST_NBLOCKS (f->stat), buf,
+					  human_output_opts, ST_NBLOCKSIZE,
+					  output_block_size))
+		: block_size_width);
 
   quote_name (NULL, f->name, filename_quoting_options, &name_width);
   len += name_width;
@@ -3485,70 +3624,26 @@ length_of_file_name_and_frills (const struct fileinfo *f)
 static void
 print_many_per_line (void)
 {
-  struct column_info *line_fmt;
-  int filesno;			/* Index into files. */
-  int row;			/* Current row. */
-  int max_name_length;		/* Length of longest file name + frills. */
-  int name_length;		/* Length of each file name + frills. */
-  int pos;			/* Current character column. */
-  int cols;			/* Number of files across. */
-  int rows;			/* Maximum number of files down. */
-  int max_cols;
-
-  /* Normally the maximum number of columns is determined by the
-     screen width.  But if few files are available this might limit it
-     as well.  */
-  max_cols = max_idx > files_index ? files_index : max_idx;
-
-  /* Compute the maximum number of possible columns.  */
-  for (filesno = 0; filesno < files_index; ++filesno)
-    {
-      int i;
-
-      name_length = length_of_file_name_and_frills (files + filesno);
-
-      for (i = 0; i < max_cols; ++i)
-	{
-	  if (column_info[i].valid_len)
-	    {
-	      int idx = filesno / ((files_index + i) / (i + 1));
-	      int real_length = name_length + (idx == i ? 0 : 2);
-
-	      if (real_length > column_info[i].col_arr[idx])
-		{
-		  column_info[i].line_len += (real_length
-					   - column_info[i].col_arr[idx]);
-		  column_info[i].col_arr[idx] = real_length;
-		  column_info[i].valid_len = column_info[i].line_len < line_length;
-		}
-	    }
-	}
-    }
-
-  /* Find maximum allowed columns.  */
-  for (cols = max_cols; cols > 1; --cols)
-    {
-      if (column_info[cols - 1].valid_len)
-	break;
-    }
-
-  line_fmt = &column_info[cols - 1];
+  size_t row;			/* Current row. */
+  size_t cols = calculate_columns (true);
+  struct column_info const *line_fmt = &column_info[cols - 1];
 
   /* Calculate the number of rows that will be in each column except possibly
      for a short column on the right. */
-  rows = files_index / cols + (files_index % cols != 0);
+  size_t rows = files_index / cols + (files_index % cols != 0);
 
   for (row = 0; row < rows; row++)
     {
-      int col = 0;
-      filesno = row;
-      pos = 0;
+      size_t col = 0;
+      size_t filesno = row;
+      size_t pos = 0;
+
       /* Print the next row.  */
       while (1)
 	{
+	  size_t name_length = length_of_file_name_and_frills (files + filesno);
+	  size_t max_name_length = line_fmt->col_arr[col++];
 	  print_file_name_and_frills (files + filesno);
-	  name_length = length_of_file_name_and_frills (files + filesno);
-	  max_name_length = line_fmt->col_arr[col++];
 
 	  filesno += rows;
 	  if (filesno >= files_index)
@@ -3564,65 +3659,20 @@ print_many_per_line (void)
 static void
 print_horizontal (void)
 {
-  struct column_info *line_fmt;
-  int filesno;
-  int max_name_length;
-  int name_length;
-  int cols;
-  int pos;
-  int max_cols;
-
-  /* Normally the maximum number of columns is determined by the
-     screen width.  But if few files are available this might limit it
-     as well.  */
-  max_cols = max_idx > files_index ? files_index : max_idx;
-
-  /* Compute the maximum file name length.  */
-  max_name_length = 0;
-  for (filesno = 0; filesno < files_index; ++filesno)
-    {
-      int i;
-
-      name_length = length_of_file_name_and_frills (files + filesno);
-
-      for (i = 0; i < max_cols; ++i)
-	{
-	  if (column_info[i].valid_len)
-	    {
-	      int idx = filesno % (i + 1);
-	      int real_length = name_length + (idx == i ? 0 : 2);
-
-	      if (real_length > column_info[i].col_arr[idx])
-		{
-		  column_info[i].line_len += (real_length
-					   - column_info[i].col_arr[idx]);
-		  column_info[i].col_arr[idx] = real_length;
-		  column_info[i].valid_len = column_info[i].line_len < line_length;
-		}
-	    }
-	}
-    }
-
-  /* Find maximum allowed columns.  */
-  for (cols = max_cols; cols > 1; --cols)
-    {
-      if (column_info[cols - 1].valid_len)
-	break;
-    }
-
-  line_fmt = &column_info[cols - 1];
-
-  pos = 0;
+  size_t filesno;
+  size_t pos = 0;
+  size_t cols = calculate_columns (false);
+  struct column_info const *line_fmt = &column_info[cols - 1];
+  size_t name_length = length_of_file_name_and_frills (files);
+  size_t max_name_length = line_fmt->col_arr[0];
 
   /* Print first entry.  */
   print_file_name_and_frills (files);
-  name_length = length_of_file_name_and_frills (files);
-  max_name_length = line_fmt->col_arr[0];
 
   /* Now the rest.  */
   for (filesno = 1; filesno < files_index; ++filesno)
     {
-      int col = filesno % cols;
+      size_t col = filesno % cols;
 
       if (col == 0)
 	{
@@ -3646,31 +3696,34 @@ print_horizontal (void)
 static void
 print_with_commas (void)
 {
-  int filesno;
-  int pos, old_pos;
-
-  pos = 0;
+  size_t filesno;
+  size_t pos = 0;
 
   for (filesno = 0; filesno < files_index; filesno++)
     {
-      old_pos = pos;
+      size_t len = length_of_file_name_and_frills (files + filesno);
 
-      pos += length_of_file_name_and_frills (files + filesno);
-      if (filesno + 1 < files_index)
-	pos += 2;		/* For the comma and space */
-
-      if (old_pos != 0 && pos >= line_length)
+      if (filesno != 0)
 	{
-	  putchar ('\n');
-	  pos -= old_pos;
+	  char separator;
+
+	  if (pos + len + 2 < line_length)
+	    {
+	      pos += 2;
+	      separator = ' ';
+	    }
+	  else
+	    {
+	      pos = 0;
+	      separator = '\n';
+	    }
+
+	  putchar (',');
+	  putchar (separator);
 	}
 
       print_file_name_and_frills (files + filesno);
-      if (filesno + 1 < files_index)
-	{
-	  putchar (',');
-	  putchar (' ');
-	}
+      pos += len;
     }
   putchar ('\n');
 }
@@ -3679,11 +3732,11 @@ print_with_commas (void)
    Use a TAB character instead of two or more spaces whenever possible.  */
 
 static void
-indent (int from, int to)
+indent (size_t from, size_t to)
 {
   while (from < to)
     {
-      if (tabsize > 0 && to / tabsize > (from + 1) / tabsize)
+      if (tabsize != 0 && to / tabsize > (from + 1) / tabsize)
 	{
 	  putchar ('\t');
 	  from += tabsize - from % tabsize;
@@ -3719,41 +3772,132 @@ attach (char *dest, const char *dirname, const char *name)
   *dest = 0;
 }
 
+/* Allocate enough column info suitable for the current number of
+   files and display columns, and initialize the info to represent the
+   narrowest possible columns.  */
+
 static void
 init_column_info (void)
 {
-  int i;
-  int allocate = 0;
+  size_t i;
+  size_t max_cols = MIN (max_idx, files_index);
 
-  max_idx = line_length / MIN_COLUMN_WIDTH;
-  if (max_idx == 0)
-    max_idx = 1;
+  /* Currently allocated columns in column_info.  */
+  static size_t column_info_alloc;
 
-  if (column_info == NULL)
+  if (column_info_alloc < max_cols)
     {
-      column_info = XMALLOC (struct column_info, max_idx);
-      allocate = 1;
+      size_t new_column_info_alloc;
+      size_t *p;
+
+      if (max_cols < max_idx / 2)
+	{
+	  /* The number of columns is far less than the display width
+	     allows.  Grow the allocation, but only so that it's
+	     double the current requirements.  If the display is
+	     extremely wide, this avoids allocating a lot of memory
+	     that is never needed.  */
+	  column_info = xnrealloc (column_info, max_cols,
+				   2 * sizeof *column_info);
+	  new_column_info_alloc = 2 * max_cols;
+	}
+      else
+	{
+	  column_info = xnrealloc (column_info, max_idx, sizeof *column_info);
+	  new_column_info_alloc = max_idx;
+	}
+
+      /* Allocate the new size_t objects by computing the triangle
+	 formula n * (n + 1) / 2, except that we don't need to
+	 allocate the part of the triangle that we've already
+	 allocated.  Check for address arithmetic overflow.  */
+      {
+	size_t column_info_growth = new_column_info_alloc - column_info_alloc;
+	size_t s = column_info_alloc + 1 + new_column_info_alloc;
+	size_t t = s * column_info_growth;
+	if (s < new_column_info_alloc || t / column_info_growth != s)
+	  xalloc_die ();
+	p = xnmalloc (t / 2, sizeof *p);
+      }
+
+      /* Grow the triangle by parceling out the cells just allocated.  */
+      for (i = column_info_alloc; i < new_column_info_alloc; i++)
+	{
+	  column_info[i].col_arr = p;
+	  p += i + 1;
+	}
+
+      column_info_alloc = new_column_info_alloc;
     }
 
-  for (i = 0; i < max_idx; ++i)
+  for (i = 0; i < max_cols; ++i)
     {
-      int j;
+      size_t j;
 
-      column_info[i].valid_len = 1;
+      column_info[i].valid_len = true;
       column_info[i].line_len = (i + 1) * MIN_COLUMN_WIDTH;
-
-      if (allocate)
-	column_info[i].col_arr = XMALLOC (int, i + 1);
-
       for (j = 0; j <= i; ++j)
 	column_info[i].col_arr[j] = MIN_COLUMN_WIDTH;
     }
 }
 
+/* Calculate the number of columns needed to represent the current set
+   of files in the current display width.  */
+
+static size_t
+calculate_columns (bool by_columns)
+{
+  size_t filesno;		/* Index into files. */
+  size_t cols;			/* Number of files across. */
+
+  /* Normally the maximum number of columns is determined by the
+     screen width.  But if few files are available this might limit it
+     as well.  */
+  size_t max_cols = MIN (max_idx, files_index);
+
+  init_column_info ();
+
+  /* Compute the maximum number of possible columns.  */
+  for (filesno = 0; filesno < files_index; ++filesno)
+    {
+      size_t name_length = length_of_file_name_and_frills (files + filesno);
+      size_t i;
+
+      for (i = 0; i < max_cols; ++i)
+	{
+	  if (column_info[i].valid_len)
+	    {
+	      size_t idx = (by_columns
+			    ? filesno / ((files_index + i) / (i + 1))
+			    : filesno % (i + 1));
+	      size_t real_length = name_length + (idx == i ? 0 : 2);
+
+	      if (column_info[i].col_arr[idx] < real_length)
+		{
+		  column_info[i].line_len += (real_length
+					      - column_info[i].col_arr[idx]);
+		  column_info[i].col_arr[idx] = real_length;
+		  column_info[i].valid_len = (column_info[i].line_len
+					      < line_length);
+		}
+	    }
+	}
+    }
+
+  /* Find maximum allowed columns.  */
+  for (cols = max_cols; 1 < cols; --cols)
+    {
+      if (column_info[cols - 1].valid_len)
+	break;
+    }
+
+  return cols;
+}
+
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -3878,7 +4022,7 @@ Mandatory arguments to long options are mandatory for short options too.\n\
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
       fputs (_("\n\
 SIZE may be (or may be an integer optionally followed by) one of following:\n\
-kB 1000, K 1024, MB 1,000,000, M 1,048,576, and so on for G, T, P, E, Z, Y.\n\
+kB 1000, K 1024, MB 1000*1000, M 1024*1024, and so on for G, T, P, E, Z, Y.\n\
 "), stdout);
       fputs (_("\
 \n\

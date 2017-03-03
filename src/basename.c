@@ -1,5 +1,5 @@
 /* basename -- strip directory and suffix from filenames
-   Copyright (C) 1990-1997, 1999-2002 Free Software Foundation, Inc.
+   Copyright (C) 1990-1997, 1999-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,7 +33,6 @@
 #include "long-options.h"
 #include "dirname.h"
 #include "error.h"
-#include "closeout.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "basename"
@@ -46,7 +45,7 @@ char *program_name;
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -92,6 +91,7 @@ main (int argc, char **argv)
 {
   char *name;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -100,7 +100,7 @@ main (int argc, char **argv)
   atexit (close_stdout);
 
   parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
-		      AUTHORS, usage);
+		      usage, AUTHORS, (char const *) NULL);
   /* The above handles --help and --version.
      Since there is no other invocation of getopt, handle `--' here.  */
   if (argc > 1 && STREQ (argv[1], "--"))
@@ -109,9 +109,9 @@ main (int argc, char **argv)
       ++argv;
     }
 
-  if (argc == 1 || argc > 3)
+  if (argc <= 1 || argc > 3)
     {
-      error (0, 0, (argc == 1 ? _("too few arguments")
+      error (0, 0, (argc <= 1 ? _("too few arguments")
 		    : _("too many arguments")));
       usage (EXIT_FAILURE);
     }

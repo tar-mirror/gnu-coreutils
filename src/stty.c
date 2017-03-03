@@ -1,5 +1,5 @@
 /* stty -- change and print terminal line settings
-   Copyright (C) 1990-2002 Free Software Foundation, Inc.
+   Copyright (C) 1990-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -52,19 +52,13 @@
 # include <sys/pty.h>
 #endif
 #include <getopt.h>
-#if PROTOTYPES
-# include <stdarg.h>
-# define VA_START(args, lastarg) va_start(args, lastarg)
-#else
-# include <varargs.h>
-# define VA_START(args, lastarg) va_start(args)
-#endif
+#include <stdarg.h>
+#define VA_START(args, lastarg) va_start(args, lastarg)
 
 #include "system.h"
 #include "long-options.h"
 #include "error.h"
 #include "xstrtol.h"
-#include "closeout.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "stty"
@@ -450,19 +444,16 @@ static struct option longopts[] =
 /* The name this program was run with. */
 char *program_name;
 
+static void wrapf (const char *message, ...)
+     __attribute__ ((__format__ (__printf__, 1, 2)));
+
 /* Print format string MESSAGE and optional args.
    Wrap to next line first if it won't fit.
    Print a space first unless MESSAGE will start a new line. */
 
 /* VARARGS */
 static void
-#if PROTOTYPES
 wrapf (const char *message,...)
-#else
- wrapf (message, va_alist)
-     const char *message;
-     va_dcl
-#endif
 {
   va_list args;
   char buf[1024];		/* Plenty long for our needs. */
@@ -490,7 +481,7 @@ wrapf (const char *message,...)
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -750,6 +741,7 @@ main (int argc, char **argv)
   const char *posixly_correct = getenv ("POSIXLY_CORRECT");
   int invalid_long_option = 0;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -758,7 +750,7 @@ main (int argc, char **argv)
   atexit (close_stdout);
 
   parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
-		      AUTHORS, usage);
+		      usage, AUTHORS, (char const *) NULL);
 
   output_type = changed;
   verbose_output = 0;
@@ -784,7 +776,7 @@ main (int argc, char **argv)
 
 	case 'F':
 	  if (file_name)
-	    error (2, 0, _("only one device may be specified"));
+	    error (EXIT_FAILURE, 0, _("only one device may be specified"));
 	  file_name = optarg;
 	  break;
 
@@ -824,7 +816,7 @@ main (int argc, char **argv)
 	  if (k < argc - 1)
 	    noargs = 0;
 	  break;
-    	}
+	}
 
       /* Handle "--file device" */
       len = strlen (argv[k]);
@@ -833,7 +825,7 @@ main (int argc, char **argv)
 	  argv[k] = NULL;
 	  argv[k + 1] = NULL;
 	  continue;
-    	}
+	}
 
       /* Handle "--all" and "--save".  */
       if (len >= 3
@@ -878,13 +870,14 @@ main (int argc, char **argv)
 
   /* Specifying both -a and -g gets an error.  */
   if (verbose_output && recoverable_output)
-    error (2, 0,
+    error (EXIT_FAILURE, 0,
 	   _("the options for verbose and stty-readable output styles are\n\
 mutually exclusive"));
 
   /* Specifying any other arguments with -a or -g gets an error.  */
   if (!noargs && (verbose_output || recoverable_output))
-    error (2, 0, _("when specifying an output style, modes may not be set"));
+    error (EXIT_FAILURE, 0,
+	   _("when specifying an output style, modes may not be set"));
 
   /* FIXME: it'd be better not to open the file until we've verified
      that all arguments are valid.  Otherwise, we could end up doing

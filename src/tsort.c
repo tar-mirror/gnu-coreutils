@@ -1,5 +1,5 @@
 /* tsort - topological sort.
-   Copyright (C) 1998-2002 Free Software Foundation, Inc.
+   Copyright (C) 1998-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,7 +29,6 @@
 #include <sys/types.h>
 
 #include "system.h"
-#include "closeout.h"
 #include "long-options.h"
 #include "error.h"
 #include "readtokens.h"
@@ -66,7 +65,7 @@ char *program_name;
 /* Nonzero if any of the input files are the standard input. */
 static int have_read_stdin;
 
-/* The error code to return to the system. */
+/* Nonzero if a nonfatal error has occurred.  */
 static int exit_status;
 
 /* The head of the sorted list.  */
@@ -89,7 +88,7 @@ static struct option const long_options[] =
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -105,14 +104,14 @@ With no FILE, or when FILE is -, read standard input.\n\
       printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
     }
 
-  exit (status == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
+  exit (status);
 }
 
 /* Create a new item/node for STR.  */
 static struct item *
 new_item (const char *str)
 {
-  struct item *k = xmalloc (sizeof (struct item));
+  struct item *k = xmalloc (sizeof *k);
 
   k->str = (str ? xstrdup (str): NULL);
   k->left = k->right = NULL;
@@ -287,7 +286,7 @@ record_relation (struct item *j, struct item *k)
   if (!STREQ (j->str, k->str))
     {
       k->count++;
-      p = xmalloc (sizeof (struct successor));
+      p = xmalloc (sizeof *p);
       p->suc = k;
       p->next = j->top;
       j->top = p;
@@ -491,6 +490,10 @@ tsort (const char *file)
       j = k;
     }
 
+  if (k != NULL)
+    error (EXIT_FAILURE, 0, _("%s: input contains an odd number of tokens"),
+	   file);
+
   /* T1. Initialize (N <- n).  */
   walk_tree (root, count_items);
 
@@ -530,8 +533,7 @@ tsort (const char *file)
       if (n_strings > 0)
 	{
 	  /* The input contains a loop.  */
-	  error (0, 0, _("%s: input contains a loop:"),
-		 (have_read_stdin ? "-" : file));
+	  error (0, 0, _("%s: input contains a loop:"), file);
 	  exit_status = 1;
 
 	  /* Print the loop and remove a relation to break it.  */
@@ -547,6 +549,7 @@ main (int argc, char **argv)
 {
   int opt;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -557,7 +560,7 @@ main (int argc, char **argv)
   exit_status = 0;
 
   parse_long_options (argc, argv, PROGRAM_NAME, PACKAGE, VERSION,
-		      AUTHORS, usage);
+		      usage, AUTHORS, (char const *) NULL);
 
   while ((opt = getopt_long (argc, argv, "", long_options, NULL)) != -1)
     switch (opt)
@@ -570,16 +573,13 @@ main (int argc, char **argv)
 
   have_read_stdin = 0;
 
-  if (optind + 1 < argc)
+  if (1 < argc - optind)
     {
       error (0, 0, _("only one argument may be specified"));
       usage (EXIT_FAILURE);
     }
 
-  if (optind < argc)
-    tsort (argv[optind]);
-  else
-    tsort ("-");
+  tsort (optind == argc ? "-" : argv[optind]);
 
   if (have_read_stdin && fclose (stdin) == EOF)
     error (EXIT_FAILURE, errno, _("standard input"));

@@ -3,12 +3,11 @@
 : ${PERL=perl}
 : ${srcdir=.}
 
-case "$PERL" in
-  *'missing perl')
-  echo 1>&2 "$0: configure didn't find a usable version of Perl, so can't run this test"
+$PERL -e 1 > /dev/null 2>&1 || {
+  echo 1>&2 "$0: configure didn't find a usable version of Perl," \
+    "so can't run this test"
   exit 77
-  ;;
-esac
+}
 
 exec $PERL -w -I$srcdir/.. -MFetish -- - <<\EOF
 require 5.003;
@@ -36,13 +35,31 @@ my @Tests =
 				{OUT=>"57edf4a22be3c955ac49da2e2107b67a  f\n"}],
      ['backslash', {IN=> {".\\foo"=> ''}},
 				{OUT=>"\\$degenerate  .\\\\foo\n"}],
+     ['check-1', '--check', {AUX=> {f=> ''}},
+				{IN=> {'f.md5' => "$degenerate  f\n"}},
+				{OUT=>"f: OK\n"}],
+     ['check-2', '--check', '--status', {IN=>{'f.md5' => "$degenerate  f\n"}},
+				{AUX=> {f=> 'foo'}}, {EXIT=> 1}],
+     # The sha1sum and md5sum drivers share a lot of code.
+     # Ensure that md5sum does *not* share the part that makes
+     # sha1sum accept BSD format.
+     ['check-bsd', '--check', {IN=> {'f.sha1' => "SHA1 (f) = $degenerate\n"}},
+				{AUX=> {f=> ''}},
+				{ERR=>"md5sum: f.sha1: no properly formatted "
+				       . "MD5 checksum lines found\n"},
+				{EXIT=> 1}],
+     ['check-bsd2', '--check', {IN=> {'f.md5' => "MD5 (f) = $degenerate\n"}},
+				{AUX=> {f=> ''}}, {OUT=>"f: OK\n"}],
+     ['check-bsd3', '--check', '--status',
+				{IN=> {'f.md5' => "MD5 (f) = $degenerate\n"}},
+				{AUX=> {f=> 'bar'}}, {EXIT=> 1}],
     );
 
 # Insert the `--text' argument for each test.
 my $t;
 foreach $t (@Tests)
   {
-    splice @$t, 1, 0, '--text';
+    splice @$t, 1, 0, '--text' unless @$t[1] =~ /--check/;
   }
 
 my $save_temps = $ENV{DEBUG};

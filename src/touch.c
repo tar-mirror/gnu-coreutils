@@ -1,5 +1,5 @@
 /* touch -- change modification and access times of files
-   Copyright (C) 87, 1989-1991, 1995-2002 Free Software Foundation, Inc.
+   Copyright (C) 87, 1989-1991, 1995-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,12 +31,13 @@
 #include "posixver.h"
 #include "quote.h"
 #include "safe-read.h"
+#include "utimens.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "touch"
 
 #define AUTHORS \
-N_ ("Paul Rubin, Arnold Robbins, Jim Kingdon, David MacKenzie, and Randy Smith")
+"Paul Rubin", "Arnold Robbins, Jim Kingdon, David MacKenzie", "Randy Smith"
 
 #ifndef STDC_HEADERS
 time_t time ();
@@ -46,22 +47,6 @@ time_t time ();
 #define CH_ATIME 1
 #define CH_MTIME 2
 
-#if !defined O_NDELAY
-# define O_NDELAY 0
-#endif
-
-#if !defined O_NONBLOCK
-# define O_NONBLOCK O_NDELAY
-#endif
-
-#if !defined O_NOCTTY
-# define O_NOCTTY 0
-#endif
-
-#if !defined EISDIR
-# define EISDIR 0
-#endif
-
 /* The name by which this program was run. */
 char *program_name;
 
@@ -70,9 +55,6 @@ static int change_times;
 
 /* (-c) If nonzero, don't create if not already there. */
 static int no_create;
-
-/* (-d) If nonzero, date supplied on command line in get_date formats. */
-static int flexible_date;
 
 /* (-r) If nonzero, use times from a reference file. */
 static int use_ref;
@@ -88,7 +70,7 @@ static int posix_date;
 static int amtime_now;
 
 /* New time to use when setting time. */
-static time_t newtime;
+static struct timespec newtime;
 
 /* File to use for -r. */
 static char *ref_file;
@@ -126,6 +108,19 @@ static int const time_masks[] =
 {
   CH_ATIME, CH_ATIME, CH_ATIME, CH_MTIME, CH_MTIME
 };
+
+/* Interpret FLEX_DATE as a date, relative to NOW, and return the
+   respresented time.  If NOW is null, use the current time.
+   FIXME: add support for subsecond resolution.  */
+
+static time_t
+get_reldate (char const *flex_date, time_t const *now)
+{
+  time_t r = get_date (flex_date, now);
+  if (r == (time_t) -1)
+    error (EXIT_FAILURE, 0, _("invalid date format %s"), quote (flex_date));
+  return r;
+}
 
 /* Update the time of file FILE according to the options given.
    Return 0 if successful, 1 if an error occurs. */
@@ -169,7 +164,8 @@ touch (const char *file)
 	      error (0, errno, _("failed to get attributes of %s"),
 		     quote (file));
 	    }
-	  close (fd);
+	  if (fd != -1)
+	    close (fd);
 	  return 1;
 	}
     }
@@ -188,7 +184,7 @@ touch (const char *file)
     }
   else
     {
-      struct utimbuf utb;
+      struct timespec timespec[2];
 
       /* There's currently no interface to set file timestamps with
 	 better than 1-second resolution, so discard any fractional
@@ -196,19 +192,27 @@ touch (const char *file)
 
       if (use_ref)
 	{
-	  utb.actime = ref_stats.st_atime;
-	  utb.modtime = ref_stats.st_mtime;
+	  timespec[0].tv_sec = ref_stats.st_atime;
+	  timespec[0].tv_nsec = TIMESPEC_NS (ref_stats.st_atim);
+	  timespec[1].tv_sec = ref_stats.st_mtime;
+	  timespec[1].tv_nsec = TIMESPEC_NS (ref_stats.st_mtim);
 	}
       else
-	utb.actime = utb.modtime = newtime;
+	timespec[0] = timespec[1] = newtime;
 
       if (!(change_times & CH_ATIME))
-	utb.actime = sbuf.st_atime;
+	{
+	  timespec[0].tv_sec = sbuf.st_atime;
+	  timespec[0].tv_nsec = TIMESPEC_NS (sbuf.st_atim);
+	}
 
       if (!(change_times & CH_MTIME))
-	utb.modtime = sbuf.st_mtime;
+	{
+	  timespec[1].tv_sec = sbuf.st_mtime;
+	  timespec[1].tv_nsec = TIMESPEC_NS (sbuf.st_mtim);
+	}
 
-      status = utime (file, &utb);
+      status = utimens (file, timespec);
     }
 
   if (status)
@@ -236,7 +240,7 @@ touch (const char *file)
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -279,7 +283,9 @@ main (int argc, char **argv)
   int c;
   int date_set = 0;
   int err = 0;
+  char const *flex_date = NULL;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -287,7 +293,7 @@ main (int argc, char **argv)
 
   atexit (close_stdout);
 
-  change_times = no_create = use_ref = posix_date = flexible_date = 0;
+  change_times = no_create = use_ref = posix_date = 0;
 
   while ((c = getopt_long (argc, argv, "acd:fmr:t:", longopts, NULL)) != -1)
     {
@@ -305,10 +311,7 @@ main (int argc, char **argv)
 	  break;
 
 	case 'd':
-	  flexible_date++;
-	  newtime = get_date (optarg, NULL);
-	  if (newtime == (time_t) -1)
-	    error (EXIT_FAILURE, 0, _("invalid date format %s"), quote (optarg));
+	  flex_date = optarg;
 	  date_set++;
 	  break;
 
@@ -326,9 +329,10 @@ main (int argc, char **argv)
 
 	case 't':
 	  posix_date++;
-	  if (! posixtime (&newtime, optarg,
+	  if (! posixtime (&newtime.tv_sec, optarg,
 			   PDS_LEADING_YEAR | PDS_CENTURY | PDS_SECONDS))
 	    error (EXIT_FAILURE, 0, _("invalid date format %s"), quote (optarg));
+	  newtime.tv_nsec = 0;
 	  date_set++;
 	  break;
 
@@ -349,8 +353,7 @@ main (int argc, char **argv)
   if (change_times == 0)
     change_times = CH_ATIME | CH_MTIME;
 
-  if ((use_ref && (posix_date || flexible_date))
-      || (posix_date && flexible_date))
+  if (posix_date && (use_ref || flex_date))
     {
       error (0, 0, _("cannot specify times from more than one source"));
       usage (EXIT_FAILURE);
@@ -361,7 +364,22 @@ main (int argc, char **argv)
       if (stat (ref_file, &ref_stats))
 	error (EXIT_FAILURE, errno,
 	       _("failed to get attributes of %s"), quote (ref_file));
+      if (flex_date)
+	{
+	  if (change_times & CH_ATIME)
+	    ref_stats.st_atime = get_reldate (flex_date, &ref_stats.st_atime);
+	  if (change_times & CH_MTIME)
+	    ref_stats.st_mtime = get_reldate (flex_date, &ref_stats.st_mtime);
+	}
       date_set++;
+    }
+  else
+    {
+      if (flex_date)
+	{
+	  newtime.tv_sec = get_reldate (flex_date, NULL);
+	  newtime.tv_nsec = 0;
+	}
     }
 
   /* The obsolete `MMDDhhmm[YY]' form is valid IFF there are
@@ -369,11 +387,12 @@ main (int argc, char **argv)
   if (!date_set && 2 <= argc - optind && !STREQ (argv[optind - 1], "--")
       && posix2_version () < 200112)
     {
-      if (posixtime (&newtime, argv[optind], PDS_TRAILING_YEAR))
+      if (posixtime (&newtime.tv_sec, argv[optind], PDS_TRAILING_YEAR))
 	{
+	  newtime.tv_nsec = 0;
 	  if (! getenv ("POSIXLY_CORRECT"))
 	    {
-	      struct tm const *tm = localtime (&newtime);
+	      struct tm const *tm = localtime (&newtime.tv_sec);
 	      error (0, 0,
 		     _("warning: `touch %s' is obsolete; use\
  `touch -t %04d%02d%02d%02d%02d.%02d'"),
@@ -391,7 +410,20 @@ main (int argc, char **argv)
       if ((change_times & (CH_ATIME | CH_MTIME)) == (CH_ATIME | CH_MTIME))
 	amtime_now = 1;
       else
-	time (&newtime);
+	{
+	  /* Get time of day, but only to microsecond resolution,
+	     since 'utimes' currently supports only microsecond
+	     resolution at best.  It would be cleaner here to invoke
+	     gettime, but then we would have to link in more shared
+	     libraries on platforms like Solaris, and we'd rather not
+	     have 'touch' depend on libraries that it doesn't
+	     need.  */
+	  struct timeval timeval;
+	  if (gettimeofday (&timeval, NULL) != 0)
+	    error (EXIT_FAILURE, errno, _("cannot get time of day"));
+	  newtime.tv_sec = timeval.tv_sec;
+	  newtime.tv_nsec = timeval.tv_usec * 1000;
+	}
     }
 
   if (optind == argc)
@@ -401,7 +433,7 @@ main (int argc, char **argv)
     }
 
   for (; optind < argc; ++optind)
-    err += touch (argv[optind]);
+    err |= touch (argv[optind]);
 
-  exit (err != 0);
+  exit (err == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
 }

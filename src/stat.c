@@ -1,5 +1,5 @@
 /* stat.c -- display file or filesystem status
-   Copyright (C) 2001, 2002, 2003 Free Software Foundation.
+   Copyright (C) 2001, 2002, 2003, 2004 Free Software Foundation.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,31 +23,33 @@
 #include <sys/types.h>
 #include <pwd.h>
 #include <grp.h>
-#include <unistd.h>
-#include <time.h>
-#if HAVE_SYS_STATVFS_H
+#if HAVE_SYS_STATVFS_H && HAVE_STRUCT_STATVFS_F_BASETYPE
 # include <sys/statvfs.h>
-#endif
-#if HAVE_SYS_VFS_H
+#elif HAVE_SYS_VFS_H
 # include <sys/vfs.h>
-#endif
-
+#elif HAVE_SYS_MOUNT_H && HAVE_SYS_PARAM_H
+/* NOTE: freebsd5.0 needs sys/param.h and sys/mount.h for statfs.
+   It does have statvfs.h, but shouldn't use it, since it doesn't
+   HAVE_STRUCT_STATVFS_F_BASETYPE.  So find a clean way to fix it.  */
 /* NetBSD 1.5.2 needs these, for the declaration of struct statfs. */
-#if !HAVE_SYS_STATVFS_H && !HAVE_SYS_VFS_H
-# if HAVE_SYS_MOUNT_H && HAVE_SYS_PARAM_H
-#  include <sys/param.h>
-#  include <sys/mount.h>
+# include <sys/param.h>
+# include <sys/mount.h>
+# if HAVE_NETINET_IN_H && HAVE_NFS_NFS_CLNT_H && HAVE_NFS_VFS_H
+/* Ultrix 4.4 needs these for the declaration of struct statfs.  */
+#  include <netinet/in.h>
+#  include <nfs/nfs_clnt.h>
+#  include <nfs/vfs.h>
 # endif
 #endif
 
 #include "system.h"
 
-#include "closeout.h"
 #include "error.h"
 #include "filemode.h"
 #include "file-type.h"
 #include "fs.h"
 #include "getopt.h"
+#include "inttostr.h"
 #include "quote.h"
 #include "quotearg.h"
 #include "strftime.h"
@@ -119,91 +121,100 @@ human_fstype (STRUCT_STATVFS const *statfsbuf)
   switch (statfsbuf->f_type)
     {
 # if defined __linux__
-    case S_MAGIC_AFFS:
+
+      /* IMPORTANT NOTE: Each of the following `case S_MAGIC_...:'
+	 statements must be followed by a hexadecimal constant in
+	 a comment.  The S_MAGIC_... name and constant are automatically
+	 combined to produce the #define directives in fs.h.  */
+
+    case S_MAGIC_AFFS: /* 0xADFF */
       type = "affs";
       break;
-    case S_MAGIC_EXT:
+    case S_MAGIC_DEVPTS: /* 0x1CD1 */
+      type = "devpts";
+      break;
+    case S_MAGIC_EXT: /* 0x137D */
       type = "ext";
       break;
-    case S_MAGIC_EXT2_OLD:
+    case S_MAGIC_EXT2_OLD: /* 0xEF51 */
       type = "ext2";
       break;
-    case S_MAGIC_EXT2:
+    case S_MAGIC_EXT2: /* 0xEF53 */
       type = "ext2/ext3";
       break;
-    case S_MAGIC_HPFS:
+    case S_MAGIC_HPFS: /* 0xF995E849 */
       type = "hpfs";
       break;
-    case S_MAGIC_ISOFS:
+    case S_MAGIC_ISOFS: /* 0x9660 */
       type = "isofs";
       break;
-    case S_MAGIC_ISOFS_WIN:
+    case S_MAGIC_ISOFS_WIN: /* 0x4000 */
       type = "isofs";
       break;
-    case S_MAGIC_ISOFS_R_WIN:
+    case S_MAGIC_ISOFS_R_WIN: /* 0x4004 */
       type = "isofs";
       break;
-    case S_MAGIC_MINIX:
+    case S_MAGIC_MINIX: /* 0x137F */
       type = "minix";
       break;
-    case S_MAGIC_MINIX_30:
+    case S_MAGIC_MINIX_30: /* 0x138F */
       type = "minix (30 char.)";
       break;
-    case S_MAGIC_MINIX_V2:
+    case S_MAGIC_MINIX_V2: /* 0x2468 */
       type = "minix v2";
       break;
-    case S_MAGIC_MINIX_V2_30:
+    case S_MAGIC_MINIX_V2_30: /* 0x2478 */
       type = "minix v2 (30 char.)";
       break;
-    case S_MAGIC_MSDOS:
+    case S_MAGIC_MSDOS: /* 0x4d44 */
       type = "msdos";
       break;
-    case S_MAGIC_FAT:
+    case S_MAGIC_FAT: /* 0x4006 */
       type = "fat";
       break;
-    case S_MAGIC_NCP:
+    case S_MAGIC_NCP: /* 0x564c */
       type = "novell";
       break;
-    case S_MAGIC_NFS:
+    case S_MAGIC_NFS: /* 0x6969 */
       type = "nfs";
       break;
-    case S_MAGIC_PROC:
+    case S_MAGIC_PROC: /* 0x9fa0 */
       type = "proc";
       break;
-    case S_MAGIC_SMB:
+    case S_MAGIC_SMB: /* 0x517B */
       type = "smb";
       break;
-    case S_MAGIC_XENIX:
+    case S_MAGIC_XENIX: /* 0x012FF7B4 */
       type = "xenix";
       break;
-    case S_MAGIC_SYSV4:
+    case S_MAGIC_SYSV4: /* 0x012FF7B5 */
       type = "sysv4";
       break;
-    case S_MAGIC_SYSV2:
+    case S_MAGIC_SYSV2: /* 0x012FF7B6 */
       type = "sysv2";
       break;
-    case S_MAGIC_COH:
+    case S_MAGIC_COH: /* 0x012FF7B7 */
       type = "coh";
       break;
-    case S_MAGIC_UFS:
+    case S_MAGIC_UFS: /* 0x00011954 */
       type = "ufs";
       break;
-    case S_MAGIC_XIAFS:
+    case S_MAGIC_XIAFS: /* 0x012FD16D */
       type = "xia";
       break;
-    case S_MAGIC_NTFS:
+    case S_MAGIC_NTFS: /* 0x5346544e */
       type = "ntfs";
       break;
-    case S_MAGIC_TMPFS:
+    case S_MAGIC_TMPFS: /* 0x1021994 */
       type = "tmpfs";
       break;
-    case S_MAGIC_REISERFS:
+    case S_MAGIC_REISERFS: /* 0x52654973 */
       type = "reiserfs";
       break;
-    case S_MAGIC_CRAMFS:
+    case S_MAGIC_CRAMFS: /* 0x28cd3d45 */
       type = "cramfs";
       break;
-    case S_MAGIC_ROMFS:
+    case S_MAGIC_ROMFS: /* 0x7275 */
       type = "romfs";
       break;
 # elif __GNU__
@@ -298,9 +309,9 @@ human_fstype (STRUCT_STATVFS const *statfsbuf)
     return (char *) type;
 
   {
-    static char buf[sizeof "UNKNOWN (0x%x)" - 2
+    static char buf[sizeof "UNKNOWN (0x%lx)" - 3
 		    + 2 * sizeof (statfsbuf->f_type)];
-    sprintf (buf, "UNKNOWN (0x%x)", statfsbuf->f_type);
+    sprintf (buf, "UNKNOWN (0x%lx)", (unsigned long) statfsbuf->f_type);
     return buf;
   }
 #endif
@@ -316,16 +327,18 @@ human_access (struct stat const *statbuf)
 }
 
 static char *
-human_time (time_t const *t)
+human_time (time_t t, int t_ns)
 {
-  static char str[80];
-  struct tm *tm = localtime (t);
+  static char str[MAX (INT_BUFSIZE_BOUND (intmax_t),
+		       (INT_STRLEN_BOUND (int) /* YYYY */
+			+ 1 /* because YYYY might equal INT_MAX + 1900 */
+			+ sizeof "-MM-DD HH:MM:SS.NNNNNNNNN +ZZZZ"))];
+  struct tm const *tm = localtime (&t);
   if (tm == NULL)
-    {
-      G_fail = 1;
-      return (char *) _("*** invalid date/time ***");
-    }
-  nstrftime (str, sizeof str, "%Y-%m-%d %H:%M:%S.%N %z", tm, 0, 0);
+    return (TYPE_SIGNED (time_t)
+	    ? imaxtostr (t, str)
+	    : umaxtostr (t, str));
+  nstrftime (str, sizeof str, "%Y-%m-%d %H:%M:%S.%N %z", tm, 0, t_ns);
   return str;
 }
 
@@ -515,7 +528,8 @@ print_stat (char *pformat, char m, char const *filename, void const *data)
       break;
     case 'x':
       strcat (pformat, "s");
-      printf (pformat, human_time (&(statbuf->st_atime)));
+      printf (pformat, human_time (statbuf->st_atime,
+				   TIMESPEC_NS (statbuf->st_atim)));
       break;
     case 'X':
       strcat (pformat, "d");
@@ -523,7 +537,8 @@ print_stat (char *pformat, char m, char const *filename, void const *data)
       break;
     case 'y':
       strcat (pformat, "s");
-      printf (pformat, human_time (&(statbuf->st_mtime)));
+      printf (pformat, human_time (statbuf->st_mtime,
+				   TIMESPEC_NS (statbuf->st_mtim)));
       break;
     case 'Y':
       strcat (pformat, "d");
@@ -531,7 +546,8 @@ print_stat (char *pformat, char m, char const *filename, void const *data)
       break;
     case 'z':
       strcat (pformat, "s");
-      printf (pformat, human_time (&(statbuf->st_ctime)));
+      printf (pformat, human_time (statbuf->st_ctime,
+				   TIMESPEC_NS (statbuf->st_ctim)));
       break;
     case 'Z':
       strcat (pformat, "d");
@@ -556,7 +572,6 @@ print_it (char const *masterformat, char const *filename,
 
   char *dest = xmalloc (strlen (format) + 1);
 
-
   b = format;
   while (b)
     {
@@ -573,9 +588,12 @@ print_it (char const *masterformat, char const *filename,
 	  dest[1 + len] = 0;
 	  p += len;
 
+	  b = p + 1;
 	  switch (*p)
 	    {
 	    case '\0':
+	      b = NULL;
+	      /* fall through */
 	    case '%':
 	      putchar ('%');
 	      break;
@@ -583,7 +601,6 @@ print_it (char const *masterformat, char const *filename,
 	      print_func (dest, *p, filename, data);
 	      break;
 	    }
-	  b = p + 1;
 	}
       else
 	{
@@ -657,16 +674,16 @@ do_stat (char const *filename, int follow_links, int terse,
 		"Device: %Dh/%dd\tInode: %-10i  Links: %-5h"
 		" Device type: %t,%T\n"
 		"Access: (%04a/%10.10A)  Uid: (%5u/%8U)   Gid: (%5g/%8G)\n"
-		"Access: %x\n" "Modify: %y\n" "Change: %z\n";
+		"Access: %x\n" "Modify: %y\n" "Change: %z";
 	    }
 	  else
 	    {
 	      format =
 		"  File: %N\n"
 		"  Size: %-10s\tBlocks: %-10b IO Block: %-6o %F\n"
-		"Device: %Dh/%dd\tInode: %-10i  Links: %-5h\n"
+		"Device: %Dh/%dd\tInode: %-10i  Links: %h\n"
 		"Access: (%04a/%10.10A)  Uid: (%5u/%8U)   Gid: (%5g/%8G)\n"
-		"Access: %x\n" "Modify: %y\n" "Change: %z\n";
+		"Access: %x\n" "Modify: %y\n" "Change: %z";
 	    }
 	}
     }
@@ -676,7 +693,7 @@ do_stat (char const *filename, int follow_links, int terse,
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -763,6 +780,7 @@ main (int argc, char *argv[])
   int terse = 0;
   char *format = NULL;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -777,13 +795,18 @@ main (int argc, char *argv[])
 	case 'c':
 	  format = optarg;
 	  break;
+
 	case 'l': /* deprecated */
+	  error (0, 0, _("Warning: `-l' is deprecated; use `-L' instead"));
+	  /* fall through */
 	case 'L':
 	  follow_links = 1;
 	  break;
+
 	case 'f':
 	  fs = 1;
 	  break;
+
 	case 't':
 	  terse = 1;
 	  break;

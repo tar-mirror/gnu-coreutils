@@ -1,5 +1,5 @@
 /* echo.c, derived from code echo.c in Bash.
-   Copyright (C) 87,89, 1991-1997, 1999-2002 Free Software Foundation, Inc.
+   Copyright (C) 87,89, 1991-1997, 1999-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include "system.h"
-#include "closeout.h"
 #include "long-options.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
@@ -69,7 +68,7 @@ char *program_name;
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -117,6 +116,7 @@ main (int argc, char **argv)
   int display_return = 1, do_v9 = 0;
   int allow_options = 1;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -127,7 +127,7 @@ main (int argc, char **argv)
   /* Don't recognize --help or --version if POSIXLY_CORRECT is set.  */
   if (getenv ("POSIXLY_CORRECT") == NULL)
     parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
-		      AUTHORS, usage);
+		      usage, AUTHORS, (char const *) NULL, NULL);
   else
     allow_options = 0;
 

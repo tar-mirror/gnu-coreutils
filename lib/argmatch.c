@@ -1,7 +1,7 @@
 /* argmatch.c -- find a match for a string in an array
 
-   Copyright (C) 1990, 1998, 1999, 2001, 2002, 2003 Free Software
-   Foundation, Inc.
+   Copyright (C) 1990, 1998, 1999, 2001, 2002, 2003, 2004 Free
+   Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@
 #define _(msgid) gettext (msgid)
 
 #include "error.h"
+#include "exit.h"
 #include "quotearg.h"
 #include "quote.h"
 #include "unlocked-io.h"
@@ -46,13 +47,10 @@
 # define ARGMATCH_QUOTING_STYLE locale_quoting_style
 #endif
 
-#ifndef EXIT_FAILURE
-# define EXIT_FAILURE 1
-#endif
-
 /* Non failing version of argmatch call this function after failing. */
 #ifndef ARGMATCH_DIE
-# define ARGMATCH_DIE exit (EXIT_FAILURE)
+# include "exitfail.h"
+# define ARGMATCH_DIE exit (exit_failure)
 #endif
 
 #ifdef ARGMATCH_DIE_DECL
@@ -212,7 +210,6 @@ argmatch_to_argument (const char *value,
  * Based on "getversion.c" by David MacKenzie <djm@gnu.ai.mit.edu>
  */
 char *program_name;
-extern const char *getenv ();
 
 /* When to make backup files.  */
 enum backup_type

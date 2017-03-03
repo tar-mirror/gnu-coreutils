@@ -1,5 +1,5 @@
 /* cp-hash.c  -- file copying (hash search routines)
-   Copyright (C) 89, 90, 91, 1995-2002 Free Software Foundation.
+   Copyright (C) 89, 90, 91, 1995-2003 Free Software Foundation.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ struct Src_to_dest
   /* Destination path name (of non-directory or pre-existing directory)
      corresponding to the dev/ino of a copied file, or the destination path
      name corresponding to a dev/ino pair for a newly-created directory. */
-  char const* name;
+  char *name;
 };
 
 /* This table maps source dev/ino to destination file name.
@@ -52,8 +52,8 @@ static Hash_table *src_to_dest;
 /* Initial size of the above hash table.  */
 #define INITIAL_TABLE_SIZE 103
 
-static unsigned int
-src_to_dest_hash (void const *x, unsigned int table_size)
+static size_t
+src_to_dest_hash (void const *x, size_t table_size)
 {
   struct Src_to_dest const *p = x;
 
@@ -77,7 +77,7 @@ static void
 src_to_dest_free (void *x)
 {
   struct Src_to_dest *a = x;
-  free ((char *) (a->name));
+  free (a->name);
   free (x);
 }
 
@@ -126,7 +126,7 @@ remember_copied (const char *name, ino_t ino, dev_t dev)
   struct Src_to_dest *ent;
   struct Src_to_dest *ent_from_table;
 
-  ent = (struct Src_to_dest *) xmalloc (sizeof *ent);
+  ent = xmalloc (sizeof *ent);
   ent->name = xstrdup (name);
   ent->st_ino = ino;
   ent->st_dev = dev;

@@ -23,17 +23,8 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
-#if defined(STDC_HEADERS) || defined(HAVE_STRING_H)
-# include <string.h>
-#else
-# include <strings.h>
-#endif /* STDC_HEADERS || HAVE_STRING_H */
-
-#if STDC_HEADERS
-# include <stdlib.h>
-#else
-void *realloc ();
-#endif
+#include <string.h>
+#include <stdlib.h>
 
 #include "readutmp.h"
 #include "unlocked-io.h"
@@ -113,23 +104,33 @@ read_utmp (const char *filename, int *n_entries, STRUCT_UTMP **utmp_buf)
   if (utmp == NULL)
     return 1;
 
-  fstat (fileno (utmp), &file_stats);
-  size = file_stats.st_size;
-  if (size > 0)
-    buf = (STRUCT_UTMP *) xmalloc (size);
-  else
+  if (fstat (fileno (utmp), &file_stats) != 0)
     {
+      int e = errno;
       fclose (utmp);
+      errno = e;
+      return 1;
+    }
+  size = file_stats.st_size;
+  buf = xmalloc (size);
+  n_read = fread (buf, sizeof *buf, size / sizeof *buf, utmp);
+  if (ferror (utmp))
+    {
+      int e = errno;
+      free (buf);
+      fclose (utmp);
+      errno = e;
+      return 1;
+    }
+  if (fclose (utmp) != 0)
+    {
+      int e = errno;
+      free (buf);
+      errno = e;
       return 1;
     }
 
-  /* Use < instead of != in case the utmp just grew.  */
-  n_read = fread (buf, 1, size, utmp);
-  if (ferror (utmp) || fclose (utmp) == EOF
-      || n_read < size)
-    return 1;
-
-  *n_entries = size / sizeof (STRUCT_UTMP);
+  *n_entries = n_read;
   *utmp_buf = buf;
 
   return 0;

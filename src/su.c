@@ -1,5 +1,5 @@
 /* su for GNU.  Run a shell with substitute user and group IDs.
-   Copyright (C) 1992-2002 Free Software Foundation, Inc.
+   Copyright (C) 1992-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -82,7 +82,6 @@
 #define getusershell _getusershell_sys_proto_
 
 #include "system.h"
-#include "closeout.h"
 #include "dirname.h"
 
 #undef getusershell
@@ -193,7 +192,7 @@ static char *
 concat (const char *s1, const char *s2, const char *s3)
 {
   int len1 = strlen (s1), len2 = strlen (s2), len3 = strlen (s3);
-  char *result = (char *) xmalloc (len1 + len2 + len3 + 1);
+  char *result = xmalloc (len1 + len2 + len3 + 1);
 
   strcpy (result, s1);
   strcpy (result + len1, s2);
@@ -310,7 +309,7 @@ modify_environment (const struct passwd *pw, const char *shell)
       /* Leave TERM unchanged.  Set HOME, SHELL, USER, LOGNAME, PATH.
          Unset all other environment variables.  */
       term = getenv ("TERM");
-      environ = (char **) xmalloc (2 * sizeof (char *));
+      environ = xmalloc (2 * sizeof (char *));
       environ[0] = 0;
       if (term)
 	xputenv (concat ("TERM", "=", term));
@@ -347,13 +346,13 @@ change_identity (const struct passwd *pw)
 #ifdef HAVE_INITGROUPS
   errno = 0;
   if (initgroups (pw->pw_name, pw->pw_gid) == -1)
-    error (EXIT_FAILURE, errno, _("cannot set groups"));
+    error (EXIT_FAIL, errno, _("cannot set groups"));
   endgrent ();
 #endif
   if (setgid (pw->pw_gid))
-    error (EXIT_FAILURE, errno, _("cannot set group id"));
+    error (EXIT_FAIL, errno, _("cannot set group id"));
   if (setuid (pw->pw_uid))
-    error (EXIT_FAILURE, errno, _("cannot set user id"));
+    error (EXIT_FAIL, errno, _("cannot set user id"));
 }
 
 /* Run SHELL, or DEFAULT_SHELL if SHELL is empty.
@@ -368,10 +367,10 @@ run_shell (const char *shell, const char *command, char **additional_args)
   int argno = 1;
 
   if (additional_args)
-    args = (const char **) xmalloc (sizeof (char *)
+    args = xmalloc (sizeof (char *)
 				    * (10 + elements (additional_args)));
   else
-    args = (const char **) xmalloc (sizeof (char *) * 10);
+    args = xmalloc (sizeof (char *) * 10);
   if (simulate_login)
     {
       char *arg0;
@@ -399,7 +398,7 @@ run_shell (const char *shell, const char *command, char **additional_args)
   execv (shell, (char **) args);
 
   {
-    int exit_status = (errno == ENOENT ? 127 : 126);
+    int exit_status = (errno == ENOENT ? EXIT_ENOENT : EXIT_CANNOT_INVOKE);
     error (0, errno, "%s", shell);
     exit (exit_status);
   }
@@ -429,7 +428,7 @@ restricted_shell (const char *shell)
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -452,7 +451,6 @@ Change the effective user id and group id to that of USER.\n\
 A mere - implies -l.   If USER not given, assume root.\n\
 "), stdout);
       printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
-      close_stdout ();
     }
   exit (status);
 }
@@ -468,10 +466,14 @@ main (int argc, char **argv)
   struct passwd *pw;
   struct passwd pw_copy;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
+
+  initialize_exit_failure (EXIT_FAIL);
+  atexit (close_stdout);
 
   fast_startup = 0;
   simulate_login = 0;
@@ -510,7 +512,7 @@ main (int argc, char **argv)
 	case_GETOPT_VERSION_CHAR (PROGRAM_NAME, AUTHORS);
 
 	default:
-	  usage (EXIT_FAILURE);
+	  usage (EXIT_FAIL);
 	}
     }
 
@@ -526,7 +528,7 @@ main (int argc, char **argv)
 
   pw = getpwnam (new_user);
   if (pw == 0)
-    error (EXIT_FAILURE, 0, _("user %s does not exist"), new_user);
+    error (EXIT_FAIL, 0, _("user %s does not exist"), new_user);
   endpwent ();
 
   /* Make sure pw->pw_shell is non-NULL.  It may be NULL when NEW_USER
@@ -549,7 +551,7 @@ main (int argc, char **argv)
 #ifdef SYSLOG_FAILURE
       log_su (pw, 0);
 #endif
-      error (EXIT_FAILURE, 0, _("incorrect password"));
+      error (EXIT_FAIL, 0, _("incorrect password"));
     }
 #ifdef SYSLOG_SUCCESS
   else

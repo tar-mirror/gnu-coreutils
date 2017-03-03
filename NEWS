@@ -1,5 +1,323 @@
-[5.0]
-* false --help now exits nonzero
+GNU coreutils NEWS                                    -*- outline -*-
+* Major changes in release 5.2.0 (2004-02-19) [stable]
+
+** Bug fixes
+
+  none
+
+
+* Major changes in release 5.1.3 (2004-02-08): candidate to become stable 5.2.0
+
+** Bug fixes
+
+  `cp -d' now works as required even on systems like OSF V5.1 that
+  declare stat and lstat as `static inline' functions.
+
+  time stamps output by stat now include actual fractional seconds,
+  when available -- or .0000000 for files without that information.
+
+  seq no longer infloops when printing 2^31 or more numbers.
+  For reference, seq `echo 2^31|bc` > /dev/null takes about one hour
+  on a 1.6 GHz Athlon 2000 XP.  Now it can output 2^53-1 numbers before
+  misbehaving.
+
+* Major changes in release 5.1.2 (2004-01-25):
+
+** Bug fixes
+
+  rmdir -p exits with status 1 on error; formerly it sometimes exited
+  with status 0 when given more than one argument.
+
+  nohup now always exits with status 127 when it finds an error,
+  as POSIX requires; formerly it sometimes exited with status 1.
+
+  Several programs (including cut, date, dd, env, hostname, nl, pr,
+  stty, and tr) now always exit with status 1 when they find an error;
+  formerly they sometimes exited with status 2.
+
+  factor no longer reports a usage error if stdin has the wrong format.
+
+  paste no longer infloops on ppc systems (bug introduced in 5.1.1)
+
+
+* Major changes in release 5.1.1 (2004-01-17):
+
+** Configuration option
+
+  You can select the default level of POSIX conformance at configure-time,
+  e.g., by ./configure DEFAULT_POSIX2_VERSION=199209
+
+** Bug fixes
+
+  fold -s works once again on systems with differing sizes for int
+  and size_t (bug introduced in 5.1.0)
+
+** New features
+
+  touch -r now specifies the origin for any relative times in the -d
+  operand, if both options are given.  For example, "touch -r FOO -d
+  '-5 seconds' BAR" sets BAR's modification time to be five seconds
+  before FOO's.
+
+  join: The obsolete options "-j1 FIELD", "-j2 FIELD", and
+  "-o LIST1 LIST2..." are no longer supported on POSIX 1003.1-2001 systems.
+  Portable scripts should use "-1 FIELD", "-2 FIELD", and
+  "-o LIST1,LIST2..." respectively.  If join was compiled on a
+  POSIX 1003.1-2001 system, you may enable the old behavior
+  by setting _POSIX2_VERSION=199209 in your environment.
+
+
+* Major changes in release 5.1.0 (2003-12-21):
+
+** New features
+
+  chgrp, chmod, and chown can now process (with -R) hierarchies of virtually
+  unlimited depth.  Before, they would fail to operate on any file they
+  encountered with a relative name of length PATH_MAX (often 4096) or longer.
+
+  chgrp, chmod, chown, and rm accept the new options:
+  --preserve-root, --no-preserve-root (default)
+
+  chgrp and chown now accept POSIX-mandated -L, -H, and -P options
+
+  du can now process hierarchies of virtually unlimited depth.
+  Before, du was limited by the user's stack size and it would get a
+  stack overflow error (often a segmentation fault) when applied to
+  a hierarchy of depth around 30,000 or larger.
+
+  du works even when run from an inaccessible directory
+
+  du -D now dereferences all symlinks specified on the command line,
+  not just the ones that reference directories
+
+  du now accepts -P (--no-dereference), for compatibility with du
+  of NetBSD and for consistency with e.g., chown and chgrp
+
+  du's -H option will soon have the meaning required by POSIX
+  (--dereference-args, aka -D) rather then the current meaning of --si.
+  Now, using -H elicits a warning to that effect.
+
+  When given -l and similar options, ls now adjusts the output column
+  widths to fit the data, so that output lines are shorter and have
+  columns that line up better.  This may adversely affect shell
+  scripts that expect fixed-width columns, but such shell scripts were
+  not portable anyway, even with old GNU ls where the columns became
+  ragged when a datum was too wide.
+
+  du accepts a new option, -0/--null, to make it produce NUL-terminated
+  output lines
+
+** Bug fixes
+
+  printf, seq, tail, and sleep now parse floating-point operands
+  and options in the C locale.  POSIX requires this for printf.
+
+  od -c -w9999999 no longer segfaults
+
+  csplit no longer reads from freed memory (dumping core on some systems)
+
+  csplit would mistakenly exhaust virtual memory in some cases
+
+  ls --width=N (for very large N) is no longer subject to an address
+  arithmetic bug that could result in bounds violations.
+
+  ls --width=N (with -x or -C) no longer allocates more space
+  (potentially much more) than necessary for a given directory.
+
+  dd `unblock' and `sync' may now be combined (e.g., dd conv=unblock,sync)
+
+* Major changes in release 5.0.91 (2003-09-08):
+
+** New features
+
+  date accepts a new option --rfc-2822, an alias for --rfc-822.
+
+  split accepts a new option -d or --numeric-suffixes.
+
+  cp, install, mv, and touch now preserve microsecond resolution on
+  file timestamps, on platforms that have the 'utimes' system call.
+  Unfortunately there is no system call yet to preserve file
+  timestamps to their full nanosecond resolution; microsecond
+  resolution is the best we can do right now.
+
+  sort now supports the zero byte (NUL) as a field separator; use -t '\0'.
+  The -t '' option, which formerly had no effect, is now an error.
+
+  sort option order no longer matters for the options -S, -d, -i, -o, and -t.
+  Stronger options override weaker, and incompatible options are diagnosed.
+
+  `sha1sum --check' now accepts the BSD format for SHA1 message digests
+  in addition to the BSD format for MD5 ones.
+
+  who -l now means `who --login', not `who --lookup', per POSIX.
+  who's -l option has been eliciting an unconditional warning about
+  this impending change since sh-utils-2.0.12 (April 2002).
+
+** Bug fixes
+
+  Mistakenly renaming a file onto itself, e.g., via `mv B b' when `B' is
+  the same directory entry as `b' no longer destroys the directory entry
+  referenced by both `b' and `B'.  Note that this would happen only on
+  file systems like VFAT where two different names may refer to the same
+  directory entry, usually due to lower->upper case mapping of file names.
+  Now, the above can happen only on file systems that perform name mapping and
+  that support hard links (stat.st_nlink > 1).  This mitigates the problem
+  in two ways: few file systems appear to be affected (hpfs and ntfs are),
+  when the bug is triggered, mv no longer removes the last hard link to a file.
+  *** ATTENTION ***: if you know how to distinguish the following two cases
+  without writing to the file system in question, please let me know:
+  1) B and b refer to the same directory entry on a file system like NTFS
+       (B may well have a link count larger than 1)
+  2) B and b are hard links to the same file
+
+  stat no longer overruns a buffer for format strings ending in `%'
+
+  fold -s -wN would infloop for N < 8 with TABs in the input.
+  E.g., this would not terminate: printf 'a\t' | fold -w2 -s
+
+  `split -a0', although of questionable utility, is accepted once again.
+
+  `df DIR' used to hang under some conditions on OSF/1 5.1.  Now it doesn't.
+
+  seq's --width (-w) option now works properly even when the endpoint
+  requiring the larger width is negative and smaller than the other endpoint.
+
+  seq's default step is 1, even if LAST < FIRST.
+
+  paste no longer mistakenly outputs 0xFF bytes for a nonempty input file
+  without a trailing newline.
+
+  `tail -n0 -f FILE' and `tail -c0 -f FILE' no longer perform what amounted
+  to a busy wait, rather than sleeping between iterations.
+
+  tail's long-undocumented --allow-missing option now elicits a warning
+
+
+* Major changes in release 5.0.90 (2003-07-29):
+
+** New features
+
+  sort is now up to 30% more CPU-efficient in some cases
+
+  `test' is now more compatible with Bash and POSIX:
+
+    `test -t', `test --help', and `test --version' now silently exit
+    with status 0.  To test whether standard output is a terminal, use
+    `test -t 1'.  To get help and version info for `test', use
+    `[ --help' and `[ --version'.
+
+    `test' now exits with status 2 (not 1) if there is an error.
+
+  wc count field widths now are heuristically adjusted depending on the input
+  size, if known.  If only one count is printed, it is guaranteed to
+  be printed without leading spaces.
+
+  Previously, wc did not align the count fields if POSIXLY_CORRECT was set,
+  but POSIX did not actually require this undesirable behavior, so it
+  has been removed.
+
+** Bug fixes
+
+  kill no longer tries to operate on argv[0] (introduced in 5.0.1)
+  Why wasn't this noticed?  Although many tests use kill, none of
+  them made an effort to avoid using the shell's built-in kill.
+
+  `[' invoked with no arguments no longer evokes a segfault
+
+  rm without --recursive (aka -r or -R) no longer prompts regarding
+  unwritable directories, as required by POSIX.
+
+  uniq -c now uses a SPACE, not a TAB between the count and the
+  corresponding line, as required by POSIX.
+
+  expr now exits with status 2 if the expression is syntactically valid,
+  and with status 3 if an error occurred.  POSIX requires this.
+
+  expr now reports trouble if string comparison fails due to a collation error.
+
+  split now generates suffixes properly on EBCDIC hosts.
+
+  split -a0 now works, as POSIX requires.
+
+  `sort --version' and `sort --help' fail, as they should
+  when their output is redirected to /dev/full.
+
+  `su --version > /dev/full' now fails, as it should.
+
+** Fewer arbitrary limitations
+
+  cut requires 97% less memory when very large field numbers or
+  byte offsets are specified.
+
+
+* Major changes in release 5.0.1 (2003-07-15):
+
+** New programs
+- new program: `[' (much like `test')
+
+** New features
+- head now accepts --lines=-N (--bytes=-N) to print all but the
+  N lines (bytes) at the end of the file
+- md5sum --check now accepts the output of the BSD md5sum program, e.g.,
+  MD5 (f) = d41d8cd98f00b204e9800998ecf8427e
+- date -d DATE can now parse a DATE string like May-23-2003
+- chown: `.' is no longer recognized as a separator in the OWNER:GROUP
+  specifier on POSIX 1003.1-2001 systems.  If chown *was not* compiled
+  on such a system, then it still accepts `.', by default.  If chown
+  was compiled on a POSIX 1003.1-2001 system, then you may enable the
+  old behavior by setting _POSIX2_VERSION=199209 in your environment.
+- chown no longer tries to preserve set-user-ID and set-group-ID bits;
+  on some systems, the chown syscall resets those bits, and previous
+  versions of the chown command would call chmod to restore the original,
+  pre-chown(2) settings, but that behavior is problematic.
+  1) There was a window whereby a malicious user, M, could subvert a
+  chown command run by some other user and operating on files in a
+  directory where M has write access.
+  2) Before (and even now, on systems with chown(2) that doesn't reset
+  those bits), an unwary admin. could use chown unwittingly to create e.g.,
+  a set-user-ID root copy of /bin/sh.
+
+** Bug fixes
+- chown --dereference no longer leaks a file descriptor per symlink processed
+- `du /' once again prints the `/' on the last line
+- split's --verbose option works once again [broken in 4.5.10 and 5.0]
+- tail -f is no longer subject to a race condition that could make it
+  delay displaying the last part of a file that had stopped growing.  That
+  bug could also make tail -f give an unwarranted `file truncated' warning.
+- du no longer runs out of file descriptors unnecessarily
+- df and `readlink --canonicalize' no longer corrupt the heap on
+  non-glibc, non-solaris systems
+- `env -u UNSET_VARIABLE' no longer dumps core on non-glibc systems
+- readlink's --canonicalize option now works on systems like Solaris that
+  lack the canonicalize_file_name function but do have resolvepath.
+- mv now removes `a' in this example on all systems: touch a; ln a b; mv a b
+  This behavior is contrary to POSIX (which requires that the mv command do
+  nothing and exit successfully), but I suspect POSIX will change.
+- date's %r format directive now honors locale settings
+- date's `-' (no-pad) format flag now affects the space-padded-by-default
+  conversion specifiers, %e, %k, %l
+- fmt now diagnoses invalid obsolescent width specifications like `-72x'
+- fmt now exits nonzero when unable to open an input file
+- tsort now fails when given an odd number of input tokens,
+  as required by POSIX.  Before, it would act as if the final token
+  appeared one additional time.
+
+** Fewer arbitrary limitations
+- tail's byte and line counts are no longer limited to OFF_T_MAX.
+  Now the limit is UINTMAX_MAX (usually 2^64).
+- split can now handle --bytes=N and --lines=N with N=2^31 or more.
+
+** Portability
+- `kill -t' now prints signal descriptions (rather than `?') on systems
+  like Tru64 with __sys_siglist but no strsignal function.
+- stat.c now compiles on Ultrix systems
+- sleep now works on AIX systems that lack support for clock_gettime
+- rm now works around Darwin6.5's broken readdir function
+  Before `rm -rf DIR' would fail to remove all files in DIR
+  if there were more than 338.
+
+* Major changes in release 5.0 (2003-04-02):
+- false --help now exits nonzero
 
 [4.5.12]
 * printf no longer treats \x specially when POSIXLY_CORRECT is set

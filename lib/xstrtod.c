@@ -1,5 +1,5 @@
-/* xstrtod.c - error-checking interface to strtod
-   Copyright (C) 1996, 1999, 2000 Free Software Foundation, Inc.
+/* error-checking interface to strtod-like functions
+   Copyright (C) 1996, 1999, 2000, 2003 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,16 +21,11 @@
 # include <config.h>
 #endif
 
-#ifdef STDC_HEADERS
-# include <stdlib.h>
-#else
-double strtod ();
-#endif
+#include "xstrtod.h"
 
 #include <errno.h>
-#include <stdio.h>
 #include <limits.h>
-#include "xstrtod.h"
+#include <stdio.h>
 
 /* Tell the compiler that non-default rounding modes are used.  */
 #if 199901 <= __STDC_VERSION__
@@ -40,13 +35,12 @@ double strtod ();
 /* An interface to strtod that encapsulates all the error checking
    one should usually perform.  Like strtod, but upon successful
    conversion put the result in *RESULT and return zero.  Return
-   non-zero and don't modify *RESULT upon any failure.  */
+   non-zero and don't modify *RESULT upon any failure.  CONVERT
+   specifies the conversion function, e.g., strtod itself.  */
 
 int
-xstrtod (str, ptr, result)
-     const char *str;
-     const char **ptr;
-     double *result;
+xstrtod (char const *str, char const **ptr, double *result,
+	 double (*convert) (char const *, char **))
 {
   double val;
   char *terminator;
@@ -54,7 +48,7 @@ xstrtod (str, ptr, result)
 
   fail = 0;
   errno = 0;
-  val = strtod (str, &terminator);
+  val = convert (str, &terminator);
 
   /* Having a non-zero terminator is an error only when PTR is NULL. */
   if (terminator == str || (ptr == NULL && *terminator != '\0'))

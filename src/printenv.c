@@ -1,5 +1,5 @@
 /* printenv -- print all or part of environment
-   Copyright (C) 1989-1997, 1999-2002 Free Software Foundation, Inc.
+   Copyright (C) 1989-1997, 1999-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
    Exit status:
    0 if all variables specified were found
    1 if not
+   2 if some other error occurred
 
    David MacKenzie and Richard Mlynarik */
 
@@ -33,14 +34,16 @@
 #include <getopt.h>
 
 #include "system.h"
-#include "closeout.h"
 #include "error.h"
 #include "long-options.h"
+
+/* Exit status for syntax errors, etc.  */
+enum { PRINTENV_FAILURE = 2 };
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "printenv"
 
-#define AUTHORS N_ ("David MacKenzie and Richard Mlynarik")
+#define AUTHORS "David MacKenzie", "Richard Mlynarik"
 
 /* The name this program was run with. */
 char *program_name;
@@ -55,7 +58,7 @@ extern char **environ;
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -84,16 +87,17 @@ main (int argc, char **argv)
   int c;
   int exit_status;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
 
-  close_stdout_set_status (2);
+  initialize_exit_failure (PRINTENV_FAILURE);
   atexit (close_stdout);
 
   parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
-		      AUTHORS, usage);
+		      usage, AUTHORS, (char const *) NULL);
 
   while ((c = getopt_long (argc, argv, "", long_options, NULL)) != -1)
     {
@@ -103,15 +107,15 @@ main (int argc, char **argv)
 	  break;
 
 	default:
-	  usage (EXIT_FAILURE);
+	  usage (PRINTENV_FAILURE);
 	}
     }
 
-  if (optind == argc)
+  if (optind >= argc)
     {
       for (env = environ; *env != NULL; ++env)
 	puts (*env);
-      exit_status = 0;
+      exit_status = EXIT_SUCCESS;
     }
   else
     {

@@ -1,5 +1,5 @@
 /* pr -- convert text files for printing.
-   Copyright (C) 88, 91, 1995-2002 Free Software Foundation, Inc.
+   Copyright (C) 88, 91, 1995-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -314,9 +314,7 @@
 #include <stdio.h>
 #include <getopt.h>
 #include <sys/types.h>
-#include <time.h>
 #include "system.h"
-#include "closeout.h"
 #include "error.h"
 #include "mbswidth.h"
 #include "posixver.h"
@@ -325,7 +323,7 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "pr"
 
-#define AUTHORS N_ ("Pete TerMaat and Roland Huebner")
+#define AUTHORS "Pete TerMaat", "Roland Huebner"
 
 #ifndef TRUE
 # define TRUE	1
@@ -462,7 +460,7 @@ static int buff_current;
 
 /* The number of characters in buff.
    Used for allocation of buff and to detect overflow of buff. */
-static int buff_allocated;
+static size_t buff_allocated;
 
 /* Array of indices into buff.
    Each entry is an index of the first character of a line.
@@ -803,7 +801,7 @@ first_last_page (char *pages)
   if (*pages == ':')
     {
       error (0, 0, _("`--pages' invalid range of page numbers: `%s'"), pages);
-      usage (2);
+      usage (EXIT_FAILURE);
     }
 
   str1 = strchr (pages, ':');
@@ -842,7 +840,7 @@ static void
 separator_string (const char *optarg_S)
 {
   col_sep_length = (int) strlen (optarg_S);
-  col_sep_string = (char *) xmalloc (col_sep_length + 1);
+  col_sep_string = xmalloc (col_sep_length + 1);
   strcpy (col_sep_string, optarg_S);
 }
 
@@ -860,6 +858,7 @@ main (int argc, char **argv)
 			       ? COMMON_SHORT_OPTIONS "S::"
 			       : COMMON_SHORT_OPTIONS "S:");
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -869,7 +868,7 @@ main (int argc, char **argv)
 
   n_files = 0;
   file_names = (argc > 1
-		? (char **) xmalloc ((argc - 1) * sizeof (char *))
+		? xmalloc ((argc - 1) * sizeof (char *))
 		: NULL);
 
   while ((c = getopt_long (argc, argv, short_options, long_options, NULL))
@@ -1069,7 +1068,7 @@ main (int argc, char **argv)
 	case_GETOPT_HELP_CHAR;
 	case_GETOPT_VERSION_CHAR (PROGRAM_NAME, AUTHORS);
 	default:
-	  usage (2);
+	  usage (EXIT_FAILURE);
 	  break;
 	}
     }
@@ -1187,7 +1186,7 @@ getoptarg (char *arg, char switch_char, char *character, int *number)
 	  error (0, 0,
 		 _("`-%c' extra characters or invalid number in the argument: `%s'"),
 		 switch_char, arg);
-	  usage (2);
+	  usage (EXIT_FAILURE);
 	}
       *number = (int) tmp_long;
     }
@@ -1302,7 +1301,7 @@ init_parameters (int number_of_files)
     {
       if (number_buff != NULL)
 	free (number_buff);
-      number_buff = (char *) xmalloc (2 * chars_per_number);
+      number_buff = xmalloc (2 * chars_per_number);
     }
 
   /* Pick the maximum between the tab width and the width of an
@@ -1312,7 +1311,7 @@ init_parameters (int number_of_files)
      to expand a tab which is not an input_tab-char. */
   if (clump_buff != NULL)
     free (clump_buff);
-  clump_buff = (int *) xmalloc ((chars_per_input_tab > 8
+  clump_buff = xmalloc ((chars_per_input_tab > 8
 				? chars_per_input_tab : 8) * sizeof (int));
 }
 
@@ -1338,8 +1337,8 @@ init_fps (int number_of_files, char **av)
   total_files = 0;
 
   if (column_vector != NULLCOL)
-    free ((char *) column_vector);
-  column_vector = (COLUMN *) xmalloc (columns * sizeof (COLUMN));
+    free (column_vector);
+  column_vector = xmalloc (columns * sizeof (COLUMN));
 
   if (parallel_files)
     {
@@ -1907,20 +1906,20 @@ init_store_cols (void)
   int chars_if_truncate = total_lines * (chars_per_column + 1);
 
   if (line_vector != NULL)
-    free ((int *) line_vector);
+    free (line_vector);
   /* FIXME: here's where it was allocated.  */
-  line_vector = (int *) xmalloc ((total_lines + 1) * sizeof (int *));
+  line_vector = xmalloc ((total_lines + 1) * sizeof (int *));
 
   if (end_vector != NULL)
-    free ((int *) end_vector);
-  end_vector = (int *) xmalloc (total_lines * sizeof (int *));
+    free (end_vector);
+  end_vector = xmalloc (total_lines * sizeof (int *));
 
   if (buff != NULL)
     free (buff);
   buff_allocated = (use_col_separator
 		    ? 2 * chars_if_truncate
 		    : chars_if_truncate);	/* Tune this. */
-  buff = (char *) xmalloc (buff_allocated);
+  buff = xmalloc (buff_allocated);
 }
 
 /* Store all but the rightmost column.
@@ -1941,7 +1940,7 @@ store_columns (void)
   int i, j;
   int line = 0;
   int buff_start;
-  int last_col;			/* The rightmost column which will be saved in buff */
+  int last_col;		/* The rightmost column which will be saved in buff */
   COLUMN *p;
 
   buff_current = 0;
@@ -2014,8 +2013,7 @@ store_char (int c)
   if (buff_current >= buff_allocated)
     {
       /* May be too generous. */
-      buff_allocated = 2 * buff_allocated;
-      buff = (char *) xrealloc (buff, buff_allocated * sizeof (char));
+      buff = x2nrealloc (buff, &buff_allocated, sizeof *buff);
     }
   buff[buff_current++] = (char) c;
 }
@@ -2746,7 +2744,7 @@ cleanup (void)
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -2861,5 +2859,5 @@ FILE is -, read standard input.\n\
 "), stdout);
       printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
     }
-  exit (status == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
+  exit (status);
 }

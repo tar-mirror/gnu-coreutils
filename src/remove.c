@@ -17,10 +17,6 @@
 
 /* Extracted from rm.c and librarified, then rewritten by Jim Meyering.  */
 
-#ifdef _AIX
- #pragma alloca
-#endif
-
 #include <config.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -39,6 +35,7 @@
 #include "obstack.h"
 #include "quote.h"
 #include "remove.h"
+#include "root-dev-ino.h"
 
 /* Avoid shadowing warnings because these are functions declared
    in dirname.h as well as locals used below.  */
@@ -53,6 +50,10 @@
 # define ROOT_CAN_UNLINK_DIRS 0
 #else
 # define ROOT_CAN_UNLINK_DIRS 1
+#endif
+
+#ifndef HAVE_WORKING_READDIR
+# define HAVE_WORKING_READDIR 0
 #endif
 
 enum Ternary
@@ -77,14 +78,6 @@ enum Prompt_action
 #if HAVE_LSTAT_EMPTY_STRING_BUG
 int rpl_lstat (const char *, struct stat *);
 # define lstat(Name, Stat_buf) rpl_lstat(Name, Stat_buf)
-#endif
-
-#ifdef D_INO_IN_DIRENT
-# define D_INO(dp) ((dp)->d_ino)
-# define ENABLE_CYCLE_CHECK
-#else
-/* Some systems don't have inodes, so fake them to avoid lots of ifdefs.  */
-# define D_INO(dp) 1
 #endif
 
 /* Initial capacity of per-directory hash table of entries that have
@@ -508,37 +501,37 @@ AD_is_removable (Dirstack_state const *ds, char const *file)
   return ! (top->unremovable && hash_lookup (top->unremovable, file));
 }
 
+/* A wrapper for readdir so that callers don't see entries for `.' or `..'.  */
+static struct dirent *
+readdir_ignoring_dotdirs (DIR *dirp)
+{
+  while (1)
+    {
+      struct dirent *dp = readdir (dirp);
+      if (dp == NULL || ! DOT_OR_DOTDOT (dp->d_name))
+	return dp;
+    }
+}
+
+/* Return nonzero if DIR is determined to be an empty directory
+   or if opendir or readdir fails.  */
 static bool
 is_empty_dir (char const *dir)
 {
   DIR *dirp = opendir (dir);
+  struct dirent *dp;
+  int saved_errno;
+
   if (dirp == NULL)
-    {
-      closedir (dirp);
-      return false;
-    }
+    return false;
 
-  while (1)
-    {
-      struct dirent *dp;
-      const char *f;
-
-      errno = 0;
-      dp = readdir (dirp);
-      if (dp == NULL)
-	{
-	  int saved_errno = errno;
-	  closedir (dirp);
-	  return saved_errno == 0 ? true : false;
-	}
-
-      f = dp->d_name;
-      if ( ! DOT_OR_DOTDOT (f))
-	{
-	  closedir (dirp);
-	  return false;
-	}
-    }
+  errno = 0;
+  dp = readdir_ignoring_dotdirs (dirp);
+  saved_errno = errno;
+  closedir (dirp);
+  if (dp != NULL)
+    return false;
+  return saved_errno == 0 ? true : false;
 }
 
 /* Prompt whether to remove FILENAME, if required via a combination of
@@ -572,6 +565,13 @@ prompt (Dirstack_state const *ds, char const *filename,
 	{
 	  /* lstat failed.  This happens e.g., with `rm '''.  */
 	  error (0, errno, _("cannot lstat %s"),
+		 quote (full_filename (filename)));
+	  return RM_ERROR;
+	}
+
+      if (S_ISDIR (sbuf.st_mode) && !x->recursive)
+	{
+	  error (0, EISDIR, _("cannot remove directory %s"),
 		 quote (full_filename (filename)));
 	  return RM_ERROR;
 	}
@@ -804,6 +804,7 @@ remove_cwd_entries (Dirstack_state *ds, char **subdir, struct stat *subdir_sb,
   DIR *dirp = opendir (".");
   struct AD_ent *top = AD_stack_top (ds);
   enum RM_status status = top->status;
+  bool need_rewinddir = false;
 
   assert (VALID_STATUS (status));
   *subdir = NULL;
@@ -827,7 +828,7 @@ remove_cwd_entries (Dirstack_state *ds, char **subdir, struct stat *subdir_sb,
       /* Set errno to zero so we can distinguish between a readdir failure
 	 and when readdir simply finds that there are no more entries.  */
       errno = 0;
-      if ((dp = readdir (dirp)) == NULL)
+      if ((dp = readdir_ignoring_dotdirs (dirp)) == NULL)
 	{
 	  if (errno)
 	    {
@@ -839,12 +840,18 @@ remove_cwd_entries (Dirstack_state *ds, char **subdir, struct stat *subdir_sb,
 	      /* Arrange to give a diagnostic after exiting this loop.  */
 	      dirp = NULL;
 	    }
+	  else if (need_rewinddir)
+	    {
+	      /* On buggy systems, call rewinddir if we've called unlink
+		 or rmdir since the opendir or a previous rewinddir.  */
+	      rewinddir (dirp);
+	      need_rewinddir = false;
+	      continue;
+	    }
 	  break;
 	}
 
       f = dp->d_name;
-      if (DOT_OR_DOTDOT (f))
-	continue;
 
       /* Skip files we've already tried/failed to remove.  */
       if ( ! AD_is_removable (ds, f))
@@ -858,7 +865,9 @@ remove_cwd_entries (Dirstack_state *ds, char **subdir, struct stat *subdir_sb,
       switch (tmp_status)
 	{
 	case RM_OK:
-	  /* do nothing */
+	  /* On buggy systems, record the fact that we've just
+	     removed a directory entry.  */
+	  need_rewinddir = ! HAVE_WORKING_READDIR;
 	  break;
 
 	case RM_ERROR:
@@ -967,7 +976,10 @@ remove_dir (Dirstack_state *ds, char const *dir, struct saved_cwd **cwd_state,
     {
       *cwd_state = XMALLOC (struct saved_cwd, 1);
       if (save_cwd (*cwd_state))
-	return RM_ERROR;
+	{
+	  error (0, errno, _("cannot get current directory"));
+	  return RM_ERROR;
+	}
       AD_push_initial (ds, *cwd_state);
       AD_INIT_OTHER_MEMBERS ();
     }
@@ -1003,6 +1015,12 @@ remove_dir (Dirstack_state *ds, char const *dir, struct saved_cwd **cwd_state,
 		 quote_n (0, full_filename (".")), quote_n (1, dir));
 	}
       return RM_ERROR;
+    }
+
+  if (ROOT_DEV_INO_CHECK (x->root_dev_ino, &dir_sb))
+    {
+      ROOT_DEV_INO_WARN (full_filename (dir));
+      return 1;
     }
 
   AD_push (ds, dir, &dir_sb);

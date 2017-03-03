@@ -1,6 +1,7 @@
 /* makepath.c -- Ensure that a directory path exists.
-   Copyright (C) 1990, 1997, 1998, 1999, 2000, 2002, 2003 Free Software
-   Foundation, Inc.
+
+   Copyright (C) 1990, 1997, 1998, 1999, 2000, 2002, 2003 Free
+   Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,19 +23,9 @@
 # include <config.h>
 #endif
 
-#if __GNUC__
-# define alloca __builtin_alloca
-#else
-# if HAVE_ALLOCA_H
-#  include <alloca.h>
-# else
-#  ifdef _AIX
- #  pragma alloca
-#  else
-char *alloca ();
-#  endif
-# endif
-#endif
+#include "makepath.h"
+
+#include <alloca.h>
 
 #include <stdio.h>
 #include <sys/types.h>
@@ -55,9 +46,7 @@ char *alloca ();
 # define S_IRWXUGO (S_IRWXU | S_IRWXG | S_IRWXO)
 #endif
 
-#if STDC_HEADERS
-# include <stdlib.h>
-#endif
+#include <stdlib.h>
 
 #include <errno.h>
 
@@ -65,14 +54,7 @@ char *alloca ();
 extern int errno;
 #endif
 
-#if HAVE_STRING_H
-# include <string.h>
-#else
-# include <strings.h>
-# ifndef strchr
-#  define strchr index
-# endif
-#endif
+#include <string.h>
 
 #ifndef S_ISUID
 # define S_ISUID 04000
@@ -98,9 +80,6 @@ extern int errno;
 #endif
 
 #define WX_USR (S_IWUSR | S_IXUSR)
-
-/* Include this before libintl.h so we get our definition of PARAMS. */
-#include "makepath.h"
 
 #include "gettext.h"
 #define _(msgid) gettext (msgid)
@@ -404,7 +383,7 @@ make_path (const char *argpath,
 	  *(p->dirname_end) = '\0';
 	  if (chmod (dirpath, parent_mode))
 	    {
-	      error (0, errno, "cannot change permissions of %s",
+	      error (0, errno, _("cannot change permissions of %s"),
 		     quote (dirpath));
 	      retval = 1;
 	    }

@@ -1,5 +1,5 @@
 /* GNU's who.
-   Copyright (C) 1992-2003 Free Software Foundation, Inc.
+   Copyright (C) 1992-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,12 +33,11 @@
 
 #include "readutmp.h"
 #include "error.h"
-#include "closeout.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "who"
 
-#define AUTHORS N_ ("Joseph Arceneaux, David MacKenzie, and Michael Stone")
+#define AUTHORS "Joseph Arceneaux", "David MacKenzie", "Michael Stone"
 
 #ifndef MAXHOSTNAMELEN
 # define MAXHOSTNAMELEN 64
@@ -171,8 +170,7 @@ static int my_line_only;
 /* for long options with no corresponding short option, use enum */
 enum
 {
-  LOOKUP_OPTION = CHAR_MAX + 1,
-  LOGIN_OPTION
+  LOOKUP_OPTION = CHAR_MAX + 1
 };
 
 static struct option const longopts[] = {
@@ -182,7 +180,7 @@ static struct option const longopts[] = {
   {"dead", no_argument, NULL, 'd'},
   {"heading", no_argument, NULL, 'H'},
   {"idle", no_argument, NULL, 'i'},
-  {"login", no_argument, NULL, LOGIN_OPTION},
+  {"login", no_argument, NULL, 'l'},
   {"lookup", no_argument, NULL, LOOKUP_OPTION},
   {"message", no_argument, NULL, 'T'},
   {"mesg", no_argument, NULL, 'T'},
@@ -249,22 +247,68 @@ print_line (const char *user, const char state, const char *line,
 	    const char *time_str, const char *idle, const char *pid,
 	    const char *comment, const char *exitstr)
 {
-  printf ("%-8.8s", user ? user : "   .");
-  if (include_mesg)
-    printf (" %c", state);
-  printf (" %-12s", line);
-  printf (" %-12s", time_str);
+  static char mesg[3] = { ' ', 'x', '\0' };
+  char *buf;
+  char x_idle[1 + IDLESTR_LEN + 1];
+  char x_pid[1 + INT_STRLEN_BOUND (pid_t) + 1];
+  char *x_exitstr;
+  int err;
+
+  mesg[1] = state;
+
   if (include_idle && !short_output)
-    printf (" %-6s", idle);
+    sprintf (x_idle, " %-6s", idle);
+  else
+    *x_idle = '\0';
+
   if (!short_output)
-    printf (" %10s", pid);
-  /* FIXME: it's not really clear whether the following should be in short_output.
-     a strict reading of SUSv2 would suggest not, but I haven't seen any
-     implementations that actually work that way... */
-  printf (" %-8s", comment);
-  if (include_exit && exitstr && *exitstr)
-    printf (" %-12s", exitstr);
-  putchar ('\n');
+    sprintf (x_pid, " %10s", pid);
+  else
+    *x_pid = '\0';
+
+  x_exitstr = xmalloc (include_exit ? 1 + MAX (12, strlen (exitstr)) + 1 : 1);
+  if (include_exit)
+    sprintf (x_exitstr, " %-12s", exitstr);
+  else
+    *x_exitstr = '\0';
+
+  err = asprintf (&buf,
+		  "%-8.8s"
+		  "%s"
+		  " %-12s"
+		  " %-12s"
+		  "%s"
+		  "%s"
+		  " %-8s"
+		  "%s"
+		  ,
+		  user ? user : "   .",
+		  include_mesg ? mesg : "",
+		  line,
+		  time_str,
+		  x_idle,
+		  x_pid,
+		  /* FIXME: it's not really clear whether the following
+		     field should be in the short_output.  A strict reading
+		     of SUSv2 would suggest not, but I haven't seen any
+		     implementations that actually work that way... */
+		  comment,
+		  x_exitstr
+		  );
+  if (err == -1)
+    xalloc_die ();
+
+  {
+    /* Remove any trailing spaces.  */
+    char *p = buf + strlen (buf);
+    while (*--p == ' ')
+      /* empty */;
+    *(p + 1) = '\0';
+  }
+
+  puts (buf);
+  free (buf);
+  free (x_exitstr);
 }
 
 /* Send properly parsed USER_PROCESS info to print_line */
@@ -327,7 +371,7 @@ print_user (const STRUCT_UTMP *utmp_ent)
       ut_host[sizeof (utmp_ent->ut_host)] = '\0';
 
       /* Look for an X display.  */
-      display = strrchr (ut_host, ':');
+      display = strchr (ut_host, ':');
       if (display)
 	*display++ = '\0';
 
@@ -561,12 +605,14 @@ who (const char *filename)
     list_entries_who (n_users, utmp_buf);
   else
     scan_entries (n_users, utmp_buf);
+
+  free (utmp_buf);
 }
 
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -582,12 +628,10 @@ usage (int status)
       fputs (_("\
   -i, --idle        add idle time as HOURS:MINUTES, . or old\n\
                     (deprecated, use -u)\n\
-      --login       print system login processes\n\
-                    (equivalent to SUS -l)\n\
+  -l, --login       print system login processes\n\
 "), stdout);
       fputs (_("\
-  -l, --lookup      attempt to canonicalize hostnames via DNS\n\
-                    (-l is deprecated, use --lookup)\n\
+      --lookup      attempt to canonicalize hostnames via DNS\n\
   -m                only hostname and user associated with stdin\n\
   -p, --process     print active processes spawned by init\n\
 "), stdout);
@@ -621,6 +665,7 @@ main (int argc, char **argv)
   int optc, longind;
   int assumptions = 1;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -666,8 +711,7 @@ main (int argc, char **argv)
 	  include_heading = 1;
 	  break;
 
-	  /* FIXME: This should be -l in a future version */
-	case LOGIN_OPTION:
+	case 'l':
 	  need_login = 1;
 	  include_idle = 1;
 	  assumptions = 0;
@@ -717,10 +761,6 @@ main (int argc, char **argv)
 	  assumptions = 0;
 	  break;
 
-	case 'l':
-	  error (0, 0,
-		 _("Warning: the meaning of '-l' will change in a future\
- release to conform to POSIX"));
 	case LOOKUP_OPTION:
 	  do_lookup = 1;
 	  break;
@@ -747,6 +787,7 @@ main (int argc, char **argv)
 
   switch (argc - optind)
     {
+    case -1:
     case 0:			/* who */
       who (UTMP_FILE);
       break;

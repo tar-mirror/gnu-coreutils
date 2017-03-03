@@ -22,10 +22,7 @@
 #endif
 
 #include <stdio.h>
-
-#ifdef STDC_HEADERS
-# include <stdlib.h>
-#endif
+#include <stdlib.h>
 
 #if HAVE_UNISTD_H
 # include <unistd.h>
@@ -47,7 +44,6 @@ extern int errno;
 #endif
 
 #include "save-cwd.h"
-#include "error.h"
 #include "xgetcwd.h"
 
 /* Record the location of the current working directory in CWD so that
@@ -63,7 +59,7 @@ extern int errno;
    support for fchdir, and getcwd is not robust or as efficient.
    So, we prefer to use the open/fchdir approach, but fall back on
    getcwd if necessary.  Some systems lack fchdir altogether: OS/2,
-   Cygwin (as of March 2003), SCO Xenix.  At least SunOS4 and Irix 5.3
+   Cygwin (as of March 2003), SCO Xenix.  At least SunOS 4 and Irix 5.3
    provide the function, yet it doesn't work for partitions on which
    auditing is enabled.  */
 
@@ -80,10 +76,7 @@ save_cwd (struct saved_cwd *cwd)
 #if HAVE_FCHDIR
       cwd->desc = open (".", O_RDONLY | O_DIRECTORY);
       if (cwd->desc < 0)
-	{
-	  error (0, errno, "cannot open current directory");
-	  return 1;
-	}
+	return 1;
 
 # if __sun__ || sun
       /* On SunOS 4 and IRIX 5.3, fchdir returns EINVAL when auditing
@@ -98,9 +91,10 @@ save_cwd (struct saved_cwd *cwd)
 	    }
 	  else
 	    {
-	      error (0, errno, "current directory");
+	      int saved_errno = errno;
 	      close (cwd->desc);
 	      cwd->desc = -1;
+	      errno = saved_errno;
 	      return 1;
 	    }
 	}
@@ -115,10 +109,7 @@ save_cwd (struct saved_cwd *cwd)
     {
       cwd->name = xgetcwd ();
       if (cwd->name == NULL)
-	{
-	  error (0, errno, "cannot get current directory");
-	  return 1;
-	}
+	return 1;
     }
   return 0;
 }

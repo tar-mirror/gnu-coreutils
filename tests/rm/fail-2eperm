@@ -19,16 +19,8 @@ framework_failure=0
 mkdir -p $tmp || framework_failure=1
 cd $tmp || framework_failure=1
 
-# Find a username with UID != 0, and a valid shell.
-non_root_username=
-names=`grep -v '[^:]*:[^:]*:0:' /etc/passwd| sed 's/:.*//'`
-for name in $names; do
-  su -c ':' $name && { non_root_username=$name; break; }
-done
-test "x$non_root_username" = x && framework_failure=1
-
 # The containing directory must be owned by the user who eventually runs rm.
-chown $non_root_username .
+chown $NON_ROOT_USERNAME .
 
 mkdir a || framework_failure=1
 chmod 1777 a || framework_failure=1
@@ -41,7 +33,21 @@ fi
 
 fail=0
 
-su -c 'rm -rf a' $non_root_username 2> out && fail=1
+# Try to ensure that $NON_ROOT_USERNAME can access
+# the required version of rm.
+rm_version=`setuidgid $NON_ROOT_USERNAME rm --version|sed -n '1s/.* //p'`
+case $rm_version in
+  $PACKAGE_VERSION) ;;
+  *) echo "$0: cannot access required version ($PACKAGE_VERSION) of rm" 1>&2
+     fail=1 ;;
+esac
+setuidgid $NON_ROOT_USERNAME rm -rf a 2> out-t && fail=1
+
+# On some systems, we get `Not owner'.  Convert it.
+# On other systems (HPUX), we get `Permission denied'.  Convert it, too.
+onp='Operation not permitted'
+sed "s/Not owner/$onp/;s/Permission denied/$onp/" out-t > out
+
 cat <<\EOF > exp
 rm: cannot remove `a/b': Operation not permitted
 EOF

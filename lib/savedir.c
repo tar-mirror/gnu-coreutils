@@ -1,6 +1,6 @@
 /* savedir.c -- save the list of files in a directory in a string
 
-   Copyright 1990, 1997, 1998, 1999, 2000, 2001 Free Software
+   Copyright 1990, 1997, 1998, 1999, 2000, 2001, 2003 Free Software
    Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
@@ -22,6 +22,8 @@
 #if HAVE_CONFIG_H
 # include <config.h>
 #endif
+
+#include "savedir.h"
 
 #include <sys/types.h>
 
@@ -52,15 +54,10 @@ extern int errno;
 # define CLOSEDIR(d) closedir (d)
 #endif
 
-#ifdef STDC_HEADERS
-# include <stdlib.h>
-# include <string.h>
-#endif
-#ifndef NULL
-# define NULL 0
-#endif
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
 
-#include "savedir.h"
 #include "xalloc.h"
 
 /* Return a freshly allocated string containing the filenames

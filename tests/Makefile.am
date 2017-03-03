@@ -1,8 +1,20 @@
 ## Process this file with automake to produce Makefile.in -*-Makefile-*-.
 
+# Sort in traditional ASCII order, regardless of the current locale;
+# otherwise we may get into trouble with distinct strings that the
+# current locale considers to be equal.
+ASSORT = LC_ALL=C sort
+
+all_programs =								\
+  echo 'spy:;@echo $$(all_programs)'					\
+    | MAKEFLAGS= $(MAKE) -s -C ../src -f Makefile -f - spy		\
+    | ../src/tr -s ' ' '\n' | $(ASSORT) -u
+
 TESTS = help-version
 TESTS_ENVIRONMENT = \
-  all_programs="$(bin_SCRIPTS) $(bin_PROGRAMS)"
+  all_programs="`$(all_programs)`" \
+  PACKAGE_BUGREPORT=$(PACKAGE_BUGREPORT) \
+  PATH="`pwd`/../src$(PATH_SEPARATOR)$$PATH"
 
 EXTRA_DIST = \
   $(TESTS) .env-warn Fetish.pm Makefile.am.in README envvar-check \
@@ -33,8 +45,7 @@ evar-check:
 
 # Advertise `check-root' target.
 root-hint:
-	@echo '********************************************'
-	@echo "NOTICE: Some tests will or might need to be"
-	@echo "        run as root. Do \`make check-root'"
-	@echo "        as \`root' to run just these tests."
-	@echo '********************************************'
+	@echo '***********************************************************'
+	@echo "NOTICE: Some tests may be run only as root."
+	@echo "  Do \`make check-root' as \`root' to run these tests."
+	@echo '***********************************************************'

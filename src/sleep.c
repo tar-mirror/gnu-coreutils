@@ -1,5 +1,5 @@
 /* sleep - delay for a specified amount of time.
-   Copyright (C) 84, 1991-1997, 1999-2003 Free Software Foundation, Inc.
+   Copyright (C) 84, 1991-1997, 1999-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 #include <getopt.h>
 
 #include "system.h"
-#include "closeout.h"
+#include "c-strtod.h"
 #include "error.h"
 #include "long-options.h"
 #include "xnanosleep.h"
@@ -31,7 +31,7 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "sleep"
 
-#define AUTHORS N_ ("Jim Meyering and Paul Eggert")
+#define AUTHORS "Jim Meyering", "Paul Eggert"
 
 /* The name by which this program was run. */
 char *program_name;
@@ -44,7 +44,7 @@ static struct option const long_options[] =
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -112,6 +112,7 @@ main (int argc, char **argv)
   int c;
   int fail = 0;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -120,7 +121,7 @@ main (int argc, char **argv)
   atexit (close_stdout);
 
   parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
-		      AUTHORS, usage);
+		      usage, AUTHORS, (char const *) NULL);
 
   while ((c = getopt_long (argc, argv, "", long_options, NULL)) != -1)
     {
@@ -144,7 +145,7 @@ main (int argc, char **argv)
     {
       double s;
       const char *p;
-      if (xstrtod (argv[i], &p, &s)
+      if (xstrtod (argv[i], &p, &s, c_strtod)
 	  /* Nonnegative interval.  */
 	  || ! (0 <= s)
 	  /* No extra chars after the number and an optional s,m,h,d char.  */

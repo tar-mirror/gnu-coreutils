@@ -1,5 +1,5 @@
 /* tr -- a filter to translate characters
-   Copyright (C) 91, 1995-2002 Free Software Foundation, Inc.
+   Copyright (C) 91, 1995-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,12 +21,10 @@
 
 #include <stdio.h>
 #include <assert.h>
-#include <errno.h>
 #include <sys/types.h>
 #include <getopt.h>
 
 #include "system.h"
-#include "closeout.h"
 #include "error.h"
 #include "safe-read.h"
 #include "xstrtol.h"
@@ -272,12 +270,7 @@ static int truncate_set1 = 0;
    It is set in main and used there and in validate().  */
 static int translating;
 
-#ifndef BUFSIZ
-# define BUFSIZ 8192
-#endif
-
-#define IO_BUF_SIZE BUFSIZ
-static unsigned char io_buf[IO_BUF_SIZE];
+static unsigned char io_buf[BUFSIZ];
 
 static char const *const char_class_name[] =
 {
@@ -319,7 +312,7 @@ static struct option const long_options[] =
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -395,7 +388,7 @@ translation or deletion.\n\
 "), stdout);
       printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
     }
-  exit (status == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
+  exit (status);
 }
 
 /* Return nonzero if the character C is a member of the
@@ -484,8 +477,8 @@ unquote (const unsigned char *s, struct E_string *es)
 
   len = strlen ((char *) s);
 
-  es->s = (unsigned char *) xmalloc (len);
-  es->escaped = (int *) xmalloc (len * sizeof (es->escaped[0]));
+  es->s = xmalloc (len);
+  es->escaped = xmalloc (len * sizeof (es->escaped[0]));
   for (i = 0; i < len; i++)
     es->escaped[i] = 0;
 
@@ -697,7 +690,7 @@ append_normal_char (struct Spec_list *list, unsigned int c)
 {
   struct List_element *new;
 
-  new = (struct List_element *) xmalloc (sizeof (struct List_element));
+  new = xmalloc (sizeof *new);
   new->next = NULL;
   new->type = RE_NORMAL_CHAR;
   new->u.normal_char = c;
@@ -728,7 +721,7 @@ append_range (struct Spec_list *list, unsigned int first, unsigned int last)
       free (tmp2);
       return 1;
     }
-  new = (struct List_element *) xmalloc (sizeof (struct List_element));
+  new = xmalloc (sizeof *new);
   new->next = NULL;
   new->type = RE_RANGE;
   new->u.range.first_char = first;
@@ -754,7 +747,7 @@ append_char_class (struct Spec_list *list,
   char_class = look_up_char_class (char_class_str, len);
   if (char_class == CC_NO_CLASS)
     return 1;
-  new = (struct List_element *) xmalloc (sizeof (struct List_element));
+  new = xmalloc (sizeof *new);
   new->next = NULL;
   new->type = RE_CHAR_CLASS;
   new->u.char_class = char_class;
@@ -775,7 +768,7 @@ append_repeated_char (struct Spec_list *list, unsigned int the_char,
 {
   struct List_element *new;
 
-  new = (struct List_element *) xmalloc (sizeof (struct List_element));
+  new = xmalloc (sizeof *new);
   new->next = NULL;
   new->type = RE_REPEATED_CHAR;
   new->u.repeated_char.the_repeated_char = the_char;
@@ -799,7 +792,7 @@ append_equiv_class (struct Spec_list *list,
 
   if (len != 1)
     return 1;
-  new = (struct List_element *) xmalloc (sizeof (struct List_element));
+  new = xmalloc (sizeof *new);
   new->next = NULL;
   new->type = RE_EQUIV_CLASS;
   new->u.equiv_code = *equiv_class_str;
@@ -815,7 +808,7 @@ append_equiv_class (struct Spec_list *list,
 static unsigned char *
 xmemdup (const unsigned char *p, size_t len)
 {
-  unsigned char *tmp = (unsigned char *) xmalloc (len);
+  unsigned char *tmp = xmalloc (len);
 
   /* Use memcpy rather than strncpy because `p' may contain zero-bytes.  */
   memcpy (tmp, p, len);
@@ -1393,8 +1386,8 @@ get_s2_spec_stats (struct Spec_list *s2, size_t len_s1)
 static void
 spec_init (struct Spec_list *spec_list)
 {
-  spec_list->head = spec_list->tail =
-    (struct List_element *) xmalloc (sizeof (struct List_element));
+  struct List_element *new = xmalloc (sizeof *new);
+  spec_list->head = spec_list->tail = new;
   spec_list->head->next = NULL;
 }
 
@@ -1793,6 +1786,7 @@ main (int argc, char **argv)
   struct Spec_list *s1 = &buf1;
   struct Spec_list *s2 = &buf2;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -1828,7 +1822,7 @@ main (int argc, char **argv)
 	case_GETOPT_VERSION_CHAR (PROGRAM_NAME, AUTHORS);
 
 	default:
-	  usage (2);
+	  usage (EXIT_FAILURE);
 	  break;
 	}
     }
@@ -1846,7 +1840,7 @@ main (int argc, char **argv)
   if (non_option_args > 2)
     {
       error (0, 0, _("too many arguments"));
-      usage (2);
+      usage (EXIT_FAILURE);
     }
 
   if (!delete && !squeeze_repeats && non_option_args != 2)
@@ -1898,7 +1892,7 @@ without squeezing repeats"));
   if (squeeze_repeats && non_option_args == 1)
     {
       set_initialize (s1, complement, in_squeeze_set);
-      squeeze_filter (io_buf, IO_BUF_SIZE, NULL);
+      squeeze_filter (io_buf, sizeof io_buf, NULL);
     }
   else if (delete && non_option_args == 1)
     {
@@ -1907,7 +1901,7 @@ without squeezing repeats"));
       set_initialize (s1, complement, in_delete_set);
       do
 	{
-	  nr = read_and_delete (io_buf, IO_BUF_SIZE, NULL);
+	  nr = read_and_delete (io_buf, sizeof io_buf, NULL);
 	  if (nr > 0 && fwrite ((char *) io_buf, 1, nr, stdout) == 0)
 	    error (EXIT_FAILURE, errno, _("write error"));
 	}
@@ -1917,7 +1911,7 @@ without squeezing repeats"));
     {
       set_initialize (s1, complement, in_delete_set);
       set_initialize (s2, 0, in_squeeze_set);
-      squeeze_filter (io_buf, IO_BUF_SIZE, read_and_delete);
+      squeeze_filter (io_buf, sizeof io_buf, read_and_delete);
     }
   else if (translating)
     {
@@ -2006,7 +2000,7 @@ construct in string1 must be aligned with a corresponding construct\n\
       if (squeeze_repeats)
 	{
 	  set_initialize (s2, 0, in_squeeze_set);
-	  squeeze_filter (io_buf, IO_BUF_SIZE, read_and_xlate);
+	  squeeze_filter (io_buf, sizeof io_buf, read_and_xlate);
 	}
       else
 	{
@@ -2014,7 +2008,7 @@ construct in string1 must be aligned with a corresponding construct\n\
 
 	  do
 	    {
-	      bytes_read = read_and_xlate (io_buf, IO_BUF_SIZE, NULL);
+	      bytes_read = read_and_xlate (io_buf, sizeof io_buf, NULL);
 	      if (bytes_read > 0
 		  && fwrite ((char *) io_buf, 1, bytes_read, stdout) == 0)
 		error (EXIT_FAILURE, errno, _("write error"));

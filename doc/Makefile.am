@@ -13,17 +13,13 @@ EXTRA_DIST = perm.texi getdate.texi constants.texi doclicense.texi
 # old systems.
 MAKEINFO = makeinfo --no-split
 
-# Remove `DISABLED_' when fileutils, textutils, and sh-utils have
-# all been merged into one package.
-DISABLED_constants.texi: $(top_srcdir)/src/tail.c
+constants.texi: $(top_srcdir)/src/tail.c
 	LC_ALL=C \
 	sed -n -e 's/^#define \(DEFAULT_MAX[_A-Z]*\) \(.*\)/@set \1 \2/p' \
 	  $(top_srcdir)/src/tail.c > t-$@
 	mv t-$@ $@
 
-# Uncomment this when fileutils, textutils, and sh-utils have
-# all been merged into one package.
-# MAINTAINERCLEANFILES = constants.texi
+MAINTAINERCLEANFILES = constants.texi
 
 $(DVIS): $(EXTRA_DIST)
 $(INFO_DEPS): $(EXTRA_DIST)
@@ -32,6 +28,7 @@ $(INFO_DEPS): $(EXTRA_DIST)
 check-texinfo:
 	fail=0; \
 	grep timezone $(srcdir)/*.texi && fail=1; \
+	grep non-zero $(srcdir)/*.texi && fail=1; \
 	grep '\$$@"' $(srcdir)/*.texi && fail=1; \
 	$(PERL) -e 1 2> /dev/null && { $(PERL) -ne \
 	  '/\bPOSIX\b/ && !/\@acronym{POSIX}/ && !/^\* / || /{posix}/ and print,exit 1' \

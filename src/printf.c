@@ -1,5 +1,5 @@
 /* printf - format and print data
-   Copyright (C) 1990-2003, Free Software Foundation, Inc.
+   Copyright (C) 1990-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,14 +31,15 @@
    \r = carriage return
    \t = horizontal tab
    \v = vertical tab
-   \0ooo = octal number (ooo is 0 to 3 digits)
+   \ooo = octal number (ooo is 1 to 3 digits)
    \xhh = hexadecimal number (hhh is 1 to 2 digits)
    \uhhhh = 16-bit Unicode character (hhhh is 4 digits)
    \Uhhhhhhhh = 32-bit Unicode character (hhhhhhhh is 8 digits)
 
    Additional directive:
 
-   %b = print an argument string, interpreting backslash escapes
+   %b = print an argument string, interpreting backslash escapes,
+     except that octal escapes are of the form \0 or \0ooo.
 
    The `format' argument is re-used as many times as necessary
    to convert all of the given arguments.
@@ -51,21 +52,15 @@
 #include <getopt.h>
 
 #include "system.h"
+#include "c-strtod.h"
 #include "long-options.h"
 #include "error.h"
-#include "closeout.h"
 #include "unicodeio.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "printf"
 
 #define AUTHORS "David MacKenzie"
-
-#ifndef STDC_HEADERS
-double strtod ();
-long int strtol ();
-unsigned long int strtoul ();
-#endif
 
 #define isodigit(c) ((c) >= '0' && (c) <= '7')
 #define hextobin(c) ((c) >= 'a' && (c) <= 'f' ? (c) - 'a' + 10 : \
@@ -92,7 +87,7 @@ char *program_name;
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -113,7 +108,7 @@ Print ARGUMENT(s) according to FORMAT.\n\
 FORMAT controls the output as in C printf.  Interpreted sequences are:\n\
 \n\
   \\\"      double quote\n\
-  \\0NNN   character with octal value NNN (0 to 3 digits)\n\
+  \\NNN    character with octal value NNN (1 to 3 digits)\n\
   \\\\      backslash\n\
 "), stdout);
       fputs (_("\
@@ -136,7 +131,8 @@ FORMAT controls the output as in C printf.  Interpreted sequences are:\n\
 "), stdout);
       fputs (_("\
   %%      a single %\n\
-  %b      ARGUMENT as a string with `\\' escapes interpreted\n\
+  %b      ARGUMENT as a string with `\\' escapes interpreted,\n\
+            except that octal escapes are of the form \\0 or \\0NNN\n\
 \n\
 and all C format specifications ending with one of diouxXfeEgGcs, with\n\
 ARGUMENTs converted to proper type first.  Variable widths are handled.\n\
@@ -193,7 +189,7 @@ FUNC_NAME (s)								 \
 
 STRTOX (unsigned long int, xstrtoul, (strtoul (s, &end, 0)))
 STRTOX (long int,          xstrtol,  (strtol  (s, &end, 0)))
-STRTOX (double,            xstrtod,  (strtod  (s, &end)))
+STRTOX (double,            xstrtod,  (c_strtod (s, &end)))
 
 /* Output a single-character \ escape.  */
 
@@ -234,10 +230,12 @@ print_esc_char (int c)
 
 /* Print a \ escape sequence starting at ESCSTART.
    Return the number of characters in the escape sequence
-   besides the backslash. */
+   besides the backslash.
+   If OCTAL_0 is nonzero, octal escapes are of the form \0ooo, where o
+   is an octal digit; otherwise they are of the form \ooo.  */
 
 static int
-print_esc (const char *escstart)
+print_esc (const char *escstart, bool octal_0)
 {
   register const char *p = escstart + 1;
   int esc_value = 0;		/* Value of \nnn escape. */
@@ -254,11 +252,12 @@ print_esc (const char *escstart)
 	error (EXIT_FAILURE, 0, _("missing hexadecimal number in escape"));
       putchar (esc_value);
     }
-  else if (*p == '0')
+  else if (isodigit (*p))
     {
-      /* An octal \0ooo escape sequence has 0 to 3 octal digits
-	 after the leading \0.  */
-      for (esc_length = 0, ++p;
+      /* Parse \0ooo (if octal_0 && *p == '0') or \ooo (otherwise).
+         Allow \ooo if octal_0 && *p != '0'; this is an undocumented
+         extension to POSIX that is compatible with Bash 2.05b.  */
+      for (esc_length = 0, p += octal_0 && *p == '0';
 	   esc_length < 3 && isodigit (*p);
 	   ++esc_length, ++p)
 	esc_value = esc_value * 8 + octtobin (*p);
@@ -313,7 +312,7 @@ print_esc_string (const char *str)
 {
   for (; *str; str++)
     if (*str == '\\')
-      str += print_esc (str);
+      str += print_esc (str, true);
     else
       putchar (*str);
 }
@@ -531,7 +530,7 @@ print_formatted (const char *format, int argc, char **argv)
 	  break;
 
 	case '\\':
-	  f += print_esc (f);
+	  f += print_esc (f, false);
 	  break;
 
 	default:
@@ -548,6 +547,7 @@ main (int argc, char **argv)
   char *format;
   int args_used;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -561,7 +561,7 @@ main (int argc, char **argv)
   posixly_correct = (getenv ("POSIXLY_CORRECT") != NULL);
   if (!posixly_correct)
     parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
-			AUTHORS, usage);
+			usage, AUTHORS, (char const *) NULL);
 
   /* The above handles --help and --version.
      Since there is no other invocation of getopt, handle `--' here.  */
@@ -571,7 +571,7 @@ main (int argc, char **argv)
       ++argv;
     }
 
-  if (argc == 1)
+  if (argc <= 1)
     {
       fprintf (stderr, _("Usage: %s format [argument...]\n"), program_name);
       exit (EXIT_FAILURE);

@@ -1,6 +1,6 @@
 %{
 /* Parse a string into an internal time stamp.
-   Copyright (C) 1999, 2000, 2002 Free Software Foundation, Inc.
+   Copyright (C) 1999, 2000, 2002, 2003 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,10 +27,9 @@
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
-# ifdef HAVE_ALLOCA_H
-#  include <alloca.h>
-# endif
 #endif
+
+#include <alloca.h>
 
 /* Since the code of getdate.y is not included in the Emacs executable
    itself, there is no need to #define static in this file.  Even if
@@ -44,9 +43,7 @@
 
 #include <ctype.h>
 
-#if HAVE_STDLIB_H
-# include <stdlib.h> /* for `free'; used by Bison 1.27 */
-#endif
+#include <stdlib.h> /* for `free'; used by Bison 1.27 */
 
 #if STDC_HEADERS || (! defined isascii && ! HAVE_ISASCII)
 # define IN_CTYPE_DOMAIN(c) 1
@@ -68,9 +65,7 @@
    of `digit' even when the host does not conform to POSIX.  */
 #define ISDIGIT(c) ((unsigned) (c) - '0' <= 9)
 
-#if STDC_HEADERS || HAVE_STRING_H
-# include <string.h>
-#endif
+#include <string.h>
 
 #if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 8) || __STRICT_ANSI__
 # define __attribute__(x)
@@ -322,6 +317,14 @@ date:
 	PC.year.value = -$3.value;
 	PC.year.digits = $3.digits;
       }
+  | tMONTH tSNUMBER tSNUMBER
+      {
+	/* e.g. JUN-17-1992.  */
+	PC.month = $1;
+	PC.day = -$2.value;
+	PC.year.value = -$3.value;
+	PC.year.digits = $3.digits;
+      }
   | tMONTH tUNUMBER
       {
 	PC.month = $1;
@@ -520,10 +523,10 @@ static table const time_units_table[] =
 /* Assorted relative-time words. */
 static table const relative_time_table[] =
 {
-  { "TOMORROW",	tMINUTE_UNIT,	24 * 60 },
-  { "YESTERDAY",tMINUTE_UNIT,	- (24 * 60) },
-  { "TODAY",	tMINUTE_UNIT,	 0 },
-  { "NOW",	tMINUTE_UNIT,	 0 },
+  { "TOMORROW",	tDAY_UNIT,	 1 },
+  { "YESTERDAY",tDAY_UNIT,	-1 },
+  { "TODAY",	tDAY_UNIT,	 0 },
+  { "NOW",	tDAY_UNIT,	 0 },
   { "LAST",	tUNUMBER,	-1 },
   { "THIS",	tUNUMBER,	 0 },
   { "NEXT",	tUNUMBER,	 1 },

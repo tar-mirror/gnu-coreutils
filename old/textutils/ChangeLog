@@ -570,7 +570,7 @@
 	* src/sort.c, src/split.c, src/sum.c, src/sys2.h, src/tac.c:
 	* src/tail.c, src/tr.c, src/tsort.c, src/unexpand.c, src/uniq.c:
 	* src/wc.c (usage): Use new macros, HELP_OPTION_DESCRIPTION and
-      	VERSION_OPTION_DESCRIPTION instead of hard-coding --help and
+	VERSION_OPTION_DESCRIPTION instead of hard-coding --help and
 	--version descriptions.
 	* po/POTFILES.in: Add src/sys2.h.
 
@@ -2529,7 +2529,7 @@
 1999-10-26  Marc Boucher  <marc@mbsi.ca>
 
 	* src/tail.c (main): Flush stdout before switching to unbuffered mode
-	and calling tail_forever.  Required only on Solaris2.7 -- on other
+	and calling tail_forever.  Required only on Solaris 5.7 -- on other
 	systems, using setvbuf to switch to unbufferd mode does the flush.
 
 1999-11-22  Jim Meyering  <meyering@ascend.com>
@@ -3643,7 +3643,7 @@
 
 	* src/cat.c (usage) [O_BINARY]: Describe -B,--binary option.
 	(main) [O_BINARY]: binary_files, binary_output, file_open_mode:
-	new variables. 	Add --binary to long_options[].  Switch stdin and
+	new variables.  Add --binary to long_options[].  Switch stdin and
 	stdout to binary mode unless file contents are not important
 	anyway.  Open files in binary mode when required.
 

@@ -2,6 +2,7 @@
 AUTOMAKE_OPTIONS = 1.3 gnits
 
 TESTS = \
+  hard-4 \
   hard-3 \
   hard-2 \
   perm-1 \
@@ -13,8 +14,8 @@ TESTS = \
   i-1 hard-link-1 force partition-perm to-symlink dir-file diag \
   part-symlink part-rename trailing-slash
 
-EXTRA_DIST = $(TESTS) setup
+EXTRA_DIST = $(TESTS) setup vfat
 TESTS_ENVIRONMENT = \
-  PERL="@PERL@" \
-  PATH="`pwd`/../../src@PATH_SEPARATOR@$$PATH" \
+  PERL="$(PERL)" \
+  PATH="`pwd`/../../src$(PATH_SEPARATOR)$$PATH" \
   PROG=mv

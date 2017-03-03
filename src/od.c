@@ -1,5 +1,5 @@
 /* od -- dump files in octal and other formats
-   Copyright (C) 92, 1995-2002 Free Software Foundation, Inc.
+   Copyright (C) 92, 1995-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@
 #include <getopt.h>
 #include <sys/types.h>
 #include "system.h"
-#include "closeout.h"
 #include "error.h"
 #include "posixver.h"
 #include "xstrtol.h"
@@ -279,7 +278,7 @@ static struct option const long_options[] =
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -369,7 +368,7 @@ implies 32.  By default, od uses -A o -t d2 -w 16.\n\
 "), stdout);
       printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
     }
-  exit (status == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
+  exit (status);
 }
 
 /* Compute the greatest common denominator of U and V
@@ -983,10 +982,11 @@ open_next_file (void)
    it is not standard input.  Return nonzero if there has been an error
    on in_stream or stdout; return zero otherwise.  This function will
    report more than one error only if both a read and a write error
-   have occurred.  */
+   have occurred.  IN_ERRNO, if nonzero, is the error number
+   corresponding to the most recent action for IN_STREAM.  */
 
 static int
-check_and_close (void)
+check_and_close (int in_errno)
 {
   int err = 0;
 
@@ -994,7 +994,7 @@ check_and_close (void)
     {
       if (ferror (in_stream))
 	{
-	  error (0, errno, "%s", input_filename);
+	  error (0, in_errno, _("%s: read error"), input_filename);
 	  if (in_stream != stdin)
 	    fclose (in_stream);
 	  err = 1;
@@ -1010,7 +1010,7 @@ check_and_close (void)
 
   if (ferror (stdout))
     {
-      error (0, errno, _("standard output"));
+      error (0, 0, _("write error"));
       err = 1;
     }
 
@@ -1038,16 +1038,10 @@ decode_format_string (const char *s)
       assert (s != next);
       s = next;
 
-      if (n_specs >= n_specs_allocated)
-	{
-	  n_specs_allocated = 1 + (3 * n_specs_allocated) / 2;
-	  spec = (struct tspec *) xrealloc ((char *) spec,
-					    (n_specs_allocated
-					     * sizeof (struct tspec)));
-	}
+      if (n_specs_allocated <= n_specs)
+	spec = x2nrealloc (spec, &n_specs_allocated, sizeof *spec);
 
-      memcpy ((char *) &spec[n_specs], (char *) &tspec,
-	      sizeof (struct tspec));
+      memcpy (&spec[n_specs], &tspec, sizeof *spec);
       ++n_specs;
     }
 
@@ -1065,6 +1059,7 @@ static int
 skip (uintmax_t n_skip)
 {
   int err = 0;
+  int in_errno = 0;
 
   if (n_skip == 0)
     return 0;
@@ -1099,7 +1094,7 @@ skip (uintmax_t n_skip)
 		{
 		  if (fseeko (in_stream, n_skip, SEEK_CUR) != 0)
 		    {
-		      error (0, errno, "%s", input_filename);
+		      in_errno = errno;
 		      err = 1;
 		    }
 		  n_skip = 0;
@@ -1121,7 +1116,12 @@ skip (uintmax_t n_skip)
 		  n_bytes_read = fread (buf, 1, n_bytes_to_read, in_stream);
 		  n_skip -= n_bytes_read;
 		  if (n_bytes_read != n_bytes_to_read)
-		    break;
+		    {
+		      in_errno = errno;
+		      err = 1;
+		      n_skip = 0;
+		      break;
+		    }
 		}
 	    }
 
@@ -1135,7 +1135,7 @@ skip (uintmax_t n_skip)
 	  err = 1;
 	}
 
-      err |= check_and_close ();
+      err |= check_and_close (in_errno);
 
       err |= open_next_file ();
     }
@@ -1293,7 +1293,7 @@ read_char (int *c)
       if (*c != EOF)
 	break;
 
-      err |= check_and_close ();
+      err |= check_and_close (errno);
 
       err |= open_next_file ();
     }
@@ -1340,7 +1340,7 @@ read_block (size_t n, char *block, size_t *n_bytes_in_buffer)
       if (n_read == n_needed)
 	break;
 
-      err |= check_and_close ();
+      err |= check_and_close (errno);
 
       err |= open_next_file ();
     }
@@ -1421,8 +1421,8 @@ dump (void)
   int err;
   size_t n_bytes_read;
 
-  block[0] = (char *) alloca (bytes_per_block);
-  block[1] = (char *) alloca (bytes_per_block);
+  block[0] = xnmalloc (2, bytes_per_block);
+  block[1] = block[0] + bytes_per_block;
 
   current_offset = n_bytes_to_skip;
 
@@ -1485,7 +1485,9 @@ dump (void)
   format_address (current_offset, '\n');
 
   if (limit_bytes_to_format && current_offset >= end_offset)
-    err |= check_and_close ();
+    err |= check_and_close (0);
+
+  free (block[0]);
 
   return err;
 }
@@ -1539,8 +1541,7 @@ dump_strings (void)
 	{
 	  if (i == bufsize)
 	    {
-	      bufsize = 1 + 3 * bufsize / 2;
-	      buf = xrealloc (buf, bufsize);
+	      buf = x2nrealloc (buf, &bufsize, sizeof *buf);
 	    }
 	  err |= read_char (&c);
 	  address++;
@@ -1605,7 +1606,7 @@ dump_strings (void)
 
   free (buf);
 
-  err |= check_and_close ();
+  err |= check_and_close (0);
   return err;
 }
 
@@ -1628,6 +1629,7 @@ main (int argc, char **argv)
      after any true address.  */
   uintmax_t pseudo_start IF_LINT (= 0);
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -1661,8 +1663,8 @@ main (int argc, char **argv)
   fp_type_size[sizeof (double)] = FLOAT_DOUBLE;
 
   n_specs = 0;
-  n_specs_allocated = 5;
-  spec = (struct tspec *) xmalloc (n_specs_allocated * sizeof (struct tspec));
+  n_specs_allocated = 0;
+  spec = NULL;
 
   format_address = format_address_std;
   address_base = 8;
@@ -1920,12 +1922,12 @@ it must be one character from [doxn]"),
     {
       end_offset = n_bytes_to_skip + max_bytes_to_format;
       if (end_offset < n_bytes_to_skip)
-	error (EXIT_FAILURE, 0, "skip-bytes + read-bytes is too large");
+	error (EXIT_FAILURE, 0, _("skip-bytes + read-bytes is too large"));
     }
 
   if (n_specs == 0)
     {
-      if (decode_one_format ("o2", "o2", NULL, &(spec[0])))
+      if (decode_format_string ("o2"))
 	{
 	  /* This happens on Cray systems that don't have a 2-byte
 	     integral type.  */

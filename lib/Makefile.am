@@ -20,8 +20,8 @@
 
 noinst_LIBRARIES = libfetish.a
 
-INCLUDES = -I.. -I$(srcdir)
-DEFS = -DLIBDIR=\"$(libdir)\" @DEFS@
+AM_CPPFLAGS = -I.. -I$(srcdir)
+DEFS += -DLIBDIR=\"$(libdir)\"
 
 ## Put relatively complex files at the beginning of the list so
 ## that parallel compiles finish a tiny bit sooner.  I don't see
@@ -42,7 +42,7 @@ libfetish_a_SOURCES = \
   argmatch.c argmatch.h \
   backupfile.c backupfile.h \
   basename.c \
-  bumpalloc.h \
+  c-strtod.c c-strtod.h \
   canon-host.c \
   canonicalize.h \
   closeout.c closeout.h \
@@ -54,18 +54,17 @@ libfetish_a_SOURCES = \
   dup-safer.c \
   euidaccess.h \
   exclude.c exclude.h \
+  exit.h \
   exitfail.c exitfail.h \
   filemode.c filemode.h \
   file-type.c file-type.h \
-  fnmatch_.h \
   fopen-safer.c \
   fsusage.h \
-  ftw_.h \
+  fts.c fts_.h \
   full-read.c full-read.h \
   full-write.c full-write.h \
   getline.h \
   getpagesize.h \
-  getstr.c getstr.h \
   gettime.c \
   gettext.h \
   getugroups.c \
@@ -77,7 +76,7 @@ libfetish_a_SOURCES = \
   imaxtostr.c \
   lchown.h \
   linebuffer.c linebuffer.h \
-  localcharset.c \
+  localcharset.c localcharset.h \
   long-options.c long-options.h \
   makepath.c makepath.h \
   mbswidth.c mbswidth.h \
@@ -95,51 +94,68 @@ libfetish_a_SOURCES = \
   readtokens.c readtokens.h \
   readutmp.h \
   regex.h \
+  root-dev-ino.c root-dev-ino.h \
   safe-read.c safe-read.h \
   safe-write.c safe-write.h \
   same.c same.h \
   save-cwd.c save-cwd.h \
   savedir.c savedir.h \
-  search_.h \
   settime.c \
-  sha.c sha.h \
+  sha1.c sha1.h \
   sig2str.h \
   stdio-safer.h \
   stripslash.c \
+  strndup.h \
   strverscmp.h \
+  time_r.c time_r.h \
   timespec.h \
   umaxtostr.c \
   unicodeio.c unicodeio.h \
   unistd-safer.h \
   unlocked-io.h \
-  userspec.c \
+  userspec.c userspec.h \
+  utimens.c utimens.h \
   version-etc.c version-etc.h \
   xalloc.h \
+  xfts.c xfts.h \
   xgetcwd.c xgetcwd.h \
-  xgethostname.c \
+  xgethostname.c xgethostname.h \
   xmalloc.c \
   xmemcoll.c xmemcoll.h \
   xnanosleep.c xnanosleep.h \
   xreadlink.c xreadlink.h \
   xstrdup.c \
+  xstrndup.c xstrndup.h \
   xstrtod.c xstrtod.h \
+  xstrtoimax.c \
   xstrtol.c xstrtol.h \
   xstrtoul.c \
-  xstrtoimax.c \
   xstrtoumax.c \
   yesno.c
 
-libfetish_a_LIBADD = @LIBOBJS@ @ALLOCA@
+libfetish_a_SOURCES += \
+  printf-args.h \
+  printf-parse.h \
+  vasprintf.h \
+  vasnprintf.h
+
+libfetish_a_LIBADD = $(LIBOBJS) $(ALLOCA)
 libfetish_a_DEPENDENCIES = $(libfetish_a_LIBADD)
+
+lib_OBJECTS = $(libfetish_a_OBJECTS)
 
 
 BUILT_SOURCES = getdate.c
+CLEANFILES =
 MAINTAINERCLEANFILES = $(BUILT_SOURCES)
+MOSTLYCLEANFILES =
+SUFFIXES =
 
 EXTRA_DIST = config.charset ref-add.sin ref-del.sin \
-  fnmatch_loop.c inttostr.c inttostr.h
+  getndelim2.c getndelim2.h \
+  inttostr.c inttostr.h
 
-# The following is needed in order to install a simple file in $(libdir)
+# We need the following in order to install a simple file in $(libdir)
 # which is shared with other installed packages. We use a list of referencing
 # packages so that "make uninstall" will remove the file if and only if it
 # is not used by another installed package.
@@ -151,13 +167,13 @@ all-local: charset.alias ref-add.sed ref-del.sed
 charset_alias = $(DESTDIR)$(libdir)/charset.alias
 charset_tmp = $(DESTDIR)$(libdir)/charset.tmp
 install-exec-local: all-local
-	$(mkinstalldirs) $(DESTDIR)$(libdir)
+	test $(GLIBC21) != no || $(mkinstalldirs) $(DESTDIR)$(libdir)
 	if test -f $(charset_alias); then \
 	  sed -f ref-add.sed $(charset_alias) > $(charset_tmp) ; \
 	  $(INSTALL_DATA) $(charset_tmp) $(charset_alias) ; \
 	  rm -f $(charset_tmp) ; \
 	else \
-	  if test @GLIBC21@ = no; then \
+	  if test $(GLIBC21) = no; then \
 	    sed -f ref-add.sed charset.alias > $(charset_tmp) ; \
 	    $(INSTALL_DATA) $(charset_tmp) $(charset_alias) ; \
 	    rm -f $(charset_tmp) ; \
@@ -177,13 +193,42 @@ uninstall-local: all-local
 	fi
 
 charset.alias: config.charset
-	$(SHELL) $(srcdir)/config.charset '@host@' > t-$@
+	$(SHELL) $(srcdir)/config.charset '$(host)' > t-$@
 	mv t-$@ $@
 
-SUFFIXES = .sed .sin
+SUFFIXES += .sed .sin
 .sin.sed:
-	sed -e '/^#/d' -e 's/@''PACKAGE''@/@PACKAGE@/g' $< > t-$@
+	sed -e '/^#/d' -e 's/@''PACKAGE''@/$(PACKAGE)/g' $< > t-$@
 	mv t-$@ $@
 
-CLEANFILES = charset.alias ref-add.sed ref-del.sed
-DISTCLEANFILES = ftw.h search.h fnmatch.h
+CLEANFILES += charset.alias ref-add.sed ref-del.sed
+
+BUILT_SOURCES += $(STDBOOL_H)
+EXTRA_DIST += stdbool_.h
+MOSTLYCLEANFILES += stdbool.h stdbool.ht
+# Create stdbool.h on systems that lack a working one.
+stdbool.h: stdbool_.h
+	sed -e 's/@''HAVE__BOOL''@/$(HAVE__BOOL)/g' $(srcdir)/stdbool_.h > $@t
+	mv $@t $@
+
+BUILT_SOURCES += $(ALLOCA_H)
+EXTRA_DIST += alloca_.h
+
+# We need the following in order to create an <alloca.h> when the system
+# doesn't have one that works with the given compiler.
+all-local $(lib_OBJECTS): $(ALLOCA_H)
+alloca.h: alloca_.h
+	cp $(srcdir)/alloca_.h $@-t
+	mv $@-t $@
+MOSTLYCLEANFILES += alloca.h alloca.h-t
+
+BUILT_SOURCES += $(FNMATCH_H)
+EXTRA_DIST += fnmatch_.h fnmatch_loop.c
+
+# We need the following in order to create an <fnmatch.h> when the system
+# doesn't have one that supports the required API.
+all-local $(lib_OBJECTS): $(FNMATCH_H)
+fnmatch.h: fnmatch_.h
+	cp $(srcdir)/fnmatch_.h $@-t
+	mv $@-t $@
+MOSTLYCLEANFILES += fnmatch.h fnmatch.h-t

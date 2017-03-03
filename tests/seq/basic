@@ -4,13 +4,11 @@
 : ${PERL=perl}
 : ${srcdir=.}
 
-case "$PERL" in
-  *missing\ perl)
-    echo 1>&2 "$0: configure didn't find a usable version of Perl," \
-      "so can't run this test"
-    exit 77
-    ;;
-esac
+$PERL -e 1 > /dev/null 2>&1 || {
+  echo 1>&2 "$0: configure didn't find a usable version of Perl," \
+    "so can't run this test"
+  exit 77
+}
 
 d=$srcdir/..
 exec $PERL -w -I$d -MFetish -- - << \EOF
@@ -27,7 +25,7 @@ my $prog = $ENV{PROG} || die "$0: \$PROG not specified in environment\n";
 my @Tests =
   (
    ['onearg-1',	qw(10),		{OUT => [(1..10)]}],
-   ['onearg-2',	qw(-1),		{OUT => [qw(1 0 -1)]}],
+   ['onearg-2',	qw(-1)],
    ['neg-1',	qw(-10 10 10),	{OUT => [qw(-10 0 10)]}],
    ['neg-2',	qw(-.1 .1 .1),	{OUT => [qw(-0.1 0 0.1)]}],
    ['neg-3',	qw(1 -1 0),	{OUT => [qw(1 0)]}],

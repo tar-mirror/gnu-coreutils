@@ -1,5 +1,5 @@
 /* GNU's pinky.
-   Copyright (C) 1992-1997, 1999-2002 Free Software Foundation, Inc.
+   Copyright (C) 1992-1997, 1999-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,12 +27,11 @@
 
 #include "error.h"
 #include "readutmp.h"
-#include "closeout.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "pinky"
 
-#define AUTHORS N_ ("Joseph Arceneaux, David MacKenzie, and Kaveh Ghazi")
+#define AUTHORS "Joseph Arceneaux", "David MacKenzie", "Kaveh Ghazi"
 
 #ifndef MAXHOSTNAMELEN
 # define MAXHOSTNAMELEN 64
@@ -260,7 +259,7 @@ print_entry (const STRUCT_UTMP *utmp_ent)
       ut_host[sizeof (utmp_ent->ut_host)] = '\0';
 
       /* Look for an X display.  */
-      display = strrchr (ut_host, ':');
+      display = strchr (ut_host, ':');
       if (display)
 	*display++ = '\0';
 
@@ -461,7 +460,7 @@ long_pinky (const int argc_names, char *const argv_names[])
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -500,6 +499,7 @@ main (int argc, char **argv)
   int optc, longind;
   int n_users;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);

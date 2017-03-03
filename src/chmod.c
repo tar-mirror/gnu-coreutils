@@ -1,5 +1,5 @@
 /* chmod -- change permission modes of files
-   Copyright (C) 89, 90, 91, 1995-2002 Free Software Foundation, Inc.
+   Copyright (C) 89, 90, 91, 1995-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,16 +23,20 @@
 #include <sys/types.h>
 
 #include "system.h"
+#include "dev-ino.h"
+#include "dirname.h"
 #include "error.h"
 #include "filemode.h"
 #include "modechange.h"
 #include "quote.h"
+#include "root-dev-ino.h"
 #include "savedir.h"
+#include "xfts.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "chmod"
 
-#define AUTHORS "David MacKenzie"
+#define AUTHORS "David MacKenzie", "Jim Meyering"
 
 enum Change_status
 {
@@ -53,8 +57,6 @@ enum Verbosity
   V_off
 };
 
-static int change_dir_mode (const char *dir, const struct mode_change *changes);
-
 /* The name the program was run with. */
 char *program_name;
 
@@ -71,20 +73,28 @@ static enum Verbosity verbosity = V_off;
    of this file.  This file must exist.  */
 static char *reference_file;
 
+/* Pointer to the device and inode numbers of `/', when --recursive.
+   Otherwise NULL.  */
+static struct dev_ino *root_dev_ino;
+
 /* For long options that have no equivalent short option, use a
    non-character as a pseudo short option, starting with CHAR_MAX + 1.  */
 enum
 {
-  REFERENCE_FILE_OPTION = CHAR_MAX + 1
+  NO_PRESERVE_ROOT = CHAR_MAX + 1,
+  PRESERVE_ROOT,
+  REFERENCE_FILE_OPTION
 };
 
 static struct option const long_options[] =
 {
-  {"recursive", no_argument, 0, 'R'},
   {"changes", no_argument, 0, 'c'},
-  {"silent", no_argument, 0, 'f'},
+  {"recursive", no_argument, 0, 'R'},
+  {"no-preserve-root", no_argument, 0, NO_PRESERVE_ROOT},
+  {"preserve-root", no_argument, 0, PRESERVE_ROOT},
   {"quiet", no_argument, 0, 'f'},
   {"reference", required_argument, 0, REFERENCE_FILE_OPTION},
+  {"silent", no_argument, 0, 'f'},
   {"verbose", no_argument, 0, 'v'},
   {GETOPT_HELP_OPTION_DECL},
   {GETOPT_VERSION_OPTION_DECL},
@@ -137,104 +147,122 @@ describe_change (const char *file, mode_t mode,
 }
 
 /* Change the mode of FILE according to the list of operations CHANGES.
-   If DEREF_SYMLINK is nonzero and FILE is a symbolic link, change the
-   mode of the referenced file.  If DEREF_SYMLINK is zero, ignore symbolic
-   links.  Return 0 if successful, 1 if errors occurred. */
+   Return 0 if successful, 1 if errors occurred.  This function is called
+   once for every file system object that fts encounters.  */
 
 static int
-change_file_mode (const char *file, const struct mode_change *changes,
-		  const int deref_symlink)
+process_file (FTS *fts, FTSENT *ent, const struct mode_change *changes)
 {
-  struct stat file_stats;
+  const char *file_full_name = ent->fts_path;
+  const char *file = ent->fts_accpath;
+  const struct stat *sb = ent->fts_statp;
   mode_t newmode;
   int errors = 0;
   int fail;
   int saved_errno;
 
-  if (deref_symlink ? stat (file, &file_stats) : lstat (file, &file_stats))
+  switch (ent->fts_info)
     {
-      if (force_silent == 0)
-	error (0, errno, _("failed to get attributes of %s"), quote (file));
+    case FTS_NS:
+      error (0, ent->fts_errno, _("cannot access %s"), quote (file_full_name));
+      return 1;
+
+    case FTS_ERR:
+      error (0, ent->fts_errno, _("%s"), quote (file_full_name));
+      return 1;
+
+    case FTS_DNR:
+      error (0, ent->fts_errno, _("cannot read directory %s"),
+	     quote (file_full_name));
+      return 1;
+
+    default:
+      break;
+    }
+
+  /* If this is the second (post-order) encounter with a directory,
+     then return right away.  */
+  if (ent->fts_info == FTS_DP)
+    return 0;
+
+  if (ROOT_DEV_INO_CHECK (root_dev_ino, sb))
+    {
+      ROOT_DEV_INO_WARN (file_full_name);
       return 1;
     }
 
-#ifdef S_ISLNK
-  if (S_ISLNK (file_stats.st_mode))
+  if (S_ISLNK (sb->st_mode))
     return 0;
-#endif
 
-  newmode = mode_adjust (file_stats.st_mode, changes);
+  newmode = mode_adjust (sb->st_mode, changes);
 
   fail = chmod (file, newmode);
   saved_errno = errno;
 
   if (verbosity == V_high
       || (verbosity == V_changes_only
-	  && !fail && mode_changed (file, file_stats.st_mode)))
-    describe_change (file, newmode, (fail ? CH_FAILED : CH_SUCCEEDED));
+	  && !fail && mode_changed (file, sb->st_mode)))
+    describe_change (file_full_name, newmode,
+		     (fail ? CH_FAILED : CH_SUCCEEDED));
 
   if (fail)
     {
       if (force_silent == 0)
 	error (0, saved_errno, _("changing permissions of %s"),
-	       quote (file));
+	       quote (file_full_name));
       errors = 1;
     }
 
-  if (recurse && S_ISDIR (file_stats.st_mode))
-    errors |= change_dir_mode (file, changes);
+  if ( ! recurse)
+    fts_set (fts, ent, FTS_SKIP);
+
   return errors;
 }
 
-/* Recursively change the modes of the files in directory DIR
-   according to the list of operations CHANGES.
-   Return 0 if successful, 1 if errors occurred. */
+/* Recursively change the modes of the specified FILES (the last entry
+   of which is NULL) according to the list of operations CHANGES.
+   BIT_FLAGS controls how fts works.
+   If the fts_open call fails, exit nonzero.
+   Otherwise, return nonzero upon error.  */
 
 static int
-change_dir_mode (const char *dir, const struct mode_change *changes)
+process_files (char **files, int bit_flags, const struct mode_change *changes)
 {
-  char *name_space, *namep;
-  char *path;			/* Full path of each entry to process. */
-  unsigned dirlength;		/* Length of DIR and '\0'. */
-  unsigned filelength;		/* Length of each pathname to process. */
-  unsigned pathlength;		/* Bytes allocated for `path'. */
-  int errors = 0;
+  int fail = 0;
 
-  name_space = savedir (dir);
-  if (name_space == NULL)
+  FTS *fts = xfts_open (files, bit_flags, NULL);
+
+  while (1)
     {
-      if (force_silent == 0)
-	error (0, errno, "%s", quote (dir));
-      return 1;
-    }
+      FTSENT *ent;
 
-  dirlength = strlen (dir) + 1;	/* + 1 is for the trailing '/'. */
-  pathlength = dirlength + 1;
-  /* Give `path' a dummy value; it will be reallocated before first use. */
-  path = xmalloc (pathlength);
-  strcpy (path, dir);
-  path[dirlength - 1] = '/';
-
-  for (namep = name_space; *namep; namep += filelength - dirlength)
-    {
-      filelength = dirlength + strlen (namep) + 1;
-      if (filelength > pathlength)
+      ent = fts_read (fts);
+      if (ent == NULL)
 	{
-	  pathlength = filelength * 2;
-	  path = xrealloc (path, pathlength);
+	  if (errno != 0)
+	    {
+	      /* FIXME: try to give a better message  */
+	      error (0, errno, _("fts_read failed"));
+	      fail = 1;
+	    }
+	  break;
 	}
-      strcpy (path + dirlength, namep);
-      errors |= change_file_mode (path, changes, 0);
+
+      fail |= process_file (fts, ent, changes);
     }
-  free (path);
-  free (name_space);
-  return errors;
+
+  /* Ignore failure, since the only way it can do so is in failing to
+     return to the original directory, and since we're about to exit,
+     that doesn't matter.  */
+  fts_close (fts);
+
+  return fail;
 }
 
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -249,6 +277,12 @@ Usage: %s [OPTION]... MODE[,MODE]... FILE...\n\
 Change the mode of each FILE to MODE.\n\
 \n\
   -c, --changes           like verbose but report only when a change is made\n\
+"), stdout);
+      fputs (_("\
+      --no-preserve-root  do not treat `/' specially (the default)\n\
+      --preserve-root     fail to operate recursively on `/'\n\
+"), stdout);
+      fputs (_("\
   -f, --silent, --quiet   suppress most error messages\n\
   -v, --verbose           output a diagnostic for every file processed\n\
       --reference=RFILE   use RFILE's mode instead of MODE values\n\
@@ -273,11 +307,13 @@ int
 main (int argc, char **argv)
 {
   struct mode_change *changes;
-  int errors = 0;
+  int fail = 0;
   int modeind = 0;		/* Index of the mode argument in `argv'. */
   int thisind;
+  bool preserve_root = false;
   int c;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -317,10 +353,17 @@ main (int argc, char **argv)
 	    {
 	      static char char_string[2] = {0, 0};
 	      char_string[0] = c;
-	      error (EXIT_FAILURE, 0, _("invalid character %s in mode string %s"),
+	      error (EXIT_FAILURE, 0,
+		     _("invalid character %s in mode string %s"),
 		     quote_n (0, char_string), quote_n (1, argv[thisind]));
 	    }
 	  modeind = thisind;
+	  break;
+	case NO_PRESERVE_ROOT:
+	  preserve_root = false;
+	  break;
+	case PRESERVE_ROOT:
+	  preserve_root = true;
 	  break;
 	case REFERENCE_FILE_OPTION:
 	  reference_file = optarg;
@@ -365,8 +408,20 @@ main (int argc, char **argv)
     error (EXIT_FAILURE, errno, _("failed to get attributes of %s"),
 	   quote (reference_file));
 
-  for (; optind < argc; ++optind)
-    errors |= change_file_mode (argv[optind], changes, 1);
+  if (recurse && preserve_root)
+    {
+      static struct dev_ino dev_ino_buf;
+      root_dev_ino = get_root_dev_ino (&dev_ino_buf);
+      if (root_dev_ino == NULL)
+	error (EXIT_FAILURE, errno, _("failed to get attributes of %s"),
+	       quote ("/"));
+    }
+  else
+    {
+      root_dev_ino = NULL;
+    }
 
-  exit (errors);
+  fail = process_files (argv + optind, FTS_COMFOLLOW, changes);
+
+  exit (fail ? EXIT_FAILURE : EXIT_SUCCESS);
 }

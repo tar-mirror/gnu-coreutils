@@ -19,10 +19,8 @@
 
 #include <config.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <limits.h>
 #include <getopt.h>
+#include <sys/types.h>
 
 #include "system.h"
 #include "canonicalize.h"
@@ -91,16 +89,13 @@ main (int argc, char *const argv[])
   char *value;
   int optc;
 
+  initialize_main (&argc, &argv);
+  program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
 
   atexit (close_stdout);
-
-  if (argc < 1)
-    error (EXIT_FAILURE, 0, _("too few arguments"));
-
-  program_name = argv[0];
 
   while ((optc = getopt_long (argc, argv, "fnqsv", longopts, NULL)) != -1)
     {
@@ -130,7 +125,7 @@ main (int argc, char *const argv[])
 
   if (optind >= argc)
     {
-      error (EXIT_SUCCESS, 0, _("too few arguments"));
+      error (0, 0, _("too few arguments"));
       usage (EXIT_FAILURE);
     }
 
@@ -138,7 +133,7 @@ main (int argc, char *const argv[])
 
   if (optind < argc)
     {
-      error (EXIT_SUCCESS, 0, _("too many arguments"));
+      error (0, 0, _("too many arguments"));
       usage (EXIT_FAILURE);
     }
 
@@ -151,7 +146,7 @@ main (int argc, char *const argv[])
     }
 
   if (verbose)
-    error (EXIT_SUCCESS, errno, "%s", fname);
+    error (EXIT_FAILURE, errno, "%s", fname);
 
   return EXIT_FAILURE;
 }

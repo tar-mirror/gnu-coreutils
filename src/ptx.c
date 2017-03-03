@@ -1,6 +1,6 @@
 /* Permuted index for GNU, with keywords in their context.
    Copyright (C) 1990, 1991, 1993, 1998-2003 Free Software Foundation, Inc.
-   François Pinard <pinard@iro.umontreal.ca>, 1988.
+   FranÃ§ois Pinard <pinard@iro.umontreal.ca>, 1988.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-   François Pinard <pinard@iro.umontreal.ca> */
+   FranÃ§ois Pinard <pinard@iro.umontreal.ca> */
 
 #include <config.h>
 
@@ -24,9 +24,7 @@
 #include <getopt.h>
 #include <sys/types.h>
 #include "system.h"
-#include "closeout.h"
 #include "argmatch.h"
-#include "bumpalloc.h"
 #include "diacrit.h"
 #include "error.h"
 #include "regex.h"
@@ -34,7 +32,10 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "ptx"
 
-#define AUTHORS "François Pinard"
+/* Note to translator: Please translate "F. Pinard" to "FranÃ§ois
+   Pinard" if "Ã§" (c-with-cedilla) is available in the
+   translation's character set and encoding.  */
+#define AUTHORS _("F. Pinard")
 
 /* Number of possible characters in a byte.  */
 #define CHAR_SET_SIZE 256
@@ -115,7 +116,8 @@ WORD;
 typedef struct
   {
     WORD *start;		/* array of WORDs */
-    size_t length;		/* number of entries */
+    size_t alloc;		/* allocated length */
+    size_t length;		/* number of used entries */
   }
 WORD_TABLE;
 
@@ -157,9 +159,6 @@ int reference_max_width;
 
 WORD_TABLE ignore_table;	/* table of words to ignore */
 WORD_TABLE only_table;		/* table of words to select */
-
-#define ALLOC_NEW_WORD(table) \
-  BUMP_ALLOC ((table)->start, (table)->length, 8, WORD)
 
 /* Source text table, and scanning macros.  */
 
@@ -240,10 +239,9 @@ OCCURS;
    being, there is no such multiple language support.  */
 
 OCCURS *occurs_table[1];	/* all words retained from the read text */
+size_t occurs_alloc[1];		/* allocated size of occurs_table */
 size_t number_of_occurs[1];	/* number of used slots in occurs_table */
 
-#define ALLOC_NEW_OCCURS(language) \
-  BUMP_ALLOC (occurs_table[language], number_of_occurs[language], 9, OCCURS)
 
 /* Communication among output routines.  */
 
@@ -396,14 +394,13 @@ alloc_and_compile_regex (const char *string)
   struct re_pattern_buffer *pattern; /* newly allocated structure */
   const char *message;		/* error message returned by regex.c */
 
-  pattern = (struct re_pattern_buffer *)
-    xmalloc (sizeof (struct re_pattern_buffer));
+  pattern = xmalloc (sizeof *pattern);
   memset (pattern, 0, sizeof (struct re_pattern_buffer));
 
   pattern->buffer = NULL;
   pattern->allocated = 0;
   pattern->translate = ignore_case ? (char *) folded_chars : NULL;
-  pattern->fastmap = (char *) xmalloc ((size_t) CHAR_SET_SIZE);
+  pattern->fastmap = xmalloc ((size_t) CHAR_SET_SIZE);
 
   message = re_compile_pattern (string, (int) strlen (string), pattern);
   if (message)
@@ -420,7 +417,7 @@ alloc_and_compile_regex (const char *string)
   if (pattern->allocated > pattern->used)
     {
       pattern->buffer
-	= (unsigned char *) xrealloc (pattern->buffer, (size_t) pattern->used);
+	= xrealloc (pattern->buffer, (size_t) pattern->used);
       pattern->allocated = pattern->used;
     }
 
@@ -505,7 +502,7 @@ initialize_regex (void)
 | This routine will attempt to swallow a whole file name FILE_NAME into a |
 | contiguous region of memory and return a description of it into BLOCK.  |
 | Standard input is assumed whenever FILE_NAME is NULL, empty or "-".	  |
-| 									  |
+|									  |
 | Previously, in some cases, white space compression was attempted while  |
 | inputting text.  This was defeating some regexps like default end of	  |
 | sentence, which checks for two consecutive spaces.  If white space	  |
@@ -543,7 +540,7 @@ swallow_file_in_memory (const char *file_name, BLOCK *block)
     {
       size_t in_memory_size;
 
-      block->start = (char *) xmalloc ((size_t) stat_block.st_size);
+      block->start = xmalloc ((size_t) stat_block.st_size);
 
       if ((in_memory_size = read (file_handle,
 				  block->start, (size_t) stat_block.st_size))
@@ -557,7 +554,7 @@ swallow_file_in_memory (const char *file_name, BLOCK *block)
 	     CR+LF.  */
 	  if (in_memory_size != (size_t)-1
 	      && in_memory_size >= stat_block.st_size / 2)
-	    block->start = (char *) xrealloc (block->start, in_memory_size);
+	    block->start = xrealloc (block->start, in_memory_size);
 	  else
 #endif /* not MSDOS */
 
@@ -567,7 +564,7 @@ swallow_file_in_memory (const char *file_name, BLOCK *block)
     }
   else
     {
-      block->start = (char *) xmalloc ((size_t) 1 << SWALLOW_REALLOC_LOG);
+      block->start = xmalloc ((size_t) 1 << SWALLOW_REALLOC_LOG);
       used_length = 0;
       allocated_length = (1 << SWALLOW_REALLOC_LOG);
 
@@ -581,7 +578,7 @@ swallow_file_in_memory (const char *file_name, BLOCK *block)
 	    {
 	      allocated_length += (1 << SWALLOW_REALLOC_LOG);
 	      block->start
-		= (char *) xrealloc (block->start, allocated_length);
+		= xrealloc (block->start, allocated_length);
 	    }
 	}
 
@@ -603,7 +600,7 @@ swallow_file_in_memory (const char *file_name, BLOCK *block)
 | Compare two words, FIRST and SECOND, and return 0 if they are identical.  |
 | Return less than 0 if the first word goes before the second; return	    |
 | greater than 0 if the first word goes after the second.		    |
-| 									    |
+|									    |
 | If a word is indeed a prefix of the other, the shorter should go first.   |
 `--------------------------------------------------------------------------*/
 
@@ -765,6 +762,7 @@ digest_word_file (const char *file_name, WORD_TABLE *table)
   swallow_file_in_memory (file_name, &file_contents);
 
   table->start = NULL;
+  table->alloc = 0;
   table->length = 0;
 
   /* Read the whole file.  */
@@ -783,7 +781,15 @@ digest_word_file (const char *file_name, WORD_TABLE *table)
 
       if (cursor > word_start)
 	{
-	  ALLOC_NEW_WORD (table);
+	  if (table->length == table->alloc)
+	    {
+	      if ((SIZE_MAX / sizeof *table->start - 1) / 2 < table->alloc)
+		xalloc_die ();
+	      table->alloc = table->alloc * 2 + 1;
+	      table->start = xrealloc (table->start,
+				       table->alloc * sizeof *table->start);
+	    }
+
 	  table->start[table->length].start = word_start;
 	  table->start[table->length].size = cursor - word_start;
 	  table->length++;
@@ -995,7 +1001,16 @@ find_occurs_in_text (void)
 	     proper allocation of the next OCCURS, and make a pointer to
 	     where it will be constructed.  */
 
-	  ALLOC_NEW_OCCURS (0);
+	  if (number_of_occurs[0] == occurs_alloc[0])
+	    {
+	      if ((SIZE_MAX / sizeof *occurs_table[0] - 1) / 2
+		  < occurs_alloc[0])
+		xalloc_die ();
+	      occurs_alloc[0] = occurs_alloc[0] * 2 + 1;
+	      occurs_table[0] = xrealloc (occurs_table[0],
+					  occurs_alloc[0] * sizeof *occurs_table[0]);
+	    }
+
 	  occurs_cursor = occurs_table[0] + number_of_occurs[0];
 
 	  /* Define the refence field, if any.  */
@@ -1267,7 +1282,7 @@ fix_output_parameters (void)
 	    reference_max_width = reference_width;
 	}
       reference_max_width++;
-      reference.start = (char *) xmalloc ((size_t) reference_max_width + 1);
+      reference.start = xmalloc ((size_t) reference_max_width + 1);
     }
 
   /* If the reference appears to the left of the output line, reserve some
@@ -1899,6 +1914,7 @@ Mandatory arguments to long options are mandatory for short options too.\n\
 \n\
 With no FILE or if FILE is -, read Standard Input.  `-F /' by default.\n\
 "), stdout);
+      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
     }
   exit (status);
 }
@@ -1951,6 +1967,7 @@ main (int argc, char **argv)
 
   /* Decode program options.  */
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -2090,18 +2107,16 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.\n"),
 
       /* No more argument simply means: read standard input.  */
 
-      input_file_name = (const char **) xmalloc (sizeof (const char *));
-      file_line_count = (int *) xmalloc (sizeof (int));
+      input_file_name = xmalloc (sizeof *input_file_name);
+      file_line_count = xmalloc (sizeof *file_line_count);
       number_input_files = 1;
       input_file_name[0] = NULL;
     }
   else if (gnu_extensions)
     {
       number_input_files = argc - optind;
-      input_file_name
-	= (const char **) xmalloc (number_input_files * sizeof (const char *));
-      file_line_count
-	= (int *) xmalloc (number_input_files * sizeof (int));
+      input_file_name = xmalloc (number_input_files * sizeof *input_file_name);
+      file_line_count = xmalloc (number_input_files * sizeof *file_line_count);
 
       for (file_index = 0; file_index < number_input_files; file_index++)
 	{
@@ -2119,8 +2134,8 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.\n"),
       /* There is one necessary input file.  */
 
       number_input_files = 1;
-      input_file_name = (const char **) xmalloc (sizeof (const char *));
-      file_line_count = (int *) xmalloc (sizeof (int));
+      input_file_name = xmalloc (sizeof *input_file_name);
+      file_line_count = xmalloc (sizeof *file_line_count);
       if (!*argv[optind] || strcmp (argv[optind], "-") == 0)
 	input_file_name[0] = NULL;
       else

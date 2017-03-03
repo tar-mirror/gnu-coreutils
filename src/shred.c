@@ -1,6 +1,6 @@
 /* shred.c - overwrite files and devices to make it harder to recover data
 
-   Copyright (C) 1999-2003 Free Software Foundation, Inc.
+   Copyright (C) 1999-2004 Free Software Foundation, Inc.
    Copyright (C) 1997, 1998, 1999 Colin Plumb.
 
    This program is free software; you can redistribute it and/or modify
@@ -104,7 +104,6 @@
 
 #include "system.h"
 #include "xstrtol.h"
-#include "closeout.h"
 #include "error.h"
 #include "human.h"
 #include "inttostr.h"
@@ -152,7 +151,7 @@ char const *program_name; /* Initialized before any possible use */
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -1516,6 +1515,7 @@ main (int argc, char **argv)
   int c;
   int i;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -1622,7 +1622,7 @@ main (int argc, char **argv)
   /* Just on general principles, wipe s. */
   memset (&s, 0, sizeof s);
 
-  exit (err);
+  exit (err == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
 }
 /*
  * vim:sw=2:sts=2:

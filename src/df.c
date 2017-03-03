@@ -1,5 +1,5 @@
 /* df - summarize free disk space
-   Copyright (C) 91, 1995-2003 Free Software Foundation, Inc.
+   Copyright (C) 91, 1995-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,10 +18,6 @@
 /* Written by David MacKenzie <djm@gnu.ai.mit.edu>.
    --human-readable and --megabyte options added by lm@sgi.com.
    --si and large file support added by eggert@twinsun.com.  */
-
-#ifdef _AIX
- #pragma alloca
-#endif
 
 #include <config.h>
 #include <stdio.h>
@@ -46,7 +42,7 @@
 #define PROGRAM_NAME "df"
 
 #define AUTHORS \
-  N_ ("Torbjorn Granlund, David MacKenzie, Larry McVoy, and Paul Eggert")
+  "Torbjorn Granlund", "David MacKenzie", "Paul Eggert"
 
 /* Name this program was run with. */
 char *program_name;
@@ -437,7 +433,9 @@ show_dev (const char *disk, const char *mount_point, const char *fstype,
 }
 
 /* Return the root mountpoint of the filesystem on which FILE exists, in
-   malloced storage.  FILE_STAT should be the result of stating FILE.  */
+   malloced storage.  FILE_STAT should be the result of stating FILE.
+   Give a diagnostic and return NULL if unable to determine the mount point.
+   Exit if unable to restore current working directory.  */
 static char *
 find_mount_point (const char *file, const struct stat *file_stat)
 {
@@ -446,27 +444,41 @@ find_mount_point (const char *file, const struct stat *file_stat)
   char *mp = 0;			/* The malloced mount point path.  */
 
   if (save_cwd (&cwd))
-    return NULL;
+    {
+      error (0, errno, _("cannot get current directory"));
+      return NULL;
+    }
 
   if (S_ISDIR (file_stat->st_mode))
     /* FILE is a directory, so just chdir there directly.  */
     {
       last_stat = *file_stat;
       if (chdir (file) < 0)
-	return NULL;
+	{
+	  error (0, errno, _("cannot change to directory %s"), quote (file));
+	  return NULL;
+	}
     }
   else
-    /* FILE is some other kind of file, we need to use its directory.  */
+    /* FILE is some other kind of file; use its directory.  */
     {
-      char *dir = dir_name (file);
-      int rv = chdir (dir);
-      free (dir);
+      char *xdir = dir_name (file);
+      char *dir;
+      ASSIGN_STRDUPA (dir, xdir);
+      free (xdir);
 
-      if (rv < 0)
-	return NULL;
+      if (chdir (dir) < 0)
+	{
+	  error (0, errno, _("cannot change to directory %s"), quote (dir));
+	  return NULL;
+	}
 
       if (stat (".", &last_stat) < 0)
-	goto done;
+	{
+	  error (0, errno, _("cannot stat current directory (now %s)"),
+		 quote (dir));
+	  goto done;
+	}
     }
 
   /* Now walk up FILE's parents until we find another filesystem or /,
@@ -476,12 +488,18 @@ find_mount_point (const char *file, const struct stat *file_stat)
     {
       struct stat st;
       if (stat ("..", &st) < 0)
-	goto done;
+	{
+	  error (0, errno, _("cannot stat %s"), quote (".."));
+	  goto done;
+	}
       if (st.st_dev != last_stat.st_dev || st.st_ino == last_stat.st_ino)
 	/* cwd is the mount point.  */
 	break;
       if (chdir ("..") < 0)
-	goto done;
+	{
+	  error (0, errno, _("cannot change to directory %s"), quote (".."));
+	  goto done;
+	}
       last_stat = st;
     }
 
@@ -635,8 +653,6 @@ show_point (const char *point, const struct stat *statp)
 	show_dev (0, mp, 0, 0, 0);
 	free (mp);
       }
-    else
-      error (0, errno, "%s", quote (point));
   }
 
   return;
@@ -681,7 +697,7 @@ add_fs_type (const char *fstype)
 {
   struct fs_type_list *fsp;
 
-  fsp = (struct fs_type_list *) xmalloc (sizeof (struct fs_type_list));
+  fsp = xmalloc (sizeof *fsp);
   fsp->fs_name = (char *) fstype;
   fsp->fs_next = fs_select_list;
   fs_select_list = fsp;
@@ -694,7 +710,7 @@ add_excluded_fs_type (const char *fstype)
 {
   struct fs_type_list *fsp;
 
-  fsp = (struct fs_type_list *) xmalloc (sizeof (struct fs_type_list));
+  fsp = xmalloc (sizeof *fsp);
   fsp->fs_name = (char *) fstype;
   fsp->fs_next = fs_exclude_list;
   fs_exclude_list = fsp;
@@ -703,7 +719,7 @@ add_excluded_fs_type (const char *fstype)
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -741,7 +757,7 @@ Mandatory arguments to long options are mandatory for short options too.\n\
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
       fputs (_("\n\
 SIZE may be (or may be an integer optionally followed by) one of following:\n\
-kB 1000, K 1024, MB 1,000,000, M 1,048,576, and so on for G, T, P, E, Z, Y.\n\
+kB 1000, K 1024, MB 1000*1000, M 1024*1024, and so on for G, T, P, E, Z, Y.\n\
 "), stdout);
       printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
     }
@@ -755,6 +771,7 @@ main (int argc, char **argv)
   struct stat *stats IF_LINT (= 0);
   int n_valid_args = 0;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -867,27 +884,27 @@ main (int argc, char **argv)
       exit (EXIT_FAILURE);
   }
 
-  {
-    int i;
+  if (optind < argc)
+    {
+      int i;
 
-    /* stat all the given entries to make sure they get automounted,
-       if necessary, before reading the filesystem table.  */
-    stats = (struct stat *)
-      xmalloc ((argc - optind) * sizeof (struct stat));
-    for (i = optind; i < argc; ++i)
-      {
-	if (stat (argv[i], &stats[i - optind]))
-	  {
-	    error (0, errno, "%s", quote (argv[i]));
-	    exit_status = 1;
-	    argv[i] = NULL;
-	  }
-	else
-	  {
-	    ++n_valid_args;
-	  }
-      }
-  }
+      /* stat all the given entries to make sure they get automounted,
+	 if necessary, before reading the filesystem table.  */
+      stats = xmalloc ((argc - optind) * sizeof *stats);
+      for (i = optind; i < argc; ++i)
+	{
+	  if (stat (argv[i], &stats[i - optind]))
+	    {
+	      error (0, errno, "%s", quote (argv[i]));
+	      exit_status = 1;
+	      argv[i] = NULL;
+	    }
+	  else
+	    {
+	      ++n_valid_args;
+	    }
+	}
+    }
 
   mount_list =
     read_filesystem_list ((fs_select_list != NULL
@@ -900,8 +917,8 @@ main (int argc, char **argv)
       /* Couldn't read the table of mounted filesystems.
 	 Fail if df was invoked with no file name arguments;
 	 Otherwise, merely give a warning and proceed.  */
-      const char *warning = (optind == argc ? "" : _("Warning: "));
-      int status = (optind == argc ? 1 : 0);
+      const char *warning = (optind < argc ? _("Warning: ") : "");
+      int status = (optind < argc ? 0 : EXIT_FAILURE);
       error (status, errno,
 	     _("%scannot read table of mounted filesystems"), warning);
     }
@@ -909,12 +926,7 @@ main (int argc, char **argv)
   if (require_sync)
     sync ();
 
-  if (optind == argc)
-    {
-      print_header ();
-      show_all_entries ();
-    }
-  else
+  if (optind < argc)
     {
       int i;
 
@@ -928,6 +940,11 @@ main (int argc, char **argv)
 	if (argv[i])
 	  show_entry (argv[i], &stats[i - optind]);
     }
+  else
+    {
+      print_header ();
+      show_all_entries ();
+    }
 
-  exit (exit_status);
+  exit (exit_status == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
 }

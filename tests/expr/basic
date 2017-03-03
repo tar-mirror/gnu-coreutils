@@ -4,13 +4,11 @@
 : ${PERL=perl}
 : ${srcdir=.}
 
-case "$PERL" in
-  *'missing perl')
-    echo 1>&2 "$0: configure didn't find a usable version of Perl," \
-      "so can't run this test"
-    exit 77
-    ;;
-esac
+$PERL -e 1 > /dev/null 2>&1 || {
+  echo 1>&2 "$0: configure didn't find a usable version of Perl," \
+    "so can't run this test"
+  exit 77
+}
 
 d=$srcdir/..
 exec $PERL -w -I$d -MFetish -- - << \EOF
@@ -46,6 +44,12 @@ my @Tests =
 
      # This erroneously succeeded and output `3' before 2.0.12.
      ['fail-a', '3 + -', {ERR => "$prog: non-numeric argument\n"},
+      {EXIT => 3}],
+
+     ['fail-b', '9 9', {ERR => "$prog: syntax error\n"},
+      {EXIT => 2}],
+     ['fail-c', {ERR => "$prog: too few arguments\n"
+		 . "Try `$prog --help' for more information.\n"},
       {EXIT => 2}],
     );
 

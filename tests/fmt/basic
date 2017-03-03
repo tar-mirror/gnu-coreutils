@@ -4,12 +4,11 @@
 : ${PERL=perl}
 : ${srcdir=.}
 
-case "$PERL" in
-  *'missing perl')
-  echo 1>&2 "$0: configure didn't find a usable version of Perl, so can't run this test"
+$PERL -e 1 > /dev/null 2>&1 || {
+  echo 1>&2 "$0: configure didn't find a usable version of Perl," \
+    "so can't run this test"
   exit 77
-  ;;
-esac
+}
 
 # Export this to avoid hassles when run in a UTF-8 locale,
 # since we use 8-bit characters below, and those values are
@@ -30,6 +29,15 @@ my @Tests =
       {OUT=>"ça b\n"}],
      ['wide-1', '-32768',	{IN=> "a\n"}, {OUT=>"a\n"}],
      ['wide-2', '-2147483647',	{IN=> "a\n"}, {OUT=>"a\n"}],
+     ['bad-suffix', '-72x',	{IN=> ''},
+      {ERR => "fmt: invalid width option: `-72x'\n"}, {EXIT => 1}],
+     ['no-file', 'no-such-file',
+      {ERR => "fmt: cannot open `no-such-file' for reading:"
+       . " No such file or directory\n"}, {EXIT => 1}],
+     ['obs-1', '-c -72',
+      {ERR => "fmt: invalid option -- 7; -WIDTH is recognized only when it"
+       . " is the first\noption; use -w N instead\n"
+       . "Try `fmt --help' for more information.\n" }, {EXIT => 1}],
     );
 
 my $save_temps = $ENV{DEBUG};

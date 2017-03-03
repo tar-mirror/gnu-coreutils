@@ -1,5 +1,5 @@
-/* Copyright (C) 1991, 1992, 1993, 1996, 1997, 1998, 1999, 2000, 2001,
-   2002, 2003 Free Software Foundation, Inc.
+/* Copyright (C) 1991,1992,1993,1996,1997,1998,1999,2000,2001,2002,2003,2004
+	Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,9 +17,6 @@
 
 /* Match STRING against the filename pattern PATTERN, returning zero if
    it matches, nonzero if not.  */
-static int FCT (const CHAR *pattern, const CHAR *string,
-		const CHAR *string_end, int no_leading_period, int flags)
-     internal_function;
 static int EXT (INT opt, const CHAR *pattern, const CHAR *string,
 		const CHAR *string_end, int no_leading_period, int flags)
      internal_function;
@@ -27,12 +24,8 @@ static const CHAR *END (const CHAR *patternp) internal_function;
 
 static int
 internal_function
-FCT (pattern, string, string_end, no_leading_period, flags)
-     const CHAR *pattern;
-     const CHAR *string;
-     const CHAR *string_end;
-     int no_leading_period;
-     int flags;
+FCT (const CHAR *pattern, const CHAR *string, const CHAR *string_end,
+     int no_leading_period, int flags)
 {
   register const CHAR *p = pattern, *n = string;
   register UCHAR c;
@@ -538,11 +531,13 @@ FCT (pattern, string, string_end, no_leading_period, flags)
 				if (! is_range)
 				  {
 # ifdef WIDE_CHAR_VERSION
-				    for (c1 = 0; c1 < wextra[idx]; ++c1)
+				    for (c1 = 0;
+					 (int32_t) c1 < wextra[idx];
+					 ++c1)
 				      if (n[c1] != wextra[1 + c1])
 					break;
 
-				    if (c1 == wextra[idx])
+				    if ((int32_t) c1 == wextra[idx])
 				      goto matched;
 # else
 				    for (c1 = 0; c1 < extra[idx]; ++c1)
@@ -618,7 +613,7 @@ FCT (pattern, string, string_end, no_leading_period, flags)
 
 # ifdef WIDE_CHAR_VERSION
 			/* Search in the `names' array for the characters.  */
-			fcollseq = collseq_table_lookup (collseq, fn);
+			fcollseq = __collseq_table_lookup (collseq, fn);
 			if (fcollseq == ~((uint32_t) 0))
 			  /* XXX We don't know anything about the character
 			     we are supposed to match.  This means we are
@@ -628,7 +623,7 @@ FCT (pattern, string, string_end, no_leading_period, flags)
 			if (is_seqval)
 			  lcollseq = cold;
 			else
-			  lcollseq = collseq_table_lookup (collseq, cold);
+			  lcollseq = __collseq_table_lookup (collseq, cold);
 # else
 			fcollseq = collseq[fn];
 			lcollseq = is_seqval ? cold : collseq[(UCHAR) cold];
@@ -790,7 +785,7 @@ FCT (pattern, string, string_end, no_leading_period, flags)
 			      {
 # ifdef WIDE_CHAR_VERSION
 				hcollseq =
-				  collseq_table_lookup (collseq, cend);
+				  __collseq_table_lookup (collseq, cend);
 				if (hcollseq == ~((uint32_t) 0))
 				  {
 				    /* Hum, no information about the upper
@@ -931,7 +926,7 @@ FCT (pattern, string, string_end, no_leading_period, flags)
 	case L('/'):
 	  if (NO_LEADING_PERIOD (flags))
 	    {
-	      if (n == string_end || c != *n)
+	      if (n == string_end || c != (UCHAR) *n)
 		return FNM_NOMATCH;
 
 	      new_no_leading_period = 1;
@@ -1014,6 +1009,7 @@ EXT (INT opt, const CHAR *pattern, const CHAR *string, const CHAR *string_end,
   size_t pattern_len = STRLEN (pattern);
   const CHAR *p;
   const CHAR *rs;
+  enum { ALLOCA_LIMIT = 8000 };
 
   /* Parse the pattern.  Store the individual parts in the list.  */
   level = 0;
@@ -1052,13 +1048,19 @@ EXT (INT opt, const CHAR *pattern, const CHAR *string, const CHAR *string_end,
 #define NEW_PATTERN \
 	    struct patternlist *newp;					      \
 	    size_t plen;						      \
+	    size_t plensize;						      \
+	    size_t newpsize;						      \
 									      \
 	    plen = (opt == L('?') || opt == L('@')			      \
 		    ? pattern_len					      \
 		    : p - startp + 1);					      \
-	    newp = (struct patternlist *)				      \
-	      alloca (offsetof (struct patternlist, str)		      \
-		      + (plen * sizeof (CHAR)));			      \
+	    plensize = plen * sizeof (CHAR);				      \
+	    newpsize = offsetof (struct patternlist, str) + plensize;	      \
+	    if ((size_t) -1 / sizeof (CHAR) < plen			      \
+		|| newpsize < offsetof (struct patternlist, str)	      \
+		|| ALLOCA_LIMIT <= newpsize)				      \
+	      return -1;						      \
+	    newp = (struct patternlist *) alloca (newpsize);		      \
 	    *((CHAR *) MEMPCPY (newp->str, startp, p - startp)) = L('\0');    \
 	    newp->next = NULL;						      \
 	    *lastp = newp;						      \

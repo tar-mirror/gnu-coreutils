@@ -2,6 +2,7 @@
 AUTOMAKE_OPTIONS = 1.1 gnits
 
 TESTS = \
+  dir-no-w \
   fail-2eperm \
   cycle i-no-r fail-eperm \
   dangling-symlink rm1 rm2 rm3 rm4 rm5 \
@@ -13,6 +14,7 @@ TESTS_ENVIRONMENT = \
   MKDIR=../../src/mkdir \
   top_srcdir=$(top_srcdir) \
   srcdir=$(srcdir) \
-  PERL="@PERL@" \
-  PATH="`pwd`/../../src@PATH_SEPARATOR@$$PATH" \
+  PERL="$(PERL)" \
+  PATH="`pwd`/../../src$(PATH_SEPARATOR)$$PATH" \
+  PACKAGE_VERSION=$(PACKAGE_VERSION) \
   PROG=rm

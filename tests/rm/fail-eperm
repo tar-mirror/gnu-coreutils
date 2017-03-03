@@ -3,16 +3,25 @@
 # Ensure that rm gives the expected diagnostic when failing to remove a file
 # owned by some other user in a directory with the sticky bit set.
 
+if test "$VERBOSE" = yes; then
+  set -x
+  rm --version
+fi
+
+# FIXME-someday: when run as root we don't need all of the
+# searching below.  root can simply create the required
+# dir/files and run the test as someone else.
+
+PRIV_CHECK_ARG=require-non-root . $srcdir/../priv-check
+
 : ${PERL=perl}
 : ${srcdir=.}
 
-case "$PERL" in
-  *'missing perl') #'
-  echo 1>&2 \
-   "$0: configure didn't find a usable version of Perl, so can't run this test"
+$PERL -e 1 > /dev/null 2>&1 || {
+  echo 1>&2 "$0: configure didn't find a usable version of Perl," \
+    "so can't run this test"
   exit 77
-  ;;
-esac
+}
 
 ARGV_0=$0
 export ARGV_0
@@ -24,18 +33,9 @@ use strict;
 (my $ME = $ENV{ARGV_0}) =~ s|.*/||;
 
 my $verbose = $ENV{VERBOSE} && $ENV{VERBOSE} eq 'yes';
-$verbose
-  and system qw (rm --version);
 
 # Ensure that the diagnostics are in English.
 $ENV{LC_ALL} = 'C';
-
-# Ensure that the effective UID is not 0.
-if ($> == 0)
-  {
-    warn "$ME: you may not run this test as root;  skipping it.\n";
-    exit 77;
-  }
 
 my @dir_list = qw(/tmp /var/tmp /usr/tmp);
 

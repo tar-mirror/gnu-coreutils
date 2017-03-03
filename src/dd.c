@@ -1,5 +1,5 @@
 /* dd -- convert a file while copying it.
-   Copyright (C) 85, 90, 91, 1995-2002 Free Software Foundation, Inc.
+   Copyright (C) 85, 90, 91, 1995-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@
 #include <getopt.h>
 
 #include "system.h"
-#include "closeout.h"
 #include "error.h"
 #include "full-write.h"
 #include "getpagesize.h"
@@ -40,7 +39,7 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "dd"
 
-#define AUTHORS N_ ("Paul Rubin, David MacKenzie, and Stuart Kemp")
+#define AUTHORS "Paul Rubin", "David MacKenzie", "Stuart Kemp"
 
 #ifndef SIGINFO
 # define SIGINFO SIGUSR1
@@ -280,7 +279,7 @@ static char const ebcdic_to_ascii[] =
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -307,8 +306,8 @@ Copy a file, converting and formatting according to the options.\n\
       fputs (_("\
 \n\
 BLOCKS and BYTES may be followed by the following multiplicative suffixes:\n\
-xM M, c 1, w 2, b 512, kB 1000, K 1024, MB 1,000,000, M 1,048,576,\n\
-GB 1,000,000,000, G 1,073,741,824, and so on for T, P, E, Z, Y.\n\
+xM M, c 1, w 2, b 512, kB 1000, K 1024, MB 1000*1000, M 1024*1024,\n\
+GB 1000*1000*1000, G 1024*1024*1024, and so on for T, P, E, Z, Y.\n\
 Each KEYWORD may be:\n\
 \n\
 "), stdout);
@@ -327,6 +326,17 @@ Each KEYWORD may be:\n\
   noerror   continue after read errors\n\
   sync      pad every input block with NULs to ibs-size; when used\n\
               with block or unblock, pad with spaces rather than NULs\n\
+"), stdout);
+      fputs (_("\
+\n\
+Note that sending a SIGUSR1 signal to a running `dd' process makes it\n\
+print to standard error the number of records read and written so far,\n\
+then to resume copying.\n\
+\n\
+  $ dd if=/dev/zero of=/dev/null& pid=$!\n\
+  $ kill -USR1 $pid; sleep 1; kill $pid\n\
+  10899206+0 records in\n\
+  10899206+0 records out\n\
 "), stdout);
       printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
     }
@@ -469,7 +479,7 @@ write_output (void)
       error (0, errno, _("writing to %s"), quote (output_file));
       if (nwritten != 0)
 	w_partial++;
-      quit (1);
+      quit (EXIT_FAILURE);
     }
   else
     w_full++;
@@ -640,11 +650,10 @@ apply_translations (void)
 #define MX(a) (bit_count (conversions_mask & (a)))
   if ((MX (C_ASCII | C_EBCDIC | C_IBM) > 1)
       || (MX (C_BLOCK | C_UNBLOCK) > 1)
-      || (MX (C_LCASE | C_UCASE) > 1)
-      || (MX (C_UNBLOCK | C_SYNC) > 1))
+      || (MX (C_LCASE | C_UCASE) > 1))
     {
       error (EXIT_FAILURE, 0, _("\
-only one conv in {ascii,ebcdic,ibm}, {lcase,ucase}, {block,unblock}, {unblock,sync}"));
+	only one conv in {ascii,ebcdic,ibm}, {lcase,ucase}, {block,unblock}"));
     }
 #undef MX
 
@@ -814,7 +823,7 @@ skip (int fdesc, char const *file, uintmax_t records, size_t blocksize,
 	  if (nread == SAFE_READ_ERROR)
 	    {
 	      error (0, errno, _("reading %s"), quote (file));
-	      quit (1);
+	      quit (EXIT_FAILURE);
 	    }
 	  /* POSIX doesn't say what to do when dd detects it has been
 	     asked to skip past EOF, so I assume it's non-fatal.
@@ -928,7 +937,7 @@ dd_copy (void)
   char *real_buf;		/* real buffer address before alignment */
   char *real_obuf;
   size_t nread;			/* Bytes read in the current block. */
-  int exit_status = 0;
+  int exit_status = EXIT_SUCCESS;
   size_t page_size = getpagesize ();
   size_t n_bytes_read;
 
@@ -1023,7 +1032,7 @@ dd_copy (void)
 	  else
 	    {
 	      /* Write any partial block. */
-	      exit_status = 2;
+	      exit_status = EXIT_FAILURE;
 	      break;
 	    }
 	}
@@ -1052,7 +1061,7 @@ dd_copy (void)
 	  if (nwritten != n_bytes_read)
 	    {
 	      error (0, errno, _("writing %s"), quote (output_file));
-	      quit (1);
+	      quit (EXIT_FAILURE);
 	    }
 	  else if (n_bytes_read == input_blocksize)
 	    w_full++;
@@ -1113,7 +1122,7 @@ dd_copy (void)
       if (nwritten != oc)
 	{
 	  error (0, errno, _("writing %s"), quote (output_file));
-	  quit (1);
+	  quit (EXIT_FAILURE);
 	}
     }
 
@@ -1141,6 +1150,7 @@ main (int argc, char **argv)
   int i;
   int exit_status;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -1150,7 +1160,7 @@ main (int argc, char **argv)
   atexit (close_stdout_wrapper);
 
   parse_long_options (argc, argv, PROGRAM_NAME, PACKAGE, VERSION,
-		      AUTHORS, usage);
+		      usage, AUTHORS, (char const *) NULL);
 
   /* Don't close stdout on exit from here on.  */
   closeout_func = NULL;

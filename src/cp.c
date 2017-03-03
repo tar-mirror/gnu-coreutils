@@ -1,5 +1,5 @@
 /* cp.c  -- file copying (main routines)
-   Copyright (C) 89, 90, 91, 1995-2003 Free Software Foundation.
+   Copyright (C) 89, 90, 91, 1995-2004 Free Software Foundation.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,10 +17,6 @@
 
    Written by Torbjorn Granlund, David MacKenzie, and Jim Meyering. */
 
-#ifdef _AIX
- #pragma alloca
-#endif
-
 #include <config.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -36,6 +32,7 @@
 #include "dirname.h"
 #include "path-concat.h"
 #include "quote.h"
+#include "utimens.h"
 
 #define ASSIGN_BASENAME_STRDUPA(Dest, File_name)	\
   do							\
@@ -50,7 +47,7 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "cp"
 
-#define AUTHORS N_ ("Torbjorn Granlund, David MacKenzie, and Jim Meyering")
+#define AUTHORS "Torbjorn Granlund", "David MacKenzie", "Jim Meyering"
 
 #ifndef _POSIX_VERSION
 uid_t geteuid ();
@@ -119,9 +116,6 @@ static int const reply_vals[] =
   I_ALWAYS_YES, I_ALWAYS_NO, I_ASK_USER
 };
 
-/* The error code to return to the system. */
-static int exit_status = 0;
-
 static struct option const long_opts[] =
 {
   {"archive", no_argument, NULL, 'a'},
@@ -156,7 +150,7 @@ static struct option const long_opts[] =
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -288,8 +282,7 @@ re_protect (const char *const_dst_path, int src_offset,
   char *src_path;		/* The source name in `dst_path'. */
   uid_t myeuid = geteuid ();
 
-  dst_path = (char *) alloca (strlen (const_dst_path) + 1);
-  strcpy (dst_path, const_dst_path);
+  ASSIGN_STRDUPA (dst_path, const_dst_path);
   src_path = dst_path + src_offset;
 
   for (p = attr_list; p; p = p->next)
@@ -298,7 +291,7 @@ re_protect (const char *const_dst_path, int src_offset,
 
       dst_path[p->slash_offset] = '\0';
 
-      if ((*(x->xstat)) (src_path, &src_sb))
+      if (XSTAT (x, src_path, &src_sb))
 	{
 	  error (0, errno, _("failed to get attributes of %s"),
 		 quote (src_path));
@@ -311,16 +304,14 @@ re_protect (const char *const_dst_path, int src_offset,
 
       if (x->preserve_timestamps)
 	{
-	  struct utimbuf utb;
+	  struct timespec timespec[2];
 
-	  /* There's currently no interface to set file timestamps with
-	     better than 1-second resolution, so discard any fractional
-	     part of the source timestamp.  */
+	  timespec[0].tv_sec = src_sb.st_atime;
+	  timespec[0].tv_nsec = TIMESPEC_NS (src_sb.st_atim);
+	  timespec[1].tv_sec = src_sb.st_mtime;
+	  timespec[1].tv_nsec = TIMESPEC_NS (src_sb.st_mtim);
 
-	  utb.actime = src_sb.st_atime;
-	  utb.modtime = src_sb.st_mtime;
-
-	  if (utime (dst_path, &utb))
+	  if (utimens (dst_path, timespec))
 	    {
 	      error (0, errno, _("failed to preserve times for %s"),
 		     quote (dst_path));
@@ -388,13 +379,12 @@ make_path_private (const char *const_dirpath, int src_offset, int mode,
   char *dst_dirname;		/* Leading path of `dirpath'. */
   size_t dirlen;		/* Length of leading path of `dirpath'. */
 
-  dirpath = (char *) alloca (strlen (const_dirpath) + 1);
-  strcpy (dirpath, const_dirpath);
+  ASSIGN_STRDUPA (dirpath, const_dirpath);
 
   src = dirpath + src_offset;
 
   dirlen = dir_len (dirpath);
-  dst_dirname = (char *) alloca (dirlen + 1);
+  dst_dirname = alloca (dirlen + 1);
   memcpy (dst_dirname, dirpath, dirlen);
   dst_dirname[dirlen] = '\0';
 
@@ -413,8 +403,7 @@ make_path_private (const char *const_dirpath, int src_offset, int mode,
 	{
 	  /* Add this directory to the list of directories whose modes need
 	     fixing later. */
-	  struct dir_attr *new =
-	    (struct dir_attr *) xmalloc (sizeof (struct dir_attr));
+	  struct dir_attr *new = xmalloc (sizeof *new);
 	  new->slash_offset = slash - dirpath;
 	  new->next = *attr_list;
 	  *attr_list = new;
@@ -541,18 +530,18 @@ do_copy (int n_files, char **file, const char *target_directory,
 
   if (!dest_is_dir)
     {
-      if (target_directory)
+      if (target_directory || 1 < n_files)
 	{
-	  error (0, 0, _("%s: specified target is not a directory"),
-		 quote (dest));
-	  usage (EXIT_FAILURE);
-	}
+	  char const *msg;
+	  if (new_dst)
+	    msg = N_("%s: specified destination directory does not exist");
+	  else if (target_directory)
+	    msg = N_("%s: specified target is not a directory");
+	  else /* n_files > 1 */
+	    msg =
+	  N_("copying multiple files, but last argument %s is not a directory");
 
-      if (n_files > 1)
-	{
-	  error (0, 0,
-	 _("copying multiple files, but last argument %s is not a directory"),
-	     quote (dest));
+	  error (0, 0, _(msg), quote (dest));
 	  usage (EXIT_FAILURE);
 	}
     }
@@ -563,6 +552,10 @@ do_copy (int n_files, char **file, const char *target_directory,
 	 Copy the files `file1' through `filen'
 	 to the existing directory `edir'. */
       int i;
+      int (*xstat)() = (x->dereference == DEREF_COMMAND_LINE_ARGUMENTS
+			|| x->dereference == DEREF_ALWAYS
+			? stat
+			: lstat);
 
       for (i = 0; i < n_files; i++)
 	{
@@ -604,10 +597,10 @@ do_copy (int n_files, char **file, const char *target_directory,
 						  (x->verbose
 						   ? "%s -> %s\n" : NULL),
 						  &attr_list, &new_dst,
-						  x->xstat);
+						  xstat);
 	    }
-  	  else
-  	    {
+	  else
+	    {
 	      char *arg_base;
 	      /* Append the last component of `arg' to `dest'.  */
 
@@ -622,7 +615,7 @@ do_copy (int n_files, char **file, const char *target_directory,
 	    {
 	      /* make_path_private failed, so don't even attempt the copy. */
 	      ret = 1;
-  	    }
+	    }
 	  else
 	    {
 	      int copy_into_self;
@@ -696,8 +689,7 @@ do_copy (int n_files, char **file, const char *target_directory,
 	  char *source_base;
 
 	  ASSIGN_BASENAME_STRDUPA (source_base, source);
-	  new_dest = (char *) alloca (strlen (dest)
-				      + strlen (source_base) + 1);
+	  new_dest = alloca (strlen (dest) + strlen (source_base) + 1);
 	  stpcpy (stpcpy (new_dest, dest), source_base);
 	}
       else
@@ -830,6 +822,7 @@ int
 main (int argc, char **argv)
 {
   int c;
+  int exit_status;
   int make_backups = 0;
   char *backup_suffix_string;
   char *version_control_string = NULL;
@@ -837,6 +830,7 @@ main (int argc, char **argv)
   int copy_contents = 0;
   char *target_directory = NULL;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -1032,16 +1026,6 @@ main (int argc, char **argv)
   /* The key difference between -d (--no-dereference) and not is the version
      of `stat' to call.  */
 
-  if (x.dereference == DEREF_NEVER)
-    x.xstat = lstat;
-  else
-    {
-      /* For DEREF_COMMAND_LINE_ARGUMENTS, x.xstat must be stat for
-	 each command line argument, but must later be `lstat' for
-	 any symlinks that are found via recursive traversal.  */
-      x.xstat = stat;
-    }
-
   if (x.recursive)
     x.copy_as_regular = copy_contents;
 
@@ -1054,7 +1038,7 @@ main (int argc, char **argv)
 
   hash_init ();
 
-  exit_status |= do_copy (argc - optind, argv + optind, target_directory, &x);
+  exit_status = do_copy (argc - optind, argv + optind, target_directory, &x);
 
   forget_all ();
 

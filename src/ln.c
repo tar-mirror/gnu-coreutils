@@ -1,5 +1,5 @@
 /* `ln' program to create links between files.
-   Copyright (C) 86, 89, 90, 91, 1995-2002 Free Software Foundation, Inc.
+   Copyright (C) 86, 89, 90, 91, 1995-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,10 +17,6 @@
 
 /* Written by Mike Parker and David MacKenzie. */
 
-#ifdef _AIX
- #pragma alloca
-#endif
-
 #include <config.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -36,7 +32,11 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "ln"
 
-#define AUTHORS N_ ("Mike Parker and David MacKenzie")
+#define AUTHORS "Mike Parker", "David MacKenzie"
+
+#ifndef ENABLE_HARD_LINK_TO_SYMLINK_WARNING
+# define ENABLE_HARD_LINK_TO_SYMLINK_WARNING 0
+#endif
 
 /* For long options that have no equivalent short option, use a
    non-character as a pseudo short option, starting with CHAR_MAX + 1.  */
@@ -73,13 +73,14 @@ int symlink ();
       {									\
 	const char *source_base;					\
 	char *tmp_source;						\
+	size_t buf_len = strlen (source) + 1;				\
 									\
-	tmp_source = (char *) alloca (strlen ((source)) + 1);		\
-	strcpy (tmp_source, (source));					\
+	tmp_source = alloca (buf_len);					\
+	memcpy (tmp_source, (source), buf_len);				\
 	strip_trailing_slashes (tmp_source);				\
 	source_base = base_name (tmp_source);				\
 									\
-	(new_dest) = (char *) alloca (strlen ((dest)) + 1		\
+	(new_dest) = alloca (strlen ((dest)) + 1			\
 				      + strlen (source_base) + 1);	\
 	stpcpy (stpcpy (stpcpy ((new_dest), (dest)), "/"), source_base);\
       }									\
@@ -110,7 +111,10 @@ static int remove_existing_files;
 /* If nonzero, list each file as it is moved. */
 static int verbose;
 
-/* If nonzero, allow the superuser to make hard links to directories. */
+/* If nonzero, allow the superuser to *attempt* to make hard links
+   to directories.  However, it appears that this option is not useful
+   in practice, since even the superuser is prohibited from hard-linking
+   directories on most (all?) existing systems.  */
 static int hard_dir_link;
 
 /* If nonzero, and the specified destination is a symbolic link to a
@@ -162,7 +166,8 @@ do_link (const char *source, const char *dest)
 	  return 1;
 	}
 
-      if (S_ISLNK (source_stats.st_mode))
+      if (ENABLE_HARD_LINK_TO_SYMLINK_WARNING
+	  && S_ISLNK (source_stats.st_mode))
 	{
 	  error (0, 0, _("%s: warning: making a hard link to a symbolic link\
  is not portable"),
@@ -226,11 +231,10 @@ do_link (const char *source, const char *dest)
 	 misleading.  */
       && (backup_type == none || !symbolic_link)
       && (!symbolic_link || stat (source, &source_stats) == 0)
-      && source_stats.st_dev == dest_stats.st_dev
-      && source_stats.st_ino == dest_stats.st_ino
+      && SAME_INODE (source_stats, dest_stats)
       /* The following detects whether removing DEST will also remove
- 	 SOURCE.  If the file has only one link then both are surely
- 	 the same link.  Otherwise check whether they point to the same
+	 SOURCE.  If the file has only one link then both are surely
+	 the same link.  Otherwise check whether they point to the same
 	 name in the same directory.  */
       && (source_stats.st_nlink == 1 || same_name (source, dest)))
     {
@@ -260,11 +264,13 @@ do_link (const char *source, const char *dest)
 
       if (backup_type != none)
 	{
+	  size_t buf_len;
 	  char *tmp_backup = find_backup_file_name (dest, backup_type);
 	  if (tmp_backup == NULL)
 	    xalloc_die ();
-	  dest_backup = (char *) alloca (strlen (tmp_backup) + 1);
-	  strcpy (dest_backup, tmp_backup);
+	  buf_len = strlen (tmp_backup) + 1;
+	  dest_backup = alloca (buf_len);
+	  memcpy (dest_backup, tmp_backup, buf_len);
 	  free (tmp_backup);
 	  if (rename (dest, dest_backup))
 	    {
@@ -331,7 +337,7 @@ do_link (const char *source, const char *dest)
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -357,7 +363,9 @@ Mandatory arguments to long options are mandatory for short options too.\n\
       fputs (_("\
       --backup[=CONTROL]      make a backup of each existing destination file\n\
   -b                          like --backup but does not accept an argument\n\
-  -d, -F, --directory         hard link directories (super-user only)\n\
+  -d, -F, --directory         allow the superuser to attempt to hard link\n\
+                                directories (note: will probably fail due to\n\
+                                system restrictions, even for the superuser)\n\
   -f, --force                 remove existing destination files\n\
 "), stdout);
       fputs (_("\
@@ -406,6 +414,7 @@ main (int argc, char **argv)
   char **file;
   int dest_is_dir;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -427,7 +436,7 @@ main (int argc, char **argv)
       switch (c)
 	{
 	case 0:			/* Long-named option. */
- 	  break;
+	  break;
 
 	case 'V':  /* FIXME: this is deprecated.  Remove it in 2001.  */
 	  error (0, 0,
@@ -482,14 +491,14 @@ main (int argc, char **argv)
 	}
     }
 
-  n_files = argc - optind;
-  file = argv + optind;
-
-  if (n_files == 0)
+  if (argc <= optind)
     {
       error (0, 0, _("missing file argument"));
       usage (EXIT_FAILURE);
     }
+
+  n_files = argc - optind;
+  file = argv + optind;
 
   target_directory_specified = (target_directory != NULL);
   if (!target_directory)
@@ -571,5 +580,5 @@ main (int argc, char **argv)
       errors = do_link (source, new_dest);
     }
 
-  exit (errors != 0);
+  exit (errors == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
 }

@@ -1,5 +1,5 @@
 /* mknod -- make special files
-   Copyright (C) 90, 91, 1995-2002 Free Software Foundation, Inc.
+   Copyright (C) 90, 91, 1995-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ static struct option const longopts[] =
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -93,6 +93,7 @@ main (int argc, char **argv)
   int optc;
   mode_t node_type;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -150,7 +151,7 @@ main (int argc, char **argv)
     {
     case 'b':			/* `block' or `buffered' */
 #ifndef S_IFBLK
-      error (4, 0, _("block special files not supported"));
+      error (EXIT_FAILURE, 0, _("block special files not supported"));
 #else
       node_type = S_IFBLK;
 #endif
@@ -159,7 +160,7 @@ main (int argc, char **argv)
     case 'c':			/* `character' */
     case 'u':			/* `unbuffered' */
 #ifndef S_IFCHR
-      error (4, 0, _("character special files not supported"));
+      error (EXIT_FAILURE, 0, _("character special files not supported"));
 #else
       node_type = S_IFCHR;
 #endif
@@ -203,7 +204,7 @@ numbers must be specified"));
 
     case 'p':			/* `pipe' */
 #ifndef S_ISFIFO
-      error (4, 0, _("fifo files not supported"));
+      error (EXIT_FAILURE, 0, _("fifo files not supported"));
 #else
       if (argc - optind != 2)
 	{
@@ -217,7 +218,7 @@ major and minor device numbers may not be specified for fifo files"));
       break;
 
     default:
-      error (0, 0, "invalid device type %s", quote (argv[optind + 1]));
+      error (0, 0, _("invalid device type %s"), quote (argv[optind + 1]));
       usage (EXIT_FAILURE);
     }
 

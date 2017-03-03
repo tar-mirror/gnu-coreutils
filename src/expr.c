@@ -1,5 +1,5 @@
 /* expr -- evaluate expressions.
-   Copyright (C) 86, 1991-1997, 1999-2002 Free Software Foundation, Inc.
+   Copyright (C) 86, 1991-1997, 1999-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
 #include <regex.h>
 #include "long-options.h"
 #include "error.h"
-#include "closeout.h"
 #include "inttostr.h"
+#include "quotearg.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "expr"
@@ -46,7 +46,19 @@
 
 #undef NEW
 #define NEW(Type) XMALLOC (Type, 1)
-#define OLD(x) free ((char *) x)
+#define OLD(x) free (x)
+
+/* Exit statuses.  */
+enum
+  {
+    /* Invalid expression: i.e., its form does not conform to the
+       grammar for expressions.  Our grammar is an extension of the
+       POSIX grammar.  */
+    EXPR_INVALID = 2,
+
+    /* Some other error occurred.  */
+    EXPR_FAILURE
+  };
 
 /* The kinds of value we can have.  */
 enum valtype
@@ -75,14 +87,14 @@ static char **args;
 char *program_name;
 
 static VALUE *eval (void);
-static int nomoreargs (void);
-static int null (VALUE *v);
+static bool nomoreargs (void);
+static bool null (VALUE *v);
 static void printv (VALUE *v);
 
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -151,20 +163,29 @@ Pattern matches return the string matched between \\( and \\) or null; if\n\
   exit (status);
 }
 
+/* Report a syntax error and exit.  */
+static void
+syntax_error (void)
+{
+  error (EXPR_INVALID, 0, _("syntax error"));
+}
+
 int
 main (int argc, char **argv)
 {
   VALUE *v;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
 
+  initialize_exit_failure (EXPR_FAILURE);
   atexit (close_stdout);
 
   parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
-		      AUTHORS, usage);
+		      usage, AUTHORS, (char const *) NULL);
   /* The above handles --help and --version.
      Since there is no other invocation of getopt, handle `--' here.  */
   if (argc > 1 && STREQ (argv[1], "--"))
@@ -173,17 +194,17 @@ main (int argc, char **argv)
       ++argv;
     }
 
-  if (argc == 1)
+  if (argc <= 1)
     {
       error (0, 0, _("too few arguments"));
-      usage (EXIT_FAILURE);
+      usage (EXPR_INVALID);
     }
 
   args = argv + 1;
 
   v = eval ();
   if (!nomoreargs ())
-    error (2, 0, _("syntax error"));
+    syntax_error ();
   printv (v);
 
   exit (null (v));
@@ -248,9 +269,9 @@ printv (VALUE *v)
   puts (p);
 }
 
-/* Return nonzero if V is a null-string or zero-number.  */
+/* Return true if V is a null-string or zero-number.  */
 
-static int
+static bool
 null (VALUE *v)
 {
   switch (v->type)
@@ -284,19 +305,19 @@ tostring (VALUE *v)
     }
 }
 
-/* Coerce V to an integer value.  Return 1 on success, 0 on failure.  */
+/* Coerce V to an integer value.  Return true on success, false on failure.  */
 
-static int
+static bool
 toarith (VALUE *v)
 {
   intmax_t i;
-  int neg;
+  bool neg;
   char *cp;
 
   switch (v->type)
     {
     case integer:
-      return 1;
+      return true;
     case string:
       i = 0;
       cp = v->u.s;
@@ -309,14 +330,14 @@ toarith (VALUE *v)
 	  if (ISDIGIT (*cp))
 	    i = i * 10 + *cp - '0';
 	  else
-	    return 0;
+	    return false;
 	}
       while (*++cp);
 
       free (v->u.s);
       v->u.i = i * (neg ? -1 : 1);
       v->type = integer;
-      return 1;
+      return true;
     default:
       abort ();
     }
@@ -325,22 +346,22 @@ toarith (VALUE *v)
 /* Return nonzero and advance if the next token matches STR exactly.
    STR must not be NULL.  */
 
-static int
-nextarg (char *str)
+static bool
+nextarg (char const *str)
 {
   if (*args == NULL)
     return 0;
   else
     {
-      int r = strcoll (*args, str) == 0;
+      bool r = strcmp (*args, str) == 0;
       args += r;
       return r;
     }
 }
 
-/* Return nonzero if there no more tokens.  */
+/* Return true if there no more tokens.  */
 
-static int
+static bool
 nomoreargs (void)
 {
   return *args == 0;
@@ -393,12 +414,12 @@ of the basic regular expression is not portable; it is being ignored"),
   re_buffer.allocated = 2 * len;
   if (re_buffer.allocated < len)
     xalloc_die ();
-  re_buffer.buffer = (unsigned char *) xmalloc (re_buffer.allocated);
+  re_buffer.buffer = xmalloc (re_buffer.allocated);
   re_buffer.translate = 0;
   re_syntax_options = RE_SYNTAX_POSIX_BASIC;
   errmsg = re_compile_pattern (pv->u.s, len, &re_buffer);
   if (errmsg)
-    error (2, 0, "%s", errmsg);
+    error (EXPR_FAILURE, 0, "%s", errmsg);
 
   matchlen = re_match (&re_buffer, sv->u.s, strlen (sv->u.s), 0, &re_regs);
   if (0 <= matchlen)
@@ -435,18 +456,18 @@ eval7 (void)
   trace ("eval7");
 #endif
   if (nomoreargs ())
-    error (2, 0, _("syntax error"));
+    syntax_error ();
 
   if (nextarg ("("))
     {
       v = eval ();
       if (!nextarg (")"))
-	error (2, 0, _("syntax error"));
+	syntax_error ();
       return v;
     }
 
   if (nextarg (")"))
-    error (2, 0, _("syntax error"));
+    syntax_error ();
 
   return str_value (*args++);
 }
@@ -468,7 +489,7 @@ eval6 (void)
   if (nextarg ("+"))
     {
       if (nomoreargs ())
-	error (2, 0, _("syntax error"));
+	syntax_error ();
       return str_value (*args++);
     }
   else if (nextarg ("length"))
@@ -515,7 +536,7 @@ eval6 (void)
 	{
 	  v = NEW (VALUE);
 	  v->type = string;
-	  v->u.s = strncpy ((char *) xmalloc (i2->u.i + 1),
+	  v->u.s = strncpy (xmalloc (i2->u.i + 1),
 			    l->u.s + i1->u.i - 1, i2->u.i);
 	  v->u.s[i2->u.i] = 0;
 	}
@@ -583,13 +604,13 @@ eval4 (void)
 	return l;
       r = eval5 ();
       if (!toarith (l) || !toarith (r))
-	error (2, 0, _("non-numeric argument"));
+	error (EXPR_FAILURE, 0, _("non-numeric argument"));
       if (fxn == multiply)
 	val = l->u.i * r->u.i;
       else
 	{
 	  if (r->u.i == 0)
-	    error (2, 0, _("division by zero"));
+	    error (EXPR_FAILURE, 0, _("division by zero"));
 	  val = fxn == divide ? l->u.i / r->u.i : l->u.i % r->u.i;
 	}
       freev (l);
@@ -622,7 +643,7 @@ eval3 (void)
 	return l;
       r = eval4 ();
       if (!toarith (l) || !toarith (r))
-	error (2, 0, _("non-numeric argument"));
+	error (EXPR_FAILURE, 0, _("non-numeric argument"));
       val = fxn == plus ? l->u.i + r->u.i : l->u.i - r->u.i;
       freev (l);
       freev (r);
@@ -641,9 +662,11 @@ eval2 (void)
   {
     less_than, less_equal, equal, not_equal, greater_equal, greater_than
   } fxn;
-  int val;
+  bool val;
   intmax_t lval;
   intmax_t rval;
+  int collation_errno;
+  char *collation_arg1;
 
 #ifdef EVAL_TRACE
   trace ("eval2");
@@ -668,13 +691,31 @@ eval2 (void)
       r = eval3 ();
       tostring (l);
       tostring (r);
-      lval = strcoll (l->u.s, r->u.s);
+
+      /* Save the first arg to strcoll, in case we need its value for
+	 a diagnostic later.  This is needed because 'toarith' might
+	 free the first arg.  */
+      collation_arg1 = xstrdup (l->u.s);
+
+      errno = 0;
+      lval = strcoll (collation_arg1, r->u.s);
+      collation_errno = errno;
       rval = 0;
       if (toarith (l) && toarith (r))
 	{
 	  lval = l->u.i;
 	  rval = r->u.i;
 	}
+      else if (collation_errno)
+	{
+	  error (0, collation_errno, _("string comparison failed"));
+	  error (0, 0, _("Set LC_ALL='C' to work around the problem."));
+	  error (EXPR_FAILURE, 0,
+		 _("The strings compared were %s and %s."),
+		 quotearg_n_style (0, locale_quoting_style, collation_arg1),
+		 quotearg_n_style (1, locale_quoting_style, r->u.s));
+	}
+
       switch (fxn)
 	{
 	case less_than:     val = (lval <  rval); break;
@@ -687,6 +728,7 @@ eval2 (void)
 	}
       freev (l);
       freev (r);
+      free (collation_arg1);
       l = int_value (val);
     }
 }

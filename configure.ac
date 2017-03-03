@@ -1,22 +1,22 @@
 dnl Process this file with autoconf to produce a configure script. -*-m4-*-
-AC_INIT([GNU coreutils],[5.0],[bug-coreutils@gnu.org])
+AC_INIT([GNU coreutils],[5.2.0],[bug-coreutils@gnu.org])
 AC_CONFIG_SRCDIR(src/ls.c)
 
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_HEADERS([config.h:config.hin])
-AC_CANONICAL_HOST
 
-AM_INIT_AUTOMAKE([1.6b gnits dist-bzip2])
+AM_INIT_AUTOMAKE([1.8 gnits dist-bzip2])
 
-AC_GNU_SOURCE
+gl_DEFAULT_POSIX2_VERSION
+gl_USE_SYSTEM_EXTENSIONS
 jm_PERL
 AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_GCC_TRADITIONAL
 AC_PROG_RANLIB
 AC_PROG_LN_S
-AC_AIX
-AC_MINIX
+AC_CANONICAL_HOST
+
 
 AC_CHECK_FUNCS(uname,
 	OPTIONAL_BIN_PROGS="$OPTIONAL_BIN_PROGS uname\$(EXEEXT)"
@@ -32,29 +32,6 @@ jm_MACROS
 
 AC_HEADER_TIOCGWINSZ()
 jm_WINSIZE_IN_PTEM
-
-# Check for SunOS statfs brokenness wrt partitions 2GB and larger.
-# If <sys/vfs.h> exists and struct statfs has a member named f_spare,
-# enable the work-around code in fsusage.c.
-AC_MSG_CHECKING([for statfs that truncates block counts])
-AC_CACHE_VAL(fu_cv_sys_truncating_statfs,
-[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-#if !defined(sun) && !defined(__sun)
-choke -- this is a workaround for a Sun-specific problem
-#endif
-#include <sys/types.h>
-#include <sys/vfs.h>]],
-  [[struct statfs t; long c = *(t.f_spare);]])],
-  [fu_cv_sys_truncating_statfs=yes],
-  [fu_cv_sys_truncating_statfs=no])])
-if test $fu_cv_sys_truncating_statfs = yes; then
-  AC_DEFINE(STATFS_TRUNCATES_BLOCK_COUNTS, 1,
-[  Define if the block counts reported by statfs may be truncated to 2GB
-   and the correct values may be stored in the f_spare array.
-   (SunOS 4.1.2, 4.1.3, and 4.1.3_U1 are reported to have this problem.
-   SunOS 4.1.1 seems not to be affected.)])
-fi
-AC_MSG_RESULT($fu_cv_sys_truncating_statfs)
 
 AC_MSG_CHECKING(whether localtime caches TZ)
 AC_CACHE_VAL(utils_cv_localtime_cache,
@@ -127,8 +104,7 @@ AC_CACHE_VAL(utils_cv_func_setpriority,
 AC_MSG_RESULT($utils_cv_func_setpriority)
 if test $utils_cv_func_setpriority = yes; then
   OPTIONAL_BIN_PROGS="$OPTIONAL_BIN_PROGS nice\$(EXEEXT)"
-  OPTIONAL_BIN_ZCRIPTS="$OPTIONAL_BIN_ZCRIPTS nohup"
-  MAN="$MAN nice.1 nohup.1"
+  MAN="$MAN nice.1"
 else
   AC_MSG_CHECKING(for nice function)
   AC_CACHE_VAL(utils_cv_func_nice,
@@ -139,14 +115,13 @@ else
   if test $utils_cv_func_nice = yes; then
     AC_DEFINE(NICE_PRIORITY, 1, [FIXME])
     OPTIONAL_BIN_PROGS="$OPTIONAL_BIN_PROGS nice\$(EXEEXT)"
-    OPTIONAL_BIN_ZCRIPTS="$OPTIONAL_BIN_ZCRIPTS nohup"
-    MAN="$MAN nice.1 nohup.1"
+    MAN="$MAN nice.1"
   fi
 fi
 
-AC_DEFUN(jm_DUMMY_1,
+AC_DEFUN([jm_DUMMY_1],
 [
-  AC_REQUIRE([jm_PREREQ_READUTMP])
+  AC_REQUIRE([gl_READUTMP])
   if test $ac_cv_header_utmp_h = yes || test $ac_cv_header_utmpx_h = yes; then
     OPTIONAL_BIN_PROGS="$OPTIONAL_BIN_PROGS pinky\$(EXEEXT)"
     OPTIONAL_BIN_PROGS="$OPTIONAL_BIN_PROGS users\$(EXEEXT)"
@@ -250,12 +225,12 @@ if test $jm_cv_sys_tiocgwinsz_needs_termios_h = no && \
 fi
 
 # For src/kill.c.
-AC_CHECK_DECLS([strsignal, strtoimax, sys_siglist, _sys_siglist])
+AC_CHECK_DECLS([strsignal, strtoimax, sys_siglist, _sys_siglist, __sys_siglist])
 
 jm_LIB_CHECK
 
 AM_GNU_GETTEXT([external], [need-ngettext])
-AM_GNU_GETTEXT_VERSION(0.11.5)
+AM_GNU_GETTEXT_VERSION(0.13.1)
 
 AC_CONFIG_FILES(
   Makefile

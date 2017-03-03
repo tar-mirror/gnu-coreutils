@@ -1,5 +1,5 @@
 /* group-member.c -- determine whether group id is in calling user's group list
-   Copyright (C) 1994, 1997, 1998 Free Software Foundation, Inc.
+   Copyright (C) 1994, 1997, 1998, 2003 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,18 +19,16 @@
 # include <config.h>
 #endif
 
+#include "group-member.h"
+
 #include <stdio.h>
 #include <sys/types.h>
-
-#ifdef STDC_HEADERS
-# include <stdlib.h>
-#endif
+#include <stdlib.h>
 
 #if HAVE_UNISTD_H
 # include <unistd.h>
 #endif
 
-#include "group-member.h"
 #include "xalloc.h"
 
 struct group_info
@@ -67,8 +65,7 @@ get_group_info (void)
   while (n_groups == n_group_slots)
     {
       n_group_slots += 64;
-      group = (GETGROUPS_T *) xrealloc (group,
-					n_group_slots * sizeof (GETGROUPS_T));
+      group = xrealloc (group, n_group_slots * sizeof (GETGROUPS_T));
       n_groups = getgroups (n_group_slots, group);
     }
 
@@ -79,7 +76,7 @@ get_group_info (void)
       return NULL;
     }
 
-  gi = (struct group_info *) xmalloc (sizeof (*gi));
+  gi = xmalloc (sizeof (*gi));
   gi->n_groups = n_groups;
   gi->group = group;
 
@@ -128,7 +125,7 @@ group_member (gid_t gid)
 char *program_name;
 
 int
-main (int argc, char** argv)
+main (int argc, char **argv)
 {
   int i;
 

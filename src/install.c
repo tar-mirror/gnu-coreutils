@@ -1,5 +1,5 @@
 /* install - copy files and set attributes
-   Copyright (C) 89, 90, 91, 1995-2002 Free Software Foundation, Inc.
+   Copyright (C) 89, 90, 91, 1995-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,10 +16,6 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
 /* Written by David MacKenzie <djm@gnu.ai.mit.edu> */
-
-#ifdef _AIX
- #pragma alloca
-#endif
 
 #include <config.h>
 #include <stdio.h>
@@ -38,6 +34,7 @@
 #include "modechange.h"
 #include "path-concat.h"
 #include "quote.h"
+#include "utimens.h"
 #include "xstrtol.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
@@ -168,7 +165,6 @@ cp_option_init (struct cp_options *x)
   x->umask_kill = 0;
   x->update = 0;
   x->verbose = 0;
-  x->xstat = stat;
   x->dest_info = NULL;
   x->src_info = NULL;
 }
@@ -187,6 +183,7 @@ main (int argc, char **argv)
   int n_files;
   char **file;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -279,7 +276,7 @@ main (int argc, char **argv)
   n_files = argc - optind;
   file = argv + optind;
 
-  if (n_files == 0 || (n_files == 1 && !dir_arg))
+  if (argc <= optind || (n_files == 1 && !dir_arg))
     {
       error (0, 0, _("too few arguments"));
       usage (EXIT_FAILURE);
@@ -343,7 +340,7 @@ is not a directory"),
 	}
     }
 
-  exit (errors);
+  exit (errors == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
 }
 
 /* Copy file FROM onto file TO, creating any missing parent directories of TO.
@@ -468,13 +465,13 @@ change_attributes (const char *path)
 #endif
       )
     {
-      error (0, errno, "cannot change ownership of %s", quote (path));
+      error (0, errno, _("cannot change ownership of %s"), quote (path));
       err = 1;
     }
 
   if (!err && chmod (path, mode))
     {
-      error (0, errno, "cannot change permissions of %s", quote (path));
+      error (0, errno, _("cannot change permissions of %s"), quote (path));
       err = 1;
     }
 
@@ -488,7 +485,7 @@ static int
 change_timestamps (const char *from, const char *to)
 {
   struct stat stb;
-  struct utimbuf utb;
+  struct timespec timespec[2];
 
   if (stat (from, &stb))
     {
@@ -496,13 +493,11 @@ change_timestamps (const char *from, const char *to)
       return 1;
     }
 
-  /* There's currently no interface to set file timestamps with
-     better than 1-second resolution, so discard any fractional
-     part of the source timestamp.  */
-
-  utb.actime = stb.st_atime;
-  utb.modtime = stb.st_mtime;
-  if (utime (to, &utb))
+  timespec[0].tv_sec = stb.st_atime;
+  timespec[0].tv_nsec = TIMESPEC_NS (stb.st_atim);
+  timespec[1].tv_sec = stb.st_mtime;
+  timespec[1].tv_nsec = TIMESPEC_NS (stb.st_mtim);
+  if (utimens (to, timespec))
     {
       error (0, errno, _("cannot set time stamps for %s"), quote (to));
       return 1;
@@ -589,7 +584,7 @@ get_ids (void)
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else

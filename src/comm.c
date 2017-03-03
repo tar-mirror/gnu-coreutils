@@ -1,5 +1,5 @@
 /* comm -- compare two sorted files line by line.
-   Copyright (C) 86, 90, 91, 1995-2002 Free Software Foundation, Inc.
+   Copyright (C) 86, 90, 91, 1995-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@
 #include <getopt.h>
 #include <sys/types.h>
 #include "system.h"
-#include "closeout.h"
 #include "linebuffer.h"
 #include "error.h"
 #include "hard-locale.h"
@@ -32,7 +31,7 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "comm"
 
-#define AUTHORS N_ ("Richard Stallman and David MacKenzie")
+#define AUTHORS "Richard Stallman", "David MacKenzie"
 
 /* Undefine, to avoid warning about redefinition on some systems.  */
 #undef min
@@ -65,7 +64,7 @@ static struct option const long_options[] =
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -85,7 +84,7 @@ Compare sorted files LEFT_FILE and RIGHT_FILE line by line.\n\
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
       printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
     }
-  exit (status == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
+  exit (status);
 }
 
 /* Output the line in linebuffer LINE to stream STREAM
@@ -145,6 +144,9 @@ compare_files (char **infiles)
   /* streams[i] holds the input stream for file i.  */
   FILE *streams[2];
 
+  /* errno values for each stream.  */
+  int saved_errno[2];
+
   int i, ret = 0;
 
   /* Initialize the storage. */
@@ -159,7 +161,8 @@ compare_files (char **infiles)
 	  return 1;
 	}
 
-      thisline[i] = readline (thisline[i], streams[i]);
+      thisline[i] = readlinebuffer (thisline[i], streams[i]);
+      saved_errno[i] = errno;
     }
 
   while (thisline[0] || thisline[1])
@@ -199,16 +202,27 @@ compare_files (char **infiles)
       /* Step the file the line came from.
 	 If the files match, step both files.  */
       if (order >= 0)
-	thisline[1] = readline (thisline[1], streams[1]);
+	{
+	  thisline[1] = readlinebuffer (thisline[1], streams[1]);
+	  saved_errno[1] = errno;
+	}
       if (order <= 0)
-	thisline[0] = readline (thisline[0], streams[0]);
+	{
+	  thisline[0] = readlinebuffer (thisline[0], streams[0]);
+	  saved_errno[0] = errno;
+	}
     }
 
   /* Free all storage and close all input streams. */
   for (i = 0; i < 2; i++)
     {
       free (lb1[i].buffer);
-      if (ferror (streams[i]) || fclose (streams[i]) == EOF)
+      if (ferror (streams[i]))
+	{
+	  error (0, saved_errno[i], "%s", infiles[i]);
+	  ret = 1;
+	}
+      if (fclose (streams[i]) != 0)
 	{
 	  error (0, errno, "%s", infiles[i]);
 	  ret = 1;
@@ -222,6 +236,7 @@ main (int argc, char **argv)
 {
   int c;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -261,7 +276,10 @@ main (int argc, char **argv)
       }
 
   if (optind + 2 != argc)
-    usage (EXIT_FAILURE);
+    {
+      error (0, 0, _("too few arguments"));
+      usage (EXIT_FAILURE);
+    }
 
   exit (compare_files (argv + optind) == 0
 	? EXIT_SUCCESS : EXIT_FAILURE);

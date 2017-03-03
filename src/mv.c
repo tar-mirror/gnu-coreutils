@@ -1,5 +1,5 @@
 /* mv -- move or rename files
-   Copyright (C) 86, 89, 90, 91, 1995-2002 Free Software Foundation, Inc.
+   Copyright (C) 86, 89, 90, 91, 1995-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,10 +16,6 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
 /* Written by Mike Parker, David MacKenzie, and Jim Meyering */
-
-#ifdef _AIX
- #pragma alloca
-#endif
 
 #include <config.h>
 #include <stdio.h>
@@ -41,7 +37,7 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "mv"
 
-#define AUTHORS N_ ("Mike Parker, David MacKenzie, and Jim Meyering")
+#define AUTHORS "Mike Parker", "David MacKenzie", "Jim Meyering"
 
 /* Initial number of entries in each hash table entry's table of inodes.  */
 #define INITIAL_HASH_MODULE 100
@@ -100,9 +96,8 @@ static void
 rm_option_init (struct rm_options *x)
 {
   x->unlink_dirs = 0;
-
   x->ignore_missing_files = 0;
-
+  x->root_dev_ino = NULL;
   x->recursive = 1;
 
   /* Should we prompt for removal, too?  No.  Prompting for the `move'
@@ -145,7 +140,6 @@ cp_option_init (struct cp_options *x)
 
   x->update = 0;
   x->verbose = 0;
-  x->xstat = lstat;
   x->dest_info = NULL;
   x->src_info = NULL;
 }
@@ -303,7 +297,7 @@ movefile (char *source, char *dest, int dest_is_dir,
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -325,9 +319,9 @@ Mandatory arguments to long options are mandatory for short options too.\n\
       --backup[=CONTROL]       make a backup of each existing destination file\n\
   -b                           like --backup but does not accept an argument\n\
   -f, --force                  do not prompt before overwriting\n\
-                                 equivalent to --reply=yes\n\
+                                 (equivalent to --reply=yes)\n\
   -i, --interactive            prompt before overwrite\n\
-                                 equivalent to --reply=query\n\
+                                 (equivalent to --reply=query)\n\
 "), stdout);
       fputs (_("\
       --reply={yes,no,query}   specify how to handle the prompt about an\n\
@@ -378,6 +372,7 @@ main (int argc, char **argv)
   unsigned int n_files;
   char **file;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -445,7 +440,7 @@ main (int argc, char **argv)
 	}
     }
 
-  n_files = argc - optind;
+  n_files = (optind < argc ? argc - optind : 0);
   file = argv + optind;
 
   target_directory_specified = (target_directory != NULL);
@@ -501,5 +496,5 @@ main (int argc, char **argv)
       errors |= movefile (file[i], target_directory, dest_is_dir, &x);
   }
 
-  exit (errors);
+  exit (errors == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
 }

@@ -1,13 +1,13 @@
-#define G_N_LINES 106
+#define G_N_LINES 107
 
 const size_t G_line_length[G_N_LINES] =
 {
   65, 72, 0, 59, 61, 0, 77, 10, 12, 15, 12, 14, 14, 14, 14, 13, 13, 13, 13,
   13, 13, 11, 10, 16, 17, 9, 11, 13, 10, 10, 0, 73, 64, 18, 64, 19, 72,
-  25, 72, 68, 22, 22, 71, 72, 17, 19, 17, 34, 39, 45, 0, 44, 10, 0, 70,
+  25, 72, 68, 22, 21, 70, 62, 17, 19, 17, 34, 38, 45, 0, 44, 10, 0, 70,
   75, 48, 0, 73, 40, 11, 11, 11, 11, 0, 48, 10, 10, 10, 10, 10, 10, 10,
   10, 10, 10, 10, 10, 0, 15, 10, 11, 10, 10, 10, 10, 10, 10, 10, 10, 10,
-  11, 10, 10, 11, 10, 10, 9, 9, 10, 10, 0, 15, 10, 10, 10
+  11, 10, 10, 10, 11, 10, 10, 9, 9, 10, 10, 0, 15, 10, 10, 10
 };
 
 const char *const G_line[G_N_LINES] =
@@ -52,15 +52,15 @@ const char *const G_line[G_N_LINES] =
   "# Background color codes:",
   "# 40=black 41=red 42=green 43=yellow 44=blue 45=magenta 46=cyan 47=white",
   "NORMAL 00	# global default, although everything should be something.",
-  "FILE 00 	# normal file",
-  "DIR 01;34 	# directory",
-  "LINK 01;36 	# symbolic link.  (If you set this to 'target' instead of a",
-  "           	# numerical value, the color is as for the file pointed to.)",
+  "FILE 00		# normal file",
+  "DIR 01;34	# directory",
+  "LINK 01;36	# symbolic link.  (If you set this to 'target' instead of a",
+  "		# numerical value, the color is as for the file pointed to.)",
   "FIFO 40;33	# pipe",
   "SOCK 01;35	# socket",
   "DOOR 01;35	# door",
   "BLK 40;33;01	# block device driver",
-  "CHR 40;33;01 	# character device driver",
+  "CHR 40;33;01	# character device driver",
   "ORPHAN 40;31;01 # symlink to nonexistent file",
   "",
   "# This is for files with execute permission:",
@@ -105,6 +105,7 @@ const char *const G_line[G_N_LINES] =
   ".tif 01;35",
   ".tiff 01;35",
   ".png 01;35",
+  ".mov 01;35",
   ".mpg 01;35",
   ".mpeg 01;35",
   ".avi 01;35",

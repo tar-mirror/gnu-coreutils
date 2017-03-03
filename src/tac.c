@@ -1,5 +1,5 @@
 /* tac - concatenate and print files in reverse
-   Copyright (C) 1988-1991, 1995-2002 Free Software Foundation, Inc.
+   Copyright (C) 1988-1991, 1995-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -41,7 +41,6 @@ tac -r -s '.\|
 #include <getopt.h>
 #include <sys/types.h>
 #include "system.h"
-#include "closeout.h"
 
 #include <regex.h>
 
@@ -51,7 +50,7 @@ tac -r -s '.\|
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "tac"
 
-#define AUTHORS N_ ("Jay Lepreau and David MacKenzie")
+#define AUTHORS "Jay Lepreau", "David MacKenzie"
 
 #if defined __MSDOS__ || defined _WIN32
 /* Define this to non-zero on systems for which the regular mechanism
@@ -119,7 +118,7 @@ static struct option const longopts[] =
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -145,7 +144,7 @@ Mandatory arguments to long options are mandatory for short options too.\n\
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
       printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
     }
-  exit (status == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
+  exit (status);
 }
 
 /* Print the characters from START to PAST_END - 1.
@@ -227,7 +226,7 @@ tac_seekable (int input_fd, const char *file)
      in the input file. */
 
   if (lseek (input_fd, file_pos, SEEK_SET) < 0)
-    error (0, errno, "%s: seek failed", file);
+    error (0, errno, _("%s: seek failed"), file);
 
   if (safe_read (input_fd, G_buffer, saved_record_size) != saved_record_size)
     {
@@ -315,7 +314,8 @@ tac_seekable (int input_fd, const char *file)
 	      read_size = file_pos;
 	      file_pos = 0;
 	    }
-	  lseek (input_fd, file_pos, SEEK_SET);
+	  if (lseek (input_fd, file_pos, SEEK_SET) < 0)
+	    error (0, errno, _("%s: seek failed"), file);
 
 	  /* Shift the pending record data right to make room for the new.
 	     The source and destination regions probably overlap.  */
@@ -377,7 +377,7 @@ tac_file (const char *file)
     }
   SET_BINARY (fileno (in));
   errors = tac_seekable (fileno (in), file);
-  if (ferror (in) || fclose (in) == EOF)
+  if (fclose (in) != 0)
     {
       error (0, errno, "%s", file);
       return 1;
@@ -453,10 +453,10 @@ save_stdin (FILE **g_tmp, char **g_tempfile)
 	error (EXIT_FAILURE, errno, _("stdin: read error"));
 
       if (fwrite (G_buffer, 1, bytes_read, tmp) != bytes_read)
-	break;
+	error (EXIT_FAILURE, errno, "%s", tempfile);
     }
 
-  if (ferror (tmp) || fflush (tmp) == EOF)
+  if (fflush (tmp) != 0)
     error (EXIT_FAILURE, errno, "%s", tempfile);
 
   SET_BINARY (fileno (tmp));
@@ -502,28 +502,16 @@ tac_stdin (void)
 #if 0
 /* BUF_END points one byte past the end of the buffer to be searched.  */
 
-static void *
-memrchr (const char *buf_start, const char *buf_end, int c)
-{
-  const char *p = buf_end;
-  while (buf_start <= --p)
-    {
-      if (*(const unsigned char *) p == c)
-	return (void *) p;
-    }
-  return NULL;
-}
-
 /* FIXME: describe */
 
-static int
+static void
 tac_mem (const char *buf, size_t n_bytes, FILE *out)
 {
   const char *nl;
   const char *bol;
 
   if (n_bytes == 0)
-    return 0;
+    return;
 
   nl = memrchr (buf, buf + n_bytes, '\n');
   bol = (nl == NULL ? buf : nl + 1);
@@ -556,7 +544,6 @@ tac_mem (const char *buf, size_t n_bytes, FILE *out)
     fwrite (buf, 1, bol - buf, out);
 
   /* FIXME: this is work in progress.... */
-  return ferror (out);
 }
 
 /* FIXME: describe */
@@ -572,19 +559,21 @@ tac_stdin_to_mem (void)
   while (1)
     {
       size_t bytes_read;
-      if (buf == NULL)
-	buf = (char *) malloc (bufsiz);
-      else
-	buf = (char *) realloc (buf, bufsiz);
+      char *new_buf = realloc (buf, bufsiz);
 
-      if (buf == NULL)
+      if (new_buf == NULL)
 	{
+	  /* Write contents of buf to a temporary file, ... */
+	  /* FIXME */
+
 	  /* Free the buffer and fall back on the code that relies on a
 	     temporary file.  */
 	  free (buf);
 	  /* FIXME */
 	  abort ();
 	}
+
+      buf = new_buf;
       bytes_read = safe_read (STDIN_FILENO, buf + n_bytes, bufsiz - n_bytes);
       if (bytes_read == 0)
 	break;
@@ -608,6 +597,7 @@ main (int argc, char **argv)
   int optc, errors;
   int have_read_stdin = 0;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);

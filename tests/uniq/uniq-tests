@@ -21,7 +21,7 @@ export LANG
 cat $srcdir/1.I | $xx  > 1.O 2> 1.E
 code=$?
 if test $code != 0; then
-  $echo "Test 1(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 1(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 1.O $srcdir/1.X > /dev/null 2>&1
@@ -39,7 +39,7 @@ test -s 1.E || rm -f 1.E
 $xx  < $srcdir/1.I > 1.O 2> 1.E
 code=$?
 if test $code != 0; then
-  $echo "Test 1(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 1(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 1.O $srcdir/1.X > /dev/null 2>&1
@@ -57,7 +57,7 @@ test -s 1.E || rm -f 1.E
 cat $srcdir/2.I | $xx  > 2.O 2> 2.E
 code=$?
 if test $code != 0; then
-  $echo "Test 2(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 2(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 2.O $srcdir/2.X > /dev/null 2>&1
@@ -75,7 +75,7 @@ test -s 2.E || rm -f 2.E
 $xx  < $srcdir/2.I > 2.O 2> 2.E
 code=$?
 if test $code != 0; then
-  $echo "Test 2(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 2(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 2.O $srcdir/2.X > /dev/null 2>&1
@@ -93,7 +93,7 @@ test -s 2.E || rm -f 2.E
 cat $srcdir/3.I | $xx  > 3.O 2> 3.E
 code=$?
 if test $code != 0; then
-  $echo "Test 3(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 3(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 3.O $srcdir/3.X > /dev/null 2>&1
@@ -111,7 +111,7 @@ test -s 3.E || rm -f 3.E
 $xx  < $srcdir/3.I > 3.O 2> 3.E
 code=$?
 if test $code != 0; then
-  $echo "Test 3(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 3(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 3.O $srcdir/3.X > /dev/null 2>&1
@@ -129,7 +129,7 @@ test -s 3.E || rm -f 3.E
 cat $srcdir/4.I | $xx  > 4.O 2> 4.E
 code=$?
 if test $code != 0; then
-  $echo "Test 4(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 4(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 4.O $srcdir/4.X > /dev/null 2>&1
@@ -147,7 +147,7 @@ test -s 4.E || rm -f 4.E
 $xx  < $srcdir/4.I > 4.O 2> 4.E
 code=$?
 if test $code != 0; then
-  $echo "Test 4(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 4(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 4.O $srcdir/4.X > /dev/null 2>&1
@@ -165,7 +165,7 @@ test -s 4.E || rm -f 4.E
 cat $srcdir/5.I | $xx  > 5.O 2> 5.E
 code=$?
 if test $code != 0; then
-  $echo "Test 5(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 5(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 5.O $srcdir/5.X > /dev/null 2>&1
@@ -183,7 +183,7 @@ test -s 5.E || rm -f 5.E
 $xx  < $srcdir/5.I > 5.O 2> 5.E
 code=$?
 if test $code != 0; then
-  $echo "Test 5(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 5(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 5.O $srcdir/5.X > /dev/null 2>&1
@@ -201,7 +201,7 @@ test -s 5.E || rm -f 5.E
 cat $srcdir/6.I | $xx  > 6.O 2> 6.E
 code=$?
 if test $code != 0; then
-  $echo "Test 6(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 6(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 6.O $srcdir/6.X > /dev/null 2>&1
@@ -219,7 +219,7 @@ test -s 6.E || rm -f 6.E
 $xx  < $srcdir/6.I > 6.O 2> 6.E
 code=$?
 if test $code != 0; then
-  $echo "Test 6(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 6(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 6.O $srcdir/6.X > /dev/null 2>&1
@@ -237,7 +237,7 @@ test -s 6.E || rm -f 6.E
 cat $srcdir/7.I | $xx  > 7.O 2> 7.E
 code=$?
 if test $code != 0; then
-  $echo "Test 7(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 7(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 7.O $srcdir/7.X > /dev/null 2>&1
@@ -255,7 +255,7 @@ test -s 7.E || rm -f 7.E
 $xx  < $srcdir/7.I > 7.O 2> 7.E
 code=$?
 if test $code != 0; then
-  $echo "Test 7(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 7(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 7.O $srcdir/7.X > /dev/null 2>&1
@@ -273,7 +273,7 @@ test -s 7.E || rm -f 7.E
 cat $srcdir/8.I | $xx  > 8.O 2> 8.E
 code=$?
 if test $code != 0; then
-  $echo "Test 8(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 8(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 8.O $srcdir/8.X > /dev/null 2>&1
@@ -291,7 +291,7 @@ test -s 8.E || rm -f 8.E
 $xx  < $srcdir/8.I > 8.O 2> 8.E
 code=$?
 if test $code != 0; then
-  $echo "Test 8(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 8(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 8.O $srcdir/8.X > /dev/null 2>&1
@@ -309,7 +309,7 @@ test -s 8.E || rm -f 8.E
 cat $srcdir/9.I | $xx -u > 9.O 2> 9.E
 code=$?
 if test $code != 0; then
-  $echo "Test 9(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 9(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 9.O $srcdir/9.X > /dev/null 2>&1
@@ -327,7 +327,7 @@ test -s 9.E || rm -f 9.E
 $xx -u < $srcdir/9.I > 9.O 2> 9.E
 code=$?
 if test $code != 0; then
-  $echo "Test 9(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 9(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 9.O $srcdir/9.X > /dev/null 2>&1
@@ -345,7 +345,7 @@ test -s 9.E || rm -f 9.E
 cat $srcdir/10.I | $xx -u > 10.O 2> 10.E
 code=$?
 if test $code != 0; then
-  $echo "Test 10(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 10(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 10.O $srcdir/10.X > /dev/null 2>&1
@@ -363,7 +363,7 @@ test -s 10.E || rm -f 10.E
 $xx -u < $srcdir/10.I > 10.O 2> 10.E
 code=$?
 if test $code != 0; then
-  $echo "Test 10(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 10(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 10.O $srcdir/10.X > /dev/null 2>&1
@@ -381,7 +381,7 @@ test -s 10.E || rm -f 10.E
 cat $srcdir/11.I | $xx -u > 11.O 2> 11.E
 code=$?
 if test $code != 0; then
-  $echo "Test 11(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 11(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 11.O $srcdir/11.X > /dev/null 2>&1
@@ -399,7 +399,7 @@ test -s 11.E || rm -f 11.E
 $xx -u < $srcdir/11.I > 11.O 2> 11.E
 code=$?
 if test $code != 0; then
-  $echo "Test 11(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 11(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 11.O $srcdir/11.X > /dev/null 2>&1
@@ -417,7 +417,7 @@ test -s 11.E || rm -f 11.E
 cat $srcdir/12.I | $xx -u > 12.O 2> 12.E
 code=$?
 if test $code != 0; then
-  $echo "Test 12(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 12(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 12.O $srcdir/12.X > /dev/null 2>&1
@@ -435,7 +435,7 @@ test -s 12.E || rm -f 12.E
 $xx -u < $srcdir/12.I > 12.O 2> 12.E
 code=$?
 if test $code != 0; then
-  $echo "Test 12(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 12(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 12.O $srcdir/12.X > /dev/null 2>&1
@@ -453,7 +453,7 @@ test -s 12.E || rm -f 12.E
 cat $srcdir/13.I | $xx -u > 13.O 2> 13.E
 code=$?
 if test $code != 0; then
-  $echo "Test 13(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 13(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 13.O $srcdir/13.X > /dev/null 2>&1
@@ -471,7 +471,7 @@ test -s 13.E || rm -f 13.E
 $xx -u < $srcdir/13.I > 13.O 2> 13.E
 code=$?
 if test $code != 0; then
-  $echo "Test 13(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 13(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 13.O $srcdir/13.X > /dev/null 2>&1
@@ -489,7 +489,7 @@ test -s 13.E || rm -f 13.E
 cat $srcdir/20.I | $xx -d > 20.O 2> 20.E
 code=$?
 if test $code != 0; then
-  $echo "Test 20(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 20(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 20.O $srcdir/20.X > /dev/null 2>&1
@@ -507,7 +507,7 @@ test -s 20.E || rm -f 20.E
 $xx -d < $srcdir/20.I > 20.O 2> 20.E
 code=$?
 if test $code != 0; then
-  $echo "Test 20(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 20(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 20.O $srcdir/20.X > /dev/null 2>&1
@@ -525,7 +525,7 @@ test -s 20.E || rm -f 20.E
 cat $srcdir/21.I | $xx -d > 21.O 2> 21.E
 code=$?
 if test $code != 0; then
-  $echo "Test 21(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 21(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 21.O $srcdir/21.X > /dev/null 2>&1
@@ -543,7 +543,7 @@ test -s 21.E || rm -f 21.E
 $xx -d < $srcdir/21.I > 21.O 2> 21.E
 code=$?
 if test $code != 0; then
-  $echo "Test 21(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 21(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 21.O $srcdir/21.X > /dev/null 2>&1
@@ -561,7 +561,7 @@ test -s 21.E || rm -f 21.E
 cat $srcdir/22.I | $xx -d > 22.O 2> 22.E
 code=$?
 if test $code != 0; then
-  $echo "Test 22(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 22(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 22.O $srcdir/22.X > /dev/null 2>&1
@@ -579,7 +579,7 @@ test -s 22.E || rm -f 22.E
 $xx -d < $srcdir/22.I > 22.O 2> 22.E
 code=$?
 if test $code != 0; then
-  $echo "Test 22(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 22(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 22.O $srcdir/22.X > /dev/null 2>&1
@@ -597,7 +597,7 @@ test -s 22.E || rm -f 22.E
 cat $srcdir/23.I | $xx -d > 23.O 2> 23.E
 code=$?
 if test $code != 0; then
-  $echo "Test 23(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 23(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 23.O $srcdir/23.X > /dev/null 2>&1
@@ -615,7 +615,7 @@ test -s 23.E || rm -f 23.E
 $xx -d < $srcdir/23.I > 23.O 2> 23.E
 code=$?
 if test $code != 0; then
-  $echo "Test 23(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 23(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 23.O $srcdir/23.X > /dev/null 2>&1
@@ -633,7 +633,7 @@ test -s 23.E || rm -f 23.E
 cat $srcdir/obs30.I | _POSIX2_VERSION=199209 $xx -1 > obs30.O 2> obs30.E
 code=$?
 if test $code != 0; then
-  $echo "Test obs30(_POSIX2_VERSION=199209:|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test obs30(_POSIX2_VERSION=199209:|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp obs30.O $srcdir/obs30.X > /dev/null 2>&1
@@ -651,7 +651,7 @@ test -s obs30.E || rm -f obs30.E
 _POSIX2_VERSION=199209 $xx -1 < $srcdir/obs30.I > obs30.O 2> obs30.E
 code=$?
 if test $code != 0; then
-  $echo "Test obs30(_POSIX2_VERSION=199209:<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test obs30(_POSIX2_VERSION=199209:<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp obs30.O $srcdir/obs30.X > /dev/null 2>&1
@@ -669,7 +669,7 @@ test -s obs30.E || rm -f obs30.E
 cat $srcdir/31.I | $xx -f 1 > 31.O 2> 31.E
 code=$?
 if test $code != 0; then
-  $echo "Test 31(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 31(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 31.O $srcdir/31.X > /dev/null 2>&1
@@ -687,7 +687,7 @@ test -s 31.E || rm -f 31.E
 $xx -f 1 < $srcdir/31.I > 31.O 2> 31.E
 code=$?
 if test $code != 0; then
-  $echo "Test 31(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 31(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 31.O $srcdir/31.X > /dev/null 2>&1
@@ -705,7 +705,7 @@ test -s 31.E || rm -f 31.E
 cat $srcdir/32.I | $xx -f 1 > 32.O 2> 32.E
 code=$?
 if test $code != 0; then
-  $echo "Test 32(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 32(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 32.O $srcdir/32.X > /dev/null 2>&1
@@ -723,7 +723,7 @@ test -s 32.E || rm -f 32.E
 $xx -f 1 < $srcdir/32.I > 32.O 2> 32.E
 code=$?
 if test $code != 0; then
-  $echo "Test 32(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 32(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 32.O $srcdir/32.X > /dev/null 2>&1
@@ -741,7 +741,7 @@ test -s 32.E || rm -f 32.E
 cat $srcdir/33.I | $xx -f 1 > 33.O 2> 33.E
 code=$?
 if test $code != 0; then
-  $echo "Test 33(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 33(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 33.O $srcdir/33.X > /dev/null 2>&1
@@ -759,7 +759,7 @@ test -s 33.E || rm -f 33.E
 $xx -f 1 < $srcdir/33.I > 33.O 2> 33.E
 code=$?
 if test $code != 0; then
-  $echo "Test 33(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 33(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 33.O $srcdir/33.X > /dev/null 2>&1
@@ -777,7 +777,7 @@ test -s 33.E || rm -f 33.E
 cat $srcdir/34.I | $xx -f 1 > 34.O 2> 34.E
 code=$?
 if test $code != 0; then
-  $echo "Test 34(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 34(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 34.O $srcdir/34.X > /dev/null 2>&1
@@ -795,7 +795,7 @@ test -s 34.E || rm -f 34.E
 $xx -f 1 < $srcdir/34.I > 34.O 2> 34.E
 code=$?
 if test $code != 0; then
-  $echo "Test 34(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 34(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 34.O $srcdir/34.X > /dev/null 2>&1
@@ -813,7 +813,7 @@ test -s 34.E || rm -f 34.E
 cat $srcdir/35.I | $xx -f 2 > 35.O 2> 35.E
 code=$?
 if test $code != 0; then
-  $echo "Test 35(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 35(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 35.O $srcdir/35.X > /dev/null 2>&1
@@ -831,7 +831,7 @@ test -s 35.E || rm -f 35.E
 $xx -f 2 < $srcdir/35.I > 35.O 2> 35.E
 code=$?
 if test $code != 0; then
-  $echo "Test 35(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 35(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 35.O $srcdir/35.X > /dev/null 2>&1
@@ -849,7 +849,7 @@ test -s 35.E || rm -f 35.E
 cat $srcdir/obs40.I | _POSIX2_VERSION=199209 $xx +1 > obs40.O 2> obs40.E
 code=$?
 if test $code != 0; then
-  $echo "Test obs40(_POSIX2_VERSION=199209:|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test obs40(_POSIX2_VERSION=199209:|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp obs40.O $srcdir/obs40.X > /dev/null 2>&1
@@ -867,7 +867,7 @@ test -s obs40.E || rm -f obs40.E
 _POSIX2_VERSION=199209 $xx +1 < $srcdir/obs40.I > obs40.O 2> obs40.E
 code=$?
 if test $code != 0; then
-  $echo "Test obs40(_POSIX2_VERSION=199209:<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test obs40(_POSIX2_VERSION=199209:<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp obs40.O $srcdir/obs40.X > /dev/null 2>&1
@@ -885,7 +885,7 @@ test -s obs40.E || rm -f obs40.E
 cat $srcdir/obs41.I | _POSIX2_VERSION=199209 $xx +1 > obs41.O 2> obs41.E
 code=$?
 if test $code != 0; then
-  $echo "Test obs41(_POSIX2_VERSION=199209:|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test obs41(_POSIX2_VERSION=199209:|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp obs41.O $srcdir/obs41.X > /dev/null 2>&1
@@ -903,7 +903,7 @@ test -s obs41.E || rm -f obs41.E
 _POSIX2_VERSION=199209 $xx +1 < $srcdir/obs41.I > obs41.O 2> obs41.E
 code=$?
 if test $code != 0; then
-  $echo "Test obs41(_POSIX2_VERSION=199209:<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test obs41(_POSIX2_VERSION=199209:<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp obs41.O $srcdir/obs41.X > /dev/null 2>&1
@@ -921,7 +921,7 @@ test -s obs41.E || rm -f obs41.E
 cat $srcdir/42.I | $xx -s 1 > 42.O 2> 42.E
 code=$?
 if test $code != 0; then
-  $echo "Test 42(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 42(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 42.O $srcdir/42.X > /dev/null 2>&1
@@ -939,7 +939,7 @@ test -s 42.E || rm -f 42.E
 $xx -s 1 < $srcdir/42.I > 42.O 2> 42.E
 code=$?
 if test $code != 0; then
-  $echo "Test 42(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 42(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 42.O $srcdir/42.X > /dev/null 2>&1
@@ -957,7 +957,7 @@ test -s 42.E || rm -f 42.E
 cat $srcdir/43.I | $xx -s 2 > 43.O 2> 43.E
 code=$?
 if test $code != 0; then
-  $echo "Test 43(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 43(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 43.O $srcdir/43.X > /dev/null 2>&1
@@ -975,7 +975,7 @@ test -s 43.E || rm -f 43.E
 $xx -s 2 < $srcdir/43.I > 43.O 2> 43.E
 code=$?
 if test $code != 0; then
-  $echo "Test 43(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 43(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 43.O $srcdir/43.X > /dev/null 2>&1
@@ -993,7 +993,7 @@ test -s 43.E || rm -f 43.E
 cat $srcdir/obs44.I | _POSIX2_VERSION=199209 $xx +1 -- > obs44.O 2> obs44.E
 code=$?
 if test $code != 0; then
-  $echo "Test obs44(_POSIX2_VERSION=199209:|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test obs44(_POSIX2_VERSION=199209:|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp obs44.O $srcdir/obs44.X > /dev/null 2>&1
@@ -1011,7 +1011,7 @@ test -s obs44.E || rm -f obs44.E
 _POSIX2_VERSION=199209 $xx +1 -- < $srcdir/obs44.I > obs44.O 2> obs44.E
 code=$?
 if test $code != 0; then
-  $echo "Test obs44(_POSIX2_VERSION=199209:<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test obs44(_POSIX2_VERSION=199209:<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp obs44.O $srcdir/obs44.X > /dev/null 2>&1
@@ -1029,7 +1029,7 @@ test -s obs44.E || rm -f obs44.E
 cat $srcdir/obs45.I | _POSIX2_VERSION=199209 $xx +1 -- > obs45.O 2> obs45.E
 code=$?
 if test $code != 0; then
-  $echo "Test obs45(_POSIX2_VERSION=199209:|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test obs45(_POSIX2_VERSION=199209:|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp obs45.O $srcdir/obs45.X > /dev/null 2>&1
@@ -1047,7 +1047,7 @@ test -s obs45.E || rm -f obs45.E
 _POSIX2_VERSION=199209 $xx +1 -- < $srcdir/obs45.I > obs45.O 2> obs45.E
 code=$?
 if test $code != 0; then
-  $echo "Test obs45(_POSIX2_VERSION=199209:<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test obs45(_POSIX2_VERSION=199209:<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp obs45.O $srcdir/obs45.X > /dev/null 2>&1
@@ -1065,7 +1065,7 @@ test -s obs45.E || rm -f obs45.E
 cat $srcdir/50.I | $xx -f 1 -s 1 > 50.O 2> 50.E
 code=$?
 if test $code != 0; then
-  $echo "Test 50(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 50(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 50.O $srcdir/50.X > /dev/null 2>&1
@@ -1083,7 +1083,7 @@ test -s 50.E || rm -f 50.E
 $xx -f 1 -s 1 < $srcdir/50.I > 50.O 2> 50.E
 code=$?
 if test $code != 0; then
-  $echo "Test 50(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 50(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 50.O $srcdir/50.X > /dev/null 2>&1
@@ -1101,7 +1101,7 @@ test -s 50.E || rm -f 50.E
 cat $srcdir/51.I | $xx -f 1 -s 1 > 51.O 2> 51.E
 code=$?
 if test $code != 0; then
-  $echo "Test 51(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 51(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 51.O $srcdir/51.X > /dev/null 2>&1
@@ -1119,7 +1119,7 @@ test -s 51.E || rm -f 51.E
 $xx -f 1 -s 1 < $srcdir/51.I > 51.O 2> 51.E
 code=$?
 if test $code != 0; then
-  $echo "Test 51(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 51(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 51.O $srcdir/51.X > /dev/null 2>&1
@@ -1137,7 +1137,7 @@ test -s 51.E || rm -f 51.E
 cat $srcdir/52.I | $xx -s 1 -f 1 > 52.O 2> 52.E
 code=$?
 if test $code != 0; then
-  $echo "Test 52(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 52(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 52.O $srcdir/52.X > /dev/null 2>&1
@@ -1155,7 +1155,7 @@ test -s 52.E || rm -f 52.E
 $xx -s 1 -f 1 < $srcdir/52.I > 52.O 2> 52.E
 code=$?
 if test $code != 0; then
-  $echo "Test 52(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 52(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 52.O $srcdir/52.X > /dev/null 2>&1
@@ -1173,7 +1173,7 @@ test -s 52.E || rm -f 52.E
 cat $srcdir/53.I | $xx -s 1 -f 1 > 53.O 2> 53.E
 code=$?
 if test $code != 0; then
-  $echo "Test 53(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 53(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 53.O $srcdir/53.X > /dev/null 2>&1
@@ -1191,7 +1191,7 @@ test -s 53.E || rm -f 53.E
 $xx -s 1 -f 1 < $srcdir/53.I > 53.O 2> 53.E
 code=$?
 if test $code != 0; then
-  $echo "Test 53(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 53(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 53.O $srcdir/53.X > /dev/null 2>&1
@@ -1209,7 +1209,7 @@ test -s 53.E || rm -f 53.E
 cat $srcdir/54.I | $xx -s 4 > 54.O 2> 54.E
 code=$?
 if test $code != 0; then
-  $echo "Test 54(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 54(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 54.O $srcdir/54.X > /dev/null 2>&1
@@ -1227,7 +1227,7 @@ test -s 54.E || rm -f 54.E
 $xx -s 4 < $srcdir/54.I > 54.O 2> 54.E
 code=$?
 if test $code != 0; then
-  $echo "Test 54(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 54(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 54.O $srcdir/54.X > /dev/null 2>&1
@@ -1245,7 +1245,7 @@ test -s 54.E || rm -f 54.E
 cat $srcdir/55.I | $xx -s 0 > 55.O 2> 55.E
 code=$?
 if test $code != 0; then
-  $echo "Test 55(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 55(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 55.O $srcdir/55.X > /dev/null 2>&1
@@ -1263,7 +1263,7 @@ test -s 55.E || rm -f 55.E
 $xx -s 0 < $srcdir/55.I > 55.O 2> 55.E
 code=$?
 if test $code != 0; then
-  $echo "Test 55(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 55(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 55.O $srcdir/55.X > /dev/null 2>&1
@@ -1281,7 +1281,7 @@ test -s 55.E || rm -f 55.E
 cat $srcdir/56.I | $xx -s 0 > 56.O 2> 56.E
 code=$?
 if test $code != 0; then
-  $echo "Test 56(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 56(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 56.O $srcdir/56.X > /dev/null 2>&1
@@ -1299,7 +1299,7 @@ test -s 56.E || rm -f 56.E
 $xx -s 0 < $srcdir/56.I > 56.O 2> 56.E
 code=$?
 if test $code != 0; then
-  $echo "Test 56(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 56(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 56.O $srcdir/56.X > /dev/null 2>&1
@@ -1317,7 +1317,7 @@ test -s 56.E || rm -f 56.E
 cat $srcdir/57.I | $xx -w 0 > 57.O 2> 57.E
 code=$?
 if test $code != 0; then
-  $echo "Test 57(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 57(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 57.O $srcdir/57.X > /dev/null 2>&1
@@ -1335,7 +1335,7 @@ test -s 57.E || rm -f 57.E
 $xx -w 0 < $srcdir/57.I > 57.O 2> 57.E
 code=$?
 if test $code != 0; then
-  $echo "Test 57(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 57(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 57.O $srcdir/57.X > /dev/null 2>&1
@@ -1353,7 +1353,7 @@ test -s 57.E || rm -f 57.E
 cat $srcdir/60.I | $xx -w 1 > 60.O 2> 60.E
 code=$?
 if test $code != 0; then
-  $echo "Test 60(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 60(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 60.O $srcdir/60.X > /dev/null 2>&1
@@ -1371,7 +1371,7 @@ test -s 60.E || rm -f 60.E
 $xx -w 1 < $srcdir/60.I > 60.O 2> 60.E
 code=$?
 if test $code != 0; then
-  $echo "Test 60(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 60(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 60.O $srcdir/60.X > /dev/null 2>&1
@@ -1389,7 +1389,7 @@ test -s 60.E || rm -f 60.E
 cat $srcdir/61.I | $xx -w 3 > 61.O 2> 61.E
 code=$?
 if test $code != 0; then
-  $echo "Test 61(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 61(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 61.O $srcdir/61.X > /dev/null 2>&1
@@ -1407,7 +1407,7 @@ test -s 61.E || rm -f 61.E
 $xx -w 3 < $srcdir/61.I > 61.O 2> 61.E
 code=$?
 if test $code != 0; then
-  $echo "Test 61(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 61(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 61.O $srcdir/61.X > /dev/null 2>&1
@@ -1425,7 +1425,7 @@ test -s 61.E || rm -f 61.E
 cat $srcdir/62.I | $xx -w 1 -f 1 > 62.O 2> 62.E
 code=$?
 if test $code != 0; then
-  $echo "Test 62(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 62(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 62.O $srcdir/62.X > /dev/null 2>&1
@@ -1443,7 +1443,7 @@ test -s 62.E || rm -f 62.E
 $xx -w 1 -f 1 < $srcdir/62.I > 62.O 2> 62.E
 code=$?
 if test $code != 0; then
-  $echo "Test 62(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 62(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 62.O $srcdir/62.X > /dev/null 2>&1
@@ -1461,7 +1461,7 @@ test -s 62.E || rm -f 62.E
 cat $srcdir/63.I | $xx -f 1 -w 1 > 63.O 2> 63.E
 code=$?
 if test $code != 0; then
-  $echo "Test 63(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 63(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 63.O $srcdir/63.X > /dev/null 2>&1
@@ -1479,7 +1479,7 @@ test -s 63.E || rm -f 63.E
 $xx -f 1 -w 1 < $srcdir/63.I > 63.O 2> 63.E
 code=$?
 if test $code != 0; then
-  $echo "Test 63(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 63(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 63.O $srcdir/63.X > /dev/null 2>&1
@@ -1497,7 +1497,7 @@ test -s 63.E || rm -f 63.E
 cat $srcdir/64.I | $xx -f 1 -w 4 > 64.O 2> 64.E
 code=$?
 if test $code != 0; then
-  $echo "Test 64(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 64(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 64.O $srcdir/64.X > /dev/null 2>&1
@@ -1515,7 +1515,7 @@ test -s 64.E || rm -f 64.E
 $xx -f 1 -w 4 < $srcdir/64.I > 64.O 2> 64.E
 code=$?
 if test $code != 0; then
-  $echo "Test 64(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 64(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 64.O $srcdir/64.X > /dev/null 2>&1
@@ -1533,7 +1533,7 @@ test -s 64.E || rm -f 64.E
 cat $srcdir/65.I | $xx -f 1 -w 3 > 65.O 2> 65.E
 code=$?
 if test $code != 0; then
-  $echo "Test 65(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 65(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 65.O $srcdir/65.X > /dev/null 2>&1
@@ -1551,7 +1551,7 @@ test -s 65.E || rm -f 65.E
 $xx -f 1 -w 3 < $srcdir/65.I > 65.O 2> 65.E
 code=$?
 if test $code != 0; then
-  $echo "Test 65(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 65(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 65.O $srcdir/65.X > /dev/null 2>&1
@@ -1569,7 +1569,7 @@ test -s 65.E || rm -f 65.E
 cat $srcdir/90.I | $xx  > 90.O 2> 90.E
 code=$?
 if test $code != 0; then
-  $echo "Test 90(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 90(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 90.O $srcdir/90.X > /dev/null 2>&1
@@ -1587,7 +1587,7 @@ test -s 90.E || rm -f 90.E
 $xx  < $srcdir/90.I > 90.O 2> 90.E
 code=$?
 if test $code != 0; then
-  $echo "Test 90(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 90(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 90.O $srcdir/90.X > /dev/null 2>&1
@@ -1605,7 +1605,7 @@ test -s 90.E || rm -f 90.E
 cat $srcdir/91.I | $xx  > 91.O 2> 91.E
 code=$?
 if test $code != 0; then
-  $echo "Test 91(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 91(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 91.O $srcdir/91.X > /dev/null 2>&1
@@ -1623,7 +1623,7 @@ test -s 91.E || rm -f 91.E
 $xx  < $srcdir/91.I > 91.O 2> 91.E
 code=$?
 if test $code != 0; then
-  $echo "Test 91(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 91(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 91.O $srcdir/91.X > /dev/null 2>&1
@@ -1641,7 +1641,7 @@ test -s 91.E || rm -f 91.E
 cat $srcdir/92.I | $xx -f 1 > 92.O 2> 92.E
 code=$?
 if test $code != 0; then
-  $echo "Test 92(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 92(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 92.O $srcdir/92.X > /dev/null 2>&1
@@ -1659,7 +1659,7 @@ test -s 92.E || rm -f 92.E
 $xx -f 1 < $srcdir/92.I > 92.O 2> 92.E
 code=$?
 if test $code != 0; then
-  $echo "Test 92(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 92(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 92.O $srcdir/92.X > /dev/null 2>&1
@@ -1677,7 +1677,7 @@ test -s 92.E || rm -f 92.E
 cat $srcdir/93.I | $xx -f 2 > 93.O 2> 93.E
 code=$?
 if test $code != 0; then
-  $echo "Test 93(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 93(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 93.O $srcdir/93.X > /dev/null 2>&1
@@ -1695,7 +1695,7 @@ test -s 93.E || rm -f 93.E
 $xx -f 2 < $srcdir/93.I > 93.O 2> 93.E
 code=$?
 if test $code != 0; then
-  $echo "Test 93(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 93(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 93.O $srcdir/93.X > /dev/null 2>&1
@@ -1713,7 +1713,7 @@ test -s 93.E || rm -f 93.E
 cat $srcdir/94.I | $xx -f 1 > 94.O 2> 94.E
 code=$?
 if test $code != 0; then
-  $echo "Test 94(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 94(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 94.O $srcdir/94.X > /dev/null 2>&1
@@ -1731,7 +1731,7 @@ test -s 94.E || rm -f 94.E
 $xx -f 1 < $srcdir/94.I > 94.O 2> 94.E
 code=$?
 if test $code != 0; then
-  $echo "Test 94(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 94(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 94.O $srcdir/94.X > /dev/null 2>&1
@@ -1749,7 +1749,7 @@ test -s 94.E || rm -f 94.E
 cat $srcdir/101.I | $xx -c > 101.O 2> 101.E
 code=$?
 if test $code != 0; then
-  $echo "Test 101(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 101(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 101.O $srcdir/101.X > /dev/null 2>&1
@@ -1767,7 +1767,7 @@ test -s 101.E || rm -f 101.E
 $xx -c < $srcdir/101.I > 101.O 2> 101.E
 code=$?
 if test $code != 0; then
-  $echo "Test 101(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 101(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 101.O $srcdir/101.X > /dev/null 2>&1
@@ -1785,7 +1785,7 @@ test -s 101.E || rm -f 101.E
 cat $srcdir/102.I | $xx -c > 102.O 2> 102.E
 code=$?
 if test $code != 0; then
-  $echo "Test 102(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 102(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 102.O $srcdir/102.X > /dev/null 2>&1
@@ -1803,7 +1803,7 @@ test -s 102.E || rm -f 102.E
 $xx -c < $srcdir/102.I > 102.O 2> 102.E
 code=$?
 if test $code != 0; then
-  $echo "Test 102(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 102(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 102.O $srcdir/102.X > /dev/null 2>&1
@@ -1821,7 +1821,7 @@ test -s 102.E || rm -f 102.E
 cat $srcdir/110.I | $xx -D > 110.O 2> 110.E
 code=$?
 if test $code != 0; then
-  $echo "Test 110(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 110(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 110.O $srcdir/110.X > /dev/null 2>&1
@@ -1839,7 +1839,7 @@ test -s 110.E || rm -f 110.E
 $xx -D < $srcdir/110.I > 110.O 2> 110.E
 code=$?
 if test $code != 0; then
-  $echo "Test 110(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 110(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 110.O $srcdir/110.X > /dev/null 2>&1
@@ -1857,7 +1857,7 @@ test -s 110.E || rm -f 110.E
 cat $srcdir/111.I | $xx -D -w1 > 111.O 2> 111.E
 code=$?
 if test $code != 0; then
-  $echo "Test 111(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 111(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 111.O $srcdir/111.X > /dev/null 2>&1
@@ -1875,7 +1875,7 @@ test -s 111.E || rm -f 111.E
 $xx -D -w1 < $srcdir/111.I > 111.O 2> 111.E
 code=$?
 if test $code != 0; then
-  $echo "Test 111(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 111(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 111.O $srcdir/111.X > /dev/null 2>&1
@@ -1893,7 +1893,7 @@ test -s 111.E || rm -f 111.E
 cat $srcdir/112.I | $xx -D -c > 112.O 2> 112.E
 code=$?
 if test $code != 1; then
-  $echo "Test 112(|) failed: ../../src/uniq return code $code differs from expected value 1" 1>&2
+  $echo "Test 112(|) failed: $xx return code $code differs from expected value 1" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 112.O $srcdir/112.X > /dev/null 2>&1
@@ -1911,7 +1911,7 @@ test -s 112.E || rm -f 112.E
 $xx -D -c < $srcdir/112.I > 112.O 2> 112.E
 code=$?
 if test $code != 1; then
-  $echo "Test 112(<) failed: ../../src/uniq return code $code differs from expected value 1" 1>&2
+  $echo "Test 112(<) failed: $xx return code $code differs from expected value 1" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 112.O $srcdir/112.X > /dev/null 2>&1
@@ -1929,7 +1929,7 @@ test -s 112.E || rm -f 112.E
 cat $srcdir/113.I | $xx --all-repeated=separate > 113.O 2> 113.E
 code=$?
 if test $code != 0; then
-  $echo "Test 113(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 113(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 113.O $srcdir/113.X > /dev/null 2>&1
@@ -1947,7 +1947,7 @@ test -s 113.E || rm -f 113.E
 $xx --all-repeated=separate < $srcdir/113.I > 113.O 2> 113.E
 code=$?
 if test $code != 0; then
-  $echo "Test 113(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 113(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 113.O $srcdir/113.X > /dev/null 2>&1
@@ -1965,7 +1965,7 @@ test -s 113.E || rm -f 113.E
 cat $srcdir/114.I | $xx --all-repeated=separate > 114.O 2> 114.E
 code=$?
 if test $code != 0; then
-  $echo "Test 114(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 114(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 114.O $srcdir/114.X > /dev/null 2>&1
@@ -1983,7 +1983,7 @@ test -s 114.E || rm -f 114.E
 $xx --all-repeated=separate < $srcdir/114.I > 114.O 2> 114.E
 code=$?
 if test $code != 0; then
-  $echo "Test 114(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 114(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 114.O $srcdir/114.X > /dev/null 2>&1
@@ -2001,7 +2001,7 @@ test -s 114.E || rm -f 114.E
 cat $srcdir/115.I | $xx --all-repeated=separate > 115.O 2> 115.E
 code=$?
 if test $code != 0; then
-  $echo "Test 115(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 115(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 115.O $srcdir/115.X > /dev/null 2>&1
@@ -2019,7 +2019,7 @@ test -s 115.E || rm -f 115.E
 $xx --all-repeated=separate < $srcdir/115.I > 115.O 2> 115.E
 code=$?
 if test $code != 0; then
-  $echo "Test 115(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 115(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 115.O $srcdir/115.X > /dev/null 2>&1
@@ -2037,7 +2037,7 @@ test -s 115.E || rm -f 115.E
 cat $srcdir/116.I | $xx --all-repeated=prepend > 116.O 2> 116.E
 code=$?
 if test $code != 0; then
-  $echo "Test 116(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 116(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 116.O $srcdir/116.X > /dev/null 2>&1
@@ -2055,7 +2055,7 @@ test -s 116.E || rm -f 116.E
 $xx --all-repeated=prepend < $srcdir/116.I > 116.O 2> 116.E
 code=$?
 if test $code != 0; then
-  $echo "Test 116(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 116(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 116.O $srcdir/116.X > /dev/null 2>&1
@@ -2073,7 +2073,7 @@ test -s 116.E || rm -f 116.E
 cat $srcdir/117.I | $xx --all-repeated=prepend > 117.O 2> 117.E
 code=$?
 if test $code != 0; then
-  $echo "Test 117(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 117(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 117.O $srcdir/117.X > /dev/null 2>&1
@@ -2091,7 +2091,7 @@ test -s 117.E || rm -f 117.E
 $xx --all-repeated=prepend < $srcdir/117.I > 117.O 2> 117.E
 code=$?
 if test $code != 0; then
-  $echo "Test 117(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 117(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 117.O $srcdir/117.X > /dev/null 2>&1
@@ -2109,7 +2109,7 @@ test -s 117.E || rm -f 117.E
 cat $srcdir/118.I | $xx --all-repeated=prepend > 118.O 2> 118.E
 code=$?
 if test $code != 0; then
-  $echo "Test 118(|) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 118(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 118.O $srcdir/118.X > /dev/null 2>&1
@@ -2127,7 +2127,7 @@ test -s 118.E || rm -f 118.E
 $xx --all-repeated=prepend < $srcdir/118.I > 118.O 2> 118.E
 code=$?
 if test $code != 0; then
-  $echo "Test 118(<) failed: ../../src/uniq return code $code differs from expected value 0" 1>&2
+  $echo "Test 118(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 118.O $srcdir/118.X > /dev/null 2>&1
@@ -2145,7 +2145,7 @@ test -s 118.E || rm -f 118.E
 cat $srcdir/119.I | $xx --all-repeated=badoption > 119.O 2> 119.E
 code=$?
 if test $code != 1; then
-  $echo "Test 119(|) failed: ../../src/uniq return code $code differs from expected value 1" 1>&2
+  $echo "Test 119(|) failed: $xx return code $code differs from expected value 1" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 119.O $srcdir/119.X > /dev/null 2>&1
@@ -2163,7 +2163,7 @@ test -s 119.E || rm -f 119.E
 $xx --all-repeated=badoption < $srcdir/119.I > 119.O 2> 119.E
 code=$?
 if test $code != 1; then
-  $echo "Test 119(<) failed: ../../src/uniq return code $code differs from expected value 1" 1>&2
+  $echo "Test 119(<) failed: $xx return code $code differs from expected value 1" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 119.O $srcdir/119.X > /dev/null 2>&1
@@ -2178,8 +2178,44 @@ else
   esac
 fi
 test -s 119.E || rm -f 119.E
+cat $srcdir/120.I | $xx -d -u > 120.O 2> 120.E
+code=$?
+if test $code != 0; then
+  $echo "Test 120(|) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp 120.O $srcdir/120.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed 120(|)"; fi;;
+    1) $echo "Test 120(|) failed: files 120.O and $srcdir/120.X differ" 1>&2
+       (diff -c 120.O $srcdir/120.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test 120(|) may have failed." 1>&2
+       $echo The command "cmp 120.O $srcdir/120.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s 120.E || rm -f 120.E
+$xx -d -u < $srcdir/120.I > 120.O 2> 120.E
+code=$?
+if test $code != 0; then
+  $echo "Test 120(<) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp 120.O $srcdir/120.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed 120(<)"; fi;;
+    1) $echo "Test 120(<) failed: files 120.O and $srcdir/120.X differ" 1>&2
+       (diff -c 120.O $srcdir/120.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test 120(<) may have failed." 1>&2
+       $echo The command "cmp 120.O $srcdir/120.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s 120.E || rm -f 120.E
 if test $errors = 0; then
-  $echo Passed all 120 tests. 1>&2
+  $echo Passed all 122 tests. 1>&2
 else
   $echo Failed $errors tests. 1>&2
 fi

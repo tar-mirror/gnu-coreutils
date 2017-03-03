@@ -1,5 +1,6 @@
 /* userspec.c -- Parse a user and group string.
-   Copyright (C) 1989-1992, 1997, 1998, 2000, 2002 Free Software Foundation, Inc.
+   Copyright (C) 1989-1992, 1997-1998, 2000, 2002-2003 Free Software
+   Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,19 +22,7 @@
 # include <config.h>
 #endif
 
-#ifdef __GNUC__
-# define alloca __builtin_alloca
-#else
-# if HAVE_ALLOCA_H
-#  include <alloca.h>
-# else
-#  ifdef _AIX
- #  pragma alloca
-#  else
-char *alloca ();
-#  endif
-# endif
-#endif
+#include <alloca.h>
 
 #include <stdio.h>
 #include <sys/types.h>
@@ -44,27 +33,16 @@ char *alloca ();
 # include <sys/param.h>
 #endif
 
-#if HAVE_LIMITS_H
-# include <limits.h>
-#endif
-
-#if HAVE_STRING_H
-# include <string.h>
-#else
-# include <strings.h>
-# ifndef strchr
-#  define strchr index
-# endif
-#endif
-
-#if STDC_HEADERS
-# include <stdlib.h>
-#endif
+#include <limits.h>
+#include <stdlib.h>
+#include <string.h>
 
 #if HAVE_UNISTD_H
 # include <unistd.h>
 #endif
 
+#include "userspec.h"
+#include "posixver.h"
 #include "xalloc.h"
 #include "xstrtol.h"
 
@@ -84,10 +62,6 @@ struct group *getgrgid ();
 
 #ifndef HAVE_ENDPWENT
 # define endpwent() ((void) 0)
-#endif
-
-#ifndef CHAR_BIT
-# define CHAR_BIT 8
 #endif
 
 /* The extra casts work around common compiler bugs.  */
@@ -197,7 +171,7 @@ parse_user_spec (const char *spec_arg, uid_t *uid, gid_t *gid,
   separator = strchr (spec, ':');
 
   /* If there is no colon, then see if there's a `.'.  */
-  if (separator == NULL)
+  if (separator == NULL && posix2_version () < 200112)
     {
       dot = strchr (spec, '.');
       /* If there's no colon but there is a `.', then first look up the

@@ -1,5 +1,5 @@
 /* hostname - set or print the name of current host system
-   Copyright (C) 1994-1997, 1999-2002 Free Software Foundation, Inc.
+   Copyright (C) 1994-1997, 1999-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,14 +15,13 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-/* Jim Meyering <meyering@comco.com> */
+/* Written by Jim Meyering.  */
 
 #include <config.h>
 #include <stdio.h>
 #include <sys/types.h>
 
 #include "system.h"
-#include "closeout.h"
 #include "long-options.h"
 #include "error.h"
 
@@ -59,7 +58,7 @@ char *program_name;
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -83,6 +82,7 @@ main (int argc, char **argv)
 {
   char *hostname;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -91,7 +91,7 @@ main (int argc, char **argv)
   atexit (close_stdout);
 
   parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
-		      AUTHORS, usage);
+		      usage, AUTHORS, (char const *) NULL);
 
 #ifdef HAVE_SETHOSTNAME
   if (argc == 2)
@@ -110,7 +110,7 @@ main (int argc, char **argv)
 	   _("cannot set hostname; this system lacks the functionality"));
 #endif
 
-  if (argc == 1)
+  if (argc <= 1)
     {
       hostname = xgethostname ();
       if (hostname == NULL)
@@ -119,7 +119,7 @@ main (int argc, char **argv)
     }
   else
     {
-      error (2, 0, _("too many arguments"));
+      error (0, 0, _("too many arguments"));
       usage (EXIT_FAILURE);
     }
 

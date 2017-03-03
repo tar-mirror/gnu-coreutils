@@ -1,5 +1,5 @@
 /* Compute MD5 or SHA1 checksum of files or strings
-   Copyright (C) 1995-2002 Free Software Foundation, Inc.
+   Copyright (C) 1995-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,16 +26,15 @@
 #include "system.h"
 
 #include "md5.h"
-#include "sha.h"
+#include "sha1.h"
 #include "checksum.h"
 #include "getline.h"
-#include "closeout.h"
 #include "error.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME (algorithm == ALG_MD5 ? "md5sum" : "shasum")
 
-#define AUTHORS N_ ("Ulrich Drepper and Scott Miller")
+#define AUTHORS "Ulrich Drepper", "Scott Miller"
 
 /* Most systems do not distinguish between external and internal
    text representations.  */
@@ -117,7 +116,7 @@ static const struct option long_options[] =
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -157,7 +156,46 @@ text), and name for each FILE.\n"),
       printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
     }
 
-  exit (status == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
+  exit (status);
+}
+
+#define ISWHITE(c) ((c) == ' ' || (c) == '\t')
+
+/* Split the checksum string S (of length S_LEN) from a BSD 'md5' or
+   'sha1' command into two parts: a hexadecimal digest, and the file
+   name.  S is modified.  */
+
+static int
+bsd_split_3 (char *s, size_t s_len, unsigned char **hex_digest, char **file_name)
+{
+  size_t i;
+
+  *file_name = s;
+
+  /* Find end of filename. The BSD 'md5' and 'sha1' commands do not escape
+     filenames, so search backwards for the last ')'. */
+  i = s_len - 1;
+  while (i && s[i] != ')')
+    i--;
+
+  if (s[i] != ')')
+    return 1;
+
+  s[i++] = '\0';
+
+  while (ISWHITE (s[i]))
+    i++;
+
+  if (s[i] != '=')
+    return 1;
+
+  i++;
+
+  while (ISWHITE (s[i]))
+    i++;
+
+  *hex_digest = (unsigned char *) &s[i];
+  return 0;
 }
 
 /* Split the string S (of length S_LEN) into three parts:
@@ -170,12 +208,24 @@ split_3 (char *s, size_t s_len,
 {
   size_t i;
   int escaped_filename = 0;
-
-#define ISWHITE(c) ((c) == ' ' || (c) == '\t')
+  size_t algo_name_len;
 
   i = 0;
   while (ISWHITE (s[i]))
     ++i;
+
+  /* Check for BSD-style checksum line. */
+  algo_name_len = strlen (DIGEST_TYPE_STRING (algorithm));
+  if (strncmp (s + i, DIGEST_TYPE_STRING (algorithm), algo_name_len) == 0)
+    {
+      if (strncmp (s + i + algo_name_len, " (", 2) == 0)
+	{
+	  *binary = 0;
+	  return bsd_split_3 (s +      i + algo_name_len + 2,
+			      s_len - (i + algo_name_len + 2),
+			      hex_digest, file_name);
+	}
+    }
 
   /* Ignore this line if it is too short.
      Each line must have at least `min_digest_line_length - 1' (or one more, if
@@ -496,7 +546,7 @@ main (int argc, char **argv)
   int opt;
   char **string = NULL;
   size_t n_strings = 0;
-  size_t err = 0;
+  int err = 0;
   int file_type_specified = 0;
 
 #if O_BINARY
@@ -509,6 +559,7 @@ main (int argc, char **argv)
 #endif
 
   /* Setting values of global variables.  */
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -524,7 +575,7 @@ main (int argc, char **argv)
       case 1: /* --string */
 	{
 	  if (string == NULL)
-	    string = (char **) xmalloc ((argc - 1) * sizeof (char *));
+	    string = xmalloc ((argc - 1) * sizeof (char *));
 
 	  if (optarg == NULL)
 	    optarg = "";

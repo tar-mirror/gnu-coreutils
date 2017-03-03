@@ -24,14 +24,13 @@ n-5.E n-5a.O n-5a.E n-5b.O n-5b.E
 EXTRA_DIST = Test.pm $x-tests $(explicit) $(maint_gen)
 noinst_SCRIPTS = $x-tests
 
-PERL = @PERL@
-editpl = sed -e 's,@''PERL''@,$(PERL),g' -e 's,@''srcdir''@,@srcdir@,g'
+editpl = sed -e 's,@''PERL''@,$(PERL),g' -e 's,@''srcdir''@,$(srcdir),g'
 
 TESTS = $x-tests
 
 mk_script = $(srcdir)/../mk-script
 $(srcdir)/$x-tests: $(mk_script) Test.pm
-	$(PERL) -I$(srcdir) -w -- $(mk_script) ../../src/$x > $@.n
+	$(PERL) -I$(srcdir) -w -- $(mk_script) $(srcdir) ../../src/$x > $@.n
 	mv $@.n $@
 	chmod 755 $@
 
@@ -40,11 +39,11 @@ CLEANFILES = $(run_gen)
 
 check: $(maint_gen)
 
-Makefile.am: ../Makefile.am.in Test.pm $(mk_script)
+$(srcdir)/Makefile.am: ../Makefile.am.in Test.pm $(mk_script)
 	rm -f $@ $@t
-	sed -n '1,/^##test-files-begin/p' $< > $@t
+	sed -n '1,/^##test-files-begin/p' $(srcdir)/../Makefile.am.in > $@t
 	tool=`echo $(subdir)|sed 's/^tests.//;s/-test//'`; \
 	  echo "x = $$tool" >> $@t
-	$(PERL) -I$(srcdir) -w -- $(mk_script) --list >> $@t
-	sed -n '/^##test-files-end/,$$p' $< >> $@t
+	$(PERL) -I$(srcdir) -w -- $(mk_script) $(srcdir) --list >> $@t
+	sed -n '/^##test-files-end/,$$p' $(srcdir)/../Makefile.am.in >> $@t
 	mv $@t $@

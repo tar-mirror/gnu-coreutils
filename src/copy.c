@@ -1,5 +1,5 @@
 /* copy.c -- core functions for copying files and directories
-   Copyright (C) 89, 90, 91, 1995-2003 Free Software Foundation.
+   Copyright (C) 89, 90, 91, 1995-2004 Free Software Foundation.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,10 +17,6 @@
 
 /* Extracted from cp.c and librarified by Jim Meyering.  */
 
-#ifdef _AIX
- #pragma alloca
-#endif
-
 #include <config.h>
 #include <stdio.h>
 #include <assert.h>
@@ -31,19 +27,19 @@
 #endif
 
 #include "system.h"
-#include "error.h"
 #include "backupfile.h"
-#include "savedir.h"
 #include "copy.h"
 #include "cp-hash.h"
+#include "dirname.h"
+#include "error.h"
+#include "full-write.h"
 #include "hash.h"
 #include "hash-pjw.h"
-#include "same.h"
-#include "dirname.h"
-#include "full-write.h"
 #include "path-concat.h"
 #include "quote.h"
 #include "same.h"
+#include "savedir.h"
+#include "utimens.h"
 #include "xreadlink.h"
 
 #define DO_CHOWN(Chown, File, New_uid, New_gid)				\
@@ -72,7 +68,7 @@ struct dir_list
 /* Describe a just-created or just-renamed destination file.  */
 struct F_triple
 {
-  char const* name;
+  char *name;
   ino_t st_ino;
   dev_t st_dev;
 };
@@ -166,7 +162,7 @@ copy_dir (const char *src_path_in, const char *dst_path_in, int new_dst,
   /* For cp's -H option, dereference command line arguments, but do not
      dereference symlinks that are found via recursive traversal.  */
   if (x->dereference == DEREF_COMMAND_LINE_ARGUMENTS)
-    non_command_line_options.xstat = lstat;
+    non_command_line_options.dereference = DEREF_NEVER;
 
   namep = name_space;
   while (*namep != '\0')
@@ -314,7 +310,7 @@ copy_reg (const char *src_path, const char *dst_path,
 
   /* Make a buffer with space for a sentinel at the end.  */
 
-  buf = (char *) alloca (buf_size + sizeof (int));
+  buf = alloca (buf_size + sizeof (int));
 
   for (;;)
     {
@@ -424,12 +420,22 @@ close_src_desc:
    making the `copy' operation remove both copies of the file
    in that case, while still allowing the user to e.g., move or
    copy a regular file onto a symlink that points to it.
-   Try to minimize the cost of this function in the common case.  */
+   Try to minimize the cost of this function in the common case.
+   Set *RETURN_NOW if we've determined that the caller has no more
+   work to do and should return successfully, right away.
+
+   Set *UNLINK_SRC if we've determined that the caller wants to do
+   `rename (a, b)' where `a' and `b' are distinct hard links to the same
+   file. In that case, the caller should try to unlink `a' and then return
+   successfully.  Ideally, we wouldn't have to do that, and we'd be
+   able to rely on rename to remove the source file.  However, POSIX
+   mistakenly requires that such a rename call do *nothing* and return
+   successfully.  */
 
 static int
 same_file_ok (const char *src_path, const struct stat *src_sb,
 	      const char *dst_path, const struct stat *dst_sb,
-	      const struct cp_options *x, int *return_now)
+	      const struct cp_options *x, int *return_now, int *unlink_src)
 {
   const struct stat *src_sb_link;
   const struct stat *dst_sb_link;
@@ -440,6 +446,7 @@ same_file_ok (const char *src_path, const struct stat *src_sb,
   int same = (SAME_INODE (*src_sb, *dst_sb));
 
   *return_now = 0;
+  *unlink_src = 0;
 
   /* FIXME: this should (at the very least) be moved into the following
      if-block.  More likely, it should be removed, because it inhibits
@@ -452,7 +459,7 @@ same_file_ok (const char *src_path, const struct stat *src_sb,
       return 1;
     }
 
-  if (x->xstat == lstat)
+  if (x->dereference == DEREF_NEVER)
     {
       same_link = same;
 
@@ -548,10 +555,23 @@ same_file_ok (const char *src_path, const struct stat *src_sb,
      destination file before opening it -- via `rename' if they're on
      the same file system, via `unlink (DST_PATH)' otherwise.
      It's also ok if they're distinct hard links to the same file.  */
-  if ((x->move_mode || x->unlink_dest_before_opening)
-      && (S_ISLNK (dst_sb_link->st_mode)
-	  || (same_link && !same_name (src_path, dst_path))))
-    return 1;
+  if (x->move_mode || x->unlink_dest_before_opening)
+    {
+      if (S_ISLNK (dst_sb_link->st_mode))
+	return 1;
+
+      if (same_link
+	  && 1 < dst_sb_link->st_nlink
+	  && ! same_name (src_path, dst_path))
+	{
+	  if (x->move_mode)
+	    {
+	      *unlink_src = 1;
+	      *return_now = 1;
+	    }
+	  return 1;
+	}
+    }
 
   /* If neither is a symlink, then it's ok as long as they aren't
      hard links to the same file.  */
@@ -575,7 +595,7 @@ same_file_ok (const char *src_path, const struct stat *src_sb,
       && S_ISLNK (dst_sb_link->st_mode))
     return dst_sb_link->st_dev == src_sb_link->st_dev;
 
-  if (x->xstat == lstat)
+  if (x->dereference == DEREF_NEVER)
     {
       if ( ! S_ISLNK (src_sb_link->st_mode))
 	tmp_src_sb = *src_sb_link;
@@ -619,8 +639,8 @@ overwrite_prompt (char const *dst_path, struct stat const *dst_sb)
 }
 
 /* Hash an F_triple.  */
-static unsigned int
-triple_hash (void const *x, unsigned int table_size)
+static size_t
+triple_hash (void const *x, size_t table_size)
 {
   struct F_triple const *p = x;
 
@@ -632,15 +652,15 @@ triple_hash (void const *x, unsigned int table_size)
      to be very large to make the N^2 factor noticable, and
      one would probably encounter a limit on the length of
      a command line before it became a problem.  */
-  unsigned int tmp = hash_pjw (p->name, table_size);
+  size_t tmp = hash_pjw (p->name, table_size);
 
   /* Ignoring the device number here should be fine.  */
   return (tmp | p->st_ino) % table_size;
 }
 
 /* Hash an F_triple.  */
-static unsigned int
-triple_hash_no_name (void const *x, unsigned int table_size)
+static size_t
+triple_hash_no_name (void const *x, size_t table_size)
 {
   struct F_triple const *p = x;
 
@@ -662,7 +682,7 @@ static void
 triple_free (void *x)
 {
   struct F_triple *a = x;
-  free ((char *) (a->name));
+  free (a->name);
   free (a);
 }
 
@@ -713,7 +733,7 @@ seen_file (Hash_table const *ht, char const *filename,
   if (ht == NULL)
     return 0;
 
-  new_ent.name = filename;
+  new_ent.name = (char *) filename;
   new_ent.st_ino = stats->st_ino;
   new_ent.st_dev = stats->st_dev;
 
@@ -734,7 +754,7 @@ record_file (Hash_table *ht, char const *filename,
   if (ht == NULL)
     return;
 
-  ent = (struct F_triple *) xmalloc (sizeof *ent);
+  ent = xmalloc (sizeof *ent);
   ent->name = xstrdup (filename);
   if (stats)
     {
@@ -805,7 +825,8 @@ copy_internal (const char *src_path, const char *dst_path,
     *rename_succeeded = 0;
 
   *copy_into_self = 0;
-  if ((*(x->xstat)) (src_path, &src_sb))
+
+  if (XSTAT (x, src_path, &src_sb))
     {
       error (0, errno, _("cannot stat %s"), quote (src_path));
       return 1;
@@ -841,7 +862,7 @@ copy_internal (const char *src_path, const char *dst_path,
 
   if (!new_dst)
     {
-      if ((*(x->xstat)) (dst_path, &dst_sb))
+      if (XSTAT (x, dst_path, &dst_sb))
 	{
 	  if (errno != ENOENT)
 	    {
@@ -856,8 +877,21 @@ copy_internal (const char *src_path, const char *dst_path,
       else
 	{
 	  int return_now;
+	  int unlink_src;
 	  int ok = same_file_ok (src_path, &src_sb, dst_path, &dst_sb,
-				 x, &return_now);
+				 x, &return_now, &unlink_src);
+	  if (unlink_src)
+	    {
+	      if (unlink (src_path))
+		{
+		  error (0, errno, _("cannot remove %s"), quote (src_path));
+		  return 1;
+		}
+	      /* Tell the caller that there's no need to remove src_path.  */
+	      if (rename_succeeded)
+		*rename_succeeded = 1;
+	    }
+
 	  if (return_now)
 	    return 0;
 
@@ -1003,8 +1037,11 @@ copy_internal (const char *src_path, const char *dst_path,
 		  return 1;
 		}
 
-	      dst_backup = (char *) alloca (strlen (tmp_backup) + 1);
-	      strcpy (dst_backup, tmp_backup);
+	      /* Using alloca for a pathname that may be (in theory) arbitrarily
+		 long is not recommended.  In fact, even forming such a name
+		 should be discouraged.  Eventually, this code will be rewritten
+		 to use fts, so using alloca here will be less of a problem.  */
+	      ASSIGN_STRDUPA (dst_backup, tmp_backup);
 	      free (tmp_backup);
 	      if (rename (dst_path, dst_backup))
 		{
@@ -1026,7 +1063,7 @@ copy_internal (const char *src_path, const char *dst_path,
 	    }
 	  else if (! S_ISDIR (dst_sb.st_mode)
 		   && (x->unlink_dest_before_opening
-		       || (x->xstat == lstat
+		       || (x->dereference == DEREF_NEVER
 			   && ! S_ISREG (src_sb.st_mode))))
 	    {
 	      if (unlink (dst_path) && errno != ENOENT)
@@ -1273,7 +1310,7 @@ copy_internal (const char *src_path, const char *dst_path,
 
       /* Insert the current directory in the list of parents.  */
 
-      dir = (struct dir_list *) alloca (sizeof (struct dir_list));
+      dir = alloca (sizeof *dir);
       dir->parent = ancestors;
       dir->ino = src_sb.st_ino;
       dir->dev = src_sb.st_dev;
@@ -1367,10 +1404,7 @@ copy_internal (const char *src_path, const char *dst_path,
     }
   else if (S_ISREG (src_type)
 	   || (x->copy_as_regular && !S_ISDIR (src_type)
-#ifdef S_ISLNK
-	       && !S_ISLNK (src_type)
-#endif
-	       ))
+	       && !S_ISLNK (src_type)))
     {
       copied_as_regular = 1;
       /* POSIX says the permission bits of the source file must be
@@ -1393,10 +1427,7 @@ copy_internal (const char *src_path, const char *dst_path,
   else
 #endif
     if (S_ISBLK (src_type) || S_ISCHR (src_type)
-#ifdef S_ISSOCK
-	|| S_ISSOCK (src_type)
-#endif
-	)
+	|| S_ISSOCK (src_type))
     {
       if (mknod (dst_path, get_dest_mode (x, src_mode), src_sb.st_rdev))
 	{
@@ -1426,7 +1457,7 @@ copy_internal (const char *src_path, const char *dst_path,
 	    {
 	      /* See if the destination is already the desired symlink.  */
 	      size_t src_link_len = strlen (src_link_val);
-	      char *dest_link_val = (char *) alloca (src_link_len + 1);
+	      char *dest_link_val = alloca (src_link_len + 1);
 	      int dest_link_len = readlink (dst_path, dest_link_val,
 					    src_link_len + 1);
 	      if ((size_t) dest_link_len == src_link_len
@@ -1492,16 +1523,14 @@ copy_internal (const char *src_path, const char *dst_path,
 
   if (x->preserve_timestamps)
     {
-      struct utimbuf utb;
+      struct timespec timespec[2];
 
-      /* There's currently no interface to set file timestamps with
-	 better than 1-second resolution, so discard any fractional
-	 part of the source timestamp.  */
+      timespec[0].tv_sec = src_sb.st_atime;
+      timespec[0].tv_nsec = TIMESPEC_NS (src_sb.st_atim);
+      timespec[1].tv_sec = src_sb.st_mtime;
+      timespec[1].tv_nsec = TIMESPEC_NS (src_sb.st_mtim);
 
-      utb.actime = src_sb.st_atime;
-      utb.modtime = src_sb.st_mtime;
-
-      if (utime (dst_path, &utb))
+      if (utimens (dst_path, timespec))
 	{
 	  error (0, errno, _("preserving times for %s"), quote (dst_path));
 	  if (x->require_preserve)
@@ -1527,10 +1556,16 @@ copy_internal (const char *src_path, const char *dst_path,
   /* Preserve the st_author field.  */
   {
     file_t file = file_name_lookup (dst_path, 0, 0);
-    if (file_chauthor (file, src_sb.st_author))
-      error (0, errno, _("failed to preserve authorship for %s"),
-	     quote (dst_path));
-    mach_port_deallocate (mach_task_self (), file);
+    if (file == MACH_PORT_NULL)
+      error (0, errno, _("failed to lookup file %s"), quote (dst_path));
+    else
+      {
+	error_t err = file_chauthor (file, src_sb.st_author);
+	if (err)
+	  error (0, err, _("failed to preserve authorship for %s"),
+		 quote (dst_path));
+	mach_port_deallocate (mach_task_self (), file);
+      }
   }
 #endif
 
@@ -1583,18 +1618,8 @@ static int
 valid_options (const struct cp_options *co)
 {
   assert (co != NULL);
-
   assert (VALID_BACKUP_TYPE (co->backup_type));
-
-  /* FIXME: for some reason this assertion always fails,
-     at least on Solaris2.5.1.  Just disable it for now.  */
-  /* assert (co->xstat == lstat || co->xstat == stat); */
-
-  /* Make sure xstat and dereference are consistent.  */
-  /* FIXME */
-
   assert (VALID_SPARSE_MODE (co->sparse_mode));
-
   return 1;
 }
 

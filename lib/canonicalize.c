@@ -130,7 +130,7 @@ canonicalize_file_name (const char *name)
     {
       char *wd;
 
-      if (!(wd = xgetcwd ()));
+      if (!(wd = xgetcwd ()))
 	return NULL;
 
       extra_buf = path_concat (wd, name, NULL);
@@ -147,18 +147,22 @@ canonicalize_file_name (const char *name)
       resolved_size = 2 * resolved_size + 1;
       resolved = xmalloc (resolved_size);
       resolved_len = resolvepath (name, resolved, resolved_size);
+      if (resolved_len < 0)
+	{
+	  free (resolved);
+	  free (extra_buf);
+	  return NULL;
+	}
       if (resolved_len < resolved_size)
 	break;
       free (resolved);
     }
 
-  if (resolved_len < 0)
-    {
-      free (resolved);
-      resolved = NULL;
-    }
-
   free (extra_buf);
+
+  /* NUL-terminate the resulting name.  */
+  resolved[resolved_len] = '\0';
+
   return resolved;
 
 #else /* !HAVE_RESOLVEPATH */
@@ -169,9 +173,11 @@ canonicalize_file_name (const char *name)
       if (!rpath)
 	return NULL;
       dest = strchr (rpath, '\0');
-      if (dest < rpath + PATH_MAX)
+      if (dest - rpath < PATH_MAX)
 	{
-	  rpath = xrealloc (rpath, PATH_MAX);
+	  char *p = xrealloc (rpath, PATH_MAX);
+	  dest = p + (dest - rpath);
+	  rpath = p;
 	  rpath_limit = rpath + PATH_MAX;
 	}
       else
@@ -223,7 +229,7 @@ canonicalize_file_name (const char *name)
 		new_size += end - start + 1;
 	      else
 		new_size += PATH_MAX;
-	      rpath = (char *) xrealloc (rpath, new_size);
+	      rpath = xrealloc (rpath, new_size);
 	      rpath_limit = rpath + new_size;
 
 	      dest = rpath + dest_offset;

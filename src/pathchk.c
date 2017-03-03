@@ -1,5 +1,5 @@
 /* pathchk -- check whether pathnames are valid or portable
-   Copyright (C) 1991-2003 Free Software Foundation, Inc.
+   Copyright (C) 1991-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -43,20 +43,14 @@
 #include <getopt.h>
 #include <sys/types.h>
 
-#include <errno.h>
-#ifndef errno
-extern int errno;
-#endif
-
 #include "system.h"
 #include "error.h"
 #include "long-options.h"
-#include "closeout.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "pathchk"
 
-#define AUTHORS N_ ("David MacKenzie and Jim Meyering")
+#define AUTHORS "David MacKenzie", "Jim Meyering"
 
 #define NEED_PATHCONF_WRAPPER 0
 #if HAVE_PATHCONF
@@ -138,7 +132,7 @@ pathconf_wrapper (const char *filename, int param)
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -163,6 +157,7 @@ main (int argc, char **argv)
   int check_portability = 0;
   int optc;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -171,7 +166,7 @@ main (int argc, char **argv)
   atexit (close_stdout);
 
   parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
-		      AUTHORS, usage);
+		      usage, AUTHORS, (char const *) NULL);
 
   while ((optc = getopt_long (argc, argv, "p", longopts, NULL)) != -1)
     {
@@ -378,8 +373,8 @@ validate_path (char *path, int portability)
   free (parent);
   if (strlen (path) > (size_t) path_max)
     {
-      error (0, 0, _("path `%s' has length %d; exceeds limit of %ld"),
-	     path, strlen (path), path_max);
+      error (0, 0, _("path `%s' has length %lu; exceeds limit of %ld"),
+	     path, (unsigned long) strlen (path), path_max);
       return 1;
     }
 

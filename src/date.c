@@ -1,5 +1,5 @@
 /* date - print or set the system date and time
-   Copyright (C) 1989-2002 Free Software Foundation, Inc.
+   Copyright (C) 1989-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,14 +27,14 @@
 
 #include "system.h"
 #include "argmatch.h"
-#include "closeout.h"
 #include "error.h"
 #include "getdate.h"
 #include "getline.h"
+#include "inttostr.h"
 #include "posixtm.h"
 #include "posixver.h"
+#include "quote.h"
 #include "strftime.h"
-#include "timespec.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "date"
@@ -43,7 +43,7 @@
 
 int putenv ();
 
-static void show_date (const char *format, struct timespec when);
+static int show_date (const char *format, struct timespec when);
 
 enum Time_spec
 {
@@ -85,6 +85,7 @@ static struct option const long_options[] =
   {"iso-8601", optional_argument, NULL, 'I'},
   {"reference", required_argument, NULL, 'r'},
   {"rfc-822", no_argument, NULL, 'R'},
+  {"rfc-2822", no_argument, NULL, 'R'},
   {"set", required_argument, NULL, 's'},
   {"uct", no_argument, NULL, 'u'},
   {"utc", no_argument, NULL, 'u'},
@@ -109,7 +110,7 @@ static struct option const long_options[] =
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -132,7 +133,7 @@ Display the current time in the given FORMAT, or set the system date.\n\
 "), stdout);
       fputs (_("\
   -r, --reference=FILE      display the last modification time of FILE\n\
-  -R, --rfc-822             output RFC-822 compliant date string\n\
+  -R, --rfc-2822            output RFC-2822 compliant date string\n\
   -s, --set=STRING          set time described by STRING\n\
   -u, --utc, --universal    print or set Coordinated Universal Time\n\
 "), stdout);
@@ -203,7 +204,7 @@ specifies Coordinated Universal Time.  Interpreted sequences are:\n\
   %Y   year (1970...)\n\
 "), stdout);
       fputs (_("\
-  %z   RFC-822 style numeric timezone (-0500) (a nonstandard extension)\n\
+  %z   RFC-2822 style numeric timezone (-0500) (a nonstandard extension)\n\
   %Z   time zone (e.g., EDT), or nothing if no time zone is determinable\n\
 \n\
 By default, date pads numeric fields with zeroes.  GNU date recognizes\n\
@@ -242,7 +243,7 @@ batch_convert (const char *input_filename, const char *format)
       in_stream = fopen (input_filename, "r");
       if (in_stream == NULL)
 	{
-	  error (EXIT_FAILURE, errno, "`%s'", input_filename);
+	  error (EXIT_FAILURE, errno, "%s", quote (input_filename));
 	}
     }
 
@@ -270,12 +271,12 @@ batch_convert (const char *input_filename, const char *format)
 	}
       else
 	{
-	  show_date (format, when);
+	  status |= show_date (format, when);
 	}
     }
 
   if (fclose (in_stream) == EOF)
-    error (2, errno, "`%s'", input_filename);
+    error (EXIT_FAILURE, errno, "%s", quote (input_filename));
 
   if (line != NULL)
     free (line);
@@ -302,12 +303,12 @@ main (int argc, char **argv)
 			       ? COMMON_SHORT_OPTIONS "I::"
 			       : COMMON_SHORT_OPTIONS "I:");
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
 
-  close_stdout_set_status (2);
   atexit (close_stdout);
 
   while ((optc = getopt_long (argc, argv, short_options, long_options, NULL))
@@ -390,12 +391,12 @@ argument must be a format string beginning with `+'."),
       usage (EXIT_FAILURE);
     }
 
-  /* Simply ignore --rfc-822 if specified when setting the date.  */
+  /* Simply ignore --rfc-2822 if specified when setting the date.  */
   if (rfc_format && !set_date && n_args > 0)
     {
       error (0, 0,
 	     _("a format string may not be specified when using\
- the --rfc-822 (-R) option"));
+ the --rfc-2822 (-R) option"));
       usage (EXIT_FAILURE);
     }
 
@@ -470,17 +471,18 @@ argument must be a format string beginning with `+'."),
 	    }
 	}
 
-      show_date (format, when);
+      status |= show_date (format, when);
     }
 
-  exit (status);
+  exit (status == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
 }
 
 /* Display the date and/or time in WHEN according to the format specified
    in FORMAT, followed by a newline.  If FORMAT is NULL, use the
-   standard output format (ctime style but with a timezone inserted). */
+   standard output format (ctime style but with a timezone inserted).
+   Return zero if successful.  */
 
-static void
+static int
 show_date (const char *format, struct timespec when)
 {
   struct tm *tm;
@@ -494,8 +496,6 @@ show_date (const char *format, struct timespec when)
     "%Y-%m-%dT%H:%M%z",
     "%Y-%m-%dT%H:%M:%S%z"
   };
-
-  tm = localtime (&when.tv_sec);
 
   if (format == NULL)
     {
@@ -519,14 +519,25 @@ show_date (const char *format, struct timespec when)
   else if (*format == '\0')
     {
       printf ("\n");
-      return;
+      return 0;
+    }
+
+  tm = localtime (&when.tv_sec);
+  if (! tm)
+    {
+      char buf[INT_BUFSIZE_BOUND (intmax_t)];
+      error (0, 0, _("time %s is out of range"),
+	     (TYPE_SIGNED (time_t)
+	      ? imaxtostr (when.tv_sec, buf)
+	      : umaxtostr (when.tv_sec, buf)));
+      puts (buf);
+      return 1;
     }
 
   while (1)
     {
       int done;
-      out_length += 200;
-      out = (char *) xrealloc (out, out_length);
+      out = x2nrealloc (out, &out_length, sizeof *out);
 
       /* Mark the first byte of the buffer so we can detect the case
 	 of nstrftime producing an empty string.  Otherwise, this loop
@@ -549,4 +560,5 @@ show_date (const char *format, struct timespec when)
 
   printf ("%s\n", out);
   free (out);
+  return 0;
 }

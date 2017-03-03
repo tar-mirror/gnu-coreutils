@@ -1,55 +1,44 @@
 /* memrchr -- find the last occurrence of a byte in a memory block
-   Copyright (C) 1991, 93, 96, 97, 99, 2000 Free Software Foundation, Inc.
+
+   Copyright (C) 1991, 1993, 1996, 1997, 1999, 2000, 2003 Free
+   Software Foundation, Inc.
+
    Based on strlen implementation by Torbjorn Granlund (tege@sics.se),
    with help from Dan Sahlin (dan@sics.se) and
    commentary by Jim Blandy (jimb@ai.mit.edu);
    adaptation to memchr suggested by Dick Karpinski (dick@cca.ucsf.edu),
    and implemented by Roland McGrath (roland@ai.mit.edu).
 
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Library General Public License as
-   published by the Free Software Foundation; either version 2 of the
-   License, or (at your option) any later version.
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
 
-   The GNU C Library is distributed in the hope that it will be useful,
+   This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Library General Public License for more details.
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-   You should have received a copy of the GNU Library General Public
-   License along with the GNU C Library; see the file COPYING.LIB.  If not,
-   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-   Boston, MA 02111-1307, USA.  */
+   You should have received a copy of the GNU General Public License along
+   with this program; if not, write to the Free Software Foundation,
+   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
 #include <stdlib.h>
-
-#undef __ptr_t
-#if defined (__cplusplus) || (defined (__STDC__) && __STDC__)
-# define __ptr_t void *
-#else /* Not C++ or ANSI C.  */
-# define __ptr_t char *
-#endif /* C++ or ANSI C.  */
+#include <string.h>
 
 #if defined (_LIBC)
-# include <string.h>
 # include <memcopy.h>
 #else
 # define reg_char char
 #endif
 
-#if defined (HAVE_LIMITS_H) || defined (_LIBC)
-# include <limits.h>
-#endif
+#include <limits.h>
 
 #define LONG_MAX_32_BITS 2147483647
-
-#ifndef LONG_MAX
-# define LONG_MAX LONG_MAX_32_BITS
-#endif
 
 #include <sys/types.h>
 
@@ -61,11 +50,8 @@
 #endif
 
 /* Search no more than N bytes of S for C.  */
-__ptr_t
-__memrchr (s, c_in, n)
-     const __ptr_t s;
-     int c_in;
-     size_t n;
+void *
+__memrchr (void const *s, int c_in, size_t n)
 {
   const unsigned char *char_ptr;
   const unsigned long int *longword_ptr;
@@ -81,7 +67,7 @@ __memrchr (s, c_in, n)
 		 & (sizeof (longword) - 1)) != 0;
        --n)
     if (*--char_ptr == c)
-      return (__ptr_t) char_ptr;
+      return (void *) char_ptr;
 
   /* All these elucidatory comments refer to 4-byte longwords,
      but the theory applies equally well to 8-byte longwords.  */
@@ -173,22 +159,22 @@ __memrchr (s, c_in, n)
 
 #if LONG_MAX > 2147483647
 	  if (cp[7] == c)
-	    return (__ptr_t) &cp[7];
+	    return (void *) &cp[7];
 	  if (cp[6] == c)
-	    return (__ptr_t) &cp[6];
+	    return (void *) &cp[6];
 	  if (cp[5] == c)
-	    return (__ptr_t) &cp[5];
+	    return (void *) &cp[5];
 	  if (cp[4] == c)
-	    return (__ptr_t) &cp[4];
+	    return (void *) &cp[4];
 #endif
 	  if (cp[3] == c)
-	    return (__ptr_t) &cp[3];
+	    return (void *) &cp[3];
 	  if (cp[2] == c)
-	    return (__ptr_t) &cp[2];
+	    return (void *) &cp[2];
 	  if (cp[1] == c)
-	    return (__ptr_t) &cp[1];
+	    return (void *) &cp[1];
 	  if (cp[0] == c)
-	    return (__ptr_t) cp;
+	    return (void *) cp;
 	}
 
       n -= sizeof (longword);
@@ -199,7 +185,7 @@ __memrchr (s, c_in, n)
   while (n-- > 0)
     {
       if (*--char_ptr == c)
-	return (__ptr_t) char_ptr;
+	return (void *) char_ptr;
     }
 
   return 0;

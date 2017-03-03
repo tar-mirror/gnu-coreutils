@@ -1,5 +1,5 @@
 /* readtokens.c  -- Functions for reading tokens from an input stream.
-   Copyright (C) 1990-1991, 1999, 2001, 2003 Jim Meyering.
+   Copyright (C) 1990-1991, 1999, 2001, 2003 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,24 +31,12 @@
 # include <config.h>
 #endif
 
-#include <stdio.h>
-
-#ifdef STDC_HEADERS
-# include <stdlib.h>
-#endif
-
-#if defined (STDC_HEADERS) || defined(HAVE_STRING_H)
-# include <string.h>
-/* An ANSI string.h and pre-ANSI memory.h might conflict.  */
-# if !defined (STDC_HEADERS) && defined (HAVE_MEMORY_H)
-#  include <memory.h>
-# endif /* not STDC_HEADERS and HAVE_MEMORY_H */
-#else /* not STDC_HEADERS and not HAVE_STRING_H */
-# include <strings.h>
-/* memory.h and strings.h conflict on some systems.  */
-#endif /* not STDC_HEADERS and not HAVE_STRING_H */
-
 #include "readtokens.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "unlocked-io.h"
 #include "xalloc.h"
 
@@ -58,11 +46,10 @@
 /* Initialize a tokenbuffer. */
 
 void
-init_tokenbuffer (tokenbuffer)
-     token_buffer *tokenbuffer;
+init_tokenbuffer (token_buffer *tokenbuffer)
 {
   tokenbuffer->size = INITIAL_TOKEN_LENGTH;
-  tokenbuffer->buffer = ((char *) xmalloc (INITIAL_TOKEN_LENGTH));
+  tokenbuffer->buffer = xmalloc (INITIAL_TOKEN_LENGTH);
 }
 
 /* Read a token from `stream' into `tokenbuffer'.
@@ -184,8 +171,8 @@ readtokens (FILE *stream,
   else
     projected_n_tokens = 64;
   sz = projected_n_tokens;
-  tokens = (char **) xmalloc (sz * sizeof (char *));
-  lengths = (long *) xmalloc (sz * sizeof (long));
+  tokens = xmalloc (sz * sizeof (char *));
+  lengths = xmalloc (sz * sizeof (long));
 
   init_tokenbuffer (token);
   for (;;)
@@ -195,8 +182,8 @@ readtokens (FILE *stream,
       if (n_tokens >= sz)
 	{
 	  sz *= 2;
-	  tokens = (char **) xrealloc (tokens, sz * sizeof (char *));
-	  lengths = (long *) xrealloc (lengths, sz * sizeof (long));
+	  tokens = xrealloc (tokens, sz * sizeof (char *));
+	  lengths = xrealloc (lengths, sz * sizeof (long));
 	}
 
       if (token_length < 0)
@@ -206,7 +193,7 @@ readtokens (FILE *stream,
 	  lengths[n_tokens] = -1;
 	  break;
 	}
-      tmp = (char *) xmalloc ((token_length + 1) * sizeof (char));
+      tmp = xmalloc ((token_length + 1) * sizeof (char));
       lengths[n_tokens] = token_length;
       tokens[n_tokens] = strncpy (tmp, token->buffer,
 				  (unsigned) (token_length + 1));

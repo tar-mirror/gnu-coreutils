@@ -50,13 +50,13 @@ my @tv = (
 ['no-oct-2', '-010', "\n"x12, "\n"x10, 0],
 ['no-oct-3', '-n 08', "\n"x12, "\n"x8, 0],
 ['no-oct-4', '-c 08', "\n"x12, "\n"x8, 0],
+
 );
 
 sub test_vector
 {
-  my $t;
   my @derived_tests;
-  foreach $t (@tv)
+  foreach my $t (@tv)
     {
       my ($test_name, $flags, $in, $exp, $ret) = @$t;
 
@@ -79,6 +79,12 @@ sub test_vector
 	  $flags = "-l $`";
 	}
       push (@derived_tests, [$test_name, $flags, $in, $exp, $ret]);
+    }
+
+  foreach my $t (@tv, @derived_tests)
+    {
+      my ($test_name) = @$t;
+      $Test::input_via{$test_name} = {REDIR => 0, FILE => 0, PIPE => 0}
     }
 
   return (@tv, @derived_tests);

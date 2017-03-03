@@ -19,8 +19,6 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include "system.h"
-#include "version-etc.h"
-#include "closeout.h"
 
 #define PROGRAM_NAME "false"
 #define AUTHORS "Jim Meyering"
@@ -49,6 +47,7 @@ These option names may not be abbreviated.\n\
 int
 main (int argc, char **argv)
 {
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -64,7 +63,8 @@ main (int argc, char **argv)
 	usage (EXIT_FAILURE);
 
       if (STREQ (argv[1], "--version"))
-	version_etc (stdout, PROGRAM_NAME, GNU_PACKAGE, VERSION, AUTHORS);
+	version_etc (stdout, PROGRAM_NAME, GNU_PACKAGE, VERSION, AUTHORS,
+		     (char *) NULL);
     }
 
   exit (EXIT_FAILURE);

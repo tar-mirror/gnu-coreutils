@@ -2,7 +2,7 @@
 
 /* Modified to run with the GNU shell by bfox. */
 
-/* Copyright (C) 1987-2003 Free Software Foundation, Inc.
+/* Copyright (C) 1987-2004 Free Software Foundation, Inc.
 
    This file is part of GNU Bash, the Bourne Again SHell.
 
@@ -22,54 +22,40 @@
 
 /* Define TEST_STANDALONE to get the /bin/test version.  Otherwise, you get
    the shell builtin version. */
-/* #define TEST_STANDALONE */
 
 #include <config.h>
 #include <stdio.h>
 #include <sys/types.h>
 
-/* The official name of this program (e.g., no `g' prefix).  */
-#define PROGRAM_NAME "test"
-
 #define TEST_STANDALONE 1
 
-#if !defined (TEST_STANDALONE)
-# include "shell.h"
-# include "posixstat.h"
-# include "filecntl.h"
-#else /* TEST_STANDALONE */
-# include "system.h"
-# include "error.h"
-# include "euidaccess.h"
-# if !defined (S_IXUGO)
-#  define S_IXUGO 0111
-# endif /* S_IXUGO */
-# if defined (_POSIX_VERSION)
-#  include <limits.h>
-# else /* !_POSIX_VERSION */
-#  include <sys/param.h>
-# endif /* _POSIX_VERSION */
-# define whitespace(c) (((c) == ' ') || ((c) == '\t'))
-# define digit(c)  ((c) >= '0' && (c) <= '9')
-# define digit_value(c) ((c) - '0')
+#ifndef LBRACKET
+# define LBRACKET 0
+#endif
+
+/* The official name of this program (e.g., no `g' prefix).  */
+#if LBRACKET
+# define PROGRAM_NAME "["
+#else
+# define PROGRAM_NAME "test"
+#endif
+
+#include "system.h"
+#include "error.h"
+#include "euidaccess.h"
+
+#ifndef _POSIX_VERSION
+# include <sys/param.h>
+#endif /* _POSIX_VERSION */
+#define whitespace(c) (((c) == ' ') || ((c) == '\t'))
+#define digit(c)  ((c) >= '0' && (c) <= '9')
+#define digit_value(c) ((c) - '0')
+
 char *program_name;
-#endif /* TEST_STANDALONE */
 
 #if !defined (_POSIX_VERSION)
 # include <sys/file.h>
 #endif /* !_POSIX_VERSION */
-
-#include <errno.h>
-#ifndef errno
-extern int errno;
-#endif
-
-#undef STREQ
-#define STREQ(a, b) ((a)[0] == (b)[0] && strcmp (a, b) == 0)
-
-#if !defined (member)
-# define member(c, s) ((c) ? (strchr ((s), (c)) ? 1 : 0) : 0)
-#endif /* !member */
 
 extern gid_t getegid ();
 extern uid_t geteuid ();
@@ -80,9 +66,6 @@ extern uid_t geteuid ();
 # define X_OK 1
 # define F_OK 0
 #endif /* R_OK */
-
-/* This name is used solely when printing --version information.  */
-#define PROGRAM_NAME "test"
 
 /* The following few defines control the truth and false output of each stage.
    TRUE and FALSE are what we use to compute the final output value.
@@ -97,6 +80,9 @@ extern uid_t geteuid ();
 #define TRUTH_OR(a, b) ((a) | (b))
 #define TRUTH_AND(a, b) ((a) & (b))
 
+/* Exit status for syntax errors, etc.  */
+enum { TEST_FAILURE = 2 };
+
 #if defined (TEST_STANDALONE)
 # define test_exit(val) exit (val)
 #else
@@ -109,13 +95,13 @@ static int pos;		/* The offset of the current argument in ARGV. */
 static int argc;	/* The number of arguments present in ARGV. */
 static char **argv;	/* The argument list. */
 
-static int unop (int op);
+static int test_unop (char const *s);
 static int binop (char *s);
 static int unary_operator (void);
-static int binary_operator (void);
+static int binary_operator (bool);
 static int two_arguments (void);
 static int three_arguments (void);
-static int posixtest (void);
+static int posixtest (int);
 
 static int expr (void);
 static int term (void);
@@ -132,7 +118,7 @@ test_syntax_error (char const *format, char const *arg)
   fprintf (stderr, "%s: ", argv[0]);
   fprintf (stderr, format, arg);
   fflush (stderr);
-  test_exit (SHELL_BOOLEAN (FALSE));
+  test_exit (TEST_FAILURE);
 }
 
 #if HAVE_SETREUID && HAVE_SETREGID
@@ -198,7 +184,7 @@ advance (int f)
 }
 #endif /* advance */
 
-#define unary_advance() 						\
+#define unary_advance()							\
   do									\
     {									\
       advance (1);							\
@@ -221,7 +207,7 @@ beyond (void)
 static void
 integer_expected_error (char const *pch)
 {
-  test_syntax_error (_("integer expression expected %s\n"), pch);
+  test_syntax_error (_("%s: integer expression expected\n"), pch);
 }
 
 /* Return nonzero if the characters pointed to by STRING constitute a
@@ -301,7 +287,7 @@ age_of (char *filename, time_t *age)
  * term ::=
  *	'-'('h'|'d'|'f'|'r'|'s'|'w'|'c'|'b'|'p'|'u'|'g'|'k') filename
  *	'-'('L'|'x') filename
- * 	'-t' [ int ]
+ *	'-t' [ int ]
  *	'-'('z'|'n') string
  *	string
  *	string ('!='|'=') string
@@ -320,42 +306,55 @@ term (void)
   if (pos >= argc)
     beyond ();
 
-  /* Deal with leading "not"'s. */
-  if ('!' == argv[pos][0] && '\000' == argv[pos][1])
+  /* Deal with leading `not's. */
+  if (argv[pos][0] == '!' && argv[pos][1] == '\0')
     {
-      value = FALSE;
-      while (pos < argc && '!' == argv[pos][0] && '\000' == argv[pos][1])
+      value = 0;
+      while (pos < argc && argv[pos][0] == '!' && argv[pos][1] == '\0')
 	{
 	  advance (1);
-	  value ^= (TRUE);
+	  value = 1 - value;
 	}
 
-      return (value ^ (term ()));
+      return (value ? !term() : term());
     }
 
   /* A paren-bracketed argument. */
-  if (argv[pos][0] == '(' && !argv[pos][1])
+  if (argv[pos][0] == '(' && argv[pos][1] == '\0')
     {
+      int nargs;
+
       advance (1);
-      value = expr ();
-      if (!argv[pos])
+
+      for (nargs = 1;
+	   pos + nargs < argc && ! STREQ (argv[pos + nargs], ")");
+	   nargs++)
+	if (nargs == 4)
+	  {
+	    nargs = argc - pos;
+	    break;
+	  }
+
+      value = posixtest (nargs);
+      if (argv[pos] == 0)
 	test_syntax_error (_("')' expected\n"), NULL);
       else
         if (argv[pos][0] != ')' || argv[pos][1])
 	  test_syntax_error (_("')' expected, found %s\n"), argv[pos]);
       advance (0);
-      return (TRUE == (value));
+      return (value);
     }
 
   /* are there enough arguments left that this could be dyadic? */
-  if (((pos + 3 <= argc) && binop (argv[pos + 1])) ||
-      ((pos + 4 <= argc && STREQ (argv[pos], "-l") && binop (argv[pos + 2]))))
-    value = binary_operator ();
+  if (pos + 4 <= argc && STREQ (argv[pos], "-l") && binop (argv[pos + 2]))
+    value = binary_operator (true);
+  else if (pos + 3 <= argc && binop (argv[pos + 1]))
+    value = binary_operator (false);
 
   /* Might be a switch type argument */
-  else if ('-' == argv[pos][0] && argv[pos][1] && 0 == argv[pos][2])
+  else if (argv[pos][0] == '-' && argv[pos][1] && argv[pos][2] == '\0')
     {
-      if (unop (argv[pos][1]))
+      if (test_unop (argv[pos]))
 	value = unary_operator ();
       else
 	test_syntax_error (_("%s: unary operator expected\n"), argv[pos]);
@@ -370,31 +369,18 @@ term (void)
 }
 
 static int
-binary_operator (void)
+binary_operator (bool l_is_l)
 {
   register int op;
   struct stat stat_buf, stat_spare;
   intmax_t l, r;
   int value;
-  /* Are the left and right integer expressions of the form '-l string'? */
-  int l_is_l, r_is_l;
+  /* Is the right integer expression of the form '-l string'? */
+  int r_is_l;
 
-  if (strcmp (argv[pos], "-l") == 0)
-    {
-      l_is_l = 1;
-      op = pos + 2;
-
-      /* Make sure that OP is still a valid binary operator. */
-      if ((op >= argc - 1) || (binop (argv[op]) == 0))
-	test_syntax_error (_("%s: binary operator expected\n"), argv[op]);
-
-      advance (0);
-    }
-  else
-    {
-      l_is_l = 0;
-      op = pos + 1;
-    }
+  if (l_is_l)
+    advance (0);
+  op = pos + 1;
 
   if ((op < argc - 2) && (strcmp (argv[op + 1], "-l") == 0))
     {
@@ -590,7 +576,9 @@ binary_operator (void)
 	    }
 	  break;
 	}
-      test_syntax_error (_("unknown binary operator"), argv[op]);
+
+      /* FIXME: is this dead code? */
+      test_syntax_error (_("unknown binary operator\n"), argv[op]);
     }
 
   if (argv[op][0] == '=' && !argv[op][1])
@@ -774,17 +762,9 @@ unary_operator (void)
     case 't':			/* File (fd) is a terminal? */
       {
 	intmax_t fd;
-	advance (0);
-	if (pos < argc)
-	  {
-	    if (!isint (argv[pos], &fd))
-	      integer_expected_error (_("after -t"));
-	    advance (0);
-	  }
-	else
-	  {
-	    fd = 1;
-	  }
+	unary_advance ();
+	if (!isint (argv[pos - 1], &fd))
+	  integer_expected_error (_("after -t"));
 	return (TRUE == (fd == (int) fd && isatty (fd)));
       }
 
@@ -863,18 +843,28 @@ binop (char *s)
 
 /* Return nonzero if OP is one of the test command's unary operators. */
 static int
-unop (int op)
+test_unop (char const *op)
 {
-  return (member (op, "abcdefgkLhprsStuwxOGnz"));
+  if (op[0] != '-')
+    return (0);
+
+  switch (op[1])
+    {
+    case 'a': case 'b': case 'c': case 'd': case 'e':
+    case 'f': case 'g': case 'h': case 'k': case 'n':
+    case 'o': case 'p': case 'r': case 's': case 't':
+    case 'u': case 'w': case 'x': case 'z':
+    case 'G': case 'L': case 'O': case 'S': case 'N':
+      return (1);
+    }
+
+  return (0);
 }
 
 static int
-one_argument (const char *s)
+one_argument (void)
 {
-  if (STREQ (s, "-t"))
-    return (TRUE == (isatty (1)));
-
-  return strlen (s) != 0;
+  return argv[pos++][0] != '\0';
 }
 
 static int
@@ -883,12 +873,15 @@ two_arguments (void)
   int value;
 
   if (STREQ (argv[pos], "!"))
-    value = ! one_argument (argv[pos+1]);
+    {
+      advance (0);
+      value = ! one_argument ();
+    }
   else if (argv[pos][0] == '-'
 	   && argv[pos][1] != '\0'
 	   && argv[pos][2] == '\0')
     {
-      if (unop (argv[pos][1]))
+      if (test_unop (argv[pos]))
 	value = unary_operator ();
       else
 	test_syntax_error (_("%s: unary operator expected\n"), argv[pos]);
@@ -903,18 +896,20 @@ three_arguments (void)
 {
   int value;
 
-  if (STREQ (argv[pos], "!"))
+  if (binop (argv[pos + 1]))
+    value = binary_operator (false);
+  else if (STREQ (argv[pos], "!"))
     {
       advance (1);
       value = !two_arguments ();
     }
-  else if (binop (argv[pos+1]))
+  else if (STREQ (argv[pos], "(") && STREQ (argv[pos + 2], ")"))
     {
-      value = binary_operator ();
-      pos = argc;
+      advance (0);
+      value = one_argument ();
+      advance (0);
     }
-  else if ((STREQ (argv[pos+1], "-a")) || (STREQ (argv[pos+1], "-o")) ||
-	   (argv[pos][0] == '('))
+  else if (STREQ (argv[pos + 1], "-a") || STREQ (argv[pos + 1], "-o"))
     value = expr ();
   else
     test_syntax_error (_("%s: binary operator expected\n"), argv[pos+1]);
@@ -923,25 +918,18 @@ three_arguments (void)
 
 /* This is an implementation of a Posix.2 proposal by David Korn. */
 static int
-posixtest (void)
+posixtest (int nargs)
 {
   int value;
 
-  switch (argc - 1)	/* one extra passed in */
+  switch (nargs)
     {
-      case 0:
-	value = FALSE;
-	pos = argc;
-	break;
-
       case 1:
-	value = one_argument (argv[1]);
-	pos = argc;
+	value = one_argument ();
 	break;
 
       case 2:
 	value = two_arguments ();
-	pos = argc;
 	break;
 
       case 3:
@@ -955,9 +943,18 @@ posixtest (void)
 	    value = !three_arguments ();
 	    break;
 	  }
+	if (STREQ (argv[pos], "(") && STREQ (argv[pos + 3], ")"))
+	  {
+	    advance (0);
+	    value = two_arguments ();
+	    advance (0);
+	    break;
+	  }
 	/* FALLTHROUGH */
       case 5:
       default:
+	if (nargs <= 0)
+	  abort ();
 	value = expr ();
     }
 
@@ -966,23 +963,19 @@ posixtest (void)
 
 #if defined (TEST_STANDALONE)
 # include "long-options.h"
-# include "closeout.h"
 
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
     {
-      printf (_("\
-Usage: %s EXPRESSION\n\
-  or:  [ EXPRESSION ]\n\
-  or:  %s OPTION\n\
-"),
-	      program_name, program_name);
       fputs (_("\
+Usage: test EXPRESSION\n\
+  or:  [ EXPRESSION ]\n\
+  or:  [ OPTION\n\
 Exit with the status determined by EXPRESSION.\n\
 \n\
 "), stdout);
@@ -1064,7 +1057,7 @@ INTEGER may also be -l STRING, which evaluates to the length of STRING.\n\
 # define main test_command
 #endif
 
-#define AUTHORS N_ ("FIXME: ksb and mjb")
+#define AUTHORS "Kevin Braunsdorf", "Matthew Bradburn"
 
 /*
  * [:
@@ -1085,30 +1078,33 @@ main (int margc, char **margv)
   if (code)
     return (test_error_return);
 #else /* TEST_STANDALONE */
+  initialize_main (&margc, &margv);
   program_name = margv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
 
+  initialize_exit_failure (TEST_FAILURE);
   atexit (close_stdout);
 #endif /* TEST_STANDALONE */
 
   argv = margv;
 
-  if (margv[0] && strcmp (margv[0], "[") == 0)
+  if (LBRACKET)
     {
-      /* Don't recognize --help or --version if POSIXLY_CORRECT is set.  */
-      if (getenv ("POSIXLY_CORRECT") == NULL)
-	parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
-			    AUTHORS, usage);
+      /* Recognize --help or --version, but only when invoked in the
+	 "[" form, and when the last argument is not "]".  POSIX
+	 allows "[ --help" and "[ --version" to have the usual GNU
+	 behavior, but it requires "test --help" and "test --version"
+	 to exit silently with status 1.  */
+      if (margc < 2 || strcmp (margv[margc - 1], "]") != 0)
+	{
+	  parse_long_options (margc, margv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
+			      usage, AUTHORS, (char const *) NULL);
+	  test_syntax_error (_("missing `]'\n"), NULL);
+	}
 
       --margc;
-
-      if (margc < 2)
-	test_exit (SHELL_BOOLEAN (FALSE));
-
-      if (margv[margc] && strcmp (margv[margc], "]") != 0)
-	test_syntax_error (_("missing `]'\n"), NULL);
     }
 
   argc = margc;
@@ -1117,9 +1113,7 @@ main (int margc, char **margv)
   if (pos >= argc)
     test_exit (SHELL_BOOLEAN (FALSE));
 
-  parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
-		      AUTHORS, usage);
-  value = posixtest ();
+  value = posixtest (argc - 1);
 
   if (pos != argc)
     test_syntax_error (_("too many arguments\n"), NULL);

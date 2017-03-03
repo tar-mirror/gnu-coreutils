@@ -1,5 +1,5 @@
 /* chown-core.c -- core functions for changing ownership.
-   Copyright (C) 2000, 2002 Free Software Foundation.
+   Copyright (C) 2000, 2002, 2003 Free Software Foundation.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,8 +25,10 @@
 
 #include "system.h"
 #include "error.h"
+#include "xfts.h"
 #include "lchown.h"
 #include "quote.h"
+#include "root-dev-ino.h"
 #include "savedir.h"
 #include "chown-core.h"
 
@@ -39,15 +41,14 @@ struct group *getgrnam ();
 struct group *getgrgid ();
 #endif
 
-int lstat ();
-
 void
 chopt_init (struct Chown_option *chopt)
 {
   chopt->verbosity = V_off;
-  chopt->dereference = DEREF_NEVER;
-  chopt->recurse = 0;
-  chopt->force_silent = 0;
+  chopt->root_dev_ino = NULL;
+  chopt->affect_symlink_referent = false;
+  chopt->recurse = false;
+  chopt->force_silent = false;
   chopt->user_name = 0;
   chopt->group_name = 0;
 }
@@ -163,143 +164,86 @@ describe_change (const char *file, enum Change_status changed,
     free (spec);
 }
 
-/* Recursively change the ownership of the files in directory DIR to user-id,
-   UID, and group-id, GID, according to the options specified by CHOPT.
-   Return 0 if successful, 1 if errors occurred. */
-
+/* Change the owner and/or group of the file specified by FTS and ENT
+   to UID and/or GID as appropriate.
+   FIXME: describe old_uid and old_gid.
+   CHOPT specifies additional options.
+   Return nonzero upon error, zero otherwise.  */
 static int
-change_dir_owner (const char *dir, uid_t uid, gid_t gid,
-		  uid_t old_uid, gid_t old_gid,
-		  struct Chown_option const *chopt)
-{
-  char *name_space, *namep;
-  char *path;			/* Full path of each entry to process. */
-  unsigned dirlength;		/* Length of `dir' and '\0'. */
-  unsigned filelength;		/* Length of each pathname to process. */
-  unsigned pathlength;		/* Bytes allocated for `path'. */
-  int errors = 0;
-
-  name_space = savedir (dir);
-  if (name_space == NULL)
-    {
-      if (chopt->force_silent == 0)
-	error (0, errno, "%s", quote (dir));
-      return 1;
-    }
-
-  dirlength = strlen (dir) + 1;	/* + 1 is for the trailing '/'. */
-  pathlength = dirlength + 1;
-  /* Give `path' a dummy value; it will be reallocated before first use. */
-  path = xmalloc (pathlength);
-  strcpy (path, dir);
-  path[dirlength - 1] = '/';
-
-  for (namep = name_space; *namep; namep += filelength - dirlength)
-    {
-      filelength = dirlength + strlen (namep) + 1;
-      if (filelength > pathlength)
-	{
-	  pathlength = filelength * 2;
-	  path = xrealloc (path, pathlength);
-	}
-      strcpy (path + dirlength, namep);
-      errors |= change_file_owner (0, path, uid, gid, old_uid, old_gid,
-				   chopt);
-    }
-  free (path);
-  free (name_space);
-  return errors;
-}
-
-/* Change the ownership of FILE to user-id, UID, and group-id, GID,
-   provided it presently has owner OLD_UID and group OLD_GID.
-   Honor the options specified by CHOPT.
-   If FILE is a directory and -R is given, recurse.
-   Return 0 if successful, 1 if errors occurred. */
-
-int
-change_file_owner (int cmdline_arg, const char *file, uid_t uid, gid_t gid,
+change_file_owner (FTS *fts, FTSENT *ent,
+		   uid_t uid, gid_t gid,
 		   uid_t old_uid, gid_t old_gid,
 		   struct Chown_option const *chopt)
 {
-  struct stat file_stats;
-  uid_t new_uid;
-  gid_t new_gid;
+  const char *file_full_name = ent->fts_path;
+  struct stat *file_stats = ent->fts_statp;
   int errors = 0;
-  int is_symlink;
-  int is_directory;
 
-  if (lstat (file, &file_stats))
+  /* This is the second time we've seen this directory.  */
+  if (ent->fts_info == FTS_DP)
+    return 0;
+
+  switch (ent->fts_info)
     {
-      if (chopt->force_silent == 0)
-	error (0, errno, _("failed to get attributes of %s"), quote (file));
+    case FTS_NS:
+      error (0, ent->fts_errno, _("cannot access %s"), quote (file_full_name));
+      return 1;
+
+    case FTS_ERR:
+      error (0, ent->fts_errno, _("%s"), quote (file_full_name));
+      return 1;
+
+    case FTS_DNR:
+      error (0, ent->fts_errno, _("cannot read directory %s"),
+	     quote (file_full_name));
+      return 1;
+
+    default:
+      break;
+    }
+
+  if (ROOT_DEV_INO_CHECK (chopt->root_dev_ino, file_stats))
+    {
+      ROOT_DEV_INO_WARN (file_full_name);
       return 1;
     }
 
-  /* If it's a symlink and we're dereferencing, then use stat
-     to get the attributes of the referent.  */
-  if (S_ISLNK (file_stats.st_mode))
+  if ((old_uid == (uid_t) -1 || file_stats->st_uid == old_uid)
+      && (old_gid == (gid_t) -1 || file_stats->st_gid == old_gid))
     {
-      if (chopt->dereference == DEREF_ALWAYS
-	  && stat (file, &file_stats))
+      uid_t new_uid = (uid == (uid_t) -1 ? file_stats->st_uid : uid);
+      gid_t new_gid = (gid == (gid_t) -1 ? file_stats->st_gid : gid);
+      if (new_uid != file_stats->st_uid || new_gid != file_stats->st_gid)
 	{
-	  if (chopt->force_silent == 0)
-	    error (0, errno, _("failed to get attributes of %s"), quote (file));
-	  return 1;
-	}
-
-      is_symlink = 1;
-
-      /* With -R, don't traverse through symlinks-to-directories.
-	 But of course, this will all change with POSIX's new
-	 -H, -L, -P options.  */
-      is_directory = 0;
-    }
-  else
-    {
-      is_symlink = 0;
-      is_directory = S_ISDIR (file_stats.st_mode);
-    }
-
-  if ((old_uid == (uid_t) -1 || file_stats.st_uid == old_uid)
-      && (old_gid == (gid_t) -1 || file_stats.st_gid == old_gid))
-    {
-      new_uid = (uid == (uid_t) -1 ? file_stats.st_uid : uid);
-      new_gid = (gid == (gid_t) -1 ? file_stats.st_gid : gid);
-      if (new_uid != file_stats.st_uid || new_gid != file_stats.st_gid)
-	{
+	  const char *file = ent->fts_accpath;
 	  int fail;
 	  int symlink_changed = 1;
 	  int saved_errno;
-	  int called_lchown = 0;
 
-	  if (is_symlink)
+	  if (S_ISLNK (file_stats->st_mode))
 	    {
-	      if (chopt->dereference == DEREF_NEVER)
-		{
-		  called_lchown = 1;
-		  fail = lchown (file, new_uid, new_gid);
-
-		  /* Ignore the failure if it's due to lack of support (ENOSYS)
-		     and this is not a command line argument.  */
-		  if (!cmdline_arg && fail && errno == ENOSYS)
-		    {
-		      fail = 0;
-		      symlink_changed = 0;
-		    }
-		}
-	      else if (chopt->dereference == DEREF_ALWAYS)
+	      if (chopt->affect_symlink_referent)
 		{
 		  /* Applying chown to a symlink and expecting it to affect
 		     the referent is not portable.  So instead, open the
 		     file and use fchown on the resulting descriptor.  */
 		  int fd = open (file, O_RDONLY | O_NONBLOCK | O_NOCTTY);
 		  fail = (fd == -1 ? 1 : fchown (fd, new_uid, new_gid));
+		  if (fd != -1)
+		    close (fd);
 		}
 	      else
 		{
-		  /* FIXME */
-		  abort ();
+		  bool is_command_line_argument = (ent->fts_level == 1);
+		  fail = lchown (file, new_uid, new_gid);
+
+		  /* Ignore the failure if it's due to lack of support (ENOSYS)
+		     and this is not a command line argument.  */
+		  if (!is_command_line_argument && fail && errno == ENOSYS)
+		    {
+		      fail = 0;
+		      symlink_changed = 0;
+		    }
 		}
 	    }
 	  else
@@ -315,48 +259,85 @@ change_file_owner (int cmdline_arg, const char *file, uid_t uid, gid_t gid,
 					      ? CH_NOT_APPLIED
 					      : (fail
 						 ? CH_FAILED : CH_SUCCEEDED));
-	      describe_change (file, ch_status,
+	      describe_change (file_full_name, ch_status,
 			       chopt->user_name, chopt->group_name);
 	    }
 
 	  if (fail)
 	    {
-	      if (chopt->force_silent == 0)
+	      if ( ! chopt->force_silent)
 		error (0, saved_errno, (uid != (uid_t) -1
 					? _("changing ownership of %s")
 					: _("changing group of %s")),
-		       quote (file));
+		       quote (file_full_name));
 	      errors = 1;
 	    }
 	  else
 	    {
-	      /* The change succeeded.  On some systems, the chown function
-		 resets the `special' permission bits.  When run by a
-		 `privileged' user, this program must ensure that at least
-		 the set-uid and set-group ones are still set.  */
-	      if (file_stats.st_mode & ~(S_IFMT | S_IRWXUGO)
-		  /* If we called lchown above (which means this is a symlink),
-		     then skip it.  */
-		  && ! called_lchown)
-		{
-		  if (chmod (file, file_stats.st_mode))
-		    {
-		      error (0, saved_errno,
-			     _("unable to restore permissions of %s"),
-			     quote (file));
-		      fail = 1;
-		    }
-		}
+	      /* The change succeeded.  On some systems (e.g., Linux-2.4.x),
+		 the chown function resets the `special' permission bits.
+		 Do *not* restore those bits;  doing so would open a window in
+		 which a malicious user, M, could subvert a chown command run
+		 by some other user and operating on files in a directory
+		 where M has write access.  */
 	    }
 	}
       else if (chopt->verbosity == V_high)
 	{
-	  describe_change (file, CH_NO_CHANGE_REQUESTED,
+	  describe_change (file_full_name, CH_NO_CHANGE_REQUESTED,
 			   chopt->user_name, chopt->group_name);
 	}
     }
 
-  if (chopt->recurse && is_directory)
-    errors |= change_dir_owner (file, uid, gid, old_uid, old_gid, chopt);
+  if ( ! chopt->recurse)
+    fts_set (fts, ent, FTS_SKIP);
+
   return errors;
+}
+
+/* Change the owner and/or group of the specified FILES.
+   BIT_FLAGS specifies how to treat each symlink-to-directory
+   that is encountered during a recursive traversal.
+   CHOPT specifies additional options.
+   If UID is not -1, then change the owner id of each file to UID.
+   If GID is not -1, then change the group id of each file to GID.
+   If REQUIRED_UID and/or REQUIRED_GID is not -1, then change only
+   files with user ID and group ID that match the non-(-1) value(s).
+   Return nonzero upon error, zero otherwise.  */
+int
+chown_files (char **files, int bit_flags,
+	     uid_t uid, gid_t gid,
+	     uid_t required_uid, gid_t required_gid,
+	     struct Chown_option const *chopt)
+{
+  int fail = 0;
+
+  FTS *fts = xfts_open (files, bit_flags, NULL);
+
+  while (1)
+    {
+      FTSENT *ent;
+
+      ent = fts_read (fts);
+      if (ent == NULL)
+	{
+	  if (errno != 0)
+	    {
+	      /* FIXME: try to give a better message  */
+	      error (0, errno, _("fts_read failed"));
+	      fail = 1;
+	    }
+	  break;
+	}
+
+      fail |= change_file_owner (fts, ent, uid, gid,
+				 required_uid, required_gid, chopt);
+    }
+
+  /* Ignore failure, since the only way it can do so is in failing to
+     return to the original directory, and since we're about to exit,
+     that doesn't matter.  */
+  fts_close (fts);
+
+  return fail;
 }

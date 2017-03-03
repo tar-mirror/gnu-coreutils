@@ -1,5 +1,5 @@
 /* tee - read from standard input and write to standard output and files.
-   Copyright (C) 85,1990-2002 Free Software Foundation, Inc.
+   Copyright (C) 85,1990-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,13 +24,12 @@
 #include <getopt.h>
 
 #include "system.h"
-#include "closeout.h"
 #include "error.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "tee"
 
-#define AUTHORS N_ ("Mike Parker, Richard M. Stallman, and David MacKenzie")
+#define AUTHORS "Mike Parker", "Richard M. Stallman", "David MacKenzie"
 
 static int tee (int nfiles, const char **files);
 
@@ -55,7 +54,7 @@ static struct option const long_options[] =
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -80,6 +79,7 @@ main (int argc, char **argv)
   int errs;
   int optc;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -166,7 +166,7 @@ tee (int nfiles, const char **files)
   int ret = 0;
   const char *mode_string = (append ? "a" : "w");
 
-  descriptors = (FILE **) xmalloc ((nfiles + 1) * sizeof (descriptors[0]));
+  descriptors = xnmalloc (nfiles + 1, sizeof *descriptors);
 
   /* Move all the names `up' one in the argv array to make room for
      the entry for standard output.  This writes into argv[argc].  */
@@ -209,10 +209,13 @@ tee (int nfiles, const char **files)
       /* Write to all NFILES + 1 descriptors.
 	 Standard output is the first one.  */
       for (i = 0; i <= nfiles; i++)
-	{
-	  if (descriptors[i] != NULL)
-	    fwrite (buffer, bytes_read, 1, descriptors[i]);
-	}
+	if (descriptors[i]
+	    && fwrite (buffer, 1, bytes_read, descriptors[i]) != bytes_read)
+	  {
+	    error (0, errno, "%s", files[i]);
+	    descriptors[i] = NULL;
+	    ret = 1;
+	  }
     }
 
   if (bytes_read == -1)
@@ -223,8 +226,7 @@ tee (int nfiles, const char **files)
 
   /* Close the files, but not standard output.  */
   for (i = 1; i <= nfiles; i++)
-    if (descriptors[i] != NULL
-	&& (ferror (descriptors[i]) || fclose (descriptors[i]) == EOF))
+    if (descriptors[i] && fclose (descriptors[i]) != 0)
       {
 	error (0, errno, "%s", files[i]);
 	ret = 1;

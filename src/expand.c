@@ -1,5 +1,5 @@
 /* expand - convert tabs to spaces
-   Copyright (C) 89, 91, 1995-2002 Free Software Foundation, Inc.
+   Copyright (C) 89, 91, 1995-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -39,9 +39,10 @@
 #include <getopt.h>
 #include <sys/types.h>
 #include "system.h"
-#include "closeout.h"
 #include "error.h"
 #include "posixver.h"
+#include "quote.h"
+#include "xstrndup.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "expand"
@@ -51,10 +52,6 @@
 /* The number of bytes added at a time to the amount of memory
    allocated for the output line. */
 #define OUTPUT_BLOCK 256
-
-/* The number of bytes added at a time to the amount of memory
-   allocated for the list of tabstops. */
-#define TABLIST_BLOCK 256
 
 /* The name this program was run with. */
 char *program_name;
@@ -73,7 +70,8 @@ static int *tab_list;
 
 /* The index of the first invalid element of `tab_list',
    where the next element can be added. */
-static int first_free_tab;
+static size_t first_free_tab;
+static size_t n_tabs_allocated;
 
 /* Null-terminated array of input filenames. */
 static char **file_list;
@@ -87,7 +85,7 @@ static char *stdin_argv[] =
 /* Nonzero if we have ever read standard input. */
 static int have_read_stdin;
 
-/* Status to return to the system. */
+/* Nonzero if errors have occurred.  */
 static int exit_status;
 
 static struct option const longopts[] =
@@ -102,7 +100,7 @@ static struct option const longopts[] =
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -130,7 +128,7 @@ Mandatory arguments to long options are mandatory for short options too.\n\
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
       printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
     }
-  exit (status == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
+  exit (status);
 }
 
 /* Add tab stop TABVAL to the end of `tab_list', except
@@ -141,10 +139,8 @@ add_tabstop (int tabval)
 {
   if (tabval == -1)
     return;
-  if (first_free_tab % TABLIST_BLOCK == 0)
-    tab_list = (int *) xrealloc ((char *) tab_list,
-				 (first_free_tab
-				  + TABLIST_BLOCK * sizeof (tab_list[0])));
+  if (first_free_tab == n_tabs_allocated)
+    tab_list = x2nrealloc (tab_list, &n_tabs_allocated, sizeof *tab_list);
   tab_list[first_free_tab++] = tabval;
 }
 
@@ -152,9 +148,11 @@ add_tabstop (int tabval)
    to the list of tabstops. */
 
 static void
-parse_tabstops (char *stops)
+parse_tabstops (char const *stops)
 {
   int tabval = -1;
+  char const *num_start IF_LINT (= NULL);
+  int fail = 0;
 
   for (; *stops; stops++)
     {
@@ -166,12 +164,37 @@ parse_tabstops (char *stops)
       else if (ISDIGIT (*stops))
 	{
 	  if (tabval == -1)
-	    tabval = 0;
-	  tabval = tabval * 10 + *stops - '0';
+	    {
+	      tabval = 0;
+	      num_start = stops;
+	    }
+	  {
+	    int new_t;
+
+	    /* Detect overflow.  */
+	    new_t = 10 * tabval + *stops - '0';
+	    if (INT_MAX / 10 < tabval || new_t < tabval * 10)
+	      {
+		size_t len = strspn (num_start, "0123456789");
+		char *bad_num = xstrndup (num_start, len);
+		error (0, 0, _("tab stop is too large %s"), quote (bad_num));
+		fail = 1;
+		stops = num_start + len - 1;
+	      }
+	    tabval = new_t;
+	  }
 	}
       else
-	error (EXIT_FAILURE, 0, _("tab size contains an invalid character"));
+	{
+	  error (0, 0, _("tab size contains invalid character(s): %s"),
+		 quote (stops));
+	  fail = 1;
+	  break;
+	}
     }
+
+  if (fail)
+    exit (EXIT_FAILURE);
 
   add_tabstop (tabval);
 }
@@ -343,6 +366,7 @@ main (int argc, char **argv)
   convert_entire_line = 1;
   tab_list = NULL;
   first_free_tab = 0;
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -398,10 +422,7 @@ main (int argc, char **argv)
   else
     tab_size = 0;
 
-  if (optind == argc)
-    file_list = stdin_argv;
-  else
-    file_list = &argv[optind];
+  file_list = (optind < argc ? &argv[optind] : stdin_argv);
 
   expand ();
 

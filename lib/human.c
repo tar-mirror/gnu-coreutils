@@ -1,6 +1,6 @@
 /* human.c -- print human readable file size
 
-   Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002 Free
+   Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003 Free
    Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
@@ -17,27 +17,14 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
-/* Originally contributed by lm@sgi.com;
-   --si, output block size selection, large file support,
-   and grouping added by eggert@twinsun.com.  */
+/* Written by Paul Eggert and Larry McVoy.  */
 
 #if HAVE_CONFIG_H
 # include <config.h>
 #endif
 
-#if HAVE_STDBOOL_H
-# include <stdbool.h>
-#else
-typedef enum {false = 0, true = 1} bool;
-#endif
+#include "human.h"
 
-#if HAVE_INTTYPES_H
-# include <inttypes.h>
-#else
-# if HAVE_STDINT_H
-#  include <stdint.h>
-# endif
-#endif
 #ifndef SIZE_MAX
 # define SIZE_MAX ((size_t) -1)
 #endif
@@ -45,41 +32,20 @@ typedef enum {false = 0, true = 1} bool;
 # define UINTMAX_MAX ((uintmax_t) -1)
 #endif
 
-#include <limits.h>
-
 #if HAVE_LOCALE_H && HAVE_LOCALECONV
 # include <locale.h>
 #endif
 
-#if HAVE_STDLIB_H
-# include <stdlib.h>
-#endif
-#ifndef HAVE_DECL_GETENV
-"this configure-time declaration test was not run"
-#endif
-#if !HAVE_DECL_GETENV
-char *getenv ();
-#endif
-
-#if HAVE_STRING_H
-# include <string.h>
-#endif
-
-#if HAVE_STRINGS_H
-# include <strings.h>
-#endif
-
 #include <stdio.h>
-#include <sys/types.h>
+#include <stdlib.h>
+#include <string.h>
 
-#include <gettext.h>
-#define _(text) gettext (text)
+#include "gettext.h"
+#define _(msgid) gettext (msgid)
 
 #include <argmatch.h>
 #include <error.h>
 #include <xstrtol.h>
-
-#include "human.h"
 
 /* The maximum length of a suffix like "KiB".  */
 #define HUMAN_READABLE_SUFFIX_LENGTH_MAX 3
@@ -373,11 +339,9 @@ human_readable (uintmax_t n, char *buf, int opts,
 	  }
       }
 
-    if (inexact_style == human_ceiling
-	? 0 < tenths + rounding
-	: inexact_style == human_round_to_nearest
-	? 5 < tenths + (2 < rounding + (amt & 1))
-	: /* inexact_style == human_floor */ 0)
+    if (inexact_style == human_round_to_nearest
+	? 5 < tenths + (0 < rounding + (amt & 1))
+	: inexact_style == human_ceiling && 0 < tenths + rounding)
       {
 	amt++;
 
@@ -486,8 +450,6 @@ humblock (char const *spec, uintmax_t *block_size, int *options)
 				       "eEgGkKmMpPtTyYzZ0");
 	  if (e != LONGINT_OK)
 	    return e;
-	  if (*ptr)
-	    return LONGINT_INVALID_SUFFIX_CHAR;
 	  for (; ! ('0' <= *spec && *spec <= '9'); spec++)
 	    if (spec == ptr)
 	      {

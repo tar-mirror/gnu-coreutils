@@ -1,4 +1,4 @@
-#serial 2
+#serial 5
 
 dnl From Jim Meyering.
 dnl
@@ -12,14 +12,11 @@ dnl the wrapper functions that work around the problem.
 AC_DEFUN([AC_FUNC_GETTIMEOFDAY_CLOBBER],
 [
  AC_REQUIRE([AC_HEADER_TIME])
- AC_CHECK_HEADERS(string.h stdlib.h)
  AC_CACHE_CHECK([whether gettimeofday clobbers localtime buffer],
   jm_cv_func_gettimeofday_clobber,
   [AC_TRY_RUN([
 #include <stdio.h>
-#if HAVE_STRING_H
-# include <string.h>
-#endif
+#include <string.h>
 
 #if TIME_WITH_SYS_TIME
 # include <sys/time.h>
@@ -32,9 +29,7 @@ AC_DEFUN([AC_FUNC_GETTIMEOFDAY_CLOBBER],
 # endif
 #endif
 
-#if HAVE_STDLIB_H
-# include <stdlib.h>
-#endif
+#include <stdlib.h>
 
 int
 main ()
@@ -58,12 +53,25 @@ main ()
 	 jm_cv_func_gettimeofday_clobber=yes)
   ])
   if test $jm_cv_func_gettimeofday_clobber = yes; then
-    AC_LIBOBJ(gettimeofday)
-    AC_DEFINE(localtime, rpl_localtime,
-      [Define to rpl_localtime if the replacement function should be used.])
+    gl_GETTIMEOFDAY_REPLACE_LOCALTIME
+
     AC_DEFINE(gettimeofday, rpl_gettimeofday,
       [Define to rpl_gettimeofday if the replacement function should be used.])
     AC_DEFINE(GETTIMEOFDAY_CLOBBERS_LOCALTIME_BUFFER, 1,
       [Define if gettimeofday clobbers localtime's static buffer.])
+    gl_PREREQ_GETTIMEOFDAY
   fi
+])
+
+AC_DEFUN([gl_GETTIMEOFDAY_REPLACE_LOCALTIME], [
+  AC_LIBOBJ(gettimeofday)
+  AC_DEFINE(gmtime, rpl_gmtime,
+    [Define to rpl_gmtime if the replacement function should be used.])
+  AC_DEFINE(localtime, rpl_localtime,
+    [Define to rpl_localtime if the replacement function should be used.])
+])
+
+# Prerequisites of lib/gettimeofday.c.
+AC_DEFUN([gl_PREREQ_GETTIMEOFDAY], [
+  AC_REQUIRE([AC_HEADER_TIME])
 ])

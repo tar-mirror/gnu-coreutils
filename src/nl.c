@@ -1,5 +1,5 @@
 /* nl -- number lines of files
-   Copyright (C) 89, 92, 1995-2002 Free Software Foundation, Inc.
+   Copyright (C) 89, 92, 1995-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,18 +25,18 @@
 #include <getopt.h>
 
 #include "system.h"
-#include "closeout.h"
 
 #include <regex.h>
 
 #include "error.h"
 #include "linebuffer.h"
+#include "quote.h"
 #include "xstrtol.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "nl"
 
-#define AUTHORS N_ ("Scott Bartram and David MacKenzie")
+#define AUTHORS "Scott Bartram", "David MacKenzie"
 
 #ifndef TRUE
 # define TRUE   1
@@ -168,7 +168,7 @@ static struct option const longopts[] =
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -226,7 +226,7 @@ FORMAT is one of:\n\
 "), stdout);
       printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
     }
-  exit (status == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
+  exit (status);
 }
 
 /* Build the printf format string, based on `lineno_format'. */
@@ -274,7 +274,7 @@ build_type_arg (char **typep, struct re_pattern_buffer *regexp)
       *typep = optarg++;
       optlen = strlen (optarg);
       regexp->allocated = optlen * 2;
-      regexp->buffer = (unsigned char *) xmalloc (regexp->allocated);
+      regexp->buffer = xmalloc (regexp->allocated);
       regexp->translate = NULL;
       regexp->fastmap = xmalloc (256);
       regexp->fastmap_accurate = 0;
@@ -349,7 +349,7 @@ proc_text (void)
 	      blank_lines = 0;
 	    }
 	  else
-	    puts (print_no_line_fmt);
+	    fputs (print_no_line_fmt, stdout);
 	}
       else
 	print_lineno ();
@@ -358,15 +358,15 @@ proc_text (void)
       if (1 < line_buf.length)
 	print_lineno ();
       else
-	puts (print_no_line_fmt);
+	fputs (print_no_line_fmt, stdout);
       break;
     case 'n':
-      puts (print_no_line_fmt);
+      fputs (print_no_line_fmt, stdout);
       break;
     case 'p':
       if (re_search (current_regex, line_buf.buffer, line_buf.length - 1,
 		     0, line_buf.length - 1, (struct re_registers *) 0) < 0)
-	puts (print_no_line_fmt);
+	fputs (print_no_line_fmt, stdout);
       else
 	print_lineno ();
       break;
@@ -400,7 +400,7 @@ check_section (void)
 static void
 process_file (FILE *fp)
 {
-  while (readline (&line_buf, fp))
+  while (readlinebuffer (&line_buf, fp))
     {
       switch ((int) check_section ())
 	{
@@ -465,7 +465,9 @@ main (int argc, char **argv)
 {
   int c, exit_status = 0;
   size_t len;
+  int fail = 0;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -485,15 +487,27 @@ main (int argc, char **argv)
 
 	case 'h':
 	  if (build_type_arg (&header_type, &header_regex) != TRUE)
-	    usage (2);
+	    {
+	      error (0, 0, _("invalid header numbering style: %s"),
+		     quote (optarg));
+	      fail = 1;
+	    }
 	  break;
 	case 'b':
 	  if (build_type_arg (&body_type, &body_regex) != TRUE)
-	    usage (2);
+	    {
+	      error (0, 0, _("invalid body numbering style: %s"),
+		     quote (optarg));
+	      fail = 1;
+	    }
 	  break;
 	case 'f':
 	  if (build_type_arg (&footer_type, &footer_regex) != TRUE)
-	    usage (2);
+	    {
+	      error (0, 0, _("invalid footer numbering style: %s"),
+		     quote (optarg));
+	      fail = 1;
+	    }
 	  break;
 	case 'v':
 	  {
@@ -501,9 +515,15 @@ main (int argc, char **argv)
 	    if (xstrtol (optarg, NULL, 10, &tmp_long, "") != LONGINT_OK
 		/* Allow it to be negative.  */
 		|| tmp_long > INT_MAX)
-	      error (EXIT_FAILURE, 0, _("invalid starting line number: `%s'"),
-		     optarg);
-	    starting_line_number = (int) tmp_long;
+	      {
+		error (0, 0, _("invalid starting line number: %s"),
+		       quote (optarg));
+		fail = 1;
+	      }
+	    else
+	      {
+		starting_line_number = (int) tmp_long;
+	      }
 	  }
 	  break;
 	case 'i':
@@ -511,9 +531,15 @@ main (int argc, char **argv)
 	    long int tmp_long;
 	    if (xstrtol (optarg, NULL, 10, &tmp_long, "") != LONGINT_OK
 		|| tmp_long <= 0 || tmp_long > INT_MAX)
-	      error (EXIT_FAILURE, 0, _("invalid line number increment: `%s'"),
-		     optarg);
-	    page_incr = (int) tmp_long;
+	      {
+		error (0, 0, _("invalid line number increment: %s"),
+		       quote (optarg));
+		fail = 1;
+	      }
+	    else
+	      {
+		page_incr = (int) tmp_long;
+	      }
 	  }
 	  break;
 	case 'p':
@@ -524,9 +550,15 @@ main (int argc, char **argv)
 	    long int tmp_long;
 	    if (xstrtol (optarg, NULL, 10, &tmp_long, "") != LONGINT_OK
 		|| tmp_long <= 0 || tmp_long > INT_MAX)
-	      error (EXIT_FAILURE, 0, _("invalid number of blank lines: `%s'"),
-		     optarg);
-	    blank_join = (int) tmp_long;
+	      {
+		error (0, 0, _("invalid number of blank lines: %s"),
+		       quote (optarg));
+		fail = 1;
+	      }
+	    else
+	      {
+		blank_join = (int) tmp_long;
+	      }
 	  }
 	  break;
 	case 's':
@@ -537,38 +569,29 @@ main (int argc, char **argv)
 	    long int tmp_long;
 	    if (xstrtol (optarg, NULL, 10, &tmp_long, "") != LONGINT_OK
 		|| tmp_long <= 0 || tmp_long > INT_MAX)
-	      error (EXIT_FAILURE, 0,
-		     _("invalid line number field width: `%s'"),
-		     optarg);
-	    lineno_width = (int) tmp_long;
+	      {
+		error (0, 0, _("invalid line number field width: %s"),
+		       quote (optarg));
+		fail = 1;
+	      }
+	    else
+	      {
+		lineno_width = (int) tmp_long;
+	      }
 	  }
 	  break;
 	case 'n':
-	  switch (*optarg)
+	  if (STREQ (optarg, "ln"))
+	    lineno_format = FORMAT_LEFT;
+	  else if (STREQ (optarg, "rn"))
+	    lineno_format = FORMAT_RIGHT_NOLZ;
+	  else if (STREQ (optarg, "rz"))
+	    lineno_format = FORMAT_RIGHT_LZ;
+	  else
 	    {
-	    case 'l':
-	      if (optarg[1] == 'n')
-		lineno_format = FORMAT_LEFT;
-	      else
-		usage (2);
-	      break;
-	    case 'r':
-	      switch (optarg[1])
-		{
-		case 'n':
-		  lineno_format = FORMAT_RIGHT_NOLZ;
-		  break;
-		case 'z':
-		  lineno_format = FORMAT_RIGHT_LZ;
-		  break;
-		default:
-		  usage (2);
-		  break;
-		}
-	      break;
-	    default:
-	      usage (2);
-	      break;
+	      error (0, 0, _("invalid line numbering format: %s"),
+		     quote (optarg));
+	      fail = 1;
 	    }
 	  break;
 	case 'd':
@@ -577,10 +600,13 @@ main (int argc, char **argv)
 	case_GETOPT_HELP_CHAR;
 	case_GETOPT_VERSION_CHAR (PROGRAM_NAME, AUTHORS);
 	default:
-	  usage (2);
+	  fail = 1;
 	  break;
 	}
     }
+
+  if (fail)
+    usage (EXIT_FAILURE);
 
   /* Initialize the section delimiters.  */
   len = strlen (section_del);

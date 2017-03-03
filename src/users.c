@@ -1,5 +1,5 @@
 /* GNU's users.
-   Copyright (C) 1992-2002 Free Software Foundation, Inc.
+   Copyright (C) 1992-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,12 +27,11 @@
 #include "error.h"
 #include "long-options.h"
 #include "readutmp.h"
-#include "closeout.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "users"
 
-#define AUTHORS N_ ("Joseph Arceneaux and David MacKenzie")
+#define AUTHORS "Joseph Arceneaux", "David MacKenzie"
 
 /* The name this program was run with. */
 char *program_name;
@@ -58,7 +57,7 @@ list_entries_users (int n, const STRUCT_UTMP *this)
   int n_entries;
 
   n_entries = 0;
-  u = (char **) xmalloc (n * sizeof (u[0]));
+  u = xmalloc (n * sizeof (u[0]));
   for (i = 0; i < n; i++)
     {
       if (UT_USER (this) [0]
@@ -105,12 +104,14 @@ users (const char *filename)
     error (EXIT_FAILURE, errno, "%s", filename);
 
   list_entries_users (n_users, utmp_buf);
+
+  free (utmp_buf);
 }
 
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -133,6 +134,7 @@ int
 main (int argc, char **argv)
 {
   int optc, longind;
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -141,7 +143,7 @@ main (int argc, char **argv)
   atexit (close_stdout);
 
   parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
-		      AUTHORS, usage);
+		      usage, AUTHORS, (char const *) NULL);
 
   while ((optc = getopt_long (argc, argv, "", longopts, &longind)) != -1)
     {

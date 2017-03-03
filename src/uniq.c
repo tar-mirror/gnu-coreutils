@@ -1,5 +1,5 @@
 /* uniq -- remove duplicate lines from a sorted file
-   Copyright (C) 86, 91, 1995-2002, Free Software Foundation, Inc.
+   Copyright (C) 86, 91, 1995-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@
 #include <sys/types.h>
 
 #include "system.h"
-#include "closeout.h"
 #include "argmatch.h"
 #include "linebuffer.h"
 #include "error.h"
@@ -37,7 +36,7 @@
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "uniq"
 
-#define AUTHORS N_ ("Richard Stallman and David MacKenzie")
+#define AUTHORS "Richard Stallman", "David MacKenzie"
 
 #define SWAP_LINES(A, B)			\
   do						\
@@ -74,16 +73,12 @@ enum countmode
    times they occurred in the input. */
 static enum countmode countmode;
 
-enum output_mode
-{
-  output_repeated,		/* -d Only lines that are repeated. */
-  output_all_repeated,		/* -D All lines that are repeated. */
-  output_unique,		/* -u Only lines that are not repeated. */
-  output_all			/* Default.  Print first copy of each line. */
-};
-
-/* Which lines to output. */
-static enum output_mode mode;
+/* Which lines to output: unique lines, the first of a group of
+   repeated lines, and the second and subsequented of a group of
+   repeated lines.  */
+static bool output_unique;
+static bool output_first_repeated;
+static bool output_later_repeated;
 
 /* If nonzero, ignore case when comparing.  */
 static int ignore_case;
@@ -131,7 +126,7 @@ static struct option const longopts[] =
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -173,7 +168,7 @@ Fields are skipped before chars.\n\
 "), stdout);
       printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
     }
-  exit (status == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
+  exit (status);
 }
 
 /* Convert OPT to size_t, reporting an error using MSGID if it does
@@ -240,19 +235,21 @@ different (char *old, char *new, size_t oldlen, size_t newlen)
 
 /* Output the line in linebuffer LINE to stream STREAM
    provided that the switches say it should be output.
+   MATCH is true if the line matches the previous line.
    If requested, print the number of times it occurred, as well;
    LINECOUNT + 1 is the number of times that the line occurred. */
 
 static void
-writeline (const struct linebuffer *line, FILE *stream, int linecount)
+writeline (struct linebuffer const *line, FILE *stream,
+	   bool match, int linecount)
 {
-  if ((mode == output_unique && linecount != 0)
-      || (mode == output_repeated && linecount == 0)
-      || (mode == output_all_repeated && linecount == 0))
+  if (! (linecount == 0 ? output_unique
+	 : !match ? output_first_repeated
+	 : output_later_repeated))
     return;
 
   if (countmode == count_occurrences)
-    fprintf (stream, "%7d\t", linecount + 1);
+    fprintf (stream, "%7d ", linecount + 1);
 
   fwrite (line->buffer, sizeof (char), line->length, stream);
 }
@@ -295,7 +292,7 @@ check_file (const char *infile, const char *outfile)
      this optimization lets uniq output each different line right away,
      without waiting to see if the next one is different.  */
 
-  if (mode == output_all && countmode == count_none)
+  if (output_unique && output_first_repeated && countmode == count_none)
     {
       char *prevfield IF_LINT (= NULL);
       size_t prevlen IF_LINT (= 0);
@@ -304,7 +301,7 @@ check_file (const char *infile, const char *outfile)
 	{
 	  char *thisfield;
 	  size_t thislen;
-	  if (readline (thisline, istream) == 0)
+	  if (readlinebuffer (thisline, istream) == 0)
 	    break;
 	  thisfield = find_field (thisline);
 	  thislen = thisline->length - 1 - (thisfield - thisline->buffer);
@@ -327,18 +324,22 @@ check_file (const char *infile, const char *outfile)
       int match_count = 0;
       int first_delimiter = 1;
 
-      if (readline (prevline, istream) == 0)
+      if (readlinebuffer (prevline, istream) == 0)
 	goto closefiles;
       prevfield = find_field (prevline);
       prevlen = prevline->length - 1 - (prevfield - prevline->buffer);
 
       while (!feof (istream))
 	{
-	  int match;
+	  bool match;
 	  char *thisfield;
 	  size_t thislen;
-	  if (readline (thisline, istream) == 0)
-	    break;
+	  if (readlinebuffer (thisline, istream) == 0)
+	    {
+	      if (ferror (istream))
+		goto closefiles;
+	      break;
+	    }
 	  thisfield = find_field (thisline);
 	  thislen = thisline->length - 1 - (thisfield - thisline->buffer);
 	  match = !different (thisfield, prevfield, thislen, prevlen);
@@ -346,7 +347,7 @@ check_file (const char *infile, const char *outfile)
 	  if (match)
 	    ++match_count;
 
-          if (mode == output_all_repeated && delimit_groups != DM_NONE)
+          if (delimit_groups != DM_NONE)
 	    {
 	      if (!match)
 		{
@@ -362,9 +363,9 @@ check_file (const char *infile, const char *outfile)
 		}
 	    }
 
-	  if (!match || mode == output_all_repeated)
+	  if (!match || output_later_repeated)
 	    {
-	      writeline (prevline, ostream, match_count);
+	      writeline (prevline, ostream, match, match_count);
 	      SWAP_LINES (prevline, thisline);
 	      prevfield = thisfield;
 	      prevlen = thislen;
@@ -373,16 +374,18 @@ check_file (const char *infile, const char *outfile)
 	    }
 	}
 
-      writeline (prevline, ostream, match_count);
+      writeline (prevline, ostream, false, match_count);
     }
 
  closefiles:
   if (ferror (istream) || fclose (istream) == EOF)
     error (EXIT_FAILURE, errno, _("error reading %s"), infile);
 
+  if (ferror (ostream))
+    error (EXIT_FAILURE, 0, _("error writing %s"), outfile);
   /* Close ostream only if it's not stdout -- the latter is closed
      via the atexit-invoked close_stdout.  */
-  if (ostream != stdout && (ferror (ostream) || fclose (ostream) == EOF))
+  if (ostream != stdout && fclose (ostream) != 0)
     error (EXIT_FAILURE, errno, _("error writing %s"), outfile);
 
   free (lb1.buffer);
@@ -399,6 +402,7 @@ main (int argc, char **argv)
   char const *file[2];
 
   file[0] = file[1] = "-";
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -410,7 +414,8 @@ main (int argc, char **argv)
   skip_chars = 0;
   skip_fields = 0;
   check_chars = SIZE_MAX;
-  mode = output_all;
+  output_unique = output_first_repeated = true;
+  output_later_repeated = false;
   countmode = count_none;
   delimit_groups = DM_NONE;
 
@@ -426,7 +431,7 @@ main (int argc, char **argv)
 				   "-0123456789Dcdf:is:uw:", longopts, NULL))
 	      == -1))
 	{
-	  if (optind == argc)
+	  if (argc <= optind)
 	    break;
 	  if (nfiles == 2)
 	    {
@@ -480,11 +485,12 @@ main (int argc, char **argv)
 	  break;
 
 	case 'd':
-	  mode = output_repeated;
+	  output_unique = false;
 	  break;
 
 	case 'D':
-	  mode = output_all_repeated;
+	  output_unique = false;
+	  output_later_repeated = true;
 	  if (optarg == NULL)
 	    delimit_groups = DM_NONE;
 	  else
@@ -508,7 +514,7 @@ main (int argc, char **argv)
 	  break;
 
 	case 'u':
-	  mode = output_unique;
+	  output_first_repeated = false;
 	  break;
 
 	case 'w':
@@ -532,7 +538,7 @@ main (int argc, char **argv)
       usage (EXIT_FAILURE);
     }
 
-  if (countmode == count_occurrences && mode == output_all_repeated)
+  if (countmode == count_occurrences && output_later_repeated)
     {
       error (0, 0,
 	   _("printing all duplicated lines and repeat counts is meaningless"));

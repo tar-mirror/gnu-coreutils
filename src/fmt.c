@@ -1,5 +1,5 @@
 /* GNU fmt -- simple text formatter.
-   Copyright (C) 1994-2003 Free Software Foundation, Inc.
+   Copyright (C) 1994-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@
 #define word unused_word_type
 
 #include "system.h"
-#include "closeout.h"
 #include "error.h"
+#include "quote.h"
 #include "xstrtol.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
@@ -263,7 +263,7 @@ static int last_line_length;
 void
 usage (int status)
 {
-  if (status != 0)
+  if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
 	     program_name);
   else
@@ -286,17 +286,17 @@ Mandatory arguments to long options are mandatory for short options too.\n\
       fputs (_("\
   -t, --tagged-paragraph    indentation of first line different from second\n\
   -u, --uniform-spacing     one space between words, two after sentences\n\
-  -w, --width=NUMBER        maximum line width (default of 75 columns)\n\
+  -w, --width=WIDTH         maximum line width (default of 75 columns)\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
       fputs (_("\
 \n\
-In -wNUMBER, the letter `w' may be omitted.\n"),
+With no FILE, or when FILE is -, read standard input.\n"),
 	     stdout);
       printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
     }
-  exit (status == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
+  exit (status);
 }
 
 /* Decode options and launch execution.  */
@@ -318,7 +318,9 @@ int
 main (register int argc, register char **argv)
 {
   int optchar;
+  int fail;
 
+  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -342,8 +344,13 @@ main (register int argc, register char **argv)
 	  int old_max = max_width;
 	  max_width = max_width * 10 + *s - '0';
 	  if (INT_MAX / 10 < old_max || max_width < old_max)
-	    error (EXIT_FAILURE, 0, _("invalid width option: `%s'"), argv[1]);
+	    break;
 	}
+
+      if (*s)
+	error (EXIT_FAILURE, 0, _("invalid width option: %s"),
+	       quote (argv[1]));
+
       /* Make the options we just parsed invisible to getopt. */
       argv[1] = argv[0];
       argv++;
@@ -356,10 +363,11 @@ main (register int argc, register char **argv)
     switch (optchar)
       {
       default:
+	if (ISDIGIT (optchar))
+	  error (0, 0, _("invalid option -- %c; -WIDTH is recognized\
+ only when it is the first\noption; use -w N instead"),
+		 optchar);
 	usage (EXIT_FAILURE);
-
-      case 0:
-	break;
 
       case 'c':
 	crown = TRUE;
@@ -382,8 +390,7 @@ main (register int argc, register char **argv)
 	  long int tmp_long;
 	  if (xstrtol (optarg, NULL, 10, &tmp_long, "") != LONGINT_OK
 	      || tmp_long <= 0 || tmp_long > INT_MAX)
-	    error (EXIT_FAILURE, 0, _("invalid width: `%s'"),
-		   optarg);
+	    error (EXIT_FAILURE, 0, _("invalid width: %s"), quote (optarg));
 	  max_width = (int) tmp_long;
 	}
 	break;
@@ -400,6 +407,7 @@ main (register int argc, register char **argv)
 
   best_width = max_width * (2 * (100 - LEEWAY) + 1) / 200;
 
+  fail = 0;
   if (optind == argc)
     fmt (stdin);
   else
@@ -417,15 +425,22 @@ main (register int argc, register char **argv)
 		{
 		  fmt (in_stream);
 		  if (fclose (in_stream) == EOF)
-		    error (EXIT_FAILURE, errno, "%s", file);
+		    {
+		      error (0, errno, "%s", file);
+		      fail = 1;
+		    }
 		}
 	      else
-		error (0, errno, "%s", file);
+		{
+		  error (0, errno, _("cannot open %s for reading"),
+			 quote (file));
+		  fail = 1;
+		}
 	    }
 	}
     }
 
-  exit (EXIT_SUCCESS);
+  exit (fail ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 /* Trim space from the front and back of the string P, yielding the prefix,
@@ -765,7 +780,7 @@ flush_paragraph (void)
 
   if (word_limit == word)
     {
-      printf ("%*s", wptr - parabuf, parabuf);
+      printf ("%*s", (int) (wptr - parabuf), parabuf);
       wptr = parabuf;
       return;
     }
