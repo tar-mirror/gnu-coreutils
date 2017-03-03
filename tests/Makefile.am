@@ -16,7 +16,6 @@ EXTRA_DIST =		\
   other-fs-tmpdir	\
   require-perl		\
   sample-test		\
-  test-lib.sh		\
   $(pr_data)
 
 root_tests =					\
@@ -150,6 +149,7 @@ TESTS =						\
   misc/xstrtol					\
   tail-2/pid					\
   misc/od					\
+  misc/od-float					\
   misc/mktemp					\
   misc/arch					\
   misc/pr					\
@@ -228,6 +228,8 @@ TESTS =						\
   misc/sort					\
   misc/sort-benchmark-random			\
   misc/sort-compress				\
+  misc/sort-compress-hang			\
+  misc/sort-compress-proc			\
   misc/sort-continue				\
   misc/sort-debug-keys				\
   misc/sort-debug-warn				\
@@ -237,11 +239,17 @@ TESTS =						\
   misc/sort-merge-fdlimit			\
   misc/sort-month				\
   misc/sort-rand				\
+  misc/sort-spinlock-abuse			\
+  misc/sort-stale-thread-mem			\
   misc/sort-unique				\
+  misc/sort-unique-segv				\
   misc/sort-version				\
   misc/split-a					\
+  misc/split-bchunk				\
   misc/split-fail				\
   misc/split-l					\
+  misc/split-lchunk				\
+  misc/split-rchunk				\
   misc/stat-birthtime				\
   misc/stat-fmt					\
   misc/stat-hyphen				\

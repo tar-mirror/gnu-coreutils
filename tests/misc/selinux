@@ -16,16 +16,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-if test "$VERBOSE" = yes; then
-  set -x
-  chcon --version
-  cp --version
-  ls --version
-  mv --version
-  stat --version
-fi
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
+print_ver_ chcon cp ls mv stat
 
-. $srcdir/test-lib.sh
 require_root_
 require_selinux_
 skip_if_mcstransd_is_running_

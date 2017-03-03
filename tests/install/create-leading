@@ -19,12 +19,8 @@
 # Note that the tests below use `ginstall', not install, because
 # that's the name of the binary in ../../src.
 
-if test "$VERBOSE" = yes; then
-  set -x
-  ginstall --version
-fi
-
-. $srcdir/test-lib.sh
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
+print_ver_ ginstall
 
 
 file=file

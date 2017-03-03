@@ -262,7 +262,7 @@ _GL_WARN_ON_USE (expl, "expl is unportable - "
 #  endif
 _GL_FUNCDECL_RPL (floorf, float, (float x));
 _GL_CXXALIAS_RPL (floorf, float, (float x));
-#else
+# else
 #  if !@HAVE_DECL_FLOORF@
 _GL_FUNCDECL_SYS (floorf, float, (float x));
 #  endif
@@ -679,6 +679,10 @@ _GL_EXTERN_C int rpl_isnanl (long double x);
    (sizeof (x) == sizeof (long double) ? gl_isnan_l (x) : \
     sizeof (x) == sizeof (double) ? gl_isnan_d (x) : \
     gl_isnan_f (x))
+# endif
+/* Ensure isnan is a macro.  */
+# ifndef isnan
+#  define isnan isnan
 # endif
 #elif defined GNULIB_POSIXCHECK
 # if defined isnan

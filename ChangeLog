@@ -1,4 +1,679 @@
+2010-12-22  Jim Meyering  <meyering@redhat.com>
+
+	version 8.8
+	* NEWS: Record release date.
+
+	csplit: update gnulib for Solaris 8,9 snprintf fix
+
+	maint: correct test-related comments
+	* tests/mv/i-3: Adjust comment to match just-changed code.
+	Spotted by Pádraig Brady.
+	* tests/init.cfg (retry_delay_): Correct spelling of function name
+	in usage example.
+
+	tests: adjust preceding change to handle general WERROR_CFLAGS values
+	* gnulib-tests/Makefile.am (test_xvasprintf_CFLAGS):
+	(test_lock_CFLAGS, test_tls_CFLAGS): Avoid a syntax error when
+	$(WERROR_CFLAGS) expands to more than one token.
+
+2010-12-22  Paul Eggert  <eggert@cs.ucla.edu>
+
+	tests: do not assume compiler knows -Wxxx flags
+	* gnulib-tests/Makefile.am (test_xvasprintf_CFLAGS):
+	(test_lock_CFLAGS, test_tls_CFLAGS): Do not append GCC-specific
+	flags like -Wno-format-security unless the GCC-specific flag
+	-Werror is also specified.  This avoids a "make check" failure on
+	Solaris when using Sun C 5.8.
+
+2010-12-22  Jim Meyering  <meyering@redhat.com>
+
+	tests: mv/i-3: avoid false-positive failure on a slow/busy system
+	* tests/mv/i-3: Quadruple the timeout duration.
+	Without this, I saw an expired timeout on a heavily-loaded system.
+
+2010-12-21  Jim Meyering  <meyering@redhat.com>
+
+	tests: avoid new false-positive failure on at least FreeBSD 8.1
+	* tests/mv/trailing-slash: Accommodate different diagnostic
+	on FreeBSD 8.1.
+
+2010-12-21  Paul Eggert  <eggert@cs.ucla.edu>
+
+	who: omit useless definitions of MAXHOSTNAMELEN
+	This prevents a compilation failure on Solaris 8, GCC 4.4.2, with
+	"configure --enable-gcc-warnings".
+	* src/who.c (MAXHOSTNAMELEN): Remove; no longer needed.
+	* src/pinky.c: Likewise.
+
+2010-12-20  Pádraig Brady  <P@draigBrady.com>
+
+	maint: fix a typo in sort --parallel help message
+	Also fix up Chen Guo's contacts
+	* src/sort.c (usage): Add a missing "of"
+	* THANKS: Add Chen Guo
+	* .mailmap: Add Chen Guo's UCLA address
+
+2010-12-20  Jim Meyering  <meyering@redhat.com>
+
+	build: update gnulib: ACL-vs-Solaris 8 portability etc.
+
+2010-12-19  Paul Eggert  <eggert@cs.ucla.edu>
+
+	tests: sync init.sh from gnulib
+	* tests/init.sh (setup_): Initialize fail=0 before invoking mktempd_.
+	Ensure that IFS is defined initially.
+	(mktempd_): Remove fail=0 initialization; no longer needed.
+
+2010-12-19  Pádraig Brady  <P@draigBrady.com>
+
+	wc: fix a possible hang with --files0-from
+	* src/wc.c (main): exit when we get a read error on
+	the --files0-from file, rather than retrying and
+	spinning the CPU
+
+	cp: ensure backups are created when -T specified
+	* src/cp.c (do_copy): When -T is specified, initialize
+	the NEW_DST and SB variables, which are checked when
+	running: cp -T --force --backup file file
+	* tests/cp/backup-1: Add the -T case
+
+	sort: use at most 8 threads by default
+	* src/sort.c (main): If --parallel isn't specified,
+	restrict the number of threads to 8 by default.
+	If the --parallel option is specified, then
+	allow any number of threads to be set, independent
+	of the number of processors on the system.
+	* doc/coreutils.texi (sort invocation): Document the changes
+	to determining the number of threads to use.
+	Mention the memory overhead when using multiple threads.
+	* tests/misc/sort-spinlock-abuse: Allow single core
+	systems that support pthreads.
+	* tests/misc/sort-stale-thread-mem: Likewise.
+	* tests/misc/sort-unique-segv: Likewise.
+	* NEWS: Mention the change in behaviour.
+
+2010-12-18  Jim Meyering  <meyering@redhat.com>
+
+	doc: split: add examples showing how to use the new option
+	* doc/coreutils.texi (split invocation): Add examples.
+
+	tests: avoid spurious du/bigtime failure
+	* tests/du/bigtime: Map nonzero block count to 0.
+	Reported by Assaf Gordon.
+	* THANKS: Update.
+
+2010-12-18  Paul Eggert  <eggert@cs.ucla.edu>
+
+	tests: set fail=0 by default
+	* tests/init.sh (setup_): Set fail=0.  This was the intent as per
+	<http://lists.gnu.org/archive/html/bug-coreutils/2010-12/msg00058.html>
+	but the assignment in mktempd_ is ineffective, since mktempd_
+	is used inside `` and its assignments are in a subshell.
+
+2010-12-17  Jim Meyering  <meyering@redhat.com>
+
+	build: update gnulib submodule to latest
+
+2010-12-17  Paul Eggert  <eggert@cs.ucla.edu>
+
+	sort: do not generate thousands of subprocesses for 16-way merge
+	Without this change, tests/misc/sort-compress-hang would consume
+	more than 10,000 process slots on my RHEL 5.5 x86-64 server,
+	making it likely for other applications to fail due to lack of
+	process slots.  With this change, the same benchmark causes 'sort'
+	to consume at most 19 process slots.  The change also improved
+	wall-clock time by 2% and user+system time by 14% on that benchmark.
+	* NEWS: Document this.
+	* src/sort.c (MAX_PROCS_BEFORE_REAP): Remove.
+	(reap_exited): Renamed from reap_some; this is a more accurate name,
+	since "some" incorrectly implies that it reaps at least one process.
+	All uses changed.
+	(reap_some): New function: it *does* reap at least one process.
+	(pipe_fork): Do not allow more than NMERGE + 2 subprocesses.
+	(mergefps, sort): Omit check for exited processes: no longer needed,
+	and anyway the code consumed too much CPU per line when 2 < nprocs.
+
+2010-12-16  Paul Eggert  <eggert@cs.ucla.edu>
+
+	sort: fix hang with sort --compress
+	* NEWS: Document this.
+	* src/sort.c (UNCOMPRESSED, UNREAPED, REAPED): New constants.
+	(struct tempnode): New member 'state', to hold these constants.
+	The pid member is now undefined if state == UNCOMPRESSED.
+	(struct sortfile): Replace member 'pid' with member 'temp'.
+	(uintptr): Remove.
+	(proctab_hasher, proctab_comparator, register_proc, delete_proc):
+	Proctab entries are now struct tempnode *, not pid_t, to handle
+	the case where multiple tempnode objects correspond to the same
+	pid.  This avoids a race condition that can cause a hang.
+	(register_proc): Arg is now struct tempnode *, not pid_t.  All
+	callers changed.
+	(delete_proc): Set tempnode state to REAPED.
+	(create_temp_file): No need to set pid member here; it's now
+	done when the pid is known.
+	(maybe_create_temp, create_temp): Remove PPID arg.  Return struct
+	tempnode *, not char *.  All callers changed.
+	(maybe_create_temp): Set node state to UNCOMPRESSED or UNREAPED.
+	No need to set node->pid to 0.
+	(open_temp): Replace NAME and PID args with a single TEMP arg.
+	All callers changed.  Wait only for unreaped children.
+	(zaptemp): Wait for decompressor to finish before removing its
+	temporary-file input.  This avoids .nfsXXXX hassles with NFS
+	and fixes a race (leading to a hang) regardless of NFS.
+	(open_input_files): Adjust to new way of dealing with temp files
+	and their subprocesses.
+	* tests/Makefile.am (TESTS): Add misc/sort-compress-hang.
+	* tests/misc/sort-compress-hang: New file.
+
+	sort: don't dump core when merging from input twice
+	* NEWS: Document this.
+	* src/sort.c (avoid_trashing_input): The previous fix to this
+	function didn't fix all the problems with this code.  Replace it
+	with something simpler: just copy the input file.  This doesn't
+	change the number of files, so return void instead of the updated
+	file count.  Caller changed.
+	* tests/misc/sort-merge-fdlimit: Test for the bug.
+
+2010-12-14  Jim Meyering  <meyering@redhat.com>
+
+	doc: tail: semi-deprecate --sleep-interval and --max-unchanged-stats
+	Those options are useful only on systems that lack inotify support
+	and in the unusual event that a system with inotify support must
+	resort to polling.
+	* src/tail.c (usage): Note that the --max-unchanged-stats=N and
+	--sleep-interval=N options are rarely useful on systems with
+	inotify support.
+	* doc/coreutils.texi (tail invocation): Likewise.
+
+2010-12-14  Paul Eggert  <eggert@cs.ucla.edu>
+
+	sort: fix very-unlikely buffer overrun when merging to input file
+	* src/sort.c (avoid_trashing_input): Fix a typo that could cause a
+	buffer overrun in theory.  In practice this is extremely unlikely,
+	as it requires running out of file descriptors in a small merge,
+	presumably because some other process is hogging all the OS's file
+	descriptors.
+
+	sort: document --compress reaper fixes
+	* NEWS: Document the --compress reaper fixes installed yesterday.
+
+	tests: default to /tmp as the temporary directory
+	* tests/check.mk (TESTS_ENVIRONMENT): Default TMPDIR to /tmp,
+	rather than to the working directory; this is more common in
+	practice, which makes the tests more real-worldish; and it is
+	often faster.  Also, it avoids some problems with NFS cleanups.
+	* tests/misc/sort-compress: Remove unnecessary code setting TMPDIR.
+	* tests/misc/sort-compress-proc: Likewise.  Do the final sleep
+	only if TMPDIR is relative, which should be rarely given the
+	change to TESTS_ENVIRONMENT.
+
+	sort: fix some --compress reaper bugs
+	* src/sort.c (uintptr): New type.
+	(enum procstate, struct procnode, update_proc): Remove.
+	(proctab_hasher, proctab_comparator, register_proc, wait_proc):
+	(reap_some): The proctab is now simply a hash of process-IDs
+	rather than of pointers to objects with reference counts and
+	states; this is smaller and faster and easier to understand.
+	(nprocs): Now pid_t, not size_t, since one cannot have more than
+	PID_MAX children.
+	(reap): If the argument is -1, wait; if 0 (a new value), do not.
+	Delete pid from proctab as needed.  Ignore children that are not
+	in proctab, as they are from the program that exec'ed us and are
+	irrelevant to our success or failure.
+	(delete_proc, reap_all): New functions.
+	(open_temp): Register the child.
+	(sort): Clean up all children afterwards; without this patch,
+	'sort' sometimes missed failures in children due to race conditions.
+	* tests/Makefile.am (TESTS): Add misc/sort-compress-proc.
+	* tests/misc/sort-compress-proc: New file, to test for the
+	bugs fixed above.
+
+2010-12-13  Paul Eggert  <eggert@cs.ucla.edu>
+
+	tests: typo fix
+	* tests/misc/sort-stale-thread-mem: Fix typo in comment.
+
+2010-12-13  Jim Meyering  <meyering@redhat.com>
+
+	tests: tweak basic-1 to use warn_ rather than literal "exit 77"
+	* tests/install/basic-1 (just_built_dd): Use warn_, rather than
+	cat and exit 77.
+
+	tests: mark new test as very expensive
+	* tests/misc/sort-stale-thread-mem: Don't initialize fail=0 here;
+	that is done in init.sh.  This avoids a syntax-check failure.
+	Invoke "Exit $fail" at end, too.
+	Mark as a very expensive test.
+
+2010-12-12  Paul Eggert  <eggert@cs.ucla.edu>
+
+	tests: test for access to stale thread memory
+	* tests/misc/sort-stale-thread-mem: New tests.
+	* tests/Makefile.am (TESTS): Add it.
+
+2010-12-11  Jim Meyering  <meyering@redhat.com>
+
+	tests: avoid FP failure when run under valgrind
+	* tests/misc/printenv: Filter out LD_PRELOAD, as the comment
+	said, not LD_LIBRARY.
+
+	sort: avoid segfault when using two or more threads
+	This change does not fix the actual bug.  That was done by commit
+	c9db0ac6, "sort: preallocate merge tree nodes to heap".  The fix
+	was to store each "node" structure on the heap, not on the stack.
+	Otherwise, a node from one thread's stack could be used in another
+	thread after the first thread had expired (via pthread_join).
+	This bug was very hard to trigger when using spinlocks, but
+	easier once we began using mutexes.
+	* NEWS (Bug fixes): Mention it.
+	For details, see http://debbugs.gnu.org/7597.
+
+	sort: syntax cleanup
+	* src/sort.c (xfopen, debug_key, sortlines, sort, main): Adjust
+	formatting: fix misplaced braces, use consistent spacing,
+	split a 2-stmt line.
+
+2010-12-11  Paul Eggert  <eggert@cs.ucla.edu>
+
+	sort: integer overflow checks in thread counts, etc.
+	* src/sort.c (specify_nthreads, merge_tree_init, init_node):
+	(queue_init, sortlines, struct thread_args, sort, main):
+	Use size_t, not unsigned long int, for thread counts, since thread
+	counts are now used to compute sizes.
+	(specify_nthreads): Check for size_t overflow.
+	(merge_tree_init, sort): Shorten name of local variable, for
+	readability.
+	(merge_tree_init): Move constants next to each other in product,
+	so that the constant folding is easier to see.
+	(init_node): Now static.  Add 'restrict' only where it might
+	be helpful for compiler optimization.
+	(queue_init): 2nd arg is now nthreads, not "reserve", which is
+	a bit harder to follow.  All uses changed.
+	(struct thread_args): Rename lo_child to is_lo_child, so that
+	it's obvious to the reader when we're talking about this boolean
+	as opposed to the new lo_child member of the other structure.
+	All uses changed.
+	(sort): Remove unused local variable end_node.
+	(main): Don't allow large thread counts to cause undefined behavior
+	later, due to integer overflow.
+
+2010-12-11  Chen Guo  <chenguo4@ucla.edu>
+
+	sort: preallocate merge tree nodes to heap.
+	* src/sort.c: (merge_tree_init) New function. Allocates memory for
+	merge tree nodes.
+	(merge_tree_destory) New function.
+	(init_node) New function.
+	(sortlines) Refactor node creation code to init_node. Remove now
+	superfluous arguments. All callers changed.
+	(sort) Initialize/destory merge tree. Refactor root node creation
+	to merge_tree_init.
+
+2010-12-11  Paul Eggert  <eggert@cs.ucla.edu>
+
+	sort: comment fix
+	* src/sort.c: Comment fix re spin locks.
+
+2010-12-11  Chen Guo  <chenguo4@ucla.edu>
+
+	sort: use mutexes, not spinlocks (avoid busy loop on blocked output)
+	Running a command like this on a multi-core system
+	  sort < big-file | less
+	would peg all processors at near 100% utilization.
+	* src/sort.c: (struct merge_node) Change member lock to mutex.
+	All uses changed.
+	* tests/Makefile.am (XFAIL_TESTS): Remove definition, now that
+	this test passes once again.  I.e., the sort-spinlock-abuse test
+	no longer fails.
+	* NEWS (Bug reports): Mention this.
+	Reported by DJ Lucas in http://debbugs.gnu.org/7489.
+
+2010-12-09  Pádraig Brady  <P@draigBrady.com>
+
+	split: fix a case where --elide-empty causes invalid chunking
+	When -n l/N is used and long lines are present that both
+	span partitions and multiple buffers, one would get
+	inconsistent chunk sizes.
+
+	* src/split.c (main): Add a new undocumented ---io-blksize option
+	to support full testing with varied buffer sizes.
+	(cwrite): Refactor most handling of --elide-empty to here.
+	(bytes_split): Remove handling of --elide-empty.
+	(lines_chunk_split): Likewise.  The specific issue here
+	was the first handling of elide_empty_files interfered
+	with the replenishing of the input buffer.
+	* test/misc/split-lchunk: Add -e and the new ---io-blksize
+	combinations to the test.
+
+2010-12-05  Jim Meyering  <meyering@redhat.com>
+
+	tests: remove useless definition of $SORT in sort-compress
+	* tests/misc/sort-compress (SORT): Remove unused definition.
+
+2010-12-04  Jim Meyering  <meyering@redhat.com>
+
+	tests: make it harder to lose a race in spinlock-abuse
+	* tests/misc/sort-spinlock-abuse: On a busy system, with only 12
+	pauses of length 0.1 seconds, the buggy (busy-spinlock blocked)
+	sort would fail to accumulate 1 second of CPU time, and hence
+	would mistakenly pass.  Increase from 12 to 50.
+
+2010-12-04  Paul Eggert  <eggert@cs.ucla.edu>
+
+	sort: merge_queue -> queue
+	* src/sort.c (struct thread_args, sortlines_thread, sortlines, sort):
+	Rename "merge_queue" to "queue", for consistency with other functions
+	that just use the name "queue" for these things.
+
+	sort: clarify queue_check_insert
+	* src/sort.c (queue_check_insert): Clarify body a bit, and remove
+	no-longer-needed comment.
+
+	sort: fix problems with merge node dest pointer
+	* src/sort.c (mergelines_node): Return void, not size_t.  All
+	callers changed.  Change *node->dest here, not in caller.
+	Do not change node->dest: it's not needed and could cause problems
+	on (mostly theoretical) hosts that do not allow adding integers to
+	null pointers.
+	(queue_check_insert_parent): Omit MERGED parameter; no longer needed.
+	All callers changed.
+
+	sort: simplify write_unique
+	* src/sort.c (write_unique): Simplify slightly so that there is
+	just one call to write_line, not two.
+
+	sort: put queue arg first
+	* src/sort.c (queue_check_insert, queue_check_insert_parent): Make
+	the queue arg first, for consistency with other functions such as
+	queue_insert that put the queue arg first.  Rename from
+	check_insert and update_parent, respectively.  All callers
+	changed.
+
+	sort: tune struct_merge_node slightly
+	* src/sort.c (struct merge_node): 'lock' is now the actual lock,
+	not a pointer to the lock; there's no need for indirection here.
+	Make 'level' unsigned int instead of size_t, since it is a
+	bit-shift count; also, move it next to a bool so that it's more
+	likely to take less space.  All uses changed.
+	(sortlines, sort): Spell out initialization instead of using an
+	initializer.  This makes the initializer a bit easier to understand,
+	and avoids unnecessary stores into the spin lock.
+
+	sort: Clarify comments
+	* src/sort.c: Improve comments a bit.
+
+2010-12-03  Paul Eggert  <eggert@cs.ucla.edu>
+
+	tests: cleanup rm -rf fails under NFS
+	This problem was observed on RHEL 5.5 x86-64 when running as a
+	client of a NetApp FAS2050.
+	* tests/cp/cp-mv-backup: Don't leave a file descriptor open to
+	a file in a directory that will be cleaned up with "rm -rf".
+	Under NFS, when the rm unlinks that file, it is instead renamed
+	to .nfsXXXX and then rm cannot remove the parent directory,
+	and the test fails.
+	* tests/cp/same-file: Likewise.
+
+	cp: fix bug with fine-grained src to nearby coarse-grained dest
+	The actual fix is in gnulib's lib/utimecmp.c.
+	* NEWS: Document fix.
+
+	build: update gnulib submodule to latest
+
+2010-12-02  Paul Eggert  <eggert@cs.ucla.edu>
+
+	sort: fix bug on 64-bit hosts with at least 32768 processors
+	* src/sort.c (MAX_MERGE): Avoid integer overflow when on a machine
+	with (say) 32-bit int and 64-bit size_t and when level == 15.
+	Without this fix, on such a machine with 32768 or more processors,
+	the level computation could overflow on large input, and this
+	would result in division by zero.
+
+2010-12-01  Jim Meyering  <meyering@redhat.com>
+
+	tests: add test for parallel sort -u segfault bug
+	* tests/misc/sort-unique-segv: New file.
+	* tests/Makefile.am (TESTS): Add it.
+
+2010-12-01  Paul Eggert  <eggert@cs.ucla.edu>
+
+	sort -u: fix a thread-race pointer corruption bug
+	* src/sort.c (write_unique): Save the entire "struct line", not
+	just a pointer to one.  Otherwise, with a multi-thread run,
+	sometimes, with some inputs, fillbuf would would win a race
+	and clobber a "saved->text" pointer in one thread just before
+	it was dereferenced in a comparison in another thread.
+	* NEWS (Bug fixes): Mention it.
+
+2010-11-27  Jim Meyering  <meyering@redhat.com>
+
+	tests: don't let the OMP_NUM_THREADS envvar affect sort tests
+	* tests/envvar-check (vars): Add OMP_NUM_THREADS.
+
+	tests: test for parallel sort spinlock abuse
+	* tests/misc/sort-spinlock-abuse: New file.
+	* tests/Makefile.am (TESTS): Add it.
+	(XFAIL_TESTS): Mark this as an expected-to-fail (for now) test.
+
+2010-11-27  Pádraig Brady  <P@draigBrady.com>
+
+	tsort: suppress a valgrind memory leak warning
+	* src/tsort.c (tsort): Unconditionally invoking the free()
+	doesn't increase scalability, so do it only with -Dlint
+
+2010-11-24  Pádraig Brady  <P@draigBrady.com>
+
+	maint: update the valgrind support script
+	* README-valgrind: Include the "noinst" programs in
+	those wrapped by valgrind.  Update $PATH in check.mk
+	rather than Makefile.am.  Make wrapper scripts
+	work when suppressions not setup.  Keep lines < 80 chars.
+
+2010-11-22  Paul Eggert  <eggert@cs.ucla.edu>
+
+	cp: give a better diagnostic for nonexistent dest/
+	This patch was written by Jim Meyering and myself.
+	* src/copy.c (copy_reg): Turn EISDIR to ENOTDIR to improve the
+	quality of diagnostics for commands like "cp a nosuch/".  Reported
+	by Марк Коренберг and Alan Curry in the thread starting at:
+	http://lists.gnu.org/archive/html/bug-coreutils/2010-11/msg00178.html
+	* THANKS: Update.
+	* tests/mv/trailing-slash: Add a test.
+
+2010-11-22  Chen Guo  <chen.guo.0625@gmail.com>
+
+	split: add --number to generate a particular number of files
+	* src/split.c (usage, long_options, main): New options --number,
+	--unbuffered, --elide-empty-files.
+	(set_suffix_length): New function to auto increase suffix length
+	to handle a specified number of files.
+	(create): New function.  Refactored from cwrite() and ofile_open().
+	(bytes_split): Add max_files argument to support byte chunking.
+	(lines_chunk_split): New function.  Split file into chunks of lines.
+	(bytes_chunk_extract): New function.  Extract a chunk of file.
+	(of_info): New struct.  Used by functions lines_rr and ofile_open
+	to keep track of file descriptors associated with output files.
+	(ofile_open): New function.  Shuffle file descriptors when there
+	are more output files than available file descriptors.
+	(lines_rr): New function to distribute lines round-robin to files.
+	(chunk_parse): New function.  Parses K/N syntax.
+	* tests/misc/split-bchunk: New test for byte chunking.
+	* tests/misc/split-lchunk: New test for line delimited chunking.
+	* tests/misc/split-rchunk: New test for round-robin chunking.
+	* tests/Makefile.am: Reference new tests.
+	* tests/misc/split-fail: Add failure scenarios for new options.
+	* tests/misc/split-l: Fix a typo. s/ln/split/.
+	* doc/coreutils.texi (split invocation): Document --number.
+	* NEWS: Mention the new feature.
+	* .mailmap: Map new email address for shortlog.
+
+2010-11-19  Jim Meyering  <meyering@redhat.com>
+
+	build: update gnulib to fix a syntax error in a test
+
+2010-11-18  Jim Meyering  <meyering@redhat.com>
+
+	maint: avoid NEWS-related syntax-check failure
+	* NEWS: Add 2nd blank line to separate latest changes from
+	those of 8.7, to avoid syntax-check failure.
+
+2010-11-18  Paul Eggert  <eggert@cs.ucla.edu>
+
+	od: fix bugs in displaying floating-point values
+	* NEWS: Describe patch.
+	* bootstrap.conf (gnulib_modules): Add ftoastr.
+	* src/od.c: Include ftoastr.h, not float.h.
+	(FLT_DIG, DBL_DIG): Remove.  No need to verify LDBL_DIG.
+	(FMT_BYTES_ALLOCATED): No need to worry about floating point now,
+	since this format is no longer used for floating point.
+	(PRINT_FIELDS): New macro, with most of the guts of the old PRINT_TYPE.
+	(PRINT_TYPE): Rewrite to use PRINT_FIELDS.
+	(PRINT_FLOATTYPE): New macro.  This uses the new functions from
+	ftoastr.
+	(print_float, print_double, print_long_double): Reimplement
+	using PRINT_FLOATTYPE.
+	(decode_one_format): Calculate field widths based on ftoastr-supplied
+	macros.
+	* tests/Makefile.am (TESTS): Add misc/od-float.
+	* tests/misc/od-float: New file.
+
+	build: update gnulib submodule to latest
+
+2010-11-18  Jim Meyering  <meyering@redhat.com>
+
+	maint: syntax-check: prevent new $VERBOSE/--version tests
+	* cfg.mk (sc_prohibit_verbose_version): New rule.
+
+2010-11-17  Jim Meyering  <meyering@redhat.com>
+
+	tests: convert tests/misc/selinux manually
+
+	tests: convert the multi-prog $VERBOSE/--version uses
+	E.g.,
+
+	-test "$VERBOSE" = yes && { env -- pwd --version; readlink --version; }
+	+print_ver_ pwd readlink
+
+	-test "$VERBOSE" = yes && { stdbuf --version; mv --version; }
+	+print_ver_ stdbuf mv
+
+	Use this command:
+	git grep -l 'VERBOSE.*--version'|xargs perl -ni \
+	  -e '/^test "\$VERBOSE" = yes && { .*--version/ or print,next;' \
+	  -e 's/env -- //g;' \
+	  -e 's/test "\$VERBOSE" = yes && { /print_ver_ /;' \
+	  -e ' s/(\w+) --version;/$1/g; s/ *}$//; print'
+
+	tests: convert "... env -- prog --version" uses
+	E.g.,
+
+	-test "$VERBOSE" = yes && env -- pwd --version
+	+print_ver_ pwd
+
+	git grep -l 'VERBOSE.*--version'|xargs perl -pi -e \
+	  's/test "\$VERBOSE" = yes && env -- (\w+) --version/print_ver_ $1/'
+
+	tests: substitute the single-program $VERBOSE/--version uses
+	Automatically make all of the changes like this:
+
+	  -test "$VERBOSE" = yes && chgrp --version
+	  +print_ver_ chgrp
+
+	git grep -l 'VERBOSE.*--version'|xargs perl -pi -e \
+	  's/test "\$VERBOSE" = yes && (\w+) --version/print_ver_ $1/'
+
+	tests: factor out VERBOSE-only --version-printing code
+	* tests/init.cfg (print_ver_): New function.
+
+	tests: remove test-lib.sh; now all tests use gnulib's init.sh
+	* tests/test-lib.sh: Remove file.  No longer used.
+	* tests/Makefile.am (EXTRA_DIST): Remove it here, too.
+	* tests/sample-test: Correct a comment.
+
+	tests: convert remaining uses of test-lib.sh to init.sh
+	RHS='. "\${srcdir=.}/init.sh"; path_prepend_ ../src'
+	git grep -l test-lib.sh \
+	  | xargs perl -pi -e 's,^\. \$srcdir/test-lib\.sh$,'"$RHS",
+
+	tests: convert 'if test "$VERBOSE" = yes; then' to test ... &&
+
+	tests: convert first batch of tests from test-lib.sh to init.sh
+	Initially, I did this,
+	git grep -l srcdir/test-lib.sh|xargs perl -p0i -e '~180-byte script'
+	but that line would have been much longer than the maximum permitted
+	by coreutils' commit hook, and wasn't readable besides, so here's a
+	more readable version:
+
+	lhs=$(printf '%s\\n' \
+	'if test "$VERBOSE" = yes; then' \
+	'  set -x' \
+	'  touch --version' \
+	'fi' \
+	'' \
+	'. $srcdir/test-lib.sh' \
+	  | sed 's/\$/\\\$/g;s/touch/(\\w+)/')
+
+	rhs=$(printf '%s\\n' \
+	'. "${srcdir=.}/init.sh"; path_prepend_ ../src' \
+	'test "$VERBOSE" = yes && FIXME --version' \
+	  | sed 's/\$/\\\$/g;s/FIXME/\$1/')
+
+	git grep -l srcdir/test-lib.sh|xargs perl -p0i -e "s,$lhs,$rhs,"
+
+	tests: move a comment so automated conversion works
+
+	maint: add a NEWS-checking syntax-check rule
+	* cfg.mk (sc_NEWS_two_empty_lines): New syntax-check rule.
+
+2010-11-16  Pádraig Brady  <P@draigBrady.com>
+
+	build: add `patch` as a bootstrap dependency
+	* bootstrap.conf (buildreq): require `patch` as it's used
+	by gnulib-tool to apply local diffs to gnulib modules
+
+	split: fail immediately if impossible to create a large file
+	* src/split.c (main): Error if -[bC] value > OFF_T_MAX
+	* tests/misc/split-fail: Adjust for the new lower limits
+
+	truncate: fix a very unlikely case for undiagnosed errors
+	src/truncate.c (main): Use a bool to store if an error occurred,
+	rather than an int, to protect against overflow.
+	(do_ftruncate): Likewise.   Also change 0/false to mean failure
+	rather than success.
+
+	maint: fix a new -Wpointer-sign gcc warning
+	* src/csplit.c (max_out): Fix a new warning introduced with
+	commit 6568b173, 2010-11-10, "csplit: do not rely on..."
+
+	build: enable the -Wpointer-sign gcc warning
+	... when configured with the --enable-gcc-warnings option.
+	This follows on from commit 34ef0a01, 2010-10-14,
+	"sort: fix unportable cast of unsigned char * -> char *"
+
+	* configure.ac: -Wall implicitly enables this warning
+	so remove the explicit disabling.
+
+2010-11-15  Pádraig Brady  <P@draigBrady.com>
+
+	maint: add a missed fadvise-tests module
+	* gl/modules/fadvise-tests: Add the module previously missed
+	in commit 63b5e816, 2010-07-14, "fadvise: new module ...".
+	* gl/tests/test-fadvise.c: Add a comment as to why we don't
+	check return values.
+
+2010-11-13  Paul Eggert  <eggert@cs.ucla.edu>
+
+	doc: tweak NEWS and coreutils.texi
+	* doc/coreutils.texi (stat invocation): Add sentence-ending period.
+	* NEWS: Correct stat change description: s/floating point //.
+	* cfg.mk (old_NEWS_hash): Update, to match this NEWS change.
+
 2010-11-13  Jim Meyering  <meyering@redhat.com>
+
+	post-release administrivia
+	* NEWS: Add header line for next release.
+	* .prev-version: Record previous version.
+	* cfg.mk (old_NEWS_hash): Auto-update.
 
 	version 8.7
 	* NEWS: Record release date.

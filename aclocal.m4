@@ -13,8 +13,8 @@
 
 m4_ifndef([AC_AUTOCONF_VERSION],
   [m4_copy([m4_PACKAGE_VERSION], [AC_AUTOCONF_VERSION])])dnl
-m4_if(m4_defn([AC_AUTOCONF_VERSION]), [2.68.8-89ce5],,
-[m4_warning([this file was generated for autoconf 2.68.8-89ce5.
+m4_if(m4_defn([AC_AUTOCONF_VERSION]), [2.67.65-9144],,
+[m4_warning([this file was generated for autoconf 2.67.65-9144.
 You have another version of autoconf.  It may work, but is not guaranteed to.
 If you have problems, you may need to regenerate the build system entirely.
 To do so, use the procedure documented by the package, typically `autoreconf'.])])
@@ -151,7 +151,7 @@ fi])])
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
 
-# serial 11
+# serial 12
 
 # There are a few dirty hacks below to avoid letting `AC_PROG_CC' be
 # written in clear, in which case automake, when reading aclocal.m4,
@@ -314,9 +314,13 @@ AC_SUBST([DEPDIR], ["${am__leading_dot}deps"])dnl
 # AM_DEP_TRACK
 # ------------
 AC_DEFUN([AM_DEP_TRACK],
-[AC_ARG_ENABLE(dependency-tracking,
-[  --disable-dependency-tracking  speeds up one-time build
-  --enable-dependency-tracking   do not reject slow dependency extractors])
+[AC_ARG_ENABLE([dependency-tracking], [dnl
+AS_HELP_STRING(
+  [--enable-dependency-tracking],
+  [do not reject slow dependency extractors])
+AS_HELP_STRING(
+  [--disable-dependency-tracking],
+  [speeds up one-time build])])
 if test "x$enable_dependency_tracking" != xno; then
   am_depcomp="$ac_aux_dir/depcomp"
   AMDEPBACKSLASH='\'
@@ -881,13 +885,13 @@ am_sleep_pid=
 if grep 'slept: no' conftest.file >/dev/null 2>&1; then
   ( sleep 1 ) &
   am_sleep_pid=$!
-  AC_CONFIG_COMMANDS_PRE(
-    [if test -n "$am_sleep_pid"; then
-       AC_MSG_CHECKING([that generated files are newer than configure])
-       wait $am_sleep_pid
-       AC_MSG_RESULT([done])
-     fi])
 fi
+AC_CONFIG_COMMANDS_PRE(
+  [AC_MSG_CHECKING([that generated files are newer than configure])
+   if test -n "$am_sleep_pid"; then
+     wait $am_sleep_pid
+   fi
+   AC_MSG_RESULT([done])])
 rm -f conftest.file
 ])
 
@@ -1094,6 +1098,7 @@ m4_include([m4/closein.m4])
 m4_include([m4/closeout.m4])
 m4_include([m4/codeset.m4])
 m4_include([m4/config-h.m4])
+m4_include([m4/configmake.m4])
 m4_include([m4/ctype.m4])
 m4_include([m4/cycle-check.m4])
 m4_include([m4/d-ino.m4])

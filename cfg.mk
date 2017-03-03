@@ -27,7 +27,7 @@ bootstrap-tools = autoconf,automake,gnulib,bison
 # Now that we have better tests, make this the default.
 export VERBOSE = yes
 
-old_NEWS_hash = 594c508078596fb65a3db2c0f4437386
+old_NEWS_hash = e2a254a0d4c81397994ea10a15663ac3
 
 # Add an exemption for sc_makefile_at_at_check.
 _makefile_at_at_check_exceptions = ' && !/^cu_install_program =/'
@@ -164,6 +164,13 @@ sc_man_file_correlation:
 	@$(MAKE) -s -C src all_programs
 	@$(MAKE) -s -C man $@
 
+# Ensure that the end of each release's section is marked by two empty lines.
+sc_NEWS_two_empty_lines:
+	@sed -n 4,/Noteworthy/p $(srcdir)/NEWS				\
+	    | perl -n0e '/(^|\n)\n\n\* Noteworthy/ or exit 1'		\
+	  || { echo '$(ME): use two empty lines to separate NEWS sections' \
+		 1>&2; exit 1; } || :;					\
+
 # Perl-based tests used to exec perl from a #!/bin/sh script.
 # Now they all start with #!/usr/bin/perl and the portability
 # infrastructure is in tests/Makefile.am.  Make sure no old-style
@@ -242,6 +249,12 @@ sc_prohibit_perl_hash_quotes:
 sc_prohibit_sleep:
 	@prohibit='\<(nano|u)?sleep \('					\
 	halt='prefer xnanosleep over other sleep interfaces'		\
+	  $(_sc_search_regexp)
+
+# Use print_ver_ (from init.cfg), not open-coded $VERBOSE check.
+sc_prohibit_verbose_version:
+	@prohibit='test "\$$VERBOSE" = yes && .* --version'		\
+	halt='use the print_ver_ function instead...'			\
 	  $(_sc_search_regexp)
 
 ###########################################################

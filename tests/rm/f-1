@@ -18,12 +18,8 @@
 
 test=f-1
 
-if test "$VERBOSE" = yes; then
-  set -x
-  rm --version
-fi
-
-. $srcdir/test-lib.sh
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
+print_ver_ rm
 
 mkdir -p d || framework_failure
 

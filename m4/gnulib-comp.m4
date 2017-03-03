@@ -132,6 +132,7 @@ AC_DEFUN([gl_EARLY],
   AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
   # Code from module faccessat:
   # Code from module fadvise:
+  # Code from module fadvise-tests:
   # Code from module fchdir:
   # Code from module fchdir-tests:
   # Code from module fclose:
@@ -205,6 +206,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module ftello:
   AC_REQUIRE([AC_FUNC_FSEEKO])
   # Code from module ftello-tests:
+  # Code from module ftoastr:
   # Code from module fts:
   # Code from module full-read:
   # Code from module full-write:
@@ -739,6 +741,7 @@ AC_DEFUN([gl_INIT],
   # Code from module config-h:
   gl_CONFIG_H
   # Code from module configmake:
+  gl_CONFIGMAKE_PREP
   # Code from module crypto/md5:
   gl_MD5
   # Code from module crypto/sha1:
@@ -894,6 +897,8 @@ AC_DEFUN([gl_INIT],
   # Code from module ftello:
   gl_FUNC_FTELLO
   gl_STDIO_MODULE_INDICATOR([ftello])
+  # Code from module ftoastr:
+  AC_REQUIRE([gl_C99_STRTOLD])
   # Code from module fts:
   gl_FUNC_FTS
   # Code from module full-read:
@@ -991,6 +996,8 @@ AC_DEFUN([gl_INIT],
   gl_I_RING
   # Code from module iconv:
   AM_ICONV
+  m4_ifdef([gl_ICONV_MODULE_INDICATOR],
+    [gl_ICONV_MODULE_INDICATOR([iconv])])
   # Code from module iconv-h:
   gl_ICONV_H
   # Code from module iconv_open:
@@ -1903,6 +1910,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/dirname-lgpl.c
   lib/dirname.c
   lib/dirname.h
+  lib/dtoastr.c
   lib/dup-safer-flag.c
   lib/dup-safer.c
   lib/dup2.c
@@ -1977,6 +1985,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/fsusage.h
   lib/fsync.c
   lib/ftello.c
+  lib/ftoastr.c
+  lib/ftoastr.h
   lib/fts-cycle.c
   lib/fts.c
   lib/fts_.h
@@ -2061,8 +2071,10 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/isnanf.c
   lib/isnanl-nolibm.h
   lib/isnanl.c
+  lib/iswblank.c
   lib/langinfo.in.h
   lib/lchown.c
+  lib/ldtoastr.c
   lib/linebuffer.c
   lib/linebuffer.h
   lib/link.c
@@ -2416,6 +2428,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/closeout.m4
   m4/codeset.m4
   m4/config-h.m4
+  m4/configmake.m4
   m4/ctype.m4
   m4/cycle-check.m4
   m4/d-ino.m4
@@ -2786,6 +2799,7 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-exclude6.sh
   tests/test-exclude7.sh
   tests/test-exclude8.sh
+  tests/test-fadvise.c
   tests/test-fchdir.c
   tests/test-fchownat.c
   tests/test-fcntl-h.c

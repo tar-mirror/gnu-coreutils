@@ -409,6 +409,14 @@ EXTRA_DIST += test-exclude.c test-exclude1.sh test-exclude2.sh test-exclude3.sh 
 
 ## end   gnulib module exclude-tests
 
+## begin gnulib module fadvise-tests
+
+TESTS += test-fadvise
+check_PROGRAMS += test-fadvise
+EXTRA_DIST += test-fadvise.c
+
+## end   gnulib module fadvise-tests
+
 ## begin gnulib module fchdir-tests
 
 TESTS += test-fchdir

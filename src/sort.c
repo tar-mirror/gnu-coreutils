@@ -105,9 +105,9 @@ struct rlimit { size_t rlim_cur; };
 #endif
 
 /* Maximum number of lines to merge every time a NODE is taken from
-   the MERGE_QUEUE.  Node is at LEVEL in the binary merge tree,
+   the merge queue.  Node is at LEVEL in the binary merge tree,
    and is responsible for merging TOTAL lines. */
-#define MAX_MERGE(total, level) ((total) / ((2 << level) * (2 << level)) + 1)
+#define MAX_MERGE(total, level) (((total) >> (2 * ((level) + 1))) + 1)
 
 /* Heuristic value for the number of lines for which it is worth
    creating a subthread, during an internal merge sort, on a machine
@@ -115,6 +115,10 @@ struct rlimit { size_t rlim_cur; };
    This value must be at least 4.  We don't know of any machine where
    this number has any practical effect.  */
 enum { SUBTHREAD_LINES_HEURISTIC = 4 };
+
+/* The number of threads after which there are
+   diminishing performance gains.  */
+enum { DEFAULT_MAX_THREADS = 8 };
 
 /* Exit statuses.  */
 enum
@@ -196,6 +200,7 @@ struct buffer
   bool eof;			/* An EOF has been read.  */
 };
 
+/* Sort key.  */
 struct keyfield
 {
   size_t sword;			/* Zero-origin 'word' to start at. */
@@ -237,10 +242,12 @@ struct merge_node
   struct line **dest;           /* Pointer to destination of merge. */
   size_t nlo;                   /* Total Lines remaining from LO. */
   size_t nhi;                   /* Total lines remaining from HI. */
-  size_t level;                 /* Level in merge tree. */
   struct merge_node *parent;    /* Parent node. */
+  struct merge_node *lo_child;  /* LO child node. */
+  struct merge_node *hi_child;  /* HI child node. */
+  unsigned int level;           /* Level in merge tree. */
   bool queued;                  /* Node is already in heap. */
-  pthread_spinlock_t *lock;     /* Lock for node operations. */
+  pthread_mutex_t lock;         /* Lock for node operations. */
 };
 
 /* Priority queue of merge nodes. */
@@ -452,7 +459,7 @@ Other options:\n\
   -t, --field-separator=SEP  use SEP instead of non-blank to blank transition\n\
   -T, --temporary-directory=DIR  use DIR for temporaries, not $TMPDIR or %s;\n\
                               multiple options specify multiple directories\n\
-      --parallel=N          limit the number of sorts run concurrently to N\n\
+      --parallel=N          change the number of sorts run concurrently to N\n\
   -u, --unique              with -c, check for strict ordering;\n\
                               without -c, output only the first of an equal run\n\
 "), DEFAULT_TMPDIR);
@@ -607,79 +614,74 @@ cs_leave (struct cs_status status)
     }
 }
 
+/* Possible states for a temp file.  If compressed, the file's status
+   is unreaped or reaped, depending on whether 'sort' has waited for
+   the subprocess to finish.  */
+enum { UNCOMPRESSED, UNREAPED, REAPED };
+
 /* The list of temporary files. */
 struct tempnode
 {
   struct tempnode *volatile next;
-  pid_t pid;     /* If compressed, the pid of compressor, else zero */
+  pid_t pid;     /* The subprocess PID; undefined if state == UNCOMPRESSED.  */
+  char state;
   char name[1];  /* Actual size is 1 + file name length.  */
 };
 static struct tempnode *volatile temphead;
 static struct tempnode *volatile *temptail = &temphead;
 
+/* A file to be sorted.  */
 struct sortfile
 {
+  /* The file's name.  */
   char const *name;
-  pid_t pid;     /* If compressed, the pid of compressor, else zero */
+
+  /* Nonnull if this is a temporary file, in which case NAME == TEMP->name.  */
+  struct tempnode *temp;
 };
 
-/* A table where we store compression process states.  We clean up all
-   processes in a timely manner so as not to exhaust system resources,
-   so we store the info on whether the process is still running, or has
-   been reaped here.  */
+/* Map PIDs of unreaped subprocesses to their struct tempnode objects.  */
 static Hash_table *proctab;
 
 enum { INIT_PROCTAB_SIZE = 47 };
 
-enum procstate { ALIVE, ZOMBIE };
-
-/* A proctab entry.  The COUNT field is there in case we fork a new
-   compression process that has the same PID as an old zombie process
-   that is still in the table (because the process to decompress the
-   temp file it was associated with hasn't started yet).  */
-struct procnode
-{
-  pid_t pid;
-  enum procstate state;
-  size_t count;
-};
-
 static size_t
 proctab_hasher (void const *entry, size_t tabsize)
 {
-  struct procnode const *node = entry;
+  struct tempnode const *node = entry;
   return node->pid % tabsize;
 }
 
 static bool
 proctab_comparator (void const *e1, void const *e2)
 {
-  struct procnode const *n1 = e1, *n2 = e2;
+  struct tempnode const *n1 = e1;
+  struct tempnode const *n2 = e2;
   return n1->pid == n2->pid;
 }
 
-/* The total number of forked processes (compressors and decompressors)
-   that have not been reaped yet. */
-static size_t nprocs;
+/* The number of unreaped child processes.  */
+static pid_t nprocs;
 
-/* The number of child processes we'll allow before we try to reap some. */
-enum { MAX_PROCS_BEFORE_REAP = 2 };
+static bool delete_proc (pid_t);
 
-/* If 0 < PID, wait for the child process with that PID to exit.
-   If PID is -1, clean up a random child process which has finished and
-   return the process ID of that child.  If PID is -1 and no processes
-   have quit yet, return 0 without waiting.  */
+/* If PID is positive, wait for the child process with that PID to
+   exit, and assume that PID has already been removed from the process
+   table.  If PID is 0 or -1, clean up some child that has exited (by
+   waiting for it, and removing it from the proc table) and return the
+   child's process ID.  However, if PID is 0 and no children have
+   exited, return 0 without waiting.  */
 
 static pid_t
 reap (pid_t pid)
 {
   int status;
-  pid_t cpid = waitpid (pid, &status, pid < 0 ? WNOHANG : 0);
+  pid_t cpid = waitpid ((pid ? pid : -1), &status, (pid ? 0 : WNOHANG));
 
   if (cpid < 0)
     error (SORT_FAILURE, errno, _("waiting for %s [-d]"),
            compress_program);
-  else if (0 < cpid)
+  else if (0 < cpid && (0 < pid || delete_proc (cpid)))
     {
       if (! WIFEXITED (status) || WEXITSTATUS (status))
         error (SORT_FAILURE, 0, _("%s [-d] terminated abnormally"),
@@ -690,96 +692,80 @@ reap (pid_t pid)
   return cpid;
 }
 
-/* Add the PID of a running compression process to proctab, or update
-   the entry COUNT and STATE fields if it's already there.  This also
-   creates the table for us the first time it's called.  */
+/* TEMP represents a new process; add it to the process table.  Create
+   the process table the first time it's called.  */
 
 static void
-register_proc (pid_t pid)
+register_proc (struct tempnode *temp)
 {
-  struct procnode test, *node;
-
   if (! proctab)
     {
       proctab = hash_initialize (INIT_PROCTAB_SIZE, NULL,
                                  proctab_hasher,
                                  proctab_comparator,
-                                 free);
+                                 NULL);
       if (! proctab)
         xalloc_die ();
     }
 
-  test.pid = pid;
-  node = hash_lookup (proctab, &test);
-  if (node)
-    {
-      node->state = ALIVE;
-      ++node->count;
-    }
-  else
-    {
-      node = xmalloc (sizeof *node);
-      node->pid = pid;
-      node->state = ALIVE;
-      node->count = 1;
-      if (hash_insert (proctab, node) == NULL)
-        xalloc_die ();
-    }
+  temp->state = UNREAPED;
+
+  if (! hash_insert (proctab, temp))
+    xalloc_die ();
 }
 
-/* This is called when we reap a random process.  We don't know
-   whether we have reaped a compression process or a decompression
-   process until we look in the table.  If there's an ALIVE entry for
-   it, then we have reaped a compression process, so change the state
-   to ZOMBIE.  Otherwise, it's a decompression processes, so ignore it.  */
+/* If PID is in the process table, remove it and return true.
+   Otherwise, return false.  */
 
-static void
-update_proc (pid_t pid)
+static bool
+delete_proc (pid_t pid)
 {
-  struct procnode test, *node;
+  struct tempnode test;
 
   test.pid = pid;
-  node = hash_lookup (proctab, &test);
-  if (node)
-    node->state = ZOMBIE;
+  struct tempnode *node = hash_delete (proctab, &test);
+  if (! node)
+    return false;
+  node->state = REAPED;
+  return true;
 }
 
-/* This is for when we need to wait for a compression process to exit.
-   If it has a ZOMBIE entry in the table then it's already dead and has
-   been reaped.  Note that if there's an ALIVE entry for it, it still may
-   already have died and been reaped if a second process was created with
-   the same PID.  This is probably exceedingly rare, but to be on the safe
-   side we will have to wait for any compression process with this PID.  */
+/* Remove PID from the process table, and wait for it to exit if it
+   hasn't already.  */
 
 static void
 wait_proc (pid_t pid)
 {
-  struct procnode test, *node;
-
-  test.pid = pid;
-  node = hash_lookup (proctab, &test);
-  if (node->state == ALIVE)
+  if (delete_proc (pid))
     reap (pid);
-
-  node->state = ZOMBIE;
-  if (! --node->count)
-    {
-      hash_delete (proctab, node);
-      free (node);
-    }
 }
 
-/* Keep reaping finished children as long as there are more to reap.
-   This doesn't block waiting for any of them, it only reaps those
-   that are already dead.  */
+/* Reap any exited children.  Do not block; reap only those that have
+   already exited.  */
+
+static void
+reap_exited (void)
+{
+  while (0 < nprocs && reap (0))
+    continue;
+}
+
+/* Reap at least one exited child, waiting if necessary.  */
 
 static void
 reap_some (void)
 {
-  pid_t pid;
+  reap (-1);
+  reap_exited ();
+}
 
-  while (0 < nprocs && (pid = reap (-1)))
-    update_proc (pid);
+/* Reap all children, waiting if necessary.  */
+
+static void
+reap_all (void)
+{
+  while (0 < nprocs)
+    reap (-1);
 }
 
 /* Clean up any remaining temporary files.  */
@@ -834,7 +820,6 @@ create_temp_file (int *pfd, bool survive_fd_exhaustion)
   memcpy (file, temp_dir, len);
   memcpy (file + len, slashbase, sizeof slashbase);
   node->next = NULL;
-  node->pid = 0;
   if (++temp_dir_index == temp_dir_count)
     temp_dir_index = 0;
 
@@ -936,7 +921,7 @@ stream_open (char const *file, char const *how)
 
 static FILE *
 xfopen (char const *file, char const *how)
- {
+{
   FILE *fp = stream_open (file, how);
   if (!fp)
     die (_("open failed"), file);
@@ -994,6 +979,16 @@ pipe_fork (int pipefds[2], size_t tries)
   if (pipe (pipefds) < 0)
     return -1;
 
+  /* At least NMERGE + 1 subprocesses are needed.  More could be created, but
+     uncontrolled subprocess generation can hurt performance significantly.
+     Allow at most NMERGE + 2 subprocesses, on the theory that there
+     may be some useful parallelism by letting compression for the
+     previous merge finish (1 subprocess) in parallel with the current
+     merge (NMERGE + 1 subprocesses).  */
+
+  if (nmerge + 1 < nprocs)
+    reap_some ();
+
   while (tries--)
     {
       /* This is so the child process won't delete our temp files
@@ -1016,7 +1011,7 @@ pipe_fork (int pipefds[2], size_t tries)
         {
           xnanosleep (wait_retry);
           wait_retry *= 2;
-          reap_some ();
+          reap_exited ();
         }
     }
 
@@ -1042,23 +1037,21 @@ pipe_fork (int pipefds[2], size_t tries)
 #endif
 }
 
-/* Create a temporary file and start a compression program to filter output
-   to that file.  Set *PFP to the file handle and if PPID is non-NULL,
-   set *PPID to the PID of the newly-created process.  If the creation
+/* Create a temporary file and, if asked for, start a compressor
+   to that file.  Set *PFP to the file handle and return
+   the address of the new temp node.  If the creation
    fails, return NULL if the failure is due to file descriptor
    exhaustion and SURVIVE_FD_EXHAUSTION; otherwise, die.  */
 
-static char *
-maybe_create_temp (FILE **pfp, pid_t *ppid, bool survive_fd_exhaustion)
+static struct tempnode *
+maybe_create_temp (FILE **pfp, bool survive_fd_exhaustion)
 {
   int tempfd;
   struct tempnode *node = create_temp_file (&tempfd, survive_fd_exhaustion);
-  char *name;
-
   if (! node)
     return NULL;
 
-  name = node->name;
+  node->state = UNCOMPRESSED;
 
   if (compress_program)
     {
@@ -1071,7 +1064,7 @@ maybe_create_temp (FILE **pfp, pid_t *ppid, bool survive_fd_exhaustion)
           close (pipefds[0]);
           tempfd = pipefds[1];
 
-          register_proc (node->pid);
+          register_proc (node);
         }
       else if (node->pid == 0)
         {
@@ -1085,49 +1078,46 @@ maybe_create_temp (FILE **pfp, pid_t *ppid, bool survive_fd_exhaustion)
             error (SORT_FAILURE, errno, _("couldn't execute %s"),
                    compress_program);
         }
-      else
-        node->pid = 0;
     }
 
   *pfp = fdopen (tempfd, "w");
   if (! *pfp)
-    die (_("couldn't create temporary file"), name);
+    die (_("couldn't create temporary file"), node->name);
 
-  if (ppid)
-    *ppid = node->pid;
-
-  return name;
+  return node;
 }
 
-/* Create a temporary file and start a compression program to filter output
-   to that file.  Set *PFP to the file handle and if *PPID is non-NULL,
-   set it to the PID of the newly-created process.  Die on failure.  */
+/* Create a temporary file and, if asked for, start a compressor
+   to that file.  Set *PFP to the file handle and return the address
+   of the new temp node.  Die on failure.  */
 
-static char *
-create_temp (FILE **pfp, pid_t *ppid)
+static struct tempnode *
+create_temp (FILE **pfp)
 {
-  return maybe_create_temp (pfp, ppid, false);
+  return maybe_create_temp (pfp, false);
 }
 
 /* Open a compressed temp file and start a decompression process through
-   which to filter the input.  PID must be the valid processes ID of the
-   process used to compress the file.  Return NULL (setting errno to
+   which to filter the input.  Return NULL (setting errno to
    EMFILE) if we ran out of file descriptors, and die on any other
    kind of failure.  */
 
 static FILE *
-open_temp (char const *name, pid_t pid)
+open_temp (struct tempnode *temp)
 {
   int tempfd, pipefds[2];
   FILE *fp = NULL;
 
-  wait_proc (pid);
+  if (temp->state == UNREAPED)
+    wait_proc (temp->pid);
 
-  tempfd = open (name, O_RDONLY);
+  tempfd = open (temp->name, O_RDONLY);
   if (tempfd < 0)
     return NULL;
 
-  switch (pipe_fork (pipefds, MAX_FORK_TRIES_DECOMPRESS))
+  pid_t child = pipe_fork (pipefds, MAX_FORK_TRIES_DECOMPRESS);
+
+  switch (child)
     {
     case -1:
       if (errno != EMFILE)
@@ -1149,6 +1139,8 @@ open_temp (char const *name, pid_t pid)
              compress_program);
 
     default:
+      temp->pid = child;
+      register_proc (temp);
       close (tempfd);
       close (pipefds[1]);
 
@@ -1189,6 +1181,9 @@ zaptemp (char const *name)
 
   for (pnode = &temphead; (node = *pnode)->name != name; pnode = &node->next)
     continue;
+
+  if (node->state == UNREAPED)
+    wait_proc (node->pid);
 
   /* Unlink the temporary file in a critical section to avoid races.  */
   next = node->next;
@@ -1376,15 +1371,17 @@ specify_sort_size (int oi, char c, char const *s)
 }
 
 /* Specify the number of threads to spawn during internal sort.  */
-static unsigned long int
+static size_t
 specify_nthreads (int oi, char c, char const *s)
 {
   unsigned long int nthreads;
   enum strtol_error e = xstrtoul (s, NULL, 10, &nthreads, "");
   if (e == LONGINT_OVERFLOW)
-    return ULONG_MAX;
+    return SIZE_MAX;
   if (e != LONGINT_OK)
     xstrtol_fatal (e, oi, c, long_options, s);
+  if (SIZE_MAX < nthreads)
+    nthreads = SIZE_MAX;
   if (nthreads == 0)
     error (SORT_FAILURE, 0, _("number in parallel must be nonzero"));
   return nthreads;
@@ -2202,7 +2199,8 @@ debug_key (struct line const *line, struct keyfield const *key)
 
       if (key->skipsblanks || key->month || key_numeric (key))
         {
-          char saved = *lim; *lim = '\0';
+          char saved = *lim;
+          *lim = '\0';
 
           while (blanks[to_uchar (*beg)])
             beg++;
@@ -2799,8 +2797,8 @@ open_input_files (struct sortfile *files, size_t nfiles, FILE ***pfps)
   /* Open as many input files as we can.  */
   for (i = 0; i < nfiles; i++)
     {
-      fps[i] = (files[i].pid
-                ? open_temp (files[i].name, files[i].pid)
+      fps[i] = (files[i].temp && files[i].temp->state != UNCOMPRESSED
+                ? open_temp (files[i].temp)
                 : stream_open (files[i].name, "r"));
       if (!fps[i])
         break;
@@ -2990,10 +2988,6 @@ mergefps (struct sortfile *files, size_t ntemps, size_t nfiles,
           ord[j] = ord[j + 1];
         ord[count_of_smaller_lines] = ord0;
       }
-
-      /* Free up some resources every once in a while.  */
-      if (MAX_PROCS_BEFORE_REAP < nprocs)
-        reap_some ();
     }
 
   if (unique && savedline)
@@ -3072,7 +3066,9 @@ mergelines (struct line *restrict t, size_t nlines,
 }
 
 /* Sort the array LINES with NLINES members, using TEMP for temporary space.
-   NLINES must be at least 2.
+   Do this all within one thread.  NLINES must be at least 2.
+   If TO_TEMP, put the sorted output into TEMP, and TEMP is as large as LINES.
+   Otherwise the sort is in-place and TEMP is half-sized.
    The input and output arrays are in reverse order, and LINES and
    TEMP point just past the end of their respective arrays.
 
@@ -3134,9 +3130,90 @@ sequential_sort (struct line *restrict lines, size_t nlines,
     }
 }
 
-/* Compare two NODEs for priority. The NODE with the higher (numerically
-   lower) level has priority. If tie, the NODE with the most remaining
-   lines has priority. */
+static struct merge_node *init_node (struct merge_node *restrict,
+                                     struct merge_node *restrict,
+                                     struct line *, size_t, size_t, bool);
+
+
+/* Create and return a merge tree for NTHREADS threads, sorting NLINES
+   lines, with destination DEST.  */
+static struct merge_node *
+merge_tree_init (size_t nthreads, size_t nlines, struct line *dest)
+{
+  struct merge_node *merge_tree = xmalloc (2 * sizeof *merge_tree * nthreads);
+
+  struct merge_node *root = merge_tree;
+  root->lo = root->hi = root->end_lo = root->end_hi = NULL;
+  root->dest = NULL;
+  root->nlo = root->nhi = nlines;
+  root->parent = NULL;
+  root->level = MERGE_END;
+  root->queued = false;
+  pthread_mutex_init (&root->lock, NULL);
+
+  init_node (root, root + 1, dest, nthreads, nlines, false);
+  return merge_tree;
+}
+
+/* Destroy the merge tree. */
+static void
+merge_tree_destroy (struct merge_node *merge_tree)
+{
+  free (merge_tree);
+}
+
+/* Initialize a merge tree node and its descendants.  The node's
+   parent is PARENT.  The node and its descendants are taken from the
+   array of nodes NODE_POOL.  Their destination starts at DEST; they
+   will consume NTHREADS threads.  The total number of sort lines is
+   TOTAL_LINES.  IS_LO_CHILD is true if the node is the low child of
+   its parent.  */
+
+static struct merge_node *
+init_node (struct merge_node *restrict parent,
+           struct merge_node *restrict node_pool,
+           struct line *dest, size_t nthreads,
+           size_t total_lines, bool is_lo_child)
+{
+  size_t nlines = (is_lo_child ? parent->nlo : parent->nhi);
+  size_t nlo = nlines / 2;
+  size_t nhi = nlines - nlo;
+  struct line *lo = dest - total_lines;
+  struct line *hi = lo - nlo;
+  struct line **parent_end = (is_lo_child ? &parent->end_lo : &parent->end_hi);
+
+  struct merge_node *node = node_pool++;
+  node->lo = node->end_lo = lo;
+  node->hi = node->end_hi = hi;
+  node->dest = parent_end;
+  node->nlo = nlo;
+  node->nhi = nhi;
+  node->parent = parent;
+  node->level = parent->level + 1;
+  node->queued = false;
+  pthread_mutex_init (&node->lock, NULL);
+
+  if (nthreads > 1)
+    {
+      size_t lo_threads = nthreads / 2;
+      size_t hi_threads = nthreads - lo_threads;
+      node->lo_child = node_pool;
+      node_pool = init_node (node, node_pool, lo, lo_threads,
+                             total_lines, true);
+      node->hi_child = node_pool;
+      node_pool = init_node (node, node_pool, hi, hi_threads,
+                             total_lines, false);
+    }
+  else
+    {
+      node->lo_child = NULL;
+      node->hi_child = NULL;
+    }
+  return node_pool;
+}
+
+
+/* Compare two merge nodes A and B for priority.  */
 
 static int
 compare_nodes (void const *a, void const *b)
@@ -3148,15 +3225,12 @@ compare_nodes (void const *a, void const *b)
   return nodea->level < nodeb->level;
 }
 
-/* Lock a merge tree NODE.
-   Note spin locks were seen to perform better than mutexes
-   as long as the number of threads is limited to the
-   number of processors.  */
+/* Lock a merge tree NODE.  */
 
 static inline void
 lock_node (struct merge_node *node)
 {
-  pthread_spin_lock (node->lock);
+  pthread_mutex_lock (&node->lock);
 }
 
 /* Unlock a merge tree NODE. */
@@ -3164,7 +3238,7 @@ lock_node (struct merge_node *node)
 static inline void
 unlock_node (struct merge_node *node)
 {
-  pthread_spin_unlock (node->lock);
+  pthread_mutex_unlock (&node->lock);
 }
 
 /* Destroy merge QUEUE. */
@@ -3177,21 +3251,22 @@ queue_destroy (struct merge_node_queue *queue)
   pthread_mutex_destroy (&queue->mutex);
 }
 
-/* Initialize merge QUEUE, allocating space for a maximum of RESERVE nodes.
-   Though it's highly unlikely all nodes are in the heap at the same time,
-   RESERVE should accommodate all of them. Counting a NULL dummy head for the
-   heap, RESERVE should be 2 * NTHREADS. */
+/* Initialize merge QUEUE, allocating space suitable for a maximum of
+   NTHREADS threads.  */
 
 static void
-queue_init (struct merge_node_queue *queue, size_t reserve)
+queue_init (struct merge_node_queue *queue, size_t nthreads)
 {
-  queue->priority_queue = heap_alloc (compare_nodes, reserve);
+  /* Though it's highly unlikely all nodes are in the heap at the same
+     time, the heap should accommodate all of them.  Counting a NULL
+     dummy head for the heap, reserve 2 * NTHREADS nodes.  */
+  queue->priority_queue = heap_alloc (compare_nodes, 2 * nthreads);
   pthread_mutex_init (&queue->mutex, NULL);
   pthread_cond_init (&queue->cond, NULL);
 }
 
-/* Insert NODE into priority QUEUE. Assume caller either holds lock on NODE
-   or does not need to lock NODE. */
+/* Insert NODE into QUEUE.  The caller either holds a lock on NODE, or
+   does not need to lock NODE.  */
 
 static void
 queue_insert (struct merge_node_queue *queue, struct merge_node *node)
@@ -3203,7 +3278,7 @@ queue_insert (struct merge_node_queue *queue, struct merge_node *node)
   pthread_cond_signal (&queue->cond);
 }
 
-/* Pop NODE off priority QUEUE. Guarantee a non-null, spinlocked NODE. */
+/* Pop the top node off the priority QUEUE, lock the node, return it.  */
 
 static struct merge_node *
 queue_pop (struct merge_node_queue *queue)
@@ -3218,29 +3293,36 @@ queue_pop (struct merge_node_queue *queue)
   return node;
 }
 
-/* If UNQIUE is set, checks to make sure line isn't a duplicate before
-   outputting. If UNIQUE is not set, output the passed in line. Note that
-   this function does not actually save the line, nor any key information,
-   thus is only appropriate for internal sort. */
+/* Output LINE to TFP, unless -u is specified and the line compares
+   equal to the previous line.  TEMP_OUTPUT is the name of TFP, or
+   is null if TFP is standard output.
+
+   This function does not save the line for comparison later, so it is
+   appropriate only for internal sort.  */
 
 static void
 write_unique (struct line const *line, FILE *tfp, char const *temp_output)
 {
-  static struct line const *saved = NULL;
+  static struct line saved;
 
-  if (!unique)
-    write_line (line, tfp, temp_output);
-  else if (!saved || compare (line, saved))
+  if (unique)
     {
-      saved = line;
-      write_line (line, tfp, temp_output);
+      if (saved.text && ! compare (line, &saved))
+        return;
+      saved = *line;
     }
+
+  write_line (line, tfp, temp_output);
 }
 
 /* Merge the lines currently available to a NODE in the binary
-   merge tree, up to a maximum specified by MAX_MERGE. */
+   merge tree.  Merge a number of lines appropriate for this merge
+   level, assuming TOTAL_LINES is the total number of lines.
 
-static size_t
+   If merging at the top level, send output to TFP.  TEMP_OUTPUT is
+   the name of TFP, or is null if TFP is standard output.  */
+
+static void
 mergelines_node (struct merge_node *restrict node, size_t total_lines,
                  FILE *tfp, char const *temp_output)
 {
@@ -3269,6 +3351,7 @@ mergelines_node (struct merge_node *restrict node, size_t total_lines,
       else if (node->nlo == merged_lo)
         while (node->hi != node->end_hi && to_merge--)
           *--dest = *--node->hi;
+      *node->dest = dest;
     }
   else
     {
@@ -3294,7 +3377,6 @@ mergelines_node (struct merge_node *restrict node, size_t total_lines,
           while (node->hi != node->end_hi && to_merge--)
             write_unique (--node->hi, tfp, temp_output);
         }
-      node->dest -= lo_orig - node->lo + hi_orig - node->hi;
     }
 
   /* Update NODE. */
@@ -3302,40 +3384,34 @@ mergelines_node (struct merge_node *restrict node, size_t total_lines,
   merged_hi = hi_orig - node->hi;
   node->nlo -= merged_lo;
   node->nhi -= merged_hi;
-  return merged_lo + merged_hi;
 }
 
-/* Insert NODE into QUEUE if it passes insertion checks. */
+/* Into QUEUE, insert NODE if it is not already queued, and if one of
+   NODE's children has available lines and the other either has
+   available lines or has exhausted its lines.  */
 
 static void
-check_insert (struct merge_node *node, struct merge_node_queue *queue)
+queue_check_insert (struct merge_node_queue *queue, struct merge_node *node)
 {
-  size_t lo_avail = node->lo - node->end_lo;
-  size_t hi_avail = node->hi - node->end_hi;
-
-  /* Conditions for insertion:
-     1. NODE is not already in heap.
-     2. NODE has available lines from both it's children, OR one child has
-          available lines, but the other has exhausted all its lines. */
-  if ((!node->queued)
-      && ((lo_avail && (hi_avail || !(node->nhi)))
-          || (hi_avail && !(node->nlo))))
+  if (! node->queued)
     {
-      queue_insert (queue, node);
+      bool lo_avail = (node->lo - node->end_lo) != 0;
+      bool hi_avail = (node->hi - node->end_hi) != 0;
+      if (lo_avail ? hi_avail || ! node->nhi : hi_avail && ! node->nlo)
+        queue_insert (queue, node);
     }
 }
 
-/* Update parent merge tree NODE. */
+/* Into QUEUE, insert NODE's parent if the parent can now be worked on.  */
 
 static void
-update_parent (struct merge_node *node, size_t merged,
-               struct merge_node_queue *queue)
+queue_check_insert_parent (struct merge_node_queue *queue,
+                           struct merge_node *node)
 {
   if (node->level > MERGE_ROOT)
     {
       lock_node (node->parent);
-      *node->dest -= merged;
-      check_insert (node->parent, queue);
+      queue_check_insert (queue, node->parent);
       unlock_node (node->parent);
     }
   else if (node->nlo + node->nhi == 0)
@@ -3346,8 +3422,11 @@ update_parent (struct merge_node *node, size_t merged,
     }
 }
 
-/* Repeatedly pop QUEUE for a NODE with lines to merge, and merge at least
-   some of those lines, until the MERGE_END node is popped. */
+/* Repeatedly pop QUEUE for a node with lines to merge, and merge at least
+   some of those lines, until the MERGE_END node is popped.
+   TOTAL_LINES is the total number of lines.  If merging at the top
+   level, send output to TFP.  TEMP_OUTPUT is the name of TFP, or is
+   null if TFP is standard output.  */
 
 static void
 merge_loop (struct merge_node_queue *queue,
@@ -3364,33 +3443,46 @@ merge_loop (struct merge_node_queue *queue,
           queue_insert (queue, node);
           break;
         }
-      size_t merged_lines = mergelines_node (node, total_lines, tfp,
-                                             temp_output);
-      check_insert (node, queue);
-      update_parent (node, merged_lines, queue);
+      mergelines_node (node, total_lines, tfp, temp_output);
+      queue_check_insert (queue, node);
+      queue_check_insert_parent (queue, node);
 
       unlock_node (node);
     }
 }
 
 
-static void sortlines (struct line *restrict, struct line *restrict,
-                       unsigned long int, size_t,
-                       struct merge_node *, bool,
-                       struct merge_node_queue *,
+static void sortlines (struct line *restrict, size_t, size_t,
+                       struct merge_node *, bool, struct merge_node_queue *,
                        FILE *, char const *);
 
 /* Thread arguments for sortlines_thread. */
 
 struct thread_args
 {
+  /* Source, i.e., the array of lines to sort.  This points just past
+     the end of the array.  */
   struct line *lines;
-  struct line *dest;
-  unsigned long int nthreads;
+
+  /* Number of threads to use.  If 0 or 1, sort single-threaded.  */
+  size_t nthreads;
+
+  /* Number of lines in LINES and DEST.  */
   size_t const total_lines;
-  struct merge_node *const parent;
-  bool lo_child;
-  struct merge_node_queue *const merge_queue;
+
+  /* Merge node. Lines from this node and this node's sibling will merged
+     to this node's parent. */
+  struct merge_node *const node;
+
+  /* True if this node is sorting the lower half of the parent's work.  */
+  bool is_lo_child;
+
+  /* The priority queue controlling available work for the entire
+     internal sort.  */
+  struct merge_node_queue *const queue;
+
+  /* If at the top level, the file to output to, and the file's name.
+     If the file is standard output, the file's name is null.  */
   FILE *tfp;
   char const *output_temp;
 };
@@ -3401,13 +3493,16 @@ static void *
 sortlines_thread (void *data)
 {
   struct thread_args const *args = data;
-  sortlines (args->lines, args->dest, args->nthreads, args->total_lines,
-             args->parent, args->lo_child, args->merge_queue,
-             args->tfp, args->output_temp);
+  sortlines (args->lines, args->nthreads, args->total_lines,
+             args->node, args->is_lo_child, args->queue, args->tfp,
+             args->output_temp);
   return NULL;
 }
 
-/* There are three phases to the algorithm: node creation, sequential sort,
+/* Sort lines, possibly in parallel.  The arguments are as in struct
+   thread_args above.
+
+   The algorithm has three phases: node creation, sequential sort,
    and binary merge.
 
    During node creation, sortlines recursively visits each node in the
@@ -3429,42 +3524,32 @@ sortlines_thread (void *data)
    have been merged. */
 
 static void
-sortlines (struct line *restrict lines, struct line *restrict dest,
-           unsigned long int nthreads, size_t total_lines,
-           struct merge_node *parent, bool lo_child,
-           struct merge_node_queue *merge_queue,
-           FILE *tfp, char const *temp_output)
+sortlines (struct line *restrict lines, size_t nthreads,
+           size_t total_lines, struct merge_node *node, bool is_lo_child,
+           struct merge_node_queue *queue, FILE *tfp, char const *temp_output)
 {
-  /* Create merge tree NODE. */
-  size_t nlines = (lo_child)? parent->nlo : parent->nhi;
-  size_t nlo = nlines / 2;
-  size_t nhi = nlines - nlo;
-  struct line *lo = dest - total_lines;
-  struct line *hi = lo - nlo;
-  struct line **parent_end = (lo_child)? &parent->end_lo : &parent->end_hi;
-  pthread_spinlock_t lock;
-  pthread_spin_init (&lock, PTHREAD_PROCESS_PRIVATE);
-  struct merge_node node = {lo, hi, lo, hi, parent_end, nlo, nhi,
-                            parent->level + 1, parent, false, &lock};
+  size_t nlines = node->nlo + node->nhi;
 
   /* Calculate thread arguments. */
-  unsigned long int lo_threads = nthreads / 2;
-  unsigned long int hi_threads = nthreads - lo_threads;
+  size_t lo_threads = nthreads / 2;
+  size_t hi_threads = nthreads - lo_threads;
   pthread_t thread;
-  struct thread_args args = {lines, lo, lo_threads, total_lines, &node,
-                             true, merge_queue, tfp, temp_output};
+  struct thread_args args = {lines, lo_threads, total_lines,
+                             node->lo_child, true, queue, tfp, temp_output};
 
   if (nthreads > 1 && SUBTHREAD_LINES_HEURISTIC <= nlines
       && pthread_create (&thread, NULL, sortlines_thread, &args) == 0)
     {
-      sortlines (lines - nlo, hi, hi_threads, total_lines, &node, false,
-                 merge_queue, tfp, temp_output);
+      sortlines (lines - node->nlo, hi_threads, total_lines,
+                 node->hi_child, false, queue, tfp, temp_output);
       pthread_join (thread, NULL);
     }
   else
     {
       /* Nthreads = 1, this is a leaf NODE, or pthread_create failed.
          Sort with 1 thread. */
+      size_t nlo = node->nlo;
+      size_t nhi = node->nhi;
       struct line *temp = lines - total_lines;
       if (1 < nhi)
         sequential_sort (lines - nlo, nhi, temp - nlo / 2, false);
@@ -3472,24 +3557,24 @@ sortlines (struct line *restrict lines, struct line *restrict dest,
         sequential_sort (lines, nlo, temp, false);
 
       /* Update merge NODE. No need to lock yet. */
-      node.lo = lines;
-      node.hi = lines - nlo;
-      node.end_lo = lines - nlo;
-      node.end_hi = lines - nlo - nhi;
+      node->lo = lines;
+      node->hi = lines - nlo;
+      node->end_lo = lines - nlo;
+      node->end_hi = lines - nlo - nhi;
 
-      queue_insert (merge_queue, &node);
-      merge_loop (merge_queue, total_lines, tfp, temp_output);
+      queue_insert (queue, node);
+      merge_loop (queue, total_lines, tfp, temp_output);
     }
 
-  pthread_spin_destroy (&lock);
+  pthread_mutex_destroy (&node->lock);
 }
 
-/* Scan through FILES[NTEMPS .. NFILES-1] looking for a file that is
-   the same as OUTFILE.  If found, merge the found instances (and perhaps
-   some other files) into a temporary file so that it can in turn be
-   merged into OUTFILE without destroying OUTFILE before it is completely
-   read.  Return the new value of NFILES, which differs from the old if
-   some merging occurred.
+/* Scan through FILES[NTEMPS .. NFILES-1] looking for files that are
+   the same as OUTFILE.  If found, replace each with the same
+   temporary copy that can be merged into OUTFILE without destroying
+   OUTFILE before it is completely read.  This temporary copy does not
+   count as a merge temp, so don't worry about incrementing NTEMPS in
+   the caller; final cleanup will remove it, not zaptemp.
 
    This test ensures that an otherwise-erroneous use like
    "sort -m -o FILE ... FILE ..." copies FILE before writing to it.
@@ -3501,13 +3586,14 @@ sortlines (struct line *restrict lines, struct line *restrict dest,
    Catching these obscure cases would slow down performance in
    common cases.  */
 
-static size_t
+static void
 avoid_trashing_input (struct sortfile *files, size_t ntemps,
                       size_t nfiles, char const *outfile)
 {
   size_t i;
   bool got_outstat = false;
   struct stat outstat;
+  struct tempnode *tempcopy = NULL;
 
   for (i = ntemps; i < nfiles; i++)
     {
@@ -3538,28 +3624,17 @@ avoid_trashing_input (struct sortfile *files, size_t ntemps,
 
       if (same)
         {
-          FILE *tftp;
-          pid_t pid;
-          char *temp = create_temp (&tftp, &pid);
-          size_t num_merged = 0;
-          do
+          if (! tempcopy)
             {
-              num_merged += mergefiles (&files[i], 0, nfiles - i, tftp, temp);
-              files[i].name = temp;
-              files[i].pid = pid;
-
-              if (i + num_merged < nfiles)
-                memmove (&files[i + 1], &files[i + num_merged],
-                         num_merged * sizeof *files);
-              ntemps += 1;
-              nfiles -= num_merged - 1;;
-              i += num_merged;
+              FILE *tftp;
+              tempcopy = create_temp (&tftp);
+              mergefiles (&files[i], 0, 1, tftp, tempcopy->name);
             }
-          while (i < nfiles);
+
+          files[i].name = tempcopy->name;
+          files[i].temp = tempcopy;
         }
     }
-
-  return nfiles;
 }
 
 /* Merge the input FILES.  NTEMPS is the number of files at the
@@ -3592,13 +3667,12 @@ merge (struct sortfile *files, size_t ntemps, size_t nfiles,
       for (out = in = 0; nmerge <= nfiles - in; out++)
         {
           FILE *tfp;
-          pid_t pid;
-          char *temp = create_temp (&tfp, &pid);
+          struct tempnode *temp = create_temp (&tfp);
           size_t num_merged = mergefiles (&files[in], MIN (ntemps, nmerge),
-                                          nmerge, tfp, temp);
+                                          nmerge, tfp, temp->name);
           ntemps -= MIN (ntemps, num_merged);
-          files[out].name = temp;
-          files[out].pid = pid;
+          files[out].name = temp->name;
+          files[out].temp = temp;
           in += num_merged;
         }
 
@@ -3612,13 +3686,12 @@ merge (struct sortfile *files, size_t ntemps, size_t nfiles,
              files as possible, to avoid needless I/O.  */
           size_t nshortmerge = remainder - cheap_slots + 1;
           FILE *tfp;
-          pid_t pid;
-          char *temp = create_temp (&tfp, &pid);
+          struct tempnode *temp = create_temp (&tfp);
           size_t num_merged = mergefiles (&files[in], MIN (ntemps, nshortmerge),
-                                          nshortmerge, tfp, temp);
+                                          nshortmerge, tfp, temp->name);
           ntemps -= MIN (ntemps, num_merged);
-          files[out].name = temp;
-          files[out++].pid = pid;
+          files[out].name = temp->name;
+          files[out++].temp = temp;
           in += num_merged;
         }
 
@@ -3629,7 +3702,7 @@ merge (struct sortfile *files, size_t ntemps, size_t nfiles,
       nfiles -= in - out;
     }
 
-  nfiles = avoid_trashing_input (files, ntemps, nfiles, output_file);
+  avoid_trashing_input (files, ntemps, nfiles, output_file);
 
   /* We aren't guaranteed that this final mergefiles will work, therefore we
      try to merge into the output, and then merge as much as we can into a
@@ -3661,21 +3734,21 @@ merge (struct sortfile *files, size_t ntemps, size_t nfiles,
          (e.g., some other process could open a file between the time
          we closed and tried to create).  */
       FILE *tfp;
-      pid_t pid;
-      char *temp;
+      struct tempnode *temp;
       do
         {
           nopened--;
           xfclose (fps[nopened], files[nopened].name);
-          temp = maybe_create_temp (&tfp, &pid, ! (nopened <= 2));
+          temp = maybe_create_temp (&tfp, ! (nopened <= 2));
         }
       while (!temp);
 
       /* Merge into the newly allocated temporary.  */
-      mergefps (&files[0], MIN (ntemps, nopened), nopened, tfp, temp, fps);
+      mergefps (&files[0], MIN (ntemps, nopened), nopened, tfp, temp->name,
+                fps);
       ntemps -= MIN (ntemps, nopened);
-      files[0].name = temp;
-      files[0].pid = pid;
+      files[0].name = temp->name;
+      files[0].temp = temp;
 
       memmove (&files[1], &files[nopened], (nfiles - nopened) * sizeof *files);
       ntemps++;
@@ -3683,11 +3756,11 @@ merge (struct sortfile *files, size_t ntemps, size_t nfiles,
     }
 }
 
-/* Sort NFILES FILES onto OUTPUT_FILE. */
+/* Sort NFILES FILES onto OUTPUT_FILE.  Use at most NTHREADS threads.  */
 
 static void
-sort (char * const *files, size_t nfiles, char const *output_file,
-      unsigned long int nthreads)
+sort (char *const *files, size_t nfiles, char const *output_file,
+      size_t nthreads)
 {
   struct buffer buf;
   size_t ntemps = 0;
@@ -3706,7 +3779,7 @@ sort (char * const *files, size_t nfiles, char const *output_file,
       if (nthreads > 1)
         {
           /* Get log P. */
-          unsigned long int tmp = 1;
+          size_t tmp = 1;
           size_t mult = 1;
           while (tmp < nthreads)
             {
@@ -3751,32 +3824,26 @@ sort (char * const *files, size_t nfiles, char const *output_file,
           else
             {
               ++ntemps;
-              temp_output = create_temp (&tfp, NULL);
+              temp_output = create_temp (&tfp)->name;
             }
           if (1 < buf.nlines)
             {
-              struct merge_node_queue merge_queue;
-              queue_init (&merge_queue, 2 * nthreads);
+              struct merge_node_queue queue;
+              queue_init (&queue, nthreads);
+              struct merge_node *merge_tree =
+                merge_tree_init (nthreads, buf.nlines, line);
+              struct merge_node *root = merge_tree + 1;
 
-              pthread_spinlock_t lock;
-              pthread_spin_init (&lock, PTHREAD_PROCESS_PRIVATE);
-              struct merge_node node =
-                {NULL, NULL, NULL, NULL, NULL, buf.nlines,
-                 buf.nlines, MERGE_END, NULL, false, &lock};
-
-              sortlines (line, line, nthreads, buf.nlines, &node, true,
-                         &merge_queue, tfp, temp_output);
-              queue_destroy (&merge_queue);
-              pthread_spin_destroy (&lock);
+              sortlines (line, nthreads, buf.nlines, root,
+                         true, &queue, tfp, temp_output);
+              queue_destroy (&queue);
+              pthread_mutex_destroy (&root->lock);
+              merge_tree_destroy (merge_tree);
             }
           else
             write_unique (line - 1, tfp, temp_output);
 
           xfclose (tfp, temp_output);
-
-          /* Free up some resources every once in a while.  */
-          if (MAX_PROCS_BEFORE_REAP < nprocs)
-            reap_some ();
 
           if (output_file_created)
             goto finish;
@@ -3795,12 +3862,14 @@ sort (char * const *files, size_t nfiles, char const *output_file,
       for (i = 0; node; i++)
         {
           tempfiles[i].name = node->name;
-          tempfiles[i].pid = node->pid;
+          tempfiles[i].temp = node;
           node = node->next;
         }
       merge (tempfiles, ntemps, ntemps, output_file);
       free (tempfiles);
     }
+
+  reap_all ();
 }
 
 /* Insert a malloc'd copy of key KEY_ARG at the end of the key list.  */
@@ -3967,6 +4036,8 @@ set_ordering (char const *s, struct keyfield *key, enum blanktype blanktype)
   return (char *) s;
 }
 
+/* Initialize KEY.  */
+
 static struct keyfield *
 key_init (struct keyfield *key)
 {
@@ -3988,7 +4059,7 @@ main (int argc, char **argv)
   bool mergeonly = false;
   char *random_source = NULL;
   bool need_random = false;
-  unsigned long int nthreads = 0;
+  size_t nthreads = 0;
   size_t nfiles = 0;
   bool posixly_correct = (getenv ("POSIXLY_CORRECT") != NULL);
   bool obsolete_usage = (posix2_version () < 200112);
@@ -4402,7 +4473,7 @@ main (int argc, char **argv)
           files = tok.tok;
           nfiles = tok.n_tok;
           for (i = 0; i < nfiles; i++)
-          {
+            {
               if (STREQ (files[i], "-"))
                 error (SORT_FAILURE, 0, _("when reading file names from stdin, "
                                           "no file name of %s allowed"),
@@ -4417,7 +4488,7 @@ main (int argc, char **argv)
                          _("%s:%lu: invalid zero-length file name"),
                          quotearg_colon (files_from), file_number);
                 }
-          }
+            }
         }
       else
         error (SORT_FAILURE, 0, _("no input from %s"),
@@ -4528,11 +4599,15 @@ main (int argc, char **argv)
     }
   else
     {
-      /* If NTHREADS > number of cores on the machine, spinlocking
-         could be wasteful.  */
-      unsigned long int np2 = num_processors (NPROC_CURRENT_OVERRIDABLE);
-      if (!nthreads || nthreads > np2)
-        nthreads = np2;
+      if (!nthreads)
+        {
+          nthreads = MIN (DEFAULT_MAX_THREADS,
+                          num_processors (NPROC_CURRENT_OVERRIDABLE));
+        }
+
+      /* Avoid integer overflow later.  */
+      size_t nthreads_max = SIZE_MAX / (2 * sizeof (struct merge_node));
+      nthreads = MIN (nthreads, nthreads_max);
 
       sort (files, nfiles, outfile, nthreads);
     }

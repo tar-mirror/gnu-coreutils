@@ -18,12 +18,9 @@
 
 prog=printf
 
-if test "$VERBOSE" = yes; then
-  set -x
-  env $prog --version
-fi
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
+print_ver_ printf
 
-. $srcdir/test-lib.sh
 require_ulimit_
 
 

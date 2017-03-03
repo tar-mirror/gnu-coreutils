@@ -17,14 +17,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-if test "$VERBOSE" = yes; then
-  set -x
-  mv --version
-  getfacl --version
-  setfacl --version
-fi
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
+print_ver_ mv getfacl setfacl
 
-. $srcdir/test-lib.sh
 require_acl_
 
 # Skip this test if cp was built without ACL support:

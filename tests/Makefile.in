@@ -34,7 +34,6 @@ VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
-pkglibexecdir = $(libexecdir)/@PACKAGE@
 am__cd = CDPATH="$${ZSH_VERSION+.}$(PATH_SEPARATOR)" && cd
 install_sh_DATA = $(install_sh) -c -m 644
 install_sh_PROGRAM = $(install_sh) -c
@@ -68,15 +67,15 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/00gnulib.m4 \
 	$(top_srcdir)/m4/cloexec.m4 $(top_srcdir)/m4/close-stream.m4 \
 	$(top_srcdir)/m4/close.m4 $(top_srcdir)/m4/closein.m4 \
 	$(top_srcdir)/m4/closeout.m4 $(top_srcdir)/m4/codeset.m4 \
-	$(top_srcdir)/m4/config-h.m4 $(top_srcdir)/m4/ctype.m4 \
-	$(top_srcdir)/m4/cycle-check.m4 $(top_srcdir)/m4/d-ino.m4 \
-	$(top_srcdir)/m4/d-type.m4 $(top_srcdir)/m4/dirent-safer.m4 \
-	$(top_srcdir)/m4/dirent_h.m4 $(top_srcdir)/m4/dirfd.m4 \
-	$(top_srcdir)/m4/dirname.m4 $(top_srcdir)/m4/dos.m4 \
-	$(top_srcdir)/m4/double-slash-root.m4 $(top_srcdir)/m4/dup2.m4 \
-	$(top_srcdir)/m4/eealloc.m4 $(top_srcdir)/m4/environ.m4 \
-	$(top_srcdir)/m4/errno_h.m4 $(top_srcdir)/m4/error.m4 \
-	$(top_srcdir)/m4/euidaccess-stat.m4 \
+	$(top_srcdir)/m4/config-h.m4 $(top_srcdir)/m4/configmake.m4 \
+	$(top_srcdir)/m4/ctype.m4 $(top_srcdir)/m4/cycle-check.m4 \
+	$(top_srcdir)/m4/d-ino.m4 $(top_srcdir)/m4/d-type.m4 \
+	$(top_srcdir)/m4/dirent-safer.m4 $(top_srcdir)/m4/dirent_h.m4 \
+	$(top_srcdir)/m4/dirfd.m4 $(top_srcdir)/m4/dirname.m4 \
+	$(top_srcdir)/m4/dos.m4 $(top_srcdir)/m4/double-slash-root.m4 \
+	$(top_srcdir)/m4/dup2.m4 $(top_srcdir)/m4/eealloc.m4 \
+	$(top_srcdir)/m4/environ.m4 $(top_srcdir)/m4/errno_h.m4 \
+	$(top_srcdir)/m4/error.m4 $(top_srcdir)/m4/euidaccess-stat.m4 \
 	$(top_srcdir)/m4/euidaccess.m4 $(top_srcdir)/m4/exclude.m4 \
 	$(top_srcdir)/m4/exponentd.m4 $(top_srcdir)/m4/exponentf.m4 \
 	$(top_srcdir)/m4/exponentl.m4 $(top_srcdir)/m4/extensions.m4 \
@@ -377,6 +376,7 @@ TEST_LOG_COMPILE = $(TEST_LOG_COMPILER) $(AM_TEST_LOG_FLAGS) \
 	$(TEST_LOG_FLAGS)
 TEST_LOGS_TMP = $(TEST_LOGS:.log=.log-t)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
+pkglibexecdir = @pkglibexecdir@
 ACLOCAL = @ACLOCAL@
 ALLOCA = @ALLOCA@
 ALLOCA_H = @ALLOCA_H@
@@ -498,6 +498,7 @@ GNULIB_GETSUBOPT = @GNULIB_GETSUBOPT@
 GNULIB_GETTIMEOFDAY = @GNULIB_GETTIMEOFDAY@
 GNULIB_GETUSERSHELL = @GNULIB_GETUSERSHELL@
 GNULIB_GRANTPT = @GNULIB_GRANTPT@
+GNULIB_ICONV = @GNULIB_ICONV@
 GNULIB_IMAXABS = @GNULIB_IMAXABS@
 GNULIB_IMAXDIV = @GNULIB_IMAXDIV@
 GNULIB_INET_NTOP = @GNULIB_INET_NTOP@
@@ -562,6 +563,7 @@ GNULIB_OBSTACK_PRINTF_POSIX = @GNULIB_OBSTACK_PRINTF_POSIX@
 GNULIB_OPEN = @GNULIB_OPEN@
 GNULIB_OPENAT = @GNULIB_OPENAT@
 GNULIB_PERROR = @GNULIB_PERROR@
+GNULIB_PIPE = @GNULIB_PIPE@
 GNULIB_PIPE2 = @GNULIB_PIPE2@
 GNULIB_POPEN = @GNULIB_POPEN@
 GNULIB_PREAD = @GNULIB_PREAD@
@@ -690,15 +692,19 @@ HAVE_DECL_COSL = @HAVE_DECL_COSL@
 HAVE_DECL_DIRFD = @HAVE_DECL_DIRFD@
 HAVE_DECL_ENVIRON = @HAVE_DECL_ENVIRON@
 HAVE_DECL_EXPL = @HAVE_DECL_EXPL@
+HAVE_DECL_FCHDIR = @HAVE_DECL_FCHDIR@
 HAVE_DECL_FDOPENDIR = @HAVE_DECL_FDOPENDIR@
 HAVE_DECL_FLOORF = @HAVE_DECL_FLOORF@
 HAVE_DECL_FLOORL = @HAVE_DECL_FLOORL@
 HAVE_DECL_FPURGE = @HAVE_DECL_FPURGE@
 HAVE_DECL_FREEADDRINFO = @HAVE_DECL_FREEADDRINFO@
 HAVE_DECL_FREXPL = @HAVE_DECL_FREXPL@
+HAVE_DECL_FSEEKO = @HAVE_DECL_FSEEKO@
+HAVE_DECL_FTELLO = @HAVE_DECL_FTELLO@
 HAVE_DECL_GAI_STRERROR = @HAVE_DECL_GAI_STRERROR@
 HAVE_DECL_GETADDRINFO = @HAVE_DECL_GETADDRINFO@
 HAVE_DECL_GETDELIM = @HAVE_DECL_GETDELIM@
+HAVE_DECL_GETDOMAINNAME = @HAVE_DECL_GETDOMAINNAME@
 HAVE_DECL_GETLINE = @HAVE_DECL_GETLINE@
 HAVE_DECL_GETLOADAVG = @HAVE_DECL_GETLOADAVG@
 HAVE_DECL_GETLOGIN_R = @HAVE_DECL_GETLOGIN_R@
@@ -718,6 +724,7 @@ HAVE_DECL_OBSTACK_PRINTF = @HAVE_DECL_OBSTACK_PRINTF@
 HAVE_DECL_ROUND = @HAVE_DECL_ROUND@
 HAVE_DECL_ROUNDF = @HAVE_DECL_ROUNDF@
 HAVE_DECL_ROUNDL = @HAVE_DECL_ROUNDL@
+HAVE_DECL_SETENV = @HAVE_DECL_SETENV@
 HAVE_DECL_SINL = @HAVE_DECL_SINL@
 HAVE_DECL_SNPRINTF = @HAVE_DECL_SNPRINTF@
 HAVE_DECL_SQRTL = @HAVE_DECL_SQRTL@
@@ -730,9 +737,12 @@ HAVE_DECL_STRTOIMAX = @HAVE_DECL_STRTOIMAX@
 HAVE_DECL_STRTOK_R = @HAVE_DECL_STRTOK_R@
 HAVE_DECL_STRTOUMAX = @HAVE_DECL_STRTOUMAX@
 HAVE_DECL_TANL = @HAVE_DECL_TANL@
+HAVE_DECL_TCGETSID = @HAVE_DECL_TCGETSID@
 HAVE_DECL_TRUNC = @HAVE_DECL_TRUNC@
 HAVE_DECL_TRUNCF = @HAVE_DECL_TRUNCF@
 HAVE_DECL_TRUNCL = @HAVE_DECL_TRUNCL@
+HAVE_DECL_TTYNAME_R = @HAVE_DECL_TTYNAME_R@
+HAVE_DECL_UNSETENV = @HAVE_DECL_UNSETENV@
 HAVE_DECL_VSNPRINTF = @HAVE_DECL_VSNPRINTF@
 HAVE_DECL_WCTOB = @HAVE_DECL_WCTOB@
 HAVE_DECL_WCWIDTH = @HAVE_DECL_WCWIDTH@
@@ -748,13 +758,13 @@ HAVE_FCHMODAT = @HAVE_FCHMODAT@
 HAVE_FCHOWNAT = @HAVE_FCHOWNAT@
 HAVE_FCNTL = @HAVE_FCNTL@
 HAVE_FDOPENDIR = @HAVE_FDOPENDIR@
+HAVE_FEATURES_H = @HAVE_FEATURES_H@
 HAVE_FSEEKO = @HAVE_FSEEKO@
 HAVE_FSTATAT = @HAVE_FSTATAT@
 HAVE_FSYNC = @HAVE_FSYNC@
 HAVE_FTELLO = @HAVE_FTELLO@
 HAVE_FTRUNCATE = @HAVE_FTRUNCATE@
 HAVE_FUTIMENS = @HAVE_FUTIMENS@
-HAVE_GETDOMAINNAME = @HAVE_GETDOMAINNAME@
 HAVE_GETDTABLESIZE = @HAVE_GETDTABLESIZE@
 HAVE_GETGROUPS = @HAVE_GETGROUPS@
 HAVE_GETHOSTNAME = @HAVE_GETHOSTNAME@
@@ -808,6 +818,7 @@ HAVE_NETINET_IN_H = @HAVE_NETINET_IN_H@
 HAVE_NL_LANGINFO = @HAVE_NL_LANGINFO@
 HAVE_OPENAT = @HAVE_OPENAT@
 HAVE_OS_H = @HAVE_OS_H@
+HAVE_PIPE = @HAVE_PIPE@
 HAVE_PIPE2 = @HAVE_PIPE2@
 HAVE_POSIX_SIGNALBLOCKING = @HAVE_POSIX_SIGNALBLOCKING@
 HAVE_PREAD = @HAVE_PREAD@
@@ -853,6 +864,7 @@ HAVE_STRUCT_RANDOM_DATA = @HAVE_STRUCT_RANDOM_DATA@
 HAVE_STRUCT_SCHED_PARAM = @HAVE_STRUCT_SCHED_PARAM@
 HAVE_STRUCT_SIGACTION_SA_SIGACTION = @HAVE_STRUCT_SIGACTION_SA_SIGACTION@
 HAVE_STRUCT_SOCKADDR_STORAGE = @HAVE_STRUCT_SOCKADDR_STORAGE@
+HAVE_STRUCT_SOCKADDR_STORAGE_SS_FAMILY = @HAVE_STRUCT_SOCKADDR_STORAGE_SS_FAMILY@
 HAVE_STRUCT_TIMEVAL = @HAVE_STRUCT_TIMEVAL@
 HAVE_STRUCT_UTSNAME = @HAVE_STRUCT_UTSNAME@
 HAVE_STRVERSCMP = @HAVE_STRVERSCMP@
@@ -869,16 +881,13 @@ HAVE_SYS_TIME_H = @HAVE_SYS_TIME_H@
 HAVE_SYS_TYPES_H = @HAVE_SYS_TYPES_H@
 HAVE_SYS_UTSNAME_H = @HAVE_SYS_UTSNAME_H@
 HAVE_TANL = @HAVE_TANL@
-HAVE_TCGETSID = @HAVE_TCGETSID@
 HAVE_TERMIOS_H = @HAVE_TERMIOS_H@
 HAVE_TIMEGM = @HAVE_TIMEGM@
-HAVE_TTYNAME_R = @HAVE_TTYNAME_R@
 HAVE_TYPE_VOLATILE_SIG_ATOMIC_T = @HAVE_TYPE_VOLATILE_SIG_ATOMIC_T@
 HAVE_UNAME = @HAVE_UNAME@
 HAVE_UNISTD_H = @HAVE_UNISTD_H@
 HAVE_UNLINKAT = @HAVE_UNLINKAT@
 HAVE_UNLOCKPT = @HAVE_UNLOCKPT@
-HAVE_UNSETENV = @HAVE_UNSETENV@
 HAVE_UNSIGNED_LONG_LONG_INT = @HAVE_UNSIGNED_LONG_LONG_INT@
 HAVE_USLEEP = @HAVE_USLEEP@
 HAVE_UTIMENSAT = @HAVE_UTIMENSAT@
@@ -898,6 +907,7 @@ HAVE__BOOL = @HAVE__BOOL@
 HAVE__EXIT = @HAVE__EXIT@
 HELP2MAN = @HELP2MAN@
 HOSTENT_LIB = @HOSTENT_LIB@
+ICONV_CONST = @ICONV_CONST@
 ICONV_H = @ICONV_H@
 IGNORE_UNUSED_LIBRARIES_CFLAGS = @IGNORE_UNUSED_LIBRARIES_CFLAGS@
 INCLUDE_NEXT = @INCLUDE_NEXT@
@@ -1095,6 +1105,7 @@ REPLACE_FTELLO = @REPLACE_FTELLO@
 REPLACE_FUTIMENS = @REPLACE_FUTIMENS@
 REPLACE_GETCWD = @REPLACE_GETCWD@
 REPLACE_GETDELIM = @REPLACE_GETDELIM@
+REPLACE_GETDOMAINNAME = @REPLACE_GETDOMAINNAME@
 REPLACE_GETGROUPS = @REPLACE_GETGROUPS@
 REPLACE_GETLINE = @REPLACE_GETLINE@
 REPLACE_GETPAGESIZE = @REPLACE_GETPAGESIZE@
@@ -1272,6 +1283,7 @@ infodir = @infodir@
 install_sh = @install_sh@
 libdir = @libdir@
 libexecdir = @libexecdir@
+lispdir = @lispdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
 mandir = @mandir@
@@ -1296,7 +1308,7 @@ top_srcdir = @top_srcdir@
 ASSORT = LC_ALL=C sort
 EXTRA_DIST = Coreutils.pm CuTmpdir.pm check.mk envvar-check init.cfg \
 	init.sh lang-default other-fs-tmpdir require-perl sample-test \
-	test-lib.sh $(pr_data) $(TESTS)
+	$(pr_data) $(TESTS)
 root_tests = \
   chown/basic					\
   cp/cp-a-selinux				\
@@ -1412,6 +1424,7 @@ TESTS = \
   misc/xstrtol					\
   tail-2/pid					\
   misc/od					\
+  misc/od-float					\
   misc/mktemp					\
   misc/arch					\
   misc/pr					\
@@ -1490,6 +1503,8 @@ TESTS = \
   misc/sort					\
   misc/sort-benchmark-random			\
   misc/sort-compress				\
+  misc/sort-compress-hang			\
+  misc/sort-compress-proc			\
   misc/sort-continue				\
   misc/sort-debug-keys				\
   misc/sort-debug-warn				\
@@ -1499,11 +1514,17 @@ TESTS = \
   misc/sort-merge-fdlimit			\
   misc/sort-month				\
   misc/sort-rand				\
+  misc/sort-spinlock-abuse			\
+  misc/sort-stale-thread-mem			\
   misc/sort-unique				\
+  misc/sort-unique-segv				\
   misc/sort-version				\
   misc/split-a					\
+  misc/split-bchunk				\
   misc/split-fail				\
   misc/split-l					\
+  misc/split-lchunk				\
+  misc/split-rchunk				\
   misc/stat-birthtime				\
   misc/stat-fmt					\
   misc/stat-hyphen				\
@@ -1929,7 +1950,8 @@ built_programs = \
 # variables to test scripts.
 TESTS_ENVIRONMENT = \
   . $(srcdir)/lang-default;			\
-  tmp__=$$TMPDIR; test -d "$$tmp__" || tmp__=.;	\
+  tmp__=$${TMPDIR-/tmp};			\
+  test -d "$$tmp__" && test -w "$$tmp__" || tmp__=.;	\
   . $(srcdir)/envvar-check;			\
   TMPDIR=$$tmp__; export TMPDIR;		\
   exec 9>&2;					\
@@ -2291,6 +2313,8 @@ tail-2/pid.log: tail-2/pid
 	@p='tail-2/pid'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 misc/od.log: misc/od
 	@p='misc/od'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+misc/od-float.log: misc/od-float
+	@p='misc/od-float'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 misc/mktemp.log: misc/mktemp
 	@p='misc/mktemp'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 misc/arch.log: misc/arch
@@ -2447,6 +2471,10 @@ misc/sort-benchmark-random.log: misc/sort-benchmark-random
 	@p='misc/sort-benchmark-random'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 misc/sort-compress.log: misc/sort-compress
 	@p='misc/sort-compress'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+misc/sort-compress-hang.log: misc/sort-compress-hang
+	@p='misc/sort-compress-hang'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+misc/sort-compress-proc.log: misc/sort-compress-proc
+	@p='misc/sort-compress-proc'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 misc/sort-continue.log: misc/sort-continue
 	@p='misc/sort-continue'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 misc/sort-debug-keys.log: misc/sort-debug-keys
@@ -2465,16 +2493,28 @@ misc/sort-month.log: misc/sort-month
 	@p='misc/sort-month'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 misc/sort-rand.log: misc/sort-rand
 	@p='misc/sort-rand'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+misc/sort-spinlock-abuse.log: misc/sort-spinlock-abuse
+	@p='misc/sort-spinlock-abuse'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+misc/sort-stale-thread-mem.log: misc/sort-stale-thread-mem
+	@p='misc/sort-stale-thread-mem'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 misc/sort-unique.log: misc/sort-unique
 	@p='misc/sort-unique'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+misc/sort-unique-segv.log: misc/sort-unique-segv
+	@p='misc/sort-unique-segv'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 misc/sort-version.log: misc/sort-version
 	@p='misc/sort-version'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 misc/split-a.log: misc/split-a
 	@p='misc/split-a'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+misc/split-bchunk.log: misc/split-bchunk
+	@p='misc/split-bchunk'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 misc/split-fail.log: misc/split-fail
 	@p='misc/split-fail'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 misc/split-l.log: misc/split-l
 	@p='misc/split-l'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+misc/split-lchunk.log: misc/split-lchunk
+	@p='misc/split-lchunk'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+misc/split-rchunk.log: misc/split-rchunk
+	@p='misc/split-rchunk'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 misc/stat-birthtime.log: misc/stat-birthtime
 	@p='misc/stat-birthtime'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 misc/stat-fmt.log: misc/stat-fmt
@@ -3059,10 +3099,15 @@ install-am: all-am
 
 installcheck: installcheck-am
 install-strip:
-	$(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
-	  install_sh_PROGRAM="$(INSTALL_STRIP_PROGRAM)" INSTALL_STRIP_FLAG=-s \
-	  `test -z '$(STRIP)' || \
-	    echo "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'"` install
+	if test -z '$(STRIP)'; then \
+	  $(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
+	    install_sh_PROGRAM="$(INSTALL_STRIP_PROGRAM)" INSTALL_STRIP_FLAG=-s \
+	      install; \
+	else \
+	  $(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
+	    install_sh_PROGRAM="$(INSTALL_STRIP_PROGRAM)" INSTALL_STRIP_FLAG=-s \
+	    "INSTALL_PROGRAM_ENV=STRIPPROG='$(STRIP)'" install; \
+	fi
 mostlyclean-generic:
 	-test -z "$(TEST_LOGS)" || rm -f $(TEST_LOGS)
 	-test -z "$(TEST_LOGS_TMP)" || rm -f $(TEST_LOGS_TMP)

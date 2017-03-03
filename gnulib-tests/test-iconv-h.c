@@ -20,10 +20,6 @@
 
 #if HAVE_ICONV
 # include <iconv.h>
-
-# ifndef ICONV_CONST
-#  define ICONV_CONST /* empty */
-# endif
 #endif
 
 int

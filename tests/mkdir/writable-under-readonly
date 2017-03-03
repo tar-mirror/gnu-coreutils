@@ -24,12 +24,8 @@
 #
 # Demonstrate the problem, as root:
 
-if test "$VERBOSE" = yes; then
-  set -x
-  mkdir --version
-fi
-
-. $srcdir/test-lib.sh
+. "${srcdir=.}/init.sh"; path_prepend_ ../src
+print_ver_ mkdir
 require_root_
 
 # FIXME: for now, skip it unconditionally
