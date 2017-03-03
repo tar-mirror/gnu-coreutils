@@ -1,10 +1,10 @@
 /* od -- dump files in octal and other formats
-   Copyright (C) 92, 1995-2006 Free Software Foundation, Inc.
+   Copyright (C) 92, 1995-2007 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -12,8 +12,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* Written by Jim Meyering.  */
 
@@ -52,11 +51,6 @@ typedef double LONG_DOUBLE;
 /* The number of decimal digits of precision in a double.  */
 #ifndef DBL_DIG
 # define DBL_DIG 15
-#endif
-
-/* The number of decimal digits of precision in a long double.  */
-#ifndef LDBL_DIG
-# define LDBL_DIG DBL_DIG
 #endif
 
 #if HAVE_UNSIGNED_LONG_LONG_INT
@@ -383,16 +377,17 @@ for sizeof(double) or L for sizeof(long double).\n\
       fputs (_("\
 \n\
 RADIX is d for decimal, o for octal, x for hexadecimal or n for none.\n\
-BYTES is hexadecimal with 0x or 0X prefix, it is multiplied by 512\n\
-with b suffix, by 1024 with k and by 1048576 with m.  Adding a z suffix to\n\
-any type adds a display of printable characters to the end of each line\n\
-of output.  \
+BYTES is hexadecimal with 0x or 0X prefix, and may have a multiplier suffix:\n\
+b 512, kB 1000, K 1024, MB 1000*1000, M 1024*1024,\n\
+GB 1000*1000*1000, G 1024*1024*1024, and so on for T, P, E, Z, Y.\n\
+Adding a z suffix to any type displays printable characters at the end of each\n\
+output line.  \
 "), stdout);
       fputs (_("\
 --string without a number implies 3.  --width without a number\n\
 implies 32.  By default, od uses -A o -t d2 -w16.\n\
 "), stdout);
-      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+      emit_bug_reporting_address ();
     }
   exit (status);
 }
@@ -1034,13 +1029,14 @@ skip (uintmax_t n_skip)
 	{
 	  /* The st_size field is valid only for regular files
 	     (and for symbolic links, which cannot occur here).
-	     If the number of bytes left to skip is at least
-	     as large as the size of the current file, we can
-	     decrement n_skip and go on to the next file.  */
-
-	  if (S_ISREG (file_stats.st_mode) && 0 <= file_stats.st_size)
+	     If the number of bytes left to skip is larger than
+	     the size of the current file, we can decrement n_skip
+	     and go on to the next file.  Skip this optimization also
+	     when st_size is 0, because some kernels report that
+	     nonempty files in /proc have st_size == 0.  */
+	  if (S_ISREG (file_stats.st_mode) && 0 < file_stats.st_size)
 	    {
-	      if ((uintmax_t) file_stats.st_size <= n_skip)
+	      if ((uintmax_t) file_stats.st_size < n_skip)
 		n_skip -= file_stats.st_size;
 	      else
 		{
@@ -1555,7 +1551,6 @@ dump_strings (void)
 int
 main (int argc, char **argv)
 {
-  int c;
   int n_files;
   size_t i;
   int l_c_m;
@@ -1563,6 +1558,7 @@ main (int argc, char **argv)
   bool modern = false;
   bool width_specified = false;
   bool ok = true;
+  static char const multipliers[] = "bEGKkMmPTYZ0";
 
   /* The old-style `pseudo starting address' to be printed in parentheses
      after any true address.  */
@@ -1608,11 +1604,14 @@ main (int argc, char **argv)
   address_pad_len = 7;
   flag_dump_strings = false;
 
-  while ((c = getopt_long (argc, argv, short_options, long_options, NULL))
-	 != -1)
+  for (;;)
     {
       uintmax_t tmp;
       enum strtol_error s_err;
+      int oi = -1;
+      int c = getopt_long (argc, argv, short_options, long_options, &oi);
+      if (c == -1)
+        break;
 
       switch (c)
 	{
@@ -1650,18 +1649,19 @@ it must be one character from [doxn]"),
 
 	case 'j':
 	  modern = true;
-	  s_err = xstrtoumax (optarg, NULL, 0, &n_bytes_to_skip, "bkm");
+	  s_err = xstrtoumax (optarg, NULL, 0, &n_bytes_to_skip, multipliers);
 	  if (s_err != LONGINT_OK)
-	    STRTOL_FATAL_ERROR (optarg, _("skip argument"), s_err);
+	    xstrtol_fatal (s_err, oi, c, long_options, optarg);
 	  break;
 
 	case 'N':
 	  modern = true;
 	  limit_bytes_to_format = true;
 
-	  s_err = xstrtoumax (optarg, NULL, 0, &max_bytes_to_format, "bkm");
+	  s_err = xstrtoumax (optarg, NULL, 0, &max_bytes_to_format,
+			      multipliers);
 	  if (s_err != LONGINT_OK)
-	    STRTOL_FATAL_ERROR (optarg, _("limit argument"), s_err);
+	    xstrtol_fatal (s_err, oi, c, long_options, optarg);
 	  break;
 
 	case 'S':
@@ -1670,9 +1670,9 @@ it must be one character from [doxn]"),
 	    string_min = 3;
 	  else
 	    {
-	      s_err = xstrtoumax (optarg, NULL, 0, &tmp, "bkm");
+	      s_err = xstrtoumax (optarg, NULL, 0, &tmp, multipliers);
 	      if (s_err != LONGINT_OK)
-		STRTOL_FATAL_ERROR (optarg, _("minimum string length"), s_err);
+		xstrtol_fatal (s_err, oi, c, long_options, optarg);
 
 	      /* The minimum string length may be no larger than SIZE_MAX,
 		 since we may allocate a buffer of this size.  */
@@ -1744,7 +1744,7 @@ it must be one character from [doxn]"),
 	      uintmax_t w_tmp;
 	      s_err = xstrtoumax (optarg, NULL, 10, &w_tmp, "");
 	      if (s_err != LONGINT_OK)
-		STRTOL_FATAL_ERROR (optarg, _("width specification"), s_err);
+		xstrtol_fatal (s_err, oi, c, long_options, optarg);
 	      if (SIZE_MAX < w_tmp)
 		error (EXIT_FAILURE, 0, _("%s is too large"), optarg);
 	      desired_width = w_tmp;

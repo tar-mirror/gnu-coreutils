@@ -2,10 +2,10 @@
 # groups -- print the groups a user is in
 # Copyright (C) 1991, 1997, 2000, 2002, 2004-2007 Free Software Foundation, Inc.
 
-# This program is free software; you can redistribute it and/or modify
+# This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2, or (at your option)
-# any later version.
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -13,8 +13,7 @@
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # Written by David MacKenzie <djm@gnu.ai.mit.edu>.
 
@@ -31,10 +30,10 @@ Same as id -Gn.  If no USERNAME, use current process.
 
 Report bugs to <@PACKAGE_BUGREPORT@>."
 
-version='groups (@GNU_PACKAGE@) @VERSION@
+version='groups (@PACKAGE_NAME@) @VERSION@
 Copyright (C) @RELEASE_YEAR@ Free Software Foundation, Inc.
-This is free software.  You may redistribute copies of it under the terms of
-the GNU General Public License <http://www.gnu.org/licenses/gpl.html>.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
 
 Written by David MacKenzie.'
@@ -53,6 +52,8 @@ do
     -*)
       echo "$0: invalid option: $arg" >&2
       exit 1 ;;
+    *)
+      break ;;
   esac
 done
 

@@ -1,10 +1,10 @@
 /* stty -- change and print terminal line settings
-   Copyright (C) 1990-2005 Free Software Foundation, Inc.
+   Copyright (C) 1990-2005, 2007 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -12,8 +12,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* Usage: stty [-ag] [--all] [--save] [-F device] [--file=device] [setting...]
 
@@ -62,7 +61,6 @@
 #include "error.h"
 #include "fd-reopen.h"
 #include "quote.h"
-#include "vasprintf.h"
 #include "xstrtol.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
@@ -721,7 +719,7 @@ prints baud rate, line discipline, and deviations from stty sane.  In\n\
 settings, CHAR is taken literally, or coded as in ^c, 0x37, 0177 or\n\
 127; special values ^- or undef used to disable special characters.\n\
 "), stdout);
-      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+      emit_bug_reporting_address ();
     }
   exit (status);
 }
@@ -1655,42 +1653,61 @@ display_recoverable (struct termios *mode)
   putchar ('\n');
 }
 
+/* NOTE: identical to below, modulo use of tcflag_t */
+static int
+strtoul_tcflag_t (char const *s, int base, char **p, tcflag_t *result,
+		  char delim)
+{
+  unsigned long ul;
+  errno = 0;
+  ul = strtoul (s, p, base);
+  if (errno || **p != delim || *p == s || (tcflag_t) ul != ul)
+    return -1;
+  *result = ul;
+  return 0;
+}
+
+/* NOTE: identical to above, modulo use of cc_t */
+static int
+strtoul_cc_t (char const *s, int base, char **p, cc_t *result, char delim)
+{
+  unsigned long ul;
+  errno = 0;
+  ul = strtoul (s, p, base);
+  if (errno || **p != delim || *p == s || (cc_t) ul != ul)
+    return -1;
+  *result = ul;
+  return 0;
+}
+
+/* Parse the output of display_recoverable.
+   Return false if any part of it is invalid.  */
 static bool
 recover_mode (char const *arg, struct termios *mode)
 {
+  tcflag_t flag[4];
+  char const *s = arg;
   size_t i;
-  int n;
-  unsigned long int chr;
-  unsigned long int iflag, oflag, cflag, lflag;
+  for (i = 0; i < 4; i++)
+    {
+      char *p;
+      if (strtoul_tcflag_t (s, 16, &p, flag + i, ':') != 0)
+	return false;
+      s = p + 1;
+    }
+  mode->c_iflag = flag[0];
+  mode->c_oflag = flag[1];
+  mode->c_cflag = flag[2];
+  mode->c_lflag = flag[3];
 
-  /* Scan into temporaries since it is too much trouble to figure out
-     the right format for `tcflag_t'.  */
-  if (sscanf (arg, "%lx:%lx:%lx:%lx%n",
-	      &iflag, &oflag, &cflag, &lflag, &n) != 4)
-    return false;
-  mode->c_iflag = iflag;
-  mode->c_oflag = oflag;
-  mode->c_cflag = cflag;
-  mode->c_lflag = lflag;
-  if (mode->c_iflag != iflag
-      || mode->c_oflag != oflag
-      || mode->c_cflag != cflag
-      || mode->c_lflag != lflag)
-    return false;
-  arg += n;
   for (i = 0; i < NCCS; ++i)
     {
-      if (sscanf (arg, ":%lx%n", &chr, &n) != 1)
+      char *p;
+      char delim = i < NCCS - 1 ? ':' : '\0';
+      if (strtoul_cc_t (s, 16, &p, mode->c_cc + i, delim) != 0)
 	return false;
-      mode->c_cc[i] = chr;
-      if (mode->c_cc[i] != chr)
-	return false;
-      arg += n;
+      s = p + 1;
     }
-
-  /* Fail if there are too many fields.  */
-  if (*arg != '\0')
-    return false;
 
   return true;
 }
@@ -1846,8 +1863,8 @@ visible (cc_t ch)
 	}
       else
 	{
-	  *bpout++ = 'M',
-	    *bpout++ = '-';
+	  *bpout++ = 'M';
+	  *bpout++ = '-';
 	  if (ch >= 128 + 32)
 	    {
 	      if (ch < 128 + 127)
@@ -1882,8 +1899,7 @@ static unsigned long int
 integer_arg (const char *s, unsigned long int maxval)
 {
   unsigned long int value;
-  if (xstrtoul (s, NULL, 0, &value, "bB") != LONGINT_OK
-      || maxval < value)
+  if (xstrtoul (s, NULL, 0, &value, "bB") != LONGINT_OK || maxval < value)
     {
       error (0, 0, _("invalid integer argument %s"), quote (s));
       usage (EXIT_FAILURE);

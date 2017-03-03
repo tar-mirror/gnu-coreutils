@@ -3,9 +3,9 @@
 # Copyright (C) 1997, 1998, 2000, 2003, 2004, 2006 Free Software
 # Foundation, Inc.
 
-# This program is free software; you can redistribute it and/or modify
+# This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
+# the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 
 # This program is distributed in the hope that it will be useful,
@@ -14,9 +14,7 @@
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-# 02110-1301, USA.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ##test-files-begin
 x = tr
@@ -33,7 +31,9 @@ ross-1b.I ross-1b.X ross-2.I ross-2.X ross-3.I ross-3.X ross-4.I ross-4.X \
 ross-5.I ross-5.X ross-6.I ross-6.X empty-eq.I empty-eq.X empty-cc.I \
 empty-cc.X repeat-bs-9.I repeat-bs-9.X repeat-0.I repeat-0.X repeat-zeros.I \
 repeat-zeros.X repeat-compl.I repeat-compl.X repeat-xC.I repeat-xC.X \
-fowler-1.I fowler-1.X
+fowler-1.I fowler-1.X no-abort-1.I no-abort-1.X s1-lower.I s1-lower.X \
+s1-upper.I s1-upper.X tolower-F.I tolower-F.X upcase-xtra.I upcase-xtra.X \
+dncase-xtra.I dncase-xtra.X
 run_gen = 1.O 1.E 2.O 2.E 3.O 3.E 4.O 4.E 5.O 5.E 6.O 6.E 7.O 7.E 8.O 8.E 9.O \
 9.E a.O a.E b.O b.E c.O c.E d.O d.E e.O e.E f.O f.E g.O g.E h.O h.E i.O i.E \
 j.O j.E k.O k.E l.O l.E m.O m.E n.O n.E o.O o.E p.O p.E q.O q.E r.O r.E s.O \
@@ -46,14 +46,13 @@ ross-1b.O ross-1b.E ross-2.O ross-2.E ross-3.O ross-3.E ross-4.O ross-4.E \
 ross-5.O ross-5.E ross-6.O ross-6.E empty-eq.O empty-eq.E empty-cc.O \
 empty-cc.E repeat-bs-9.O repeat-bs-9.E repeat-0.O repeat-0.E repeat-zeros.O \
 repeat-zeros.E repeat-compl.O repeat-compl.E repeat-xC.O repeat-xC.E \
-fowler-1.O fowler-1.E
+fowler-1.O fowler-1.E no-abort-1.O no-abort-1.E s1-lower.O s1-lower.E \
+s1-upper.O s1-upper.E tolower-F.O tolower-F.E upcase-xtra.O upcase-xtra.E \
+dncase-xtra.O dncase-xtra.E
 ##test-files-end
 
 EXTRA_DIST = Test.pm $x-tests $(explicit) $(maint_gen)
 noinst_SCRIPTS = $x-tests
-TESTS_ENVIRONMENT = \
-  CU_TEST_NAME=`basename $(abs_srcdir)`,$$tst \
-  PATH="$(VG_PATH_PREFIX)`pwd`/../../src$(PATH_SEPARATOR)$$PATH"
 
 editpl = sed -e 's,@''PERL''@,$(PERL),g' -e 's,@''srcdir''@,$(srcdir),g'
 
@@ -80,3 +79,5 @@ $(srcdir)/Makefile.am: ../Makefile.am.in Test.pm $(mk_script)
 	sed -n '/^##test-files-end/,$$p' $(srcdir)/../Makefile.am.in >> $@t
 	chmod -w $@t
 	mv $@t $@
+
+include $(top_srcdir)/tests/check.mk

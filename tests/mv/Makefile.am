@@ -3,9 +3,9 @@
 # Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007
 # Free Software Foundation, Inc.
 
-# This program is free software; you can redistribute it and/or modify
+# This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
+# the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 
 # This program is distributed in the hope that it will be useful,
@@ -14,11 +14,10 @@
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-# 02110-1301, USA.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 TESTS = \
+  sticky-to-xpart \
   hard-verbose \
   backup-dir \
   dir2dir \
@@ -34,17 +33,20 @@ TESTS = \
   perm-1 \
   i-link-no \
   part-fail \
-  dup-source childproof i-4 i-5 update i-2 mv-special-1 \
-  into-self into-self-2 into-self-3 into-self-4 \
+  dup-source childproof update mv-special-1 \
+  into-self \
+  into-self-2 \
+  into-self-3 \
+  into-self-4 \
+  i-1 \
+  i-2 \
+  i-3 \
+  i-4 \
+  i-5 \
   backup-is-src \
-  i-1 hard-link-1 force partition-perm to-symlink dir-file diag \
+  hard-link-1 force partition-perm to-symlink dir-file diag \
   part-symlink part-rename trailing-slash
 
 EXTRA_DIST = $(TESTS) vfat
-TESTS_ENVIRONMENT = \
-  PERL="$(PERL)" \
-  EGREP="$(EGREP)" \
-  CU_TEST_NAME=`basename $(abs_srcdir)`,$$tst \
-  PATH="$(VG_PATH_PREFIX)`pwd`/../../src$(PATH_SEPARATOR)$$PATH" \
-  CONFIG_HEADER=$(CONFIG_HEADER) \
-  PROG=mv
+
+include $(top_srcdir)/tests/check.mk

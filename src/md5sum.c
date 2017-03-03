@@ -1,10 +1,10 @@
 /* Compute MD5, SHA1, SHA224, SHA256, SHA384 or SHA512 checksum of files or strings
-   Copyright (C) 1995-2006 Free Software Foundation, Inc.
+   Copyright (C) 1995-2007 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -12,8 +12,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* Written by Ulrich Drepper <drepper@gnu.ai.mit.edu>.  */
 
@@ -36,9 +35,7 @@
 #if HASH_ALGO_SHA512 || HASH_ALGO_SHA384
 # include "sha512.h"
 #endif
-#include "getline.h"
 #include "error.h"
-#include "quote.h"
 #include "stdio--.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
@@ -191,7 +188,7 @@ should be a former output of this program.  The default mode is to print\n\
 a line with checksum, a character indicating type (`*' for binary, ` ' for\n\
 text), and name for each FILE.\n"),
 	      DIGEST_REFERENCE);
-      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+      emit_bug_reporting_address ();
     }
 
   exit (status);

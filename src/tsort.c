@@ -1,10 +1,10 @@
 /* tsort - topological sort.
-   Copyright (C) 1998-2005 Free Software Foundation, Inc.
+   Copyright (C) 1998-2005, 2007 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -12,8 +12,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* Written by Mark Kettenis <kettenis@phys.uva.nl>.  */
 
@@ -91,7 +90,7 @@ With no FILE, or when FILE is -, read standard input.\n\
 "), program_name);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
-      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+      emit_bug_reporting_address ();
     }
 
   exit (status);
@@ -487,7 +486,7 @@ tsort (const char *file)
 	  struct successor *p = head->top;
 
 	  /* T5. Output front of queue.  */
-	  printf ("%s\n", head->str);
+	  puts (head->str);
 	  head->str = NULL;	/* Avoid printing the same string twice.  */
 	  n_strings--;
 

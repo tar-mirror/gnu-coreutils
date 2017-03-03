@@ -1,10 +1,10 @@
 /* pr -- convert text files for printing.
    Copyright (C) 88, 91, 1995-2007 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -12,8 +12,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /*  By Pete TerMaat, with considerable refinement by Roland Huebner.  */
 
@@ -536,9 +535,9 @@ static int lines_per_page = 66;
 
 /* Number of lines in the header and footer can be reset to 0 using
    the -t flag. */
-static int lines_per_header = 5;
+enum { lines_per_header = 5 };
 static int lines_per_body;
-static int lines_per_footer = 5;
+enum { lines_per_footer = 5 };
 
 /* (-w|-W) Width in characters of the page.  Does not include the width of
    the margin. */
@@ -797,14 +796,14 @@ cols_ready_to_print (void)
    using option +FIRST_PAGE:LAST_PAGE */
 
 static bool
-first_last_page (char const *pages)
+first_last_page (int oi, char c, char const *pages)
 {
   char *p;
   uintmax_t first;
   uintmax_t last = UINTMAX_MAX;
   strtol_error err = xstrtoumax (pages, &p, 10, &first, "");
   if (err != LONGINT_OK && err != LONGINT_INVALID_SUFFIX_CHAR)
-    _STRTOL_ERROR (EXIT_FAILURE, pages, _("page range"), err);
+    xstrtol_fatal (err, oi, c, long_options, pages);
 
   if (p == pages || !first)
     return false;
@@ -814,7 +813,7 @@ first_last_page (char const *pages)
       char const *p1 = p + 1;
       err = xstrtoumax (p1, &p, 10, &last, "");
       if (err != LONGINT_OK)
-	_STRTOL_ERROR (EXIT_FAILURE, pages, _("page range"), err);
+	xstrtol_fatal (err, oi, c, long_options, pages);
       if (p1 == p || last < first)
 	return false;
     }
@@ -857,7 +856,6 @@ separator_string (const char *optarg_S)
 int
 main (int argc, char **argv)
 {
-  int c;
   int n_files;
   bool old_options = false;
   bool old_w = false;
@@ -882,9 +880,13 @@ main (int argc, char **argv)
 		? xmalloc ((argc - 1) * sizeof (char *))
 		: NULL);
 
-  while ((c = getopt_long (argc, argv, short_options, long_options, NULL))
-	 != -1)
+  for (;;)
     {
+      int oi = -1;
+      int c = getopt_long (argc, argv, short_options, long_options, &oi);
+      if (c == -1)
+	break;
+
       if (ISDIGIT (c))
 	{
 	  /* Accumulate column-count digits specified via old-style options. */
@@ -903,7 +905,7 @@ main (int argc, char **argv)
 	case 1:			/* Non-option argument. */
 	  /* long option --page dominates old `+FIRST_PAGE ...'.  */
 	  if (! (first_page_number == 0
-		 && *optarg == '+' && first_last_page (optarg + 1)))
+		 && *optarg == '+' && first_last_page (-2, '+', optarg + 1)))
 	    file_names[n_files++] = optarg;
 	  break;
 
@@ -912,7 +914,7 @@ main (int argc, char **argv)
 	    if (! optarg)
 	      error (EXIT_FAILURE, 0,
 		     _("`--pages=FIRST_PAGE[:LAST_PAGE]' missing argument"));
-	    else if (! first_last_page (optarg))
+	    else if (! first_last_page (oi, 0, optarg))
 	      error (EXIT_FAILURE, 0, _("Invalid page range %s"),
 		     quote (optarg));
 	    break;
@@ -1213,12 +1215,6 @@ static void
 init_parameters (int number_of_files)
 {
   int chars_used_by_number = 0;
-
-  if (use_form_feed)
-    {
-      lines_per_header = 3;
-      lines_per_footer = 0;
-    }
 
   lines_per_body = lines_per_page - lines_per_header - lines_per_footer;
   if (lines_per_body <= 0)
@@ -2395,9 +2391,6 @@ print_header (void)
   int lhs_spaces;
   int rhs_spaces;
 
-  if (!use_form_feed)
-    printf ("\n\n");
-
   output_position = 0;
   pad_across_to (chars_per_margin);
   print_white_space ();
@@ -2414,7 +2407,7 @@ print_header (void)
   lhs_spaces = available_width >> 1;
   rhs_spaces = available_width - lhs_spaces;
 
-  printf ("%s%*s%s%*s%s\n\n\n",
+  printf ("\n\n%s%*s%s%*s%s\n\n\n",
 	  date_text, lhs_spaces, " ", file_text, rhs_spaces, " ", page_text);
 
   print_a_header = false;
@@ -2869,10 +2862,10 @@ Mandatory arguments to long options are mandatory for short options too.\n\
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
       fputs (_("\
 \n\
--T implied by -l nn when nn <= 10 or <= 3 with -F. With no FILE, or when\n\
+-t is implied if PAGE_LENGTH <= 10.  With no FILE, or when\n\
 FILE is -, read standard input.\n\
 "), stdout);
-      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+      emit_bug_reporting_address ();
     }
   exit (status);
 }

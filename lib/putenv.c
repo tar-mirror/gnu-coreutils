@@ -4,9 +4,9 @@
    NOTE: The canonical source of this file is maintained with the GNU C
    Library.  Bugs can be reported to bug-glibc@prep.ai.mit.edu.
 
-   This program is free software; you can redistribute it and/or modify it
+   This program is free software: you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
-   Free Software Foundation; either version 2, or (at your option) any
+   Free Software Foundation; either version 3 of the License, or any
    later version.
 
    This program is distributed in the hope that it will be useful,
@@ -15,16 +15,12 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 #include <config.h>
 
-/* undef putenv here, because some (e.g., Solaris 10) declare putenv in
-   with a non-const argument.  That would conflict with the declaration of
-   rpl_putenv below (due to the #define putenv rpl_putenv from config.h).  */
-#undef putenv
-int rpl_putenv (char const *);
+/* Specification.  */
+#include <stdlib.h>
 
 #include <stddef.h>
 
@@ -96,7 +92,7 @@ _unsetenv (const char *name)
 /* Put STRING, which is of the form "NAME=VALUE", in the environment.
    If STRING contains no `=', then remove STRING from the environment.  */
 int
-rpl_putenv (const char *string)
+putenv (char *string)
 {
   const char *const name_end = strchr (string, '=');
   register size_t size;
@@ -132,7 +128,7 @@ rpl_putenv (const char *string)
       environ = new_environ;
     }
   else
-    *ep = (char *) string;
+    *ep = string;
 
   return 0;
 }

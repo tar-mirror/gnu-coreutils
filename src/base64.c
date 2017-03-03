@@ -3,20 +3,18 @@
 
    This file is part of Base64.
 
-   Base64 is free software; you can redistribute it and/or modify it
-   under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
-   Base64 is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   General Public License for more details.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with Base64; see the file COPYING.  If not, write to the Free
-   Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-   MA 02110-1301, USA. */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 /* Written by Simon Josefsson <simon@josefsson.org>.  */
 
@@ -87,7 +85,7 @@ When decoding, the input may contain newlines in addition to the bytes of\n\
 the formal base64 alphabet.  Use --ignore-garbage to attempt to recover\n\
 from any other non-alphabet bytes in the encoded stream.\n"),
 	     stdout);
-      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+      emit_bug_reporting_address ();
     }
 
   exit (status);
@@ -296,7 +294,7 @@ main (int argc, char **argv)
   else
     infile = "-";
 
-  if (strcmp (infile, "-") == 0)
+  if (STREQ (infile, "-"))
     input_fh = stdin;
   else
     {
@@ -312,7 +310,7 @@ main (int argc, char **argv)
 
   if (fclose (input_fh) == EOF)
     {
-      if (strcmp (infile, "-") == 0)
+      if (STREQ (infile, "-"))
 	error (EXIT_FAILURE, errno, _("closing standard input"));
       else
 	error (EXIT_FAILURE, errno, "%s", infile);

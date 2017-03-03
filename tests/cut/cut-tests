@@ -3096,8 +3096,224 @@ else
   esac
 fi
 test -s od-overlap5.E || rm -f od-overlap5.E
+$xx -f 2-0 $srcdir/inval1.I > inval1.O 2> inval1.E
+code=$?
+if test $code != 1; then
+  $echo "Test inval1(F) failed: $xx return code $code differs from expected value 1" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp inval1.O $srcdir/inval1.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed inval1(F)"; fi;;
+    1) $echo "Test inval1(F) failed: files inval1.O and $srcdir/inval1.X differ" 1>&2
+       (diff -c inval1.O $srcdir/inval1.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test inval1(F) may have failed." 1>&2
+       $echo The command "cmp inval1.O $srcdir/inval1.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s inval1.E || rm -f inval1.E
+$xx -f 2-0 < $srcdir/inval1.I > inval1.O 2> inval1.E
+code=$?
+if test $code != 1; then
+  $echo "Test inval1(<) failed: $xx return code $code differs from expected value 1" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp inval1.O $srcdir/inval1.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed inval1(<)"; fi;;
+    1) $echo "Test inval1(<) failed: files inval1.O and $srcdir/inval1.X differ" 1>&2
+       (diff -c inval1.O $srcdir/inval1.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test inval1(<) may have failed." 1>&2
+       $echo The command "cmp inval1.O $srcdir/inval1.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s inval1.E || rm -f inval1.E
+$xx -f - $srcdir/inval2.I > inval2.O 2> inval2.E
+code=$?
+if test $code != 1; then
+  $echo "Test inval2(F) failed: $xx return code $code differs from expected value 1" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp inval2.O $srcdir/inval2.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed inval2(F)"; fi;;
+    1) $echo "Test inval2(F) failed: files inval2.O and $srcdir/inval2.X differ" 1>&2
+       (diff -c inval2.O $srcdir/inval2.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test inval2(F) may have failed." 1>&2
+       $echo The command "cmp inval2.O $srcdir/inval2.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s inval2.E || rm -f inval2.E
+$xx -f - < $srcdir/inval2.I > inval2.O 2> inval2.E
+code=$?
+if test $code != 1; then
+  $echo "Test inval2(<) failed: $xx return code $code differs from expected value 1" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp inval2.O $srcdir/inval2.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed inval2(<)"; fi;;
+    1) $echo "Test inval2(<) failed: files inval2.O and $srcdir/inval2.X differ" 1>&2
+       (diff -c inval2.O $srcdir/inval2.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test inval2(<) may have failed." 1>&2
+       $echo The command "cmp inval2.O $srcdir/inval2.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s inval2.E || rm -f inval2.E
+$xx -f 4,- $srcdir/inval3.I > inval3.O 2> inval3.E
+code=$?
+if test $code != 1; then
+  $echo "Test inval3(F) failed: $xx return code $code differs from expected value 1" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp inval3.O $srcdir/inval3.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed inval3(F)"; fi;;
+    1) $echo "Test inval3(F) failed: files inval3.O and $srcdir/inval3.X differ" 1>&2
+       (diff -c inval3.O $srcdir/inval3.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test inval3(F) may have failed." 1>&2
+       $echo The command "cmp inval3.O $srcdir/inval3.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s inval3.E || rm -f inval3.E
+$xx -f 4,- < $srcdir/inval3.I > inval3.O 2> inval3.E
+code=$?
+if test $code != 1; then
+  $echo "Test inval3(<) failed: $xx return code $code differs from expected value 1" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp inval3.O $srcdir/inval3.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed inval3(<)"; fi;;
+    1) $echo "Test inval3(<) failed: files inval3.O and $srcdir/inval3.X differ" 1>&2
+       (diff -c inval3.O $srcdir/inval3.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test inval3(<) may have failed." 1>&2
+       $echo The command "cmp inval3.O $srcdir/inval3.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s inval3.E || rm -f inval3.E
+$xx -f 1-2,- $srcdir/inval4.I > inval4.O 2> inval4.E
+code=$?
+if test $code != 1; then
+  $echo "Test inval4(F) failed: $xx return code $code differs from expected value 1" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp inval4.O $srcdir/inval4.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed inval4(F)"; fi;;
+    1) $echo "Test inval4(F) failed: files inval4.O and $srcdir/inval4.X differ" 1>&2
+       (diff -c inval4.O $srcdir/inval4.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test inval4(F) may have failed." 1>&2
+       $echo The command "cmp inval4.O $srcdir/inval4.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s inval4.E || rm -f inval4.E
+$xx -f 1-2,- < $srcdir/inval4.I > inval4.O 2> inval4.E
+code=$?
+if test $code != 1; then
+  $echo "Test inval4(<) failed: $xx return code $code differs from expected value 1" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp inval4.O $srcdir/inval4.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed inval4(<)"; fi;;
+    1) $echo "Test inval4(<) failed: files inval4.O and $srcdir/inval4.X differ" 1>&2
+       (diff -c inval4.O $srcdir/inval4.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test inval4(<) may have failed." 1>&2
+       $echo The command "cmp inval4.O $srcdir/inval4.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s inval4.E || rm -f inval4.E
+$xx -f 1-,- $srcdir/inval5.I > inval5.O 2> inval5.E
+code=$?
+if test $code != 1; then
+  $echo "Test inval5(F) failed: $xx return code $code differs from expected value 1" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp inval5.O $srcdir/inval5.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed inval5(F)"; fi;;
+    1) $echo "Test inval5(F) failed: files inval5.O and $srcdir/inval5.X differ" 1>&2
+       (diff -c inval5.O $srcdir/inval5.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test inval5(F) may have failed." 1>&2
+       $echo The command "cmp inval5.O $srcdir/inval5.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s inval5.E || rm -f inval5.E
+$xx -f 1-,- < $srcdir/inval5.I > inval5.O 2> inval5.E
+code=$?
+if test $code != 1; then
+  $echo "Test inval5(<) failed: $xx return code $code differs from expected value 1" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp inval5.O $srcdir/inval5.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed inval5(<)"; fi;;
+    1) $echo "Test inval5(<) failed: files inval5.O and $srcdir/inval5.X differ" 1>&2
+       (diff -c inval5.O $srcdir/inval5.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test inval5(<) may have failed." 1>&2
+       $echo The command "cmp inval5.O $srcdir/inval5.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s inval5.E || rm -f inval5.E
+$xx -f -1,- $srcdir/inval6.I > inval6.O 2> inval6.E
+code=$?
+if test $code != 1; then
+  $echo "Test inval6(F) failed: $xx return code $code differs from expected value 1" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp inval6.O $srcdir/inval6.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed inval6(F)"; fi;;
+    1) $echo "Test inval6(F) failed: files inval6.O and $srcdir/inval6.X differ" 1>&2
+       (diff -c inval6.O $srcdir/inval6.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test inval6(F) may have failed." 1>&2
+       $echo The command "cmp inval6.O $srcdir/inval6.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s inval6.E || rm -f inval6.E
+$xx -f -1,- < $srcdir/inval6.I > inval6.O 2> inval6.E
+code=$?
+if test $code != 1; then
+  $echo "Test inval6(<) failed: $xx return code $code differs from expected value 1" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp inval6.O $srcdir/inval6.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed inval6(<)"; fi;;
+    1) $echo "Test inval6(<) failed: files inval6.O and $srcdir/inval6.X differ" 1>&2
+       (diff -c inval6.O $srcdir/inval6.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test inval6(<) may have failed." 1>&2
+       $echo The command "cmp inval6.O $srcdir/inval6.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s inval6.E || rm -f inval6.E
 if test $errors = 0; then
-  $echo Passed all 171 tests. 1>&2
+  $echo Passed all 183 tests. 1>&2
 else
   $echo Failed $errors tests. 1>&2
 fi

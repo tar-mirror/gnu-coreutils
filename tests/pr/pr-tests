@@ -2574,20 +2574,20 @@ else
   esac
 fi
 test -s 4a.E || rm -f 4a.E
-$xx --date-format="-- Date/Time --" -h x -l 17 -f $srcdir/tn > 4b.O 2> 4b.E
+$xx --date-format="-- Date/Time --" -h x -l 24 -f $srcdir/tn > 4b.O 2> 4b.E
 code=$?
 if test $code != 0; then
   $echo "Test 4b failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 4b.O $srcdir/l17f-t > /dev/null 2>&1
+  cmp 4b.O $srcdir/l24f-t > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 4b"; fi;;
-    1) $echo "Test 4b failed: files 4b.O and $srcdir/l17f-t differ" 1>&2
-       (diff -c 4b.O $srcdir/l17f-t) 2> /dev/null
+    1) $echo "Test 4b failed: files 4b.O and $srcdir/l24f-t differ" 1>&2
+       (diff -c 4b.O $srcdir/l24f-t) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 4b may have failed." 1>&2
-       $echo The command "cmp 4b.O $srcdir/l17f-t" failed. 1>&2
+       $echo The command "cmp 4b.O $srcdir/l24f-t" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
@@ -2610,38 +2610,38 @@ else
   esac
 fi
 test -s 4c.E || rm -f 4c.E
-$xx --date-format="-- Date/Time --" -h x +3 -l 17 -f $srcdir/tn > 4d.O 2> 4d.E
+$xx --date-format="-- Date/Time --" -h x +3 -l 24 -f $srcdir/tn > 4d.O 2> 4d.E
 code=$?
 if test $code != 0; then
   $echo "Test 4d failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 4d.O $srcdir/3l17f-t > /dev/null 2>&1
+  cmp 4d.O $srcdir/3l24f-t > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 4d"; fi;;
-    1) $echo "Test 4d failed: files 4d.O and $srcdir/3l17f-t differ" 1>&2
-       (diff -c 4d.O $srcdir/3l17f-t) 2> /dev/null
+    1) $echo "Test 4d failed: files 4d.O and $srcdir/3l24f-t differ" 1>&2
+       (diff -c 4d.O $srcdir/3l24f-t) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 4d may have failed." 1>&2
-       $echo The command "cmp 4d.O $srcdir/3l17f-t" failed. 1>&2
+       $echo The command "cmp 4d.O $srcdir/3l24f-t" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 4d.E || rm -f 4d.E
-$xx --date-format="-- Date/Time --" -h x +3:5 -l 17 -f $srcdir/tn > 4e.O 2> 4e.E
+$xx --date-format="-- Date/Time --" -h x +3:5 -l 24 -f $srcdir/tn > 4e.O 2> 4e.E
 code=$?
 if test $code != 0; then
   $echo "Test 4e failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 4e.O $srcdir/3-5l17f-t > /dev/null 2>&1
+  cmp 4e.O $srcdir/3-5l24f-t > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 4e"; fi;;
-    1) $echo "Test 4e failed: files 4e.O and $srcdir/3-5l17f-t differ" 1>&2
-       (diff -c 4e.O $srcdir/3-5l17f-t) 2> /dev/null
+    1) $echo "Test 4e failed: files 4e.O and $srcdir/3-5l24f-t differ" 1>&2
+       (diff -c 4e.O $srcdir/3-5l24f-t) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 4e may have failed." 1>&2
-       $echo The command "cmp 4e.O $srcdir/3-5l17f-t" failed. 1>&2
+       $echo The command "cmp 4e.O $srcdir/3-5l24f-t" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
@@ -2682,38 +2682,38 @@ else
   esac
 fi
 test -s 4f.C.E || rm -f 4f.C.E
-$xx --date-format="-- Date/Time --" -h x -a -3 -l 8 -f $srcdir/tn > 4g.O 2> 4g.E
+$xx --date-format="-- Date/Time --" -h x -a -3 -l 15 -f $srcdir/tn > 4g.O 2> 4g.E
 code=$?
 if test $code != 0; then
   $echo "Test 4g failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 4g.O $srcdir/a3l8f-t > /dev/null 2>&1
+  cmp 4g.O $srcdir/a3l15f-t > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 4g"; fi;;
-    1) $echo "Test 4g failed: files 4g.O and $srcdir/a3l8f-t differ" 1>&2
-       (diff -c 4g.O $srcdir/a3l8f-t) 2> /dev/null
+    1) $echo "Test 4g failed: files 4g.O and $srcdir/a3l15f-t differ" 1>&2
+       (diff -c 4g.O $srcdir/a3l15f-t) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 4g may have failed." 1>&2
-       $echo The command "cmp 4g.O $srcdir/a3l8f-t" failed. 1>&2
+       $echo The command "cmp 4g.O $srcdir/a3l15f-t" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 4g.E || rm -f 4g.E
-$xx --date-format="-- Date/Time --" -h x -a --columns=3 -l 8 -f $srcdir/tn > 4g.C.O 2> 4g.C.E
+$xx --date-format="-- Date/Time --" -h x -a --columns=3 -l 15 -f $srcdir/tn > 4g.C.O 2> 4g.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 4g.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 4g.C.O $srcdir/a3l8f-t > /dev/null 2>&1
+  cmp 4g.C.O $srcdir/a3l15f-t > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 4g.C"; fi;;
-    1) $echo "Test 4g.C failed: files 4g.C.O and $srcdir/a3l8f-t differ" 1>&2
-       (diff -c 4g.C.O $srcdir/a3l8f-t) 2> /dev/null
+    1) $echo "Test 4g.C failed: files 4g.C.O and $srcdir/a3l15f-t differ" 1>&2
+       (diff -c 4g.C.O $srcdir/a3l15f-t) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 4g.C may have failed." 1>&2
-       $echo The command "cmp 4g.C.O $srcdir/a3l8f-t" failed. 1>&2
+       $echo The command "cmp 4g.C.O $srcdir/a3l15f-t" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
@@ -2754,38 +2754,38 @@ else
   esac
 fi
 test -s 4h.C.E || rm -f 4h.C.E
-$xx --date-format="-- Date/Time --" -h x +3 -a -3 -l 8 -f $srcdir/tn > 4i.O 2> 4i.E
+$xx --date-format="-- Date/Time --" -h x +3 -a -3 -l 15 -f $srcdir/tn > 4i.O 2> 4i.E
 code=$?
 if test $code != 0; then
   $echo "Test 4i failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 4i.O $srcdir/3a3l8f-t > /dev/null 2>&1
+  cmp 4i.O $srcdir/3a3l15f-t > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 4i"; fi;;
-    1) $echo "Test 4i failed: files 4i.O and $srcdir/3a3l8f-t differ" 1>&2
-       (diff -c 4i.O $srcdir/3a3l8f-t) 2> /dev/null
+    1) $echo "Test 4i failed: files 4i.O and $srcdir/3a3l15f-t differ" 1>&2
+       (diff -c 4i.O $srcdir/3a3l15f-t) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 4i may have failed." 1>&2
-       $echo The command "cmp 4i.O $srcdir/3a3l8f-t" failed. 1>&2
+       $echo The command "cmp 4i.O $srcdir/3a3l15f-t" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 4i.E || rm -f 4i.E
-$xx --date-format="-- Date/Time --" -h x +3 -a --columns=3 -l 8 -f $srcdir/tn > 4i.C.O 2> 4i.C.E
+$xx --date-format="-- Date/Time --" -h x +3 -a --columns=3 -l 15 -f $srcdir/tn > 4i.C.O 2> 4i.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 4i.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 4i.C.O $srcdir/3a3l8f-t > /dev/null 2>&1
+  cmp 4i.C.O $srcdir/3a3l15f-t > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 4i.C"; fi;;
-    1) $echo "Test 4i.C failed: files 4i.C.O and $srcdir/3a3l8f-t differ" 1>&2
-       (diff -c 4i.C.O $srcdir/3a3l8f-t) 2> /dev/null
+    1) $echo "Test 4i.C failed: files 4i.C.O and $srcdir/3a3l15f-t differ" 1>&2
+       (diff -c 4i.C.O $srcdir/3a3l15f-t) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 4i.C may have failed." 1>&2
-       $echo The command "cmp 4i.C.O $srcdir/3a3l8f-t" failed. 1>&2
+       $echo The command "cmp 4i.C.O $srcdir/3a3l15f-t" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
@@ -2826,38 +2826,38 @@ else
   esac
 fi
 test -s 4j.C.E || rm -f 4j.C.E
-$xx --date-format="-- Date/Time --" -h x -b -3 -l 8 -f $srcdir/tn > 4k.O 2> 4k.E
+$xx --date-format="-- Date/Time --" -h x -b -3 -l 15 -f $srcdir/tn > 4k.O 2> 4k.E
 code=$?
 if test $code != 0; then
   $echo "Test 4k failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 4k.O $srcdir/b3l8f-t > /dev/null 2>&1
+  cmp 4k.O $srcdir/b3l15f-t > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 4k"; fi;;
-    1) $echo "Test 4k failed: files 4k.O and $srcdir/b3l8f-t differ" 1>&2
-       (diff -c 4k.O $srcdir/b3l8f-t) 2> /dev/null
+    1) $echo "Test 4k failed: files 4k.O and $srcdir/b3l15f-t differ" 1>&2
+       (diff -c 4k.O $srcdir/b3l15f-t) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 4k may have failed." 1>&2
-       $echo The command "cmp 4k.O $srcdir/b3l8f-t" failed. 1>&2
+       $echo The command "cmp 4k.O $srcdir/b3l15f-t" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 4k.E || rm -f 4k.E
-$xx --date-format="-- Date/Time --" -h x -b --columns=3 -l 8 -f $srcdir/tn > 4k.C.O 2> 4k.C.E
+$xx --date-format="-- Date/Time --" -h x -b --columns=3 -l 15 -f $srcdir/tn > 4k.C.O 2> 4k.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 4k.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 4k.C.O $srcdir/b3l8f-t > /dev/null 2>&1
+  cmp 4k.C.O $srcdir/b3l15f-t > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 4k.C"; fi;;
-    1) $echo "Test 4k.C failed: files 4k.C.O and $srcdir/b3l8f-t differ" 1>&2
-       (diff -c 4k.C.O $srcdir/b3l8f-t) 2> /dev/null
+    1) $echo "Test 4k.C failed: files 4k.C.O and $srcdir/b3l15f-t differ" 1>&2
+       (diff -c 4k.C.O $srcdir/b3l15f-t) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 4k.C may have failed." 1>&2
-       $echo The command "cmp 4k.C.O $srcdir/b3l8f-t" failed. 1>&2
+       $echo The command "cmp 4k.C.O $srcdir/b3l15f-t" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
@@ -2898,38 +2898,38 @@ else
   esac
 fi
 test -s 4l.C.E || rm -f 4l.C.E
-$xx --date-format="-- Date/Time --" -h x +3 -b -3 -l 8 -f $srcdir/tn > 4m.O 2> 4m.E
+$xx --date-format="-- Date/Time --" -h x +3 -b -3 -l 15 -f $srcdir/tn > 4m.O 2> 4m.E
 code=$?
 if test $code != 0; then
   $echo "Test 4m failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 4m.O $srcdir/3b3l8f-t > /dev/null 2>&1
+  cmp 4m.O $srcdir/3b3l15f-t > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 4m"; fi;;
-    1) $echo "Test 4m failed: files 4m.O and $srcdir/3b3l8f-t differ" 1>&2
-       (diff -c 4m.O $srcdir/3b3l8f-t) 2> /dev/null
+    1) $echo "Test 4m failed: files 4m.O and $srcdir/3b3l15f-t differ" 1>&2
+       (diff -c 4m.O $srcdir/3b3l15f-t) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 4m may have failed." 1>&2
-       $echo The command "cmp 4m.O $srcdir/3b3l8f-t" failed. 1>&2
+       $echo The command "cmp 4m.O $srcdir/3b3l15f-t" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 4m.E || rm -f 4m.E
-$xx --date-format="-- Date/Time --" -h x +3 -b --columns=3 -l 8 -f $srcdir/tn > 4m.C.O 2> 4m.C.E
+$xx --date-format="-- Date/Time --" -h x +3 -b --columns=3 -l 15 -f $srcdir/tn > 4m.C.O 2> 4m.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 4m.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 4m.C.O $srcdir/3b3l8f-t > /dev/null 2>&1
+  cmp 4m.C.O $srcdir/3b3l15f-t > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 4m.C"; fi;;
-    1) $echo "Test 4m.C failed: files 4m.C.O and $srcdir/3b3l8f-t differ" 1>&2
-       (diff -c 4m.C.O $srcdir/3b3l8f-t) 2> /dev/null
+    1) $echo "Test 4m.C failed: files 4m.C.O and $srcdir/3b3l15f-t differ" 1>&2
+       (diff -c 4m.C.O $srcdir/3b3l15f-t) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 4m.C may have failed." 1>&2
-       $echo The command "cmp 4m.C.O $srcdir/3b3l8f-t" failed. 1>&2
+       $echo The command "cmp 4m.C.O $srcdir/3b3l15f-t" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
@@ -2952,20 +2952,20 @@ else
   esac
 fi
 test -s 5a.E || rm -f 5a.E
-$xx --date-format="-- Date/Time --" -h x -m -l 17 -f $srcdir/tn $srcdir/tn > 5b.O 2> 5b.E
+$xx --date-format="-- Date/Time --" -h x -m -l 24 -f $srcdir/tn $srcdir/tn > 5b.O 2> 5b.E
 code=$?
 if test $code != 0; then
   $echo "Test 5b failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 5b.O $srcdir/ml17f-t > /dev/null 2>&1
+  cmp 5b.O $srcdir/ml24f-t > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 5b"; fi;;
-    1) $echo "Test 5b failed: files 5b.O and $srcdir/ml17f-t differ" 1>&2
-       (diff -c 5b.O $srcdir/ml17f-t) 2> /dev/null
+    1) $echo "Test 5b failed: files 5b.O and $srcdir/ml24f-t differ" 1>&2
+       (diff -c 5b.O $srcdir/ml24f-t) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 5b may have failed." 1>&2
-       $echo The command "cmp 5b.O $srcdir/ml17f-t" failed. 1>&2
+       $echo The command "cmp 5b.O $srcdir/ml24f-t" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
@@ -2988,74 +2988,74 @@ else
   esac
 fi
 test -s 5c.E || rm -f 5c.E
-$xx --date-format="-- Date/Time --" -h x +3 -m -l 17 -f $srcdir/tn $srcdir/tn > 5d.O 2> 5d.E
+$xx --date-format="-- Date/Time --" -h x +3 -m -l 24 -f $srcdir/tn $srcdir/tn > 5d.O 2> 5d.E
 code=$?
 if test $code != 0; then
   $echo "Test 5d failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 5d.O $srcdir/3ml17f-t > /dev/null 2>&1
+  cmp 5d.O $srcdir/3ml24f-t > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 5d"; fi;;
-    1) $echo "Test 5d failed: files 5d.O and $srcdir/3ml17f-t differ" 1>&2
-       (diff -c 5d.O $srcdir/3ml17f-t) 2> /dev/null
+    1) $echo "Test 5d failed: files 5d.O and $srcdir/3ml24f-t differ" 1>&2
+       (diff -c 5d.O $srcdir/3ml24f-t) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 5d may have failed." 1>&2
-       $echo The command "cmp 5d.O $srcdir/3ml17f-t" failed. 1>&2
+       $echo The command "cmp 5d.O $srcdir/3ml24f-t" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 5d.E || rm -f 5d.E
-$xx --date-format="-- Date/Time --" -h x -m -l 17 -f $srcdir/0Ft $srcdir/0Ft > 5e.O 2> 5e.E
+$xx --date-format="-- Date/Time --" -h x -m -l 24 -f $srcdir/0Ft $srcdir/0Ft > 5e.O 2> 5e.E
 code=$?
 if test $code != 0; then
   $echo "Test 5e failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 5e.O $srcdir/ml17f-0F > /dev/null 2>&1
+  cmp 5e.O $srcdir/ml24f-0F > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 5e"; fi;;
-    1) $echo "Test 5e failed: files 5e.O and $srcdir/ml17f-0F differ" 1>&2
-       (diff -c 5e.O $srcdir/ml17f-0F) 2> /dev/null
+    1) $echo "Test 5e failed: files 5e.O and $srcdir/ml24f-0F differ" 1>&2
+       (diff -c 5e.O $srcdir/ml24f-0F) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 5e may have failed." 1>&2
-       $echo The command "cmp 5e.O $srcdir/ml17f-0F" failed. 1>&2
+       $echo The command "cmp 5e.O $srcdir/ml24f-0F" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 5e.E || rm -f 5e.E
-$xx --date-format="-- Date/Time --" -h x -m -l 17 -f $srcdir/0Ft $srcdir/0Fnt > 5f.O 2> 5f.E
+$xx --date-format="-- Date/Time --" -h x -m -l 24 -f $srcdir/0Ft $srcdir/0Fnt > 5f.O 2> 5f.E
 code=$?
 if test $code != 0; then
   $echo "Test 5f failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 5f.O $srcdir/ml17f-0F > /dev/null 2>&1
+  cmp 5f.O $srcdir/ml24f-0F > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 5f"; fi;;
-    1) $echo "Test 5f failed: files 5f.O and $srcdir/ml17f-0F differ" 1>&2
-       (diff -c 5f.O $srcdir/ml17f-0F) 2> /dev/null
+    1) $echo "Test 5f failed: files 5f.O and $srcdir/ml24f-0F differ" 1>&2
+       (diff -c 5f.O $srcdir/ml24f-0F) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 5f may have failed." 1>&2
-       $echo The command "cmp 5f.O $srcdir/ml17f-0F" failed. 1>&2
+       $echo The command "cmp 5f.O $srcdir/ml24f-0F" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 5f.E || rm -f 5f.E
-$xx --date-format="-- Date/Time --" -h x -m -l 17 -f $srcdir/tn $srcdir/0Ft > 5g.O 2> 5g.E
+$xx --date-format="-- Date/Time --" -h x -m -l 24 -f $srcdir/tn $srcdir/0Ft > 5g.O 2> 5g.E
 code=$?
 if test $code != 0; then
   $echo "Test 5g failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 5g.O $srcdir/ml17f-t-0F > /dev/null 2>&1
+  cmp 5g.O $srcdir/ml24f-t-0F > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 5g"; fi;;
-    1) $echo "Test 5g failed: files 5g.O and $srcdir/ml17f-t-0F differ" 1>&2
-       (diff -c 5g.O $srcdir/ml17f-t-0F) 2> /dev/null
+    1) $echo "Test 5g failed: files 5g.O and $srcdir/ml24f-t-0F differ" 1>&2
+       (diff -c 5g.O $srcdir/ml24f-t-0F) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 5g may have failed." 1>&2
-       $echo The command "cmp 5g.O $srcdir/ml17f-t-0F" failed. 1>&2
+       $echo The command "cmp 5g.O $srcdir/ml24f-t-0F" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
@@ -3204,7 +3204,7 @@ else
   esac
 fi
 test -s 6a.E || rm -f 6a.E
-$xx --date-format="-- Date/Time --" -h x -t -l 17 -f $srcdir/tn > 6b.O 2> 6b.E
+$xx --date-format="-- Date/Time --" -h x -t -l 24 -f $srcdir/tn > 6b.O 2> 6b.E
 code=$?
 if test $code != 0; then
   $echo "Test 6b failed: $xx return code $code differs from expected value 0" 1>&2
@@ -3222,7 +3222,7 @@ else
   esac
 fi
 test -s 6b.E || rm -f 6b.E
-$xx --date-format="-- Date/Time --" -h x -t -l 17 -f $srcdir/tFFt-bl > 6c.O 2> 6c.E
+$xx --date-format="-- Date/Time --" -h x -t -l 24 -f $srcdir/tFFt-bl > 6c.O 2> 6c.E
 code=$?
 if test $code != 0; then
   $echo "Test 6c failed: $xx return code $code differs from expected value 0" 1>&2
@@ -3294,7 +3294,7 @@ else
   esac
 fi
 test -s 6f.E || rm -f 6f.E
-$xx --date-format="-- Date/Time --" -h x -t -l 17 -f $srcdir/FFn > 6g.O 2> 6g.E
+$xx --date-format="-- Date/Time --" -h x -t -l 24 -f $srcdir/FFn > 6g.O 2> 6g.E
 code=$?
 if test $code != 0; then
   $echo "Test 6g failed: $xx return code $code differs from expected value 0" 1>&2
@@ -3546,7 +3546,7 @@ else
   esac
 fi
 test -s 7a.E || rm -f 7a.E
-$xx --date-format="-- Date/Time --" -h x -T -l 17 -f $srcdir/tn > 7b.O 2> 7b.E
+$xx --date-format="-- Date/Time --" -h x -T -l 24 -f $srcdir/tn > 7b.O 2> 7b.E
 code=$?
 if test $code != 0; then
   $echo "Test 7b failed: $xx return code $code differs from expected value 0" 1>&2
@@ -3564,7 +3564,7 @@ else
   esac
 fi
 test -s 7b.E || rm -f 7b.E
-$xx --date-format="-- Date/Time --" -h x -T -l 17 -f $srcdir/tFFt-bl > 7c.O 2> 7c.E
+$xx --date-format="-- Date/Time --" -h x -T -l 24 -f $srcdir/tFFt-bl > 7c.O 2> 7c.E
 code=$?
 if test $code != 0; then
   $echo "Test 7c failed: $xx return code $code differs from expected value 0" 1>&2
@@ -3636,7 +3636,7 @@ else
   esac
 fi
 test -s 7f.E || rm -f 7f.E
-$xx --date-format="-- Date/Time --" -h x -T -l 17 -f $srcdir/FFn > 7g.O 2> 7g.E
+$xx --date-format="-- Date/Time --" -h x -T -l 24 -f $srcdir/FFn > 7g.O 2> 7g.E
 code=$?
 if test $code != 0; then
   $echo "Test 7g failed: $xx return code $code differs from expected value 0" 1>&2
@@ -3870,254 +3870,254 @@ else
   esac
 fi
 test -s 7bc.C.E || rm -f 7bc.C.E
-$xx --date-format="-- Date/Time --" -h x -n.3 -l 17 -f $srcdir/tFFt-bl > 9a.O 2> 9a.E
+$xx --date-format="-- Date/Time --" -h x -n.3 -l 24 -f $srcdir/tFFt-bl > 9a.O 2> 9a.E
 code=$?
 if test $code != 0; then
   $echo "Test 9a failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9a.O $srcdir/nl17f-bl > /dev/null 2>&1
+  cmp 9a.O $srcdir/nl24f-bl > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9a"; fi;;
-    1) $echo "Test 9a failed: files 9a.O and $srcdir/nl17f-bl differ" 1>&2
-       (diff -c 9a.O $srcdir/nl17f-bl) 2> /dev/null
+    1) $echo "Test 9a failed: files 9a.O and $srcdir/nl24f-bl differ" 1>&2
+       (diff -c 9a.O $srcdir/nl24f-bl) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9a may have failed." 1>&2
-       $echo The command "cmp 9a.O $srcdir/nl17f-bl" failed. 1>&2
+       $echo The command "cmp 9a.O $srcdir/nl24f-bl" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9a.E || rm -f 9a.E
-$xx --date-format="-- Date/Time --" -h x -n.3 -N 15 -l 17 -f $srcdir/tFFt-bl > 9b.O 2> 9b.E
+$xx --date-format="-- Date/Time --" -h x -n.3 -N 15 -l 24 -f $srcdir/tFFt-bl > 9b.O 2> 9b.E
 code=$?
 if test $code != 0; then
   $echo "Test 9b failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9b.O $srcdir/nN15l17f-bl > /dev/null 2>&1
+  cmp 9b.O $srcdir/nN15l24f-bl > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9b"; fi;;
-    1) $echo "Test 9b failed: files 9b.O and $srcdir/nN15l17f-bl differ" 1>&2
-       (diff -c 9b.O $srcdir/nN15l17f-bl) 2> /dev/null
+    1) $echo "Test 9b failed: files 9b.O and $srcdir/nN15l24f-bl differ" 1>&2
+       (diff -c 9b.O $srcdir/nN15l24f-bl) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9b may have failed." 1>&2
-       $echo The command "cmp 9b.O $srcdir/nN15l17f-bl" failed. 1>&2
+       $echo The command "cmp 9b.O $srcdir/nN15l24f-bl" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9b.E || rm -f 9b.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +2 -l 17 -f $srcdir/tFFt-bl > 9Pa.O 2> 9Pa.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +2 -l 24 -f $srcdir/tFFt-bl > 9Pa.O 2> 9Pa.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pa failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pa.O $srcdir/n+2l17f-bl > /dev/null 2>&1
+  cmp 9Pa.O $srcdir/n+2l24f-bl > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pa"; fi;;
-    1) $echo "Test 9Pa failed: files 9Pa.O and $srcdir/n+2l17f-bl differ" 1>&2
-       (diff -c 9Pa.O $srcdir/n+2l17f-bl) 2> /dev/null
+    1) $echo "Test 9Pa failed: files 9Pa.O and $srcdir/n+2l24f-bl differ" 1>&2
+       (diff -c 9Pa.O $srcdir/n+2l24f-bl) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pa may have failed." 1>&2
-       $echo The command "cmp 9Pa.O $srcdir/n+2l17f-bl" failed. 1>&2
+       $echo The command "cmp 9Pa.O $srcdir/n+2l24f-bl" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pa.E || rm -f 9Pa.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +3 -l 17 -f $srcdir/tFFt-bl > 9Pb.O 2> 9Pb.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +3 -l 24 -f $srcdir/tFFt-bl > 9Pb.O 2> 9Pb.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pb failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pb.O $srcdir/n+3l17f-bl > /dev/null 2>&1
+  cmp 9Pb.O $srcdir/n+3l24f-bl > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pb"; fi;;
-    1) $echo "Test 9Pb failed: files 9Pb.O and $srcdir/n+3l17f-bl differ" 1>&2
-       (diff -c 9Pb.O $srcdir/n+3l17f-bl) 2> /dev/null
+    1) $echo "Test 9Pb failed: files 9Pb.O and $srcdir/n+3l24f-bl differ" 1>&2
+       (diff -c 9Pb.O $srcdir/n+3l24f-bl) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pb may have failed." 1>&2
-       $echo The command "cmp 9Pb.O $srcdir/n+3l17f-bl" failed. 1>&2
+       $echo The command "cmp 9Pb.O $srcdir/n+3l24f-bl" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pb.E || rm -f 9Pb.E
-$xx --date-format="-- Date/Time --" -h x -n.3 -N 1 +3 -l 17 -f $srcdir/tFFt-bl > 9Pc.O 2> 9Pc.E
+$xx --date-format="-- Date/Time --" -h x -n.3 -N 1 +3 -l 24 -f $srcdir/tFFt-bl > 9Pc.O 2> 9Pc.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pc failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pc.O $srcdir/nN1+3l17f-bl > /dev/null 2>&1
+  cmp 9Pc.O $srcdir/nN1+3l24f-bl > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pc"; fi;;
-    1) $echo "Test 9Pc failed: files 9Pc.O and $srcdir/nN1+3l17f-bl differ" 1>&2
-       (diff -c 9Pc.O $srcdir/nN1+3l17f-bl) 2> /dev/null
+    1) $echo "Test 9Pc failed: files 9Pc.O and $srcdir/nN1+3l24f-bl differ" 1>&2
+       (diff -c 9Pc.O $srcdir/nN1+3l24f-bl) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pc may have failed." 1>&2
-       $echo The command "cmp 9Pc.O $srcdir/nN1+3l17f-bl" failed. 1>&2
+       $echo The command "cmp 9Pc.O $srcdir/nN1+3l24f-bl" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pc.E || rm -f 9Pc.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +2 -l 17 -f $srcdir/0FFt > 9Pe.O 2> 9Pe.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +2 -l 24 -f $srcdir/0FFt > 9Pe.O 2> 9Pe.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pe failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pe.O $srcdir/n+2l17f-0FF > /dev/null 2>&1
+  cmp 9Pe.O $srcdir/n+2l24f-0FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pe"; fi;;
-    1) $echo "Test 9Pe failed: files 9Pe.O and $srcdir/n+2l17f-0FF differ" 1>&2
-       (diff -c 9Pe.O $srcdir/n+2l17f-0FF) 2> /dev/null
+    1) $echo "Test 9Pe failed: files 9Pe.O and $srcdir/n+2l24f-0FF differ" 1>&2
+       (diff -c 9Pe.O $srcdir/n+2l24f-0FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pe may have failed." 1>&2
-       $echo The command "cmp 9Pe.O $srcdir/n+2l17f-0FF" failed. 1>&2
+       $echo The command "cmp 9Pe.O $srcdir/n+2l24f-0FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pe.E || rm -f 9Pe.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +2 -l 17 -f $srcdir/0FFnt > 9Pf.O 2> 9Pf.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +2 -l 24 -f $srcdir/0FFnt > 9Pf.O 2> 9Pf.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pf failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pf.O $srcdir/n+2l17f-0FF > /dev/null 2>&1
+  cmp 9Pf.O $srcdir/n+2l24f-0FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pf"; fi;;
-    1) $echo "Test 9Pf failed: files 9Pf.O and $srcdir/n+2l17f-0FF differ" 1>&2
-       (diff -c 9Pf.O $srcdir/n+2l17f-0FF) 2> /dev/null
+    1) $echo "Test 9Pf failed: files 9Pf.O and $srcdir/n+2l24f-0FF differ" 1>&2
+       (diff -c 9Pf.O $srcdir/n+2l24f-0FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pf may have failed." 1>&2
-       $echo The command "cmp 9Pf.O $srcdir/n+2l17f-0FF" failed. 1>&2
+       $echo The command "cmp 9Pf.O $srcdir/n+2l24f-0FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pf.E || rm -f 9Pf.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +2 -l 17 -f $srcdir/0FnFt > 9Pg.O 2> 9Pg.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +2 -l 24 -f $srcdir/0FnFt > 9Pg.O 2> 9Pg.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pg failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pg.O $srcdir/n+2l17f-0FF > /dev/null 2>&1
+  cmp 9Pg.O $srcdir/n+2l24f-0FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pg"; fi;;
-    1) $echo "Test 9Pg failed: files 9Pg.O and $srcdir/n+2l17f-0FF differ" 1>&2
-       (diff -c 9Pg.O $srcdir/n+2l17f-0FF) 2> /dev/null
+    1) $echo "Test 9Pg failed: files 9Pg.O and $srcdir/n+2l24f-0FF differ" 1>&2
+       (diff -c 9Pg.O $srcdir/n+2l24f-0FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pg may have failed." 1>&2
-       $echo The command "cmp 9Pg.O $srcdir/n+2l17f-0FF" failed. 1>&2
+       $echo The command "cmp 9Pg.O $srcdir/n+2l24f-0FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pg.E || rm -f 9Pg.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +2 -l 17 -f $srcdir/0FnFnt > 9Ph.O 2> 9Ph.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +2 -l 24 -f $srcdir/0FnFnt > 9Ph.O 2> 9Ph.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Ph failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Ph.O $srcdir/n+2l17f-0FF > /dev/null 2>&1
+  cmp 9Ph.O $srcdir/n+2l24f-0FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Ph"; fi;;
-    1) $echo "Test 9Ph failed: files 9Ph.O and $srcdir/n+2l17f-0FF differ" 1>&2
-       (diff -c 9Ph.O $srcdir/n+2l17f-0FF) 2> /dev/null
+    1) $echo "Test 9Ph failed: files 9Ph.O and $srcdir/n+2l24f-0FF differ" 1>&2
+       (diff -c 9Ph.O $srcdir/n+2l24f-0FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Ph may have failed." 1>&2
-       $echo The command "cmp 9Ph.O $srcdir/n+2l17f-0FF" failed. 1>&2
+       $echo The command "cmp 9Ph.O $srcdir/n+2l24f-0FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Ph.E || rm -f 9Ph.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +2:5 -l 17 -f $srcdir/0FFt > 9Pi.O 2> 9Pi.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +2:5 -l 24 -f $srcdir/0FFt > 9Pi.O 2> 9Pi.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pi failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pi.O $srcdir/n+2-5l17f-0FF > /dev/null 2>&1
+  cmp 9Pi.O $srcdir/n+2-5l24f-0FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pi"; fi;;
-    1) $echo "Test 9Pi failed: files 9Pi.O and $srcdir/n+2-5l17f-0FF differ" 1>&2
-       (diff -c 9Pi.O $srcdir/n+2-5l17f-0FF) 2> /dev/null
+    1) $echo "Test 9Pi failed: files 9Pi.O and $srcdir/n+2-5l24f-0FF differ" 1>&2
+       (diff -c 9Pi.O $srcdir/n+2-5l24f-0FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pi may have failed." 1>&2
-       $echo The command "cmp 9Pi.O $srcdir/n+2-5l17f-0FF" failed. 1>&2
+       $echo The command "cmp 9Pi.O $srcdir/n+2-5l24f-0FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pi.E || rm -f 9Pi.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +3 -l 17 -f $srcdir/0FFt > 9Pj.O 2> 9Pj.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +3 -l 24 -f $srcdir/0FFt > 9Pj.O 2> 9Pj.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pj failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pj.O $srcdir/n+3l17f-0FF > /dev/null 2>&1
+  cmp 9Pj.O $srcdir/n+3l24f-0FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pj"; fi;;
-    1) $echo "Test 9Pj failed: files 9Pj.O and $srcdir/n+3l17f-0FF differ" 1>&2
-       (diff -c 9Pj.O $srcdir/n+3l17f-0FF) 2> /dev/null
+    1) $echo "Test 9Pj failed: files 9Pj.O and $srcdir/n+3l24f-0FF differ" 1>&2
+       (diff -c 9Pj.O $srcdir/n+3l24f-0FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pj may have failed." 1>&2
-       $echo The command "cmp 9Pj.O $srcdir/n+3l17f-0FF" failed. 1>&2
+       $echo The command "cmp 9Pj.O $srcdir/n+3l24f-0FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pj.E || rm -f 9Pj.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +3 -l 17 -f $srcdir/0FFnt > 9Pk.O 2> 9Pk.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +3 -l 24 -f $srcdir/0FFnt > 9Pk.O 2> 9Pk.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pk failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pk.O $srcdir/n+3l17f-0FF > /dev/null 2>&1
+  cmp 9Pk.O $srcdir/n+3l24f-0FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pk"; fi;;
-    1) $echo "Test 9Pk failed: files 9Pk.O and $srcdir/n+3l17f-0FF differ" 1>&2
-       (diff -c 9Pk.O $srcdir/n+3l17f-0FF) 2> /dev/null
+    1) $echo "Test 9Pk failed: files 9Pk.O and $srcdir/n+3l24f-0FF differ" 1>&2
+       (diff -c 9Pk.O $srcdir/n+3l24f-0FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pk may have failed." 1>&2
-       $echo The command "cmp 9Pk.O $srcdir/n+3l17f-0FF" failed. 1>&2
+       $echo The command "cmp 9Pk.O $srcdir/n+3l24f-0FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pk.E || rm -f 9Pk.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +3 -l 17 -f $srcdir/0FnFt > 9Pl.O 2> 9Pl.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +3 -l 24 -f $srcdir/0FnFt > 9Pl.O 2> 9Pl.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pl failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pl.O $srcdir/n+3l17f-0FF > /dev/null 2>&1
+  cmp 9Pl.O $srcdir/n+3l24f-0FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pl"; fi;;
-    1) $echo "Test 9Pl failed: files 9Pl.O and $srcdir/n+3l17f-0FF differ" 1>&2
-       (diff -c 9Pl.O $srcdir/n+3l17f-0FF) 2> /dev/null
+    1) $echo "Test 9Pl failed: files 9Pl.O and $srcdir/n+3l24f-0FF differ" 1>&2
+       (diff -c 9Pl.O $srcdir/n+3l24f-0FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pl may have failed." 1>&2
-       $echo The command "cmp 9Pl.O $srcdir/n+3l17f-0FF" failed. 1>&2
+       $echo The command "cmp 9Pl.O $srcdir/n+3l24f-0FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pl.E || rm -f 9Pl.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +3 -l 17 -f $srcdir/0FnFnt > 9Pm.O 2> 9Pm.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +3 -l 24 -f $srcdir/0FnFnt > 9Pm.O 2> 9Pm.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pm failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pm.O $srcdir/n+3l17f-0FF > /dev/null 2>&1
+  cmp 9Pm.O $srcdir/n+3l24f-0FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pm"; fi;;
-    1) $echo "Test 9Pm failed: files 9Pm.O and $srcdir/n+3l17f-0FF differ" 1>&2
-       (diff -c 9Pm.O $srcdir/n+3l17f-0FF) 2> /dev/null
+    1) $echo "Test 9Pm failed: files 9Pm.O and $srcdir/n+3l24f-0FF differ" 1>&2
+       (diff -c 9Pm.O $srcdir/n+3l24f-0FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pm may have failed." 1>&2
-       $echo The command "cmp 9Pm.O $srcdir/n+3l17f-0FF" failed. 1>&2
+       $echo The command "cmp 9Pm.O $srcdir/n+3l24f-0FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
@@ -4248,146 +4248,146 @@ else
   esac
 fi
 test -s 9Pt.E || rm -f 9Pt.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +5 -a -3 -l 6 -f $srcdir/0FFt > 9Paa.O 2> 9Paa.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +5 -a -3 -l 13 -f $srcdir/0FFt > 9Paa.O 2> 9Paa.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Paa failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Paa.O $srcdir/n+5a3l6f-0FF > /dev/null 2>&1
+  cmp 9Paa.O $srcdir/n+5a3l13f-0FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Paa"; fi;;
-    1) $echo "Test 9Paa failed: files 9Paa.O and $srcdir/n+5a3l6f-0FF differ" 1>&2
-       (diff -c 9Paa.O $srcdir/n+5a3l6f-0FF) 2> /dev/null
+    1) $echo "Test 9Paa failed: files 9Paa.O and $srcdir/n+5a3l13f-0FF differ" 1>&2
+       (diff -c 9Paa.O $srcdir/n+5a3l13f-0FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Paa may have failed." 1>&2
-       $echo The command "cmp 9Paa.O $srcdir/n+5a3l6f-0FF" failed. 1>&2
+       $echo The command "cmp 9Paa.O $srcdir/n+5a3l13f-0FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Paa.E || rm -f 9Paa.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +5 -a --columns=3 -l 6 -f $srcdir/0FFt > 9Paa.C.O 2> 9Paa.C.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +5 -a --columns=3 -l 13 -f $srcdir/0FFt > 9Paa.C.O 2> 9Paa.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Paa.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Paa.C.O $srcdir/n+5a3l6f-0FF > /dev/null 2>&1
+  cmp 9Paa.C.O $srcdir/n+5a3l13f-0FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Paa.C"; fi;;
-    1) $echo "Test 9Paa.C failed: files 9Paa.C.O and $srcdir/n+5a3l6f-0FF differ" 1>&2
-       (diff -c 9Paa.C.O $srcdir/n+5a3l6f-0FF) 2> /dev/null
+    1) $echo "Test 9Paa.C failed: files 9Paa.C.O and $srcdir/n+5a3l13f-0FF differ" 1>&2
+       (diff -c 9Paa.C.O $srcdir/n+5a3l13f-0FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Paa.C may have failed." 1>&2
-       $echo The command "cmp 9Paa.C.O $srcdir/n+5a3l6f-0FF" failed. 1>&2
+       $echo The command "cmp 9Paa.C.O $srcdir/n+5a3l13f-0FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Paa.C.E || rm -f 9Paa.C.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +5 -a -3 -l 6 -f $srcdir/0FFnt > 9Pab.O 2> 9Pab.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +5 -a -3 -l 13 -f $srcdir/0FFnt > 9Pab.O 2> 9Pab.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pab failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pab.O $srcdir/n+5a3l6f-0FF > /dev/null 2>&1
+  cmp 9Pab.O $srcdir/n+5a3l13f-0FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pab"; fi;;
-    1) $echo "Test 9Pab failed: files 9Pab.O and $srcdir/n+5a3l6f-0FF differ" 1>&2
-       (diff -c 9Pab.O $srcdir/n+5a3l6f-0FF) 2> /dev/null
+    1) $echo "Test 9Pab failed: files 9Pab.O and $srcdir/n+5a3l13f-0FF differ" 1>&2
+       (diff -c 9Pab.O $srcdir/n+5a3l13f-0FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pab may have failed." 1>&2
-       $echo The command "cmp 9Pab.O $srcdir/n+5a3l6f-0FF" failed. 1>&2
+       $echo The command "cmp 9Pab.O $srcdir/n+5a3l13f-0FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pab.E || rm -f 9Pab.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +5 -a --columns=3 -l 6 -f $srcdir/0FFnt > 9Pab.C.O 2> 9Pab.C.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +5 -a --columns=3 -l 13 -f $srcdir/0FFnt > 9Pab.C.O 2> 9Pab.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pab.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pab.C.O $srcdir/n+5a3l6f-0FF > /dev/null 2>&1
+  cmp 9Pab.C.O $srcdir/n+5a3l13f-0FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pab.C"; fi;;
-    1) $echo "Test 9Pab.C failed: files 9Pab.C.O and $srcdir/n+5a3l6f-0FF differ" 1>&2
-       (diff -c 9Pab.C.O $srcdir/n+5a3l6f-0FF) 2> /dev/null
+    1) $echo "Test 9Pab.C failed: files 9Pab.C.O and $srcdir/n+5a3l13f-0FF differ" 1>&2
+       (diff -c 9Pab.C.O $srcdir/n+5a3l13f-0FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pab.C may have failed." 1>&2
-       $echo The command "cmp 9Pab.C.O $srcdir/n+5a3l6f-0FF" failed. 1>&2
+       $echo The command "cmp 9Pab.C.O $srcdir/n+5a3l13f-0FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pab.C.E || rm -f 9Pab.C.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +5 -a -3 -l 6 -f $srcdir/0FnFt > 9Pac.O 2> 9Pac.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +5 -a -3 -l 13 -f $srcdir/0FnFt > 9Pac.O 2> 9Pac.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pac failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pac.O $srcdir/n+5a3l6f-0FF > /dev/null 2>&1
+  cmp 9Pac.O $srcdir/n+5a3l13f-0FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pac"; fi;;
-    1) $echo "Test 9Pac failed: files 9Pac.O and $srcdir/n+5a3l6f-0FF differ" 1>&2
-       (diff -c 9Pac.O $srcdir/n+5a3l6f-0FF) 2> /dev/null
+    1) $echo "Test 9Pac failed: files 9Pac.O and $srcdir/n+5a3l13f-0FF differ" 1>&2
+       (diff -c 9Pac.O $srcdir/n+5a3l13f-0FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pac may have failed." 1>&2
-       $echo The command "cmp 9Pac.O $srcdir/n+5a3l6f-0FF" failed. 1>&2
+       $echo The command "cmp 9Pac.O $srcdir/n+5a3l13f-0FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pac.E || rm -f 9Pac.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +5 -a --columns=3 -l 6 -f $srcdir/0FnFt > 9Pac.C.O 2> 9Pac.C.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +5 -a --columns=3 -l 13 -f $srcdir/0FnFt > 9Pac.C.O 2> 9Pac.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pac.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pac.C.O $srcdir/n+5a3l6f-0FF > /dev/null 2>&1
+  cmp 9Pac.C.O $srcdir/n+5a3l13f-0FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pac.C"; fi;;
-    1) $echo "Test 9Pac.C failed: files 9Pac.C.O and $srcdir/n+5a3l6f-0FF differ" 1>&2
-       (diff -c 9Pac.C.O $srcdir/n+5a3l6f-0FF) 2> /dev/null
+    1) $echo "Test 9Pac.C failed: files 9Pac.C.O and $srcdir/n+5a3l13f-0FF differ" 1>&2
+       (diff -c 9Pac.C.O $srcdir/n+5a3l13f-0FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pac.C may have failed." 1>&2
-       $echo The command "cmp 9Pac.C.O $srcdir/n+5a3l6f-0FF" failed. 1>&2
+       $echo The command "cmp 9Pac.C.O $srcdir/n+5a3l13f-0FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pac.C.E || rm -f 9Pac.C.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +5 -a -3 -l 6 -f $srcdir/0FnFnt > 9Pad.O 2> 9Pad.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +5 -a -3 -l 13 -f $srcdir/0FnFnt > 9Pad.O 2> 9Pad.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pad failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pad.O $srcdir/n+5a3l6f-0FF > /dev/null 2>&1
+  cmp 9Pad.O $srcdir/n+5a3l13f-0FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pad"; fi;;
-    1) $echo "Test 9Pad failed: files 9Pad.O and $srcdir/n+5a3l6f-0FF differ" 1>&2
-       (diff -c 9Pad.O $srcdir/n+5a3l6f-0FF) 2> /dev/null
+    1) $echo "Test 9Pad failed: files 9Pad.O and $srcdir/n+5a3l13f-0FF differ" 1>&2
+       (diff -c 9Pad.O $srcdir/n+5a3l13f-0FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pad may have failed." 1>&2
-       $echo The command "cmp 9Pad.O $srcdir/n+5a3l6f-0FF" failed. 1>&2
+       $echo The command "cmp 9Pad.O $srcdir/n+5a3l13f-0FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pad.E || rm -f 9Pad.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +5 -a --columns=3 -l 6 -f $srcdir/0FnFnt > 9Pad.C.O 2> 9Pad.C.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +5 -a --columns=3 -l 13 -f $srcdir/0FnFnt > 9Pad.C.O 2> 9Pad.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pad.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pad.C.O $srcdir/n+5a3l6f-0FF > /dev/null 2>&1
+  cmp 9Pad.C.O $srcdir/n+5a3l13f-0FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pad.C"; fi;;
-    1) $echo "Test 9Pad.C failed: files 9Pad.C.O and $srcdir/n+5a3l6f-0FF differ" 1>&2
-       (diff -c 9Pad.C.O $srcdir/n+5a3l6f-0FF) 2> /dev/null
+    1) $echo "Test 9Pad.C failed: files 9Pad.C.O and $srcdir/n+5a3l13f-0FF differ" 1>&2
+       (diff -c 9Pad.C.O $srcdir/n+5a3l13f-0FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pad.C may have failed." 1>&2
-       $echo The command "cmp 9Pad.C.O $srcdir/n+5a3l6f-0FF" failed. 1>&2
+       $echo The command "cmp 9Pad.C.O $srcdir/n+5a3l13f-0FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
@@ -4644,1424 +4644,1424 @@ else
   esac
 fi
 test -s 9Pak.C.E || rm -f 9Pak.C.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +4 -b -2 -l 10 -f $srcdir/0FFt > 9Pba.O 2> 9Pba.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +4 -b -2 -l 17 -f $srcdir/0FFt > 9Pba.O 2> 9Pba.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pba failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pba.O $srcdir/n+4b2l10f-0FF > /dev/null 2>&1
+  cmp 9Pba.O $srcdir/n+4b2l17f-0FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pba"; fi;;
-    1) $echo "Test 9Pba failed: files 9Pba.O and $srcdir/n+4b2l10f-0FF differ" 1>&2
-       (diff -c 9Pba.O $srcdir/n+4b2l10f-0FF) 2> /dev/null
+    1) $echo "Test 9Pba failed: files 9Pba.O and $srcdir/n+4b2l17f-0FF differ" 1>&2
+       (diff -c 9Pba.O $srcdir/n+4b2l17f-0FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pba may have failed." 1>&2
-       $echo The command "cmp 9Pba.O $srcdir/n+4b2l10f-0FF" failed. 1>&2
+       $echo The command "cmp 9Pba.O $srcdir/n+4b2l17f-0FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pba.E || rm -f 9Pba.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +4 -b --columns=2 -l 10 -f $srcdir/0FFt > 9Pba.C.O 2> 9Pba.C.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +4 -b --columns=2 -l 17 -f $srcdir/0FFt > 9Pba.C.O 2> 9Pba.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pba.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pba.C.O $srcdir/n+4b2l10f-0FF > /dev/null 2>&1
+  cmp 9Pba.C.O $srcdir/n+4b2l17f-0FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pba.C"; fi;;
-    1) $echo "Test 9Pba.C failed: files 9Pba.C.O and $srcdir/n+4b2l10f-0FF differ" 1>&2
-       (diff -c 9Pba.C.O $srcdir/n+4b2l10f-0FF) 2> /dev/null
+    1) $echo "Test 9Pba.C failed: files 9Pba.C.O and $srcdir/n+4b2l17f-0FF differ" 1>&2
+       (diff -c 9Pba.C.O $srcdir/n+4b2l17f-0FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pba.C may have failed." 1>&2
-       $echo The command "cmp 9Pba.C.O $srcdir/n+4b2l10f-0FF" failed. 1>&2
+       $echo The command "cmp 9Pba.C.O $srcdir/n+4b2l17f-0FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pba.C.E || rm -f 9Pba.C.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +4 -b -2 -l 10 -f $srcdir/0FFnt > 9Pbb.O 2> 9Pbb.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +4 -b -2 -l 17 -f $srcdir/0FFnt > 9Pbb.O 2> 9Pbb.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pbb failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pbb.O $srcdir/n+4b2l10f-0FF > /dev/null 2>&1
+  cmp 9Pbb.O $srcdir/n+4b2l17f-0FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pbb"; fi;;
-    1) $echo "Test 9Pbb failed: files 9Pbb.O and $srcdir/n+4b2l10f-0FF differ" 1>&2
-       (diff -c 9Pbb.O $srcdir/n+4b2l10f-0FF) 2> /dev/null
+    1) $echo "Test 9Pbb failed: files 9Pbb.O and $srcdir/n+4b2l17f-0FF differ" 1>&2
+       (diff -c 9Pbb.O $srcdir/n+4b2l17f-0FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pbb may have failed." 1>&2
-       $echo The command "cmp 9Pbb.O $srcdir/n+4b2l10f-0FF" failed. 1>&2
+       $echo The command "cmp 9Pbb.O $srcdir/n+4b2l17f-0FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pbb.E || rm -f 9Pbb.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +4 -b --columns=2 -l 10 -f $srcdir/0FFnt > 9Pbb.C.O 2> 9Pbb.C.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +4 -b --columns=2 -l 17 -f $srcdir/0FFnt > 9Pbb.C.O 2> 9Pbb.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pbb.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pbb.C.O $srcdir/n+4b2l10f-0FF > /dev/null 2>&1
+  cmp 9Pbb.C.O $srcdir/n+4b2l17f-0FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pbb.C"; fi;;
-    1) $echo "Test 9Pbb.C failed: files 9Pbb.C.O and $srcdir/n+4b2l10f-0FF differ" 1>&2
-       (diff -c 9Pbb.C.O $srcdir/n+4b2l10f-0FF) 2> /dev/null
+    1) $echo "Test 9Pbb.C failed: files 9Pbb.C.O and $srcdir/n+4b2l17f-0FF differ" 1>&2
+       (diff -c 9Pbb.C.O $srcdir/n+4b2l17f-0FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pbb.C may have failed." 1>&2
-       $echo The command "cmp 9Pbb.C.O $srcdir/n+4b2l10f-0FF" failed. 1>&2
+       $echo The command "cmp 9Pbb.C.O $srcdir/n+4b2l17f-0FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pbb.C.E || rm -f 9Pbb.C.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +4 -b -2 -l 10 -f $srcdir/0FnFt > 9Pbc.O 2> 9Pbc.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +4 -b -2 -l 17 -f $srcdir/0FnFt > 9Pbc.O 2> 9Pbc.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pbc failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pbc.O $srcdir/n+4b2l10f-0FF > /dev/null 2>&1
+  cmp 9Pbc.O $srcdir/n+4b2l17f-0FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pbc"; fi;;
-    1) $echo "Test 9Pbc failed: files 9Pbc.O and $srcdir/n+4b2l10f-0FF differ" 1>&2
-       (diff -c 9Pbc.O $srcdir/n+4b2l10f-0FF) 2> /dev/null
+    1) $echo "Test 9Pbc failed: files 9Pbc.O and $srcdir/n+4b2l17f-0FF differ" 1>&2
+       (diff -c 9Pbc.O $srcdir/n+4b2l17f-0FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pbc may have failed." 1>&2
-       $echo The command "cmp 9Pbc.O $srcdir/n+4b2l10f-0FF" failed. 1>&2
+       $echo The command "cmp 9Pbc.O $srcdir/n+4b2l17f-0FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pbc.E || rm -f 9Pbc.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +4 -b --columns=2 -l 10 -f $srcdir/0FnFt > 9Pbc.C.O 2> 9Pbc.C.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +4 -b --columns=2 -l 17 -f $srcdir/0FnFt > 9Pbc.C.O 2> 9Pbc.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pbc.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pbc.C.O $srcdir/n+4b2l10f-0FF > /dev/null 2>&1
+  cmp 9Pbc.C.O $srcdir/n+4b2l17f-0FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pbc.C"; fi;;
-    1) $echo "Test 9Pbc.C failed: files 9Pbc.C.O and $srcdir/n+4b2l10f-0FF differ" 1>&2
-       (diff -c 9Pbc.C.O $srcdir/n+4b2l10f-0FF) 2> /dev/null
+    1) $echo "Test 9Pbc.C failed: files 9Pbc.C.O and $srcdir/n+4b2l17f-0FF differ" 1>&2
+       (diff -c 9Pbc.C.O $srcdir/n+4b2l17f-0FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pbc.C may have failed." 1>&2
-       $echo The command "cmp 9Pbc.C.O $srcdir/n+4b2l10f-0FF" failed. 1>&2
+       $echo The command "cmp 9Pbc.C.O $srcdir/n+4b2l17f-0FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pbc.C.E || rm -f 9Pbc.C.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +4 -b -2 -l 10 -f $srcdir/0FnFnt > 9Pbd.O 2> 9Pbd.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +4 -b -2 -l 17 -f $srcdir/0FnFnt > 9Pbd.O 2> 9Pbd.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pbd failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pbd.O $srcdir/n+4b2l10f-0FF > /dev/null 2>&1
+  cmp 9Pbd.O $srcdir/n+4b2l17f-0FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pbd"; fi;;
-    1) $echo "Test 9Pbd failed: files 9Pbd.O and $srcdir/n+4b2l10f-0FF differ" 1>&2
-       (diff -c 9Pbd.O $srcdir/n+4b2l10f-0FF) 2> /dev/null
+    1) $echo "Test 9Pbd failed: files 9Pbd.O and $srcdir/n+4b2l17f-0FF differ" 1>&2
+       (diff -c 9Pbd.O $srcdir/n+4b2l17f-0FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pbd may have failed." 1>&2
-       $echo The command "cmp 9Pbd.O $srcdir/n+4b2l10f-0FF" failed. 1>&2
+       $echo The command "cmp 9Pbd.O $srcdir/n+4b2l17f-0FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pbd.E || rm -f 9Pbd.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +4 -b --columns=2 -l 10 -f $srcdir/0FnFnt > 9Pbd.C.O 2> 9Pbd.C.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +4 -b --columns=2 -l 17 -f $srcdir/0FnFnt > 9Pbd.C.O 2> 9Pbd.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pbd.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pbd.C.O $srcdir/n+4b2l10f-0FF > /dev/null 2>&1
+  cmp 9Pbd.C.O $srcdir/n+4b2l17f-0FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pbd.C"; fi;;
-    1) $echo "Test 9Pbd.C failed: files 9Pbd.C.O and $srcdir/n+4b2l10f-0FF differ" 1>&2
-       (diff -c 9Pbd.C.O $srcdir/n+4b2l10f-0FF) 2> /dev/null
+    1) $echo "Test 9Pbd.C failed: files 9Pbd.C.O and $srcdir/n+4b2l17f-0FF differ" 1>&2
+       (diff -c 9Pbd.C.O $srcdir/n+4b2l17f-0FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pbd.C may have failed." 1>&2
-       $echo The command "cmp 9Pbd.C.O $srcdir/n+4b2l10f-0FF" failed. 1>&2
+       $echo The command "cmp 9Pbd.C.O $srcdir/n+4b2l17f-0FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pbd.C.E || rm -f 9Pbd.C.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +6 -b -3 -l 6 -f $srcdir/FFn > 9Pbe.O 2> 9Pbe.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +6 -b -3 -l 13 -f $srcdir/FFn > 9Pbe.O 2> 9Pbe.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pbe failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pbe.O $srcdir/n+6b3l6f-FF > /dev/null 2>&1
+  cmp 9Pbe.O $srcdir/n+6b3l13f-FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pbe"; fi;;
-    1) $echo "Test 9Pbe failed: files 9Pbe.O and $srcdir/n+6b3l6f-FF differ" 1>&2
-       (diff -c 9Pbe.O $srcdir/n+6b3l6f-FF) 2> /dev/null
+    1) $echo "Test 9Pbe failed: files 9Pbe.O and $srcdir/n+6b3l13f-FF differ" 1>&2
+       (diff -c 9Pbe.O $srcdir/n+6b3l13f-FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pbe may have failed." 1>&2
-       $echo The command "cmp 9Pbe.O $srcdir/n+6b3l6f-FF" failed. 1>&2
+       $echo The command "cmp 9Pbe.O $srcdir/n+6b3l13f-FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pbe.E || rm -f 9Pbe.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +6 -b --columns=3 -l 6 -f $srcdir/FFn > 9Pbe.C.O 2> 9Pbe.C.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +6 -b --columns=3 -l 13 -f $srcdir/FFn > 9Pbe.C.O 2> 9Pbe.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pbe.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pbe.C.O $srcdir/n+6b3l6f-FF > /dev/null 2>&1
+  cmp 9Pbe.C.O $srcdir/n+6b3l13f-FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pbe.C"; fi;;
-    1) $echo "Test 9Pbe.C failed: files 9Pbe.C.O and $srcdir/n+6b3l6f-FF differ" 1>&2
-       (diff -c 9Pbe.C.O $srcdir/n+6b3l6f-FF) 2> /dev/null
+    1) $echo "Test 9Pbe.C failed: files 9Pbe.C.O and $srcdir/n+6b3l13f-FF differ" 1>&2
+       (diff -c 9Pbe.C.O $srcdir/n+6b3l13f-FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pbe.C may have failed." 1>&2
-       $echo The command "cmp 9Pbe.C.O $srcdir/n+6b3l6f-FF" failed. 1>&2
+       $echo The command "cmp 9Pbe.C.O $srcdir/n+6b3l13f-FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pbe.C.E || rm -f 9Pbe.C.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +6 -b -3 -l 6 -f $srcdir/FFtn > 9Pbf.O 2> 9Pbf.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +6 -b -3 -l 13 -f $srcdir/FFtn > 9Pbf.O 2> 9Pbf.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pbf failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pbf.O $srcdir/n+6b3l6f-FF > /dev/null 2>&1
+  cmp 9Pbf.O $srcdir/n+6b3l13f-FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pbf"; fi;;
-    1) $echo "Test 9Pbf failed: files 9Pbf.O and $srcdir/n+6b3l6f-FF differ" 1>&2
-       (diff -c 9Pbf.O $srcdir/n+6b3l6f-FF) 2> /dev/null
+    1) $echo "Test 9Pbf failed: files 9Pbf.O and $srcdir/n+6b3l13f-FF differ" 1>&2
+       (diff -c 9Pbf.O $srcdir/n+6b3l13f-FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pbf may have failed." 1>&2
-       $echo The command "cmp 9Pbf.O $srcdir/n+6b3l6f-FF" failed. 1>&2
+       $echo The command "cmp 9Pbf.O $srcdir/n+6b3l13f-FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pbf.E || rm -f 9Pbf.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +6 -b --columns=3 -l 6 -f $srcdir/FFtn > 9Pbf.C.O 2> 9Pbf.C.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +6 -b --columns=3 -l 13 -f $srcdir/FFtn > 9Pbf.C.O 2> 9Pbf.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pbf.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pbf.C.O $srcdir/n+6b3l6f-FF > /dev/null 2>&1
+  cmp 9Pbf.C.O $srcdir/n+6b3l13f-FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pbf.C"; fi;;
-    1) $echo "Test 9Pbf.C failed: files 9Pbf.C.O and $srcdir/n+6b3l6f-FF differ" 1>&2
-       (diff -c 9Pbf.C.O $srcdir/n+6b3l6f-FF) 2> /dev/null
+    1) $echo "Test 9Pbf.C failed: files 9Pbf.C.O and $srcdir/n+6b3l13f-FF differ" 1>&2
+       (diff -c 9Pbf.C.O $srcdir/n+6b3l13f-FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pbf.C may have failed." 1>&2
-       $echo The command "cmp 9Pbf.C.O $srcdir/n+6b3l6f-FF" failed. 1>&2
+       $echo The command "cmp 9Pbf.C.O $srcdir/n+6b3l13f-FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pbf.C.E || rm -f 9Pbf.C.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +6 -b -3 -l 6 -f $srcdir/FnFn > 9Pbg.O 2> 9Pbg.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +6 -b -3 -l 13 -f $srcdir/FnFn > 9Pbg.O 2> 9Pbg.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pbg failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pbg.O $srcdir/n+6b3l6f-FF > /dev/null 2>&1
+  cmp 9Pbg.O $srcdir/n+6b3l13f-FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pbg"; fi;;
-    1) $echo "Test 9Pbg failed: files 9Pbg.O and $srcdir/n+6b3l6f-FF differ" 1>&2
-       (diff -c 9Pbg.O $srcdir/n+6b3l6f-FF) 2> /dev/null
+    1) $echo "Test 9Pbg failed: files 9Pbg.O and $srcdir/n+6b3l13f-FF differ" 1>&2
+       (diff -c 9Pbg.O $srcdir/n+6b3l13f-FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pbg may have failed." 1>&2
-       $echo The command "cmp 9Pbg.O $srcdir/n+6b3l6f-FF" failed. 1>&2
+       $echo The command "cmp 9Pbg.O $srcdir/n+6b3l13f-FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pbg.E || rm -f 9Pbg.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +6 -b --columns=3 -l 6 -f $srcdir/FnFn > 9Pbg.C.O 2> 9Pbg.C.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +6 -b --columns=3 -l 13 -f $srcdir/FnFn > 9Pbg.C.O 2> 9Pbg.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pbg.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pbg.C.O $srcdir/n+6b3l6f-FF > /dev/null 2>&1
+  cmp 9Pbg.C.O $srcdir/n+6b3l13f-FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pbg.C"; fi;;
-    1) $echo "Test 9Pbg.C failed: files 9Pbg.C.O and $srcdir/n+6b3l6f-FF differ" 1>&2
-       (diff -c 9Pbg.C.O $srcdir/n+6b3l6f-FF) 2> /dev/null
+    1) $echo "Test 9Pbg.C failed: files 9Pbg.C.O and $srcdir/n+6b3l13f-FF differ" 1>&2
+       (diff -c 9Pbg.C.O $srcdir/n+6b3l13f-FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pbg.C may have failed." 1>&2
-       $echo The command "cmp 9Pbg.C.O $srcdir/n+6b3l6f-FF" failed. 1>&2
+       $echo The command "cmp 9Pbg.C.O $srcdir/n+6b3l13f-FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pbg.C.E || rm -f 9Pbg.C.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +6 -b -3 -l 6 -f $srcdir/tFFn > 9Pbh.O 2> 9Pbh.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +6 -b -3 -l 13 -f $srcdir/tFFn > 9Pbh.O 2> 9Pbh.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pbh failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pbh.O $srcdir/n+6b3l6f-FF > /dev/null 2>&1
+  cmp 9Pbh.O $srcdir/n+6b3l13f-FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pbh"; fi;;
-    1) $echo "Test 9Pbh failed: files 9Pbh.O and $srcdir/n+6b3l6f-FF differ" 1>&2
-       (diff -c 9Pbh.O $srcdir/n+6b3l6f-FF) 2> /dev/null
+    1) $echo "Test 9Pbh failed: files 9Pbh.O and $srcdir/n+6b3l13f-FF differ" 1>&2
+       (diff -c 9Pbh.O $srcdir/n+6b3l13f-FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pbh may have failed." 1>&2
-       $echo The command "cmp 9Pbh.O $srcdir/n+6b3l6f-FF" failed. 1>&2
+       $echo The command "cmp 9Pbh.O $srcdir/n+6b3l13f-FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pbh.E || rm -f 9Pbh.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +6 -b --columns=3 -l 6 -f $srcdir/tFFn > 9Pbh.C.O 2> 9Pbh.C.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +6 -b --columns=3 -l 13 -f $srcdir/tFFn > 9Pbh.C.O 2> 9Pbh.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pbh.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pbh.C.O $srcdir/n+6b3l6f-FF > /dev/null 2>&1
+  cmp 9Pbh.C.O $srcdir/n+6b3l13f-FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pbh.C"; fi;;
-    1) $echo "Test 9Pbh.C failed: files 9Pbh.C.O and $srcdir/n+6b3l6f-FF differ" 1>&2
-       (diff -c 9Pbh.C.O $srcdir/n+6b3l6f-FF) 2> /dev/null
+    1) $echo "Test 9Pbh.C failed: files 9Pbh.C.O and $srcdir/n+6b3l13f-FF differ" 1>&2
+       (diff -c 9Pbh.C.O $srcdir/n+6b3l13f-FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pbh.C may have failed." 1>&2
-       $echo The command "cmp 9Pbh.C.O $srcdir/n+6b3l6f-FF" failed. 1>&2
+       $echo The command "cmp 9Pbh.C.O $srcdir/n+6b3l13f-FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pbh.C.E || rm -f 9Pbh.C.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +6 -b -3 -l 6 -f $srcdir/tFnFt > 9Pbi.O 2> 9Pbi.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +6 -b -3 -l 13 -f $srcdir/tFnFt > 9Pbi.O 2> 9Pbi.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pbi failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pbi.O $srcdir/n+6b3l6f-FF > /dev/null 2>&1
+  cmp 9Pbi.O $srcdir/n+6b3l13f-FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pbi"; fi;;
-    1) $echo "Test 9Pbi failed: files 9Pbi.O and $srcdir/n+6b3l6f-FF differ" 1>&2
-       (diff -c 9Pbi.O $srcdir/n+6b3l6f-FF) 2> /dev/null
+    1) $echo "Test 9Pbi failed: files 9Pbi.O and $srcdir/n+6b3l13f-FF differ" 1>&2
+       (diff -c 9Pbi.O $srcdir/n+6b3l13f-FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pbi may have failed." 1>&2
-       $echo The command "cmp 9Pbi.O $srcdir/n+6b3l6f-FF" failed. 1>&2
+       $echo The command "cmp 9Pbi.O $srcdir/n+6b3l13f-FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pbi.E || rm -f 9Pbi.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +6 -b --columns=3 -l 6 -f $srcdir/tFnFt > 9Pbi.C.O 2> 9Pbi.C.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +6 -b --columns=3 -l 13 -f $srcdir/tFnFt > 9Pbi.C.O 2> 9Pbi.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pbi.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pbi.C.O $srcdir/n+6b3l6f-FF > /dev/null 2>&1
+  cmp 9Pbi.C.O $srcdir/n+6b3l13f-FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pbi.C"; fi;;
-    1) $echo "Test 9Pbi.C failed: files 9Pbi.C.O and $srcdir/n+6b3l6f-FF differ" 1>&2
-       (diff -c 9Pbi.C.O $srcdir/n+6b3l6f-FF) 2> /dev/null
+    1) $echo "Test 9Pbi.C failed: files 9Pbi.C.O and $srcdir/n+6b3l13f-FF differ" 1>&2
+       (diff -c 9Pbi.C.O $srcdir/n+6b3l13f-FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pbi.C may have failed." 1>&2
-       $echo The command "cmp 9Pbi.C.O $srcdir/n+6b3l6f-FF" failed. 1>&2
+       $echo The command "cmp 9Pbi.C.O $srcdir/n+6b3l13f-FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pbi.C.E || rm -f 9Pbi.C.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +6 -b -3 -l 6 -f $srcdir/tFFt > 9Pbj.O 2> 9Pbj.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +6 -b -3 -l 13 -f $srcdir/tFFt > 9Pbj.O 2> 9Pbj.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pbj failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pbj.O $srcdir/n+6b3l6f-FF > /dev/null 2>&1
+  cmp 9Pbj.O $srcdir/n+6b3l13f-FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pbj"; fi;;
-    1) $echo "Test 9Pbj failed: files 9Pbj.O and $srcdir/n+6b3l6f-FF differ" 1>&2
-       (diff -c 9Pbj.O $srcdir/n+6b3l6f-FF) 2> /dev/null
+    1) $echo "Test 9Pbj failed: files 9Pbj.O and $srcdir/n+6b3l13f-FF differ" 1>&2
+       (diff -c 9Pbj.O $srcdir/n+6b3l13f-FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pbj may have failed." 1>&2
-       $echo The command "cmp 9Pbj.O $srcdir/n+6b3l6f-FF" failed. 1>&2
+       $echo The command "cmp 9Pbj.O $srcdir/n+6b3l13f-FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pbj.E || rm -f 9Pbj.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +6 -b --columns=3 -l 6 -f $srcdir/tFFt > 9Pbj.C.O 2> 9Pbj.C.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +6 -b --columns=3 -l 13 -f $srcdir/tFFt > 9Pbj.C.O 2> 9Pbj.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pbj.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pbj.C.O $srcdir/n+6b3l6f-FF > /dev/null 2>&1
+  cmp 9Pbj.C.O $srcdir/n+6b3l13f-FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pbj.C"; fi;;
-    1) $echo "Test 9Pbj.C failed: files 9Pbj.C.O and $srcdir/n+6b3l6f-FF differ" 1>&2
-       (diff -c 9Pbj.C.O $srcdir/n+6b3l6f-FF) 2> /dev/null
+    1) $echo "Test 9Pbj.C failed: files 9Pbj.C.O and $srcdir/n+6b3l13f-FF differ" 1>&2
+       (diff -c 9Pbj.C.O $srcdir/n+6b3l13f-FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pbj.C may have failed." 1>&2
-       $echo The command "cmp 9Pbj.C.O $srcdir/n+6b3l6f-FF" failed. 1>&2
+       $echo The command "cmp 9Pbj.C.O $srcdir/n+6b3l13f-FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pbj.C.E || rm -f 9Pbj.C.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +5:8 -b -3 -l 10 -f $srcdir/FnFn > 9Pbk.O 2> 9Pbk.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +5:8 -b -3 -l 17 -f $srcdir/FnFn > 9Pbk.O 2> 9Pbk.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pbk failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pbk.O $srcdir/n+5-8b3l10f-FF > /dev/null 2>&1
+  cmp 9Pbk.O $srcdir/n+5-8b3l17f-FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pbk"; fi;;
-    1) $echo "Test 9Pbk failed: files 9Pbk.O and $srcdir/n+5-8b3l10f-FF differ" 1>&2
-       (diff -c 9Pbk.O $srcdir/n+5-8b3l10f-FF) 2> /dev/null
+    1) $echo "Test 9Pbk failed: files 9Pbk.O and $srcdir/n+5-8b3l17f-FF differ" 1>&2
+       (diff -c 9Pbk.O $srcdir/n+5-8b3l17f-FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pbk may have failed." 1>&2
-       $echo The command "cmp 9Pbk.O $srcdir/n+5-8b3l10f-FF" failed. 1>&2
+       $echo The command "cmp 9Pbk.O $srcdir/n+5-8b3l17f-FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pbk.E || rm -f 9Pbk.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +5:8 -b --columns=3 -l 10 -f $srcdir/FnFn > 9Pbk.C.O 2> 9Pbk.C.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +5:8 -b --columns=3 -l 17 -f $srcdir/FnFn > 9Pbk.C.O 2> 9Pbk.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pbk.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pbk.C.O $srcdir/n+5-8b3l10f-FF > /dev/null 2>&1
+  cmp 9Pbk.C.O $srcdir/n+5-8b3l17f-FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pbk.C"; fi;;
-    1) $echo "Test 9Pbk.C failed: files 9Pbk.C.O and $srcdir/n+5-8b3l10f-FF differ" 1>&2
-       (diff -c 9Pbk.C.O $srcdir/n+5-8b3l10f-FF) 2> /dev/null
+    1) $echo "Test 9Pbk.C failed: files 9Pbk.C.O and $srcdir/n+5-8b3l17f-FF differ" 1>&2
+       (diff -c 9Pbk.C.O $srcdir/n+5-8b3l17f-FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pbk.C may have failed." 1>&2
-       $echo The command "cmp 9Pbk.C.O $srcdir/n+5-8b3l10f-FF" failed. 1>&2
+       $echo The command "cmp 9Pbk.C.O $srcdir/n+5-8b3l17f-FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pbk.C.E || rm -f 9Pbk.C.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +3 -m -l 13 -f $srcdir/tFFt-bl $srcdir/FnFn > 9Pma.O 2> 9Pma.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +3 -m -l 20 -f $srcdir/tFFt-bl $srcdir/FnFn > 9Pma.O 2> 9Pma.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pma failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pma.O $srcdir/n+3ml13f-bl-FF > /dev/null 2>&1
+  cmp 9Pma.O $srcdir/n+3ml20f-bl-FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pma"; fi;;
-    1) $echo "Test 9Pma failed: files 9Pma.O and $srcdir/n+3ml13f-bl-FF differ" 1>&2
-       (diff -c 9Pma.O $srcdir/n+3ml13f-bl-FF) 2> /dev/null
+    1) $echo "Test 9Pma failed: files 9Pma.O and $srcdir/n+3ml20f-bl-FF differ" 1>&2
+       (diff -c 9Pma.O $srcdir/n+3ml20f-bl-FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pma may have failed." 1>&2
-       $echo The command "cmp 9Pma.O $srcdir/n+3ml13f-bl-FF" failed. 1>&2
+       $echo The command "cmp 9Pma.O $srcdir/n+3ml20f-bl-FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pma.E || rm -f 9Pma.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +3 -m -l 17 -f $srcdir/tFFt-bl $srcdir/tn > 9Pmb.O 2> 9Pmb.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +3 -m -l 24 -f $srcdir/tFFt-bl $srcdir/tn > 9Pmb.O 2> 9Pmb.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pmb failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pmb.O $srcdir/n+3ml17f-bl-tn > /dev/null 2>&1
+  cmp 9Pmb.O $srcdir/n+3ml24f-bl-tn > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pmb"; fi;;
-    1) $echo "Test 9Pmb failed: files 9Pmb.O and $srcdir/n+3ml17f-bl-tn differ" 1>&2
-       (diff -c 9Pmb.O $srcdir/n+3ml17f-bl-tn) 2> /dev/null
+    1) $echo "Test 9Pmb failed: files 9Pmb.O and $srcdir/n+3ml24f-bl-tn differ" 1>&2
+       (diff -c 9Pmb.O $srcdir/n+3ml24f-bl-tn) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pmb may have failed." 1>&2
-       $echo The command "cmp 9Pmb.O $srcdir/n+3ml17f-bl-tn" failed. 1>&2
+       $echo The command "cmp 9Pmb.O $srcdir/n+3ml24f-bl-tn" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pmb.E || rm -f 9Pmb.E
-$xx --date-format="-- Date/Time --" -h x -n.3 +3 -m -l 17 -f $srcdir/tn $srcdir/tFFt-bl > 9Pmc.O 2> 9Pmc.E
+$xx --date-format="-- Date/Time --" -h x -n.3 +3 -m -l 24 -f $srcdir/tn $srcdir/tFFt-bl > 9Pmc.O 2> 9Pmc.E
 code=$?
 if test $code != 0; then
   $echo "Test 9Pmc failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 9Pmc.O $srcdir/n+3ml17f-tn-bl > /dev/null 2>&1
+  cmp 9Pmc.O $srcdir/n+3ml24f-tn-bl > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 9Pmc"; fi;;
-    1) $echo "Test 9Pmc failed: files 9Pmc.O and $srcdir/n+3ml17f-tn-bl differ" 1>&2
-       (diff -c 9Pmc.O $srcdir/n+3ml17f-tn-bl) 2> /dev/null
+    1) $echo "Test 9Pmc failed: files 9Pmc.O and $srcdir/n+3ml24f-tn-bl differ" 1>&2
+       (diff -c 9Pmc.O $srcdir/n+3ml24f-tn-bl) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 9Pmc may have failed." 1>&2
-       $echo The command "cmp 9Pmc.O $srcdir/n+3ml17f-tn-bl" failed. 1>&2
+       $echo The command "cmp 9Pmc.O $srcdir/n+3ml24f-tn-bl" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 9Pmc.E || rm -f 9Pmc.E
-$xx --date-format="-- Date/Time --" -h x -W 72 -J -l17 -f $srcdir/tFFt-ll > 10wa.O 2> 10wa.E
+$xx --date-format="-- Date/Time --" -h x -W 72 -J -l24 -f $srcdir/tFFt-ll > 10wa.O 2> 10wa.E
 code=$?
 if test $code != 0; then
   $echo "Test 10wa failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10wa.O $srcdir/W72Jl17f-ll > /dev/null 2>&1
+  cmp 10wa.O $srcdir/W72Jl24f-ll > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10wa"; fi;;
-    1) $echo "Test 10wa failed: files 10wa.O and $srcdir/W72Jl17f-ll differ" 1>&2
-       (diff -c 10wa.O $srcdir/W72Jl17f-ll) 2> /dev/null
+    1) $echo "Test 10wa failed: files 10wa.O and $srcdir/W72Jl24f-ll differ" 1>&2
+       (diff -c 10wa.O $srcdir/W72Jl24f-ll) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10wa may have failed." 1>&2
-       $echo The command "cmp 10wa.O $srcdir/W72Jl17f-ll" failed. 1>&2
+       $echo The command "cmp 10wa.O $srcdir/W72Jl24f-ll" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10wa.E || rm -f 10wa.E
-$xx --date-format="-- Date/Time --" -h x -w 72 -J -l17 -f $srcdir/tFFt-ll > 10wb.O 2> 10wb.E
+$xx --date-format="-- Date/Time --" -h x -w 72 -J -l24 -f $srcdir/tFFt-ll > 10wb.O 2> 10wb.E
 code=$?
 if test $code != 0; then
   $echo "Test 10wb failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10wb.O $srcdir/W72Jl17f-ll > /dev/null 2>&1
+  cmp 10wb.O $srcdir/W72Jl24f-ll > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10wb"; fi;;
-    1) $echo "Test 10wb failed: files 10wb.O and $srcdir/W72Jl17f-ll differ" 1>&2
-       (diff -c 10wb.O $srcdir/W72Jl17f-ll) 2> /dev/null
+    1) $echo "Test 10wb failed: files 10wb.O and $srcdir/W72Jl24f-ll differ" 1>&2
+       (diff -c 10wb.O $srcdir/W72Jl24f-ll) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10wb may have failed." 1>&2
-       $echo The command "cmp 10wb.O $srcdir/W72Jl17f-ll" failed. 1>&2
+       $echo The command "cmp 10wb.O $srcdir/W72Jl24f-ll" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10wb.E || rm -f 10wb.E
-$xx --date-format="-- Date/Time --" -h x -W 72 -l17 -f $srcdir/tFFt-ll > 10wc.O 2> 10wc.E
+$xx --date-format="-- Date/Time --" -h x -W 72 -l24 -f $srcdir/tFFt-ll > 10wc.O 2> 10wc.E
 code=$?
 if test $code != 0; then
   $echo "Test 10wc failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10wc.O $srcdir/W-72l17f-ll > /dev/null 2>&1
+  cmp 10wc.O $srcdir/W-72l24f-ll > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10wc"; fi;;
-    1) $echo "Test 10wc failed: files 10wc.O and $srcdir/W-72l17f-ll differ" 1>&2
-       (diff -c 10wc.O $srcdir/W-72l17f-ll) 2> /dev/null
+    1) $echo "Test 10wc failed: files 10wc.O and $srcdir/W-72l24f-ll differ" 1>&2
+       (diff -c 10wc.O $srcdir/W-72l24f-ll) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10wc may have failed." 1>&2
-       $echo The command "cmp 10wc.O $srcdir/W-72l17f-ll" failed. 1>&2
+       $echo The command "cmp 10wc.O $srcdir/W-72l24f-ll" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10wc.E || rm -f 10wc.E
-$xx --date-format="-- Date/Time --" -h x -w 72 -l17 -f $srcdir/tFFt-ll > 10wd.O 2> 10wd.E
+$xx --date-format="-- Date/Time --" -h x -w 72 -l24 -f $srcdir/tFFt-ll > 10wd.O 2> 10wd.E
 code=$?
 if test $code != 0; then
   $echo "Test 10wd failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10wd.O $srcdir/w72l17f-ll > /dev/null 2>&1
+  cmp 10wd.O $srcdir/w72l24f-ll > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10wd"; fi;;
-    1) $echo "Test 10wd failed: files 10wd.O and $srcdir/w72l17f-ll differ" 1>&2
-       (diff -c 10wd.O $srcdir/w72l17f-ll) 2> /dev/null
+    1) $echo "Test 10wd failed: files 10wd.O and $srcdir/w72l24f-ll differ" 1>&2
+       (diff -c 10wd.O $srcdir/w72l24f-ll) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10wd may have failed." 1>&2
-       $echo The command "cmp 10wd.O $srcdir/w72l17f-ll" failed. 1>&2
+       $echo The command "cmp 10wd.O $srcdir/w72l24f-ll" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10wd.E || rm -f 10wd.E
-$xx --date-format="-- Date/Time --" -h x -W 28 -l17 -f $srcdir/tFFt-ll > 10we.O 2> 10we.E
+$xx --date-format="-- Date/Time --" -h x -W 28 -l24 -f $srcdir/tFFt-ll > 10we.O 2> 10we.E
 code=$?
 if test $code != 0; then
   $echo "Test 10we failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10we.O $srcdir/W28l17f-ll > /dev/null 2>&1
+  cmp 10we.O $srcdir/W28l24f-ll > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10we"; fi;;
-    1) $echo "Test 10we failed: files 10we.O and $srcdir/W28l17f-ll differ" 1>&2
-       (diff -c 10we.O $srcdir/W28l17f-ll) 2> /dev/null
+    1) $echo "Test 10we failed: files 10we.O and $srcdir/W28l24f-ll differ" 1>&2
+       (diff -c 10we.O $srcdir/W28l24f-ll) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10we may have failed." 1>&2
-       $echo The command "cmp 10we.O $srcdir/W28l17f-ll" failed. 1>&2
+       $echo The command "cmp 10we.O $srcdir/W28l24f-ll" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10we.E || rm -f 10we.E
-$xx --date-format="-- Date/Time --" -h x -W 27 -l17 -f $srcdir/tFFt-ll > 10wf.O 2> 10wf.E
+$xx --date-format="-- Date/Time --" -h x -W 27 -l24 -f $srcdir/tFFt-ll > 10wf.O 2> 10wf.E
 code=$?
 if test $code != 0; then
   $echo "Test 10wf failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10wf.O $srcdir/W27l17f-ll > /dev/null 2>&1
+  cmp 10wf.O $srcdir/W27l24f-ll > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10wf"; fi;;
-    1) $echo "Test 10wf failed: files 10wf.O and $srcdir/W27l17f-ll differ" 1>&2
-       (diff -c 10wf.O $srcdir/W27l17f-ll) 2> /dev/null
+    1) $echo "Test 10wf failed: files 10wf.O and $srcdir/W27l24f-ll differ" 1>&2
+       (diff -c 10wf.O $srcdir/W27l24f-ll) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10wf may have failed." 1>&2
-       $echo The command "cmp 10wf.O $srcdir/W27l17f-ll" failed. 1>&2
+       $echo The command "cmp 10wf.O $srcdir/W27l24f-ll" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10wf.E || rm -f 10wf.E
-$xx --date-format="-- Date/Time --" -h x -W 26 -l17 -f $srcdir/tFFt-ll > 10wg.O 2> 10wg.E
+$xx --date-format="-- Date/Time --" -h x -W 26 -l24 -f $srcdir/tFFt-ll > 10wg.O 2> 10wg.E
 code=$?
 if test $code != 0; then
   $echo "Test 10wg failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10wg.O $srcdir/W26l17f-ll > /dev/null 2>&1
+  cmp 10wg.O $srcdir/W26l24f-ll > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10wg"; fi;;
-    1) $echo "Test 10wg failed: files 10wg.O and $srcdir/W26l17f-ll differ" 1>&2
-       (diff -c 10wg.O $srcdir/W26l17f-ll) 2> /dev/null
+    1) $echo "Test 10wg failed: files 10wg.O and $srcdir/W26l24f-ll differ" 1>&2
+       (diff -c 10wg.O $srcdir/W26l24f-ll) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10wg may have failed." 1>&2
-       $echo The command "cmp 10wg.O $srcdir/W26l17f-ll" failed. 1>&2
+       $echo The command "cmp 10wg.O $srcdir/W26l24f-ll" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10wg.E || rm -f 10wg.E
-$xx --date-format="-- Date/Time --" -h x -W 20 -l17 -f $srcdir/tFFt-ll > 10wh.O 2> 10wh.E
+$xx --date-format="-- Date/Time --" -h x -W 20 -l24 -f $srcdir/tFFt-ll > 10wh.O 2> 10wh.E
 code=$?
 if test $code != 0; then
   $echo "Test 10wh failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10wh.O $srcdir/W20l17f-ll > /dev/null 2>&1
+  cmp 10wh.O $srcdir/W20l24f-ll > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10wh"; fi;;
-    1) $echo "Test 10wh failed: files 10wh.O and $srcdir/W20l17f-ll differ" 1>&2
-       (diff -c 10wh.O $srcdir/W20l17f-ll) 2> /dev/null
+    1) $echo "Test 10wh failed: files 10wh.O and $srcdir/W20l24f-ll differ" 1>&2
+       (diff -c 10wh.O $srcdir/W20l24f-ll) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10wh may have failed." 1>&2
-       $echo The command "cmp 10wh.O $srcdir/W20l17f-ll" failed. 1>&2
+       $echo The command "cmp 10wh.O $srcdir/W20l24f-ll" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10wh.E || rm -f 10wh.E
-$xx --date-format="-- Date/Time --" -h x -m -l 17 -f $srcdir/tFFt-lm $srcdir/loli > 10ma.O 2> 10ma.E
+$xx --date-format="-- Date/Time --" -h x -m -l 24 -f $srcdir/tFFt-lm $srcdir/loli > 10ma.O 2> 10ma.E
 code=$?
 if test $code != 0; then
   $echo "Test 10ma failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10ma.O $srcdir/ml17f-lm-lo > /dev/null 2>&1
+  cmp 10ma.O $srcdir/ml24f-lm-lo > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10ma"; fi;;
-    1) $echo "Test 10ma failed: files 10ma.O and $srcdir/ml17f-lm-lo differ" 1>&2
-       (diff -c 10ma.O $srcdir/ml17f-lm-lo) 2> /dev/null
+    1) $echo "Test 10ma failed: files 10ma.O and $srcdir/ml24f-lm-lo differ" 1>&2
+       (diff -c 10ma.O $srcdir/ml24f-lm-lo) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10ma may have failed." 1>&2
-       $echo The command "cmp 10ma.O $srcdir/ml17f-lm-lo" failed. 1>&2
+       $echo The command "cmp 10ma.O $srcdir/ml24f-lm-lo" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10ma.E || rm -f 10ma.E
-$xx --date-format="-- Date/Time --" -h x -W 35 -m -l 17 -f $srcdir/tFFt-lm $srcdir/loli > 10mb.O 2> 10mb.E
+$xx --date-format="-- Date/Time --" -h x -W 35 -m -l 24 -f $srcdir/tFFt-lm $srcdir/loli > 10mb.O 2> 10mb.E
 code=$?
 if test $code != 0; then
   $echo "Test 10mb failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10mb.O $srcdir/W35ml17f-lm-lo > /dev/null 2>&1
+  cmp 10mb.O $srcdir/W35ml24f-lm-lo > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10mb"; fi;;
-    1) $echo "Test 10mb failed: files 10mb.O and $srcdir/W35ml17f-lm-lo differ" 1>&2
-       (diff -c 10mb.O $srcdir/W35ml17f-lm-lo) 2> /dev/null
+    1) $echo "Test 10mb failed: files 10mb.O and $srcdir/W35ml24f-lm-lo differ" 1>&2
+       (diff -c 10mb.O $srcdir/W35ml24f-lm-lo) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10mb may have failed." 1>&2
-       $echo The command "cmp 10mb.O $srcdir/W35ml17f-lm-lo" failed. 1>&2
+       $echo The command "cmp 10mb.O $srcdir/W35ml24f-lm-lo" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10mb.E || rm -f 10mb.E
-$xx --date-format="-- Date/Time --" -h x -w 35 -m -l 17 -f $srcdir/tFFt-lm $srcdir/loli > 10mc.O 2> 10mc.E
+$xx --date-format="-- Date/Time --" -h x -w 35 -m -l 24 -f $srcdir/tFFt-lm $srcdir/loli > 10mc.O 2> 10mc.E
 code=$?
 if test $code != 0; then
   $echo "Test 10mc failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10mc.O $srcdir/W35ml17f-lm-lo > /dev/null 2>&1
+  cmp 10mc.O $srcdir/W35ml24f-lm-lo > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10mc"; fi;;
-    1) $echo "Test 10mc failed: files 10mc.O and $srcdir/W35ml17f-lm-lo differ" 1>&2
-       (diff -c 10mc.O $srcdir/W35ml17f-lm-lo) 2> /dev/null
+    1) $echo "Test 10mc failed: files 10mc.O and $srcdir/W35ml24f-lm-lo differ" 1>&2
+       (diff -c 10mc.O $srcdir/W35ml24f-lm-lo) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10mc may have failed." 1>&2
-       $echo The command "cmp 10mc.O $srcdir/W35ml17f-lm-lo" failed. 1>&2
+       $echo The command "cmp 10mc.O $srcdir/W35ml24f-lm-lo" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10mc.E || rm -f 10mc.E
-$xx --date-format="-- Date/Time --" -h x -J -m -l 17 -f $srcdir/tFFt-lm $srcdir/loli > 10md.O 2> 10md.E
+$xx --date-format="-- Date/Time --" -h x -J -m -l 24 -f $srcdir/tFFt-lm $srcdir/loli > 10md.O 2> 10md.E
 code=$?
 if test $code != 0; then
   $echo "Test 10md failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10md.O $srcdir/Jml17f-lm-lo > /dev/null 2>&1
+  cmp 10md.O $srcdir/Jml24f-lm-lo > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10md"; fi;;
-    1) $echo "Test 10md failed: files 10md.O and $srcdir/Jml17f-lm-lo differ" 1>&2
-       (diff -c 10md.O $srcdir/Jml17f-lm-lo) 2> /dev/null
+    1) $echo "Test 10md failed: files 10md.O and $srcdir/Jml24f-lm-lo differ" 1>&2
+       (diff -c 10md.O $srcdir/Jml24f-lm-lo) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10md may have failed." 1>&2
-       $echo The command "cmp 10md.O $srcdir/Jml17f-lm-lo" failed. 1>&2
+       $echo The command "cmp 10md.O $srcdir/Jml24f-lm-lo" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10md.E || rm -f 10md.E
-$xx --date-format="-- Date/Time --" -h x -W 35 -J -m -l 17 -f $srcdir/tFFt-lm $srcdir/loli > 10me.O 2> 10me.E
+$xx --date-format="-- Date/Time --" -h x -W 35 -J -m -l 24 -f $srcdir/tFFt-lm $srcdir/loli > 10me.O 2> 10me.E
 code=$?
 if test $code != 0; then
   $echo "Test 10me failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10me.O $srcdir/W35Jml17f-lmlo > /dev/null 2>&1
+  cmp 10me.O $srcdir/W35Jml24f-lmlo > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10me"; fi;;
-    1) $echo "Test 10me failed: files 10me.O and $srcdir/W35Jml17f-lmlo differ" 1>&2
-       (diff -c 10me.O $srcdir/W35Jml17f-lmlo) 2> /dev/null
+    1) $echo "Test 10me failed: files 10me.O and $srcdir/W35Jml24f-lmlo differ" 1>&2
+       (diff -c 10me.O $srcdir/W35Jml24f-lmlo) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10me may have failed." 1>&2
-       $echo The command "cmp 10me.O $srcdir/W35Jml17f-lmlo" failed. 1>&2
+       $echo The command "cmp 10me.O $srcdir/W35Jml24f-lmlo" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10me.E || rm -f 10me.E
-$xx --date-format="-- Date/Time --" -h x -w 35 -J -m -l 17 -f $srcdir/tFFt-lm $srcdir/loli > 10mf.O 2> 10mf.E
+$xx --date-format="-- Date/Time --" -h x -w 35 -J -m -l 24 -f $srcdir/tFFt-lm $srcdir/loli > 10mf.O 2> 10mf.E
 code=$?
 if test $code != 0; then
   $echo "Test 10mf failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10mf.O $srcdir/W35Jml17f-lmlo > /dev/null 2>&1
+  cmp 10mf.O $srcdir/W35Jml24f-lmlo > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10mf"; fi;;
-    1) $echo "Test 10mf failed: files 10mf.O and $srcdir/W35Jml17f-lmlo differ" 1>&2
-       (diff -c 10mf.O $srcdir/W35Jml17f-lmlo) 2> /dev/null
+    1) $echo "Test 10mf failed: files 10mf.O and $srcdir/W35Jml24f-lmlo differ" 1>&2
+       (diff -c 10mf.O $srcdir/W35Jml24f-lmlo) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10mf may have failed." 1>&2
-       $echo The command "cmp 10mf.O $srcdir/W35Jml17f-lmlo" failed. 1>&2
+       $echo The command "cmp 10mf.O $srcdir/W35Jml24f-lmlo" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10mf.E || rm -f 10mf.E
-$xx --date-format="-- Date/Time --" -h x -n.3 -J -m -l 17 -f $srcdir/tFFt-lm $srcdir/tFFt-lm $srcdir/loli > 10mg.O 2> 10mg.E
+$xx --date-format="-- Date/Time --" -h x -n.3 -J -m -l 24 -f $srcdir/tFFt-lm $srcdir/tFFt-lm $srcdir/loli > 10mg.O 2> 10mg.E
 code=$?
 if test $code != 0; then
   $echo "Test 10mg failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10mg.O $srcdir/nJml17f-lmlmlo > /dev/null 2>&1
+  cmp 10mg.O $srcdir/nJml24f-lmlmlo > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10mg"; fi;;
-    1) $echo "Test 10mg failed: files 10mg.O and $srcdir/nJml17f-lmlmlo differ" 1>&2
-       (diff -c 10mg.O $srcdir/nJml17f-lmlmlo) 2> /dev/null
+    1) $echo "Test 10mg failed: files 10mg.O and $srcdir/nJml24f-lmlmlo differ" 1>&2
+       (diff -c 10mg.O $srcdir/nJml24f-lmlmlo) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10mg may have failed." 1>&2
-       $echo The command "cmp 10mg.O $srcdir/nJml17f-lmlmlo" failed. 1>&2
+       $echo The command "cmp 10mg.O $srcdir/nJml24f-lmlmlo" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10mg.E || rm -f 10mg.E
-$xx --date-format="-- Date/Time --" -h x -n.3 -J -m -l 17 -f $srcdir/tFFt-lm $srcdir/loli $srcdir/tFFt-lm > 10mh.O 2> 10mh.E
+$xx --date-format="-- Date/Time --" -h x -n.3 -J -m -l 24 -f $srcdir/tFFt-lm $srcdir/loli $srcdir/tFFt-lm > 10mh.O 2> 10mh.E
 code=$?
 if test $code != 0; then
   $echo "Test 10mh failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10mh.O $srcdir/nJml17f-lmlolm > /dev/null 2>&1
+  cmp 10mh.O $srcdir/nJml24f-lmlolm > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10mh"; fi;;
-    1) $echo "Test 10mh failed: files 10mh.O and $srcdir/nJml17f-lmlolm differ" 1>&2
-       (diff -c 10mh.O $srcdir/nJml17f-lmlolm) 2> /dev/null
+    1) $echo "Test 10mh failed: files 10mh.O and $srcdir/nJml24f-lmlolm differ" 1>&2
+       (diff -c 10mh.O $srcdir/nJml24f-lmlolm) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10mh may have failed." 1>&2
-       $echo The command "cmp 10mh.O $srcdir/nJml17f-lmlolm" failed. 1>&2
+       $echo The command "cmp 10mh.O $srcdir/nJml24f-lmlolm" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10mh.E || rm -f 10mh.E
-$xx --date-format="-- Date/Time --" -h x -a -3 -l 17 -f $srcdir/tFFt-lm > 10aa.O 2> 10aa.E
+$xx --date-format="-- Date/Time --" -h x -a -3 -l 24 -f $srcdir/tFFt-lm > 10aa.O 2> 10aa.E
 code=$?
 if test $code != 0; then
   $echo "Test 10aa failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10aa.O $srcdir/a3l17f-lm > /dev/null 2>&1
+  cmp 10aa.O $srcdir/a3l24f-lm > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10aa"; fi;;
-    1) $echo "Test 10aa failed: files 10aa.O and $srcdir/a3l17f-lm differ" 1>&2
-       (diff -c 10aa.O $srcdir/a3l17f-lm) 2> /dev/null
+    1) $echo "Test 10aa failed: files 10aa.O and $srcdir/a3l24f-lm differ" 1>&2
+       (diff -c 10aa.O $srcdir/a3l24f-lm) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10aa may have failed." 1>&2
-       $echo The command "cmp 10aa.O $srcdir/a3l17f-lm" failed. 1>&2
+       $echo The command "cmp 10aa.O $srcdir/a3l24f-lm" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10aa.E || rm -f 10aa.E
-$xx --date-format="-- Date/Time --" -h x -a --columns=3 -l 17 -f $srcdir/tFFt-lm > 10aa.C.O 2> 10aa.C.E
+$xx --date-format="-- Date/Time --" -h x -a --columns=3 -l 24 -f $srcdir/tFFt-lm > 10aa.C.O 2> 10aa.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 10aa.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10aa.C.O $srcdir/a3l17f-lm > /dev/null 2>&1
+  cmp 10aa.C.O $srcdir/a3l24f-lm > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10aa.C"; fi;;
-    1) $echo "Test 10aa.C failed: files 10aa.C.O and $srcdir/a3l17f-lm differ" 1>&2
-       (diff -c 10aa.C.O $srcdir/a3l17f-lm) 2> /dev/null
+    1) $echo "Test 10aa.C failed: files 10aa.C.O and $srcdir/a3l24f-lm differ" 1>&2
+       (diff -c 10aa.C.O $srcdir/a3l24f-lm) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10aa.C may have failed." 1>&2
-       $echo The command "cmp 10aa.C.O $srcdir/a3l17f-lm" failed. 1>&2
+       $echo The command "cmp 10aa.C.O $srcdir/a3l24f-lm" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10aa.C.E || rm -f 10aa.C.E
-$xx --date-format="-- Date/Time --" -h x -W 35 -a -3 -l 17 -f $srcdir/tFFt-lm > 10ab.O 2> 10ab.E
+$xx --date-format="-- Date/Time --" -h x -W 35 -a -3 -l 24 -f $srcdir/tFFt-lm > 10ab.O 2> 10ab.E
 code=$?
 if test $code != 0; then
   $echo "Test 10ab failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10ab.O $srcdir/W35a3l17f-lm > /dev/null 2>&1
+  cmp 10ab.O $srcdir/W35a3l24f-lm > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10ab"; fi;;
-    1) $echo "Test 10ab failed: files 10ab.O and $srcdir/W35a3l17f-lm differ" 1>&2
-       (diff -c 10ab.O $srcdir/W35a3l17f-lm) 2> /dev/null
+    1) $echo "Test 10ab failed: files 10ab.O and $srcdir/W35a3l24f-lm differ" 1>&2
+       (diff -c 10ab.O $srcdir/W35a3l24f-lm) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10ab may have failed." 1>&2
-       $echo The command "cmp 10ab.O $srcdir/W35a3l17f-lm" failed. 1>&2
+       $echo The command "cmp 10ab.O $srcdir/W35a3l24f-lm" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10ab.E || rm -f 10ab.E
-$xx --date-format="-- Date/Time --" -h x -W 35 -a --columns=3 -l 17 -f $srcdir/tFFt-lm > 10ab.C.O 2> 10ab.C.E
+$xx --date-format="-- Date/Time --" -h x -W 35 -a --columns=3 -l 24 -f $srcdir/tFFt-lm > 10ab.C.O 2> 10ab.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 10ab.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10ab.C.O $srcdir/W35a3l17f-lm > /dev/null 2>&1
+  cmp 10ab.C.O $srcdir/W35a3l24f-lm > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10ab.C"; fi;;
-    1) $echo "Test 10ab.C failed: files 10ab.C.O and $srcdir/W35a3l17f-lm differ" 1>&2
-       (diff -c 10ab.C.O $srcdir/W35a3l17f-lm) 2> /dev/null
+    1) $echo "Test 10ab.C failed: files 10ab.C.O and $srcdir/W35a3l24f-lm differ" 1>&2
+       (diff -c 10ab.C.O $srcdir/W35a3l24f-lm) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10ab.C may have failed." 1>&2
-       $echo The command "cmp 10ab.C.O $srcdir/W35a3l17f-lm" failed. 1>&2
+       $echo The command "cmp 10ab.C.O $srcdir/W35a3l24f-lm" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10ab.C.E || rm -f 10ab.C.E
-$xx --date-format="-- Date/Time --" -h x -J -a -3 -l 17 -f $srcdir/tFFt-lm > 10ac.O 2> 10ac.E
+$xx --date-format="-- Date/Time --" -h x -J -a -3 -l 24 -f $srcdir/tFFt-lm > 10ac.O 2> 10ac.E
 code=$?
 if test $code != 0; then
   $echo "Test 10ac failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10ac.O $srcdir/Ja3l17f-lm > /dev/null 2>&1
+  cmp 10ac.O $srcdir/Ja3l24f-lm > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10ac"; fi;;
-    1) $echo "Test 10ac failed: files 10ac.O and $srcdir/Ja3l17f-lm differ" 1>&2
-       (diff -c 10ac.O $srcdir/Ja3l17f-lm) 2> /dev/null
+    1) $echo "Test 10ac failed: files 10ac.O and $srcdir/Ja3l24f-lm differ" 1>&2
+       (diff -c 10ac.O $srcdir/Ja3l24f-lm) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10ac may have failed." 1>&2
-       $echo The command "cmp 10ac.O $srcdir/Ja3l17f-lm" failed. 1>&2
+       $echo The command "cmp 10ac.O $srcdir/Ja3l24f-lm" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10ac.E || rm -f 10ac.E
-$xx --date-format="-- Date/Time --" -h x -J -a --columns=3 -l 17 -f $srcdir/tFFt-lm > 10ac.C.O 2> 10ac.C.E
+$xx --date-format="-- Date/Time --" -h x -J -a --columns=3 -l 24 -f $srcdir/tFFt-lm > 10ac.C.O 2> 10ac.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 10ac.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10ac.C.O $srcdir/Ja3l17f-lm > /dev/null 2>&1
+  cmp 10ac.C.O $srcdir/Ja3l24f-lm > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10ac.C"; fi;;
-    1) $echo "Test 10ac.C failed: files 10ac.C.O and $srcdir/Ja3l17f-lm differ" 1>&2
-       (diff -c 10ac.C.O $srcdir/Ja3l17f-lm) 2> /dev/null
+    1) $echo "Test 10ac.C failed: files 10ac.C.O and $srcdir/Ja3l24f-lm differ" 1>&2
+       (diff -c 10ac.C.O $srcdir/Ja3l24f-lm) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10ac.C may have failed." 1>&2
-       $echo The command "cmp 10ac.C.O $srcdir/Ja3l17f-lm" failed. 1>&2
+       $echo The command "cmp 10ac.C.O $srcdir/Ja3l24f-lm" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10ac.C.E || rm -f 10ac.C.E
-$xx --date-format="-- Date/Time --" -h x -W 35 -J -a -3 -l 17 -f $srcdir/tFFt-lm > 10ad.O 2> 10ad.E
+$xx --date-format="-- Date/Time --" -h x -W 35 -J -a -3 -l 24 -f $srcdir/tFFt-lm > 10ad.O 2> 10ad.E
 code=$?
 if test $code != 0; then
   $echo "Test 10ad failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10ad.O $srcdir/W35Ja3l17f-lm > /dev/null 2>&1
+  cmp 10ad.O $srcdir/W35Ja3l24f-lm > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10ad"; fi;;
-    1) $echo "Test 10ad failed: files 10ad.O and $srcdir/W35Ja3l17f-lm differ" 1>&2
-       (diff -c 10ad.O $srcdir/W35Ja3l17f-lm) 2> /dev/null
+    1) $echo "Test 10ad failed: files 10ad.O and $srcdir/W35Ja3l24f-lm differ" 1>&2
+       (diff -c 10ad.O $srcdir/W35Ja3l24f-lm) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10ad may have failed." 1>&2
-       $echo The command "cmp 10ad.O $srcdir/W35Ja3l17f-lm" failed. 1>&2
+       $echo The command "cmp 10ad.O $srcdir/W35Ja3l24f-lm" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10ad.E || rm -f 10ad.E
-$xx --date-format="-- Date/Time --" -h x -W 35 -J -a --columns=3 -l 17 -f $srcdir/tFFt-lm > 10ad.C.O 2> 10ad.C.E
+$xx --date-format="-- Date/Time --" -h x -W 35 -J -a --columns=3 -l 24 -f $srcdir/tFFt-lm > 10ad.C.O 2> 10ad.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 10ad.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10ad.C.O $srcdir/W35Ja3l17f-lm > /dev/null 2>&1
+  cmp 10ad.C.O $srcdir/W35Ja3l24f-lm > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10ad.C"; fi;;
-    1) $echo "Test 10ad.C failed: files 10ad.C.O and $srcdir/W35Ja3l17f-lm differ" 1>&2
-       (diff -c 10ad.C.O $srcdir/W35Ja3l17f-lm) 2> /dev/null
+    1) $echo "Test 10ad.C failed: files 10ad.C.O and $srcdir/W35Ja3l24f-lm differ" 1>&2
+       (diff -c 10ad.C.O $srcdir/W35Ja3l24f-lm) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10ad.C may have failed." 1>&2
-       $echo The command "cmp 10ad.C.O $srcdir/W35Ja3l17f-lm" failed. 1>&2
+       $echo The command "cmp 10ad.C.O $srcdir/W35Ja3l24f-lm" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10ad.C.E || rm -f 10ad.C.E
-$xx --date-format="-- Date/Time --" -h x -b -3 -l 17 -f $srcdir/tFFt-lm > 10ba.O 2> 10ba.E
+$xx --date-format="-- Date/Time --" -h x -b -3 -l 24 -f $srcdir/tFFt-lm > 10ba.O 2> 10ba.E
 code=$?
 if test $code != 0; then
   $echo "Test 10ba failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10ba.O $srcdir/b3l17f-lm > /dev/null 2>&1
+  cmp 10ba.O $srcdir/b3l24f-lm > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10ba"; fi;;
-    1) $echo "Test 10ba failed: files 10ba.O and $srcdir/b3l17f-lm differ" 1>&2
-       (diff -c 10ba.O $srcdir/b3l17f-lm) 2> /dev/null
+    1) $echo "Test 10ba failed: files 10ba.O and $srcdir/b3l24f-lm differ" 1>&2
+       (diff -c 10ba.O $srcdir/b3l24f-lm) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10ba may have failed." 1>&2
-       $echo The command "cmp 10ba.O $srcdir/b3l17f-lm" failed. 1>&2
+       $echo The command "cmp 10ba.O $srcdir/b3l24f-lm" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10ba.E || rm -f 10ba.E
-$xx --date-format="-- Date/Time --" -h x -b --columns=3 -l 17 -f $srcdir/tFFt-lm > 10ba.C.O 2> 10ba.C.E
+$xx --date-format="-- Date/Time --" -h x -b --columns=3 -l 24 -f $srcdir/tFFt-lm > 10ba.C.O 2> 10ba.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 10ba.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10ba.C.O $srcdir/b3l17f-lm > /dev/null 2>&1
+  cmp 10ba.C.O $srcdir/b3l24f-lm > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10ba.C"; fi;;
-    1) $echo "Test 10ba.C failed: files 10ba.C.O and $srcdir/b3l17f-lm differ" 1>&2
-       (diff -c 10ba.C.O $srcdir/b3l17f-lm) 2> /dev/null
+    1) $echo "Test 10ba.C failed: files 10ba.C.O and $srcdir/b3l24f-lm differ" 1>&2
+       (diff -c 10ba.C.O $srcdir/b3l24f-lm) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10ba.C may have failed." 1>&2
-       $echo The command "cmp 10ba.C.O $srcdir/b3l17f-lm" failed. 1>&2
+       $echo The command "cmp 10ba.C.O $srcdir/b3l24f-lm" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10ba.C.E || rm -f 10ba.C.E
-$xx --date-format="-- Date/Time --" -h x -W 35 -b -3 -l 17 -f $srcdir/tFFt-lm > 10bb.O 2> 10bb.E
+$xx --date-format="-- Date/Time --" -h x -W 35 -b -3 -l 24 -f $srcdir/tFFt-lm > 10bb.O 2> 10bb.E
 code=$?
 if test $code != 0; then
   $echo "Test 10bb failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10bb.O $srcdir/W35b3l17f-lm > /dev/null 2>&1
+  cmp 10bb.O $srcdir/W35b3l24f-lm > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10bb"; fi;;
-    1) $echo "Test 10bb failed: files 10bb.O and $srcdir/W35b3l17f-lm differ" 1>&2
-       (diff -c 10bb.O $srcdir/W35b3l17f-lm) 2> /dev/null
+    1) $echo "Test 10bb failed: files 10bb.O and $srcdir/W35b3l24f-lm differ" 1>&2
+       (diff -c 10bb.O $srcdir/W35b3l24f-lm) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10bb may have failed." 1>&2
-       $echo The command "cmp 10bb.O $srcdir/W35b3l17f-lm" failed. 1>&2
+       $echo The command "cmp 10bb.O $srcdir/W35b3l24f-lm" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10bb.E || rm -f 10bb.E
-$xx --date-format="-- Date/Time --" -h x -W 35 -b --columns=3 -l 17 -f $srcdir/tFFt-lm > 10bb.C.O 2> 10bb.C.E
+$xx --date-format="-- Date/Time --" -h x -W 35 -b --columns=3 -l 24 -f $srcdir/tFFt-lm > 10bb.C.O 2> 10bb.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 10bb.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10bb.C.O $srcdir/W35b3l17f-lm > /dev/null 2>&1
+  cmp 10bb.C.O $srcdir/W35b3l24f-lm > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10bb.C"; fi;;
-    1) $echo "Test 10bb.C failed: files 10bb.C.O and $srcdir/W35b3l17f-lm differ" 1>&2
-       (diff -c 10bb.C.O $srcdir/W35b3l17f-lm) 2> /dev/null
+    1) $echo "Test 10bb.C failed: files 10bb.C.O and $srcdir/W35b3l24f-lm differ" 1>&2
+       (diff -c 10bb.C.O $srcdir/W35b3l24f-lm) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10bb.C may have failed." 1>&2
-       $echo The command "cmp 10bb.C.O $srcdir/W35b3l17f-lm" failed. 1>&2
+       $echo The command "cmp 10bb.C.O $srcdir/W35b3l24f-lm" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10bb.C.E || rm -f 10bb.C.E
-$xx --date-format="-- Date/Time --" -h x -J -b -3 -l 17 -f $srcdir/tFFt-lm > 10bc.O 2> 10bc.E
+$xx --date-format="-- Date/Time --" -h x -J -b -3 -l 24 -f $srcdir/tFFt-lm > 10bc.O 2> 10bc.E
 code=$?
 if test $code != 0; then
   $echo "Test 10bc failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10bc.O $srcdir/Jb3l17f-lm > /dev/null 2>&1
+  cmp 10bc.O $srcdir/Jb3l24f-lm > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10bc"; fi;;
-    1) $echo "Test 10bc failed: files 10bc.O and $srcdir/Jb3l17f-lm differ" 1>&2
-       (diff -c 10bc.O $srcdir/Jb3l17f-lm) 2> /dev/null
+    1) $echo "Test 10bc failed: files 10bc.O and $srcdir/Jb3l24f-lm differ" 1>&2
+       (diff -c 10bc.O $srcdir/Jb3l24f-lm) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10bc may have failed." 1>&2
-       $echo The command "cmp 10bc.O $srcdir/Jb3l17f-lm" failed. 1>&2
+       $echo The command "cmp 10bc.O $srcdir/Jb3l24f-lm" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10bc.E || rm -f 10bc.E
-$xx --date-format="-- Date/Time --" -h x -J -b --columns=3 -l 17 -f $srcdir/tFFt-lm > 10bc.C.O 2> 10bc.C.E
+$xx --date-format="-- Date/Time --" -h x -J -b --columns=3 -l 24 -f $srcdir/tFFt-lm > 10bc.C.O 2> 10bc.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 10bc.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10bc.C.O $srcdir/Jb3l17f-lm > /dev/null 2>&1
+  cmp 10bc.C.O $srcdir/Jb3l24f-lm > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10bc.C"; fi;;
-    1) $echo "Test 10bc.C failed: files 10bc.C.O and $srcdir/Jb3l17f-lm differ" 1>&2
-       (diff -c 10bc.C.O $srcdir/Jb3l17f-lm) 2> /dev/null
+    1) $echo "Test 10bc.C failed: files 10bc.C.O and $srcdir/Jb3l24f-lm differ" 1>&2
+       (diff -c 10bc.C.O $srcdir/Jb3l24f-lm) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10bc.C may have failed." 1>&2
-       $echo The command "cmp 10bc.C.O $srcdir/Jb3l17f-lm" failed. 1>&2
+       $echo The command "cmp 10bc.C.O $srcdir/Jb3l24f-lm" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10bc.C.E || rm -f 10bc.C.E
-$xx --date-format="-- Date/Time --" -h x -W 35 -J -b -3 -l 17 -f $srcdir/tFFt-lm > 10bd.O 2> 10bd.E
+$xx --date-format="-- Date/Time --" -h x -W 35 -J -b -3 -l 24 -f $srcdir/tFFt-lm > 10bd.O 2> 10bd.E
 code=$?
 if test $code != 0; then
   $echo "Test 10bd failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10bd.O $srcdir/W35Jb3l17f-lm > /dev/null 2>&1
+  cmp 10bd.O $srcdir/W35Jb3l24f-lm > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10bd"; fi;;
-    1) $echo "Test 10bd failed: files 10bd.O and $srcdir/W35Jb3l17f-lm differ" 1>&2
-       (diff -c 10bd.O $srcdir/W35Jb3l17f-lm) 2> /dev/null
+    1) $echo "Test 10bd failed: files 10bd.O and $srcdir/W35Jb3l24f-lm differ" 1>&2
+       (diff -c 10bd.O $srcdir/W35Jb3l24f-lm) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10bd may have failed." 1>&2
-       $echo The command "cmp 10bd.O $srcdir/W35Jb3l17f-lm" failed. 1>&2
+       $echo The command "cmp 10bd.O $srcdir/W35Jb3l24f-lm" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10bd.E || rm -f 10bd.E
-$xx --date-format="-- Date/Time --" -h x -W 35 -J -b --columns=3 -l 17 -f $srcdir/tFFt-lm > 10bd.C.O 2> 10bd.C.E
+$xx --date-format="-- Date/Time --" -h x -W 35 -J -b --columns=3 -l 24 -f $srcdir/tFFt-lm > 10bd.C.O 2> 10bd.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 10bd.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 10bd.C.O $srcdir/W35Jb3l17f-lm > /dev/null 2>&1
+  cmp 10bd.C.O $srcdir/W35Jb3l24f-lm > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 10bd.C"; fi;;
-    1) $echo "Test 10bd.C failed: files 10bd.C.O and $srcdir/W35Jb3l17f-lm differ" 1>&2
-       (diff -c 10bd.C.O $srcdir/W35Jb3l17f-lm) 2> /dev/null
+    1) $echo "Test 10bd.C failed: files 10bd.C.O and $srcdir/W35Jb3l24f-lm differ" 1>&2
+       (diff -c 10bd.C.O $srcdir/W35Jb3l24f-lm) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 10bd.C may have failed." 1>&2
-       $echo The command "cmp 10bd.C.O $srcdir/W35Jb3l17f-lm" failed. 1>&2
+       $echo The command "cmp 10bd.C.O $srcdir/W35Jb3l24f-lm" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 10bd.C.E || rm -f 10bd.C.E
-$xx --date-format="-- Date/Time --" -h x -n.3 -S:--: -m -l 13 -f $srcdir/tFFt-bl $srcdir/FnFn > 11sa.O 2> 11sa.E
+$xx --date-format="-- Date/Time --" -h x -n.3 -S:--: -m -l 20 -f $srcdir/tFFt-bl $srcdir/FnFn > 11sa.O 2> 11sa.E
 code=$?
 if test $code != 0; then
   $echo "Test 11sa failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 11sa.O $srcdir/nSml13-bl-FF > /dev/null 2>&1
+  cmp 11sa.O $srcdir/nSml20-bl-FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 11sa"; fi;;
-    1) $echo "Test 11sa failed: files 11sa.O and $srcdir/nSml13-bl-FF differ" 1>&2
-       (diff -c 11sa.O $srcdir/nSml13-bl-FF) 2> /dev/null
+    1) $echo "Test 11sa failed: files 11sa.O and $srcdir/nSml20-bl-FF differ" 1>&2
+       (diff -c 11sa.O $srcdir/nSml20-bl-FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 11sa may have failed." 1>&2
-       $echo The command "cmp 11sa.O $srcdir/nSml13-bl-FF" failed. 1>&2
+       $echo The command "cmp 11sa.O $srcdir/nSml20-bl-FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 11sa.E || rm -f 11sa.E
-$xx --date-format="-- Date/Time --" -h x -n.3 -S:--: -m -l 17 -f $srcdir/tFFt-bl $srcdir/FnFn > 11sb.O 2> 11sb.E
+$xx --date-format="-- Date/Time --" -h x -n.3 -S:--: -m -l 24 -f $srcdir/tFFt-bl $srcdir/FnFn > 11sb.O 2> 11sb.E
 code=$?
 if test $code != 0; then
   $echo "Test 11sb failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 11sb.O $srcdir/nSml17-bl-FF > /dev/null 2>&1
+  cmp 11sb.O $srcdir/nSml24-bl-FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 11sb"; fi;;
-    1) $echo "Test 11sb failed: files 11sb.O and $srcdir/nSml17-bl-FF differ" 1>&2
-       (diff -c 11sb.O $srcdir/nSml17-bl-FF) 2> /dev/null
+    1) $echo "Test 11sb failed: files 11sb.O and $srcdir/nSml24-bl-FF differ" 1>&2
+       (diff -c 11sb.O $srcdir/nSml24-bl-FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 11sb may have failed." 1>&2
-       $echo The command "cmp 11sb.O $srcdir/nSml17-bl-FF" failed. 1>&2
+       $echo The command "cmp 11sb.O $srcdir/nSml24-bl-FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 11sb.E || rm -f 11sb.E
-$xx --date-format="-- Date/Time --" -h x -n.3 -S:--: -m -l 13 -f $srcdir/tn $srcdir/tn $srcdir/FnFn > 11se.O 2> 11se.E
+$xx --date-format="-- Date/Time --" -h x -n.3 -S:--: -m -l 20 -f $srcdir/tn $srcdir/tn $srcdir/FnFn > 11se.O 2> 11se.E
 code=$?
 if test $code != 0; then
   $echo "Test 11se failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 11se.O $srcdir/nSml13-t-t-FF > /dev/null 2>&1
+  cmp 11se.O $srcdir/nSml20-t-t-FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 11se"; fi;;
-    1) $echo "Test 11se failed: files 11se.O and $srcdir/nSml13-t-t-FF differ" 1>&2
-       (diff -c 11se.O $srcdir/nSml13-t-t-FF) 2> /dev/null
+    1) $echo "Test 11se failed: files 11se.O and $srcdir/nSml20-t-t-FF differ" 1>&2
+       (diff -c 11se.O $srcdir/nSml20-t-t-FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 11se may have failed." 1>&2
-       $echo The command "cmp 11se.O $srcdir/nSml13-t-t-FF" failed. 1>&2
+       $echo The command "cmp 11se.O $srcdir/nSml20-t-t-FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 11se.E || rm -f 11se.E
-$xx --date-format="-- Date/Time --" -h x -n.3 -S:--: -m -l 17 -f $srcdir/tn $srcdir/tn $srcdir/FnFn > 11sf.O 2> 11sf.E
+$xx --date-format="-- Date/Time --" -h x -n.3 -S:--: -m -l 24 -f $srcdir/tn $srcdir/tn $srcdir/FnFn > 11sf.O 2> 11sf.E
 code=$?
 if test $code != 0; then
   $echo "Test 11sf failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 11sf.O $srcdir/nSml17-t-t-FF > /dev/null 2>&1
+  cmp 11sf.O $srcdir/nSml24-t-t-FF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 11sf"; fi;;
-    1) $echo "Test 11sf failed: files 11sf.O and $srcdir/nSml17-t-t-FF differ" 1>&2
-       (diff -c 11sf.O $srcdir/nSml17-t-t-FF) 2> /dev/null
+    1) $echo "Test 11sf failed: files 11sf.O and $srcdir/nSml24-t-t-FF differ" 1>&2
+       (diff -c 11sf.O $srcdir/nSml24-t-t-FF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 11sf may have failed." 1>&2
-       $echo The command "cmp 11sf.O $srcdir/nSml17-t-t-FF" failed. 1>&2
+       $echo The command "cmp 11sf.O $srcdir/nSml24-t-t-FF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 11sf.E || rm -f 11sf.E
-$xx --date-format="-- Date/Time --" -h x -n.3 -S:--: -m -l 13 -f $srcdir/tn $srcdir/tn $srcdir/FnFn $srcdir/FnFn > 11sg.O 2> 11sg.E
+$xx --date-format="-- Date/Time --" -h x -n.3 -S:--: -m -l 20 -f $srcdir/tn $srcdir/tn $srcdir/FnFn $srcdir/FnFn > 11sg.O 2> 11sg.E
 code=$?
 if test $code != 0; then
   $echo "Test 11sg failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 11sg.O $srcdir/nSml13-t-tFFFF > /dev/null 2>&1
+  cmp 11sg.O $srcdir/nSml20-t-tFFFF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 11sg"; fi;;
-    1) $echo "Test 11sg failed: files 11sg.O and $srcdir/nSml13-t-tFFFF differ" 1>&2
-       (diff -c 11sg.O $srcdir/nSml13-t-tFFFF) 2> /dev/null
+    1) $echo "Test 11sg failed: files 11sg.O and $srcdir/nSml20-t-tFFFF differ" 1>&2
+       (diff -c 11sg.O $srcdir/nSml20-t-tFFFF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 11sg may have failed." 1>&2
-       $echo The command "cmp 11sg.O $srcdir/nSml13-t-tFFFF" failed. 1>&2
+       $echo The command "cmp 11sg.O $srcdir/nSml20-t-tFFFF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 11sg.E || rm -f 11sg.E
-$xx --date-format="-- Date/Time --" -h x -n.3 -S:--: -m -l 17 -f $srcdir/tn $srcdir/tn $srcdir/FnFn $srcdir/FnFn > 11sh.O 2> 11sh.E
+$xx --date-format="-- Date/Time --" -h x -n.3 -S:--: -m -l 24 -f $srcdir/tn $srcdir/tn $srcdir/FnFn $srcdir/FnFn > 11sh.O 2> 11sh.E
 code=$?
 if test $code != 0; then
   $echo "Test 11sh failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 11sh.O $srcdir/nSml17-t-tFFFF > /dev/null 2>&1
+  cmp 11sh.O $srcdir/nSml24-t-tFFFF > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 11sh"; fi;;
-    1) $echo "Test 11sh failed: files 11sh.O and $srcdir/nSml17-t-tFFFF differ" 1>&2
-       (diff -c 11sh.O $srcdir/nSml17-t-tFFFF) 2> /dev/null
+    1) $echo "Test 11sh failed: files 11sh.O and $srcdir/nSml24-t-tFFFF differ" 1>&2
+       (diff -c 11sh.O $srcdir/nSml24-t-tFFFF) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 11sh may have failed." 1>&2
-       $echo The command "cmp 11sh.O $srcdir/nSml17-t-tFFFF" failed. 1>&2
+       $echo The command "cmp 11sh.O $srcdir/nSml24-t-tFFFF" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 11sh.E || rm -f 11sh.E
-$xx --date-format="-- Date/Time --" -h x -o3 -a -3 -l17 -f $srcdir/tn > 12aa.O 2> 12aa.E
+$xx --date-format="-- Date/Time --" -h x -o3 -a -3 -l24 -f $srcdir/tn > 12aa.O 2> 12aa.E
 code=$?
 if test $code != 0; then
   $echo "Test 12aa failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 12aa.O $srcdir/o3a3l17f-tn > /dev/null 2>&1
+  cmp 12aa.O $srcdir/o3a3l24f-tn > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 12aa"; fi;;
-    1) $echo "Test 12aa failed: files 12aa.O and $srcdir/o3a3l17f-tn differ" 1>&2
-       (diff -c 12aa.O $srcdir/o3a3l17f-tn) 2> /dev/null
+    1) $echo "Test 12aa failed: files 12aa.O and $srcdir/o3a3l24f-tn differ" 1>&2
+       (diff -c 12aa.O $srcdir/o3a3l24f-tn) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 12aa may have failed." 1>&2
-       $echo The command "cmp 12aa.O $srcdir/o3a3l17f-tn" failed. 1>&2
+       $echo The command "cmp 12aa.O $srcdir/o3a3l24f-tn" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 12aa.E || rm -f 12aa.E
-$xx --date-format="-- Date/Time --" -h x -o3 -a --columns=3 -l17 -f $srcdir/tn > 12aa.C.O 2> 12aa.C.E
+$xx --date-format="-- Date/Time --" -h x -o3 -a --columns=3 -l24 -f $srcdir/tn > 12aa.C.O 2> 12aa.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 12aa.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 12aa.C.O $srcdir/o3a3l17f-tn > /dev/null 2>&1
+  cmp 12aa.C.O $srcdir/o3a3l24f-tn > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 12aa.C"; fi;;
-    1) $echo "Test 12aa.C failed: files 12aa.C.O and $srcdir/o3a3l17f-tn differ" 1>&2
-       (diff -c 12aa.C.O $srcdir/o3a3l17f-tn) 2> /dev/null
+    1) $echo "Test 12aa.C failed: files 12aa.C.O and $srcdir/o3a3l24f-tn differ" 1>&2
+       (diff -c 12aa.C.O $srcdir/o3a3l24f-tn) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 12aa.C may have failed." 1>&2
-       $echo The command "cmp 12aa.C.O $srcdir/o3a3l17f-tn" failed. 1>&2
+       $echo The command "cmp 12aa.C.O $srcdir/o3a3l24f-tn" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 12aa.C.E || rm -f 12aa.C.E
-$xx --date-format="-- Date/Time --" -h x -o3 -a -3 -S:--: -l17 -f $srcdir/tn > 12ab.O 2> 12ab.E
+$xx --date-format="-- Date/Time --" -h x -o3 -a -3 -S:--: -l24 -f $srcdir/tn > 12ab.O 2> 12ab.E
 code=$?
 if test $code != 0; then
   $echo "Test 12ab failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 12ab.O $srcdir/o3a3Sl17f-tn > /dev/null 2>&1
+  cmp 12ab.O $srcdir/o3a3Sl24f-tn > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 12ab"; fi;;
-    1) $echo "Test 12ab failed: files 12ab.O and $srcdir/o3a3Sl17f-tn differ" 1>&2
-       (diff -c 12ab.O $srcdir/o3a3Sl17f-tn) 2> /dev/null
+    1) $echo "Test 12ab failed: files 12ab.O and $srcdir/o3a3Sl24f-tn differ" 1>&2
+       (diff -c 12ab.O $srcdir/o3a3Sl24f-tn) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 12ab may have failed." 1>&2
-       $echo The command "cmp 12ab.O $srcdir/o3a3Sl17f-tn" failed. 1>&2
+       $echo The command "cmp 12ab.O $srcdir/o3a3Sl24f-tn" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 12ab.E || rm -f 12ab.E
-$xx --date-format="-- Date/Time --" -h x -o3 -a --columns=3 -S:--: -l17 -f $srcdir/tn > 12ab.C.O 2> 12ab.C.E
+$xx --date-format="-- Date/Time --" -h x -o3 -a --columns=3 -S:--: -l24 -f $srcdir/tn > 12ab.C.O 2> 12ab.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 12ab.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 12ab.C.O $srcdir/o3a3Sl17f-tn > /dev/null 2>&1
+  cmp 12ab.C.O $srcdir/o3a3Sl24f-tn > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 12ab.C"; fi;;
-    1) $echo "Test 12ab.C failed: files 12ab.C.O and $srcdir/o3a3Sl17f-tn differ" 1>&2
-       (diff -c 12ab.C.O $srcdir/o3a3Sl17f-tn) 2> /dev/null
+    1) $echo "Test 12ab.C failed: files 12ab.C.O and $srcdir/o3a3Sl24f-tn differ" 1>&2
+       (diff -c 12ab.C.O $srcdir/o3a3Sl24f-tn) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 12ab.C may have failed." 1>&2
-       $echo The command "cmp 12ab.C.O $srcdir/o3a3Sl17f-tn" failed. 1>&2
+       $echo The command "cmp 12ab.C.O $srcdir/o3a3Sl24f-tn" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 12ab.C.E || rm -f 12ab.C.E
-$xx --date-format="-- Date/Time --" -h x -o3 -a -3 -S:--: -n. -l17 -f $srcdir/tn > 12ac.O 2> 12ac.E
+$xx --date-format="-- Date/Time --" -h x -o3 -a -3 -S:--: -n. -l24 -f $srcdir/tn > 12ac.O 2> 12ac.E
 code=$?
 if test $code != 0; then
   $echo "Test 12ac failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 12ac.O $srcdir/o3a3Snl17f-tn > /dev/null 2>&1
+  cmp 12ac.O $srcdir/o3a3Snl24f-tn > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 12ac"; fi;;
-    1) $echo "Test 12ac failed: files 12ac.O and $srcdir/o3a3Snl17f-tn differ" 1>&2
-       (diff -c 12ac.O $srcdir/o3a3Snl17f-tn) 2> /dev/null
+    1) $echo "Test 12ac failed: files 12ac.O and $srcdir/o3a3Snl24f-tn differ" 1>&2
+       (diff -c 12ac.O $srcdir/o3a3Snl24f-tn) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 12ac may have failed." 1>&2
-       $echo The command "cmp 12ac.O $srcdir/o3a3Snl17f-tn" failed. 1>&2
+       $echo The command "cmp 12ac.O $srcdir/o3a3Snl24f-tn" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 12ac.E || rm -f 12ac.E
-$xx --date-format="-- Date/Time --" -h x -o3 -a --columns=3 -S:--: -n. -l17 -f $srcdir/tn > 12ac.C.O 2> 12ac.C.E
+$xx --date-format="-- Date/Time --" -h x -o3 -a --columns=3 -S:--: -n. -l24 -f $srcdir/tn > 12ac.C.O 2> 12ac.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 12ac.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 12ac.C.O $srcdir/o3a3Snl17f-tn > /dev/null 2>&1
+  cmp 12ac.C.O $srcdir/o3a3Snl24f-tn > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 12ac.C"; fi;;
-    1) $echo "Test 12ac.C failed: files 12ac.C.O and $srcdir/o3a3Snl17f-tn differ" 1>&2
-       (diff -c 12ac.C.O $srcdir/o3a3Snl17f-tn) 2> /dev/null
+    1) $echo "Test 12ac.C failed: files 12ac.C.O and $srcdir/o3a3Snl24f-tn differ" 1>&2
+       (diff -c 12ac.C.O $srcdir/o3a3Snl24f-tn) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 12ac.C may have failed." 1>&2
-       $echo The command "cmp 12ac.C.O $srcdir/o3a3Snl17f-tn" failed. 1>&2
+       $echo The command "cmp 12ac.C.O $srcdir/o3a3Snl24f-tn" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 12ac.C.E || rm -f 12ac.C.E
-$xx --date-format="-- Date/Time --" -h x -o3 -b -3 -l17 -f $srcdir/tn > 12ba.O 2> 12ba.E
+$xx --date-format="-- Date/Time --" -h x -o3 -b -3 -l24 -f $srcdir/tn > 12ba.O 2> 12ba.E
 code=$?
 if test $code != 0; then
   $echo "Test 12ba failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 12ba.O $srcdir/o3b3l17f-tn > /dev/null 2>&1
+  cmp 12ba.O $srcdir/o3b3l24f-tn > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 12ba"; fi;;
-    1) $echo "Test 12ba failed: files 12ba.O and $srcdir/o3b3l17f-tn differ" 1>&2
-       (diff -c 12ba.O $srcdir/o3b3l17f-tn) 2> /dev/null
+    1) $echo "Test 12ba failed: files 12ba.O and $srcdir/o3b3l24f-tn differ" 1>&2
+       (diff -c 12ba.O $srcdir/o3b3l24f-tn) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 12ba may have failed." 1>&2
-       $echo The command "cmp 12ba.O $srcdir/o3b3l17f-tn" failed. 1>&2
+       $echo The command "cmp 12ba.O $srcdir/o3b3l24f-tn" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 12ba.E || rm -f 12ba.E
-$xx --date-format="-- Date/Time --" -h x -o3 -b --columns=3 -l17 -f $srcdir/tn > 12ba.C.O 2> 12ba.C.E
+$xx --date-format="-- Date/Time --" -h x -o3 -b --columns=3 -l24 -f $srcdir/tn > 12ba.C.O 2> 12ba.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 12ba.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 12ba.C.O $srcdir/o3b3l17f-tn > /dev/null 2>&1
+  cmp 12ba.C.O $srcdir/o3b3l24f-tn > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 12ba.C"; fi;;
-    1) $echo "Test 12ba.C failed: files 12ba.C.O and $srcdir/o3b3l17f-tn differ" 1>&2
-       (diff -c 12ba.C.O $srcdir/o3b3l17f-tn) 2> /dev/null
+    1) $echo "Test 12ba.C failed: files 12ba.C.O and $srcdir/o3b3l24f-tn differ" 1>&2
+       (diff -c 12ba.C.O $srcdir/o3b3l24f-tn) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 12ba.C may have failed." 1>&2
-       $echo The command "cmp 12ba.C.O $srcdir/o3b3l17f-tn" failed. 1>&2
+       $echo The command "cmp 12ba.C.O $srcdir/o3b3l24f-tn" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 12ba.C.E || rm -f 12ba.C.E
-$xx --date-format="-- Date/Time --" -h x -o3 -b -3 -S:--: -l17 -f $srcdir/tn > 12bb.O 2> 12bb.E
+$xx --date-format="-- Date/Time --" -h x -o3 -b -3 -S:--: -l24 -f $srcdir/tn > 12bb.O 2> 12bb.E
 code=$?
 if test $code != 0; then
   $echo "Test 12bb failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 12bb.O $srcdir/o3b3Sl17f-tn > /dev/null 2>&1
+  cmp 12bb.O $srcdir/o3b3Sl24f-tn > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 12bb"; fi;;
-    1) $echo "Test 12bb failed: files 12bb.O and $srcdir/o3b3Sl17f-tn differ" 1>&2
-       (diff -c 12bb.O $srcdir/o3b3Sl17f-tn) 2> /dev/null
+    1) $echo "Test 12bb failed: files 12bb.O and $srcdir/o3b3Sl24f-tn differ" 1>&2
+       (diff -c 12bb.O $srcdir/o3b3Sl24f-tn) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 12bb may have failed." 1>&2
-       $echo The command "cmp 12bb.O $srcdir/o3b3Sl17f-tn" failed. 1>&2
+       $echo The command "cmp 12bb.O $srcdir/o3b3Sl24f-tn" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 12bb.E || rm -f 12bb.E
-$xx --date-format="-- Date/Time --" -h x -o3 -b --columns=3 -S:--: -l17 -f $srcdir/tn > 12bb.C.O 2> 12bb.C.E
+$xx --date-format="-- Date/Time --" -h x -o3 -b --columns=3 -S:--: -l24 -f $srcdir/tn > 12bb.C.O 2> 12bb.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 12bb.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 12bb.C.O $srcdir/o3b3Sl17f-tn > /dev/null 2>&1
+  cmp 12bb.C.O $srcdir/o3b3Sl24f-tn > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 12bb.C"; fi;;
-    1) $echo "Test 12bb.C failed: files 12bb.C.O and $srcdir/o3b3Sl17f-tn differ" 1>&2
-       (diff -c 12bb.C.O $srcdir/o3b3Sl17f-tn) 2> /dev/null
+    1) $echo "Test 12bb.C failed: files 12bb.C.O and $srcdir/o3b3Sl24f-tn differ" 1>&2
+       (diff -c 12bb.C.O $srcdir/o3b3Sl24f-tn) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 12bb.C may have failed." 1>&2
-       $echo The command "cmp 12bb.C.O $srcdir/o3b3Sl17f-tn" failed. 1>&2
+       $echo The command "cmp 12bb.C.O $srcdir/o3b3Sl24f-tn" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 12bb.C.E || rm -f 12bb.C.E
-$xx --date-format="-- Date/Time --" -h x -o3 -b -3 -S:--: -n. -l17 -f $srcdir/tn > 12bc.O 2> 12bc.E
+$xx --date-format="-- Date/Time --" -h x -o3 -b -3 -S:--: -n. -l24 -f $srcdir/tn > 12bc.O 2> 12bc.E
 code=$?
 if test $code != 0; then
   $echo "Test 12bc failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 12bc.O $srcdir/o3b3Snl17f-tn > /dev/null 2>&1
+  cmp 12bc.O $srcdir/o3b3Snl24f-tn > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 12bc"; fi;;
-    1) $echo "Test 12bc failed: files 12bc.O and $srcdir/o3b3Snl17f-tn differ" 1>&2
-       (diff -c 12bc.O $srcdir/o3b3Snl17f-tn) 2> /dev/null
+    1) $echo "Test 12bc failed: files 12bc.O and $srcdir/o3b3Snl24f-tn differ" 1>&2
+       (diff -c 12bc.O $srcdir/o3b3Snl24f-tn) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 12bc may have failed." 1>&2
-       $echo The command "cmp 12bc.O $srcdir/o3b3Snl17f-tn" failed. 1>&2
+       $echo The command "cmp 12bc.O $srcdir/o3b3Snl24f-tn" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 12bc.E || rm -f 12bc.E
-$xx --date-format="-- Date/Time --" -h x -o3 -b --columns=3 -S:--: -n. -l17 -f $srcdir/tn > 12bc.C.O 2> 12bc.C.E
+$xx --date-format="-- Date/Time --" -h x -o3 -b --columns=3 -S:--: -n. -l24 -f $srcdir/tn > 12bc.C.O 2> 12bc.C.E
 code=$?
 if test $code != 0; then
   $echo "Test 12bc.C failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 12bc.C.O $srcdir/o3b3Snl17f-tn > /dev/null 2>&1
+  cmp 12bc.C.O $srcdir/o3b3Snl24f-tn > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 12bc.C"; fi;;
-    1) $echo "Test 12bc.C failed: files 12bc.C.O and $srcdir/o3b3Snl17f-tn differ" 1>&2
-       (diff -c 12bc.C.O $srcdir/o3b3Snl17f-tn) 2> /dev/null
+    1) $echo "Test 12bc.C failed: files 12bc.C.O and $srcdir/o3b3Snl24f-tn differ" 1>&2
+       (diff -c 12bc.C.O $srcdir/o3b3Snl24f-tn) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 12bc.C may have failed." 1>&2
-       $echo The command "cmp 12bc.C.O $srcdir/o3b3Snl17f-tn" failed. 1>&2
+       $echo The command "cmp 12bc.C.O $srcdir/o3b3Snl24f-tn" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 12bc.C.E || rm -f 12bc.C.E
-$xx --date-format="-- Date/Time --" -h x -o3 -m -l17 -f $srcdir/tFFt-bl $srcdir/tn > 12ma.O 2> 12ma.E
+$xx --date-format="-- Date/Time --" -h x -o3 -m -l24 -f $srcdir/tFFt-bl $srcdir/tn > 12ma.O 2> 12ma.E
 code=$?
 if test $code != 0; then
   $echo "Test 12ma failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 12ma.O $srcdir/o3ml17f-bl-tn > /dev/null 2>&1
+  cmp 12ma.O $srcdir/o3ml24f-bl-tn > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 12ma"; fi;;
-    1) $echo "Test 12ma failed: files 12ma.O and $srcdir/o3ml17f-bl-tn differ" 1>&2
-       (diff -c 12ma.O $srcdir/o3ml17f-bl-tn) 2> /dev/null
+    1) $echo "Test 12ma failed: files 12ma.O and $srcdir/o3ml24f-bl-tn differ" 1>&2
+       (diff -c 12ma.O $srcdir/o3ml24f-bl-tn) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 12ma may have failed." 1>&2
-       $echo The command "cmp 12ma.O $srcdir/o3ml17f-bl-tn" failed. 1>&2
+       $echo The command "cmp 12ma.O $srcdir/o3ml24f-bl-tn" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 12ma.E || rm -f 12ma.E
-$xx --date-format="-- Date/Time --" -h x -o3 -m -S:--: -l17 -f $srcdir/tFFt-bl $srcdir/tn > 12mb.O 2> 12mb.E
+$xx --date-format="-- Date/Time --" -h x -o3 -m -S:--: -l24 -f $srcdir/tFFt-bl $srcdir/tn > 12mb.O 2> 12mb.E
 code=$?
 if test $code != 0; then
   $echo "Test 12mb failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 12mb.O $srcdir/o3mSl17f-bl-tn > /dev/null 2>&1
+  cmp 12mb.O $srcdir/o3mSl24f-bl-tn > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 12mb"; fi;;
-    1) $echo "Test 12mb failed: files 12mb.O and $srcdir/o3mSl17f-bl-tn differ" 1>&2
-       (diff -c 12mb.O $srcdir/o3mSl17f-bl-tn) 2> /dev/null
+    1) $echo "Test 12mb failed: files 12mb.O and $srcdir/o3mSl24f-bl-tn differ" 1>&2
+       (diff -c 12mb.O $srcdir/o3mSl24f-bl-tn) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 12mb may have failed." 1>&2
-       $echo The command "cmp 12mb.O $srcdir/o3mSl17f-bl-tn" failed. 1>&2
+       $echo The command "cmp 12mb.O $srcdir/o3mSl24f-bl-tn" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 12mb.E || rm -f 12mb.E
-$xx --date-format="-- Date/Time --" -h x -o3 -m -S:--: -n. -l17 -f $srcdir/tFFt-bl $srcdir/tn > 12mc.O 2> 12mc.E
+$xx --date-format="-- Date/Time --" -h x -o3 -m -S:--: -n. -l24 -f $srcdir/tFFt-bl $srcdir/tn > 12mc.O 2> 12mc.E
 code=$?
 if test $code != 0; then
   $echo "Test 12mc failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 12mc.O $srcdir/o3mSnl17fbltn > /dev/null 2>&1
+  cmp 12mc.O $srcdir/o3mSnl24fbltn > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 12mc"; fi;;
-    1) $echo "Test 12mc failed: files 12mc.O and $srcdir/o3mSnl17fbltn differ" 1>&2
-       (diff -c 12mc.O $srcdir/o3mSnl17fbltn) 2> /dev/null
+    1) $echo "Test 12mc failed: files 12mc.O and $srcdir/o3mSnl24fbltn differ" 1>&2
+       (diff -c 12mc.O $srcdir/o3mSnl24fbltn) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 12mc may have failed." 1>&2
-       $echo The command "cmp 12mc.O $srcdir/o3mSnl17fbltn" failed. 1>&2
+       $echo The command "cmp 12mc.O $srcdir/o3mSnl24fbltn" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s 12mc.E || rm -f 12mc.E
-$xx --date-format="-- Date/Time --" -h x -o3 -J -m -l17 -f $srcdir/tFFt-lm $srcdir/loli > 12md.O 2> 12md.E
+$xx --date-format="-- Date/Time --" -h x -o3 -J -m -l24 -f $srcdir/tFFt-lm $srcdir/loli > 12md.O 2> 12md.E
 code=$?
 if test $code != 0; then
   $echo "Test 12md failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp 12md.O $srcdir/o3Jml17f-lm-lo > /dev/null 2>&1
+  cmp 12md.O $srcdir/o3Jml24f-lm-lo > /dev/null 2>&1
   case $? in
     0) if test "$VERBOSE"; then $echo "passed 12md"; fi;;
-    1) $echo "Test 12md failed: files 12md.O and $srcdir/o3Jml17f-lm-lo differ" 1>&2
-       (diff -c 12md.O $srcdir/o3Jml17f-lm-lo) 2> /dev/null
+    1) $echo "Test 12md failed: files 12md.O and $srcdir/o3Jml24f-lm-lo differ" 1>&2
+       (diff -c 12md.O $srcdir/o3Jml24f-lm-lo) 2> /dev/null
        errors=`expr $errors + 1`;;
     2) $echo "Test 12md may have failed." 1>&2
-       $echo The command "cmp 12md.O $srcdir/o3Jml17f-lm-lo" failed. 1>&2
+       $echo The command "cmp 12md.O $srcdir/o3Jml24f-lm-lo" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi

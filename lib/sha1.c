@@ -1,3 +1,5 @@
+/* -*- buffer-read-only: t -*- vi: set ro: */
+/* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 /* sha1.c - Functions to compute SHA1 message digest of files or
    memory blocks according to the NIST specification FIPS-180-1.
 
@@ -6,7 +8,7 @@
 
    This program is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
-   Free Software Foundation; either version 2, or (at your option) any
+   Free Software Foundation; either version 3, or (at your option) any
    later version.
 
    This program is distributed in the hope that it will be useful,

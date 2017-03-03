@@ -1,10 +1,10 @@
 /* id -- print real and effective UIDs and GIDs
-   Copyright (C) 1989-2005 Free Software Foundation, Inc.
+   Copyright (C) 1989-2007 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -12,8 +12,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* Written by Arnold Robbins.
    Major rewrite by David MacKenzie, djm@gnu.ai.mit.edu. */
@@ -25,9 +24,12 @@
 #include <pwd.h>
 #include <grp.h>
 #include <getopt.h>
+#include <selinux/selinux.h>
 
 #include "system.h"
 #include "error.h"
+#include "getugroups.h"
+#include "mgetgroups.h"
 #include "quote.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
@@ -35,7 +37,8 @@
 
 #define AUTHORS "Arnold Robbins", "David MacKenzie"
 
-int getugroups ();
+/* If nonzero, output only the SELinux context. -Z */
+static int just_context = 0;
 
 static void print_user (uid_t uid);
 static void print_group (gid_t gid);
@@ -55,8 +58,13 @@ static gid_t rgid, egid;
 /* True unless errors have been encountered.  */
 static bool ok = true;
 
+/* The SELinux context.  Start with a known invalid value so print_full_info
+   knows when `context' has not been set to a meaningful value.  */
+static security_context_t context = NULL;
+
 static struct option const longopts[] =
 {
+  {"context", no_argument, NULL, 'Z'},
   {"group", no_argument, NULL, 'g'},
   {"groups", no_argument, NULL, 'G'},
   {"name", no_argument, NULL, 'n'},
@@ -80,6 +88,7 @@ usage (int status)
 Print information for USERNAME, or the current user.\n\
 \n\
   -a              ignore, for compatibility with other versions\n\
+  -Z, --context   print only the security context of the current user\n\
   -g, --group     print only the effective group ID\n\
   -G, --groups    print all group IDs\n\
   -n, --name      print a name instead of a number, for -ugG\n\
@@ -92,7 +101,7 @@ Print information for USERNAME, or the current user.\n\
 \n\
 Without any OPTION, print some useful set of identified information.\n\
 "), stdout);
-      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+      emit_bug_reporting_address ();
     }
   exit (status);
 }
@@ -101,6 +110,7 @@ int
 main (int argc, char **argv)
 {
   int optc;
+  int selinux_enabled = (is_selinux_enabled () > 0);
 
   /* If true, output the list of all group IDs. -G */
   bool just_group_list = false;
@@ -119,13 +129,22 @@ main (int argc, char **argv)
 
   atexit (close_stdout);
 
-  while ((optc = getopt_long (argc, argv, "agnruG", longopts, NULL)) != -1)
+  while ((optc = getopt_long (argc, argv, "agnruGZ", longopts, NULL)) != -1)
     {
       switch (optc)
 	{
 	case 'a':
 	  /* Ignore -a, for compatibility with SVR4.  */
 	  break;
+
+        case 'Z':
+	  /* politely decline if we're not on a selinux-enabled kernel. */
+	  if (!selinux_enabled)
+	    error (EXIT_FAILURE, 0,
+		   _("--context (-Z) works only on an SELinux-enabled kernel"));
+          just_context = 1;
+          break;
+
 	case 'g':
 	  just_group = true;
 	  break;
@@ -148,18 +167,37 @@ main (int argc, char **argv)
 	}
     }
 
-  if (just_user + just_group + just_group_list > 1)
-    error (EXIT_FAILURE, 0, _("cannot print only user and only group"));
-
-  if (just_user + just_group + just_group_list == 0 && (use_real | use_name))
-    error (EXIT_FAILURE, 0,
-	   _("cannot print only names or real IDs in default format"));
-
-  if (argc - optind > 1)
+  if (1 < argc - optind)
     {
       error (0, 0, _("extra operand %s"), quote (argv[optind + 1]));
       usage (EXIT_FAILURE);
     }
+
+  if (argc - optind == 1 && just_context)
+    error (EXIT_FAILURE, 0,
+	   _("cannot print security context when user specified"));
+
+  if (just_context && !selinux_enabled)
+    error (EXIT_FAILURE, 0, _("\
+cannot display context when selinux not enabled or when displaying the id\n\
+of a different user"));
+
+  /* If we are on a selinux-enabled kernel, get our context.
+     Otherwise, leave the context variable alone - it has
+     been initialized known invalid value; if we see this invalid
+     value later, we will know we are on a non-selinux kernel.  */
+  if (selinux_enabled)
+    {
+      if (getcon (&context) && just_context)
+        error (EXIT_FAILURE, 0, _("can't get process context"));
+    }
+
+  if (just_user + just_group + just_group_list + just_context > 1)
+    error (EXIT_FAILURE, 0, _("cannot print \"only\" of more than one choice"));
+
+  if (just_user + just_group + just_group_list == 0 && (use_real | use_name))
+    error (EXIT_FAILURE, 0,
+	   _("cannot print only names or real IDs in default format"));
 
   if (argc - optind == 1)
     {
@@ -183,6 +221,8 @@ main (int argc, char **argv)
     print_group (use_real ? rgid : egid);
   else if (just_group_list)
     print_group_list (argv[optind]);
+  else if (just_context)
+    fputs (context, stdout);
   else
     print_full_info (argv[optind]);
   putchar ('\n');
@@ -238,50 +278,6 @@ print_group (gid_t gid)
     printf ("%s", grp->gr_name);
 }
 
-#if HAVE_GETGROUPS
-
-/* FIXME: document */
-
-static bool
-xgetgroups (const char *username, gid_t gid, int *n_groups,
-	    GETGROUPS_T **groups)
-{
-  int max_n_groups;
-  int ng;
-  GETGROUPS_T *g = NULL;
-
-  if (!username)
-    max_n_groups = getgroups (0, NULL);
-  else
-    max_n_groups = getugroups (0, NULL, username, gid);
-
-  if (max_n_groups < 0)
-    ng = -1;
-  else
-    {
-      g = xnmalloc (max_n_groups, sizeof *g);
-      if (!username)
-	ng = getgroups (max_n_groups, g);
-      else
-	ng = getugroups (max_n_groups, g, username, gid);
-    }
-
-  if (ng < 0)
-    {
-      error (0, errno, _("cannot get supplemental group list"));
-      free (g);
-      return false;
-    }
-  else
-    {
-      *n_groups = ng;
-      *groups = g;
-      return true;
-    }
-}
-
-#endif /* HAVE_GETGROUPS */
-
 /* Print all of the distinct groups the user is in. */
 
 static void
@@ -302,13 +298,15 @@ print_group_list (const char *username)
 
 #if HAVE_GETGROUPS
   {
-    int n_groups;
     GETGROUPS_T *groups;
-    int i;
+    size_t i;
 
-    if (! xgetgroups (username, (pwd ? pwd->pw_gid : (gid_t) -1),
-		      &n_groups, &groups))
+    int n_groups = mgetgroups (username, (pwd ? pwd->pw_gid : (gid_t) -1),
+			       &groups);
+    if (n_groups < 0)
       {
+	error (0, errno, _("failed to get groups for user %s"),
+	       quote (username));
 	ok = false;
 	return;
       }
@@ -360,13 +358,15 @@ print_full_info (const char *username)
 
 #if HAVE_GETGROUPS
   {
-    int n_groups;
     GETGROUPS_T *groups;
-    int i;
+    size_t i;
 
-    if (! xgetgroups (username, (pwd ? pwd->pw_gid : (gid_t) -1),
-		      &n_groups, &groups))
+    int n_groups = mgetgroups (username, (pwd ? pwd->pw_gid : (gid_t) -1),
+			       &groups);
+    if (n_groups < 0)
       {
+	error (0, errno, _("failed to get groups for user %s"),
+	       quote (username));
 	ok = false;
 	return;
       }
@@ -385,4 +385,6 @@ print_full_info (const char *username)
     free (groups);
   }
 #endif /* HAVE_GETGROUPS */
+  if (context != NULL)
+    printf (" context=%s", context);
 }

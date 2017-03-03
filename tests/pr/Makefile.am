@@ -3,9 +3,9 @@
 # Copyright (C) 1997, 1998, 2000, 2003, 2004, 2006 Free Software
 # Foundation, Inc.
 
-# This program is free software; you can redistribute it and/or modify
+# This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
+# the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 
 # This program is distributed in the hope that it will be useful,
@@ -14,34 +14,32 @@
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-# 02110-1301, USA.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ##test-files-begin
 x = pr
 explicit = 0F 0FF 0FFnt 0FFt 0FnFnt 0FnFt 0Fnt 0Ft 2-S_f-t_notab 2-Sf-t_notab \
 2f-t_notab 2s_f-t_notab 2s_w60f-t_nota 2sf-t_notab 2sw60f-t_notab \
-2w60f-t_notab 3-0F 3-5l17f-t 3-FF 3a2l17-FF 3a3f-0F 3a3l15-t 3a3l8f-t \
-3b2l17-FF 3b3f-0F 3b3f-0FF 3b3f-FF 3b3l15-t 3b3l8f-t 3f-0F 3f-FF 3l17f-t \
-3l24-t 3ml17f-t 3ml24-FF 3ml24-t 3ml24-t-FF 4-7l24-FF 4l24-FF FF FFn FFtn \
-FnFn Ja3l17f-lm Jb3l17f-lm Jml17f-lm-lo W-72l17f-ll W20l17f-ll W26l17f-ll \
-W27l17f-ll W28l17f-ll W35Ja3l17f-lm W35Jb3l17f-lm W35Jml17f-lmlo W35a3l17f-lm \
-W35b3l17f-lm W35ml17f-lm-lo W72Jl17f-ll a2l15-FF a2l17-FF a3-0F a3f-0F \
-a3f-0FF a3f-FF a3l15-t a3l17f-lm a3l8f-t b2l15-FF b2l17-FF b3-0F b3f-0F \
-b3f-0FF b3f-FF b3l15-t b3l17f-lm b3l8f-t l17f-t l24-FF l24-t loli ml17f-0F \
-ml17f-lm-lo ml17f-t ml17f-t-0F ml20-FF-t ml24-FF ml24-t ml24-t-FF \
-n+2-5l17f-0FF n+2l17f-0FF n+2l17f-bl n+3-7l24-FF n+3l17f-0FF n+3l17f-bl \
-n+3ml13f-bl-FF n+3ml17f-bl-tn n+3ml17f-tn-bl n+4-8a2l17-FF n+4b2l10f-0FF \
-n+5-8b3l10f-FF n+5a3l6f-0FF n+6a2l17-FF n+6b3l6f-FF n+7l24-FF n+8l20-FF \
-nJml17f-lmlmlo nJml17f-lmlolm nN1+3l17f-bl nN15l17f-bl nSml13-bl-FF \
-nSml13-t-t-FF nSml13-t-tFFFF nSml17-bl-FF nSml17-t-t-FF nSml17-t-tFFFF \
-nl17f-bl o3Jml17f-lm-lo o3a3Sl17f-tn o3a3Snl17f-tn o3a3l17f-tn o3b3Sl17f-tn \
-o3b3Snl17f-tn o3b3l17f-tn o3mSl17f-bl-tn o3mSnl17fbltn o3ml17f-bl-tn t-0FF \
+2w60f-t_notab 3-0F 3-5l24f-t 3-FF 3a2l17-FF 3a3f-0F 3a3l15-t 3a3l15f-t \
+3b2l17-FF 3b3f-0F 3b3f-0FF 3b3f-FF 3b3l15-t 3b3l15f-t 3f-0F 3f-FF 3l24-t \
+3l24f-t 3ml24-FF 3ml24-t 3ml24-t-FF 3ml24f-t 4-7l24-FF 4l24-FF FF FFn FFtn \
+FnFn Ja3l24f-lm Jb3l24f-lm Jml24f-lm-lo W-72l24f-ll W20l24f-ll W26l24f-ll \
+W27l24f-ll W28l24f-ll W35Ja3l24f-lm W35Jb3l24f-lm W35Jml24f-lmlo W35a3l24f-lm \
+W35b3l24f-lm W35ml24f-lm-lo W72Jl24f-ll a2l15-FF a2l17-FF a3-0F a3f-0F \
+a3f-0FF a3f-FF a3l15-t a3l15f-t a3l24f-lm b2l15-FF b2l17-FF b3-0F b3f-0F \
+b3f-0FF b3f-FF b3l15-t b3l15f-t b3l24f-lm l24-FF l24-t l24f-t loli ml20-FF-t \
+ml24-FF ml24-t ml24-t-FF ml24f-0F ml24f-lm-lo ml24f-t ml24f-t-0F \
+n+2-5l24f-0FF n+2l24f-0FF n+2l24f-bl n+3-7l24-FF n+3l24f-0FF n+3l24f-bl \
+n+3ml20f-bl-FF n+3ml24f-bl-tn n+3ml24f-tn-bl n+4-8a2l17-FF n+4b2l17f-0FF \
+n+5-8b3l17f-FF n+5a3l13f-0FF n+6a2l17-FF n+6b3l13f-FF n+7l24-FF n+8l20-FF \
+nJml24f-lmlmlo nJml24f-lmlolm nN1+3l24f-bl nN15l24f-bl nSml20-bl-FF \
+nSml20-t-t-FF nSml20-t-tFFFF nSml24-bl-FF nSml24-t-t-FF nSml24-t-tFFFF \
+nl24f-bl o3Jml24f-lm-lo o3a3Sl24f-tn o3a3Snl24f-tn o3a3l24f-tn o3b3Sl24f-tn \
+o3b3Snl24f-tn o3b3l24f-tn o3mSl24f-bl-tn o3mSnl24fbltn o3ml24f-bl-tn t-0FF \
 t-FF t-bl t-t tFFn tFFt tFFt-bl tFFt-ll tFFt-lm tFnFt t_notab t_tab t_tab_ \
 ta3-0FF ta3-FF tb3-0FF tb3-FF tn tn2e5o3-t_tab tn2e8-t_tab tn2e8o3-t_tab \
 tn_2e8-t_tab tn_2e8S-t_tab tne8-t_tab tne8o3-t_tab tt-0FF tt-FF tt-bl tt-t \
-tta3-0FF tta3-FF ttb3-0FF ttb3-FF w72l17f-ll
+tta3-0FF tta3-FF ttb3-0FF ttb3-FF w72l24f-ll
 maint_gen = i-opt-a.I i-opt-a.X i-opt-b.I i-opt-b.X ncut-a.I ncut-a.X \
 ncut-b.I ncut-b.X margin-0.I margin-0.X dbl-sp-a.I dbl-sp-a.X dbl-sp-b.I \
 dbl-sp-b.X narrow-1.I narrow-1.X col-last.I col-last.X col-02.I col-02.X \
@@ -126,9 +124,6 @@ col-inval.C.E neg-page.O neg-page.E
 
 EXTRA_DIST = Test.pm $x-tests $(explicit) $(maint_gen)
 noinst_SCRIPTS = $x-tests
-TESTS_ENVIRONMENT = \
-  CU_TEST_NAME=`basename $(abs_srcdir)`,$$tst \
-  PATH="$(VG_PATH_PREFIX)`pwd`/../../src$(PATH_SEPARATOR)$$PATH"
 
 editpl = sed -e 's,@''PERL''@,$(PERL),g' -e 's,@''srcdir''@,$(srcdir),g'
 
@@ -155,3 +150,5 @@ $(srcdir)/Makefile.am: ../Makefile.am.in Test.pm $(mk_script)
 	sed -n '/^##test-files-end/,$$p' $(srcdir)/../Makefile.am.in >> $@t
 	chmod -w $@t
 	mv $@t $@
+
+include $(top_srcdir)/tests/check.mk

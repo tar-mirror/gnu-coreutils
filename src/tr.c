@@ -1,10 +1,10 @@
 /* tr -- a filter to translate characters
-   Copyright (C) 91, 1995-2006 Free Software Foundation, Inc.
+   Copyright (C) 91, 1995-2008 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -12,8 +12,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* Written by Jim Meyering */
 
@@ -356,7 +355,7 @@ only be used in pairs to specify case conversion.  \
 translating nor deleting; else squeezing uses SET2 and occurs after\n\
 translation or deletion.\n\
 "), stdout);
-      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+      emit_bug_reporting_address ();
     }
   exit (status);
 }
@@ -525,8 +524,9 @@ unquote (char const *s, struct E_string *es)
 		}
 	      break;
 	    case '\0':
-	      /* POSIX seems to require that a trailing backslash must
-		 stand for itself.  Weird.  */
+	      error (0, 0, _("warning: an unescaped backslash "
+			     "at end of string is not portable"));
+	      /* POSIX is not clear about this.  */
 	      es->escaped[j] = false;
 	      i--;
 	      c = '\\';
@@ -1019,6 +1019,15 @@ build_spec_list (const struct E_string *es, struct Spec_list *result)
   return true;
 }
 
+/* Advance past the current construct.
+   S->tail must be non-NULL.  */
+static void
+skip_construct (struct Spec_list *s)
+{
+  s->tail = s->tail->next;
+  s->state = NEW_ELEMENT;
+}
+
 /* Given a Spec_list S (with its saved state implicit in the values
    of its members `tail' and `state'), return the next single character
    in the expansion of S's constructs.  If the last character of S was
@@ -1077,27 +1086,15 @@ get_next (struct Spec_list *s, enum Upper_Lower_class *class)
     case RE_CHAR_CLASS:
       if (class)
 	{
-	  bool upper_or_lower;
 	  switch (p->u.char_class)
 	    {
 	    case CC_LOWER:
 	      *class = UL_LOWER;
-	      upper_or_lower = true;
 	      break;
 	    case CC_UPPER:
 	      *class = UL_UPPER;
-	      upper_or_lower = true;
 	      break;
 	    default:
-	      upper_or_lower = false;
-	      break;
-	    }
-
-	  if (upper_or_lower)
-	    {
-	      s->tail = p->next;
-	      s->state = NEW_ELEMENT;
-	      return_val = 0;
 	      break;
 	    }
 	}
@@ -1816,12 +1813,12 @@ main (int argc, char **argv)
 		  xlate[i] = ch;
 		}
 	    }
-	  assert (get_next (s2, NULL) == -1 || truncate_set1);
 	}
       else
 	{
 	  int c1, c2;
 	  int i;
+	  bool case_convert = false;
 	  enum Upper_Lower_class class_s1;
 	  enum Upper_Lower_class class_s2;
 
@@ -1831,26 +1828,37 @@ main (int argc, char **argv)
 	  s2->state = BEGIN_STATE;
 	  for (;;)
 	    {
+	      /* When the previous pair identified case-converting classes,
+		 advance S1 and S2 so that each points to the following
+		 construct.  */
+	      if (case_convert)
+		{
+		  skip_construct (s1);
+		  skip_construct (s2);
+		  case_convert = false;
+		}
+
 	      c1 = get_next (s1, &class_s1);
 	      c2 = get_next (s2, &class_s2);
 
-	      /* When constructing the translation array, either one of the
-		 values returned by paired calls to get_next must be from
-		 [:upper:] and the other is [:lower:], or neither can be from
-		 upper or lower.  */
-
-	      if ((class_s1 == UL_NONE) != (class_s2 == UL_NONE))
+	      /* When translating and there is an [:upper:] or [:lower:]
+		 class in SET2, then there must be a corresponding [:lower:]
+		 or [:upper:] class in SET1.  */
+	      if (class_s1 == UL_NONE
+		  && (class_s2 == UL_LOWER || class_s2 == UL_UPPER))
 		error (EXIT_FAILURE, 0,
 		       _("misaligned [:upper:] and/or [:lower:] construct"));
 
 	      if (class_s1 == UL_LOWER && class_s2 == UL_UPPER)
 		{
+		  case_convert = true;
 		  for (i = 0; i < N_CHARS; i++)
 		    if (islower (i))
 		      xlate[i] = toupper (i);
 		}
 	      else if (class_s1 == UL_UPPER && class_s2 == UL_LOWER)
 		{
+		  case_convert = true;
 		  for (i = 0; i < N_CHARS; i++)
 		    if (isupper (i))
 		      xlate[i] = tolower (i);

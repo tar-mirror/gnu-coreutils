@@ -2,11 +2,11 @@
 # -*- perl -*-
 # Test whether programs exit upon a single EOF from a tty.
 
-# Copyright (C) 2003, 2006, 2007 Free Software Foundation, Inc.
+# Copyright (C) 2003, 2006, 2007, 2008 Free Software Foundation, Inc.
 
-# This program is free software; you can redistribute it and/or modify
+# This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
+# the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 
 # This program is distributed in the hope that it will be useful,
@@ -15,9 +15,7 @@
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-# 02110-1301, USA.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 : ${PERL=perl}
 
@@ -26,6 +24,9 @@ $PERL -e 1 > /dev/null 2>&1 || {
     "so can't run this test"
   exit 77
 }
+
+# Ensure that $TMPDIR is valid.
+TMPDIR=.; export TMPDIR
 
 ARGV_0=$0
 export ARGV_0
@@ -91,7 +92,7 @@ $@ and (warn "$ME: this script requires Perl's Expect package >=1.11\n"),
       $exp->send("\cD");  # This is Control-D.  FIXME: what if that's not EOF?
       $exp->expect (0, '-re', "^a b\\r?\$");
       my $found = $exp->expect (1, '-re', "^.+\$");
-      # $found and warn "F: $found: " . $exp->exp_match () . "\n";
+      $found and warn "F: $found: " . $exp->exp_match () . "\n";
       $exp->expect(1, 'eof');
       # Expect no output from cut, since we gave it no input.
       defined $found || $cmd =~ /^cut/

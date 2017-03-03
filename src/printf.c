@@ -1,10 +1,10 @@
 /* printf - format and print data
    Copyright (C) 1990-2007 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -12,8 +12,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* Usage: printf format [argument...]
 
@@ -57,6 +56,7 @@
 #include "long-options.h"
 #include "quote.h"
 #include "unicodeio.h"
+#include "xprintf.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "printf"
@@ -96,7 +96,7 @@ Usage: %s FORMAT [ARGUMENT]...\n\
 "),
 	      program_name, program_name);
       fputs (_("\
-Print ARGUMENT(s) according to FORMAT.\n\
+Print ARGUMENT(s) according to FORMAT, or execute according to OPTION:\n\
 \n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
@@ -135,7 +135,7 @@ and all C format specifications ending with one of diouxXfeEgGcs, with\n\
 ARGUMENTs converted to proper type first.  Variable widths are handled.\n\
 "), stdout);
       printf (USAGE_BUILTIN_WARNING, PROGRAM_NAME);
-      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+      emit_bug_reporting_address ();
     }
   exit (status);
 }
@@ -374,16 +374,16 @@ print_direc (const char *start, size_t length, char conversion,
 	if (!have_field_width)
 	  {
 	    if (!have_precision)
-	      printf (p, arg);
+	      xprintf (p, arg);
 	    else
-	      printf (p, precision, arg);
+	      xprintf (p, precision, arg);
 	  }
 	else
 	  {
 	    if (!have_precision)
-	      printf (p, field_width, arg);
+	      xprintf (p, field_width, arg);
 	    else
-	      printf (p, field_width, precision, arg);
+	      xprintf (p, field_width, precision, arg);
 	  }
       }
       break;
@@ -397,16 +397,16 @@ print_direc (const char *start, size_t length, char conversion,
 	if (!have_field_width)
 	  {
 	    if (!have_precision)
-	      printf (p, arg);
+	      xprintf (p, arg);
 	    else
-	      printf (p, precision, arg);
+	      xprintf (p, precision, arg);
 	  }
 	else
 	  {
 	    if (!have_precision)
-	      printf (p, field_width, arg);
+	      xprintf (p, field_width, arg);
 	    else
-	      printf (p, field_width, precision, arg);
+	      xprintf (p, field_width, precision, arg);
 	  }
       }
       break;
@@ -424,41 +424,41 @@ print_direc (const char *start, size_t length, char conversion,
 	if (!have_field_width)
 	  {
 	    if (!have_precision)
-	      printf (p, arg);
+	      xprintf (p, arg);
 	    else
-	      printf (p, precision, arg);
+	      xprintf (p, precision, arg);
 	  }
 	else
 	  {
 	    if (!have_precision)
-	      printf (p, field_width, arg);
+	      xprintf (p, field_width, arg);
 	    else
-	      printf (p, field_width, precision, arg);
+	      xprintf (p, field_width, precision, arg);
 	  }
       }
       break;
 
     case 'c':
       if (!have_field_width)
-	printf (p, *argument);
+	xprintf (p, *argument);
       else
-	printf (p, field_width, *argument);
+	xprintf (p, field_width, *argument);
       break;
 
     case 's':
       if (!have_field_width)
 	{
 	  if (!have_precision)
-	    printf (p, argument);
+	    xprintf (p, argument);
 	  else
-	    printf (p, precision, argument);
+	    xprintf (p, precision, argument);
 	}
       else
 	{
 	  if (!have_precision)
-	    printf (p, field_width, argument);
+	    xprintf (p, field_width, argument);
 	  else
-	    printf (p, field_width, precision, argument);
+	    xprintf (p, field_width, precision, argument);
 	}
       break;
     }
@@ -649,7 +649,7 @@ main (int argc, char **argv)
 
   posixly_correct = (getenv ("POSIXLY_CORRECT") != NULL);
 
-  parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
+  parse_long_options (argc, argv, PROGRAM_NAME, PACKAGE_NAME, VERSION,
 		      usage, AUTHORS, (char const *) NULL);
 
   /* The above handles --help and --version.

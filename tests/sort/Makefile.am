@@ -3,9 +3,9 @@
 # Copyright (C) 1997, 1998, 2000, 2003, 2004, 2006 Free Software
 # Foundation, Inc.
 
-# This program is free software; you can redistribute it and/or modify
+# This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
+# the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 
 # This program is distributed in the hope that it will be useful,
@@ -14,9 +14,7 @@
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-# 02110-1301, USA.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ##test-files-begin
 x = sort
@@ -41,7 +39,8 @@ n10b.X n11a.I n11a.X n11b.I n11b.X 01a.I 01a.X 02a.I 02a.X 02b.I 02b.X 02c.I \
 create-empty.X neg-nls.I neg-nls.X nul-nls.I nul-nls.X use-nl.I use-nl.X o2.I \
 o2.X incompat1.I incompat1.X incompat2.I incompat2.X incompat3.I incompat3.X \
 incompat4.I incompat4.X incompat5.I incompat5.X incompat6.I incompat6.X \
-nul-tab.I nul-tab.X bigfield.I bigfield.X
+nul-tab.I nul-tab.X bigfield.I bigfield.X obs-inval.I obs-inval.X \
+realloc-buf.I realloc-buf.X
 run_gen = n1.O n1.E n2.O n2.E n3.O n3.E n4.O n4.E n5.O n5.E n6.O n6.E n7.O \
 n7.E n8a.O n8a.E n8b.O n8b.E n9a.O n9a.E n9b.O n9b.E n10a.O n10a.E n10b.O \
 n10b.E n11a.O n11a.E n11b.O n11b.E 01a.O 01a.E 02a.O 02a.E 02b.O 02b.E 02c.O \
@@ -63,14 +62,11 @@ o-no-file1.O o-no-file1.E create-empty.O create-empty.E neg-nls.O neg-nls.E \
 nul-nls.O nul-nls.E use-nl.O use-nl.E o2.O o2.E incompat1.O incompat1.E \
 incompat2.O incompat2.E incompat3.O incompat3.E incompat4.O incompat4.E \
 incompat5.O incompat5.E incompat6.O incompat6.E nul-tab.O nul-tab.E \
-bigfield.O bigfield.E
+bigfield.O bigfield.E obs-inval.O obs-inval.E realloc-buf.O realloc-buf.E
 ##test-files-end
 
 EXTRA_DIST = Test.pm $x-tests $(explicit) $(maint_gen)
 noinst_SCRIPTS = $x-tests
-TESTS_ENVIRONMENT = \
-  CU_TEST_NAME=`basename $(abs_srcdir)`,$$tst \
-  PATH="$(VG_PATH_PREFIX)`pwd`/../../src$(PATH_SEPARATOR)$$PATH"
 
 editpl = sed -e 's,@''PERL''@,$(PERL),g' -e 's,@''srcdir''@,$(srcdir),g'
 
@@ -97,3 +93,5 @@ $(srcdir)/Makefile.am: ../Makefile.am.in Test.pm $(mk_script)
 	sed -n '/^##test-files-end/,$$p' $(srcdir)/../Makefile.am.in >> $@t
 	chmod -w $@t
 	mv $@t $@
+
+include $(top_srcdir)/tests/check.mk

@@ -1,10 +1,10 @@
 /* cp.c  -- file copying (main routines)
    Copyright (C) 89, 90, 91, 1995-2007 Free Software Foundation.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -12,8 +12,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
    Written by Torbjorn Granlund, David MacKenzie, and Jim Meyering. */
 
@@ -21,6 +20,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <getopt.h>
+#include <selinux/selinux.h>
 
 #include "system.h"
 #include "argmatch.h"
@@ -31,10 +31,13 @@
 #include "filenamecat.h"
 #include "lchmod.h"
 #include "quote.h"
-#include "quotearg.h"
 #include "stat-time.h"
 #include "utimens.h"
 #include "acl.h"
+
+#if ! HAVE_LCHOWN
+# define lchown(name, uid, gid) chown (name, uid, gid)
+#endif
 
 #define ASSIGN_BASENAME_STRDUPA(Dest, File_name)	\
   do							\
@@ -56,7 +59,7 @@
    need to be fixed after copying. */
 struct dir_attr
 {
-  mode_t mode;
+  struct stat st;
   bool restore_mode;
   size_t slash_offset;
   struct dir_attr *next;
@@ -84,6 +87,9 @@ enum
 
 /* The invocation name of this program.  */
 char *program_name;
+
+/* True if the kernel is SELinux enabled.  */
+static bool selinux_enabled;
 
 /* If true, the command "cp x/e_file e_dir" uses "e_dir/x/e_file"
    as its destination instead of the usual "e_dir/e_file." */
@@ -168,30 +174,30 @@ Copy SOURCE to DEST, or multiple SOURCE(s) to DIRECTORY.\n\
 Mandatory arguments to long options are mandatory for short options too.\n\
 "), stdout);
       fputs (_("\
-  -a, --archive                same as -dpPR\n\
+  -a, --archive                same as -dpR\n\
       --backup[=CONTROL]       make a backup of each existing destination file\n\
   -b                           like --backup but does not accept an argument\n\
       --copy-contents          copy contents of special files when recursive\n\
-  -d                           same as --no-dereference --preserve=link\n\
+  -d                           same as --no-dereference --preserve=links\n\
 "), stdout);
       fputs (_("\
   -f, --force                  if an existing destination file cannot be\n\
                                  opened, remove it and try again\n\
   -i, --interactive            prompt before overwrite\n\
-  -H                           follow command-line symbolic links\n\
+  -H                           follow command-line symbolic links in SOURCE\n\
 "), stdout);
       fputs (_("\
   -l, --link                   link files instead of copying\n\
-  -L, --dereference            always follow symbolic links\n\
+  -L, --dereference            always follow symbolic links in SOURCE\n\
 "), stdout);
       fputs (_("\
-  -P, --no-dereference         never follow symbolic links\n\
+  -P, --no-dereference         never follow symbolic links in SOURCE\n\
 "), stdout);
       fputs (_("\
   -p                           same as --preserve=mode,ownership,timestamps\n\
       --preserve[=ATTR_LIST]   preserve the specified attributes (default:\n\
                                  mode,ownership,timestamps), if possible\n\
-                                 additional attributes: links, all\n\
+                                 additional attributes: context, links, all\n\
 "), stdout);
       fputs (_("\
       --no-preserve=ATTR_LIST  don't preserve the specified attributes\n\
@@ -249,7 +255,7 @@ As a special case, cp makes a backup of SOURCE when the force and backup\n\
 options are given and SOURCE and DEST are the same name for an existing,\n\
 regular file.\n\
 "), stdout);
-      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+      emit_bug_reporting_address ();
     }
   exit (status);
 }
@@ -287,16 +293,7 @@ re_protect (char const *const_dst_name, size_t src_offset,
 
   for (p = attr_list; p; p = p->next)
     {
-      struct stat src_sb;
-
       dst_name[p->slash_offset] = '\0';
-
-      if (XSTAT (x, src_name, &src_sb))
-	{
-	  error (0, errno, _("failed to get attributes of %s"),
-		 quote (src_name));
-	  return false;
-	}
 
       /* Adjust the times (and if possible, ownership) for the copy.
 	 chown turns off set[ug]id bits for non-root,
@@ -306,8 +303,8 @@ re_protect (char const *const_dst_name, size_t src_offset,
 	{
 	  struct timespec timespec[2];
 
-	  timespec[0] = get_stat_atime (&src_sb);
-	  timespec[1] = get_stat_mtime (&src_sb);
+	  timespec[0] = get_stat_atime (&p->st);
+	  timespec[1] = get_stat_mtime (&p->st);
 
 	  if (utimens (dst_name, timespec))
 	    {
@@ -319,23 +316,28 @@ re_protect (char const *const_dst_name, size_t src_offset,
 
       if (x->preserve_ownership)
 	{
-	  if (chown (dst_name, src_sb.st_uid, src_sb.st_gid) != 0
-	      && ! chown_failure_ok (x))
-	    {
-	      error (0, errno, _("failed to preserve ownership for %s"),
-		     quote (dst_name));
-	      return false;
-	    }
+          if (lchown (dst_name, p->st.st_uid, p->st.st_gid) != 0)
+            {
+              if (! chown_failure_ok (x))
+                {
+                  error (0, errno, _("failed to preserve ownership for %s"),
+                         quote (dst_name));
+                  return false;
+                }
+              /* Failing to preserve ownership is OK. Still, try to preserve
+                 the group, but ignore the possible error. */
+              (void) lchown (dst_name, -1, p->st.st_gid);
+            }
 	}
 
       if (x->preserve_mode)
 	{
-	  if (copy_acl (src_name, -1, dst_name, -1, src_sb.st_mode))
+	  if (copy_acl (src_name, -1, dst_name, -1, p->st.st_mode) != 0)
 	    return false;
 	}
       else if (p->restore_mode)
 	{
-	  if (lchmod (dst_name, p->mode) != 0)
+	  if (lchmod (dst_name, p->st.st_mode) != 0)
 	    {
 	      error (0, errno, _("failed to preserve permissions for %s"),
 		     quote (dst_name));
@@ -390,7 +392,7 @@ make_dir_parents_private (char const *const_dir, size_t src_offset,
 
   *attr_list = NULL;
 
-  if (XSTAT (x, dst_dir, &stats))
+  if (stat (dst_dir, &stats) != 0)
     {
       /* A parent of CONST_DIR does not exist.
 	 Make all missing intermediate directories. */
@@ -401,40 +403,51 @@ make_dir_parents_private (char const *const_dir, size_t src_offset,
 	slash++;
       while ((slash = strchr (slash, '/')))
 	{
-	  /* Add this directory to the list of directories whose modes need
-	     fixing later. */
-	  struct dir_attr *new = xmalloc (sizeof *new);
-	  new->slash_offset = slash - dir;
-	  new->restore_mode = false;
-	  new->next = *attr_list;
-	  *attr_list = new;
+	  struct dir_attr *new IF_LINT (= NULL);
+	  bool missing_dir;
 
 	  *slash = '\0';
-	  if (XSTAT (x, dir, &stats))
-	    {
-	      mode_t src_mode;
-	      mode_t omitted_permissions;
-	      mode_t mkdir_mode;
-	      int src_errno;
+	  missing_dir = (stat (dir, &stats) != 0);
 
-	      /* This component does not exist.  We must set
-		 *new_dst and new->mode inside this loop because,
-		 for example, in the command `cp --parents ../a/../b/c e_dir',
-		 make_dir_parents_private creates only e_dir/../a if
-		 ./b already exists. */
-	      *new_dst = true;
-	      src_errno = (XSTAT (x, src, &stats) != 0
-			   ? errno
-			   : S_ISDIR (stats.st_mode)
-			   ? 0
-			   : ENOTDIR);
+	  if (missing_dir | x->preserve_ownership | x->preserve_mode
+	      | x->preserve_timestamps)
+	    {
+	      /* Add this directory to the list of directories whose
+		 modes might need fixing later. */
+	      struct stat src_st;
+	      int src_errno = (stat (src, &src_st) != 0
+			       ? errno
+			       : S_ISDIR (src_st.st_mode)
+			       ? 0
+			       : ENOTDIR);
 	      if (src_errno)
 		{
 		  error (0, src_errno, _("failed to get attributes of %s"),
 			 quote (src));
 		  return false;
 		}
-	      src_mode = stats.st_mode;
+
+	      new = xmalloc (sizeof *new);
+	      new->st = src_st;
+	      new->slash_offset = slash - dir;
+	      new->restore_mode = false;
+	      new->next = *attr_list;
+	      *attr_list = new;
+	    }
+
+	  if (missing_dir)
+	    {
+	      mode_t src_mode;
+	      mode_t omitted_permissions;
+	      mode_t mkdir_mode;
+
+	      /* This component does not exist.  We must set
+		 *new_dst and new->st.st_mode inside this loop because,
+		 for example, in the command `cp --parents ../a/../b/c e_dir',
+		 make_dir_parents_private creates only e_dir/../a if
+		 ./b already exists. */
+	      *new_dst = true;
+	      src_mode = new->st.st_mode;
 
 	      /* If the ownership or special mode bits might change,
 		 omit some permissions at first, so unauthorized users
@@ -482,7 +495,7 @@ make_dir_parents_private (char const *const_dir, size_t src_offset,
 		  if (omitted_permissions & ~stats.st_mode
 		      || (stats.st_mode & S_IRWXU) != S_IRWXU)
 		    {
-		      new->mode = stats.st_mode | omitted_permissions;
+		      new->st.st_mode = stats.st_mode | omitted_permissions;
 		      new->restore_mode = true;
 		    }
 		}
@@ -681,6 +694,16 @@ do_copy (int n_files, char **file, const char *target_directory,
 				  attr_list, x);
 	    }
 
+	  if (parents_option)
+	    {
+	      while (attr_list)
+		{
+		  struct dir_attr *p = attr_list;
+		  attr_list = attr_list->next;
+		  free (p);
+		}
+	    }
+
 	  free (dst_name);
 	}
     }
@@ -735,13 +758,13 @@ do_copy (int n_files, char **file, const char *target_directory,
 static void
 cp_option_init (struct cp_options *x)
 {
+  cp_options_default (x);
   x->copy_as_regular = true;
   x->dereference = DEREF_UNDEFINED;
   x->unlink_dest_before_opening = false;
   x->unlink_dest_after_failed_open = false;
   x->hard_link = false;
   x->interactive = I_UNSPECIFIED;
-  x->chown_privileges = chown_privileges ();
   x->move_mode = false;
   x->one_file_system = false;
 
@@ -749,6 +772,8 @@ cp_option_init (struct cp_options *x)
   x->preserve_links = false;
   x->preserve_mode = false;
   x->preserve_timestamps = false;
+  x->preserve_security_context = false;
+  x->require_preserve_context = false;
 
   x->require_preserve = false;
   x->recursive = false;
@@ -762,6 +787,13 @@ cp_option_init (struct cp_options *x)
 
   x->update = false;
   x->verbose = false;
+
+  /* By default, refuse to open a dangling destination symlink, because
+     in general one cannot do that safely, give the current semantics of
+     open's O_EXCL flag, (which POSIX doesn't even allow cp to use, btw).
+     But POSIX requires it.  */
+  x->open_dangling_dest_symlink = getenv ("POSIXLY_CORRECT") != NULL;
+
   x->dest_info = NULL;
   x->src_info = NULL;
 }
@@ -777,18 +809,19 @@ decode_preserve_arg (char const *arg, struct cp_options *x, bool on_off)
       PRESERVE_TIMESTAMPS,
       PRESERVE_OWNERSHIP,
       PRESERVE_LINK,
+      PRESERVE_CONTEXT,
       PRESERVE_ALL
     };
   static enum File_attribute const preserve_vals[] =
     {
       PRESERVE_MODE, PRESERVE_TIMESTAMPS,
-      PRESERVE_OWNERSHIP, PRESERVE_LINK, PRESERVE_ALL
+      PRESERVE_OWNERSHIP, PRESERVE_LINK, PRESERVE_CONTEXT, PRESERVE_ALL
     };
   /* Valid arguments to the `--preserve' option. */
   static char const* const preserve_args[] =
     {
       "mode", "timestamps",
-      "ownership", "links", "all", NULL
+      "ownership", "links", "context", "all", NULL
     };
   ARGMATCH_VERIFY (preserve_args, preserve_vals);
 
@@ -824,11 +857,18 @@ decode_preserve_arg (char const *arg, struct cp_options *x, bool on_off)
 	  x->preserve_links = on_off;
 	  break;
 
+	case PRESERVE_CONTEXT:
+	  x->preserve_security_context = on_off;
+	  x->require_preserve_context = on_off;
+	  break;
+
 	case PRESERVE_ALL:
 	  x->preserve_mode = on_off;
 	  x->preserve_timestamps = on_off;
 	  x->preserve_ownership = on_off;
 	  x->preserve_links = on_off;
+	  if (selinux_enabled)
+	    x->preserve_security_context = on_off;
 	  break;
 
 	default:
@@ -860,8 +900,9 @@ main (int argc, char **argv)
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
 
-  atexit (close_stdout);
+  atexit (close_stdin);
 
+  selinux_enabled = (0 < is_selinux_enabled ());
   cp_option_init (&x);
 
   /* FIXME: consider not calling getenv for SIMPLE_BACKUP_SUFFIX unless
@@ -1048,9 +1089,6 @@ main (int argc, char **argv)
 	x.dereference = DEREF_ALWAYS;
     }
 
-  /* The key difference between -d (--no-dereference) and not is the version
-     of `stat' to call.  */
-
   if (x.recursive)
     x.copy_as_regular = copy_contents;
 
@@ -1058,6 +1096,14 @@ main (int argc, char **argv)
      first remove any existing destination file.  */
   if (x.unlink_dest_after_failed_open & (x.hard_link | x.symbolic_link))
     x.unlink_dest_before_opening = true;
+
+  if (x.preserve_security_context)
+    {
+      if (!selinux_enabled)
+	error (EXIT_FAILURE, 0,
+	       _("cannot preserve security context "
+		 "without an SELinux-enabled kernel"));
+    }
 
   /* Allocate space for remembering copied and created files.  */
 

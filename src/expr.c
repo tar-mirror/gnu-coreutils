@@ -1,10 +1,10 @@
 /* expr -- evaluate expressions.
-   Copyright (C) 86, 1991-1997, 1999-2006 Free Software Foundation, Inc.
+   Copyright (C) 86, 1991-1997, 1999-2007 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -12,8 +12,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* Author: Mike Parker.
 
@@ -37,7 +36,6 @@
 #include "long-options.h"
 #include "error.h"
 #include "inttostr.h"
-#include "quote.h"
 #include "quotearg.h"
 #include "strnumcmp.h"
 #include "xstrtol.h"
@@ -130,6 +128,8 @@ separates increasing precedence groups.  EXPRESSION may be:\n\
   ARG1 + ARG2       arithmetic sum of ARG1 and ARG2\n\
   ARG1 - ARG2       arithmetic difference of ARG1 and ARG2\n\
 "), stdout);
+      /* Tell xgettext that the "% A" below is not a printf-style
+	 format string:  xgettext:no-c-format */
       fputs (_("\
 \n\
   ARG1 * ARG2       arithmetic product of ARG1 and ARG2\n\
@@ -163,7 +163,7 @@ Pattern matches return the string matched between \\( and \\) or null; if\n\
 Exit status is 0 if EXPRESSION is neither null nor 0, 1 if EXPRESSION is null\n\
 or 0, 2 if EXPRESSION is syntactically invalid, and 3 if an error occurred.\n\
 "), stdout);
-      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+      emit_bug_reporting_address ();
     }
   exit (status);
 }
@@ -196,7 +196,7 @@ main (int argc, char **argv)
   initialize_exit_failure (EXPR_FAILURE);
   atexit (close_stdout);
 
-  parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
+  parse_long_options (argc, argv, PROGRAM_NAME, PACKAGE_NAME, VERSION,
 		      usage, AUTHORS, (char const *) NULL);
   /* The above handles --help and --version.
      Since there is no other invocation of getopt, handle `--' here.  */

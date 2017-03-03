@@ -1,5 +1,227 @@
 GNU coreutils NEWS                                    -*- outline -*-
 
+* Noteworthy changes in release 6.10 (2008-01-22) [stable]
+
+** Bug fixes
+
+  Fix a non-portable use of sed in configure.ac.
+  [bug introduced in coreutils-6.9.92]
+
+
+* Noteworthy changes in release 6.9.92 (2008-01-12) [beta]
+
+** Bug fixes
+
+  cp --parents no longer uses uninitialized memory when restoring the
+  permissions of a just-created destination directory.
+  [bug introduced in coreutils-6.9.90]
+
+  tr's case conversion would fail in a locale with differing numbers
+  of lower case and upper case characters.  E.g., this would fail:
+  env LC_CTYPE=en_US.ISO-8859-1 tr '[:upper:]' '[:lower:]'
+  [bug introduced in coreutils-6.9.90]
+
+** Improvements
+
+  "touch -d now writable-but-owned-by-someone-else" now succeeds
+  whenever that same command would succeed without "-d now".
+  Before, it would work fine with no -d option, yet it would
+  fail with the ostensibly-equivalent "-d now".
+
+
+* Noteworthy changes in release 6.9.91 (2007-12-15) [beta]
+
+** Bug fixes
+
+  "ls -l" would not output "+" on SELinux hosts unless -Z was also given.
+
+  "rm" would fail to unlink a non-directory when run in an environment
+  in which the user running rm is capable of unlinking a directory.
+  [bug introduced in coreutils-6.9]
+
+
+* Noteworthy changes in release 6.9.90 (2007-12-01) [beta]
+
+** New programs
+
+  arch: equivalent to uname -m, not installed by default
+  But don't install this program on Solaris systems.
+
+  chcon: change the SELinux security context of a file
+
+  mktemp: create a temporary file or directory (or names)
+
+  runcon: run a program in a different SELinux security context
+
+** Programs no longer installed by default
+
+  hostname, su
+
+** Changes in behavior
+
+  cp, by default, refuses to copy through a dangling destination symlink
+  Set POSIXLY_CORRECT if you require the old, risk-prone behavior.
+
+  pr -F no longer suppresses the footer or the first two blank lines in
+  the header.  This is for compatibility with BSD and POSIX.
+
+  tr now warns about an unescaped backslash at end of string.
+  The tr from coreutils-5.2.1 and earlier would fail for such usage,
+  and Solaris' tr ignores that final byte.
+
+** New features
+
+  Add SELinux support, based on the patch from Fedora:
+  * cp accepts new --preserve=context option.
+  * "cp -a" works with SELinux:
+  Now, cp -a attempts to preserve context, but failure to do so does
+  not change cp's exit status.  However "cp --preserve=context" is
+  similar, but failure *does* cause cp to exit with nonzero status.
+  * install accepts new "-Z, --context=C" option.
+  * id accepts new "-Z" option.
+  * stat honors the new %C format directive: SELinux security context string
+  * ls accepts a slightly modified -Z option.
+  * ls: contrary to Fedora version, does not accept --lcontext and --scontext
+
+  cp -p tries to preserve the GID of a file even if preserving the UID
+  is not possible.
+
+  uniq accepts a new option: --zero-terminated (-z).  As with the sort
+  option of the same name, this makes uniq consume and produce
+  NUL-terminated lines rather than newline-terminated lines.
+
+  wc no longer warns about character decoding errors in multibyte locales.
+  This means for example that "wc /bin/sh" now produces normal output
+  (though the word count will have no real meaning) rather than many
+  error messages.
+
+** New build options
+
+  By default, "make install" no longer attempts to install (or even build) su.
+  To change that, use ./configure --enable-install-program=su.
+  If you also want to install the new "arch" program, do this:
+  ./configure --enable-install-program=arch,su.
+
+  You can inhibit the compilation and installation of selected programs
+  at configure time.  For example, to avoid installing "hostname" and
+  "uptime", use ./configure --enable-no-install-program=hostname,uptime
+  Note: currently, "make check" passes, even when arch and su are not
+  built (that's the new default).  However, if you inhibit the building
+  and installation of other programs, don't be surprised if some parts
+  of "make check" fail.
+
+** Remove deprecated options
+
+  df no longer accepts the --kilobytes option.
+  du no longer accepts the --kilobytes or --megabytes options.
+  ls no longer accepts the --kilobytes option.
+  ptx longer accepts the --copyright option.
+  who no longer accepts -i or --idle.
+
+** Improved robustness
+
+  ln -f can no longer silently clobber a just-created hard link.
+  In some cases, ln could be seen as being responsible for data loss.
+  For example, given directories a, b, c, and files a/f and b/f, we
+  should be able to do this safely: ln -f a/f b/f c && rm -f a/f b/f
+  However, before this change, ln would succeed, and thus cause the
+  loss of the contents of a/f.
+
+  stty no longer silently accepts certain invalid hex values
+  in its 35-colon commmand-line argument
+
+** Bug fixes
+
+  chmod no longer ignores a dangling symlink.  Now, chmod fails
+  with a diagnostic saying that it cannot operate on such a file.
+  [bug introduced in coreutils-5.1.0]
+
+  cp attempts to read a regular file, even if stat says it is empty.
+  Before, "cp /proc/cpuinfo c" would create an empty file when the kernel
+  reports stat.st_size == 0, while "cat /proc/cpuinfo > c" would "work",
+  and create a nonempty one. [bug introduced in coreutils-6.0]
+
+  cp --parents no longer mishandles symlinks to directories in file
+  name components in the source, e.g., "cp --parents symlink/a/b d"
+  no longer fails.  Also, 'cp' no longer considers a destination
+  symlink to be the same as the referenced file when copying links
+  or making backups.  For example, if SYM is a symlink to FILE,
+  "cp -l FILE SYM" now reports an error instead of silently doing
+  nothing.  The behavior of 'cp' is now better documented when the
+  destination is a symlink.
+
+  "cp -i --update older newer" no longer prompts; same for mv
+
+  "cp -i" now detects read errors on standard input, and no longer consumes
+  too much seekable input; same for ln, install, mv, and rm.
+
+  cut now diagnoses a range starting with zero (e.g., -f 0-2) as invalid;
+  before, it would treat it as if it started with 1 (-f 1-2).
+
+  "cut -f 2-0" now fails; before, it was equivalent to "cut -f 2-"
+
+  cut now diagnoses the '-' in "cut -f -" as an invalid range, rather
+  than interpreting it as the unlimited range, "1-".
+
+  date -d now accepts strings of the form e.g., 'YYYYMMDD +N days',
+  in addition to the usual 'YYYYMMDD N days'.
+
+  du -s now includes the size of any stat'able-but-inaccessible directory
+  in the total size.
+
+  du (without -s) prints whatever it knows of the size of an inaccessible
+  directory.  Before, du would print nothing for such a directory.
+
+  ls -x DIR would sometimes output the wrong string in place of the
+  first entry.  [introduced in coreutils-6.8]
+
+  ls --color would mistakenly color a dangling symlink as if it were
+  a regular symlink.  This would happen only when the dangling symlink
+  was not a command-line argument and in a directory with d_type support.
+  [introduced in coreutils-6.0]
+
+  ls --color, (with a custom LS_COLORS envvar value including the
+  ln=target attribute) would mistakenly output the string "target"
+  before the name of each symlink.  [introduced in coreutils-6.0]
+
+  od's --skip (-j) option now works even when the kernel says that a
+  nonempty regular file has stat.st_size = 0.  This happens at least
+  with files in /proc and linux-2.6.22.
+
+  "od -j L FILE" had a bug: when the number of bytes to skip, L, is exactly
+  the same as the length of FILE, od would skip *no* bytes.  When the number
+  of bytes to skip is exactly the sum of the lengths of the first N files,
+  od would skip only the first N-1 files. [introduced in textutils-2.0.9]
+
+  ./printf %.10000000f 1 could get an internal ENOMEM error and generate
+  no output, yet erroneously exit with status 0.  Now it diagnoses the error
+  and exits with nonzero status.  [present in initial implementation]
+
+  seq no longer mishandles obvious cases like "seq 0 0.000001 0.000003",
+  so workarounds like "seq 0 0.000001 0.0000031" are no longer needed.
+
+  seq would mistakenly reject some valid format strings containing %%,
+  and would mistakenly accept some invalid ones. e.g., %g%% and %%g, resp.
+
+  "seq .1 .1" would mistakenly generate no output on some systems
+
+  Obsolete sort usage with an invalid ordering-option character, e.g.,
+  "env _POSIX2_VERSION=199209 sort +1x" no longer makes sort free an
+  invalid pointer [introduced in coreutils-6.5]
+
+  sorting very long lines (relative to the amount of available memory)
+  no longer provokes unaligned memory access
+
+  split --line-bytes=N (-C N) no longer creates an empty file
+  [this bug is present at least as far back as textutils-1.22 (Jan, 1997)]
+
+  tr -c no longer aborts when translating with Set2 larger than the
+  complement of Set1.  [present in the original version, in 1992]
+
+  tr no longer rejects an unmatched [:lower:] or [:upper:] in SET1.
+  [present in the original version]
+
+
 * Noteworthy changes in release 6.9 (2007-03-22) [stable]
 
 ** Bug fixes
@@ -12,7 +234,6 @@ GNU coreutils NEWS                                    -*- outline -*-
 
   Using pr -m -s (i.e. merging files, with TAB as the output separator)
   no longer inserts extraneous spaces between output columns.
-
 
 * Noteworthy changes in release 6.8 (2007-02-24) [not-unstable]
 
@@ -51,10 +272,32 @@ GNU coreutils NEWS                                    -*- outline -*-
   pwd and "readlink -e ." no longer fail unnecessarily when a parent
   directory is unreadable.
 
+  rm (without -f) could prompt when it shouldn't, or fail to prompt
+  when it should, when operating on a full name longer than 511 bytes
+  and getting an ENOMEM error while trying to form the long name.
+
+  rm could mistakenly traverse into the wrong directory under unusual
+  conditions: when a full name longer than 511 bytes specifies a search-only
+  directory, and when forming that name fails with ENOMEM, rm would attempt
+  to open a truncated-to-511-byte name with the first five bytes replaced
+  with "[...]".  If such a directory were to actually exist, rm would attempt
+  to remove it.
+
   "rm -rf /etc/passwd" (run by non-root) now prints a diagnostic.
   Before it would print nothing.
 
   "rm --interactive=never F" no longer prompts for an unwritable F
+
+  "rm -rf D" would emit an misleading diagnostic when failing to
+  remove a symbolic link within the unwritable directory, D.
+  Introduced in coreutils-6.0.  Similarly, when a cross-partition
+  "mv" fails because the source directory is unwritable, it now gives
+  a reasonable diagnostic.  Before, this would print
+    $ mkdir /tmp/x; touch /tmp/x/y; chmod -w /tmp/x;
+    $ test $(stat -c %d /tmp/x) -ne $(stat -c %d .) && mv /tmp/x/y .
+    mv: cannot remove `/tmp/x/y': Not a directory
+  Now it prints this:
+    mv: cannot remove `/tmp/x/y': Permission denied.
 
 ** New features
 
@@ -87,7 +330,7 @@ GNU coreutils NEWS                                    -*- outline -*-
   Fix similar problems with cp options like -p that imply
   --preserve=ownership, with install -d when combined with either -o
   or -g, and with mv when copying across file system boundaries.
-  This bug affects coreutils 6.0 through 6.6.
+  This bug affects all versions of coreutils through 6.6.
 
   du --one-file-system (-x) would skip subdirectories of any directory
   listed as second or subsequent command line argument.  This bug affects

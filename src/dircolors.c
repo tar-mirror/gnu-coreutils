@@ -2,10 +2,10 @@
    Copyright (C) 1996-2007 Free Software Foundation, Inc.
    Copyright (C) 1994, 1995, 1997, 1998, 1999, 2000 H. Peter Anvin
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -13,8 +13,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 #include <config.h>
 
@@ -26,7 +25,6 @@
 #include "dircolors.h"
 #include "c-strcase.h"
 #include "error.h"
-#include "getline.h"
 #include "obstack.h"
 #include "quote.h"
 #include "xstrndup.h"
@@ -116,7 +114,7 @@ If FILE is specified, read it to determine which colors to use for which\n\
 file types and extensions.  Otherwise, a precompiled database is used.\n\
 For details on the format of these files, run `dircolors --print-database'.\n\
 "), stdout);
-      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+      emit_bug_reporting_address ();
     }
 
   exit (status);

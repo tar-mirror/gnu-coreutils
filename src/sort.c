@@ -1,10 +1,10 @@
 /* sort - sort lines of text (with all kinds of options).
    Copyright (C) 1988, 1991-2007 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -12,8 +12,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
    Written December 1988 by Mike Haertel.
    The author may be reached (Email) at the address mike@gnu.ai.mit.edu,
@@ -380,7 +379,7 @@ The locale specified by the environment affects sort order.\n\
 Set LC_ALL=C to get the traditional sort order that uses\n\
 native byte values.\n\
 "), stdout );
-      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+      emit_bug_reporting_address ();
     }
 
   exit (status);
@@ -1033,7 +1032,7 @@ inittables (void)
 
 /* Specify the amount of main memory to use when sorting.  */
 static void
-specify_sort_size (char const *s)
+specify_sort_size (int oi, char c, char const *s)
 {
   uintmax_t n;
   char *suffix;
@@ -1089,7 +1088,7 @@ specify_sort_size (char const *s)
       e = LONGINT_OVERFLOW;
     }
 
-  STRTOL_FATAL_ERROR (s, _("sort size"), e);
+  xstrtol_fatal (e, oi, c, long_options, s);
 }
 
 /* Return the default sort size.  */
@@ -1489,9 +1488,14 @@ fillbuf (struct buffer *buf, FILE *fp, char const *file)
 	  return true;
 	}
 
-      /* The current input line is too long to fit in the buffer.
-	 Double the buffer size and try again.  */
-      buf->buf = X2REALLOC (buf->buf, &buf->alloc);
+      {
+	/* The current input line is too long to fit in the buffer.
+	   Double the buffer size and try again, keeping it properly
+	   aligned.  */
+	size_t line_alloc = buf->alloc / sizeof (struct line);
+	buf->buf = x2nrealloc (buf->buf, &line_alloc, sizeof (struct line));
+	buf->alloc = line_alloc * sizeof (struct line);
+      }
     }
 }
 
@@ -2838,6 +2842,7 @@ main (int argc, char **argv)
 	 pedantic and a file was seen, unless the POSIX version
 	 predates 1003.1-2001 and -c was not seen and the operand is
 	 "-o FILE" or "-oFILE".  */
+      int oi = -1;
 
       if (c == -1
 	  || (posixly_correct && nfiles != 0
@@ -2847,7 +2852,7 @@ main (int argc, char **argv)
 		    && argv[optind][0] == '-' && argv[optind][1] == 'o'
 		    && (argv[optind][2] || optind + 1 != argc)))
 	  || ((c = getopt_long (argc, argv, short_options,
-				long_options, NULL))
+				long_options, &oi))
 	      == -1))
 	{
 	  if (argc <= optind)
@@ -2874,10 +2879,7 @@ main (int argc, char **argv)
 		  if (! (key->sword | key->schar))
 		    key->sword = SIZE_MAX;
 		  if (! s || *set_ordering (s, key, bl_start))
-		    {
-		      free (key);
-		      key = NULL;
-		    }
+		    key = NULL;
 		  else
 		    {
 		      if (minus_pos_usage)
@@ -2930,7 +2932,7 @@ main (int argc, char **argv)
 	  break;
 
 	case COMPRESS_PROGRAM_OPTION:
-	  if (compress_program && strcmp (compress_program, optarg) != 0)
+	  if (compress_program && !STREQ (compress_program, optarg))
 	    error (SORT_FAILURE, 0, _("multiple compress programs specified"));
 	  compress_program = optarg;
 	  break;
@@ -3010,7 +3012,7 @@ main (int argc, char **argv)
 	  break;
 
 	case 'S':
-	  specify_sort_size (optarg);
+	  specify_sort_size (oi, c, optarg);
 	  break;
 
 	case 't':
@@ -3163,6 +3165,7 @@ main (int argc, char **argv)
 	sortfiles[i].name = files[i];
 
       merge (sortfiles, 0, nfiles, outfile);
+      IF_LINT (free (sortfiles));
     }
   else
     sort (files, nfiles, outfile);

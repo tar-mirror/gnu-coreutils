@@ -1,10 +1,10 @@
 /* chown -- change user and group ownership of files
-   Copyright (C) 89, 90, 91, 1995-2006 Free Software Foundation, Inc.
+   Copyright (C) 89, 90, 91, 1995-2007 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -12,8 +12,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /*
               |		              user
@@ -155,7 +154,7 @@ Examples:\n\
   %s -hR root /u    Change the owner of /u and subfiles to \"root\".\n\
 "),
 	      program_name, program_name, program_name);
-      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+      emit_bug_reporting_address ();
     }
   exit (status);
 }
@@ -239,7 +238,7 @@ main (int argc, char **argv)
 					     &required_uid, &required_gid,
 					     &u_dummy, &g_dummy);
 	    if (e)
-	      error (EXIT_FAILURE, 0, "%s: %s", quote (optarg), e);
+	      error (EXIT_FAILURE, 0, "%s: %s", e, quote (optarg));
 	    break;
 	  }
 
@@ -308,7 +307,7 @@ main (int argc, char **argv)
       const char *e = parse_user_spec (argv[optind], &uid, &gid,
 				       &chopt.user_name, &chopt.group_name);
       if (e)
-        error (EXIT_FAILURE, 0, "%s: %s", quote (argv[optind]), e);
+        error (EXIT_FAILURE, 0, "%s: %s", e, quote (argv[optind]));
 
       /* If a group is specified but no user, set the user name to the
 	 empty string so that diagnostics say "ownership :GROUP"

@@ -1,11 +1,11 @@
 /* Set file access and modification times.
 
-   Copyright (C) 2003, 2004, 2005, 2006, 2007 Free Software
+   Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Free Software
    Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify it
+   This program is free software: you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
-   Free Software Foundation; either version 2, or (at your option) any
+   Free Software Foundation; either version 3 of the License, or any
    later version.
 
    This program is distributed in the hope that it will be useful,
@@ -14,8 +14,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* Written by Paul Eggert.  */
 
@@ -55,7 +54,7 @@ struct utimbuf
 #endif
 
 #ifndef __attribute__
-# if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 8) || __STRICT_ANSI__
+# if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 8)
 #  define __attribute__(x)
 # endif
 #endif
@@ -75,8 +74,8 @@ struct utimbuf
    Return 0 on success, -1 (setting errno) on failure.  */
 
 int
-futimens (int fd ATTRIBUTE_UNUSED,
-	  char const *file, struct timespec const timespec[2])
+gl_futimens (int fd ATTRIBUTE_UNUSED,
+	     char const *file, struct timespec const timespec[2])
 {
   /* Some Linux-based NFS clients are buggy, and mishandle time stamps
      of files in NFS file systems in some cases.  We have no
@@ -185,5 +184,5 @@ futimens (int fd ATTRIBUTE_UNUSED,
 int
 utimens (char const *file, struct timespec const timespec[2])
 {
-  return futimens (-1, file, timespec);
+  return gl_futimens (-1, file, timespec);
 }

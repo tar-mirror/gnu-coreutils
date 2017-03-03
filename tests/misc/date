@@ -3,9 +3,9 @@
 
 # Copyright (C) 2005-2007 Free Software Foundation, Inc.
 
-# This program is free software; you can redistribute it and/or modify
+# This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
+# the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 
 # This program is distributed in the hope that it will be useful,
@@ -14,20 +14,19 @@
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-# 02110-1301, USA.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 : ${PERL=perl}
 : ${srcdir=.}
 
-$PERL -e 1 > /dev/null 2>&1 || {
+$PERL -e 'use warnings;' > /dev/null 2>&1 || {
   echo 1>&2 "$0: configure didn't find a usable version of Perl," \
     "so can't run this test"
   exit 77
 }
 
-exec $PERL -w -I$srcdir/.. -MCoreutils -- - <<\EOF
+me=`echo $0|sed 's,.*/,,'`
+exec $PERL -w -I$srcdir/.. -MCoreutils -M"CuTmpdir qw($me)" -- - <<\EOF
 require 5.003;
 use strict;
 
@@ -126,6 +125,11 @@ my @Tests =
      ['rel-2g', "-d '$d1 4 seconds ago' $fmt", {OUT=>"$d0 08:17:44"}],
 
      ['rel-3a', "-d '$d1 4 seconds ago' $fmt", {OUT=>"$d0 08:17:44"}],
+
+     # This has always worked, ...
+     ['rel-1day',  "-d '20050101  1 day'  +%F", {OUT=>"2005-01-02"}],
+     # ...but up to coreutils-6.9, this was rejected due to the "+".
+     ['rel-plus1', "-d '20050101 +1 day'  +%F", {OUT=>"2005-01-02"}],
 
      ['next-s', "-d '$d1 next second' '+%Y-%m-%d %T'", {OUT=>"$d0 $ts"}],
      ['next-m', "-d '$d1 next minute' '+%Y-%m-%d %T'", {OUT=>"$d0 $tm"}],

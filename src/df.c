@@ -1,10 +1,10 @@
 /* df - summarize free disk space
    Copyright (C) 91, 1995-2007 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -12,8 +12,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* Written by David MacKenzie <djm@gnu.ai.mit.edu>.
    --human-readable and --megabyte options added by lm@sgi.com.
@@ -116,8 +115,6 @@ static bool print_type;
 enum
 {
   NO_SYNC_OPTION = CHAR_MAX + 1,
-  /* FIXME: --kilobytes is deprecated (but not -k); remove in late 2006 */
-  KILOBYTES_LONG_OPTION,
   SYNC_OPTION
 };
 
@@ -128,7 +125,6 @@ static struct option const long_options[] =
   {"inodes", no_argument, NULL, 'i'},
   {"human-readable", no_argument, NULL, 'h'},
   {"si", no_argument, NULL, 'H'},
-  {"kilobytes", no_argument, NULL, KILOBYTES_LONG_OPTION},
   {"local", no_argument, NULL, 'l'},
   {"megabytes", no_argument, NULL, 'm'}, /* obsolescent */
   {"portability", no_argument, NULL, 'P'},
@@ -772,7 +768,7 @@ Mandatory arguments to long options are mandatory for short options too.\n\
 SIZE may be (or may be an integer optionally followed by) one of following:\n\
 kB 1000, K 1024, MB 1000*1000, M 1024*1024, and so on for G, T, P, E, Z, Y.\n\
 "), stdout);
-      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+      emit_bug_reporting_address ();
     }
   exit (status);
 }
@@ -780,7 +776,6 @@ kB 1000, K 1024, MB 1000*1000, M 1024*1024, and so on for G, T, P, E, Z, Y.\n\
 int
 main (int argc, char **argv)
 {
-  int c;
   struct stat *stats IF_LINT (= 0);
 
   initialize_main (&argc, &argv);
@@ -802,16 +797,26 @@ main (int argc, char **argv)
   posix_format = false;
   exit_status = EXIT_SUCCESS;
 
-  while ((c = getopt_long (argc, argv, "aB:iF:hHklmPTt:vx:", long_options, NULL))
-	 != -1)
+  for (;;)
     {
+      int oi = -1;
+      int c = getopt_long (argc, argv, "aB:iF:hHklmPTt:vx:", long_options,
+			   &oi);
+      if (c == -1)
+	break;
+
       switch (c)
 	{
 	case 'a':
 	  show_all_fs = true;
 	  break;
 	case 'B':
-	  human_output_opts = human_options (optarg, true, &output_block_size);
+	  {
+	    enum strtol_error e = human_options (optarg, &human_output_opts,
+						 &output_block_size);
+	    if (e != LONGINT_OK)
+	      xstrtol_fatal (e, oi, c, long_options, optarg);
+	  }
 	  break;
 	case 'i':
 	  inode_format = true;
@@ -824,10 +829,6 @@ main (int argc, char **argv)
 	  human_output_opts = human_autoscale | human_SI;
 	  output_block_size = 1;
 	  break;
-	case KILOBYTES_LONG_OPTION:
-	  error (0, 0,
-		 _("the --kilobytes option is deprecated; use -k instead"));
-	  /* fall through */
 	case 'k':
 	  human_output_opts = 0;
 	  output_block_size = 1024;
@@ -881,8 +882,8 @@ main (int argc, char **argv)
 	  output_block_size = (getenv ("POSIXLY_CORRECT") ? 512 : 1024);
 	}
       else
-	human_output_opts = human_options (getenv ("DF_BLOCK_SIZE"), false,
-					   &output_block_size);
+	human_options (getenv ("DF_BLOCK_SIZE"),
+		       &human_output_opts, &output_block_size);
     }
 
   /* Fail if the same file system type was both selected and excluded.  */
@@ -937,10 +938,10 @@ main (int argc, char **argv)
       /* Couldn't read the table of mounted file systems.
 	 Fail if df was invoked with no file name arguments;
 	 Otherwise, merely give a warning and proceed.  */
+      int status =          (optind < argc ? 0 : EXIT_FAILURE);
       const char *warning = (optind < argc ? _("Warning: ") : "");
-      int status = (optind < argc ? 0 : EXIT_FAILURE);
-      error (status, errno,
-	     _("%scannot read table of mounted file systems"), warning);
+      error (status, errno, "%s%s", warning,
+	     _("cannot read table of mounted file systems"));
     }
 
   if (require_sync)

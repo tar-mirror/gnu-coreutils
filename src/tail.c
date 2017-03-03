@@ -1,10 +1,10 @@
 /* tail -- output the last part of file(s)
    Copyright (C) 1989, 90, 91, 1995-2006 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -12,8 +12,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* Can display any amount of data, unlike the Unix version, which uses
    a fixed size buffer and therefore can only deliver a limited number
@@ -267,7 +266,8 @@ Mandatory arguments to long options are mandatory for short options too.\n\
 If the first character of N (the number of bytes or lines) is a `+',\n\
 print beginning with the Nth item from the start of each file, otherwise,\n\
 print the last N items in the file.  N may have a multiplier suffix:\n\
-b 512, k 1024, m 1024*1024.\n\
+b 512, kB 1000, K 1024, MB 1000*1000, M 1024*1024,\n\
+GB 1000*1000*1000, G 1024*1024*1024, and so on for T, P, E, Z, Y.\n\
 \n\
 "), stdout);
      fputs (_("\
@@ -282,7 +282,7 @@ rotation).  Use --follow=name in that case.  That causes tail to track the\n\
 named file by reopening it periodically to see if it has been removed and\n\
 recreated by some other program.\n\
 "), stdout);
-      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+      emit_bug_reporting_address ();
     }
   exit (status);
 }
@@ -1475,7 +1475,7 @@ parse_options (int argc, char **argv,
 
 	  {
 	    strtol_error s_err;
-	    s_err = xstrtoumax (optarg, NULL, 10, n_units, "bkm");
+	    s_err = xstrtoumax (optarg, NULL, 10, n_units, "bkKmMGTPEZY0");
 	    if (s_err != LONGINT_OK)
 	      {
 		error (EXIT_FAILURE, 0, "%s: %s", optarg,

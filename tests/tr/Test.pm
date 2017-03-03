@@ -1,11 +1,11 @@
 # Test "tr".
 
-# Copyright (C) 1996, 1997, 2000, 2002, 2004, 2005, 2006 Free Software
+# Copyright (C) 1996, 1997, 2000, 2002, 2004-2007 Free Software
 # Foundation, Inc.
 
-# This program is free software; you can redistribute it and/or modify
+# This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
+# the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 
 # This program is distributed in the hope that it will be useful,
@@ -14,9 +14,7 @@
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-# 02110-1301, USA.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package Test;
 require 5.002;
@@ -135,7 +133,25 @@ my @tv = (
 # From Glenn Fowler.
 ['fowler-1', q|ah -H|, 'aha', '-H-', 0],
 
+# Up to coreutils-6.9, this would provoke a failed assertion.
+['no-abort-1', '-c ' . q|a '[b*256]'|, 'abc', 'abb', 0],
+
+# Up to coreutils-6.9, tr rejected an unmatched [:lower:] or [:upper:] in SET1.
+['s1-lower', q|'[:lower:]' '[.*]'|, '#$%123abcABC', '#$%123...ABC', 0],
+['s1-upper', q|'[:upper:]' '[.*]'|, '#$%123abcABC', '#$%123abc...', 0],
+
+# Up to coreutils-6.9.91, this would fail with the diagnostic:
+# tr: misaligned [:upper:] and/or [:lower:] construct
+# with LC_CTYPE=en_US.ISO-8859-1.
+['tolower-F',q|'[:upper:]' '[:lower:]'|, 'A', 'a', 0],
+
+# When doing a case-converting translation with something after the
+# [:upper:] and [:lower:] elements, ensure that tr honors the following byte.
+['upcase-xtra',q|'[:lower:].' '[:upper:]x'|,	'abc.', 'ABCx', 0],
+['dncase-xtra',q|'[:upper:].' '[:lower:]x'|,	'ABC.', 'abcx', 0],
 );
+
+$Test::env{'tolower-F'} = ['LC_CTYPE=en_US.ISO-8859-1'];
 
 sub test_vector
 {

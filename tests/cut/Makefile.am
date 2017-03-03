@@ -3,9 +3,9 @@
 # Copyright (C) 1997, 1998, 2000, 2003, 2004, 2006 Free Software
 # Foundation, Inc.
 
-# This program is free software; you can redistribute it and/or modify
+# This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
+# the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 
 # This program is distributed in the hope that it will be useful,
@@ -14,9 +14,7 @@
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-# 02110-1301, USA.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ##test-files-begin
 x = cut
@@ -33,7 +31,8 @@ out-delim2.I out-delim2.X out-delim3.I out-delim3.X out-delim3a.I \
 out-delim3a.X out-delim4.I out-delim4.X out-delim5.I out-delim5.X \
 out-delim6.I out-delim6.X od-abut.I od-abut.X od-overlap.I od-overlap.X \
 od-overlap2.I od-overlap2.X od-overlap3.I od-overlap3.X od-overlap4.I \
-od-overlap4.X od-overlap5.I od-overlap5.X
+od-overlap4.X od-overlap5.I od-overlap5.X inval1.I inval1.X inval2.I inval2.X \
+inval3.I inval3.X inval4.I inval4.X inval5.I inval5.X inval6.I inval6.X
 run_gen = 1.O 1.E 2.O 2.E 3.O 3.E 4.O 4.E 5.O 5.E 6.O 6.E 7.O 7.E 8.O 8.E 9.O \
 9.E a.O a.E b.O b.E c.O c.E d.O d.E e.O e.E f.O f.E g.O g.E h.O h.E i.O i.E \
 j.O j.E k.O k.E l.O l.E m.O m.E n.O n.E o.O o.E p.O p.E q.O q.E r.O r.E s.O \
@@ -46,14 +45,12 @@ out-delim2.O out-delim2.E out-delim3.O out-delim3.E out-delim3a.O \
 out-delim3a.E out-delim4.O out-delim4.E out-delim5.O out-delim5.E \
 out-delim6.O out-delim6.E od-abut.O od-abut.E od-overlap.O od-overlap.E \
 od-overlap2.O od-overlap2.E od-overlap3.O od-overlap3.E od-overlap4.O \
-od-overlap4.E od-overlap5.O od-overlap5.E
+od-overlap4.E od-overlap5.O od-overlap5.E inval1.O inval1.E inval2.O inval2.E \
+inval3.O inval3.E inval4.O inval4.E inval5.O inval5.E inval6.O inval6.E
 ##test-files-end
 
 EXTRA_DIST = Test.pm $x-tests $(explicit) $(maint_gen)
 noinst_SCRIPTS = $x-tests
-TESTS_ENVIRONMENT = \
-  CU_TEST_NAME=`basename $(abs_srcdir)`,$$tst \
-  PATH="$(VG_PATH_PREFIX)`pwd`/../../src$(PATH_SEPARATOR)$$PATH"
 
 editpl = sed -e 's,@''PERL''@,$(PERL),g' -e 's,@''srcdir''@,$(srcdir),g'
 
@@ -80,3 +77,5 @@ $(srcdir)/Makefile.am: ../Makefile.am.in Test.pm $(mk_script)
 	sed -n '/^##test-files-end/,$$p' $(srcdir)/../Makefile.am.in >> $@t
 	chmod -w $@t
 	mv $@t $@
+
+include $(top_srcdir)/tests/check.mk

@@ -2,9 +2,9 @@
 
 # Copyright (C) 1990, 1993-2007 Free Software Foundation, Inc.
 
-# This program is free software; you can redistribute it and/or modify
+# This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
+# the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 
 # This program is distributed in the hope that it will be useful,
@@ -13,19 +13,17 @@
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-# 02110-1301, USA.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = lib src doc man po tests
+SUBDIRS = lib src doc man po tests gnulib-tests
 EXTRA_DIST = Makefile.cfg Makefile.maint GNUmakefile \
-  .gitignore \
-  .hgignore \
-  .kludge-stamp .prev-version THANKS-to-translators THANKStt.in \
+  .prev-version THANKS-to-translators THANKStt.in \
   .vg-suppressions \
   .x-po-check \
+  .x-sc_GPL_version \
   .x-sc_file_system .x-sc_obsolete_symbols \
   .x-sc_prohibit_atoi_atof \
+  .x-sc_prohibit_strcmp \
   .x-sc_require_config_h \
   .x-sc_space_tab .x-sc_sun_os_names \
   .x-sc_trailing_blank \
@@ -35,6 +33,7 @@ EXTRA_DIST = Makefile.cfg Makefile.maint GNUmakefile \
   bootstrap \
   bootstrap.conf \
   build-aux/cvsu \
+  build-aux/git-version-gen \
   build-aux/vc-list-files \
   gl/modules/getloadavg.diff \
   m4/ChangeLog \
@@ -56,12 +55,6 @@ ACLOCAL_AMFLAGS = -I m4
 check-root:
 	cd tests && $(MAKE) $@
 
-dist-hook:
-	test -x $(srcdir)/build-aux/install-sh
-
-distcheck-hook:
-	$(MAKE) my-distcheck
-
 # Just prior to distribution, ...
 # transform the automake-generated rule that runs `rm -f rm'.
 # On some systems, that command would fail with a diagnostic like
@@ -69,16 +62,21 @@ distcheck-hook:
 # in the shell's search path that running `rm' would run the `rm'
 # executable in the current directory.
 # Similarly, adjust the clean-binPROGRAMS rule.
-
 rm_subst = \
-  s!(rm -f (rm|\$$\(bin_PROGRAMS\)))$$!$$1 > /dev/null 2>&1 || /bin/$$1!
-MAINTAINERCLEANFILES = .kludge-stamp
-.kludge-stamp: $(srcdir)/src/Makefile.in
-	perl -pi -e '$(rm_subst)' $(srcdir)/src/Makefile.in
-	touch $@
+  s!(rm -f (rm\b|\$$\(bin_PROGRAMS\)$$))!$$1 > /dev/null 2>&1 || /bin/$$1!
 
+# Arrange so that .version appears only in distribution tarballs,
+# never in a checked-out repository.
+# The perl substitution is to change some key uses of "rm" to "/bin/rm".
+# See the rm_subst comment for details.
+dist-hook:
+	echo $(VERSION) > $(distdir)/.version
+	perl -pi -e '$(rm_subst)' $(distdir)/src/Makefile.in
 
-MAINTAINERCLEANFILES += THANKS-to-translators
+distcheck-hook:
+	$(MAKE) my-distcheck
+
+MAINTAINERCLEANFILES = THANKS-to-translators
 THANKS-to-translators: po/LINGUAS THANKStt.in
 	(								\
 	  cat $(srcdir)/THANKStt.in;					\

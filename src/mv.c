@@ -1,10 +1,10 @@
 /* mv -- move or rename files
    Copyright (C) 86, 89, 90, 91, 1995-2007 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -12,8 +12,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* Written by Mike Parker, David MacKenzie, and Jim Meyering */
 
@@ -22,6 +21,7 @@
 #include <getopt.h>
 #include <sys/types.h>
 #include <assert.h>
+#include <selinux/selinux.h>
 
 #include "system.h"
 #include "argmatch.h"
@@ -32,6 +32,7 @@
 #include "filenamecat.h"
 #include "quote.h"
 #include "remove.h"
+#include "root-dev-ino.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "mv"
@@ -92,7 +93,6 @@ static void
 rm_option_init (struct rm_options *x)
 {
   x->ignore_missing_files = false;
-  x->root_dev_ino = NULL;
   x->recursive = true;
   x->one_file_system = false;
 
@@ -108,11 +108,22 @@ rm_option_init (struct rm_options *x)
      the initial working directory, in case one of those is a
      `.'-relative name.  */
   x->require_restore_cwd = true;
+
+  {
+    static struct dev_ino dev_ino_buf;
+    x->root_dev_ino = get_root_dev_ino (&dev_ino_buf);
+    if (x->root_dev_ino == NULL)
+      error (EXIT_FAILURE, errno, _("failed to get attributes of %s"),
+	     quote ("/"));
+  }
 }
 
 static void
 cp_option_init (struct cp_options *x)
 {
+  bool selinux_enabled = (0 < is_selinux_enabled ());
+
+  cp_options_default (x);
   x->copy_as_regular = false;  /* FIXME: maybe make this an option */
   x->dereference = DEREF_NEVER;
   x->unlink_dest_before_opening = false;
@@ -120,13 +131,14 @@ cp_option_init (struct cp_options *x)
   x->hard_link = false;
   x->interactive = I_UNSPECIFIED;
   x->move_mode = true;
-  x->chown_privileges = chown_privileges ();
   x->one_file_system = false;
   x->preserve_ownership = true;
   x->preserve_links = true;
   x->preserve_mode = true;
   x->preserve_timestamps = true;
+  x->preserve_security_context = selinux_enabled;
   x->require_preserve = false;  /* FIXME: maybe make this an option */
+  x->require_preserve_context = false;
   x->recursive = true;
   x->sparse_mode = SPARSE_AUTO;  /* FIXME: maybe make this an option */
   x->symbolic_link = false;
@@ -134,6 +146,7 @@ cp_option_init (struct cp_options *x)
   x->mode = 0;
   x->stdin_tty = isatty (STDIN_FILENO);
 
+  x->open_dangling_dest_symlink = false;
   x->update = false;
   x->verbose = false;
   x->dest_info = NULL;
@@ -328,7 +341,7 @@ the VERSION_CONTROL environment variable.  Here are the values:\n\
   existing, nil   numbered if numbered backups exist, simple otherwise\n\
   simple, never   always make simple backups\n\
 "), stdout);
-      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+      emit_bug_reporting_address ();
     }
   exit (status);
 }
@@ -353,7 +366,7 @@ main (int argc, char **argv)
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
 
-  atexit (close_stdout);
+  atexit (close_stdin);
 
   cp_option_init (&x);
 

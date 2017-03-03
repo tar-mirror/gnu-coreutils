@@ -1,3 +1,5 @@
+/* -*- buffer-read-only: t -*- vi: set ro: */
+/* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 /* Functions to compute MD5 message digest of files or memory blocks.
    according to the definition of MD5 in RFC 1321 from April 1992.
    Copyright (C) 1995,1996,1997,1999,2000,2001,2005,2006
@@ -6,7 +8,7 @@
 
    This program is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
-   Free Software Foundation; either version 2, or (at your option) any
+   Free Software Foundation; either version 3, or (at your option) any
    later version.
 
    This program is distributed in the hope that it will be useful,

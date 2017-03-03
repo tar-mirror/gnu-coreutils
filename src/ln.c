@@ -1,10 +1,10 @@
 /* `ln' program to create links between files.
-   Copyright (C) 1986, 1989-1991, 1995-2006 Free Software Foundation, Inc.
+   Copyright (C) 1986, 1989-1991, 1995-2007 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -12,8 +12,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* Written by Mike Parker and David MacKenzie. */
 
@@ -23,11 +22,14 @@
 #include <getopt.h>
 
 #include "system.h"
-#include "same.h"
 #include "backupfile.h"
 #include "error.h"
 #include "filenamecat.h"
+#include "file-set.h"
+#include "hash.h"
+#include "hash-triple.h"
 #include "quote.h"
+#include "same.h"
 #include "yesno.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
@@ -82,6 +84,15 @@ static bool hard_dir_link;
    command `ln --force --no-dereference file symlink-to-dir' deletes
    symlink-to-dir before creating the new link.  */
 static bool dereference_dest_dir_symlinks = true;
+
+/* This is a set of destination name/inode/dev triples for hard links
+   created by ln.  Use this data structure to avoid data loss via a
+   sequence of commands like this:
+   rm -rf a b c; mkdir a b c; touch a/f b/f; ln -f a/f b/f c && rm -r a b */
+static Hash_table *dest_set;
+
+/* Initial size of the dest_set hash table.  */
+enum { DEST_INFO_INITIAL_CAPACITY = 61 };
 
 static struct option const long_options[] =
 {
@@ -177,6 +188,18 @@ do_link (const char *source, const char *dest)
 	  error (0, errno, _("accessing %s"), quote (dest));
 	  return false;
 	}
+    }
+
+  /* If the current target was created as a hard link to another
+     source file, then refuse to unlink it.  */
+  if (dest_lstat_ok
+      && dest_set != NULL
+      && seen_file (dest_set, dest, &dest_stats))
+    {
+      error (0, 0,
+	     _("will not overwrite just-created %s with %s"),
+	     quote_n (0, dest), quote_n (1, source));
+      return false;
     }
 
   /* If --force (-f) has been specified without --backup, then before
@@ -279,6 +302,10 @@ do_link (const char *source, const char *dest)
 
   if (ok)
     {
+      /* Right after creating a hard link, do this: (note dest name and
+	 source_stats, which are also the just-linked-destinations stats) */
+      record_file (dest_set, dest, &source_stats);
+
       if (verbose)
 	{
 	  if (dest_backup)
@@ -375,7 +402,7 @@ the VERSION_CONTROL environment variable.  Here are the values:\n\
   existing, nil   numbered if numbered backups exist, simple otherwise\n\
   simple, never   always make simple backups\n\
 "), stdout);
-      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+      emit_bug_reporting_address ();
     }
   exit (status);
 }
@@ -399,7 +426,7 @@ main (int argc, char **argv)
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
 
-  atexit (close_stdout);
+  atexit (close_stdin);
 
   /* FIXME: consider not calling getenv for SIMPLE_BACKUP_SUFFIX unless
      we'll actually use backup_suffix_string.  */
@@ -515,6 +542,29 @@ main (int argc, char **argv)
   if (target_directory)
     {
       int i;
+
+      /* Create the data structure we'll use to record which hard links we
+	 create.  Used to ensure that ln detects an obscure corner case that
+	 might result in user data loss.  Create it only if needed.  */
+      if (2 <= n_files
+	  && remove_existing_files
+	  /* Don't bother trying to protect symlinks, since ln clobbering
+	     a just-created symlink won't ever lead to real data loss.  */
+	  && ! symbolic_link
+	  /* No destination hard link can be clobbered when making
+	     numbered backups.  */
+	  && backup_type != numbered_backups)
+
+	{
+	  dest_set = hash_initialize (DEST_INFO_INITIAL_CAPACITY,
+				      NULL,
+				      triple_hash,
+				      triple_compare,
+				      triple_free);
+	  if (dest_set == NULL)
+	    xalloc_die ();
+	}
+
       ok = true;
       for (i = 0; i < n_files; ++i)
 	{

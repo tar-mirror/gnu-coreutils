@@ -1,10 +1,10 @@
 /* du -- summarize disk usage
    Copyright (C) 1988-1991, 1995-2007 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -12,8 +12,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* Differences from the Unix du:
    * Doesn't simply ignore the names of regular files given as arguments
@@ -195,15 +194,8 @@ enum
   EXCLUDE_OPTION,
   FILES0_FROM_OPTION,
   HUMAN_SI_OPTION,
-
-  /* FIXME: --kilobytes is deprecated (but not -k); remove in late 2006 */
-  KILOBYTES_LONG_OPTION,
-
   MAX_DEPTH_OPTION,
-
-  /* FIXME: --megabytes is deprecated (but not -m); remove in late 2006 */
   MEGABYTES_LONG_OPTION,
-
   TIME_OPTION,
   TIME_STYLE_OPTION
 };
@@ -222,10 +214,8 @@ static struct option const long_options[] =
   {"files0-from", required_argument, NULL, FILES0_FROM_OPTION},
   {"human-readable", no_argument, NULL, 'h'},
   {"si", no_argument, NULL, HUMAN_SI_OPTION},
-  {"kilobytes", no_argument, NULL, KILOBYTES_LONG_OPTION},
   {"max-depth", required_argument, NULL, MAX_DEPTH_OPTION},
   {"null", no_argument, NULL, '0'},
-  {"megabytes", no_argument, NULL, MEGABYTES_LONG_OPTION},
   {"no-dereference", no_argument, NULL, 'P'},
   {"one-file-system", no_argument, NULL, 'x'},
   {"separate-dirs", no_argument, NULL, 'S'},
@@ -298,7 +288,8 @@ Mandatory arguments to long options are mandatory for short options too.\n\
   -B, --block-size=SIZE  use SIZE-byte blocks\n\
   -b, --bytes           equivalent to `--apparent-size --block-size=1'\n\
   -c, --total           produce a grand total\n\
-  -D, --dereference-args  dereference FILEs that are symbolic links\n\
+  -D, --dereference-args  dereference only symlinks that are listed on the\n\
+                          command line\n\
 "), stdout);
       fputs (_("\
       --files0-from=F   summarize disk usage of the NUL-terminated file\n\
@@ -344,7 +335,7 @@ Mandatory arguments to long options are mandatory for short options too.\n\
 SIZE may be (or may be an integer optionally followed by) one of following:\n\
 kB 1000, K 1024, MB 1000*1000, M 1024*1024, and so on for G, T, P, E, Z, Y.\n\
 "), stdout);
-      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+      emit_bug_reporting_address ();
     }
   exit (status);
 }
@@ -605,13 +596,8 @@ process_file (FTS *fts, FTSENT *ent)
     duinfo_add (&dulvl[level].ent, &dui);
 
   /* Even if this directory is unreadable or we can't chdir into it,
-     do let its size contribute to the total, ... */
+     do let its size contribute to the total. */
   duinfo_add (&tot_dui, &dui);
-
-  /* ... but don't print out a total for it, since without the size(s)
-     of any potential entries, it could be very misleading.  */
-  if (ent->fts_info == FTS_DNR)
-    return ok;
 
   /* If we're not counting an entry, e.g., because it's a hard link
      to a file we've already counted (and --count-links), then don't
@@ -675,7 +661,6 @@ du_files (char **files, int bit_flags)
 int
 main (int argc, char **argv)
 {
-  int c;
   char *cwd_only[2];
   bool max_depth_specified = false;
   char **files;
@@ -706,12 +691,17 @@ main (int argc, char **argv)
 
   exclude = new_exclude ();
 
-  human_output_opts = human_options (getenv ("DU_BLOCK_SIZE"), false,
-				     &output_block_size);
+  human_options (getenv ("DU_BLOCK_SIZE"),
+		 &human_output_opts, &output_block_size);
 
-  while ((c = getopt_long (argc, argv, DEBUG_OPT "0abchHklmsxB:DLPSX:",
-			   long_options, NULL)) != -1)
+  for (;;)
     {
+      int oi = -1;
+      int c = getopt_long (argc, argv, DEBUG_OPT "0abchHklmsxB:DLPSX:",
+			   long_options, &oi);
+      if (c == -1)
+	break;
+
       switch (c)
 	{
 #if DU_DEBUG
@@ -757,10 +747,6 @@ main (int argc, char **argv)
 	  output_block_size = 1;
 	  break;
 
-	case KILOBYTES_LONG_OPTION:
-	  error (0, 0,
-		 _("the --kilobytes option is deprecated; use -k instead"));
-	  /* fall through */
 	case 'k':
 	  human_output_opts = 0;
 	  output_block_size = 1024;
@@ -806,7 +792,12 @@ main (int argc, char **argv)
 	  break;
 
 	case 'B':
-	  human_output_opts = human_options (optarg, true, &output_block_size);
+	  {
+	    enum strtol_error e = human_options (optarg, &human_output_opts,
+						 &output_block_size);
+	    if (e != LONGINT_OK)
+	      xstrtol_fatal (e, oi, c, long_options, optarg);
+	  }
 	  break;
 
 	case 'D': /* This will eventually be 'H' (-H), too.  */

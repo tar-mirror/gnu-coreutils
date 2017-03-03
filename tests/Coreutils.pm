@@ -1,12 +1,11 @@
 package Coreutils;
 # This is a testing framework.
 
-# Copyright (C) 1998, 2000, 2001, 2002, 2004, 2005, 2006 Free Software
-# Foundation, Inc.
+# Copyright (C) 1998, 2000-2002, 2004-2007 Free Software Foundation, Inc.
 
-# This program is free software; you can redistribute it and/or modify
+# This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
+# the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 
 # This program is distributed in the hope that it will be useful,
@@ -15,9 +14,7 @@ package Coreutils;
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-# 02110-1301, USA.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 require 5.003;
 use strict;
@@ -480,6 +477,23 @@ sub run_tests ($$$$$)
 	  goto cleanup;
 	}
 
+      my %actual_data;
+      # Record actual stdout and stderr contents, if POST may need them.
+      if ($expect->{POST})
+	{
+	  foreach my $eo (qw (OUT ERR))
+	    {
+	      my $out_file = $actual{$eo};
+	      open IN, $out_file
+		or (warn "$program_name: cannot open $out_file for reading: $!\n"),
+		  $fail = 1, next;
+	      $actual_data{$eo} = <IN>;
+	      close IN
+		or (warn "$program_name: failed to read $out_file: $!\n"),
+		  $fail = 1;
+	    }
+	}
+
       foreach my $eo (qw (OUT ERR))
 	{
 	  my $subst_expr = $expect->{RESULT_SUBST}->{$eo};
@@ -527,7 +541,8 @@ sub run_tests ($$$$$)
 	}
 
     cleanup:
-      &{$expect->{POST}} if $expect->{POST};
+      $expect->{POST}
+	and &{$expect->{POST}} ($actual_data{OUT}, $actual_data{ERR});
 
     }
 

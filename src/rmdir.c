@@ -1,12 +1,12 @@
 /* rmdir -- remove directories
 
-   Copyright (C) 90, 91, 1995-2002, 2004, 2005, 2006 Free Software
+   Copyright (C) 90, 91, 1995-2002, 2004, 2005, 2006, 2007 Free Software
    Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -14,8 +14,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* Options:
    -p, --parent		Remove any parent dirs that are explicitly mentioned
@@ -31,7 +30,7 @@
 
 #include "system.h"
 #include "error.h"
-#include "quotearg.h"
+#include "quote.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "rmdir"
@@ -107,7 +106,7 @@ remove_parents (char *dir)
 
       /* Give a diagnostic for each attempted removal if --verbose.  */
       if (verbose)
-	error (0, 0, _("removing directory, %s"), dir);
+	error (0, 0, _("removing directory, %s"), quote (dir));
 
       ok = (rmdir (dir) == 0);
 
@@ -121,7 +120,9 @@ remove_parents (char *dir)
 	    }
 	  else
 	    {
-	      error (0, errno, "%s", quotearg_colon (dir));
+	      /* Barring race conditions, DIR is expected to be a directory.  */
+	      error (0, errno, _("failed to remove directory %s"),
+		     quote (dir));
 	    }
 	  break;
 	}
@@ -152,7 +153,7 @@ Remove the DIRECTORY(ies), if they are empty.\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
-      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+      emit_bug_reporting_address ();
     }
   exit (status);
 }
@@ -213,7 +214,9 @@ main (int argc, char **argv)
 	      && errno_rmdir_non_empty (errno))
 	    continue;
 
-	  error (0, errno, "%s", quotearg_colon (dir));
+	  /* Here, the diagnostic is less precise, since we have no idea
+	     whether DIR is a directory.  */
+	  error (0, errno, _("failed to remove %s"), quote (dir));
 	  ok = false;
 	}
       else if (remove_empty_parents)

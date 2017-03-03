@@ -2,10 +2,10 @@
 
    Copyright (C) 2002, 2003, 2005, 2006, 2007 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation; either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -13,8 +13,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
    Written by Paul Eggert and Andreas Gruenbacher.  */
 
@@ -41,11 +40,11 @@ chmod_or_fchmod (const char *name, int desc, mode_t mode)
 /* Copy access control lists from one file to another. If SOURCE_DESC is
    a valid file descriptor, use file descriptor operations, else use
    filename based operations on SRC_NAME. Likewise for DEST_DESC and
-   DEST_NAME.
+   DST_NAME.
    If access control lists are not available, fchmod the target file to
    MODE.  Also sets the non-permission bits of the destination file
    (S_ISUID, S_ISGID, S_ISVTX) to those from MODE if any are set.
-   System call return value semantics.  */
+   Return 0 if successful, otherwise output a diagnostic and return -1.  */
 
 int
 copy_acl (const char *src_name, int source_desc, const char *dst_name,
@@ -85,7 +84,12 @@ copy_acl (const char *src_name, int source_desc, const char *dst_name,
 	  int n = acl_entries (acl);
 
 	  acl_free (acl);
-	  if (n == 3)
+	  /* On most hosts an ACL is trivial if n == 3, and it cannot be
+	     less than 3.  On IRIX 6.5 it is also trivial if n == -1.
+	     For simplicity and safety, assume the ACL is trivial if n <= 3.
+	     Also see file-has-acl.c for some of the other possibilities;
+	     it's not clear whether that complexity is needed here.  */
+	  if (n <= 3)
 	    {
 	      if (chmod_or_fchmod (dst_name, dest_desc, mode) != 0)
 		saved_errno = errno;
@@ -140,10 +144,38 @@ copy_acl (const char *src_name, int source_desc, const char *dst_name,
         acl_free (acl);
     }
   return 0;
+
 #else
-  ret = chmod_or_fchmod (dst_name, dest_desc, mode);
+
+# if USE_ACL && defined ACL_NO_TRIVIAL
+  /* Solaris 10 NFSv4 ACLs.  */
+  acl_t *aclp = NULL;
+  ret = (source_desc < 0
+	 ? acl_get (src_name, ACL_NO_TRIVIAL, &aclp)
+	 : facl_get (source_desc, ACL_NO_TRIVIAL, &aclp));
+  if (ret != 0 && errno != ENOSYS)
+    {
+      error (0, errno, "%s", quote (src_name));
+      return ret;
+    }
+# endif
+
+  ret = qset_acl (dst_name, dest_desc, mode);
   if (ret != 0)
     error (0, errno, _("preserving permissions for %s"), quote (dst_name));
+
+# if USE_ACL && defined ACL_NO_TRIVIAL
+  if (ret == 0 && aclp)
+    {
+      ret = (dest_desc < 0
+	     ? acl_set (dst_name, aclp)
+	     : facl_set (dest_desc, aclp));
+      if (ret != 0)
+	error (0, errno, _("preserving permissions for %s"), quote (dst_name));
+      acl_free (aclp);
+    }
+# endif
+
   return ret;
 #endif
 }
@@ -157,7 +189,7 @@ copy_acl (const char *src_name, int source_desc, const char *dst_name,
    semantics.  */
 
 int
-set_acl (char const *name, int desc, mode_t mode)
+qset_acl (char const *name, int desc, mode_t mode)
 {
 #if USE_ACL && HAVE_ACL_SET_FILE && HAVE_ACL_FREE
   /* POSIX 1003.1e draft 17 (abandoned) specific version.  */
@@ -181,10 +213,7 @@ set_acl (char const *name, int desc, mode_t mode)
     {
       acl = acl_from_mode (mode);
       if (!acl)
-	{
-	  error (0, errno, "%s", quote (name));
-	  return -1;
-	}
+	return -1;
     }
   else
     {
@@ -202,10 +231,7 @@ set_acl (char const *name, int desc, mode_t mode)
 
       acl = acl_from_text (acl_text);
       if (!acl)
-	{
-	  error (0, errno, "%s", quote (name));
-	  return -1;
-	}
+	return -1;
     }
   if (HAVE_ACL_SET_FD && desc != -1)
     ret = acl_set_fd (desc, acl);
@@ -223,17 +249,14 @@ set_acl (char const *name, int desc, mode_t mode)
 	  else
 	    return 0;
 	}
-      error (0, saved_errno, _("setting permissions for %s"), quote (name));
+      errno = saved_errno;
       return -1;
     }
   else
     acl_free (acl);
 
   if (S_ISDIR (mode) && acl_delete_def_file (name))
-    {
-      error (0, errno, _("setting permissions for %s"), quote (name));
-      return -1;
-    }
+    return -1;
 
   if (mode & (S_ISUID | S_ISGID | S_ISVTX))
     {
@@ -241,16 +264,57 @@ set_acl (char const *name, int desc, mode_t mode)
          been set.  */
 
       if (chmod_or_fchmod (name, desc, mode))
-	{
-	  error (0, errno, _("preserving permissions for %s"), quote (name));
-	  return -1;
-	}
+	return -1;
     }
   return 0;
 #else
-   int ret = chmod_or_fchmod (name, desc, mode);
-   if (ret)
-     error (0, errno, _("setting permissions for %s"), quote (name));
-   return ret;
+
+# if USE_ACL && defined ACL_NO_TRIVIAL
+
+  /* Solaris 10, with NFSv4 ACLs.  */
+  acl_t *aclp;
+  char acl_text[] = "user::---,group::---,mask:---,other:---";
+
+  if (mode & S_IRUSR) acl_text[ 6] = 'r';
+  if (mode & S_IWUSR) acl_text[ 7] = 'w';
+  if (mode & S_IXUSR) acl_text[ 8] = 'x';
+  if (mode & S_IRGRP) acl_text[17] = acl_text[26] = 'r';
+  if (mode & S_IWGRP) acl_text[18] = acl_text[27] = 'w';
+  if (mode & S_IXGRP) acl_text[19] = acl_text[28] = 'x';
+  if (mode & S_IROTH) acl_text[36] = 'r';
+  if (mode & S_IWOTH) acl_text[37] = 'w';
+  if (mode & S_IXOTH) acl_text[38] = 'x';
+
+  if (acl_fromtext (acl_text, &aclp) != 0)
+    {
+      errno = ENOMEM;
+      return -1;
+    }
+  else
+    {
+      int acl_result = (desc < 0 ? acl_set (name, aclp) : facl_set (desc, aclp));
+      int acl_errno = errno;
+      acl_free (aclp);
+      if (acl_result == 0 || acl_errno != ENOSYS)
+	{
+	  errno = acl_errno;
+	  return acl_result;
+	}
+    }
+# endif
+
+  return chmod_or_fchmod (name, desc, mode);
+
 #endif
+}
+
+/* As with qset_acl, but also output a diagnostic on failure.  */
+
+int
+set_acl (char const *name, int desc, mode_t mode)
+{
+  int r = qset_acl (name, desc, mode);
+  if (r != 0)
+    error (0, errno, _("setting permissions for %s"), quote (name));
+  return r;
 }

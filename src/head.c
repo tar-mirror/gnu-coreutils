@@ -1,10 +1,10 @@
 /* head -- output first part of file(s)
    Copyright (C) 89, 90, 91, 1995-2006 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -12,8 +12,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* Options: (see usage)
    Reads from standard input if no files are given or when a filename of
@@ -135,9 +134,11 @@ Mandatory arguments to long options are mandatory for short options too.\n\
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
       fputs (_("\
 \n\
-N may have a multiplier suffix: b 512, k 1024, m 1024*1024.\n\
+N may have a multiplier suffix:\n\
+b 512, kB 1000, K 1024, MB 1000*1000, M 1024*1024,\n\
+GB 1000*1000*1000, G 1024*1024*1024, and so on for T, P, E, Z, Y.\n\
 "), stdout);
-      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+      emit_bug_reporting_address ();
     }
   exit (status);
 }
@@ -860,8 +861,8 @@ head_file (const char *filename, uintmax_t n_units, bool count_lines,
   return ok;
 }
 
-/* Convert a string of decimal digits, N_STRING, with a single, optional suffix
-   character (b, k, or m) to an integral value.  Upon successful conversion,
+/* Convert a string of decimal digits, N_STRING, with an optional suffinx
+   to an integral value.  Upon successful conversion,
    return that value.  If it cannot be converted, give a diagnostic and exit.
    COUNT_LINES indicates whether N_STRING is a number of bytes or a number
    of lines.  It is used solely to give a more specific diagnostic.  */
@@ -872,7 +873,7 @@ string_to_integer (bool count_lines, const char *n_string)
   strtol_error s_err;
   uintmax_t n;
 
-  s_err = xstrtoumax (n_string, NULL, 10, &n, "bkm");
+  s_err = xstrtoumax (n_string, NULL, 10, &n, "bkKmMGTPEZY0");
 
   if (s_err == LONGINT_OVERFLOW)
     {

@@ -1,20 +1,19 @@
 /* Unicode character output to streams with locale dependent encoding.
 
-   Copyright (C) 2000-2003, 2005, 2006 Free Software Foundation, Inc.
+   Copyright (C) 2000-2003, 2006 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation; either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 
-   You should have received a copy of the GNU General Public License along
-   with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* Written by Bruno Haible <haible@clisp.cons.org>.  */
 
@@ -39,16 +38,6 @@
 #include "gettext.h"
 #define _(msgid) gettext (msgid)
 #define N_(msgid) msgid
-
-#ifndef __attribute__
-# if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 8) || __STRICT_ANSI__
-#  define __attribute__(x) /* empty */
-# endif
-#endif
-
-#ifndef ATTRIBUTE_UNUSED
-# define ATTRIBUTE_UNUSED __attribute__ ((__unused__))
-#endif
 
 #include "localcharset.h"
 
@@ -217,8 +206,7 @@ fwrite_success_callback (const char *buf, size_t buflen, void *callback_arg)
 
 /* Simple failure callback that displays an error and exits.  */
 static long
-exit_failure_callback (unsigned int code, const char *msg,
-		       void *callback_arg ATTRIBUTE_UNUSED)
+exit_failure_callback (unsigned int code, const char *msg, void *callback_arg)
 {
   if (msg == NULL)
     error (1, 0, _("cannot convert U+%04X to local character set"), code);
@@ -231,8 +219,7 @@ exit_failure_callback (unsigned int code, const char *msg,
 /* Simple failure callback that displays a fallback representation in plain
    ASCII, using the same notation as ISO C99 strings.  */
 static long
-fallback_failure_callback (unsigned int code, const char *msg ATTRIBUTE_UNUSED
-			   , void *callback_arg)
+fallback_failure_callback (unsigned int code, const char *msg, void *callback_arg)
 {
   FILE *stream = (FILE *) callback_arg;
 

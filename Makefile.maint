@@ -2,12 +2,12 @@
 # This Makefile fragment is shared between the coreutils,
 # CPPI, Bison, and Autoconf.
 
-## Copyright (C) 2001-2007 Free Software Foundation, Inc.
+## Copyright (C) 2001-2008 Free Software Foundation, Inc.
 ##
-## This program is free software; you can redistribute it and/or modify
+## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 2, or (at your option)
-## any later version.
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
 ##
 ## This program is distributed in the hope that it will be useful,
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,9 +15,7 @@
 ## GNU General Public License for more details.
 ##
 ## You should have received a copy of the GNU General Public License
-## along with this program; if not, write to the Free Software
-## Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-## 02110-1301, USA.
+## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # This is reported not to work with make-3.79.1
 # ME := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
@@ -46,9 +44,15 @@ endif
 PREV_VERSION := $(shell cat $(prev_version_file))
 VERSION_REGEXP = $(subst .,\.,$(VERSION))
 
+ifeq ($(VC),$(GIT))
+this-vc-tag = v$(VERSION)
+this-vc-tag-regexp = v$(VERSION_REGEXP)
+else
 tag-package = $(shell echo "$(PACKAGE)" | tr '[:lower:]' '[:upper:]')
 tag-this-version = $(subst .,_,$(VERSION))
 this-vc-tag = $(tag-package)-$(tag-this-version)
+this-vc-tag-regexp = $(this-vc-tag)
+endif
 my_distdir = $(PACKAGE)-$(VERSION)
 
 # Old releases are stored here.
@@ -122,7 +126,14 @@ sc_space_tab:
 # Instead, use strto* functions.
 sc_prohibit_atoi_atof:
 	@grep -nE '\<([fs]?scanf|ato([filq]|ll))\>' $$($(CVS_LIST_EXCEPT)) && \
-	  { echo '$(ME): do not use *scan''f, ato''f, ato''i, ato''l, ato''ll, or ato''q'	\
+	  { echo '$(ME): do not use *scan''f, ato''f, ato''i, ato''l, ato''ll, ato''q, or ss''canf'	\
+		1>&2; exit 1; } || :
+
+# Use STREQ rather than comparing strcmp == 0, or != 0.
+sc_prohibit_strcmp:
+	@grep -nE '! *str''cmp \(|\<str''cmp \([^)]+\) *==' \
+	    $$($(CVS_LIST_EXCEPT)) && \
+	  { echo '$(ME): use STREQ in place of the above uses of str''cmp' \
 		1>&2; exit 1; } || :
 
 # Using EXIT_SUCCESS as the first argument to error is misleading,
@@ -163,6 +174,30 @@ sc_prohibit_assert_without_use:
 	  grep -L '\<assert (' $$files					\
 	      | grep . &&						\
 	    { echo "$(ME): the above files include <assert.h> but don't use it" \
+		  1>&2; exit 1; } || :;					\
+	else :;								\
+	fi
+
+# Don't include quotearg.h unless you use one of its functions.
+sc_prohibit_quotearg_without_use:
+	@if $(CVS_LIST_EXCEPT) | grep '\.c$$' > /dev/null; then		\
+	  files=$$(grep -l '# *include "quotearg\.h"'			\
+		    $$($(CVS_LIST_EXCEPT) | grep '\.c$$')) &&		\
+	  grep -LE '\<quotearg(_[^ ]+)? \(' $$files			\
+	      | grep . &&						\
+	    { echo "$(ME): the above files include "quotearg.h" but don't use it" \
+		  1>&2; exit 1; } || :;					\
+	else :;								\
+	fi
+
+# Don't include quote.h unless you use one of its functions.
+sc_prohibit_quote_without_use:
+	@if $(CVS_LIST_EXCEPT) | grep '\.c$$' > /dev/null; then		\
+	  files=$$(grep -l '# *include "quote\.h"'			\
+		    $$($(CVS_LIST_EXCEPT) | grep '\.c$$')) &&		\
+	  grep -LE '\<quote(_n)? \(' $$files			\
+	      | grep . &&						\
+	    { echo "$(ME): the above files include "quote.h" but don't use it" \
 		  1>&2; exit 1; } || :;					\
 	else :;								\
 	fi
@@ -324,21 +359,26 @@ sc_useless_cpp_parens:
 	  { echo '$(ME): found useless parentheses in cpp directive'	\
 		1>&2; exit 1; } || :
 
+# Require the latest GPL.
+sc_GPL_version:
+	@grep -n 'either ''version [^3]' $$($(CVS_LIST_EXCEPT)) &&	\
+	  { echo '$(ME): GPL vN, N!=3' 1>&2; exit 1; } || :
+
 # Ensure that the c99-to-c89 patch applies cleanly.
 patch-check:
 	rm -rf src-c89 $@.1 $@.2
 	cp -a src src-c89
-	(cd src-c89; patch -p2 -V never --fuzz=0) < src/c99-to-c89.diff \
+	(cd src-c89; patch -p1 -V never --fuzz=0) < src/c99-to-c89.diff \
 	  > $@.1 2>&1
-	if test "$${REGEN_PATCH+set}" = set; then \
-	  diff -upr src src-c89 > new-diff || : ; fi
+	if test "$$REGEN_PATCH" = yes; then \
+	  diff -upr src src-c89 | sed 's,src-c89/,src/,' \
+	    | grep -v '^Only in' > new-diff || : ; fi
 	grep -v '^patching file ' $@.1 > $@.2 || :
 	msg=ok; test -s $@.2 && msg='fuzzy patch' || : ;	\
 	rm -f src-c89/*.o || msg='rm failed';			\
 	$(MAKE) -C src-c89 CFLAGS='-Wdeclaration-after-statement -Werror' \
 	  || msg='compile failure with extra options';		\
-	rm -rf src-c89 $@.1 $@.2;				\
-	test "$$msg" = ok && : || echo "$$msg" 1>&2;		\
+	test "$$msg" = ok && rm -rf src-c89 $@.1 $@.2 || echo "$$msg" 1>&2; \
 	test "$$msg" = ok
 
 # Ensure that date's --help output stays in sync with the info
@@ -450,7 +490,9 @@ writable-files:
 
 v_etc_file = lib/version-etc.c
 sample-test = tests/sample-test
+texi = doc/$(PACKAGE).texi
 # Make sure that the copyright date in $(v_etc_file) is up to date.
+# Do the same for the $(sample-test) and the main doc/.texi file.
 copyright-check:
 	@if test -f $(v_etc_file); then \
 	  grep 'enum { COPYRIGHT_YEAR = '$$(date +%Y)' };' $(v_etc_file) \
@@ -464,21 +506,11 @@ copyright-check:
 	  || { echo 'out of date copyright in $(sample-test); update it' 1>&2; \
 	       exit 1; }; \
 	fi
-
-
-# Sanity checks with the repository.
-# Abort early if this tag has already been used.
-vc-tag-check:
-	used=no;							\
-	if $(VC) --help | grep CVS; then				\
-	  $(CVS) -n log -h README|grep -e $(this-vc-tag): >/dev/null	\
-	    && used=yes;						\
-	else								\
-	  $(GIT) tag -l '^$(this-vc-tag)$$' && used=yes;		\
-	fi;								\
-	if test "$$used" = yes; then					\
-	  echo "$(this-vc-tag) has already been used; not tagging" 1>&2; \
-	  exit 1;							\
+	@if test -f $(texi); then \
+	  grep 'Copyright @copyright{} .*'$$(date +%Y)' Free' $(texi) \
+	    >/dev/null \
+	  || { echo 'out of date copyright in $(texi); update it' 1>&2; \
+	       exit 1; }; \
 	fi
 
 vc-diff-check:
@@ -491,18 +523,16 @@ vc-diff-check:
 	  rm vc-diffs;						\
 	fi
 
-cvs-check: vc-diff-check vc-tag-check
+cvs-check: vc-diff-check
 
 maintainer-distcheck:
 	$(MAKE) distcheck
 	$(MAKE) my-distcheck
 
 
-# Tag before making distribution.  Also, don't make a distribution if
-# checks fail.  Also, make sure the NEWS file is up-to-date.
-# FIXME: use dist-hook/my-dist like distcheck-hook/my-distcheck.
+# Don't make a distribution if checks fail.
+# Also, make sure the NEWS file is up-to-date.
 vc-dist: $(local-check) cvs-check maintainer-distcheck
-	$(VC-tag) $(this-vc-tag)
 	$(MAKE) dist
 
 # Use this to make sure we don't run these programs when building
@@ -514,16 +544,28 @@ null_AM_MAKEFLAGS = \
   AUTOHEADER=false \
   MAKEINFO=false
 
+built_programs = $$(cd src && MAKEFLAGS= $(MAKE) -s built_programs.list)
+
 warn_cflags = -Dlint -O -Werror -Wall -Wformat -Wshadow -Wpointer-arith
+bin=bin-$$$$
+
+write_loser = printf '\#!%s\necho $$0: bad path 1>&2; exit 1\n' '$(SHELL)'
 
 # Use -Wformat -Werror to detect format-string/arg-list mismatches.
 # Also, check for shadowing problems with -Wshadow, and for pointer
 # arithmetic problems with -Wpointer-arith.
 # These CFLAGS are pretty strict.  If you build this target, you probably
 # have to have a recent version of gcc and glibc headers.
+# The for-loop below ensures that there is a bin/ directory full of all
+# of the programs under test (except the few that are required for basic
+# Makefile rules), all symlinked to the just-built "false" program.
+# This is to ensure that if ever a test neglects to make PATH include
+# the build srcdir, these always-failing programs will run.
+# Otherwise, it is too easy to test the wrong programs.
+# Note that "false" itself is a symlink to true, so it too will malfunction.
 TMPDIR ?= /tmp
 t=$(TMPDIR)/$(PACKAGE)/test
-my-distcheck: $(local-check) $(release_archive_dir)/$(prev-tgz)
+my-distcheck: $(local-check) $(release_archive_dir)/$(prev-tgz) check
 	-rm -rf $(t)
 	mkdir -p $(t)
 	GZIP=$(GZIP_ENV) $(AMTAR) -C $(t) -zxf $(distdir).tar.gz
@@ -532,7 +574,20 @@ my-distcheck: $(local-check) $(release_archive_dir)/$(prev-tgz)
 	  && $(MAKE) CFLAGS='$(warn_cflags)'		\
 	      AM_MAKEFLAGS='$(null_AM_MAKEFLAGS)'	\
 	  && $(MAKE) dvi				\
-	  && $(MAKE) check				\
+	  && mkdir $(bin)				\
+	  && ($(write_loser)) > $(bin)/loser            \
+	  && chmod a+x $(bin)/loser                     \
+	  && for i in $(built_programs); do		\
+	       case $$i in				\
+		 rm|expr|basename|echo|sort|ls|tr);;	\
+		 cat|dirname|mv|wc);;			\
+		 *) ln $(bin)/loser $(bin)/$$i;;	\
+	       esac;					\
+	     done					\
+	  && ln -sf ../src/true $(bin)/false		\
+	  && PATH=`pwd`/$(bin):$$PATH $(MAKE) -C tests check \
+	  && $(MAKE) -C gnulib-tests check		\
+	  && rm -rf $(bin)				\
 	  && $(MAKE) distclean
 	(cd $(t) && mv $(distdir) $(distdir).old	\
 	  && $(AMTAR) -zxf - ) < $(distdir).tar.gz
@@ -541,7 +596,7 @@ my-distcheck: $(local-check) $(release_archive_dir)/$(prev-tgz)
 	  cd $(t)/$(distdir)						\
 	    && (cd src && patch -V never --fuzz=0 <c99-to-c89.diff)	\
 	    && ./configure --disable-largefile				\
-	         CFLAGS='-Werror -ansi -pedantic -Wno-long-long'	\
+	         CFLAGS='-Werror -ansi -Wno-long-long'			\
 	    && $(MAKE);							\
 	fi
 	-rm -rf $(t)
@@ -562,9 +617,14 @@ rel-check:
 	md5sum -c $$md5_tmp < $$tarz
 
 prev-tgz = $(PACKAGE)-$(PREV_VERSION).tar.gz
+
+# FIXME: stop distributing xdelta files in 2008, unless someone speaks up.
+# So far, not one person has said they'd miss this.
 xd-delta = $(PACKAGE)-$(PREV_VERSION)-$(VERSION).xdelta
 
 rel-files = $(xd-delta) $(DIST_ARCHIVES)
+
+gnulib-version = $$(cd $(gnulib_dir) && git describe)
 
 # Approximate the date of last gnulib "update" by the ChangeLog file's
 # mtime, and provide that date in the announcement.
@@ -579,7 +639,7 @@ announcement: NEWS ChangeLog $(rel-files)
 	    --gpg-key-id=$(gpg_key_ID)					\
 	    --news=NEWS							\
 	    --bootstrap-tools=autoconf,automake,bison,gnulib		\
-	    --gnulib-snapshot-time-stamp="$$utc_date"			\
+	    --gnulib-version=$(gnulib-version)				\
 	    $(addprefix --url-dir=, $(url_dir_list))
 
 ## ---------------- ##
@@ -606,12 +666,13 @@ $(xd-delta): $(release_archive_dir)/$(prev-tgz) $(distdir).tar.gz
 	xdelta delta -9 $^ $@ || :
 
 .PHONY: alpha beta major
-alpha beta major: news-date-check changelog-check $(local-check) writable-files
+alpha beta major: $(local-check) writable-files
 	test $@ = major						\
 	  && { echo $(VERSION) | grep -E '^[0-9]+(\.[0-9]+)+$$'	\
 	       || { echo "invalid version string: $(VERSION)" 1>&2; exit 1;};}\
 	  || :
 	$(MAKE) vc-dist
+	$(MAKE) news-date-check changelog-check
 	$(MAKE) $(xd-delta)
 	$(MAKE) -s announcement RELEASE_TYPE=$@ > /tmp/announce-$(my_distdir)
 	ln $(rel-files) $(release_archive_dir)

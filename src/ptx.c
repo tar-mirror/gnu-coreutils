@@ -1,20 +1,19 @@
 /* Permuted index for GNU, with keywords in their context.
-   Copyright (C) 1990, 1991, 1993, 1998-2006 Free Software Foundation, Inc.
+   Copyright (C) 1990, 1991, 1993, 1998-2007 Free Software Foundation, Inc.
    François Pinard <pinard@iro.umontreal.ca>, 1988.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   General Public License for more details.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
    François Pinard <pinard@iro.umontreal.ca> */
 
@@ -1922,7 +1921,7 @@ Mandatory arguments to long options are mandatory for short options too.\n\
 \n\
 With no FILE or if FILE is -, read Standard Input.  `-F /' by default.\n\
 "), stdout);
-      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+      emit_bug_reporting_address ();
     }
   exit (status);
 }
@@ -1937,7 +1936,6 @@ static const struct option long_options[] =
 {
   {"auto-reference", no_argument, NULL, 'A'},
   {"break-file", required_argument, NULL, 'b'},
-  {"copyright", no_argument, NULL, 'C'}, /* Deprecated, remove in 2007.  */
   {"flag-truncation", required_argument, NULL, 'F'},
   {"ignore-case", no_argument, NULL, 'f'},
   {"gap-size", required_argument, NULL, 'g'},
@@ -1987,7 +1985,7 @@ main (int argc, char **argv)
   setchrclass (NULL);
 #endif
 
-  while (optchar = getopt_long (argc, argv, "ACF:GM:ORS:TW:b:i:fg:o:trw:",
+  while (optchar = getopt_long (argc, argv, "AF:GM:ORS:TW:b:i:fg:o:trw:",
 				long_options, NULL),
 	 optchar != EOF)
     {
@@ -2084,11 +2082,6 @@ main (int argc, char **argv)
 	  output_format = XARGMATCH ("--format", optarg,
 				     format_args, format_vals);
 	case_GETOPT_HELP_CHAR;
-
-	case 'C':
-	  error (0, 0, _("\
-the --copyright option is deprecated; use --version instead"));
-          /* fallthrough */
 
 	case_GETOPT_VERSION_CHAR (PROGRAM_NAME, AUTHORS);
 	}

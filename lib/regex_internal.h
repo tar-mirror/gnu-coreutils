@@ -1,3 +1,5 @@
+/* -*- buffer-read-only: t -*- vi: set ro: */
+/* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 /* Extended regular expression matching and search library.
    Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
@@ -5,7 +7,7 @@
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
+   the Free Software Foundation; either version 3, or (at your option)
    any later version.
 
    This program is distributed in the hope that it will be useful,
@@ -48,7 +50,7 @@
 #endif
 
 /* In case that the system doesn't have isblank().  */
-#if !defined _LIBC && !HAVE_DECL_ISBLANK && !defined isblank
+#if !defined _LIBC && ! (defined isblank || (HAVE_ISBLANK && HAVE_DECL_ISBLANK))
 # define isblank(ch) ((ch) == ' ' || (ch) == '\t')
 #endif
 

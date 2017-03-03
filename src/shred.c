@@ -1,12 +1,12 @@
 /* shred.c - overwrite files and devices to make it harder to recover data
 
-   Copyright (C) 1999-2006 Free Software Foundation, Inc.
+   Copyright (C) 1999-2007 Free Software Foundation, Inc.
    Copyright (C) 1997, 1998, 1999 Colin Plumb.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -14,8 +14,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
    Written by Colin Plumb.  */
 
@@ -97,11 +96,9 @@
 #include "xstrtol.h"
 #include "error.h"
 #include "fcntl--.h"
-#include "getpagesize.h"
 #include "human.h"
 #include "inttostr.h"
 #include "quotearg.h"		/* For quotearg_colon */
-#include "quote.h"		/* For quotearg_colon */
 #include "randint.h"
 #include "randread.h"
 
@@ -236,7 +233,7 @@ In addition, file system backups and remote mirrors may contain copies\n\
 of the file that cannot be removed, and that will allow a shredded file\n\
 to be recovered later.\n\
 "), stdout);
-      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+      emit_bug_reporting_address ();
     }
   exit (status);
 }

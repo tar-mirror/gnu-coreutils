@@ -2,11 +2,11 @@
 # Test both cp and mv for their behavior with -if and -fi
 # The standards (POSIX and SuS) dictate annoyingly inconsistent behavior.
 
-# Copyright (C) 2000, 2001, 2006, 2007 Free Software Foundation, Inc.
+# Copyright (C) 2000, 2001, 2006-2007 Free Software Foundation, Inc.
 
-# This program is free software; you can redistribute it and/or modify
+# This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
+# the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 
 # This program is distributed in the hope that it will be useful,
@@ -15,9 +15,7 @@
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-# 02110-1301, USA.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 if test "$VERBOSE" = yes; then
   set -x
@@ -25,32 +23,18 @@ if test "$VERBOSE" = yes; then
   cp --version
 fi
 
-. $srcdir/../envvar-check
 
 # Make sure we get English translations.
 . $srcdir/../lang-default
 
-PRIV_CHECK_ARG=require-non-root . $srcdir/../priv-check
-
-pwd=`pwd`
-tmp=cp-mv-if-$$
-trap 'status=$?; cd "$pwd" && rm -rf $tmp && exit $status' 0
-trap 'exit $?' 1 2 13 15
-
-framework_failure=0
-mkdir $tmp || framework_failure=1
-cd $tmp || framework_failure=1
+. $srcdir/../test-lib.sh
+skip_if_root_
 
 for i in a b c d e f g h; do
-  echo $i > $i || framework_failure=1
+  echo $i > $i || framework_failure
 done
-chmod 0 b d f h || framework_failure=1
-echo y > y || framework_failure=1
-
-if test $framework_failure = 1; then
-  echo 'failure in testing framework'
-  exit 1
-fi
+chmod 0 b d f h || framework_failure
+echo y > y || framework_failure
 
 fail=0
 mv -if a b || fail=1
@@ -67,11 +51,11 @@ esac
 
 test -f e || fail=1
 test -f f || fail=1
-cmp e f || fail=1
+compare e f || fail=1
 
 cp -fi g h < y > out 2>&1 || fail=1
 test -f g || fail=1
 test -f h || fail=1
-cmp g h || fail=1
+compare g h || fail=1
 
 exit $fail

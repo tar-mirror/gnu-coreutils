@@ -1,3 +1,5 @@
+/* -*- buffer-read-only: t -*- vi: set ro: */
+/* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 /* Get address information (partial implementation).
    Copyright (C) 1997, 2001, 2002, 2004, 2005, 2006, 2007 Free Software
    Foundation, Inc.
@@ -5,7 +7,7 @@
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
+   the Free Software Foundation; either version 3, or (at your option)
    any later version.
 
    This program is distributed in the hope that it will be useful,
@@ -179,7 +181,7 @@ getaddrinfo (const char *restrict nodename,
       const char *proto =
 	(hints && hints->ai_socktype == SOCK_DGRAM) ? "udp" : "tcp";
 
-      if (!(hints->ai_flags & AI_NUMERICSERV))
+      if (hints == NULL || !(hints->ai_flags & AI_NUMERICSERV))
 	/* FIXME: Use getservbyname_r if available. */
 	se = getservbyname (servname, proto);
 

@@ -1,12 +1,12 @@
 #! /bin/sh
 # Test "mv" with special files.
 
-# Copyright (C) 1998, 1999, 2000, 2002, 2004, 2005, 2006 Free Software
+# Copyright (C) 1998, 1999, 2000, 2002, 2004-2007 Free Software
 # Foundation, Inc.
 
-# This program is free software; you can redistribute it and/or modify
+# This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
+# the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 
 # This program is distributed in the hope that it will be useful,
@@ -15,50 +15,32 @@
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-# 02110-1301, USA.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 if test "$VERBOSE" = yes; then
   set -x
   mv --version
 fi
 
-pwd=`pwd`
-tmp=mv-spec.$$
-trap 'status=$?; cd "$pwd" && exec 1>&2; rm -rf $tmp $other_partition_tmpdir && exit $status' 0
-trap '(exit $?); exit' 1 2 13 15
-
-. $srcdir/../other-fs-tmpdir
-. $srcdir/../envvar-check
-# Make sure we get English translations.
 . $srcdir/../lang-default
-
-if test -z "$other_partition_tmpdir"; then
-  (exit 77); exit 77
-fi
+. $srcdir/../test-lib.sh
+cleanup_() { rm -rf "$other_partition_tmpdir"; }
+. "$abs_top_srcdir/tests/other-fs-tmpdir"
 
 null=mv-null
 dir=mv-dir
 
-framework_failure=0
-mkdir $tmp || framework_failure=1
-cd $tmp || framework_failure=1
-rm -f $null || framework_failure=1
-mknod $null p || framework_failure=1
-test -p $null || framework_failure=1
-mkdir -p $dir/a/b/c $dir/d/e/f || framework_failure=1
-touch $dir/a/b/c/file1 $dir/d/e/f/file2 || framework_failure=1
+rm -f $null || framework_failure
+mknod $null p || framework_failure
+test -p $null || framework_failure
+mkdir -p $dir/a/b/c $dir/d/e/f || framework_failure
+touch $dir/a/b/c/file1 $dir/d/e/f/file2 || framework_failure
 
-if test $framework_failure = 1; then
-  echo '********************************************'
-  echo 'NOTICE: unable to create test prerequisites'
-  echo '********************************************'
-  # exit 77 here to indicate that we couldn't run the test.
-  # At least running on SunOS 4.1.4, using a directory NFS mounted
-  # from an OpenBSD system, the above mknod fails.
-  (exit 77); exit 77
-fi
+# We used to...
+# exit 77 here to indicate that we couldn't run the test.
+# At least running on SunOS 4.1.4, using a directory NFS mounted
+# from an OpenBSD system, the above mknod fails.
+# It's not worth making an exception any more.
 
 fail=0
 mv --verbose $null $dir $other_partition_tmpdir > out || fail=1
@@ -89,7 +71,7 @@ cat <<EOF | sort > exp
 \`$dir/d/e/f/file2' -> \`XXX/$dir/d/e/f/file2'
 EOF
 
-cmp out2 exp || fail=1
+compare out2 exp || fail=1
 
 # cd $other_partition_tmpdir
 # ls -l -A -R $other_partition_tmpdir

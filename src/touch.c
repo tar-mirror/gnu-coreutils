@@ -1,10 +1,10 @@
 /* touch -- change modification and access times of files
-   Copyright (C) 87, 1989-1991, 1995-2005 Free Software Foundation, Inc.
+   Copyright (C) 87, 1989-1991, 1995-2005, 2007 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -12,8 +12,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* Written by Paul Rubin, Arnold Robbins, Jim Kingdon, David MacKenzie,
    and Randy Smith. */
@@ -182,7 +181,7 @@ touch (const char *file)
       t = timespec;
     }
 
-  ok = (futimens (fd, (fd == STDOUT_FILENO ? NULL : file), t) == 0);
+  ok = (gl_futimens (fd, (fd == STDOUT_FILENO ? NULL : file), t) == 0);
 
   if (fd == STDIN_FILENO)
     {
@@ -234,6 +233,11 @@ usage (int status)
       fputs (_("\
 Update the access and modification times of each FILE to the current time.\n\
 \n\
+A FILE argument that does not exist is created empty.\n\
+\n\
+A FILE argument string of - is handled specially and causes touch to\n\
+change the times of the file associated with standard output.\n\
+\n\
 "), stdout);
       fputs (_("\
 Mandatory arguments to long options are mandatory for short options too.\n\
@@ -257,10 +261,8 @@ Mandatory arguments to long options are mandatory for short options too.\n\
       fputs (_("\
 \n\
 Note that the -d and -t options accept different time-date formats.\n\
-\n\
-If a FILE is -, touch standard output.\n\
 "), stdout);
-      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+      emit_bug_reporting_address ();
     }
   exit (status);
 }
@@ -366,9 +368,29 @@ main (int argc, char **argv)
     {
       if (flex_date)
 	{
-	  get_reldate (&newtime[0], flex_date, NULL);
+	  struct timespec now;
+	  gettime (&now);
+	  get_reldate (&newtime[0], flex_date, &now);
 	  newtime[1] = newtime[0];
 	  date_set = true;
+
+	  /* If neither -a nor -m is specified, treat "-d now" as if
+	     it were absent; this lets "touch" succeed more often in
+	     the presence of restrictive permissions.  */
+	  if (change_times == (CH_ATIME | CH_MTIME)
+	      && newtime[0].tv_sec == now.tv_sec
+	      && newtime[0].tv_nsec == now.tv_nsec)
+	    {
+	      /* Check that it really was "-d now", and not a time
+		 stamp that just happens to be the current time.  */
+	      struct timespec notnow, notnow1;
+	      notnow.tv_sec = now.tv_sec ^ 1;
+	      notnow.tv_nsec = now.tv_nsec;
+	      get_reldate (&notnow1, flex_date, &notnow);
+	      if (notnow1.tv_sec == notnow.tv_sec
+		  && notnow1.tv_nsec == notnow.tv_nsec)
+		date_set = false;
+	    }
 	}
     }
 

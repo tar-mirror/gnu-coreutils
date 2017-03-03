@@ -1,14 +1,13 @@
-#serial 105   -*- autoconf -*-
+#serial 106   -*- autoconf -*-
 
 dnl Misc type-related macros for coreutils.
 
-# Copyright (C) 1998, 2000, 2001, 2002, 2003, 2004, 2005, 2006 Free Software
-# Foundation, Inc.
+# Copyright (C) 1998, 2000-2007 Free Software Foundation, Inc.
 
-# This program is free software; you can redistribute it and/or modify
+# This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2, or (at your option)
-# any later version.
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -16,22 +15,14 @@ dnl Misc type-related macros for coreutils.
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software Foundation,
-# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # Written by Jim Meyering.
 
 AC_DEFUN([coreutils_MACROS],
 [
-  GNU_PACKAGE="GNU $PACKAGE"
-  AC_DEFINE_UNQUOTED(GNU_PACKAGE, "$GNU_PACKAGE",
-    [The concatenation of the strings `GNU ', and PACKAGE.])
-  AC_SUBST(GNU_PACKAGE)
-
   AM_MISSING_PROG(HELP2MAN, help2man)
-  AC_SUBST(OPTIONAL_BIN_PROGS)
   AC_SUBST(MAN)
-  AC_SUBST(DF_PROG)
 
   dnl This macro actually runs replacement code.  See isc-posix.m4.
   AC_REQUIRE([AC_ISC_POSIX])dnl
@@ -47,7 +38,7 @@ AC_DEFUN([coreutils_MACROS],
   # By default, argmatch should fail calling usage (1).
   AC_DEFINE(ARGMATCH_DIE, [usage (1)],
 	    [Define to the function xargmatch calls on failures.])
-  AC_DEFINE(ARGMATCH_DIE_DECL, [extern void usage ()],
+  AC_DEFINE(ARGMATCH_DIE_DECL, [void usage ()],
 	    [Define to the declaration of the xargmatch failure function.])
 
   # used by ls
@@ -104,11 +95,6 @@ AC_DEFUN([coreutils_MACROS],
     ])
 
   AC_REQUIRE([AM_LANGINFO_CODESET])
-
-  # Build df only if there's a point to it.
-  if test $gl_cv_list_mounted_fs = yes && test $gl_cv_fs_space = yes; then
-    DF_PROG='df$(EXEEXT)'
-  fi
 ])
 
 AC_DEFUN([gl_CHECK_ALL_HEADERS],

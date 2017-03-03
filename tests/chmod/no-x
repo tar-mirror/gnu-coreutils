@@ -2,11 +2,11 @@
 # Make sure chmod gives the right diagnostic for a readable,
 # but inaccessible directory.
 
-# Copyright (C) 2003, 2006 Free Software Foundation, Inc.
+# Copyright (C) 2003, 2006-2007 Free Software Foundation, Inc.
 
-# This program is free software; you can redistribute it and/or modify
+# This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
+# the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 
 # This program is distributed in the hope that it will be useful,
@@ -15,9 +15,7 @@
 # GNU General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-# 02110-1301, USA.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 if test "$VERBOSE" = yes; then
   set -x
@@ -25,51 +23,35 @@ if test "$VERBOSE" = yes; then
 fi
 
 . $srcdir/../lang-default
-PRIV_CHECK_ARG=require-non-root . $srcdir/../priv-check
+. $srcdir/../test-lib.sh
+skip_if_root_
 
-pwd=`pwd`
-t0=`echo "$0"|sed 's,.*/,,'`.tmp; tmp=$t0/$$
-trap 'status=$?; cd "$pwd" && chmod -R u+rwx $t0 && rm -rf $t0 && exit $status' 0
-trap '(exit $?); exit $?' 1 2 13 15
-
-framework_failure=0
-mkdir -p $tmp || framework_failure=1
-cd $tmp || framework_failure=1
-mkdir -p d/no-x/y || framework_failure=1
-chmod u=rw d/no-x || framework_failure=1
-
-if test $framework_failure = 1; then
-  echo "$0: failure in testing framework" 1>&2
-  (exit 1); exit 1
-fi
+mkdir -p d/no-x/y a/b || framework_failure
+chmod u=rw d/no-x || framework_failure
 
 fail=0
 
 # This must exit nonzero.
 chmod -R o=r d >/dev/null 2>out && fail=1
 
-cat <<\EOF > exp
-chmod: `d/no-x': Permission denied
+prog=chmod
+# NOTE: this code is the same for all tests/*/no-x tests.
+# Depending on whether fts is using native fdopendir, we see one
+# of the following diagnostics (note also the /y suffix in one case):
+#   prog: `d/no-x': Permission denied
+#   prog: cannot access `d/no-x/y': Permission denied
+#   prog: cannot read directory `d/no-x': Permission denied
+# Convert either of the latter two to the first one.
+sed "s/^$prog: cannot access /$prog: /" out > t && mv t out
+sed "s/^$prog: cannot read directory /$prog: /" out > t && mv t out
+sed 's,d/no-x/y,d/no-x,' out > t && mv t out
+
+cat <<EOF > exp
+$prog: \`d/no-x': Permission denied
 EOF
 
-# With native fdopendir, du uses a different code path.
-cat <<\EOF > exp-native-fdopendir
-chmod: cannot access `d/no-x/y': Permission denied
-EOF
+compare out exp || fail=1
 
-if cmp out exp >/dev/null 2>&1; then
-  :
-else
-  if cmp out exp-native-fdopendir; then
-    :
-  else
-    fail=1
-  fi
-fi
-
-test $fail = 1 && diff out exp 2> /dev/null
-
-mkdir -p a/b
 cd a
 # This will fail with ``chmod: fts_read failed: Permission denied''
 chmod a-x . b 2> /dev/null && fail=1

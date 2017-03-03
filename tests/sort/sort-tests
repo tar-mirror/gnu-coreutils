@@ -2214,8 +2214,44 @@ else
   esac
 fi
 test -s bigfield.E || rm -f bigfield.E
+_POSIX2_VERSION=199209 $xx +1x $srcdir/obs-inval.I > obs-inval.O 2> obs-inval.E
+code=$?
+if test $code != 2; then
+  $echo "Test obs-inval(_POSIX2_VERSION=199209) failed: $xx return code $code differs from expected value 2" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp obs-inval.O $srcdir/obs-inval.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed obs-inval(_POSIX2_VERSION=199209)"; fi;;
+    1) $echo "Test obs-inval(_POSIX2_VERSION=199209) failed: files obs-inval.O and $srcdir/obs-inval.X differ" 1>&2
+       (diff -c obs-inval.O $srcdir/obs-inval.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test obs-inval(_POSIX2_VERSION=199209) may have failed." 1>&2
+       $echo The command "cmp obs-inval.O $srcdir/obs-inval.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s obs-inval.E || rm -f obs-inval.E
+_POSIX2_VERSION=199209 $xx -S1 $srcdir/realloc-buf.I > realloc-buf.O 2> realloc-buf.E
+code=$?
+if test $code != 0; then
+  $echo "Test realloc-buf(_POSIX2_VERSION=199209) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp realloc-buf.O $srcdir/realloc-buf.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed realloc-buf(_POSIX2_VERSION=199209)"; fi;;
+    1) $echo "Test realloc-buf(_POSIX2_VERSION=199209) failed: files realloc-buf.O and $srcdir/realloc-buf.X differ" 1>&2
+       (diff -c realloc-buf.O $srcdir/realloc-buf.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test realloc-buf(_POSIX2_VERSION=199209) may have failed." 1>&2
+       $echo The command "cmp realloc-buf.O $srcdir/realloc-buf.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s realloc-buf.E || rm -f realloc-buf.E
 if test $errors = 0; then
-  $echo Passed all 122 tests. 1>&2
+  $echo Passed all 124 tests. 1>&2
 else
   $echo Failed $errors tests. 1>&2
 fi

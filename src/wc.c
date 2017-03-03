@@ -1,10 +1,10 @@
 /* wc - print the number of lines, words, and bytes in files
-   Copyright (C) 85, 91, 1995-2006 Free Software Foundation, Inc.
+   Copyright (C) 85, 91, 1995-2007 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -12,8 +12,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* Written by Paul Rubin, phr@ocf.berkeley.edu
    and David MacKenzie, djm@gnu.ai.mit.edu. */
@@ -23,6 +22,8 @@
 #include <stdio.h>
 #include <getopt.h>
 #include <sys/types.h>
+#include <wchar.h>
+#include <wctype.h>
 
 #include "system.h"
 #include "error.h"
@@ -30,7 +31,6 @@
 #include "quote.h"
 #include "readtokens0.h"
 #include "safe-read.h"
-#include "wcwidth.h"
 
 #if !defined iswspace && !HAVE_ISWSPACE
 # define iswspace(wc) \
@@ -126,7 +126,7 @@ read standard input.\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
-      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+      emit_bug_reporting_address ();
     }
   exit (status);
 }
@@ -274,8 +274,6 @@ wc (int fd, char const *file_x, struct fstatus *fstatus)
       bool in_word = false;
       uintmax_t linepos = 0;
       mbstate_t state = { 0, };
-      uintmax_t last_error_line = 0;
-      int last_error_errno = 0;
 # if SUPPORT_OLD_MBRTOWC
       /* Back-up the state before each multibyte character conversion and
 	 move the last incomplete character of the buffer to the front
@@ -323,17 +321,10 @@ wc (int fd, char const *file_x, struct fstatus *fstatus)
 		}
 	      if (n == (size_t) -1)
 		{
-		  /* Signal repeated errors only once per line.  */
-		  if (!(lines + 1 == last_error_line
-			&& errno == last_error_errno))
-		    {
-		      char line_number_buf[INT_BUFSIZE_BOUND (uintmax_t)];
-		      last_error_line = lines + 1;
-		      last_error_errno = errno;
-		      error (0, errno, "%s:%s", file,
-			     umaxtostr (last_error_line, line_number_buf));
-		      ok = false;
-		    }
+		  /* Remember that we read a byte, but don't complain
+		     about the error.  Because of the decoding error,
+		     this is a considered to be byte but not a
+		     character (that is, chars is not incremented).  */
 		  p++;
 		  bytes_read--;
 		}

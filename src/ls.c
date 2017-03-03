@@ -1,10 +1,10 @@
 /* `dir', `vdir' and `ls' directory listing programs for GNU.
    Copyright (C) 85, 88, 90, 91, 1995-2007 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -12,8 +12,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* If ls_mode is LS_MULTI_COL,
    the multi-column format is the default regardless
@@ -61,6 +60,8 @@
 #include <pwd.h>
 #include <getopt.h>
 #include <signal.h>
+#include <selinux/selinux.h>
+#include <wchar.h>
 
 /* Use SA_NOCLDSTOP as a proxy for whether the sigaction machinery is
    present.  */
@@ -89,6 +90,7 @@
 #include "hash.h"
 #include "human.h"
 #include "filemode.h"
+#include "idcache.h"
 #include "inttostr.h"
 #include "ls.h"
 #include "lstat.h"
@@ -101,9 +103,8 @@
 #include "stat-time.h"
 #include "strftime.h"
 #include "strverscmp.h"
-#include "wcwidth.h"
 #include "xstrtol.h"
-#include "xreadlink.h"
+#include "areadlink.h"
 
 #define PROGRAM_NAME (ls_mode == LS_LS ? "ls" \
 		      : (ls_mode == LS_MULTI_COL \
@@ -167,23 +168,19 @@ struct fileinfo
        zero.  */
     mode_t linkmode;
 
+    /* SELinux security context.  */
+    security_context_t scontext;
+
     bool stat_ok;
 
     /* For symbolic link and color printing, true if linked-to file
        exists, otherwise false.  */
     bool linkok;
 
-#if USE_ACL
-    /* For long listings, true if the file has an access control list.  */
+    /* For long listings, true if the file has an access control list,
+       or an SELinux security context.  */
     bool have_acl;
-#endif
   };
-
-#if USE_ACL
-# define FILE_HAS_ACL(F) ((F)->have_acl)
-#else
-# define FILE_HAS_ACL(F) 0
-#endif
 
 #define LEN_STR_PAIR(s) sizeof (s) - 1, s
 
@@ -196,9 +193,6 @@ struct bin_str
     size_t len;			/* Number of bytes */
     const char *string;		/* Pointer to the same */
   };
-
-char *getgroup ();
-char *getuser ();
 
 #if ! HAVE_TCGETPGRP
 # define tcgetpgrp(Fd) 0
@@ -320,14 +314,13 @@ static struct pending *pending_dirs;
 static time_t current_time = TYPE_MINIMUM (time_t);
 static int current_time_ns = -1;
 
+static bool print_scontext;
+static char UNKNOWN_SECURITY_CONTEXT[] = "?";
+
 /* Whether any of the files has an ACL.  This affects the width of the
    mode column.  */
 
-#if USE_ACL
 static bool any_has_acl;
-#else
-enum { any_has_acl = false };
-#endif
 
 /* The number of columns to use for columns containing inode numbers,
    block sizes, link counts, owners, groups, authors, major device
@@ -336,6 +329,7 @@ enum { any_has_acl = false };
 static int inode_number_width;
 static int block_size_width;
 static int nlink_width;
+static int scontext_width;
 static int owner_width;
 static int group_width;
 static int author_width;
@@ -733,10 +727,6 @@ enum
   GROUP_DIRECTORIES_FIRST_OPTION,
   HIDE_OPTION,
   INDICATOR_STYLE_OPTION,
-
-  /* FIXME: --kilobytes is deprecated (but not -k); remove in late 2006 */
-  KILOBYTES_LONG_OPTION,
-
   QUOTING_STYLE_OPTION,
   SHOW_CONTROL_CHARS_OPTION,
   SI_OPTION,
@@ -756,7 +746,6 @@ static struct option const long_options[] =
    GROUP_DIRECTORIES_FIRST_OPTION},
   {"human-readable", no_argument, NULL, 'h'},
   {"inode", no_argument, NULL, 'i'},
-  {"kilobytes", no_argument, NULL, KILOBYTES_LONG_OPTION},
   {"numeric-uid-gid", no_argument, NULL, 'n'},
   {"no-group", no_argument, NULL, 'G'},
   {"hide-control-chars", no_argument, NULL, 'q'},
@@ -787,6 +776,7 @@ static struct option const long_options[] =
   {"time-style", required_argument, NULL, TIME_STYLE_OPTION},
   {"color", optional_argument, NULL, COLOR_OPTION},
   {"block-size", required_argument, NULL, BLOCK_SIZE_OPTION},
+  {"context", no_argument, 0, 'Z'},
   {"author", no_argument, NULL, AUTHOR_OPTION},
   {GETOPT_HELP_OPTION_DECL},
   {GETOPT_VERSION_OPTION_DECL},
@@ -1176,7 +1166,7 @@ main (int argc, char **argv)
     {
       /* Avoid following symbolic links when possible.  */
       if (is_colored (C_ORPHAN)
-	  || is_colored (C_EXEC)
+	  || (is_colored (C_EXEC) && color_symlink_as_referent)
 	  || (is_colored (C_MISSING) && format == long_format))
 	check_symlink_color = true;
 
@@ -1246,6 +1236,7 @@ main (int argc, char **argv)
 
   format_needs_stat = sort_type == sort_time || sort_type == sort_size
     || format == long_format
+    || print_scontext
     || print_block_size;
   format_needs_type = (! format_needs_stat
 		       && (recursive
@@ -1383,7 +1374,6 @@ main (int argc, char **argv)
 static int
 decode_switches (int argc, char **argv)
 {
-  int c;
   char *time_style_option = NULL;
 
   /* Record whether there is an option specifying sort type.  */
@@ -1439,6 +1429,7 @@ decode_switches (int argc, char **argv)
   ignore_mode = IGNORE_DEFAULT;
   ignore_patterns = NULL;
   hide_patterns = NULL;
+  print_scontext = false;
 
   /* FIXME: put this in a function.  */
   {
@@ -1457,8 +1448,8 @@ decode_switches (int argc, char **argv)
 
   {
     char const *ls_block_size = getenv ("LS_BLOCK_SIZE");
-    human_output_opts = human_options (ls_block_size, false,
-				       &output_block_size);
+    human_options (ls_block_size,
+		   &human_output_opts, &output_block_size);
     if (ls_block_size || getenv ("BLOCK_SIZE"))
       file_output_block_size = output_block_size;
   }
@@ -1513,10 +1504,15 @@ decode_switches (int argc, char **argv)
       }
   }
 
-  while ((c = getopt_long (argc, argv,
-			   "abcdfghiklmnopqrstuvw:xABCDFGHI:LNQRST:UX1",
-			   long_options, NULL)) != -1)
+  for (;;)
     {
+      int oi = -1;
+      int c = getopt_long (argc, argv,
+			   "abcdfghiklmnopqrstuvw:xABCDFGHI:LNQRST:UXZ1",
+			   long_options, &oi);
+      if (c == -1)
+	break;
+
       switch (c)
 	{
 	case 'a':
@@ -1565,10 +1561,6 @@ decode_switches (int argc, char **argv)
 	  print_inode = true;
 	  break;
 
-	case KILOBYTES_LONG_OPTION:
-	  error (0, 0,
-		 _("the --kilobytes option is deprecated; use -k instead"));
-	  /* fall through */
 	case 'k':
 	  human_output_opts = 0;
 	  file_output_block_size = output_block_size = 1024;
@@ -1804,13 +1796,22 @@ decode_switches (int argc, char **argv)
 	  break;
 
 	case BLOCK_SIZE_OPTION:
-	  human_output_opts = human_options (optarg, true, &output_block_size);
-	  file_output_block_size = output_block_size;
+	  {
+	    enum strtol_error e = human_options (optarg, &human_output_opts,
+						 &output_block_size);
+	    if (e != LONGINT_OK)
+	      xstrtol_fatal (e, oi, 0, long_options, optarg);
+	    file_output_block_size = output_block_size;
+	  }
 	  break;
 
 	case SI_OPTION:
 	  human_output_opts = human_autoscale | human_SI;
 	  file_output_block_size = output_block_size = 1;
+	  break;
+
+	case 'Z':
+	  print_scontext = true;
 	  break;
 
 	case_GETOPT_HELP_CHAR;
@@ -2516,18 +2517,19 @@ clear_files (void)
       struct fileinfo *f = sorted_file[i];
       free (f->name);
       free (f->linkname);
+      if (f->scontext != UNKNOWN_SECURITY_CONTEXT)
+	freecon (f->scontext);
     }
 
   cwd_n_used = 0;
-#if USE_ACL
   any_has_acl = false;
-#endif
   inode_number_width = 0;
   block_size_width = 0;
   nlink_width = 0;
   owner_width = 0;
   group_width = 0;
   author_width = 0;
+  scontext_width = 0;
   major_device_number_width = 0;
   minor_device_number_width = 0;
   file_size_width = 0;
@@ -2570,7 +2572,8 @@ gobble_file (char const *name, enum filetype type, ino_t inode,
       || ((print_inode || format_needs_type)
 	  && (type == symbolic_link || type == unknown)
 	  && (dereference == DEREF_ALWAYS
-	      || (command_line_arg && dereference != DEREF_NEVER)))
+	      || (command_line_arg && dereference != DEREF_NEVER)
+	      || color_symlink_as_referent || check_symlink_color))
       /* Command line dereferences are already taken care of by the above
 	 assertion that the inode number is not yet known.  */
       || (print_inode && inode == NOT_AN_INODE_NUMBER)
@@ -2591,7 +2594,7 @@ gobble_file (char const *name, enum filetype type, ino_t inode,
     {
       /* Absolute name of this file.  */
       char *absolute_name;
-
+      bool do_deref;
       int err;
 
       if (name[0] == '/' || dirname[0] == 0)
@@ -2606,6 +2609,7 @@ gobble_file (char const *name, enum filetype type, ino_t inode,
 	{
 	case DEREF_ALWAYS:
 	  err = stat (absolute_name, &f->stat);
+	  do_deref = true;
 	  break;
 
 	case DEREF_COMMAND_LINE_ARGUMENTS:
@@ -2614,6 +2618,7 @@ gobble_file (char const *name, enum filetype type, ino_t inode,
 	    {
 	      bool need_lstat;
 	      err = stat (absolute_name, &f->stat);
+	      do_deref = true;
 
 	      if (dereference == DEREF_COMMAND_LINE_ARGUMENTS)
 		break;
@@ -2632,6 +2637,7 @@ gobble_file (char const *name, enum filetype type, ino_t inode,
 
 	default: /* DEREF_NEVER */
 	  err = lstat (absolute_name, &f->stat);
+	  do_deref = false;
 	  break;
 	}
 
@@ -2653,16 +2659,41 @@ gobble_file (char const *name, enum filetype type, ino_t inode,
 
       f->stat_ok = true;
 
-#if USE_ACL
-      if (format == long_format)
+      if (format == long_format || print_scontext)
 	{
-	  int n = file_has_acl (absolute_name, &f->stat);
-	  f->have_acl = (0 < n);
-	  any_has_acl |= f->have_acl;
-	  if (n < 0)
+	  bool have_acl = false;
+	  int attr_len = (do_deref
+			  ?  getfilecon (absolute_name, &f->scontext)
+			  : lgetfilecon (absolute_name, &f->scontext));
+	  err = (attr_len < 0);
+
+	  if (err == 0)
+	    have_acl = ! STREQ ("unlabeled", f->scontext);
+	  else
+	    {
+	      f->scontext = UNKNOWN_SECURITY_CONTEXT;
+
+	      /* When requesting security context information, don't make
+		 ls fail just because the file (even a command line argument)
+		 isn't on the right type of file system.  I.e., a getfilecon
+		 failure isn't in the same class as a stat failure.  */
+	      if (errno == ENOTSUP || errno == ENODATA)
+		err = 0;
+	    }
+
+	  if (err == 0 && ! have_acl && format == long_format)
+	    {
+	      int n = file_has_acl (absolute_name, &f->stat);
+	      err = (n < 0);
+	      have_acl = (0 < n);
+	    }
+
+	  f->have_acl = have_acl;
+	  any_has_acl |= have_acl;
+
+	  if (err)
 	    error (0, errno, "%s", quotearg_colon (absolute_name));
 	}
-#endif
 
       if (S_ISLNK (f->stat.st_mode)
 	  && (format == long_format || check_symlink_color))
@@ -2695,6 +2726,12 @@ gobble_file (char const *name, enum filetype type, ino_t inode,
 	  free (linkname);
 	}
 
+      /* When not distinguishing types of symlinks, pretend we know that
+	 it is stat'able, so that it will be colored as a regular symlink,
+	 and not as an orphan.  */
+      if (S_ISLNK (f->stat.st_mode) && !check_symlink_color)
+	f->linkok = true;
+
       if (S_ISLNK (f->stat.st_mode))
 	f->filetype = symbolic_link;
       else if (S_ISDIR (f->stat.st_mode))
@@ -2708,65 +2745,77 @@ gobble_file (char const *name, enum filetype type, ino_t inode,
 	f->filetype = normal;
 
       blocks = ST_NBLOCKS (f->stat);
-      {
-	char buf[LONGEST_HUMAN_READABLE + 1];
-	int len = mbswidth (human_readable (blocks, buf, human_output_opts,
-					    ST_NBLOCKSIZE, output_block_size),
-			    0);
-	if (block_size_width < len)
-	  block_size_width = len;
-      }
-
-      if (print_owner)
-	{
-	  int len = format_user_width (f->stat.st_uid);
-	  if (owner_width < len)
-	    owner_width = len;
-	}
-
-      if (print_group)
-	{
-	  int len = format_group_width (f->stat.st_gid);
-	  if (group_width < len)
-	    group_width = len;
-	}
-
-      if (print_author)
-	{
-	  int len = format_user_width (f->stat.st_author);
-	  if (author_width < len)
-	    author_width = len;
-	}
-
-      {
-	char buf[INT_BUFSIZE_BOUND (uintmax_t)];
-	int len = strlen (umaxtostr (f->stat.st_nlink, buf));
-	if (nlink_width < len)
-	  nlink_width = len;
-      }
-
-      if (S_ISCHR (f->stat.st_mode) || S_ISBLK (f->stat.st_mode))
-	{
-	  char buf[INT_BUFSIZE_BOUND (uintmax_t)];
-	  int len = strlen (umaxtostr (major (f->stat.st_rdev), buf));
-	  if (major_device_number_width < len)
-	    major_device_number_width = len;
-	  len = strlen (umaxtostr (minor (f->stat.st_rdev), buf));
-	  if (minor_device_number_width < len)
-	    minor_device_number_width = len;
-	  len = major_device_number_width + 2 + minor_device_number_width;
-	  if (file_size_width < len)
-	    file_size_width = len;
-	}
-      else
+      if (format == long_format || print_block_size)
 	{
 	  char buf[LONGEST_HUMAN_READABLE + 1];
-	  uintmax_t size = unsigned_file_size (f->stat.st_size);
-	  int len = mbswidth (human_readable (size, buf, human_output_opts,
-					      1, file_output_block_size),
+	  int len = mbswidth (human_readable (blocks, buf, human_output_opts,
+					      ST_NBLOCKSIZE, output_block_size),
 			      0);
-	  if (file_size_width < len)
-	    file_size_width = len;
+	  if (block_size_width < len)
+	    block_size_width = len;
+	}
+
+      if (format == long_format)
+	{
+	  if (print_owner)
+	    {
+	      int len = format_user_width (f->stat.st_uid);
+	      if (owner_width < len)
+		owner_width = len;
+	    }
+
+	  if (print_group)
+	    {
+	      int len = format_group_width (f->stat.st_gid);
+	      if (group_width < len)
+		group_width = len;
+	    }
+
+	  if (print_author)
+	    {
+	      int len = format_user_width (f->stat.st_author);
+	      if (author_width < len)
+		author_width = len;
+	    }
+	}
+
+      if (print_scontext)
+	{
+	  int len = strlen (f->scontext);
+	  if (scontext_width < len)
+	    scontext_width = len;
+	}
+
+      if (format == long_format)
+	{
+	  char b[INT_BUFSIZE_BOUND (uintmax_t)];
+	  int b_len = strlen (umaxtostr (f->stat.st_nlink, b));
+	  if (nlink_width < b_len)
+	    nlink_width = b_len;
+
+	  if (S_ISCHR (f->stat.st_mode) || S_ISBLK (f->stat.st_mode))
+	    {
+	      char buf[INT_BUFSIZE_BOUND (uintmax_t)];
+	      int len = strlen (umaxtostr (major (f->stat.st_rdev), buf));
+	      if (major_device_number_width < len)
+		major_device_number_width = len;
+	      len = strlen (umaxtostr (minor (f->stat.st_rdev), buf));
+	      if (minor_device_number_width < len)
+		minor_device_number_width = len;
+	      len = major_device_number_width + 2 + minor_device_number_width;
+	      if (file_size_width < len)
+		file_size_width = len;
+	    }
+	  else
+	    {
+	      char buf[LONGEST_HUMAN_READABLE + 1];
+	      uintmax_t size = unsigned_file_size (f->stat.st_size);
+	      int len = mbswidth (human_readable (size, buf, human_output_opts,
+						  1, file_output_block_size),
+				  0);
+	      if (file_size_width < len)
+		file_size_width = len;
+	    }
 	}
     }
 
@@ -2798,7 +2847,7 @@ is_directory (const struct fileinfo *f)
 static void
 get_link_name (char const *filename, struct fileinfo *f, bool command_line_arg)
 {
-  f->linkname = xreadlink_with_size (filename, f->stat.st_size);
+  f->linkname = areadlink_with_size (filename, f->stat.st_size);
   if (f->linkname == NULL)
     file_failure (command_line_arg, _("cannot read symbolic link %s"),
 		  filename);
@@ -3387,7 +3436,7 @@ print_long_format (const struct fileinfo *f)
   struct tm *when_local;
 
   /* Compute the mode string, except remove the trailing space if no
-     files in this directory have ACLs.  */
+     file in this directory has an ACL or SELinux security context.  */
   if (f->stat_ok)
     filemodestring (&f->stat, modebuf);
   else
@@ -3398,7 +3447,7 @@ print_long_format (const struct fileinfo *f)
     }
   if (! any_has_acl)
     modebuf[10] = '\0';
-  else if (FILE_HAS_ACL (f))
+  else if (f->have_acl)
     modebuf[10] = '+';
 
   switch (time_type)
@@ -3463,7 +3512,7 @@ print_long_format (const struct fileinfo *f)
 
   DIRED_INDENT ();
 
-  if (print_owner | print_group | print_author)
+  if (print_owner | print_group | print_author | print_scontext)
     {
       DIRED_FPUTS (buf, stdout, p - buf);
 
@@ -3475,6 +3524,9 @@ print_long_format (const struct fileinfo *f)
 
       if (print_author)
 	format_user (f->stat.st_author, author_width, f->stat_ok);
+
+      if (print_scontext)
+	format_user_or_group (f->scontext, 0, scontext_width);
 
       p = buf;
     }
@@ -3812,6 +3864,9 @@ print_file_name_and_frills (const struct fileinfo *f)
 	    human_readable (ST_NBLOCKS (f->stat), buf, human_output_opts,
 			    ST_NBLOCKSIZE, output_block_size));
 
+  if (print_scontext)
+    printf ("%*s ", format == with_commas ? 0 : scontext_width, f->scontext);
+
   print_name_with_quoting (f->name, FILE_OR_LINK_MODE (f), f->linkok,
 			   f->stat_ok, f->filetype, NULL);
 
@@ -3975,6 +4030,9 @@ length_of_file_name_and_frills (const struct fileinfo *f)
 					  output_block_size))
 		: block_size_width);
 
+  if (print_scontext)
+    len += 1 + (format == with_commas ? strlen (f->scontext) : scontext_width);
+
   quote_name (NULL, f->name, filename_quoting_options, &name_width);
   len += name_width;
 
@@ -4030,16 +4088,16 @@ print_horizontal (void)
   size_t pos = 0;
   size_t cols = calculate_columns (false);
   struct column_info const *line_fmt = &column_info[cols - 1];
-  size_t name_length = length_of_file_name_and_frills (cwd_file);
+  struct fileinfo const *f = sorted_file[0];
+  size_t name_length = length_of_file_name_and_frills (f);
   size_t max_name_length = line_fmt->col_arr[0];
 
   /* Print first entry.  */
-  print_file_name_and_frills (cwd_file);
+  print_file_name_and_frills (f);
 
   /* Now the rest.  */
   for (filesno = 1; filesno < cwd_n_used; ++filesno)
     {
-      struct fileinfo const *f;
       size_t col = filesno % cols;
 
       if (col == 0)
@@ -4403,6 +4461,7 @@ Mandatory arguments to long options are mandatory for short options too.\n\
   -w, --width=COLS           assume screen width instead of current value\n\
   -x                         list entries by lines instead of by columns\n\
   -X                         sort alphabetically by entry extension\n\
+  -Z, --context              print any SELinux security context of each file\n\
   -1                         list one file per line\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
@@ -4424,7 +4483,7 @@ colors, and can be set easily by the dircolors command.\n\
 \n\
 Exit status is 0 if OK, 1 if minor problems, 2 if serious trouble.\n\
 "), stdout);
-      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+      emit_bug_reporting_address ();
     }
   exit (status);
 }

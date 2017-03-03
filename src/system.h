@@ -1,10 +1,10 @@
 /* system-dependent definitions for coreutils
-   Copyright (C) 1989, 1991-2007 Free Software Foundation, Inc.
+   Copyright (C) 1989, 1991-2008 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -12,8 +12,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 #include <alloca.h>
 
@@ -110,15 +109,16 @@ you must include <sys/types.h> before including this file
 #ifndef ENOSYS
 # define ENOSYS (-1)
 #endif
+#ifndef ENODATA
+# define ENODATA (-1)
+#endif
 
 #include <stdbool.h>
 #include <stdlib.h>
 
-/* Exit statuses for programs like 'env' that exec other programs.
-   EXIT_FAILURE might not be 1, so use EXIT_FAIL in such programs.  */
+/* Exit statuses for programs like 'env' that exec other programs.  */
 enum
 {
-  EXIT_FAIL = 1,
   EXIT_CANNOT_INVOKE = 126,
   EXIT_ENOENT = 127
 };
@@ -399,6 +399,8 @@ enum
   "help", no_argument, NULL, GETOPT_HELP_CHAR
 #define GETOPT_VERSION_OPTION_DECL \
   "version", no_argument, NULL, GETOPT_VERSION_CHAR
+#define GETOPT_SELINUX_CONTEXT_OPTION_DECL \
+  "context", required_argument, NULL, 'Z'
 
 #define case_GETOPT_HELP_CHAR			\
   case GETOPT_HELP_CHAR:			\
@@ -418,12 +420,13 @@ enum
 #define VERSION_OPTION_DESCRIPTION \
   _("      --version  output version information and exit\n")
 
+#include "closein.h"
 #include "closeout.h"
 #include "version-etc.h"
 
 #define case_GETOPT_VERSION_CHAR(Program_name, Authors)			\
   case GETOPT_VERSION_CHAR:						\
-    version_etc (stdout, Program_name, GNU_PACKAGE, VERSION, Authors,	\
+    version_etc (stdout, Program_name, PACKAGE_NAME, VERSION, Authors,	\
                  (char *) NULL);					\
     exit (EXIT_SUCCESS);						\
     break;
@@ -470,7 +473,7 @@ enum
 #endif
 
 #ifndef __attribute__
-# if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 8) || __STRICT_ANSI__
+# if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 8)
 #  define __attribute__(x) /* empty */
 # endif
 #endif
@@ -500,21 +503,6 @@ enum
 
 #ifndef EOVERFLOW
 # define EOVERFLOW EINVAL
-#endif
-
-#if ! HAVE_FSEEKO
-# if ! defined fseeko
-#  define fseeko(s, o, w) ((o) == (long int) (o)	\
-			   ? fseek (s, o, w)		\
-			   : (errno = EOVERFLOW, -1))
-# endif
-# if ! defined ftello
-static inline off_t ftello (FILE *stream)
-{
-  verify (sizeof (long int) <= sizeof (off_t));
-  return ftell (stream);
-}
-# endif
 #endif
 
 #if ! HAVE_SYNC
@@ -581,3 +569,13 @@ ptr_align (void const *ptr, size_t alignment)
      || (Type) ((Accum) * 10 + (Digit_val)) < (Accum))			\
     ? false : (((Accum) = (Accum) * 10 + (Digit_val)), true))		\
   )
+
+static inline void
+emit_bug_reporting_address (void)
+{
+  /* TRANSLATORS: The placeholder indicates the bug-reporting address
+     for this package.  Please add _another line_ saying
+     "Report translation bugs to <...>\n" with the address for translation
+     bugs (typically your translation team's web or email address).  */
+  printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+}

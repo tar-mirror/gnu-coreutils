@@ -2,12 +2,7 @@
 
 EXTRA_DIST = $(TESTS)
 
-TESTS_ENVIRONMENT = \
-  top_srcdir=$(top_srcdir) \
-  srcdir=$(srcdir) \
-  PERL="$(PERL)" \
-  CU_TEST_NAME=`basename $(abs_srcdir)`,$$tst \
-  PATH="$(VG_PATH_PREFIX)`pwd`/../../src$(PATH_SEPARATOR)$$PATH" \
-  PROG=dd
+TESTS = \
+  misc not-rewound skip-seek skip-seek2 unblock-sync
 
-TESTS = misc not-rewound skip-seek skip-seek2 unblock-sync
+include $(top_srcdir)/tests/check.mk

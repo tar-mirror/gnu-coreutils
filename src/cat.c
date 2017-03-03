@@ -1,10 +1,10 @@
 /* cat -- concatenate files and print on the standard output.
-   Copyright (C) 88, 90, 91, 1995-2006 Free Software Foundation, Inc.
+   Copyright (C) 88, 90, 91, 1995-2007 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -12,8 +12,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* Differences from the Unix cat:
    * Always unbuffered, -u is ignored.
@@ -38,7 +37,6 @@
 #include "system.h"
 #include "error.h"
 #include "full-write.h"
-#include "getpagesize.h"
 #include "quote.h"
 #include "safe-read.h"
 
@@ -100,11 +98,11 @@ Usage: %s [OPTION] [FILE]...\n\
 Concatenate FILE(s), or standard input, to standard output.\n\
 \n\
   -A, --show-all           equivalent to -vET\n\
-  -b, --number-nonblank    number nonblank output lines\n\
+  -b, --number-nonblank    number nonempty output lines\n\
   -e                       equivalent to -vE\n\
   -E, --show-ends          display $ at end of each line\n\
   -n, --number             number all output lines\n\
-  -s, --squeeze-blank      never more than one single blank line\n\
+  -s, --squeeze-blank      suppress repeated empty output lines\n\
 "), stdout);
       fputs (_("\
   -t                       equivalent to -vT\n\
@@ -125,7 +123,7 @@ Examples:\n\
   %s        Copy standard input to standard output.\n\
 "),
 	      program_name, program_name);
-      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+      emit_bug_reporting_address ();
     }
   exit (status);
 }

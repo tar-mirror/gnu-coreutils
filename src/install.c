@@ -1,10 +1,10 @@
 /* install - copy files and set attributes
    Copyright (C) 89, 90, 91, 1995-2007 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -12,8 +12,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* Written by David MacKenzie <djm@gnu.ai.mit.edu> */
 
@@ -24,6 +23,7 @@
 #include <signal.h>
 #include <pwd.h>
 #include <grp.h>
+#include <selinux/selinux.h>
 
 #include "system.h"
 #include "backupfile.h"
@@ -35,6 +35,7 @@
 #include "mkdir-p.h"
 #include "modechange.h"
 #include "quote.h"
+#include "quotearg.h"
 #include "savewd.h"
 #include "stat-time.h"
 #include "utimens.h"
@@ -49,12 +50,19 @@
 # include <sys/wait.h>
 #endif
 
+static int selinux_enabled = 0;
+static bool use_default_selinux_context = true;
+
 #if ! HAVE_ENDGRENT
 # define endgrent() ((void) 0)
 #endif
 
 #if ! HAVE_ENDPWENT
 # define endpwent() ((void) 0)
+#endif
+
+#if ! HAVE_LCHOWN
+# define lchown(name, uid, gid) chown (name, uid, gid)
 #endif
 
 /* Initial number of entries in each hash table entry's table of inodes.  */
@@ -121,15 +129,28 @@ static bool strip_files;
 /* If true, install a directory instead of a regular file. */
 static bool dir_arg;
 
+/* For long options that have no equivalent short option, use a
+   non-character as a pseudo short option, starting with CHAR_MAX + 1.  */
+enum
+{
+  PRESERVE_CONTEXT_OPTION = CHAR_MAX + 1
+};
+
 static struct option const long_options[] =
 {
   {"backup", optional_argument, NULL, 'b'},
+  {GETOPT_SELINUX_CONTEXT_OPTION_DECL},
   {"directory", no_argument, NULL, 'd'},
   {"group", required_argument, NULL, 'g'},
   {"mode", required_argument, NULL, 'm'},
   {"no-target-directory", no_argument, NULL, 'T'},
   {"owner", required_argument, NULL, 'o'},
   {"preserve-timestamps", no_argument, NULL, 'p'},
+  {"preserve-context", no_argument, NULL, PRESERVE_CONTEXT_OPTION},
+  /* Continue silent support for --preserve_context until Jan 2008. FIXME-obs
+     After that, FIXME-obs: warn in, say, late 2008, and disable altogether
+     a year or two later.  */
+  {"preserve_context", no_argument, NULL, PRESERVE_CONTEXT_OPTION},
   {"strip", no_argument, NULL, 's'},
   {"suffix", required_argument, NULL, 'S'},
   {"target-directory", required_argument, NULL, 't'},
@@ -142,6 +163,7 @@ static struct option const long_options[] =
 static void
 cp_option_init (struct cp_options *x)
 {
+  cp_options_default (x);
   x->copy_as_regular = true;
   x->dereference = DEREF_ALWAYS;
   x->unlink_dest_before_opening = true;
@@ -149,13 +171,13 @@ cp_option_init (struct cp_options *x)
   x->hard_link = false;
   x->interactive = I_UNSPECIFIED;
   x->move_mode = false;
-  x->chown_privileges = chown_privileges ();
   x->one_file_system = false;
   x->preserve_ownership = false;
   x->preserve_links = false;
   x->preserve_mode = false;
   x->preserve_timestamps = false;
   x->require_preserve = false;
+  x->require_preserve_context = false;
   x->recursive = false;
   x->sparse_mode = SPARSE_AUTO;
   x->symbolic_link = false;
@@ -168,11 +190,88 @@ cp_option_init (struct cp_options *x)
   x->mode = S_IRUSR | S_IWUSR;
   x->stdin_tty = false;
 
+  x->open_dangling_dest_symlink = false;
   x->update = false;
+  x->preserve_security_context = false;
   x->verbose = false;
   x->dest_info = NULL;
   x->src_info = NULL;
 }
+
+#ifdef ENABLE_WHEN_MATCHPATHCON_IS_MORE_EFFICIENT
+/* Modify file context to match the specified policy.
+   If an error occurs the file will remain with the default directory
+   context.  */
+static void
+setdefaultfilecon (char const *file)
+{
+  struct stat st;
+  security_context_t scontext = NULL;
+  if (selinux_enabled != 1)
+    {
+      /* Indicate no context found. */
+      return;
+    }
+  if (lstat (file, &st) != 0)
+    return;
+
+  if (IS_ABSOLUTE_FILE_NAME (file))
+    {
+      /* Calling matchpathcon_init_prefix (NULL, "/first_component/")
+	 is an optimization to minimize the expense of the following
+	 matchpathcon call.  */
+      char const *p0;
+      char const *p = file + 1;
+      while (ISSLASH (*p))
+	++p;
+
+      /* Record final leading slash, for when FILE starts with two or more.  */
+      p0 = p - 1;
+
+      if (*p)
+	{
+	  char *prefix;
+	  do
+	    {
+	      ++p;
+	    }
+	  while (*p && !ISSLASH (*p));
+
+	  prefix = malloc (p - p0 + 2);
+	  if (prefix)
+	    {
+	      stpcpy (stpncpy (prefix, p0, p - p0), "/");
+	      matchpathcon_init_prefix (NULL, prefix);
+	      free (prefix);
+	    }
+	}
+    }
+
+  /* If there's an error determining the context, or it has none,
+     return to allow default context */
+  if ((matchpathcon (file, st.st_mode, &scontext) != 0) ||
+      STREQ (scontext, "<<none>>"))
+    {
+      if (scontext != NULL)
+	freecon (scontext);
+      return;
+    }
+
+  if (lsetfilecon (file, scontext) < 0 && errno != ENOTSUP)
+    error (0, errno,
+	   _("warning: %s: failed to change context to %s"),
+	   quotearg_colon (file), scontext);
+
+  freecon (scontext);
+  return;
+}
+#else
+static void
+setdefaultfilecon (char const *file)
+{
+  (void) file;
+}
+#endif
 
 /* FILE is the last operand of this command.  Return true if FILE is a
    directory.  But report an error there is a problem accessing FILE,
@@ -222,6 +321,9 @@ main (int argc, char **argv)
   bool no_target_directory = false;
   int n_files;
   char **file;
+  security_context_t scontext = NULL;
+  /* set iff kernel has extra selinux system calls */
+  selinux_enabled = (0 < is_selinux_enabled ());
 
   initialize_main (&argc, &argv);
   program_name = argv[0];
@@ -229,7 +331,7 @@ main (int argc, char **argv)
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
 
-  atexit (close_stdout);
+  atexit (close_stdin);
 
   cp_option_init (&x);
 
@@ -243,7 +345,7 @@ main (int argc, char **argv)
      we'll actually use backup_suffix_string.  */
   backup_suffix_string = getenv ("SIMPLE_BACKUP_SUFFIX");
 
-  while ((optc = getopt_long (argc, argv, "bcsDdg:m:o:pt:TvS:", long_options,
+  while ((optc = getopt_long (argc, argv, "bcsDdg:m:o:pt:TvS:Z:", long_options,
 			      NULL)) != -1)
     {
       switch (optc)
@@ -305,6 +407,27 @@ main (int argc, char **argv)
 	case 'T':
 	  no_target_directory = true;
 	  break;
+
+	case PRESERVE_CONTEXT_OPTION:
+	  if ( ! selinux_enabled)
+	    {
+	      error (0, 0, _("Warning: ignoring --preserve-context; "
+			     "this kernel is not SELinux-enabled."));
+	      break;
+	    }
+	  x.preserve_security_context = true;
+	  use_default_selinux_context = false;
+	  break;
+	case 'Z':
+	  if ( ! selinux_enabled)
+	    {
+	      error (0, 0, _("Warning: ignoring --context (-Z); "
+			     "this kernel is not SELinux-enabled."));
+	      break;
+	    }
+	  scontext = optarg;
+	  use_default_selinux_context = false;
+	  break;
 	case_GETOPT_HELP_CHAR;
 	case_GETOPT_VERSION_CHAR (PROGRAM_NAME, AUTHORS);
 	default:
@@ -320,6 +443,11 @@ main (int argc, char **argv)
     error (EXIT_FAILURE, 0,
 	   _("target directory not allowed when installing a directory"));
 
+  if (x.preserve_security_context && scontext != NULL)
+    error (EXIT_FAILURE, 0,
+	   _("cannot force target context to %s and preserve it"),
+	   quote (scontext));
+
   if (backup_suffix_string)
     simple_backup_suffix = xstrdup (backup_suffix_string);
 
@@ -327,6 +455,11 @@ main (int argc, char **argv)
 		   ? xget_version (_("backup type"),
 				   version_control_string)
 		   : no_backups);
+
+  if (scontext && setfscreatecon (scontext) < 0)
+    error (EXIT_FAILURE, errno,
+	   _("failed to set default file creation context to %s"),
+	   quote (scontext));
 
   n_files = argc - optind;
   file = argv + optind;
@@ -503,6 +636,7 @@ copy_file (const char *from, const char *to, const struct cp_options *x)
 static bool
 change_attributes (char const *name)
 {
+  bool ok = false;
   /* chown must precede chmod because on some systems,
      chown clears the set[ug]id bits for non-superusers,
      resulting in incorrect permissions.
@@ -516,14 +650,17 @@ change_attributes (char const *name)
      want to know.  */
 
   if (! (owner_id == (uid_t) -1 && group_id == (gid_t) -1)
-      && chown (name, owner_id, group_id) != 0)
+      && lchown (name, owner_id, group_id) != 0)
     error (0, errno, _("cannot change ownership of %s"), quote (name));
   else if (chmod (name, mode) != 0)
     error (0, errno, _("cannot change permissions of %s"), quote (name));
   else
-    return true;
+    ok = true;
 
-  return false;
+  if (use_default_selinux_context)
+    setdefaultfilecon (name);
+
+  return ok;
 }
 
 /* Set the timestamps of file TO to match those of file FROM.
@@ -687,6 +824,11 @@ Mandatory arguments to long options are mandatory for short options too.\n\
   -T, --no-target-directory  treat DEST as a normal file\n\
   -v, --verbose       print the name of each directory as it is created\n\
 "), stdout);
+      fputs (_("\
+      --preserve-context  preserve SELinux security context\n\
+  -Z, --context=CONTEXT  set SELinux security context of files and directories\n\
+"), stdout);
+
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
       fputs (_("\
@@ -702,7 +844,7 @@ the VERSION_CONTROL environment variable.  Here are the values:\n\
   existing, nil   numbered if numbered backups exist, simple otherwise\n\
   simple, never   always make simple backups\n\
 "), stdout);
-      printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
+      emit_bug_reporting_address ();
     }
   exit (status);
 }

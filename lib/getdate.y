@@ -4,10 +4,10 @@
    Copyright (C) 1999, 2000, 2002, 2003, 2004, 2005, 2006, 2007 Free Software
    Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation; either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,8 +15,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* Originally written by Steven M. Bellovin <smb@research.att.com> while
    at the University of North Carolina at Chapel Hill.  Later tweaked by
@@ -35,7 +34,10 @@
 #include <config.h>
 
 #include "getdate.h"
+
+#include "intprops.h"
 #include "timespec.h"
+#include "verify.h"
 
 /* There's no need to extend the stack, so there's no need to involve
    alloca.  */
@@ -64,7 +66,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "setenv.h"
 #include "xalloc.h"
 
 
@@ -106,6 +107,13 @@
 #define TM_YEAR_BASE 1900
 
 #define HOUR(x) ((x) * 60)
+
+/* Lots of this code assumes time_t and time_t-like values fit into
+   long int.  It also assumes that signed integer overflow silently
+   wraps around, but there's no portable way to check for that at
+   compile-time.  */
+verify (TYPE_IS_INTEGER (time_t));
+verify (LONG_MIN <= TYPE_MINIMUM (time_t) && TYPE_MAXIMUM (time_t) <= LONG_MAX);
 
 /* An integer value, and the number of digits in its textual
    representation.  */
@@ -199,6 +207,45 @@ static int yylex (union YYSTYPE *, parser_control *);
 static int yyerror (parser_control const *, char const *);
 static long int time_zone_hhmm (textint, long int);
 
+/* Extract into *PC any date and time info from a string of digits
+   of the form e.g., YYYYMMDD, YYMMDD, HHMM, HH (and sometimes YYY,
+   YYYY, ...).  */
+static void
+digits_to_date_time (parser_control *pc, textint text_int)
+{
+  if (pc->dates_seen && ! pc->year.digits
+      && ! pc->rels_seen && (pc->times_seen || 2 < text_int.digits))
+    pc->year = text_int;
+  else
+    {
+      if (4 < text_int.digits)
+	{
+	  pc->dates_seen++;
+	  pc->day = text_int.value % 100;
+	  pc->month = (text_int.value / 100) % 100;
+	  pc->year.value = text_int.value / 10000;
+	  pc->year.digits = text_int.digits - 4;
+	}
+      else
+	{
+	  pc->times_seen++;
+	  if (text_int.digits <= 2)
+	    {
+	      pc->hour = text_int.value;
+	      pc->minutes = 0;
+	    }
+	  else
+	    {
+	      pc->hour = text_int.value / 100;
+	      pc->minutes = text_int.value % 100;
+	    }
+	  pc->seconds.tv_sec = 0;
+	  pc->seconds.tv_nsec = 0;
+	  pc->meridian = MER24;
+	}
+    }
+}
+
 %}
 
 /* We want a reentrant parser, even if the TZ manipulation and the calls to
@@ -268,6 +315,7 @@ item:
   | rel
       { pc->rels_seen = true; }
   | number
+  | hybrid
   ;
 
 time:
@@ -543,38 +591,23 @@ unsigned_seconds:
 
 number:
     tUNUMBER
+      { digits_to_date_time (pc, $1); }
+  ;
+
+hybrid:
+    tUNUMBER relunit_snumber
       {
-	if (pc->dates_seen && ! pc->year.digits
-	    && ! pc->rels_seen && (pc->times_seen || 2 < $1.digits))
-	  pc->year = $1;
-	else
-	  {
-	    if (4 < $1.digits)
-	      {
-		pc->dates_seen++;
-		pc->day = $1.value % 100;
-		pc->month = ($1.value / 100) % 100;
-		pc->year.value = $1.value / 10000;
-		pc->year.digits = $1.digits - 4;
-	      }
-	    else
-	      {
-		pc->times_seen++;
-		if ($1.digits <= 2)
-		  {
-		    pc->hour = $1.value;
-		    pc->minutes = 0;
-		  }
-		else
-		  {
-		    pc->hour = $1.value / 100;
-		    pc->minutes = $1.value % 100;
-		  }
-		pc->seconds.tv_sec = 0;
-		pc->seconds.tv_nsec = 0;
-		pc->meridian = MER24;
-	      }
-	  }
+	/* Hybrid all-digit and relative offset, so that we accept e.g.,
+	   "YYYYMMDD +N days" as well as "YYYYMMDD N days".  */
+	digits_to_date_time (pc, $1);
+	pc->rel.ns += $2.ns;
+	pc->rel.seconds += $2.seconds;
+	pc->rel.minutes += $2.minutes;
+	pc->rel.hour += $2.hour;
+	pc->rel.day += $2.day;
+	pc->rel.month += $2.month;
+	pc->rel.year += $2.year;
+	pc->rels_seen = true;
       }
   ;
 
@@ -1229,6 +1262,12 @@ get_date (struct timespec *result, char const *p, struct timespec const *now)
 	  }
     }
 
+  /* As documented, be careful to treat the empty string just like
+     a date string of "0".  Without this, an empty string would be
+     declared invalid when parsed during a DST transition.  */
+  if (*p == '\0')
+    p = "0";
+
   pc.input = p;
   pc.year.value = tmp->tm_year;
   pc.year.value += TM_YEAR_BASE;
@@ -1282,7 +1321,7 @@ get_date (struct timespec *result, char const *p, struct timespec const *now)
 #else
 #if HAVE_TZNAME
   {
-# ifndef tzname
+# if !HAVE_DECL_TZNAME
     extern char *tzname[];
 # endif
     int i;

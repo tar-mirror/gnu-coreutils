@@ -2358,8 +2358,224 @@ else
   esac
 fi
 test -s fowler-1.E || rm -f fowler-1.E
+cat $srcdir/no-abort-1.I | $xx -c a '[b*256]' > no-abort-1.O 2> no-abort-1.E
+code=$?
+if test $code != 0; then
+  $echo "Test no-abort-1(|) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp no-abort-1.O $srcdir/no-abort-1.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed no-abort-1(|)"; fi;;
+    1) $echo "Test no-abort-1(|) failed: files no-abort-1.O and $srcdir/no-abort-1.X differ" 1>&2
+       (diff -c no-abort-1.O $srcdir/no-abort-1.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test no-abort-1(|) may have failed." 1>&2
+       $echo The command "cmp no-abort-1.O $srcdir/no-abort-1.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s no-abort-1.E || rm -f no-abort-1.E
+$xx -c a '[b*256]' < $srcdir/no-abort-1.I > no-abort-1.O 2> no-abort-1.E
+code=$?
+if test $code != 0; then
+  $echo "Test no-abort-1(<) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp no-abort-1.O $srcdir/no-abort-1.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed no-abort-1(<)"; fi;;
+    1) $echo "Test no-abort-1(<) failed: files no-abort-1.O and $srcdir/no-abort-1.X differ" 1>&2
+       (diff -c no-abort-1.O $srcdir/no-abort-1.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test no-abort-1(<) may have failed." 1>&2
+       $echo The command "cmp no-abort-1.O $srcdir/no-abort-1.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s no-abort-1.E || rm -f no-abort-1.E
+cat $srcdir/s1-lower.I | $xx '[:lower:]' '[.*]' > s1-lower.O 2> s1-lower.E
+code=$?
+if test $code != 0; then
+  $echo "Test s1-lower(|) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp s1-lower.O $srcdir/s1-lower.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed s1-lower(|)"; fi;;
+    1) $echo "Test s1-lower(|) failed: files s1-lower.O and $srcdir/s1-lower.X differ" 1>&2
+       (diff -c s1-lower.O $srcdir/s1-lower.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test s1-lower(|) may have failed." 1>&2
+       $echo The command "cmp s1-lower.O $srcdir/s1-lower.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s s1-lower.E || rm -f s1-lower.E
+$xx '[:lower:]' '[.*]' < $srcdir/s1-lower.I > s1-lower.O 2> s1-lower.E
+code=$?
+if test $code != 0; then
+  $echo "Test s1-lower(<) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp s1-lower.O $srcdir/s1-lower.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed s1-lower(<)"; fi;;
+    1) $echo "Test s1-lower(<) failed: files s1-lower.O and $srcdir/s1-lower.X differ" 1>&2
+       (diff -c s1-lower.O $srcdir/s1-lower.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test s1-lower(<) may have failed." 1>&2
+       $echo The command "cmp s1-lower.O $srcdir/s1-lower.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s s1-lower.E || rm -f s1-lower.E
+cat $srcdir/s1-upper.I | $xx '[:upper:]' '[.*]' > s1-upper.O 2> s1-upper.E
+code=$?
+if test $code != 0; then
+  $echo "Test s1-upper(|) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp s1-upper.O $srcdir/s1-upper.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed s1-upper(|)"; fi;;
+    1) $echo "Test s1-upper(|) failed: files s1-upper.O and $srcdir/s1-upper.X differ" 1>&2
+       (diff -c s1-upper.O $srcdir/s1-upper.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test s1-upper(|) may have failed." 1>&2
+       $echo The command "cmp s1-upper.O $srcdir/s1-upper.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s s1-upper.E || rm -f s1-upper.E
+$xx '[:upper:]' '[.*]' < $srcdir/s1-upper.I > s1-upper.O 2> s1-upper.E
+code=$?
+if test $code != 0; then
+  $echo "Test s1-upper(<) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp s1-upper.O $srcdir/s1-upper.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed s1-upper(<)"; fi;;
+    1) $echo "Test s1-upper(<) failed: files s1-upper.O and $srcdir/s1-upper.X differ" 1>&2
+       (diff -c s1-upper.O $srcdir/s1-upper.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test s1-upper(<) may have failed." 1>&2
+       $echo The command "cmp s1-upper.O $srcdir/s1-upper.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s s1-upper.E || rm -f s1-upper.E
+cat $srcdir/tolower-F.I | LC_CTYPE=en_US.ISO-8859-1 $xx '[:upper:]' '[:lower:]' > tolower-F.O 2> tolower-F.E
+code=$?
+if test $code != 0; then
+  $echo "Test tolower-F(LC_CTYPE=en_US.ISO-8859-1:|) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp tolower-F.O $srcdir/tolower-F.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed tolower-F(LC_CTYPE=en_US.ISO-8859-1:|)"; fi;;
+    1) $echo "Test tolower-F(LC_CTYPE=en_US.ISO-8859-1:|) failed: files tolower-F.O and $srcdir/tolower-F.X differ" 1>&2
+       (diff -c tolower-F.O $srcdir/tolower-F.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test tolower-F(LC_CTYPE=en_US.ISO-8859-1:|) may have failed." 1>&2
+       $echo The command "cmp tolower-F.O $srcdir/tolower-F.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s tolower-F.E || rm -f tolower-F.E
+LC_CTYPE=en_US.ISO-8859-1 $xx '[:upper:]' '[:lower:]' < $srcdir/tolower-F.I > tolower-F.O 2> tolower-F.E
+code=$?
+if test $code != 0; then
+  $echo "Test tolower-F(LC_CTYPE=en_US.ISO-8859-1:<) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp tolower-F.O $srcdir/tolower-F.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed tolower-F(LC_CTYPE=en_US.ISO-8859-1:<)"; fi;;
+    1) $echo "Test tolower-F(LC_CTYPE=en_US.ISO-8859-1:<) failed: files tolower-F.O and $srcdir/tolower-F.X differ" 1>&2
+       (diff -c tolower-F.O $srcdir/tolower-F.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test tolower-F(LC_CTYPE=en_US.ISO-8859-1:<) may have failed." 1>&2
+       $echo The command "cmp tolower-F.O $srcdir/tolower-F.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s tolower-F.E || rm -f tolower-F.E
+cat $srcdir/upcase-xtra.I | $xx '[:lower:].' '[:upper:]x' > upcase-xtra.O 2> upcase-xtra.E
+code=$?
+if test $code != 0; then
+  $echo "Test upcase-xtra(|) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp upcase-xtra.O $srcdir/upcase-xtra.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed upcase-xtra(|)"; fi;;
+    1) $echo "Test upcase-xtra(|) failed: files upcase-xtra.O and $srcdir/upcase-xtra.X differ" 1>&2
+       (diff -c upcase-xtra.O $srcdir/upcase-xtra.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test upcase-xtra(|) may have failed." 1>&2
+       $echo The command "cmp upcase-xtra.O $srcdir/upcase-xtra.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s upcase-xtra.E || rm -f upcase-xtra.E
+$xx '[:lower:].' '[:upper:]x' < $srcdir/upcase-xtra.I > upcase-xtra.O 2> upcase-xtra.E
+code=$?
+if test $code != 0; then
+  $echo "Test upcase-xtra(<) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp upcase-xtra.O $srcdir/upcase-xtra.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed upcase-xtra(<)"; fi;;
+    1) $echo "Test upcase-xtra(<) failed: files upcase-xtra.O and $srcdir/upcase-xtra.X differ" 1>&2
+       (diff -c upcase-xtra.O $srcdir/upcase-xtra.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test upcase-xtra(<) may have failed." 1>&2
+       $echo The command "cmp upcase-xtra.O $srcdir/upcase-xtra.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s upcase-xtra.E || rm -f upcase-xtra.E
+cat $srcdir/dncase-xtra.I | $xx '[:upper:].' '[:lower:]x' > dncase-xtra.O 2> dncase-xtra.E
+code=$?
+if test $code != 0; then
+  $echo "Test dncase-xtra(|) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp dncase-xtra.O $srcdir/dncase-xtra.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed dncase-xtra(|)"; fi;;
+    1) $echo "Test dncase-xtra(|) failed: files dncase-xtra.O and $srcdir/dncase-xtra.X differ" 1>&2
+       (diff -c dncase-xtra.O $srcdir/dncase-xtra.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test dncase-xtra(|) may have failed." 1>&2
+       $echo The command "cmp dncase-xtra.O $srcdir/dncase-xtra.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s dncase-xtra.E || rm -f dncase-xtra.E
+$xx '[:upper:].' '[:lower:]x' < $srcdir/dncase-xtra.I > dncase-xtra.O 2> dncase-xtra.E
+code=$?
+if test $code != 0; then
+  $echo "Test dncase-xtra(<) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp dncase-xtra.O $srcdir/dncase-xtra.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed dncase-xtra(<)"; fi;;
+    1) $echo "Test dncase-xtra(<) failed: files dncase-xtra.O and $srcdir/dncase-xtra.X differ" 1>&2
+       (diff -c dncase-xtra.O $srcdir/dncase-xtra.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test dncase-xtra(<) may have failed." 1>&2
+       $echo The command "cmp dncase-xtra.O $srcdir/dncase-xtra.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s dncase-xtra.E || rm -f dncase-xtra.E
 if test $errors = 0; then
-  $echo Passed all 130 tests. 1>&2
+  $echo Passed all 142 tests. 1>&2
 else
   $echo Failed $errors tests. 1>&2
 fi

@@ -1,6 +1,6 @@
-# calloc.m4 serial 6
+# calloc.m4 serial 7
 
-# Copyright (C) 2004, 2005, 2006 Free Software Foundation, Inc.
+# Copyright (C) 2004, 2005, 2006, 2007 Free Software Foundation, Inc.
 # This file is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
@@ -41,3 +41,22 @@ AC_DEFUN([AC_FUNC_CALLOC],
    AC_DEFINE([calloc], [rpl_calloc],
       [Define to rpl_calloc if the replacement function should be used.])])
 ])# AC_FUNC_CALLOC
+
+
+# gl_FUNC_CALLOC_POSIX
+# --------------------
+# Test whether 'calloc' is POSIX compliant (sets errno to ENOMEM when it
+# fails), and replace calloc if it is not.
+AC_DEFUN([gl_FUNC_CALLOC_POSIX],
+[
+  AC_REQUIRE([gl_CHECK_MALLOC_POSIX])
+  if test $gl_cv_func_malloc_posix = yes; then
+    HAVE_CALLOC_POSIX=1
+    AC_DEFINE([HAVE_CALLOC_POSIX], 1,
+      [Define if the 'calloc' function is POSIX compliant.])
+  else
+    AC_LIBOBJ([calloc])
+    HAVE_CALLOC_POSIX=0
+  fi
+  AC_SUBST([HAVE_CALLOC_POSIX])
+])
