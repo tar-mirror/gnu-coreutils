@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script. -*-m4-*-
-AC_INIT([GNU coreutils],[5.2.0],[bug-coreutils@gnu.org])
+AC_INIT([GNU coreutils],[5.2.1],[bug-coreutils@gnu.org])
 AC_CONFIG_SRCDIR(src/ls.c)
 
 AC_CONFIG_AUX_DIR(config)
@@ -225,7 +225,10 @@ if test $jm_cv_sys_tiocgwinsz_needs_termios_h = no && \
 fi
 
 # For src/kill.c.
-AC_CHECK_DECLS([strsignal, strtoimax, sys_siglist, _sys_siglist, __sys_siglist])
+AC_CHECK_DECLS([strtoimax])
+AC_CHECK_DECLS([strsignal, sys_siglist, _sys_siglist, __sys_siglist], , ,
+  [AC_INCLUDES_DEFAULT
+#include <signal.h>])
 
 jm_LIB_CHECK
 

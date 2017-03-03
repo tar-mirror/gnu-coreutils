@@ -1,3 +1,35 @@
+2004-03-10  Jim Meyering  <jim@meyering.net>
+
+	* coreutils.texi (Sorting the output): Remove description of
+	ls's --sort=directory option.  ls doesn't accept that option, yet.
+	Reported by Arvind Autar.
+
+	* coreutils.texi (cp invocation): Improve description of
+	cp's --sparse=WHEN option.
+
+	* coreutils.texi (nl invocation): Specify that these are _basic_
+	regular expressions (BRE), and add a link to grep's documentation.
+	Suggestion from Dan Jacobson.
+
+2004-02-23  Paul Eggert  <eggert@twinsun.com>
+
+	* coreutils.texi (chown invocation): Document that chown now falls
+	back on USER.GROUP parsing regardless of POSIX version, as POSIX
+	1003.1-2001 allows that behavior as a compatible extension.
+
+2004-02-22  Jim Meyering  <jim@meyering.net>
+
+	* coreutils.texi (du invocation): Mention that using du's -H option
+	currently evokes a warning.
+
+2004-02-15  Paul Eggert  <eggert@twinsun.com>
+
+	* coreutils.texi (expr invocation):
+	Document what forms integers may take, and say "integer"
+	consistently instead of "number".  Warn about operands
+	that "expr" can misinterpret, and how to work around the
+	problem.
+
 2004-02-17  Jim Meyering  <jim@meyering.net>
 
 	* coreutils.texi (csplit invocation): Correct typo (s/LINE/N/)

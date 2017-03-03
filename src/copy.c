@@ -214,7 +214,7 @@ copy_reg (const char *src_path, const char *dst_path,
   int return_val = 0;
   off_t n_read_total = 0;
   int last_write_made_hole = 0;
-  int make_holes = (x->sparse_mode == SPARSE_ALWAYS);
+  int make_holes = 0;
 
   source_desc = open (src_path, O_RDONLY);
   if (source_desc < 0)
@@ -285,6 +285,11 @@ copy_reg (const char *src_path, const char *dst_path,
     }
 
   buf_size = ST_BLKSIZE (sb);
+
+  /* Even with --sparse=always, try to create holes only
+     if the destination is a regular file.  */
+  if (x->sparse_mode == SPARSE_ALWAYS && S_ISREG (sb.st_mode))
+    make_holes = 1;
 
 #if HAVE_STRUCT_STAT_ST_BLOCKS
   if (x->sparse_mode == SPARSE_AUTO && S_ISREG (sb.st_mode))
@@ -1094,6 +1099,15 @@ copy_internal (const char *src_path, const char *dst_path,
 
      Sometimes, when preserving links, we have to record dev/ino even
      though st_nlink == 1:
+     - when in move_mode, since we may be moving a group of N hard-linked
+	files (via two or more command line arguments) to a different
+	partition; the links may be distributed among the command line
+	arguments (possibly hierarchies) so that the link count of
+	the final, once-linked source file is reduced to 1 when it is
+	considered below.  But in this case (for mv) we don't need to
+	incur the expense of recording the dev/ino => name mapping; all we
+	really need is a lookup, to see if the dev/ino pair has already
+	been copied.
      - when using -H and processing a command line argument;
 	that command line argument could be a symlink pointing to another
 	command line argument.  With `cp -H --preserve=link', we hard-link
@@ -1109,12 +1123,16 @@ copy_internal (const char *src_path, const char *dst_path,
      command line args.  Using the same hash table to preserve hard
      links means that it may not be cleared.  */
 
-  if ((x->preserve_links
-       && (1 < src_sb.st_nlink
-	   || (command_line_arg
-	       && x->dereference == DEREF_COMMAND_LINE_ARGUMENTS)
-	   || x->dereference == DEREF_ALWAYS))
-      || (x->recursive && S_ISDIR (src_type)))
+  if (x->move_mode && src_sb.st_nlink == 1)
+    {
+	earlier_file = src_to_dest_lookup (src_sb.st_ino, src_sb.st_dev);
+    }
+  else if ((x->preserve_links
+	    && (1 < src_sb.st_nlink
+		|| (command_line_arg
+		    && x->dereference == DEREF_COMMAND_LINE_ARGUMENTS)
+		|| x->dereference == DEREF_ALWAYS))
+	   || (x->recursive && S_ISDIR (src_type)))
     {
       earlier_file = remember_copied (dst_path, src_sb.st_ino, src_sb.st_dev);
     }

@@ -1331,8 +1331,10 @@ number all lines,
 number only nonempty lines (default for body),
 @item n
 do not number lines (default for header and footer),
-@item p@var{regexp}
-number only lines that contain a match for @var{regexp}.
+@item p@var{bre}
+number only lines that contain a match for the basic regular
+expression @var{bre}.
+@xref{Regular Expressions, , Regular Expressions, grep, The GNU Grep Manual}.
 @end table
 
 @item -d @var{cd}
@@ -5522,11 +5524,6 @@ were specified before the @option{-f}).
 Reverse whatever the sorting method is---e.g., list files in reverse
 alphabetical order, youngest first, smallest first, or whatever.
 
-@itemx --sort=directory
-@opindex --sort
-@opindex directories@r{, sorting files by}
-Show directories first, then other files.
-
 @item -S
 @itemx --sort=size
 @opindex -S
@@ -6346,17 +6343,25 @@ reads these as zeroes.  This can both save considerable disk space and
 increase speed, since many binary files contain lots of consecutive zero
 bytes.  By default, @command{cp} detects holes in input source files via a crude
 heuristic and makes the corresponding output file sparse as well.
+Only regular files may be sparse.
 
 The @var{when} value can be one of the following:
 @table @samp
 @item auto
-The default behavior: the output file is sparse if the input file is sparse.
+The default behavior: if the input file is sparse, attempt to make
+the output file sparse, too.  However, if an output file exists but
+refers to a non-regular file, then do not attempt to make it sparse.
 
 @item always
-Always make the output file sparse.  This is useful when the input
-file resides on a filesystem that does not support sparse files (the
-most notable example is @samp{efs} filesystems in SGI IRIX 5.3 and
-earlier), but the output file is on another type of filesystem.
+For each sufficiently long sequence of zero bytes in the input file,
+attempt to create a corresponding hole in the output file, even if the
+input file does not appear to be sparse.
+This is useful when the input file resides on a filesystem
+that does not support sparse files
+(for example,  @samp{efs} filesystems in SGI IRIX 5.3 and earlier),
+but the output file is on a type of filesystem that does support them.
+Holes may be created only in regular files, so if the destination file
+is of some other type, @command{cp} does not even try to make it sparse.
 
 @item never
 Never make the output file sparse.
@@ -7712,11 +7717,13 @@ is omitted, only the group of the files is changed; in this case,
 @end table
 
 Some older scripts may still use @samp{.} in place of the @samp{:} separator.
-@acronym{POSIX} 1003.1-2001 (@pxref{Standards conformance}) does not allow that,
-but you may be able to work around the compatibility problems by setting
-@samp{_POSIX2_VERSION=199209} in your environment.
-New scripts should avoid the use of @samp{.} because @sc{gnu} @command{chown}
-may fail if @var{owner} contains @samp{.} characters.
+@acronym{POSIX} 1003.1-2001 (@pxref{Standards conformance}) does not
+require support for that, but for backward compatibility @acronym{GNU}
+@command{chown} supports @samp{.} so long as no ambiguity results.
+New scripts should avoid the use of @samp{.} because it is not
+portable, and because it has undesirable results if the entire
+@var{owner@samp{.}group} happens to identify a user whose name
+contains @samp{.}.
 
 Warning: The @command{chown} command may clear the set-user-ID or
 set-group-ID bits on some systems.  The @command{chown} command is
@@ -8461,7 +8468,8 @@ are often symbolic links.
 
 @item -H
 @opindex -H
-Currently @option{-H} is the same as @option{--si}.
+Currently, @option{-H} is the same as @option{--si},
+except that @option{-H} evokes a warning.
 This option will be changed to be equivalent to
 @option{--dereference-args} (@option{-D}).
 
@@ -9289,18 +9297,35 @@ True if either @var{expr1} or @var{expr2} is true.
 @command{expr} evaluates an expression and writes the result on standard
 output.  Each token of the expression must be a separate argument.
 
-Operands are either numbers or strings.  @command{expr} converts
+Operands are either integers or strings.  Integers consist of one or
+more decimal digits, with an optional leading @samp{-}.
+@command{expr} converts
 anything appearing in an operand position to an integer or a string
 depending on the operation being applied to it.
 
 Strings are not quoted for @command{expr} itself, though you may need to
 quote them to protect characters with special meaning to the shell,
-e.g., spaces.
+e.g., spaces.  However, regardless of whether it is quoted, a string
+operand should not be a parenthesis or any of @command{expr}'s
+operators like @code{+}, so you cannot safely pass an arbitrary string
+@code{$str} to expr merely by quoting it to the shell.  One way to
+work around this is to use the @command{GNU} extension @code{+},
+(e.g., @code{+ "$str" = foo}); a more portable way is to use
+@code{@w{" $str"}} and to adjust the rest of the expression to take
+the leading space into account (e.g., @code{@w{" $str" = " foo"}}).
+
+You should not pass a negative integer or a string with leading
+@samp{-} as @command{expr}'s first argument, as it might be
+misinterpreted as an option; this can be avoided by parenthesization.
+Also, portable scripts should not use a string operand that happens to
+take the form of an integer; this can be worked around by inserting
+leading spaces as mentioned above.
 
 @cindex parentheses for grouping
 Operators may be given as infix symbols or prefix keywords.  Parentheses
-may be used for grouping in the usual manner (you must quote parentheses
-to avoid the shell evaluating them, however).
+may be used for grouping in the usual manner.  You must quote
+parentheses and many operators to avoid the shell evaluating them,
+however.
 
 @cindex exit status of @command{expr}
 Exit status:
@@ -9417,7 +9442,7 @@ the connectives (next section) have higher.
 @kindex -
 @cindex addition
 @cindex subtraction
-Addition and subtraction.  Both arguments are converted to numbers;
+Addition and subtraction.  Both arguments are converted to integers;
 an error occurs if this cannot be done.
 
 @item * / %
@@ -9428,7 +9453,7 @@ an error occurs if this cannot be done.
 @cindex division
 @cindex remainder
 Multiplication, division, remainder.  Both arguments are converted to
-numbers; an error occurs if this cannot be done.
+integers; an error occurs if this cannot be done.
 
 @end table
 
@@ -9450,15 +9475,18 @@ are higher precedence than either the string or numeric operators
 @kindex |
 @cindex logical or operator
 @cindex or operator
-Returns its first argument if that is neither null nor 0, otherwise its
-second argument.
+Returns its first argument if that is neither null nor zero, otherwise
+its second argument if it is neither null nor zero, otherwise 0.  It
+does not evaluate its second argument if its first argument is neither
+null nor zero.
 
 @item &
 @kindex &
 @cindex logical and operator
 @cindex and operator
-Return its first argument if neither argument is null or 0, otherwise
-0.
+Return its first argument if neither argument is null or zero, otherwise
+0.  It does not evaluate its second argument if its first argument is
+null or zero.
 
 @item < <= = == != >= >
 @kindex <
@@ -9471,7 +9499,7 @@ Return its first argument if neither argument is null or 0, otherwise
 @vindex LC_COLLATE
 Compare the arguments and return 1 if the relation is true, 0 otherwise.
 @code{==} is a synonym for @code{=}.  @command{expr} first tries to convert
-both arguments to numbers and do a numeric comparison; if either
+both arguments to integers and do a numeric comparison; if either
 conversion fails, it does a lexicographic comparison using the character
 collating sequence specified by the @env{LC_COLLATE} locale.
 

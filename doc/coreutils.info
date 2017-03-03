@@ -99,7 +99,7 @@ START-INFO-DIR-ENTRY
 * yes: (coreutils)yes invocation.               Print a string indefinitely.
 END-INFO-DIR-ENTRY
 
-This manual documents version 5.2.0 of the GNU core utilities,
+This manual documents version 5.2.1 of the GNU core utilities,
 including the standard programs for text and file manipulation.
 
    Copyright (C) 1994, 1995, 1996, 2000, 2001, 2002, 2003, 2004 Free
@@ -118,7 +118,7 @@ File: coreutils.info,  Node: Top,  Next: Introduction,  Up: (dir)
 GNU Coreutils
 *************
 
-This manual documents version 5.2.0 of the GNU core utilities,
+This manual documents version 5.2.1 of the GNU core utilities,
 including the standard programs for text and file manipulation.
 
    Copyright (C) 1994, 1995, 1996, 2000, 2001, 2002, 2003, 2004 Free
@@ -1080,8 +1080,10 @@ options::.
     `n'
           do not number lines (default for header and footer),
 
-    `pREGEXP'
-          number only lines that contain a match for REGEXP.
+    `pBRE'
+          number only lines that contain a match for the basic regular
+          expression BRE.  *Note Regular Expressions: (grep)Regular
+          Expressions.
 
 `-d CD'
 `--section-delimiter=CD'
@@ -4522,9 +4524,6 @@ order).
      Reverse whatever the sorting method is--e.g., list files in reverse
      alphabetical order, youngest first, smallest first, or whatever.
 
-`--sort=directory'
-     Show directories first, then other files.
-
 `-S'
 `--sort=size'
      Sort by file size, largest first.
@@ -5174,19 +5173,26 @@ options::.
      and increase speed, since many binary files contain lots of
      consecutive zero bytes.  By default, `cp' detects holes in input
      source files via a crude heuristic and makes the corresponding
-     output file sparse as well.
+     output file sparse as well.  Only regular files may be sparse.
 
      The WHEN value can be one of the following:
     `auto'
-          The default behavior: the output file is sparse if the input
-          file is sparse.
+          The default behavior: if the input file is sparse, attempt to
+          make the output file sparse, too.  However, if an output file
+          exists but refers to a non-regular file, then do not attempt
+          to make it sparse.
 
     `always'
-          Always make the output file sparse.  This is useful when the
-          input file resides on a filesystem that does not support
-          sparse files (the most notable example is `efs' filesystems
-          in SGI IRIX 5.3 and earlier), but the output file is on
-          another type of filesystem.
+          For each sufficiently long sequence of zero bytes in the
+          input file, attempt to create a corresponding hole in the
+          output file, even if the input file does not appear to be
+          sparse.  This is useful when the input file resides on a
+          filesystem that does not support sparse files (for example,
+          `efs' filesystems in SGI IRIX 5.3 and earlier), but the
+          output file is on a type of filesystem that does support them.
+          Holes may be created only in regular files, so if the
+          destination file is of some other type, `cp' does not even
+          try to make it sparse.
 
     `never'
           Never make the output file sparse.  This is useful in
@@ -6292,11 +6298,12 @@ OWNER`:'
 
 
    Some older scripts may still use `.' in place of the `:' separator.
-POSIX 1003.1-2001 (*note Standards conformance::) does not allow that,
-but you may be able to work around the compatibility problems by setting
-`_POSIX2_VERSION=199209' in your environment.  New scripts should avoid
-the use of `.' because GNU `chown' may fail if OWNER contains `.'
-characters.
+POSIX 1003.1-2001 (*note Standards conformance::) does not require
+support for that, but for backward compatibility GNU `chown' supports
+`.' so long as no ambiguity results.  New scripts should avoid the use
+of `.' because it is not portable, and because it has undesirable
+results if the entire OWNER`.'GROUP happens to identify a user whose
+name contains `.'.
 
    Warning: The `chown' command may clear the set-user-ID or
 set-group-ID bits on some systems.  The `chown' command is dependent
@@ -6866,8 +6873,9 @@ options::.
      Use the `--si' option if you prefer powers of 1000.
 
 `-H'
-     Currently `-H' is the same as `--si'.  This option will be changed
-     to be equivalent to `--dereference-args' (`-D').
+     Currently, `-H' is the same as `--si', except that `-H' evokes a
+     warning.  This option will be changed to be equivalent to
+     `--dereference-args' (`-D').
 
 `-k'
      Print sizes in 1024-byte blocks, overriding the default block size
@@ -7538,17 +7546,32 @@ File: coreutils.info,  Node: expr invocation,  Prev: test invocation,  Up: Condi
    `expr' evaluates an expression and writes the result on standard
 output.  Each token of the expression must be a separate argument.
 
-   Operands are either numbers or strings.  `expr' converts anything
-appearing in an operand position to an integer or a string depending on
-the operation being applied to it.
+   Operands are either integers or strings.  Integers consist of one or
+more decimal digits, with an optional leading `-'.  `expr' converts
+anything appearing in an operand position to an integer or a string
+depending on the operation being applied to it.
 
    Strings are not quoted for `expr' itself, though you may need to
 quote them to protect characters with special meaning to the shell,
-e.g., spaces.
+e.g., spaces.  However, regardless of whether it is quoted, a string
+operand should not be a parenthesis or any of `expr''s operators like
+`+', so you cannot safely pass an arbitrary string `$str' to expr
+merely by quoting it to the shell.  One way to work around this is to
+use the `GNU' extension `+', (e.g., `+ "$str" = foo'); a more portable
+way is to use `" $str"' and to adjust the rest of the expression to take
+the leading space into account (e.g., `" $str" = " foo"').
+
+   You should not pass a negative integer or a string with leading `-'
+as `expr''s first argument, as it might be misinterpreted as an option;
+this can be avoided by parenthesization.  Also, portable scripts should
+not use a string operand that happens to take the form of an integer;
+this can be worked around by inserting leading spaces as mentioned
+above.
 
    Operators may be given as infix symbols or prefix keywords.
-Parentheses may be used for grouping in the usual manner (you must
-quote parentheses to avoid the shell evaluating them, however).
+Parentheses may be used for grouping in the usual manner.  You must
+quote parentheses and many operators to avoid the shell evaluating them,
+however.
 
    Exit status:
 
@@ -7639,12 +7662,12 @@ precedence.  The string operators (previous section) have lower
 precedence, the connectives (next section) have higher.
 
 `+ -'
-     Addition and subtraction.  Both arguments are converted to numbers;
-     an error occurs if this cannot be done.
+     Addition and subtraction.  Both arguments are converted to
+     integers; an error occurs if this cannot be done.
 
 `* / %'
      Multiplication, division, remainder.  Both arguments are converted
-     to numbers; an error occurs if this cannot be done.
+     to integers; an error occurs if this cannot be done.
 
 
 
@@ -7659,17 +7682,20 @@ are higher precedence than either the string or numeric operators
 first.
 
 `|'
-     Returns its first argument if that is neither null nor 0,
-     otherwise its second argument.
+     Returns its first argument if that is neither null nor zero,
+     otherwise its second argument if it is neither null nor zero,
+     otherwise 0.  It does not evaluate its second argument if its
+     first argument is neither null nor zero.
 
 `&'
-     Return its first argument if neither argument is null or 0,
-     otherwise 0.
+     Return its first argument if neither argument is null or zero,
+     otherwise 0.  It does not evaluate its second argument if its
+     first argument is null or zero.
 
 `< <= = == != >= >'
      Compare the arguments and return 1 if the relation is true, 0
      otherwise.  `==' is a synonym for `='.  `expr' first tries to
-     convert both arguments to numbers and do a numeric comparison; if
+     convert both arguments to integers and do a numeric comparison; if
      either conversion fails, it does a lexicographic comparison using
      the character collating sequence specified by the `LC_COLLATE'
      locale.
@@ -12773,7 +12799,6 @@ Index
 * directories, removing (recursively):   rm invocation.
 * directories, removing empty:           rmdir invocation.
 * directories, removing with unlink:     rm invocation.
-* directories, sorting files by:         Sorting the output.
 * directory check:                       File type tests.
 * directory components, printing:        dirname invocation.
 * directory deletion, ignoring failures: rmdir invocation.
@@ -13692,185 +13717,185 @@ Node: Output of entire files38212
 Node: cat invocation38744
 Node: tac invocation41442
 Node: nl invocation42699
-Node: od invocation46474
-Node: Formatting file contents52792
-Node: fmt invocation53242
-Node: pr invocation56032
-Node: fold invocation68882
-Node: Output of parts of files70385
-Node: head invocation70892
-Node: tail invocation72454
-Node: split invocation79021
-Node: csplit invocation81146
-Node: Summarizing files85247
-Node: wc invocation85774
-Node: sum invocation87771
-Node: cksum invocation89171
-Node: md5sum invocation90305
-Node: Operating on sorted files93642
-Node: sort invocation94245
-Ref: sort invocation-Footnote-1109008
-Node: uniq invocation109560
-Node: comm invocation113430
-Node: tsort invocation114753
-Node: tsort background117782
-Node: ptx invocation119540
-Node: General options in ptx122339
-Node: Charset selection in ptx123039
-Node: Input processing in ptx123932
-Node: Output formatting in ptx129614
-Node: Compatibility in ptx136171
-Node: Operating on fields within a line139392
-Node: cut invocation139792
-Node: paste invocation142667
-Node: join invocation143990
-Node: Operating on characters147726
-Node: tr invocation148161
-Node: Character sets149370
-Node: Translating153589
-Node: Squeezing155615
-Node: Warnings in tr158609
-Node: expand invocation159739
-Node: unexpand invocation161304
-Node: Directory listing163063
-Node: ls invocation163546
-Ref: ls invocation-Footnote-1165299
-Node: Which files are listed165521
-Node: What information is listed168159
-Node: Sorting the output176014
-Node: More details about version sort178390
-Node: General output formatting179950
-Node: Formatting file timestamps183354
-Node: Formatting the file names188356
-Node: dir invocation191086
-Node: vdir invocation191514
-Node: dircolors invocation191909
-Node: Basic operations193380
-Node: cp invocation193997
-Node: dd invocation204460
-Node: install invocation208316
-Node: mv invocation211919
-Node: rm invocation215572
-Node: shred invocation218304
-Node: Special file types225320
-Node: link invocation226813
-Node: ln invocation227467
-Node: mkdir invocation231947
-Node: mkfifo invocation233520
-Node: mknod invocation234502
-Node: readlink invocation236238
-Node: rmdir invocation237600
-Node: unlink invocation238867
-Node: Changing file attributes239845
-Node: chown invocation240655
-Node: chgrp invocation246413
-Node: chmod invocation249157
-Node: touch invocation251147
-Node: Disk usage254593
-Node: df invocation255269
-Node: du invocation260525
-Node: stat invocation265472
-Node: sync invocation268282
-Node: Printing text269189
-Node: echo invocation269560
-Node: printf invocation270631
-Node: yes invocation273984
-Node: Conditions274499
-Node: false invocation275087
-Node: true invocation276014
-Node: test invocation277506
-Node: File type tests279348
-Node: Access permission tests280109
-Node: File characteristic tests280875
-Node: String tests281629
-Node: Numeric tests282211
-Node: Connectives for test282997
-Node: expr invocation283339
-Node: String expressions284541
-Node: Numeric expressions287113
-Node: Relations for expr287738
-Node: Examples of expr288690
-Node: Redirection289404
-Node: tee invocation289846
-Node: File name manipulation290754
-Node: basename invocation291199
-Node: dirname invocation291834
-Node: pathchk invocation292462
-Node: Working context293667
-Node: pwd invocation294308
-Node: stty invocation294994
-Node: Control297746
-Node: Input298495
-Node: Output299883
-Node: Local301128
-Node: Combination302696
-Node: Characters304845
-Node: Special306388
-Node: printenv invocation307740
-Node: tty invocation308496
-Node: User information309195
-Node: id invocation309844
-Node: logname invocation311070
-Node: whoami invocation311659
-Node: groups invocation312139
-Node: users invocation312857
-Node: who invocation313749
-Node: System context316342
-Node: date invocation316829
-Node: Time directives318078
-Node: Date directives319405
-Node: Literal directives321663
-Node: Padding321939
-Node: Setting the time322746
-Node: Options for date323725
-Node: Examples of date326564
-Ref: %s-examples328007
-Node: uname invocation329994
-Node: hostname invocation332236
-Node: hostid invocation332841
-Node: Modified command invocation333521
-Node: chroot invocation334155
-Node: env invocation336147
-Node: nice invocation337627
-Node: nohup invocation340093
-Node: su invocation341648
-Node: Process control346100
-Node: kill invocation346317
-Node: Delaying350663
-Node: sleep invocation350854
-Node: Numeric operations351658
-Node: factor invocation351987
-Node: seq invocation353317
-Node: File permissions357084
-Node: Mode Structure357675
-Node: Symbolic Modes360796
-Node: Setting Permissions361798
-Node: Copying Permissions364338
-Node: Changing Special Permissions365127
-Node: Conditional Executability366752
-Node: Multiple Changes367374
-Node: Umask and Protection369027
-Node: Numeric Modes370121
-Node: Date input formats371942
-Node: General date syntax374730
-Node: Calendar date items377146
-Node: Time of day items379144
-Node: Time zone items380971
-Node: Day of week items381822
-Node: Relative items in date strings382812
-Node: Pure numbers in date strings385615
-Node: Authors of getdate386596
-Node: Opening the software toolbox387345
-Node: Toolbox introduction388053
-Node: I/O redirection390779
-Node: The who command393615
-Node: The cut command394515
-Node: The sort command395581
-Node: The uniq command396288
-Node: Putting the tools together396980
-Ref: Putting the tools together-Footnote-1409156
-Node: GNU Free Documentation License409230
-Node: How to use this License for your documents427723
-Node: Index429133
+Node: od invocation46572
+Node: Formatting file contents52890
+Node: fmt invocation53340
+Node: pr invocation56130
+Node: fold invocation68980
+Node: Output of parts of files70483
+Node: head invocation70990
+Node: tail invocation72552
+Node: split invocation79119
+Node: csplit invocation81244
+Node: Summarizing files85345
+Node: wc invocation85872
+Node: sum invocation87869
+Node: cksum invocation89269
+Node: md5sum invocation90403
+Node: Operating on sorted files93740
+Node: sort invocation94343
+Ref: sort invocation-Footnote-1109106
+Node: uniq invocation109658
+Node: comm invocation113528
+Node: tsort invocation114851
+Node: tsort background117880
+Node: ptx invocation119638
+Node: General options in ptx122437
+Node: Charset selection in ptx123137
+Node: Input processing in ptx124030
+Node: Output formatting in ptx129712
+Node: Compatibility in ptx136269
+Node: Operating on fields within a line139490
+Node: cut invocation139890
+Node: paste invocation142765
+Node: join invocation144088
+Node: Operating on characters147824
+Node: tr invocation148259
+Node: Character sets149468
+Node: Translating153687
+Node: Squeezing155713
+Node: Warnings in tr158707
+Node: expand invocation159837
+Node: unexpand invocation161402
+Node: Directory listing163161
+Node: ls invocation163644
+Ref: ls invocation-Footnote-1165397
+Node: Which files are listed165619
+Node: What information is listed168257
+Node: Sorting the output176112
+Node: More details about version sort178421
+Node: General output formatting179981
+Node: Formatting file timestamps183385
+Node: Formatting the file names188387
+Node: dir invocation191117
+Node: vdir invocation191545
+Node: dircolors invocation191940
+Node: Basic operations193411
+Node: cp invocation194028
+Node: dd invocation205006
+Node: install invocation208862
+Node: mv invocation212465
+Node: rm invocation216118
+Node: shred invocation218850
+Node: Special file types225866
+Node: link invocation227359
+Node: ln invocation228013
+Node: mkdir invocation232493
+Node: mkfifo invocation234066
+Node: mknod invocation235048
+Node: readlink invocation236784
+Node: rmdir invocation238146
+Node: unlink invocation239413
+Node: Changing file attributes240391
+Node: chown invocation241201
+Node: chgrp invocation247027
+Node: chmod invocation249771
+Node: touch invocation251761
+Node: Disk usage255207
+Node: df invocation255883
+Node: du invocation261139
+Node: stat invocation266127
+Node: sync invocation268937
+Node: Printing text269844
+Node: echo invocation270215
+Node: printf invocation271286
+Node: yes invocation274639
+Node: Conditions275154
+Node: false invocation275742
+Node: true invocation276669
+Node: test invocation278161
+Node: File type tests280003
+Node: Access permission tests280764
+Node: File characteristic tests281530
+Node: String tests282284
+Node: Numeric tests282866
+Node: Connectives for test283652
+Node: expr invocation283994
+Node: String expressions286119
+Node: Numeric expressions288691
+Node: Relations for expr289318
+Node: Examples of expr290507
+Node: Redirection291221
+Node: tee invocation291663
+Node: File name manipulation292571
+Node: basename invocation293016
+Node: dirname invocation293651
+Node: pathchk invocation294279
+Node: Working context295484
+Node: pwd invocation296125
+Node: stty invocation296811
+Node: Control299563
+Node: Input300312
+Node: Output301700
+Node: Local302945
+Node: Combination304513
+Node: Characters306662
+Node: Special308205
+Node: printenv invocation309557
+Node: tty invocation310313
+Node: User information311012
+Node: id invocation311661
+Node: logname invocation312887
+Node: whoami invocation313476
+Node: groups invocation313956
+Node: users invocation314674
+Node: who invocation315566
+Node: System context318159
+Node: date invocation318646
+Node: Time directives319895
+Node: Date directives321222
+Node: Literal directives323480
+Node: Padding323756
+Node: Setting the time324563
+Node: Options for date325542
+Node: Examples of date328381
+Ref: %s-examples329824
+Node: uname invocation331811
+Node: hostname invocation334053
+Node: hostid invocation334658
+Node: Modified command invocation335338
+Node: chroot invocation335972
+Node: env invocation337964
+Node: nice invocation339444
+Node: nohup invocation341910
+Node: su invocation343465
+Node: Process control347917
+Node: kill invocation348134
+Node: Delaying352480
+Node: sleep invocation352671
+Node: Numeric operations353475
+Node: factor invocation353804
+Node: seq invocation355134
+Node: File permissions358901
+Node: Mode Structure359492
+Node: Symbolic Modes362613
+Node: Setting Permissions363615
+Node: Copying Permissions366155
+Node: Changing Special Permissions366944
+Node: Conditional Executability368569
+Node: Multiple Changes369191
+Node: Umask and Protection370844
+Node: Numeric Modes371938
+Node: Date input formats373759
+Node: General date syntax376547
+Node: Calendar date items378963
+Node: Time of day items380961
+Node: Time zone items382788
+Node: Day of week items383639
+Node: Relative items in date strings384629
+Node: Pure numbers in date strings387432
+Node: Authors of getdate388413
+Node: Opening the software toolbox389162
+Node: Toolbox introduction389870
+Node: I/O redirection392596
+Node: The who command395432
+Node: The cut command396332
+Node: The sort command397398
+Node: The uniq command398105
+Node: Putting the tools together398797
+Ref: Putting the tools together-Footnote-1410973
+Node: GNU Free Documentation License411047
+Node: How to use this License for your documents429540
+Node: Index430950
 
 End Tag Table
