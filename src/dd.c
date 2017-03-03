@@ -27,10 +27,10 @@
 #include "system.h"
 #include "close-stream.h"
 #include "error.h"
+#include "fadvise.h"
 #include "fd-reopen.h"
 #include "gethrxtime.h"
 #include "human.h"
-#include "ignore-value.h"
 #include "long-options.h"
 #include "quote.h"
 #include "quotearg.h"
@@ -56,12 +56,6 @@ static void process_signals (void);
 # if ! HAVE_SIGINTERRUPT
 #  define siginterrupt(sig, flag) /* empty */
 # endif
-#endif
-#ifndef SA_NODEFER
-# define SA_NODEFER 0
-#endif
-#ifndef SA_RESETHAND
-# define SA_RESETHAND 0
 #endif
 
 #ifndef SIGINFO
@@ -802,7 +796,7 @@ process_signals (void)
 static ssize_t
 iread (int fd, char *buf, size_t size)
 {
-  for (;;)
+  while (true)
     {
       ssize_t nread;
       process_signals ();
@@ -855,12 +849,9 @@ iwrite (int fd, char const *buf, size_t size)
          posix_fadvise to tell the system not to pollute the buffer
          cache with this data.  Don't bother to diagnose lseek or
          posix_fadvise failure. */
-#ifdef POSIX_FADV_DONTNEED
       off_t off = lseek (STDOUT_FILENO, 0, SEEK_CUR);
       if (0 <= off)
-        ignore_value (posix_fadvise (STDOUT_FILENO,
-                                     off, 0, POSIX_FADV_DONTNEED));
-#endif
+        fdadvise (STDOUT_FILENO, off, 0, FADVISE_DONTNEED);
 
       /* Attempt to ensure that that final block is committed
          to disk as quickly as possible.  */
@@ -932,7 +923,7 @@ parse_symbols (char const *str, struct symbol_value const *table,
 {
   int value = 0;
 
-  for (;;)
+  while (true)
     {
       char const *strcomma = strchr (str, ',');
       struct symbol_value const *entry;
@@ -1563,6 +1554,16 @@ set_fd_flags (int fd, int add_flags, char const *name)
     }
 }
 
+static char *
+human_size (size_t n)
+{
+  static char hbuf[LONGEST_HUMAN_READABLE + 1];
+  int human_opts =
+    (human_autoscale | human_round_to_nearest | human_base_1024
+     | human_space_before_unit | human_SI | human_B);
+  return human_readable (n, hbuf, human_opts, 1, 1);
+}
+
 /* The main loop.  */
 
 static int
@@ -1599,7 +1600,12 @@ dd_copy (void)
      It is necessary when accessing raw (i.e. character special) disk
      devices on Unixware or other SVR4-derived system.  */
 
-  real_buf = xmalloc (input_blocksize + INPUT_BLOCK_SLOP);
+  real_buf = malloc (input_blocksize + INPUT_BLOCK_SLOP);
+  if (!real_buf)
+    error (EXIT_FAILURE, 0,
+           _("memory exhausted by input buffer of size %zu bytes (%s)"),
+           input_blocksize, human_size (input_blocksize));
+
   ibuf = real_buf;
   ibuf += SWAB_ALIGN_OFFSET;	/* allow space for swab */
 
@@ -1608,7 +1614,11 @@ dd_copy (void)
   if (conversions_mask & C_TWOBUFS)
     {
       /* Page-align the output buffer, too.  */
-      real_obuf = xmalloc (output_blocksize + OUTPUT_BLOCK_SLOP);
+      real_obuf = malloc (output_blocksize + OUTPUT_BLOCK_SLOP);
+      if (!real_obuf)
+        error (EXIT_FAILURE, 0,
+               _("memory exhausted by output buffer of size %zu bytes (%s)"),
+               output_blocksize, human_size (output_blocksize));
       obuf = ptr_align (real_obuf, page_size);
     }
   else

@@ -29,8 +29,7 @@
 #include "human.h"
 #include "mountlist.h"
 #include "quote.h"
-#include "save-cwd.h"
-#include "xgetcwd.h"
+#include "find-mount-point.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "df"
@@ -522,94 +521,6 @@ show_dev (char const *disk, char const *mount_point,
   putchar ('\n');
 }
 
-/* Return the root mountpoint of the file system on which FILE exists, in
-   malloced storage.  FILE_STAT should be the result of stating FILE.
-   Give a diagnostic and return NULL if unable to determine the mount point.
-   Exit if unable to restore current working directory.  */
-static char *
-find_mount_point (const char *file, const struct stat *file_stat)
-{
-  struct saved_cwd cwd;
-  struct stat last_stat;
-  char *mp = NULL;		/* The malloced mount point.  */
-
-  if (save_cwd (&cwd) != 0)
-    {
-      error (0, errno, _("cannot get current directory"));
-      return NULL;
-    }
-
-  if (S_ISDIR (file_stat->st_mode))
-    /* FILE is a directory, so just chdir there directly.  */
-    {
-      last_stat = *file_stat;
-      if (chdir (file) < 0)
-        {
-          error (0, errno, _("cannot change to directory %s"), quote (file));
-          return NULL;
-        }
-    }
-  else
-    /* FILE is some other kind of file; use its directory.  */
-    {
-      char *xdir = dir_name (file);
-      char *dir;
-      ASSIGN_STRDUPA (dir, xdir);
-      free (xdir);
-
-      if (chdir (dir) < 0)
-        {
-          error (0, errno, _("cannot change to directory %s"), quote (dir));
-          return NULL;
-        }
-
-      if (stat (".", &last_stat) < 0)
-        {
-          error (0, errno, _("cannot stat current directory (now %s)"),
-                 quote (dir));
-          goto done;
-        }
-    }
-
-  /* Now walk up FILE's parents until we find another file system or /,
-     chdiring as we go.  LAST_STAT holds stat information for the last place
-     we visited.  */
-  for (;;)
-    {
-      struct stat st;
-      if (stat ("..", &st) < 0)
-        {
-          error (0, errno, _("cannot stat %s"), quote (".."));
-          goto done;
-        }
-      if (st.st_dev != last_stat.st_dev || st.st_ino == last_stat.st_ino)
-        /* cwd is the mount point.  */
-        break;
-      if (chdir ("..") < 0)
-        {
-          error (0, errno, _("cannot change to directory %s"), quote (".."));
-          goto done;
-        }
-      last_stat = st;
-    }
-
-  /* Finally reached a mount point, see what it's called.  */
-  mp = xgetcwd ();
-
-done:
-  /* Restore the original cwd.  */
-  {
-    int save_errno = errno;
-    if (restore_cwd (&cwd) != 0)
-      error (EXIT_FAILURE, errno,
-             _("failed to return to initial working directory"));
-    free_cwd (&cwd);
-    errno = save_errno;
-  }
-
-  return mp;
-}
-
 /* If DISK corresponds to a mount point, show its usage
    and return true.  Otherwise, return false.  */
 static bool
@@ -643,54 +554,35 @@ show_point (const char *point, const struct stat *statp)
   struct mount_entry *me;
   struct mount_entry const *best_match = NULL;
 
-  /* If POINT is an absolute file name, see if we can find the
-     mount point without performing any extra stat calls at all.  */
-  if (*point == '/')
-    {
-      /* Find the best match: prefer non-dummies, and then prefer the
-         last match if there are ties.  */
-
-      for (me = mount_list; me; me = me->me_next)
-        if (STREQ (me->me_mountdir, point) && !STREQ (me->me_type, "lofs")
-            && (!best_match || best_match->me_dummy || !me->me_dummy))
-          best_match = me;
-    }
-
   /* Calculate the real absolute file name for POINT, and use that to find
      the mount point.  This avoids statting unavailable mount points,
      which can hang df.  */
-  if (! best_match)
+  char *resolved = canonicalize_file_name (point);
+  if (resolved && resolved[0] == '/')
     {
-      char *resolved = canonicalize_file_name (point);
+      size_t resolved_len = strlen (resolved);
+      size_t best_match_len = 0;
 
-      if (resolved && resolved[0] == '/')
+      for (me = mount_list; me; me = me->me_next)
+      if (!STREQ (me->me_type, "lofs")
+          && (!best_match || best_match->me_dummy || !me->me_dummy))
         {
-          size_t resolved_len = strlen (resolved);
-          size_t best_match_len = 0;
-
-          for (me = mount_list; me; me = me->me_next)
-            if (!STREQ (me->me_type, "lofs")
-                && (!best_match || best_match->me_dummy || !me->me_dummy))
-              {
-                size_t len = strlen (me->me_mountdir);
-                if (best_match_len <= len && len <= resolved_len
-                    && (len == 1 /* root file system */
-                        || ((len == resolved_len || resolved[len] == '/')
-                            && strncmp (me->me_mountdir, resolved, len) == 0)))
-                  {
-                    best_match = me;
-                    best_match_len = len;
-                  }
-              }
+          size_t len = strlen (me->me_mountdir);
+          if (best_match_len <= len && len <= resolved_len
+              && (len == 1 /* root file system */
+                  || ((len == resolved_len || resolved[len] == '/')
+                      && strncmp (me->me_mountdir, resolved, len) == 0)))
+            {
+              best_match = me;
+              best_match_len = len;
+            }
         }
-
-      free (resolved);
-
-      if (best_match
-          && (stat (best_match->me_mountdir, &disk_stats) != 0
-              || disk_stats.st_dev != statp->st_dev))
-        best_match = NULL;
     }
+  free (resolved);
+  if (best_match
+      && (stat (best_match->me_mountdir, &disk_stats) != 0
+          || disk_stats.st_dev != statp->st_dev))
+    best_match = NULL;
 
   if (! best_match)
     for (me = mount_list; me; me = me->me_next)
@@ -819,7 +711,9 @@ Mandatory arguments to long options are mandatory for short options too.\n\
 "), stdout);
       fputs (_("\
   -a, --all             include dummy file systems\n\
-  -B, --block-size=SIZE  use SIZE-byte blocks\n\
+  -B, --block-size=SIZE  scale sizes by SIZE before printing them.  E.g.,\n\
+                           `-BM' prints sizes in units of 1,048,576 bytes.\n\
+                           See SIZE format below.\n\
       --total           produce a grand total\n\
   -h, --human-readable  print sizes in human readable format (e.g., 1K 234M 2G)\n\
   -H, --si              likewise, but use powers of 1000 not 1024\n\
@@ -850,7 +744,7 @@ Mandatory arguments to long options are mandatory for short options too.\n\
 int
 main (int argc, char **argv)
 {
-  struct stat *stats IF_LINT (= 0);
+  struct stat *stats IF_LINT ( = 0);
 
   initialize_main (&argc, &argv);
   set_program_name (argv[0]);
@@ -873,7 +767,7 @@ main (int argc, char **argv)
   print_grand_total = false;
   grand_fsu.fsu_blocksize = 1;
 
-  for (;;)
+  while (true)
     {
       int oi = -1;
       int c = getopt_long (argc, argv, "aB:iF:hHklmPTt:vx:", long_options,

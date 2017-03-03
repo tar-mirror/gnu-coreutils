@@ -25,6 +25,7 @@
 #include "argmatch.h"
 #include "linebuffer.h"
 #include "error.h"
+#include "fadvise.h"
 #include "hard-locale.h"
 #include "posixver.h"
 #include "quote.h"
@@ -286,6 +287,8 @@ check_file (const char *infile, const char *outfile, char delimiter)
   if (! (STREQ (outfile, "-") || freopen (outfile, "w", stdout)))
     error (EXIT_FAILURE, errno, "%s", outfile);
 
+  fadvise (stdin, FADVISE_SEQUENTIAL);
+
   thisline = &lb1;
   prevline = &lb2;
 
@@ -301,8 +304,8 @@ check_file (const char *infile, const char *outfile, char delimiter)
 
   if (output_unique && output_first_repeated && countmode == count_none)
     {
-      char *prevfield IF_LINT (= NULL);
-      size_t prevlen IF_LINT (= 0);
+      char *prevfield IF_LINT ( = NULL);
+      size_t prevlen IF_LINT ( = 0);
 
       while (!feof (stdin))
         {
@@ -434,7 +437,7 @@ main (int argc, char **argv)
   countmode = count_none;
   delimit_groups = DM_NONE;
 
-  for (;;)
+  while (true)
     {
       /* Parse an operand with leading "+" as a file after "--" was
          seen; or if pedantic and a file was seen; or if not

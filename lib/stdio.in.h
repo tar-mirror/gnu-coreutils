@@ -21,6 +21,7 @@
 #if __GNUC__ >= 3
 @PRAGMA_SYSTEM_HEADER@
 #endif
+@PRAGMA_COLUMNS@
 
 #if defined __need_FILE || defined __need___FILE
 /* Special invocation convention inside glibc header files.  */
@@ -64,6 +65,10 @@
 /* The definition of _GL_ARG_NONNULL is copied here.  */
 
 /* The definition of _GL_WARN_ON_USE is copied here.  */
+
+/* Macros for stringification.  */
+#define _GL_STDIO_STRINGIZE(token) #token
+#define _GL_STDIO_MACROEXPAND_AND_STRINGIZE(token) _GL_STDIO_STRINGIZE(token)
 
 
 #if @GNULIB_DPRINTF@
@@ -263,7 +268,8 @@ _GL_CXXALIASWARN (freopen);
 #elif defined GNULIB_POSIXCHECK
 # undef freopen
 /* Assume freopen is always declared.  */
-_GL_WARN_ON_USE (freopen, "freopen on Win32 platforms is not POSIX compatible - "
+_GL_WARN_ON_USE (freopen,
+                 "freopen on Win32 platforms is not POSIX compatible - "
                  "use gnulib module freopen for portability");
 #endif
 
@@ -642,16 +648,26 @@ _GL_WARN_ON_USE (popen, "popen is buggy on some platforms - "
 #if @GNULIB_PRINTF_POSIX@ || @GNULIB_PRINTF@
 # if (@GNULIB_PRINTF_POSIX@ && @REPLACE_PRINTF@) \
      || (@GNULIB_PRINTF@ && @REPLACE_STDIO_WRITE_FUNCS@ && @GNULIB_STDIO_H_SIGPIPE@)
-#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#  if defined __GNUC__
+#   if !(defined __cplusplus && defined GNULIB_NAMESPACE)
 /* Don't break __attribute__((format(printf,M,N))).  */
-#   define printf __printf__
-#  endif
-#  define GNULIB_overrides_printf 1
+#    define printf __printf__
+#   endif
 _GL_FUNCDECL_RPL_1 (__printf__, int,
                     (const char *format, ...)
+                    __asm__ (@ASM_SYMBOL_PREFIX@
+                             _GL_STDIO_MACROEXPAND_AND_STRINGIZE(rpl_printf))
                     __attribute__ ((__format__ (__printf__, 1, 2)))
                     _GL_ARG_NONNULL ((1)));
 _GL_CXXALIAS_RPL_1 (printf, __printf__, int, (const char *format, ...));
+#  else
+_GL_FUNCDECL_RPL (printf, int,
+                  (const char *format, ...)
+                  __attribute__ ((__format__ (__printf__, 1, 2)))
+                  _GL_ARG_NONNULL ((1)));
+_GL_CXXALIAS_RPL (printf, int, (const char *format, ...));
+#  endif
+#  define GNULIB_overrides_printf 1
 # else
 _GL_CXXALIAS_SYS (printf, int, (const char *format, ...));
 # endif

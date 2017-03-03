@@ -57,7 +57,7 @@ test_xvasprintf (void)
 
   {
     /* Silence gcc warning about zero-length format string.  */
-    char *empty = "";
+    const char *empty = "";
     result = my_xasprintf (empty);
     ASSERT (result != NULL);
     ASSERT (strcmp (result, "") == 0);
@@ -81,7 +81,7 @@ test_xvasprintf (void)
 }
 
 static void
-test_xasprintf ()
+test_xasprintf (void)
 {
   int repeat;
   char *result;
@@ -96,7 +96,7 @@ test_xasprintf ()
 
   {
     /* Silence gcc warning about zero-length format string.  */
-    char *empty = "";
+    const char *empty = "";
     result = xasprintf (empty);
     ASSERT (result != NULL);
     ASSERT (strcmp (result, "") == 0);

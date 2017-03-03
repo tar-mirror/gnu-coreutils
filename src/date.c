@@ -27,7 +27,7 @@
 #include "system.h"
 #include "argmatch.h"
 #include "error.h"
-#include "getdate.h"
+#include "parse-datetime.h"
 #include "posixtm.h"
 #include "quote.h"
 #include "stat-time.h"
@@ -281,7 +281,7 @@ batch_convert (const char *input_filename, const char *format)
           break;
         }
 
-      if (! get_date (&when, line, NULL))
+      if (! parse_datetime (&when, line, NULL))
         {
           if (line[line_length - 1] == '\n')
             line[line_length - 1] = '\0';
@@ -450,7 +450,7 @@ main (int argc, char **argv)
       if (! *format)
         {
           /* Do not wrap the following literal format string with _(...).
-             For example, suppose LC_ALL is unset, LC_TIME="POSIX",
+             For example, suppose LC_ALL is unset, LC_TIME=POSIX,
              and LANG="ko_KR".  In that case, POSIX says that LC_TIME
              determines the format and contents of date and time strings
              written by date, which means "date" must generate output
@@ -500,7 +500,7 @@ main (int argc, char **argv)
             {
               if (set_datestr)
                 datestr = set_datestr;
-              valid_date = get_date (&when, datestr, NULL);
+              valid_date = parse_datetime (&when, datestr, NULL);
             }
         }
 

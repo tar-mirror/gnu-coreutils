@@ -41,6 +41,7 @@
 #include <sys/types.h>
 #include "system.h"
 #include "error.h"
+#include "fadvise.h"
 #include "quote.h"
 #include "xstrndup.h"
 
@@ -163,8 +164,8 @@ static void
 parse_tab_stops (char const *stops)
 {
   bool have_tabval = false;
-  uintmax_t tabval IF_LINT (= 0);
-  char const *num_start IF_LINT (= NULL);
+  uintmax_t tabval IF_LINT ( = 0);
+  char const *num_start IF_LINT ( = NULL);
   bool ok = true;
 
   for (; *stops; stops++)
@@ -262,13 +263,14 @@ next_file (FILE *fp)
       if (STREQ (file, "-"))
         {
           have_read_stdin = true;
-          prev_file = file;
-          return stdin;
+          fp = stdin;
         }
-      fp = fopen (file, "r");
+      else
+        fp = fopen (file, "r");
       if (fp)
         {
           prev_file = file;
+          fadvise (fp, FADVISE_SEQUENTIAL);
           return fp;
         }
       error (0, errno, "%s", file);
@@ -299,7 +301,7 @@ unexpand (void)
      allocate MAX_COLUMN_WIDTH bytes to store the blanks.  */
   pending_blank = xmalloc (max_column_width);
 
-  for (;;)
+  while (true)
     {
       /* Input character, or EOF.  */
       int c;
@@ -351,7 +353,7 @@ unexpand (void)
                         next_tab_column =
                           column + (tab_size - column % tab_size);
                       else
-                        for (;;)
+                        while (true)
                           if (tab_index == first_free_tab)
                             {
                               convert = false;
@@ -450,7 +452,7 @@ int
 main (int argc, char **argv)
 {
   bool have_tabval = false;
-  uintmax_t tabval IF_LINT (= 0);
+  uintmax_t tabval IF_LINT ( = 0);
   int c;
 
   /* If true, cancel the effect of any -a (explicit or implicit in -t),

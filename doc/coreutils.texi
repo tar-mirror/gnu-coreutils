@@ -474,7 +474,7 @@ Date input formats
 * Pure numbers in date strings:: 19931219, 1440
 * Seconds since the Epoch::      @@1078100502
 * Specifying time zone rules::   TZ="America/New_York", TZ="UTC0"
-* Authors of get_date::          Bellovin, Eggert, Salz, Berets, et al
+* Authors of parse_datetime::    Bellovin, Eggert, Salz, Berets, et al
 
 Opening the software toolbox
 
@@ -1494,7 +1494,8 @@ Display a @samp{$} after the end of each line.
 @itemx --number
 @opindex -n
 @opindex --number
-Number all output lines, starting with 1.
+Number all output lines, starting with 1.  This option is ignored
+if @option{-b} is in effect.
 
 @item -s
 @itemx --squeeze-blank
@@ -3413,14 +3414,12 @@ options}.
 Note: The MD5 digest is more reliable than a simple CRC (provided by
 the @command{cksum} command) for detecting accidental file corruption,
 as the chances of accidentally having two files with identical MD5
-are vanishingly small.  However, it should not be considered truly
-secure against malicious tampering: although finding a file with a
-given MD5 fingerprint, or modifying a file so as to retain its MD5 are
-considered infeasible at the moment, it is known how to produce
-different files with identical MD5 (a ``collision''), something which
-can be a security issue in certain contexts.  For more secure hashes,
-consider using SHA-1 or SHA-2.  @xref{sha1sum invocation}, and
-@ref{sha2 utilities}.
+are vanishingly small.  However, it should not be considered secure
+against malicious tampering: although finding a file with a given MD5
+fingerprint is considered infeasible at the moment, it is known how
+to modify certain files, including digital certificates, so that they
+appear valid when signed with an MD5 digest.
+For more secure hashes, consider using SHA-2.  @xref{sha2 utilities}.
 
 If a @var{file} is specified as @samp{-} or if no files are given
 @command{md5sum} computes the checksum for the standard input.
@@ -3767,8 +3766,8 @@ the final result, after the throwing away.))
 @opindex --sort
 @cindex general numeric sort
 @vindex LC_NUMERIC
-Sort numerically, using the standard C function @code{strtod} to convert
-a prefix of each line to a double-precision floating point number.
+Sort numerically, using the standard C function @code{strtold} to convert
+a prefix of each line to a long double-precision floating point number.
 This allows floating point numbers to be specified in scientific notation,
 like @code{1.0e-34} and @code{10e100}.
 The @env{LC_NUMERIC} locale determines the decimal-point character.
@@ -3801,12 +3800,18 @@ converting to floating point.
 @opindex --sort
 @cindex human numeric sort
 @vindex LC_NUMERIC
-Sort numerically, as per the @option{--numeric-sort} option below, and in
-addition handle IEC or SI suffixes like MiB, MB etc (@ref{Block size}).
-Note a mixture of IEC and SI suffixes is not supported and will
-be flagged as an error.  Also the numbers must be abbreviated uniformly.
-I.E. values with different precisions like 6000K and 5M will be sorted
-incorrectly.
+Sort numerically, first by numeric sign (negative, zero, or positive);
+then by @acronym{SI} suffix (either empty, or @samp{k} or @samp{K}, or
+one of @samp{MGTPEZY}, in that order; @pxref{Block size}); and finally
+by numeric value.  For example, @samp{1023M} sorts before @samp{1G}
+because @samp{M} (mega) precedes @samp{G} (giga) as an @acronym{SI}
+suffix.  This option sorts values that are consistently scaled to the
+nearest suffix, regardless of whether suffixes denote powers of 1000
+or 1024, and it therefore sorts the output of any single invocation of
+the @command{df}, @command{du}, or @command{ls} commands that are
+invoked with their @option{--human-readable} or @option{--si} options.
+The syntax for numbers is the same as for the @option{--numeric-sort}
+option; the @acronym{SI} suffix must immediately follow the number.
 
 @item -i
 @itemx --ignore-nonprinting
@@ -3939,6 +3944,12 @@ multiple fields.
 
 Example:  To sort on the second field, use @option{--key=2,2}
 (@option{-k 2,2}).  See below for more notes on keys and more examples.
+See also the @option{--debug} option to help determine the part
+of the line being used in the sort.
+
+@item --debug
+Highlight the portion of each line used for sorting.
+Also issue warnings about questionable usage to stderr.
 
 @item --batch-size=@var{nmerge}
 @opindex --batch-size
@@ -4061,6 +4072,14 @@ have a large sort or merge that is I/O-bound, you can often improve
 performance by using this option to specify directories on different
 disks and controllers.
 
+@item --parallel=@var{n}
+@opindex --parallel
+@cindex multithreaded sort
+Limit the number of sorts run in parallel to @var{n}. By default,
+@var{n} is set to the number of available processors, and values
+greater than that are reduced to that limit. Also see
+@ref{nproc invocation}.
+
 @item -u
 @itemx --unique
 @opindex -u
@@ -4114,7 +4133,7 @@ the start and end positions of a field specification, and if it is
 inherited from the global options it will be attached to both.
 If input lines can contain leading or adjacent blanks and @option{-t}
 is not used, then @option{-k} is typically combined with @option{-b} or
-an option that implicitly ignores leading blanks (@samp{MghnV}) as otherwise
+an option that implicitly ignores leading blanks (@samp{Mghn}) as otherwise
 the varying numbers of leading blanks in fields can cause confusing results.
 
 If the start position in a sort field specifier falls after the end of
@@ -4153,6 +4172,13 @@ Sort in descending (reverse) numeric order.
 
 @example
 sort -n -r
+@end example
+
+@item
+Run no more that 4 sorts concurrently, using a buffer size of 10M.
+
+@example
+sort --parallel=4 -S 10M
 @end example
 
 @item
@@ -6920,11 +6946,10 @@ is 80.
 @node Formatting file timestamps
 @subsection Formatting file timestamps
 
-By default, file timestamps are listed in abbreviated form.  Most
-locales use a timestamp like @samp{2002-03-30 23:45}.  However, the
-default @acronym{POSIX} locale uses a date like @samp{Mar 30@ @ 2002}
-for non-recent timestamps, and a date-without-year and time like
-@samp{Mar 30 23:45} for recent timestamps.
+By default, file timestamps are listed in abbreviated form, using
+a date like @samp{Mar 30@ @ 2002} for non-recent timestamps, and a
+date-without-year and time like @samp{Mar 30 23:45} for recent timestamps.
+This format can change depending on the current locale as detailed below.
 
 A timestamp is considered to be @dfn{recent} if it is less than six
 months old, and is not dated in the future.  If a timestamp dated
@@ -7350,6 +7375,12 @@ directory in a different order).
 Try to preserve SELinux security context and extended attributes (xattr),
 but ignore any failure to do that and print no corresponding diagnostic.
 Equivalent to @option{-dR --preserve=all} with the reduced diagnostics.
+
+@itemx --attributes-only
+@opindex --attributes-only
+Preserve the specified attributes of the original files in the copy,
+but do not copy any data.  See the @option{--preserve} option for
+controlling which attributes to copy.
 
 @item -b
 @itemx @w{@kbd{--backup}[=@var{method}]}
@@ -8014,6 +8045,11 @@ followed by a multiplier: @samp{b}=512, @samp{c}=1,
 @samp{w}=2, @samp{x@var{m}}=@var{m}, or any of the
 standard block size suffixes like @samp{k}=1024 (@pxref{Block size}).
 
+Any block size you specify via @samp{bs=}, @samp{ibs=}, @samp{obs=}, @samp{cbs=}
+should not be too large---values larger than a few megabytes
+are generally wasteful or (as in the gigabyte..exabyte case) downright
+counterproductive or error-inducing.
+
 Use different @command{dd} invocations to use different block sizes for
 skipping and I/O@.  For example, the following shell commands copy data
 in 512 KiB blocks between a disk and a tape, but do not save or restore a
@@ -8451,6 +8487,7 @@ removal is requested.  Equivalent to @option{-I}.
 When removing a hierarchy recursively, skip any directory that is on a
 file system different from that of the corresponding command line argument.
 
+@cindex bind mount
 This option is useful when removing a build ``chroot'' hierarchy,
 which normally contains no valuable data.  However, it is not uncommon
 to bind-mount @file{/home} into such a hierarchy, to make it easier to
@@ -10421,7 +10458,9 @@ This option is equivalent to @option{--block-size=1M}.
 For each symbolic links encountered by @command{du},
 consider the disk space used by the symbolic link.
 
+@item -d @var{depth}
 @item --max-depth=@var{depth}
+@opindex -d @var{depth}
 @opindex --max-depth=@var{depth}
 @cindex limiting output of @command{du}
 Show the total for each directory (and file if --all) that is at
@@ -10591,6 +10630,7 @@ Without it, @command{stat} acts on any symbolic link argument directly.
 @cindex file systems
 Report information about the file systems where the given files are located
 instead of information about the files themselves.
+This option implies the @option{-L} option.
 
 @item -c
 @itemx --format=@var{format}
@@ -10639,6 +10679,7 @@ The valid @var{format} directives for files with @option{--format} and
 @item %A - Access rights in human readable form
 @item %b - Number of blocks allocated (see @samp{%B})
 @item %B - The size in bytes of each block reported by @samp{%b}
+@item %C - The SELinux security context of a file, if available
 @item %d - Device number in decimal
 @item %D - Device number in hex
 @item %f - Raw mode in hex
@@ -10647,6 +10688,7 @@ The valid @var{format} directives for files with @option{--format} and
 @item %G - Group name of owner
 @item %h - Number of hard links
 @item %i - Inode number
+@item %m - Mount point (See note below)
 @item %n - File name
 @item %N - Quoted file name with dereference if symbolic link
 @item %o - I/O block size
@@ -10655,12 +10697,31 @@ The valid @var{format} directives for files with @option{--format} and
 @item %T - Minor device type in hex
 @item %u - User ID of owner
 @item %U - User name of owner
+@item %w - Time of file birth, or @samp{-} if unknown
+@item %W - Time of file birth as seconds since Epoch, or @samp{-}
 @item %x - Time of last access
 @item %X - Time of last access as seconds since Epoch
 @item %y - Time of last modification
 @item %Y - Time of last modification as seconds since Epoch
 @item %z - Time of last change
 @item %Z - Time of last change as seconds since Epoch
+@end itemize
+
+The mount point printed by @samp{%m} is similar to that output
+by @command{df}, except that:
+@itemize @bullet
+@item
+stat does not dereference symlinks by default
+(unless @option{-L} is specified)
+@item
+stat does not search for specified device nodes in the
+file system list, instead operating on them directly
+@item
+@cindex bind mount
+stat outputs the alias for a bind mounted file, rather than
+the initial mount point of its backing device.
+One can recursively call stat until there is no change in output,
+to get the current base mount point
 @end itemize
 
 When listing file system information (@option{--file-system} (@option{-f})),
@@ -10759,13 +10820,13 @@ Treat @var{size} as number of I/O blocks of the @var{file} rather than bytes.
 @itemx --reference=@var{rfile}
 @opindex -r
 @opindex --reference
-Set the size of each @var{file} to the same size as @var{rfile}.
+Base the size of each @var{file} on the size of @var{rfile}.
 
 @item -s @var{size}
 @itemx --size=@var{size}
 @opindex -s
 @opindex --size
-Set the size of each @var{file} to this @var{size}.
+Set or adjust the size of each @var{file} according to @var{size}.
 @multiplierSuffixesNoBlocks{size}
 
 @var{size} may also be prefixed by one of the following to adjust
@@ -11983,14 +12044,17 @@ basename include/stdio.h .h
 @cindex non-directory suffix, stripping
 
 @command{dirname} prints all but the final slash-delimited component of
-a string (presumably a file name, but also works on directories).  Synopsis:
+@var{name}.  Slashes on either side of the final component are also
+removed.  If the string contains no slash, @command{dirname} prints
+@samp{.} (meaning the current directory).  Synopsis:
 
 @example
 dirname @var{name}
 @end example
 
-If @var{name} is a single component, @command{dirname} prints @samp{.}
-(meaning the current directory).
+@var{name} need not be a file name, but if it is, this operation
+effectively lists the directory that contains the final component,
+including the case when the final component is itself a directory.
 
 @basenameAndDirname
 
@@ -12009,6 +12073,7 @@ Examples:
 @smallexample
 # Output "/usr/bin".
 dirname /usr/bin/sort
+dirname /usr/bin//.//
 
 # Output ".".
 dirname stdio.h
@@ -15470,7 +15535,7 @@ M8=`echo 2^31-1|bc` ; M9=`echo 2^61-1|bc`
 Similarly, factoring the eighth Fermat number @math{2^{256}+1} takes
 about 20 seconds on the same machine.
 
-Factoring large prime numbers is, in general, hard.  The Pollard Rho
+Factoring large numbers is, in general, hard.  The Pollard Rho
 algorithm used by @command{factor} is particularly effective for
 numbers with relatively small factors.  If you wish to factor large
 numbers which do not have small factors (for example, numbers which
@@ -15613,7 +15678,7 @@ outputs 1.0000000000000000007 twice and skips 1.0000000000000000008.
 @chapter File permissions
 @include perm.texi
 
-@include getdate.texi
+@include parse-datetime.texi
 
 @c              What's GNU?
 @c              Arnold Robbins

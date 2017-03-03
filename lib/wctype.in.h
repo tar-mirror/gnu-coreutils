@@ -33,6 +33,7 @@
 #if __GNUC__ >= 3
 @PRAGMA_SYSTEM_HEADER@
 #endif
+@PRAGMA_COLUMNS@
 
 #if @HAVE_WINT_T@
 /* Solaris 2.5 has a bug: <wchar.h> must be included before <wctype.h>.
@@ -278,11 +279,22 @@ towupper
   return (wc >= 'a' && wc <= 'z' ? wc - 'a' + 'A' : wc);
 }
 
-#elif ! @HAVE_ISWBLANK@
+#elif ! @HAVE_ISWBLANK@ || @REPLACE_ISWBLANK@
 /* Only the iswblank function is missing.  */
 
+# if @REPLACE_ISWBLANK@
+#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#   define iswblank rpl_iswblank
+#  endif
+# endif
+
 static inline int
-iswblank (wint_t wc)
+# if @REPLACE_ISWBLANK@
+rpl_iswblank
+# else
+iswblank
+# endif
+         (wint_t wc)
 {
   return wc == ' ' || wc == '\t';
 }
@@ -340,7 +352,11 @@ _GL_CXXALIAS_RPL (iswxdigit, int, (wint_t wc));
 #else
 _GL_CXXALIAS_SYS (iswalnum, int, (wint_t wc));
 _GL_CXXALIAS_SYS (iswalpha, int, (wint_t wc));
+# if @REPLACE_ISWBLANK@
+_GL_CXXALIAS_RPL (iswblank, int, (wint_t wc));
+# else
 _GL_CXXALIAS_SYS (iswblank, int, (wint_t wc));
+# endif
 _GL_CXXALIAS_SYS (iswcntrl, int, (wint_t wc));
 _GL_CXXALIAS_SYS (iswdigit, int, (wint_t wc));
 _GL_CXXALIAS_SYS (iswgraph, int, (wint_t wc));

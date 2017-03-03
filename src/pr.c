@@ -314,6 +314,7 @@
 #include <sys/types.h>
 #include "system.h"
 #include "error.h"
+#include "fadvise.h"
 #include "hard-locale.h"
 #include "mbswidth.h"
 #include "quote.h"
@@ -876,7 +877,7 @@ main (int argc, char **argv)
                 ? xmalloc ((argc - 1) * sizeof (char *))
                 : NULL);
 
-  for (;;)
+  while (true)
     {
       int oi = -1;
       int c = getopt_long (argc, argv, short_options, long_options, &oi);
@@ -1507,6 +1508,7 @@ open_file (char *name, COLUMN *p)
         error (0, errno, "%s", name);
       return false;
     }
+  fadvise (p->fp, FADVISE_SEQUENTIAL);
   p->status = OPEN;
   p->full_page_printed = false;
   ++total_files;
@@ -2437,7 +2439,7 @@ static bool
 read_line (COLUMN *p)
 {
   int c;
-  int chars IF_LINT (= 0);
+  int chars IF_LINT ( = 0);
   int last_input_position;
   int j, k;
   COLUMN *q;
@@ -2526,7 +2528,7 @@ read_line (COLUMN *p)
 
   print_clump (p, chars, clump_buff);
 
-  for (;;)
+  while (true)
     {
       c = getc (p->fp);
 

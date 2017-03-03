@@ -48,9 +48,7 @@
 
 #define AUTHORS proper_name ("David MacKenzie")
 
-#if HAVE_SYS_WAIT_H
-# include <sys/wait.h>
-#endif
+#include <sys/wait.h>
 
 static int selinux_enabled = 0;
 static bool use_default_selinux_context = true;
@@ -188,8 +186,8 @@ have_same_content (int a_fd, int b_fd)
 static bool
 extra_mode (mode_t input)
 {
-  const mode_t mask = ~S_IRWXUGO & ~S_IFMT;
-  return !! (input & mask);
+  mode_t mask = S_IRWXUGO | S_IFMT;
+  return !! (input & ~ mask);
 }
 
 /* Return true if copy of file SRC_NAME to file DEST_NAME is necessary. */
@@ -282,6 +280,7 @@ cp_option_init (struct cp_options *x)
   x->preserve_mode = false;
   x->preserve_timestamps = false;
   x->reduce_diagnostics=false;
+  x->data_copy_required = true;
   x->require_preserve = false;
   x->require_preserve_context = false;
   x->require_preserve_xattr = false;

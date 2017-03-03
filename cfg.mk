@@ -27,7 +27,7 @@ bootstrap-tools = autoconf,automake,gnulib,bison
 # Now that we have better tests, make this the default.
 export VERBOSE = yes
 
-old_NEWS_hash = 9518f4930d702a9fa6ac6b9fd06cca94
+old_NEWS_hash = 27e765279d5735f99114b57fa097e6bd
 
 # Add an exemption for sc_makefile_at_at_check.
 _makefile_at_at_check_exceptions = ' && !/^cu_install_program =/'
@@ -106,43 +106,6 @@ sc_x_sc_dist_check:
 		   ) | sort | uniq -u)"					\
 	  && { echo 'Makefile.am: $(sce) mismatch' >&2; exit 1; } || :;
 
-headers_with_interesting_macro_defs = \
-  exit.h	\
-  fcntl_.h	\
-  fnmatch_.h	\
-  intprops.h	\
-  inttypes_.h	\
-  lchown.h	\
-  openat.h	\
-  stat-macros.h	\
-  stdint_.h
-
-# Create a list of regular expressions matching the names
-# of macros that are guaranteed by parts of gnulib to be defined.
-.re-defmac:
-	@(cd $(srcdir)/lib;						\
-	  for f in $(headers_with_interesting_macro_defs); do		\
-	    test -f $$f &&						\
-	      sed -n '/^# *define \([^_ (][^ (]*\)[ (].*/s//\1/p' $$f;	\
-	   done;							\
-	 ) | sort -u							\
-	   | grep -Ev 'ATTRIBUTE_NORETURN|SIZE_MAX'			\
-	   | sed 's/^/^# *define /'					\
-	  > $@-t
-	@mv $@-t $@
-
-# Don't define macros that we already get from gnulib header files.
-sc_always_defined_macros: .re-defmac
-	@if test -f $(srcdir)/src/system.h; then			\
-	  trap 'rc=$$?; rm -f .re-defmac; exit $$rc' 0;			\
-	  am__exit='(exit $rc); exit $rc';				\
-	  trap "rc=129; $$am__exit" 1; trap "rc=130; $$am__exit" 2;	\
-	  trap "rc=131; $$am__exit" 3; trap "rc=143; $$am__exit" 15;	\
-	  grep -f .re-defmac $$($(VC_LIST))				\
-	    && { echo '$(ME): define the above via some gnulib .h file'	\
-		  1>&2;  exit 1; } || :;				\
-	fi
-
 # Create a list of regular expressions matching the names
 # of files included from system.h.  Exclude a couple.
 .re-list:
@@ -152,16 +115,21 @@ sc_always_defined_macros: .re-defmac
 	  > $@-t
 	@mv $@-t $@
 
+define gl_trap_
+  Exit () { set +e; (exit $$1); exit $$1; };				\
+  for sig in 1 2 3 13 15; do						\
+    eval "trap 'Exit $$(expr $$sig + 128)' $$sig";			\
+  done
+endef
+
 # Files in src/ should not include directly any of
 # the headers already included via system.h.
 sc_system_h_headers: .re-list
 	@if test -f $(srcdir)/src/system.h; then			\
 	  trap 'rc=$$?; rm -f .re-list; exit $$rc' 0;			\
-	  am__exit='(exit $rc); exit $rc';				\
-	  trap "rc=129; $$am__exit" 1; trap "rc=130; $$am__exit" 2;	\
-	  trap "rc=131; $$am__exit" 3; trap "rc=143; $$am__exit" 15;	\
+	  $(gl_trap_);							\
 	  grep -nE -f .re-list						\
-	      $$($(VC_LIST_EXCEPT) | grep '^src/')			\
+	      $$($(VC_LIST_EXCEPT) | grep '^\($(srcdir)/\)\?src/')	\
 	    && { echo '$(ME): the above are already included via system.h'\
 		  1>&2;  exit 1; } || :;				\
 	fi
@@ -265,6 +233,11 @@ sc_require_stdio_safer:
 	else :;								\
 	fi
 
+sc_prohibit_perl_hash_quotes:
+	@prohibit="\{'[A-Z_]+' *[=}]"					\
+	halt="in Perl code, write \$$hash{KEY}, not \$$hash{'K''EY'}"	\
+	  $(_sc_search_regexp)
+
 # Prefer xnanosleep over other less-precise sleep methods
 sc_prohibit_sleep:
 	@prohibit='\<(nano|u)?sleep \('					\
@@ -323,6 +296,10 @@ sc_space_before_open_paren:
 		1>&2; exit 1; } || :;					\
 	else :;								\
 	fi
+
+# Override the default Cc: used in generating an announcement.
+announcement_Cc_ = $(translation_project_), \
+  coreutils@gnu.org, coreutils-announce@gnu.org
 
 include $(srcdir)/dist-check.mk
 

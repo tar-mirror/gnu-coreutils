@@ -124,6 +124,13 @@ if test "$gl_gcc_warnings" = yes; then
   nw="$nw -Wold-style-definition"
   gl_MANYWARN_COMPLEMENT([GNULIB_WARN_CFLAGS], [$WARN_CFLAGS], [$nw])
   AC_SUBST([GNULIB_WARN_CFLAGS])
+
+  # For gnulib-tests, the set is slightly smaller still.
+  nw=
+  nw="$nw -Wstrict-prototypes"
+  gl_MANYWARN_COMPLEMENT([GNULIB_TEST_WARN_CFLAGS],
+                         [$GNULIB_WARN_CFLAGS], [$nw])
+  AC_SUBST([GNULIB_TEST_WARN_CFLAGS])
 fi
 
 AC_FUNC_FORK
@@ -332,7 +339,6 @@ if test $gl_cv_list_mounted_fs = yes && test $gl_cv_fs_space = yes; then
 fi
 
 # Limit stdbuf to ELF systems with GCC
-optional_pkglib_progs=
 AC_MSG_CHECKING([whether this is an ELF system])
 AC_EGREP_CPP([yes], [#if __ELF__
 yes
@@ -341,7 +347,6 @@ AC_MSG_RESULT([$elf_sys])
 if test "$elf_sys" = "yes" && \
    test "$GCC" = "yes"; then
   gl_ADD_PROG([optional_bin_progs], [stdbuf])
-  gl_ADD_PROG([optional_pkglib_progs], [libstdbuf.so])
 fi
 
 ############################################################################
@@ -395,6 +400,13 @@ esac
 # corresponding ./configure option argument is comma-separated on input.
 gl_INCLUDE_EXCLUDE_PROG([optional_bin_progs], [arch,hostname,su])
 
+# Now that we know which programs will actually be built up, figure out
+# which optional helper progs should be compiled.
+optional_pkglib_progs=
+case " $optional_bin_progs " in
+  *' stdbuf '*) gl_ADD_PROG([optional_pkglib_progs], [libstdbuf.so]) ;;
+esac
+
 # Set INSTALL_SU if su installation has been requested via
 # --enable-install-program=su.
 AC_SUBST([INSTALL_SU])
@@ -432,7 +444,7 @@ AC_SUBST([CONFIG_STATUS_DEPENDENCIES])
 # As long as "grep 'PRI[diouxX]' po/*.pot" reports matches in
 # translatable strings, we must use need-formatstring-macros here.
 AM_GNU_GETTEXT([external], [need-formatstring-macros])
-AM_GNU_GETTEXT_VERSION([0.17])
+AM_GNU_GETTEXT_VERSION([0.18])
 
 # For a test of uniq: it uses the $LOCALE_FR envvar.
 gt_LOCALE_FR

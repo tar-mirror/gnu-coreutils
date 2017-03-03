@@ -26,6 +26,7 @@
 
 #include "system.h"
 #include "error.h"
+#include "fadvise.h"
 #include "xstrtol.h"
 #include "quote.h"
 #include "quotearg.h"
@@ -269,9 +270,9 @@ main (int argc, char **argv)
         ignore_garbage = true;
         break;
 
-        case_GETOPT_HELP_CHAR;
+      case_GETOPT_HELP_CHAR;
 
-        case_GETOPT_VERSION_CHAR (PROGRAM_NAME, AUTHORS);
+      case_GETOPT_VERSION_CHAR (PROGRAM_NAME, AUTHORS);
 
       default:
         usage (EXIT_FAILURE);
@@ -301,6 +302,8 @@ main (int argc, char **argv)
       if (input_fh == NULL)
         error (EXIT_FAILURE, errno, "%s", infile);
     }
+
+  fadvise (input_fh, FADVISE_SEQUENTIAL);
 
   if (decode)
     do_decode (input_fh, stdout, ignore_garbage);

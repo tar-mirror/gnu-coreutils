@@ -61,9 +61,7 @@
 # include "verror.h"
 #endif
 
-#if HAVE_SYS_IOCTL_H
-# include <sys/ioctl.h>
-#endif
+#include <sys/ioctl.h>
 
 #ifndef HAVE_FCHOWN
 # define HAVE_FCHOWN false
@@ -179,11 +177,11 @@ static void
 copy_attr_error (struct error_context *ctx ATTRIBUTE_UNUSED,
                  char const *fmt, ...)
 {
-  int err = errno;
-  va_list ap;
-
   if (!errno_unsupported (errno))
     {
+      int err = errno;
+      va_list ap;
+
       /* use verror module to print error message */
       va_start (ap, fmt);
       verror (0, err, fmt, ap);
@@ -216,51 +214,39 @@ copy_attr_free (struct error_context *ctx ATTRIBUTE_UNUSED,
 {
 }
 
-static bool
-copy_attr_by_fd (char const *src_path, int src_fd,
-                 char const *dst_path, int dst_fd, const struct cp_options *x)
-{
-  struct error_context ctx =
-  {
-    .error = x->require_preserve_xattr ? copy_attr_allerror : copy_attr_error,
-    .quote = copy_attr_quote,
-    .quote_free = copy_attr_free
-  };
-  return 0 == attr_copy_fd (src_path, src_fd, dst_path, dst_fd, 0,
-                            (x->reduce_diagnostics
-                             && !x->require_preserve_xattr)? NULL : &ctx);
-}
+/* If positive SRC_FD and DST_FD descriptors are passed,
+   then copy by fd, otherwise copy by name.  */
 
 static bool
-copy_attr_by_name (char const *src_path, char const *dst_path,
-                   const struct cp_options *x)
+copy_attr (char const *src_path, int src_fd,
+           char const *dst_path, int dst_fd, struct cp_options const *x)
 {
+  int ret;
+  bool all_errors = (!x->data_copy_required || x->require_preserve_xattr);
+  bool some_errors = (!all_errors && !x->reduce_diagnostics);
   struct error_context ctx =
   {
-    .error = x->require_preserve_xattr ? copy_attr_allerror : copy_attr_error,
+    .error = all_errors ? copy_attr_allerror : copy_attr_error,
     .quote = copy_attr_quote,
     .quote_free = copy_attr_free
   };
-  return 0 == attr_copy_file (src_path, dst_path, 0,
-                              (x-> reduce_diagnostics
-                               && !x->require_preserve_xattr) ? NULL : &ctx);
+  if (0 <= src_fd && 0 <= dst_fd)
+    ret = attr_copy_fd (src_path, src_fd, dst_path, dst_fd, 0,
+                        (all_errors || some_errors ? &ctx : NULL));
+  else
+    ret = attr_copy_file (src_path, dst_path, 0,
+                          (all_errors || some_errors ? &ctx : NULL));
+
+  return ret == 0;
 }
 #else /* USE_XATTR */
 
 static bool
-copy_attr_by_fd (char const *src_path ATTRIBUTE_UNUSED,
-                 int src_fd ATTRIBUTE_UNUSED,
-                 char const *dst_path ATTRIBUTE_UNUSED,
-                 int dst_fd ATTRIBUTE_UNUSED,
-                 const struct cp_options *x ATTRIBUTE_UNUSED)
-{
-  return true;
-}
-
-static bool
-copy_attr_by_name (char const *src_path ATTRIBUTE_UNUSED,
-                   char const *dst_path ATTRIBUTE_UNUSED,
-                   const struct cp_options *x ATTRIBUTE_UNUSED)
+copy_attr (char const *src_path ATTRIBUTE_UNUSED,
+           int src_fd ATTRIBUTE_UNUSED,
+           char const *dst_path ATTRIBUTE_UNUSED,
+           int dst_fd ATTRIBUTE_UNUSED,
+           struct cp_options const *x ATTRIBUTE_UNUSED)
 {
   return true;
 }
@@ -485,7 +471,7 @@ copy_reg (char const *src_name, char const *dst_name,
   struct stat sb;
   struct stat src_open_sb;
   bool return_val = true;
-  bool data_copy_required = true;
+  bool data_copy_required = x->data_copy_required;
 
   source_desc = open (src_name,
                       (O_RDONLY | O_BINARY
@@ -528,11 +514,14 @@ copy_reg (char const *src_name, char const *dst_name,
          that is used when the destination file doesn't already exist.  */
       if (x->preserve_security_context && 0 <= dest_desc)
         {
+          bool all_errors = (!x->data_copy_required
+                             || x->require_preserve_context);
+          bool some_errors = !all_errors && !x->reduce_diagnostics;
           security_context_t con = NULL;
+
           if (getfscreatecon (&con) < 0)
             {
-              if (x->require_preserve_context ||
-                  (!x->reduce_diagnostics && !errno_unsupported (errno)))
+              if (all_errors || (some_errors && !errno_unsupported (errno)))
                 error (0, errno, _("failed to get file system create context"));
               if (x->require_preserve_context)
                 {
@@ -545,8 +534,7 @@ copy_reg (char const *src_name, char const *dst_name,
             {
               if (fsetfilecon (dest_desc, con) < 0)
                 {
-                  if (x->require_preserve_context ||
-                      (!x->reduce_diagnostics && !errno_unsupported (errno)))
+                  if (all_errors || (some_errors && !errno_unsupported (errno)))
                     error (0, errno,
                            _("failed to set the security context of %s to %s"),
                            quote_n (0, dst_name), quote_n (1, con));
@@ -709,7 +697,7 @@ copy_reg (char const *src_name, char const *dst_name,
       buf_alloc = xmalloc (buf_size + buf_alignment_slop);
       buf = ptr_align (buf_alloc, buf_alignment);
 
-      for (;;)
+      while (true)
         {
           word *wp = NULL;
 
@@ -815,7 +803,7 @@ copy_reg (char const *src_name, char const *dst_name,
       timespec[0] = get_stat_atime (src_sb);
       timespec[1] = get_stat_mtime (src_sb);
 
-      if (gl_futimens (dest_desc, dst_name, timespec) != 0)
+      if (fdutimens (dest_desc, dst_name, timespec) != 0)
         {
           error (0, errno, _("preserving times for %s"), quote (dst_name));
           if (x->require_preserve)
@@ -852,7 +840,7 @@ copy_reg (char const *src_name, char const *dst_name,
       if (!(sb.st_mode & S_IWUSR) && geteuid () != 0)
         access_changed = fchmod_or_lchmod (dest_desc, dst_name, 0600) == 0;
 
-      if (!copy_attr_by_fd (src_name, source_desc, dst_name, dest_desc, x)
+      if (!copy_attr (src_name, source_desc, dst_name, dest_desc, x)
           && x->require_preserve_xattr)
         return_val = false;
 
@@ -1244,7 +1232,7 @@ copy_internal (char const *src_name, char const *dst_name,
   struct stat src_sb;
   struct stat dst_sb;
   mode_t src_mode;
-  mode_t dst_mode IF_LINT (= 0);
+  mode_t dst_mode IF_LINT ( = 0);
   mode_t dst_mode_bits;
   mode_t omitted_permissions;
   bool restore_dst_mode = false;
@@ -1823,14 +1811,15 @@ copy_internal (char const *src_name, char const *dst_name,
 
   if (x->preserve_security_context)
     {
+      bool all_errors = !x->data_copy_required || x->require_preserve_context;
+      bool some_errors = !all_errors && !x->reduce_diagnostics;
       security_context_t con;
 
       if (0 <= lgetfilecon (src_name, &con))
         {
           if (setfscreatecon (con) < 0)
             {
-              if (x->require_preserve_context ||
-                  (!x->reduce_diagnostics && !errno_unsupported (errno)))
+              if (all_errors || (some_errors && !errno_unsupported (errno)))
                 error (0, errno,
                        _("failed to set default file creation context to %s"),
                        quote (con));
@@ -1844,8 +1833,7 @@ copy_internal (char const *src_name, char const *dst_name,
         }
       else
         {
-          if (x->require_preserve_context ||
-              (!x->reduce_diagnostics && !errno_unsupported (errno)))
+          if (all_errors || (some_errors && !errno_unsupported (errno)))
             {
               error (0, errno,
                      _("failed to get security context of %s"),
@@ -2170,7 +2158,7 @@ copy_internal (char const *src_name, char const *dst_name,
 
   set_author (dst_name, -1, &src_sb);
 
-  if (x->preserve_xattr && ! copy_attr_by_name (src_name, dst_name, x)
+  if (x->preserve_xattr && ! copy_attr (src_name, -1, dst_name, -1, x)
       && x->require_preserve_xattr)
     return false;
 

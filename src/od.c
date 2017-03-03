@@ -1513,7 +1513,7 @@ main (int argc, char **argv)
   int n_files;
   size_t i;
   int l_c_m;
-  size_t desired_width IF_LINT (= 0);
+  size_t desired_width IF_LINT ( = 0);
   bool modern = false;
   bool width_specified = false;
   bool ok = true;
@@ -1522,7 +1522,7 @@ main (int argc, char **argv)
 
   /* The old-style `pseudo starting address' to be printed in parentheses
      after any true address.  */
-  uintmax_t pseudo_start IF_LINT (= 0);
+  uintmax_t pseudo_start IF_LINT ( = 0);
 
   initialize_main (&argc, &argv);
   set_program_name (argv[0]);
@@ -1564,7 +1564,7 @@ main (int argc, char **argv)
   address_pad_len = 7;
   flag_dump_strings = false;
 
-  for (;;)
+  while (true)
     {
       uintmax_t tmp;
       enum strtol_error s_err;
@@ -1800,7 +1800,7 @@ it must be one character from [doxn]"),
       if (traditional && 1 < n_files)
         {
           error (0, 0, _("extra operand %s"), quote (argv[optind + 1]));
-          error (0, 0, "%s\n",
+          error (0, 0, "%s",
                  _("compatibility mode supports at most one file"));
           usage (EXIT_FAILURE);
         }

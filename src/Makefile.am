@@ -145,6 +145,7 @@ noinst_HEADERS =	\
   copy.h		\
   cp-hash.h		\
   dircolors.h		\
+  find-mount-point.h	\
   fs.h			\
   group-list.h		\
   ls.h			\
@@ -328,13 +329,8 @@ ls_LDADD += $(LIB_CLOCK_GETTIME)
 pr_LDADD += $(LIB_CLOCK_GETTIME)
 touch_LDADD += $(LIB_CLOCK_GETTIME)
 
-# for gethrxtime, randint, randread, gen_tempname, mkstemp
+# for gethrxtime
 dd_LDADD += $(LIB_GETHRXTIME)
-mktemp_LDADD += $(LIB_GETHRXTIME)
-shred_LDADD += $(LIB_GETHRXTIME)
-shuf_LDADD += $(LIB_GETHRXTIME)
-sort_LDADD += $(LIB_GETHRXTIME)
-tac_LDADD += $(LIB_GETHRXTIME)
 
 # for cap_get_file
 ls_LDADD += $(LIB_CAP)
@@ -342,14 +338,6 @@ ls_LDADD += $(LIB_CAP)
 # for fdatasync
 dd_LDADD += $(LIB_FDATASYNC)
 shred_LDADD += $(LIB_FDATASYNC)
-
-# for strtod, strtold
-printf_LDADD += $(POW_LIB)
-seq_LDADD += $(POW_LIB)
-sleep_LDADD += $(POW_LIB)
-sort_LDADD += $(POW_LIB)
-tail_LDADD += $(POW_LIB)
-uptime_LDADD += $(POW_LIB)
 
 # for xnanosleep
 sleep_LDADD += $(LIB_NANOSLEEP)
@@ -396,6 +384,9 @@ uname_LDADD += $(GETHOSTNAME_LIB)
 
 # for strsignal
 kill_LDADD += $(LIBTHREAD)
+
+# for pthread
+sort_LDADD += $(LIB_PTHREAD)
 
 $(PROGRAMS): ../lib/libcoreutils.a
 
@@ -488,6 +479,9 @@ rm_SOURCES = rm.c remove.c
 mkdir_SOURCES = mkdir.c prog-fprintf.c
 rmdir_SOURCES = rmdir.c prog-fprintf.c
 
+df_SOURCES = df.c find-mount-point.c
+stat_SOURCES = stat.c find-mount-point.c
+
 uname_SOURCES = uname.c uname-uname.c
 arch_SOURCES = uname.c uname-arch.c
 nproc_SOURCES = nproc.c
@@ -557,7 +551,7 @@ fs-magic-compare: fs-magic fs-kernel-magic fs-def
 
 CLEANFILES += fs-def
 fs-def: fs.h
-	grep '^# *define ' $< > $@-t && mv $@-t $@
+	grep '^# *define ' $< | $(ASSORT) > $@-t && mv $@-t $@
 
 # Massage bits of the statfs man page and definitions from
 # /usr/include/linux/magic.h to be in a form consistent with what's in fs.h.
@@ -685,7 +679,7 @@ au_actual = authors-actual
 .PHONY: sc_check-AUTHORS
 sc_check-AUTHORS: $(all_programs)
 	@locale=en_US.UTF-8;				\
-	LC_ALL="$$locale" ./cat --version		\
+	LC_ALL=$$locale ./cat --version		\
 	    | grep ' Torbjorn '	> /dev/null		\
 	  && { echo "$@: skipping this check"; exit 0; }; \
 	rm -f $(au_actual) $(au_dotdot);		\
@@ -699,7 +693,7 @@ sc_check-AUTHORS: $(all_programs)
 	  elif test "$$i" = test; then			\
 	    exe='[';					\
 	  fi;						\
-	  LC_ALL="$$locale" ./$$exe --version		\
+	  LC_ALL=$$locale ./$$exe --version		\
 	    | perl -0 -pi -e 's/,\n/, /gm'		\
 	    | sed -n -e '/Written by /{ s//'"$$i"': /;'	\
 		  -e 's/,* and /, /; s/\.$$//; p; }';	\

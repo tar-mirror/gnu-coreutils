@@ -31,6 +31,7 @@
 #include "system.h"
 
 #include "error.h"
+#include "fadvise.h"
 #include "getndelim2.h"
 #include "hash.h"
 #include "quote.h"
@@ -358,7 +359,7 @@ set_fields (const char *fieldstr)
   /* Collect and store in RP the range end points.
      It also sets EOL_RANGE_START if appropriate.  */
 
-  for (;;)
+  while (true)
     {
       if (*fieldstr == '-')
         {
@@ -733,6 +734,8 @@ cut_file (char const *file)
         }
     }
 
+  fadvise (stream, FADVISE_SEQUENTIAL);
+
   cut_stream (stream);
 
   if (ferror (stream))
@@ -756,7 +759,7 @@ main (int argc, char **argv)
   int optc;
   bool ok;
   bool delim_specified = false;
-  char *spec_list_string IF_LINT (= NULL);
+  char *spec_list_string IF_LINT ( = NULL);
 
   initialize_main (&argc, &argv);
   set_program_name (argv[0]);

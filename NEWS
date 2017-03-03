@@ -1,5 +1,110 @@
 GNU coreutils NEWS                                    -*- outline -*-
 
+* Noteworthy changes in release 8.6 (2010-10-15) [stable]
+
+** Bug fixes
+
+  du no longer multiply counts a file that is a directory or whose
+  link count is 1, even if the file is reached multiple times by
+  following symlinks or via multiple arguments.
+
+  du -H and -L now consistently count pointed-to files instead of
+  symbolic links, and correctly diagnose dangling symlinks.
+
+  du --ignore=D now ignores directory D even when that directory is
+  found to be part of a directory cycle.  Before, du would issue a
+  "NOTIFY YOUR SYSTEM MANAGER" diagnostic and fail.
+
+  split now diagnoses read errors rather than silently exiting.
+  [bug introduced in coreutils-4.5.8]
+
+  tac would perform a double-free when given an input line longer than 16KiB.
+  [bug introduced in coreutils-8.3]
+
+  tail -F once again notices changes in a currently unavailable directory,
+  and works around a Linux kernel bug where inotify runs out of resources.
+  [bugs introduced in coreutils-7.5]
+
+  tr now consistently handles case conversion character classes.
+  In some locales, valid conversion specifications caused tr to abort,
+  while in all locales, some invalid specifications were undiagnosed.
+  [bugs introduced in coreutils 6.9.90 and 6.9.92]
+
+** New features
+
+  cp now accepts the --attributes-only option to not copy file data,
+  which is useful for efficiently modifying files.
+
+  du recognizes -d N as equivalent to --max-depth=N, for compatibility
+  with FreeBSD.
+
+  sort now accepts the --debug option, to highlight the part of the
+  line significant in the sort, and warn about questionable options.
+
+  sort now supports -d, -f, -i, -R, and -V in any combination.
+
+  stat now accepts the %m format directive to output the mount point
+  for a file.  It also accepts the %w and %W format directives for
+  outputting the birth time of a file, if one is available.
+
+** Changes in behavior
+
+  df now consistently prints the device name for a bind mounted file,
+  rather than its aliased target.
+
+  du now uses less than half as much memory when operating on trees
+  with many hard-linked files.  With --count-links (-l), or when
+  operating on trees with no hard-linked files, there is no change.
+
+  ls -l now uses the traditional three field time style rather than
+  the wider two field numeric ISO style, in locales where a style has
+  not been specified.  The new approach has nicer behavior in some
+  locales, including English, which was judged to outweigh the disadvantage
+  of generating less-predictable and often worse output in poorly-configured
+  locales where there is an onus to specify appropriate non-default styles.
+  [The old behavior was introduced in coreutils-6.0 and had been removed
+   for English only using a different method since coreutils-8.1]
+
+  rm's -d now evokes an error;  before, it was silently ignored.
+
+  sort -g now uses long doubles for greater range and precision.
+
+  sort -h no longer rejects numbers with leading or trailing ".", and
+  no longer accepts numbers with multiple ".".  It now considers all
+  zeros to be equal.
+
+  sort now uses the number of available processors to parallelize
+  the sorting operation.  The number of sorts run concurrently can be
+  limited with the --parallel option or with external process
+  control like taskset for example.
+
+  stat now provides translated output when no format is specified.
+
+  stat no longer accepts the --context (-Z) option.  Initially it was
+  merely accepted and ignored, for compatibility.  Starting two years
+  ago, with coreutils-7.0, its use evoked a warning.  Printing the
+  SELinux context of a file can be done with the %C format directive,
+  and the default output when no format is specified now automatically
+  includes %C when context information is available.
+
+  stat no longer accepts the %C directive when the --file-system
+  option is in effect, since security context is a file attribute
+  rather than a file system attribute.
+
+  stat now outputs the full sub-second resolution for the atime,
+  mtime, and ctime values since the Epoch, when using the %X, %Y, and
+  %Z directives of the --format option.  This matches the fact that
+  %x, %y, and %z were already doing so for the human-readable variant.
+
+  touch's --file option is no longer recognized.  Use --reference=F (-r)
+  instead.  --file has not been documented for 15 years, and its use has
+  elicited a warning since coreutils-7.1.
+
+  truncate now supports setting file sizes relative to a reference file.
+  Also errors are no longer suppressed for unsupported file types, and
+  relative sizes are restricted to supported file types.
+
+
 * Noteworthy changes in release 8.5 (2010-04-23) [stable]
 
 ** Bug fixes

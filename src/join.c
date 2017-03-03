@@ -24,6 +24,7 @@
 
 #include "system.h"
 #include "error.h"
+#include "fadvise.h"
 #include "hard-locale.h"
 #include "linebuffer.h"
 #include "memcasecmp.h"
@@ -248,13 +249,13 @@ xfields (struct line *line)
   if (ptr == lim)
     return;
 
-  if (0 <= tab)
+  if (0 <= tab && tab != '\n')
     {
       char *sep;
       for (; (sep = memchr (ptr, tab, lim - ptr)) != NULL; ptr = sep + 1)
         extract_field (line, ptr, sep - ptr);
     }
-  else
+  else if (tab < 0)
     {
       /* Skip leading blanks before the first field.  */
       while (isblank (to_uchar (*ptr)))
@@ -616,6 +617,9 @@ join (FILE *fp1, FILE *fp2)
   struct seq seq1, seq2;
   int diff;
   bool eof1, eof2;
+
+  fadvise (fp1, FADVISE_SEQUENTIAL);
+  fadvise (fp2, FADVISE_SEQUENTIAL);
 
   /* Read the first line of each file.  */
   initseq (&seq1);

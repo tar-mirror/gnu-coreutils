@@ -10,6 +10,8 @@ EXTRA_DIST =		\
   CuTmpdir.pm		\
   check.mk		\
   envvar-check		\
+  init.cfg		\
+  init.sh		\
   lang-default		\
   other-fs-tmpdir	\
   require-perl		\
@@ -82,6 +84,7 @@ TESTS =						\
   cp/link-heap					\
   tail-2/inotify-hash-abuse			\
   tail-2/inotify-hash-abuse2			\
+  tail-2/F-vs-missing				\
   tail-2/F-vs-rename				\
   tail-2/inotify-rotate				\
   chmod/no-x					\
@@ -221,19 +224,26 @@ TESTS =						\
   misc/shred-remove				\
   misc/shuf					\
   misc/sort					\
+  misc/sort-benchmark-random			\
   misc/sort-compress				\
   misc/sort-continue				\
+  misc/sort-debug-keys				\
+  misc/sort-debug-warn				\
   misc/sort-files0-from				\
+  misc/sort-float				\
   misc/sort-merge				\
   misc/sort-merge-fdlimit			\
   misc/sort-month				\
   misc/sort-rand				\
+  misc/sort-unique				\
   misc/sort-version				\
   misc/split-a					\
   misc/split-fail				\
   misc/split-l					\
+  misc/stat-birthtime				\
   misc/stat-fmt					\
   misc/stat-hyphen				\
+  misc/stat-mount				\
   misc/stat-printf				\
   misc/stat-slash				\
   misc/stdbuf					\
@@ -252,6 +262,7 @@ TESTS =						\
   misc/timeout					\
   misc/timeout-parameters			\
   misc/tr					\
+  misc/tr-case-class				\
   misc/truncate-dangling-symlink		\
   misc/truncate-dir-fail			\
   misc/truncate-fail-diag			\
@@ -346,6 +357,7 @@ TESTS =						\
   du/inaccessible-cwd				\
   du/long-from-unreadable			\
   du/long-sloop					\
+  du/max-depth					\
   du/no-deref					\
   du/no-x					\
   du/one-file-system				\

@@ -1,4 +1,1851 @@
+2010-10-15  Jim Meyering  <meyering@redhat.com>
+
+	version 8.6
+	* NEWS: Record release date.
+
+	build: update gnulib for vasnprintf fix
+
+2010-10-14  Paul Eggert  <eggert@cs.ucla.edu>
+
+	bug#7213: [PATCH] sort: fix buffer overrun on 32-bit hosts when warning re obsolete keys
+	* src/sort.c (key_warnings): Local buffer should be of size
+	INT_BUFSIZE_BOUND (uintmax_t), not INT_BUFSIZE_BOUND (sword).
+	This bug was discovered by running 'make check' on a 32-bit
+	Solaris 8 sparc host, using Sun cc.  I saw several other instances
+	of invoking umaxtostr on a buffer declared to be of size
+	INT_BUFSIZE_BOUND (VAR), and these instances should at some point
+	be replaced by INT_BUFSIZE_BOUND (uintmax_t) too, as that's a
+	less error-prone style.
+
+	tests: work around portability and clock-skew problems
+	* tests/misc/ls-misc (push_ls_colors): Don't assume LS_COLORS
+	is set.  This part of the fix is by Jim Meyering.
+	(sl-dangle2, sl-dangle3, sl-dangle4, sl-dangle5): Don't assume
+	that newly-created files will have time stamps in the past.  They
+	might not, due to clock skew, if the file systems are remote.
+	http://thread.gmane.org/gmane.comp.gnu.coreutils.bugs/21322/focus=21346
+
+	install: avoid warning with Solaris 10 cc
+	* src/install.c (extra_mode): Don't assign ~S_IRWXUGO & ~S_IFMT
+	to a mode_t variable, as the number might be too big to fit.
+	Solaris 10 cc warns about this, and the C standard says it
+	has undefined behavior.
+
+	mbsalign: avoid warning with Solaris 10 cc
+	* gl/lib/mbsalign.c: Include <stdint.h> for SIZE_MAX.
+	Use SIZE_MAX rather than (size_t) -1, to avoid warning for
+	"size_t x = -1" on Solaris 10 cc.
+	* gl/modules/mbsalign (Depends-on): Add stdint.
+
+	sort: fix unportable cast of unsigned char * -> char *
+	* src/sort.c (fold_toupper): Change this back from char to
+	unsigned char, fixing a portability issue introduced in commit
+	59e2e55d0f154a388adc9bac37d2b45f2ba971f8 dated February 26, as the
+	C Standard doesn't let you convert from unsigned char * to char *
+	without a cast, and the (in theory more portable) style here is to
+	convert char values, not pointer values.
+	(getmonth): Convert char to unsigned char when needed for
+	comparison.
+
+2010-10-13  Jim Meyering  <meyering@redhat.com>
+
+	build: prepare to enable -Werror also for gnulib-tests/
+	* configure.ac (GNULIB_WARN_CFLAGS): Define new variable, for use
+	in gnulib-tests.
+	* gnulib-tests/Makefile.am: Disable specific -W___ options,
+	but only for a few specific offending tests:
+	(test_xvasprintf_CFLAGS): Define.
+	(test_lock_CFLAGS, test_tls_CFLAGS): Define.
+
+2010-10-13  Paul Eggert  <eggert@cs.ucla.edu>
+
+	tests: fix rand-isaac test
+	* gl/tests/test-rand-isaac.c (main): Fix swapped arguments to strtol.
+
+2010-10-12  Pádraig Brady  <P@draigBrady.com>
+
+	tail: fix checking of currently unavailable directories
+	* src/tail.c (tail_forever_inotify): Handle the case where
+	tail --follow=name with inotify, is not able to add a watch on
+	a specified directory.  This may happen due to inotify resource
+	limits or if the directory is currently missing or inaccessible.
+	In all these cases, revert to polling which will try to reopen
+	the file later.  Note inotify returns ENOSPC when it runs out
+	of resources, and instead we report a particular error message,
+	lest users think one of their file systems is full.
+	(main): Document another caveat with using inotify, where we
+	currently don't recheck directories recreated after the
+	initial watch is setup.
+	* tests/tail-2/F-vs-rename: Fix the endless loop triggered by
+	the above issue.
+	* tests/tail-2/inotify-hash-abuse: Likewise.
+	* tests/tail-2/wait: Don't fail in the resource exhaustion case.
+	* tests/tail-2/F-vs-missing: A new test for this failure mode
+	which was until now just triggered on older buggy linux kernels
+	which returned ENOSPC constantly from inotify_add_watch().
+	* NEWS: Mention the fix.
+
+2010-10-11  Jim Meyering  <meyering@redhat.com>
+
+	build: update gnulib to latest; to fix failing Solaris 5.11 test
+
+	maint: add new file: .mailmap
+	* .mailmap: Map git author names and email addresses to
+	canonical/preferred form.  This file is used e.g., by "git shortlog".
+
+2010-10-08  Jim Meyering  <meyering@redhat.com>
+
+	build: update gnulib, to fix OpenBSD test failures
+
+	build: update gnulib to latest; for parse-datetime.y fix
+
+	build: update gnulib to latest, to avoid FreeBSD compilation failure:
+	http://thread.gmane.org/gmane.comp.lib.gnulib.bugs/23501
+
+2010-10-07  Pádraig Brady  <P@draigBrady.com>
+
+	split: fix reporting of read errors
+	The bug was introduced with commit 23f6d41f, 19-02-2003.
+
+	* src/split.c (bytes_split, lines_split, line_bytes_split):
+	Correctly check the return from full_read().
+	* tests/misc/split-fail: Ensure split fails when
+	it can't read its input.
+	* NEWS: Mention the fix.
+
+2010-10-06  Jim Meyering  <meyering@redhat.com>
+
+	build: update gnulib to latest, for memmem/strstr fix
+
+	maint: describe coreutils' policy on copyright year number ranges
+	* README: Mention coreutils' long-standing policy on use of M-N
+	ranges in copyright year lists.  Requested by Richard Stallman.
+
+2010-10-05  Eric Blake  <eblake@redhat.com>
+
+	build: complete the rename of get_date
+	* gnulib: Update to latest.
+	* src/date.c (includes, batch_convert, main): Track rename.
+	* src/touch.c (includes, get_reldate): Likewise.
+	* doc/coreutils.texi (Top, Date input formats): Likewise.
+	* bootstrap.conf (gnulib_modules): Likewise.
+	* doc/Makefile.am (EXTRA_DIST): Likewise.
+	* doc/.gitignore: Likewise.
+	* bootstrap: Synchronize from upstream.
+
+	stat: drop %C support when printing file system details
+	* src/stat.c (print_statfs, usage): Drop %C, since it applies to
+	files, not file systems.
+	(out_file_context): Match style of other out_* functions.
+	(print_stat): Update caller.
+	* doc/coreutils.texi (stat invocation): Document %C.
+	* NEWS: Document the change.
+
+	build: fix build on Solaris 10
+	* gnulib: Update to latest, for reduced -lgen scope.
+	* bootstrap: Synchronize from upstream.
+	Reported by Clemens Brogi, as bug #7142.
+
+2010-10-05  Pádraig Brady  <P@draigBrady.com>
+
+	stat: adjust the printing of SELinux context
+	* src/stat.c (default_format): Don't print SELinux context
+	when in file system (-f) mode, as the context is associated
+	with the file, not the file system.
+	Fix logic inversion, so that in terse mode, %C is included
+	only when is_selinux_enabled and not vice versa.
+
+2010-10-04  Pádraig Brady  <P@draigBrady.com>
+
+	tests: refactor the stat-birthtime test to use retry_delay_
+	* tests/misc/stat-birthtime: This recently added test
+	fits the pattern of requiring a delay to pass, so get
+	it to use retry_delay_()
+
+2010-10-03  Jim Meyering  <meyering@redhat.com>
+
+	maint: add a release prerequisite: check the NixOS/Hydra autobuilder
+	* README-release: Add a note to check the autobuilder.
+
+	build: update gnulib submodule to latest
+
+	maint: suppress a bogus used-uninitialized warning in tr.c
+	* src/tr.c (string2_extend): Insert an abort call to tell
+	gcc that char_to_repeat is not used uninitialized.
+
+2010-10-01  Eric Blake  <eblake@redhat.com>
+
+	tests: output --version of program under test
+	This touches all new tests added since commit b062bbd9, when
+	init.cfg was added.  Older tests still exist that could use
+	conversion, but we can address those later.
+
+	* tests/sample-test: Restore hint for --version output.
+	* tests/misc/stat-birthtime: Include --version if verbose.
+	* tests/misc/tr-case-class: Likewise.
+	* tests/misc/stat-mount: Likewise.
+	* tests/misc/sort-unique: Likewise.
+	* tests/misc/sort-benchmark-random: Likewise.
+	Suggested by Jim Meyering.
+
+	stat: print SELinux context when available
+	* src/stat.c (default_format): Include context when present.
+	* NEWS: Update blurb explaining the replacement for -Z.
+
+	stat: optimize and translate default format strings
+	Yes, this patch intentionally leaks the results of default_format(),
+	since it is called only twice, and since the results are in scope
+	until main() exits.  Not worth the extra code to pacify valgrind.
+
+	* src/stat.c (main): Hoist default format computation out of loop.
+	(do_statfs, do_stat): Move default format generation...
+	(default_format): ...into new function.  Allocate the result in
+	pieces, rather than repeating mostly-similar chunks.  Allow
+	translation of verbose format.  Pass a second format to do_stat,
+	for the one aspect of the default format that is conditional on
+	file type.
+	* NEWS: Document the translation aspect.
+
+	stat: print timestamps to full resolution
+	* src/stat.c (epoch_time): New function.
+	(print_stat): Use it for %[WXYZ].
+	* NEWS: Document this.
+	* tests/touch/60-seconds: Adjust test to match.
+	* tests/misc/stat-birthtime: Likewise.
+
+	stat: support printing birthtime
+	* src/stat.c (print_stat): New %w and %W formats.
+	(do_stat): Include %w in default format.
+	(usage): Document new specifiers.
+	* doc/coreutils.texi (stat invocation): Likewise.
+	* NEWS: Likewise.
+
+	maint: update sample test template
+	* tests/sample-test: Recommend modern idiom.
+
+2010-10-01  Pádraig Brady  <P@draigBrady.com>
+
+	maint: ensure the mbsalign module is C89 compatible
+	This module may be moved to gnulib at some stage,
+	so keep it C89 compatible.
+
+	* gl/lib/mbsalign.c (mbsalign): Declare variables at start of scope
+	(ambsalign): Likewise
+	* gl/lib/mbsalign.h: Remove trailing comma from enum
+	Reported by Andrei Suhan
+
+2010-09-30  Eric Blake  <eblake@redhat.com>
+
+	maint: update gnulib
+	* gnulib: Update to latest.
+	* doc/coreutils.texi (date): Reflect new module name.
+	* doc/Makefile.am (EXTRA_DIST): Likewise.
+	* doc/.gitignore: Likewise.
+
+	maint: update gnulib
+	* gnulib: Update to latest.
+	* bootstrap.conf (gnulib_modules): Reflect new module name.
+	* bootstrap: Resync from upstream.
+
+2010-09-30  Jim Meyering  <meyering@redhat.com>
+
+	maint: mention the du-exclude--vs--cycle-dir fix
+	* NEWS (Bug fixes): Mention the du-exclude--vs--cycle-dir fix.
+	Reported by Graham Cobb in http://bugs.debian.org/598438,
+	that bug was fixed by the 2010-07-24 commit, 77428214f,
+	"du: tune, and fix some -L bugs with dangling or cyclic symlinks"
+
+2010-09-29  Jim Meyering  <meyering@redhat.com>
+
+	build: update gnulib submodule to latest
+
+2010-09-29  Pádraig Brady  <P@draigBrady.com>
+
+	tr: fix various issues with case conversion
+	This valid translation spec aborted:
+	  LC_ALL=en_US.iso-8859-1 tr '[:upper:]- ' '[:lower:]_'
+	This invalid translation spec aborted:
+	  LC_ALL=en_US.iso-8859-1 tr '[:upper:] '  '[:lower:]'
+	This was caused by commit 6efd1046, 05-01-2008,
+	"Avoid tr case-conversion failure in some locales"
+
+	This misaligned conversion spec was allowed:
+	  LC_ALL=C tr 'A-Y[:lower:]' 'a-z[:upper:]'
+	This was caused by commit af5d0c36, 21-10-2007,
+	"tr: do not reject an unmatched [:lower:] or [:upper:] in SET1"
+
+	This misaligned spec was allowed by extending the class:
+	  LC_ALL=C tr '[:upper:] ' '[:lower:]'
+
+	* src/tr.c (validate_case_classes): A new function to check
+	alignment of case conversion classes.  Also it adjusts the
+	length of the sets so that locales with different numbers of
+	upper and lower case characters, don't cause issues.
+	(string2_extend): Disallow extending the case conversion
+	class as in the above example.  That is locale dependent
+	and most likely not what the user wants.
+	(validate): Do the simple test for "restricted" char classes
+	earlier, so we don't redundantly do more expensive validation.
+	(main): Remove the case class validation, and simplify.
+	* tests/misc/tr-case-class: A new test to test the various
+	alignment and locale issues, associated with case conversion.
+	* tests/misc/tr: Move case conversion tests to new tr-case-class.
+	* tests/Makefile.am: Reference the new test.
+	* NEWS: Mention the fixes.
+
+2010-09-21  Paul Eggert  <eggert@cs.ucla.edu>
+
+	build: update gnulib submodule to latest
+
+	sort: destroy spin locks portably
+	* src/sort.c (sortlines, sort): Use pthread_spin_destroy when a
+	spin lock is no longer used.  This isn't needed on GNU/Linux or
+	Solaris, but POSIX says it may free up resources on some platforms.
+
+2010-09-20  Pádraig Brady  <P@draigBrady.com>
+
+	tests: fix a printf portability issue
+	* tests/misc/sort-debug-keys: Don't depend on
+	printf supporting \xhh format, which isn't supported
+	by dash for example.  Also change from double quoted
+	strings to single quoted, when we don't need any
+	variable interpolation.
+
+	tests: fix an erroneous stat failure with bind mounts
+	* tests/misc/stat-mount: Don't try to correlate the
+	mount points output by df and stat, as they're similar,
+	but sometimes different in the presence of bind mounts.
+	* doc/coretuils.texi (stat invocation): Clarify the
+	bind mount difference between stat and df.
+
+2010-09-18  Jim Meyering  <meyering@redhat.com>
+
+	build: update gnulib submodule to latest
+
+	tests: sync tests/init.sh from gnulib
+	* tests/init.sh: Update from gnulib.
+
+	build: use gnulib's new termios module
+	With it, we can remove the two sole tests of HAVE_TERMIOS_H.
+	* bootstrap.conf (gnulib_modules): Add termios.
+	* src/ls.c: Don't test HAVE_TERMIOS_H.
+	* src/stty.c: Likewise.
+	* m4/jm-macros.m4 (gl_CHECK_ALL_TYPES): Remove configure-time
+	test for termios.h.
+
+	maint: don't use obsolete gnulib modules
+	* bootstrap.conf (gnulib_modules): Use calloc-gnu, malloc-gnu
+	and realloc-gnu modules, rather than calloc, malloc and realloc.
+	The shorter-named modules are now deprecated.
+	(obsolete_gnulib_modules): Remove.
+	(gnulib_modules): Remove raise, strbprk; they're obsolete, too.
+	Move strtod, strtol here, from obsolete_gnulib_modules.
+
+2010-09-17  Eric Blake  <eblake@redhat.com>
+
+	maint: update to latest gnulib
+	* gnulib: Update to latest.
+	* src/copy.c (copy_reg): Use fdutimens instead of gl_futimens.
+	* src/touch.c (touch): Adjust parameter order.
+	* tests/init.sh: Resync from upstream.
+
+	rm: remove no-op -d option
+	* src/rm.c (long_opts, main): Resolve a fixme.
+	* NEWS: Document the change.
+	Based on a report by William Plusnick.
+
+	maint: update to latest gnulib
+	* gnulib: Update to latest.
+	* bootstrap.conf (gnulib_modules): Add fdutimensat.
+	* src/touch.c (touch): Use fdutimensat instead of gl_futimens.
+
+2010-09-14  Dmitry V. Levin  <ldv@altlinux.org>
+
+	dircolors: add rxvt-unicode-256color terminal type
+	rxvt-unicode introduced new terminal type:
+	http://cvs.schmorp.de/rxvt-unicode/src/rxvt.h?r1=1.398&r2=1.399
+
+	* src/dircolors.hin: Add rxvt-unicode-256color terminal type.
+	Reported by Alexey I. Froloff in <http://bugzilla.altlinux.org/24052>.
+
+2010-09-07  Pádraig Brady  <P@draigBrady.com>
+
+	tests: work around a failure with dash 0.5.4
+	* tests/misc/env: Check that the shell can support
+	the operation, before filtering through `env`.
+	Note dash 0.5.5 is unaffected by this issue.
+
+	tests: make various timeouts more robust
+	* tests/init.cfg (retry_delay_): Describe
+	the backoff method used.
+	* tests/ls/readdir-mountpoint-inode: Add a timeout
+	to the stat call to eliminate the chance of hangups.
+	* tests/mv/i-3: Change the timeout required to pass
+	from 1 second to a range of .1s - 3.1s.
+	* tests/rm/dangling-symlink: Likewise.
+
+	tests: exclude some tests when running on NFS
+	All tests currently pass on NFS on Linux kernel 2.6.22 at least,
+	but some fail on 2.6.9, so we exclude those here.
+
+	* tests/init.cfg (is_local_dir_): A new function
+	returning if the specified directory is on a local file system.
+	(require_local_dir_): A new function to skip tests
+	if the current directory is not on a local file system.
+	* tests/cp/existing-perm-race: Skip if non local.
+	* tests/cp/file-perm-race: Likewise.
+	* tests/cp/parent-perm: Likewise.
+	* tests/cp/parent-perm-race: Likewise.
+	* tests/cp/preserve-2: Likewise.
+	* tests/mv/part-symlink: Likewise.
+	* tests/du/basic: Use refactored function.
+	* tests/install/basic-1: Likewise.
+	* tests/mkdir/p-3: Likewise.
+	* tests/dd/skip-seek-past-dev: Likewise.
+	* tests/du/slink: Likewise.  Remove redundant test
+	for NFS file system.
+	* tests/misc/join: s/local/locale/.
+
+2010-09-04  Jim Meyering  <meyering@redhat.com>
+
+	build: update gnulib submodule to latest
+
+	build: use gettext-h, not gettext
+	* bootstrap.conf (gnulib_modules): Use gettext-h, not gettext.
+	The latter is overkill for a package that uses
+	AM_GNU_GETTEXT([external]...
+
+2010-09-01  Jim Meyering  <meyering@redhat.com>
+
+	tac: suppress technically unneeded "free"
+	* src/tac.c (main): Guard final free with #ifdef lint.
+	Suggested by Paul Eggert.
+
+2010-09-01  Pádraig Brady  <P@draigBrady.com>
+
+	join: improve performance when operating on whole lines
+	Following on from commit f86bb696, 01-02-2010,
+	"join: make -t '' operate on the whole line".
+	Bypassing the delimiter search in this case,
+	gives about an 8% performance boost.
+
+	* src/join (xfields): Don't bother looking for '\n'
+	in the data, which we know won't be present.
+
+2010-08-28  Jim Meyering  <meyering@redhat.com>
+
+	tac: avoid double free
+	* src/tac.c (main): Reading a line longer than 16KiB would cause
+	tac to realloc its primary buffer.  Then, just before exit, tac
+	would mistakenly free the original (now free'd) buffer.
+	This bug was introduced by commit be6c13e7, "maint: always free a
+	buffer, to avoid even semblance of a leak".
+	* NEWS (Bug fixes): Mention it.
+	* tests/misc/tac (double-free): New test, to exercise this.
+	Reported by Salvo Tomaselli in <http://bugs.debian.org/594666>.
+
+2010-08-27  Pádraig Brady  <P@draigBrady.com>
+
+	doc: clarify that stat -f implies -L (follows symlinks)
+	* doc/coreutils.texi (stat invocation). Since there is
+	no lstatfs, document that -L is implicit with -f.
+
+2010-08-27  Aaron Burgemeister  <dajoker@gmail.com>
+
+	stat: add %m to output the mount point for a file
+	* src/find-mount-point.c: A new file refactoring
+	find_mount_point() out from df.c
+	* src/find-mount-point.h: Likewise.
+	* src/df.c: Use the new find-mount-point module.
+	* src/stat.c (print_stat): Handle the new %m format.
+	(find_bind_mount): A new function to
+	return the bind mount for a file if any.
+	(out_mount_mount): Print the bind mount for a file, or else
+	the standard mount point given by the find-mount-point module.
+	(usage): Document the %m format directive.
+	* src/Makefile.am: Reference the refactored find-mount-point.c
+	* po/POTFILES.in: Add find_mount_point.c to the translation list
+	* doc/coreutils.texi (stat invocation): Document %m,
+	and how it may differ from the mount point that df outputs.
+	* test/misc/stat-mount: A new test to correlate mount points
+	output from df and stat.
+	* tests/Makefile.am: Reference the new test.
+	* NEWS: Mention the new feature
+	* THANKS: Add the author
+
+2010-08-27  Eric Blake  <eblake@redhat.com>
+
+	maint: update to latest gnulib
+	* gnulib: Update to latest, to avoid warnings with latest autoconf.git.
+
+	maint: avoid a hung 'make syntax-check' in VPATH build
+	* cfg.mk (sc_system_h_headers): Look for files in correct location.
+
+2010-08-26  Pádraig Brady  <P@draigBrady.com>
+
+	df: always print the device name for bind mounted files
+	* src/df (show_point): Remove the optimization for comparing
+	the specified path with the device name, as this produces
+	inconsistent results in the presence of bind mounts.  For bind
+	mounts, the device name is populated with the bind mount target.
+	* NEWS: Mention the change in behavior.
+
+2010-08-23  Pádraig Brady  <P@draigBrady.com>
+
+	stat: fix a small memory leak with %N
+	* src/stat.c (print_stat): Free the buffer returned
+	from areadlink_with_size().
+
+2010-08-15  Pádraig Brady  <P@draigBrady.com>
+
+	maint: exclude tests from the set_program_name syntax-check
+	* .x-sc_program_name: Exclude all current and future
+	c files in gl/tests from this check
+	* gl/tests/test-di-set.c: Remove the hack to work around
+	the set_program_name syntax-check
+	* gl/tests/test-ino-map.c: Likewise
+	* gl/tests/test-rand-isaac.c: Likewise
+
+2010-08-15  Ralf Wildenhues  <Ralf.Wildenhues@gmx.de>
+
+	doc: avoid a warning from newer texinfo
+	* doc/coreutils.texi (sort invocation): Use @pxref inside parentheses.
+
+2010-08-15  Bruno Haible  <bruno@clisp.org>
+
+	doc: improve the info on md5sum security weaknesses
+	* doc/coreutils.texi (md5sum invocation): Mention currently known
+	security problems. Don't recommend SHA-1 as alternative.
+	* man/md5sum.x (BUGS): Warn about the vulnerabilities and
+	reference the SHA-2 based alternatives.
+	Reported by Simon Josefsson
+
+2010-08-14  Paul Eggert  <eggert@cs.ucla.edu>
+
+	* tests/misc/sort (use-nl): Fix comment to match the test case.
+
+2010-08-11  Paul Eggert  <eggert@cs.ucla.edu>
+
+	sort, who: prefer free+malloc to realloc when contents are irrelevant
+	This change was prompted by the previous one: I audited the code
+	looking for similar examples.  Too bad valgrind doesn't catch this.
+	* src/sort.c (check, mergefps): xrealloc -> free + xmalloc
+	* src/who.c (print_user): Likewise.
+
+2010-08-10  Paul Eggert  <eggert@cs.ucla.edu>
+
+	sort: free/xmalloc rather than xrealloc
+	* src/sort.c (compare_random): Use free/xmalloc rather than
+	xrealloc, since the old buffer contents need not be preserved.
+	Also, don't fail if the guessed-sized malloc fails.  Suggested by
+	Bruno Haible.
+
+2010-08-10  Eric Blake  <eblake@redhat.com>
+
+	build: update to latest gnulib
+	Fixes bug 6053 for NFS on HP-UX not recognizing ACL operations.
+
+	* gnulib: Update to latest version.
+
+2010-08-10  Jim Meyering  <meyering@redhat.com>
+
+	sort: avoid gcc warning: explicitly ignore strtold result
+	* src/sort.c: Include "ignore-value.h".
+	(debug_key): Use ignore_value.
+
+2010-08-09  Eric Blake  <eblake@redhat.com>
+
+	tests: silence 'make syntax-check'
+	* gl/tests/test-rand-isaac.c (main): Avoid warnings from
+	syntax-check.
+
+2010-08-09  Mike Frysinger  <vapier@gentoo.org>
+
+	dircolors: add screen.rxvt & terminator to TERM list
+	Resolves bug#6793.
+	* src/dircolors.hin: Add screen.rxvt & terminator.
+
+2010-08-09  Dan Hipschman  <dsh@linux.ucla.edu>
+
+	ls: fix a test failure that should have been skipped
+	* tests/ls/readdir-mountpoint-inode: Check to see if skip_test_ is
+	called in a helper function via $() instead of mistakenly failing.
+	* THANKS: Update.
+
+2010-08-09  Paul Eggert  <eggert@cs.ucla.edu>
+
+	sort: speed up -R with long lines in hard locales
+	* src/sort.c (compare_random): Guess that the output will be
+	3X the input.  This avoids the overhead of calling strxfrm
+	twice on typical implementations.  Suggested by Bruno Haible.
+
+2010-08-07  Paul Eggert  <eggert@cs.ucla.edu>
+
+	sort: support all combinations of -d, -f, -i, -R, and -V
+	* NEWS: Document this.
+	* src/sort.c (getmonth): Omit LEN arg, as MONTH is now null-terminated.
+	(compare_random): Don't null-terminate keys, as caller now does that.
+	(compare_version): Remove.
+	(debug_key): Null-terminate string for getmonth.
+	(keycompare): Support combining -R with any of -d, -f, -i, -V.
+	Also, support combining -V with any of -d, -i.
+	(check_ordering_compatibility): Allow newly-supported combinations.
+	* tests/misc/sort (02q, 02r, 02s): New tests, for new combinations.
+	(incompat2): Now test -nR, since -fR are now compatible.
+
+2010-08-05  Paul Eggert  <eggert@cs.ucla.edu>
+
+	sort: tune and refactor --debug code, and fix minor underlining bug
+	Formerly, the 'compare' function and some of its subroutines had a
+	debugging flag, which caused them to output underlines.  This
+	change refactors the code so that debugging output is
+	more-separated from the actual sorting.  In the process, the
+	change fixes a minor error in the debugging output.  The change
+	shortens the source code and executable size a tad, and improves
+	CPU performance by 2.4% on my platform with a simple benchmark (C
+	locale, line sorting, no debug).
+
+	* src/sort.c (long_double, strtold): Move back to prelude, since
+	they're now used by multiple functions again.
+	(unit_order): Move to file scope, since it's now used by two functions.
+	(find_unit_order, human_numcompare, numcompare, general_numcompare):
+	Remove endptr parameter.  All callers changed.
+	(human_numcompare): Args are now const pointers.
+	(getmonth): Endptr is now non-const.
+	(key_numeric): Move up, since it's needed earlier.
+	(debug_key): Take a line and a key as argument, instead of having
+	the caller figure out where the field is.
+	(debug_line): New function.
+	(keycompare, compare): Omit debug parameter; debug output now done
+	elsewhere.  All callers changed.
+	(write_line): Renamed from write_bytes; all callers changed.
+	Use debug_line (not 'compare') to output debug info.
+	Use a slightly faster check for whether output file is stdout.
+	(check): Don't do debugging output; it's not that useful here,
+	and it confuses the code.
+	(main): Check for incompatibility between -c and --debug.
+	Use standard diagnostic for incompatible options.
+	* tests/misc/sort-debug-keys: Fix test case: "--Mi-1" is not
+	a number, so its first character should not be underlined when
+	debugging a numeric sort.
+
+	sort: -R now uses less memory on long lines with internal NULs
+	* lib/Makefile.am (libcoreutils_a_SOURCES): Remove xmemxfrm.c,
+	xmemxfrm.h.
+	* lib/memxfrm.c, lib/memxfrm.h, lib/xmemxfrm.c, lib/xmemxfrm.h: Remove.
+	* m4/memxfrm.m4: Likewise.
+	* m4/prereq.m4 (gl_PREREQ): Remove gl_MEMXFRM.
+	* po/POTFILES.in: Remove lib/xmemxfrm.c.
+	* src/sort.c: Don't include xmemxfrm.h.
+	(cmp_hashes): Remove.
+	(xstrxfrm): New function.
+	(compare_random): If a line contains NULs, don't create a big
+	buffer that contains the strxfrm output of each string in the line.
+	Instead, accumulate checksums and differences as we go, so that
+	at any one time we have to store at most the output of a single
+	strxfrm call when processing the line.  This removes the need for
+	an memxfrm function.
+
+2010-08-03  Paul Eggert  <eggert@cs.ucla.edu>
+
+	init.sh: work around trap limitation of some shells
+	* tests/init.sh (setup_): Move exit trap outside of shell function.
+	This patch is imported from gnulib.
+
+	sort: fix bug in --debug when \0 is followed by \t
+	* src/sort.c (debug_width): New function, which does not stop
+	counting tabs at \0, and also invokes mbsnwidth.  Stamp out strnlen!
+	(count_tabs): Remove.
+	(debug_key): Use debug_width instead of mbsnwidth and count_tabs.
+	* tests/misc/sort-debug-keys: Check that \0 and \t intermix.
+
+	sort: revert recent -h changes and use a more-conservative approach
+	* NEWS: Document changes to sort -h, which are now minor with
+	respect to the pre-July-30th version.
+	* doc/coreutils.texi (sort invocation): Likewise.  The
+	documentation now describes how -h comparison is done rather than
+	being vague with border cases.
+	* src/sort.c (long_double, strtold): Move back to general_numcompare.
+	(LD, compute_human): Remove.
+	(find_unit_order): Remove THOU_SEP parameter, since thousands
+	separators are now allowed by all callers.  Revert to previous
+	behavior of sorting by suffix, and returning the order rather than
+	2 * order + binary, since we no longer care whether binary powers
+	are being used.  However, treat all zeros the same, instead of
+	sorting 0M before 0G; this is more consistent with the desired
+	behavior of sorting -1G before -1M.
+	* tests/misc/sort (h1, h3, h6): Adjust to match mostly-reverted
+	behavior.  However, check that all zeros sort together.
+	* tests/misc/sort-debug-keys: Omit a "_", since the trailing "i"
+	in "1234Gi" is no longer part of the key.
+
+2010-07-30  Paul Eggert  <eggert@cs.ucla.edu>
+
+	sort: -h now handles comparisons such as 6000K vs 5M and 5MiB vs 5MB
+	* NEWS: Document changes to sort -h.
+	* doc/coreutils.texi (sort invocation): Likewise.
+	* src/sort.c (long_double, strtold): Move to prelude, since they're
+	now used by multiple functions.
+	(LD): New macro.
+	(struct keyfield.iec_present): Remove this member.  All uses removed.
+	(check_mixed_SI_IEC): Remove.  This code was busted in the presence
+	of multiple threads, as it had a race condition.
+	(find_unit_order): Remove arg KEY; add arg THOU_SEP; arg ENDPTR is
+	now char ** rather than char const **.  Return an integer that
+	distinguishes decimal from binary powers.  Parse the number
+	consistently with the intersection of strtold and strnumcmp.
+	Set *ENDPTR unconditionally.
+	(compute_human): New static function.
+	(human_numcompare): Remove arg KEY.  Remove 'const' from other args.
+	Use strnumcmp if possible, but fall back on floating point if not.
+	(numcompare, general_numcompare): Arg EA is now char ** rather
+	than char const **.
+	(numcompare): Adjust to new find_unit_order signature and behavior.
+	(keycompare): Adjus to new human_numcompare signature.
+	* tests/misc/sort (h1, h3, h4, h6): Adjust to new behavior.
+	* tests/misc/sort-debug-keys: Likewise.
+
+2010-07-27  Paul Eggert  <eggert@cs.ucla.edu>
+
+	sort: fix --debug display with very large offsets
+	* src/sort.c (mark_key): Don't assume offset <= INT_MAX.
+	Make the code a bit clearer when width != 0.
+
+	sort: fix bug with EOF at buffer refill
+	* src/sort.c (fillbuf): Don't append eol unless the line is nonempty.
+	This fixes a bug that was partly but not completely fixed by
+	the aadc67dfdb47f28bb8d1fa5e0fe0f52e2a8c51bf commit (dated July 15).
+	* tests/misc/sort (realloc-buf-2): New test, which catches this
+	bug on 64-bit hosts.
+
+	sort: omit some "inline"s
+	* src/sort.c (mergelines, queue_destroy, queue_init, queue_insert):
+	(queue_pop, write_unique, mergelines_node, check_insert):
+	(update_parent): No longer inline; these uses of "inline"
+	seemed unlikely to help performance much.
+
+2010-07-26  Paul Eggert  <eggert@cs.ucla.edu>
+
+	sort: don't assume ASCII when parsing K, M, G suffixes
+	* src/sort.c (find_unit_order): Don't assume ASCII.
+
+2010-07-26  Paul R. Eggert  <eggert@cs.ucla.edu>
+
+	sort: make struct heap private
+	* gl/lib/heap.c (struct heap): Move this here...
+	* gl/lib/heap.h (struct heap): ... from here, as outside code no
+	longer needs to access any of these members.
+
+	sort: omit unnecessary mutex unlock+lock; simplify heap access
+	* src/sort.c (queue_pop): Omit unnecessary unlock+lock after
+	pthread_cond_wait returns.  Don't access "count" member of the
+	heap; any efficiency gains should be quite minor, the access
+	complicates this code, and "count" should be private anyway.
+
+	sort: omit 'restrict' in doubtful cases
+	* src/sort.c (lock_node, unlock_node, queue_destroy, queue_init):
+	(queue_pop):
+	Omit 'restrict'; it shouldn't help here, as these functions have just
+	one pointer parameter and don't access static storage.
+	(queue_insert, check_insert, update_parent): Omit 'restrict', as
+	the pointer types differ, and are not char * or unsigned char *,
+	and therefore can't alias.
+	(write_unique): Omit 'restrict', as the pointer types are all
+	read-only.
+	(merge_loop, sortlines): Omit 'restrict', as any performance
+	advantages are extremely unlikely and it's not worth cluttering
+	the code for that.
+	(struct thread_args): Omit 'restrict': this seems to be incorrect.
+	It's unlikely for 'restrict' to be correct inside a typedef.
+
+	sort: omit unnecessary casts
+	* src/sort.c (inittables, general_numcompare, compare_nodes):
+	(queue_init, queue_pop): Omit casts that are not needed, typically
+	because they are between void * and some other pointer type.
+
+	sort: use more-consistent style with const
+	* src/sort.c (proctab_hasher, proctab_comparator, stream_open, xfopen):
+	(open_temp, zaptemp, struct_month_cmp, begfield, limfield):
+	(find_unit_order, human_numcompare, numcompare, general_numcompare):
+	(count_tabs, keycompare, compare, compare_nodes, lock_node):
+	(unlock_node, queue_destroy, queue_init, queue_insert, queue_pop):
+	(write_unique, mergelines_node, check_insert, update_parent):
+	(merge_loop, sortlines, struct thread_args, set_ordering):
+	Prefer the style "T const" to "const T".
+	* gl/lib/heap.h (struct heap, heap_alloc): Likewise.
+	* gl/lib/heap.c (heap_default_compare, heapify_down, heapify_up):
+	(heap_alloc): Likewise.
+
+2010-07-25  Paul Eggert  <eggert@cs.ucla.edu>
+
+	du: add NEWS entry for recent du -L fixes
+
+2010-07-24  Paul R. Eggert  <eggert@cs.ucla.edu>
+
+	du: tune, and fix some -L bugs with dangling or cyclic symlinks
+	* src/du.c (process_file): Avoid recalculation of hashes
+	and of file-exclusion for directories.  Do not descend into
+	the same directory more than once, unless -l is given; this is faster.
+	Calculate stat buffer lazily, since it
+	need not be computed at all for excluded files.
+	Count space if FTS_ERR, since stat buffer is always valid then.
+	No need for 'print' local variable.
+	(main): Use FTS_NOSTAT.  Use FTS_TIGHT_CYCLE_CHECK only when not
+	hashing everything, since process_file finds cycles on its own
+	when hashing everything.
+	* tests/du/deref: Add test cases for -L bugs.
+
+	tests/misc/sort-merge-fdlimit: don't assume -R opens /dev/urandom
+	* tests/misc/sort-merge-fdlimit: This test was written assuming that
+	-R typically opens /dev/urandom, but that's no longer the case.
+	Redo test to specify a random source; this resurrects the point of
+	checking for file descriptor exhaustion.  Also try plain -R, since
+	that implementation may change in the future too.
+
+	randread: run 2x faster on 64-bit hosts, don't assume no padding bits
+	* gl/lib/rand-isaac.c: 	Remove the I/O; this belongs elsewhere.
+	Add support for ISAAC64.  Port to hosts with padding bits.
+	Add self to author list.  Include <limits.h>, for CHAR_BIT.
+	Don't include string.h, sys/time.h, unistd.h.
+	(min, just): New functions.
+	(IF32): New macros.
+	(ind, ISAAC_STEP, isaac_refill, mix, isaac_init, isaac_seed):
+	Add support for ISAAC64.  Port to hosts with padding bits.
+	(ind): Now an inline function rather than a macro; no need for it
+	to be a macro with modern compilers.
+	(ISAAC_STEP): Renamed from isaac_step, since it's not function-like.
+	Don't bother to pass args that are always the same.  All uses changed.
+	(ISAAC_STEP, ISAAC_SEED): Move to inside the only function body
+	that can use it.
+	(ISAAC_MIX): Renamed from isaac_mix, since it's now a macro and is
+	no longer function-like.  Don't bother saving and restoring state;
+	no longer needed now that we're not a function.  All uses changed.
+	(isaac_seed_start, isaac_seed_data, isaac_seed_finish): Remove.
+	(isaac_seed): Take just the one arg; the caller now sets s->m.
+	* gl/lib/rand-isaac.h: Use _GL_RAND_ISAAC_H to protect, instead
+	of RAND_ISAAC_H.  Try out " #" rather than "# " for indenting.
+	(ISAAC_BITS_LOG, ISAAC_BITS): New macros.
+	(ISAAC_WORDS_LOG): Renamed from ISAAC_LOG.
+	(isaac_word): New type.  All uses of uint32_t changed to isaac_word,
+	to support ISAAC64.
+	(struct isaac_state): Rename member MM to M, and make it public.
+	(isaac_seed, isaac_refill): Adjust to new API.
+	* gl/lib/randread.c: Include sys/time.h.
+	(get_nonce): New function, containing the nonce stuff that used
+	to be in rand-isaac.c but better belongs here.
+	(randread_new): Use it.
+	* gl/modules/randread (Depends-on): Add inline.
+	* gl/modules/randread-tests: New file.
+	* gl/tests/test-rand-isaac.c: New file.
+
+2010-07-22  Pádraig Brady  <P@draigBrady.com>
+
+	provide POSIX_FADV_SEQUENTIAL hint to appropriate utils
+	Following on from commit dae35bac, 01-03-2010,
+	"sort: inform the system about our input access pattern"
+	apply the same hint to all appropriate utils.
+	This currently gives around a 5% speedup for reading
+	large files from fast flash devices on GNU/Linux.
+
+	* src/base64.c: Call fadvise (..., FADVISE_SEQUENTIAL);
+	* src/cat.c: Likewise.
+	* src/cksum.c: Likewise.
+	* src/comm.c: Likewise.
+	* src/cut.c: Likewise.
+	* src/expand.c: Likewise.
+	* src/fmt.c: Likewise.
+	* src/fold.c: Likewise.
+	* src/join.c: Likewise.
+	* src/md5sum.c: Likewise.
+	* src/nl.c: Likewise.
+	* src/paste.c: Likewise.
+	* src/pr.c: Likewise.
+	* src/ptx.c: Likewise.
+	* src/shuf.c: Likewise.
+	* src/sum.c: Likewise.
+	* src/tee.c: Likewise.
+	* src/tr.c: Likewise.
+	* src/tsort.c: Likewise.
+	* src/unexpand.c: Likewise.
+	* src/uniq.c: Likewise.
+	* src/wc.c: Likewise, unless we don't actually read().
+
+	fadvise: new module providing a simpler interface to posix_fadvise
+	* bootstrap.conf: Include the new module
+	* gl/lib/fadvise.c: Provide a simpler interface to posix_fadvise.
+	(fadvise): Provide hint to the whole file associated with a stream.
+	(fdadvise): Provide hint to the specific portion of a file
+	associated with a file descriptor.
+	* gl/lib/fadvise.h: Redefine POSIX_FADV_* to FADVISE_* enums.
+	* gl/modules/fadvise: New file.
+	* m4/jm-macros.m4: Remove the no longer needed posix_fadvise check.
+	* .x-sc_program_name: Exclude test-fadvise.c from this check.
+	* gl/tests/test-fadvise (main): New test program.
+	* gl/modules/fadvise-testss: A new index to reference the tests.
+	* src/sort.c (stream_open): Use the new interface.
+	* src/dd.c (iwrite): Likewise.
+
+2010-07-22  Mike Frysinger  <vapier@gentoo.org>
+
+	build: support fully excluding stdbuf from the build
+	* configure.ac (optional_pkglib_progs): Only update
+	after the main programs have been selected, so that
+	libstdbuf.so can be excluded if stdbuf also is.
+
+2010-07-20  Paul R. Eggert  <eggert@cs.ucla.edu>
+
+	randread: use /dev/urandom to seed, not just getpid etc
+	* gl/lib/rand-isaac.c (isaac_seed_start): New arg SEEDED.
+	(isaac_seed): New args FD and BYTES_BOUND.  Read from FD if possible.
+	Don't bother with low-quality sources if FD has enough bytes.
+	* gl/lib/rand-isaac.h: New size_t arg for isaac_seed.
+	* gl/lib/randread.c: Include fcntl.h, unistd.h.
+	(NAME_OF_NONCE_DEVICE): New #define.
+	(nonce_device): New static var.
+	(randread_new): Use nonce device if available.
+
+2010-07-19  Paul R. Eggert  <eggert@cs.ucla.edu>
+
+	sort: -R no longer disables multithreading
+	* src/sort.c (random_md5_state): New static var.
+	(random_md5_state_init): New function, to initialize random_md5_state.
+	(random_state, randread_source): Remove.
+	(cmp_hashes): Use random_md5_state rather than random_state.
+	Break ties using memcmp, not by getting more randomness.
+	If MD5 collisions turn into a problem in practice, we should
+	simply use a better checksum.
+	(main): If -R is given, call random_md5_state_init rather than
+	going single-threaded.
+
+2010-07-17  Paul R. Eggert  <eggert@cs.ucla.edu>
+
+	randread: don't require -lrt
+	Programs like 'sort' were linking to -lrt in order to get
+	clock_gettime, but this was misguided: it wasted considerable
+	resources while gaining at most 10 bits of entropy.  Almost nobody
+	needs the entropy, and there are better ways to get much better
+	entropy for people who do need it.
+	* gl/lib/rand-isaac.c (isaac_seed): Include <sys/time.h> not
+	"gethrxtime.h".
+	(isaac_seed): Use gettimeofday rather than gethrxtime.
+	* gl/modules/randread (Depends-on): Depend on gettimeofday
+	and not gethrxtime.
+	* src/Makefile.am (mktemp_LDADD, shred_LDADD, shuf_LDADD, sort_LDADD):
+	(tac_LDADD): Omit $(LIB_GETHRXTIME); no longer needed.
+
+2010-07-16  Paul R. Eggert  <eggert@cs.ucla.edu>
+
+	sort: add a test case for the sort -u bug
+	* tests/Makefile.am (TESTS): Add misc/sort-unique.
+	* tests/misc/sort-unique: New file.
+
+	sort: fix a bug with sort -u and xmemcoll0, and tune keycompare
+	* src/sort.c (keycompare): Use xmemcoll0, as it avoids
+	a couple of stores.
+	(write_bytes): Leave the buffer the way we found it,
+	as it might be used again for a later comparison,
+	if -u is used.
+
+2010-07-15  Pádraig Brady  <P@draigBrady.com>
+
+	sort: fix a bug when sorting unterminated lines
+	* src/sort.c (fillbuf): The previous commit incorrectly
+	terminated the buffer when the last line of input
+	didn't contain a terminating character.
+
+2010-07-15  Chen Guo  <chenguo4@yahoo.com>
+
+	sort: speed up default full line sorting
+	Don't write NUL after the comparison buffers on each compare,
+	which increases performance by about 3% for short lines
+	on a pentium-m with gcc-4.4.1
+
+	* src/sort.c: (fillbuf): Delimit input items with NUL.
+	(write_bytes): Restore the item delimiter char which was
+	replaced with NUL in fillbuf().
+
+2010-07-14  Jim Meyering  <meyering@redhat.com>
+
+	heap_alloc: avoid integer overflow
+	* gl/lib/heap.c (heap_alloc): Use xnmalloc rather than xmalloc,
+	to avoid pathological overflow.
+
+2010-07-14  Paul R. Eggert  <eggert@cs.ucla.edu>
+
+	maint: omit $(POW_LIB) when linking, as this is no longer needed
+	* src/Makefile.am (printf_LDADD, seq_LDADD, sleep_LDADD, sort_LDADD):
+	(tail_LDADD, uptime_LDADD): Omit $(POW_LIB), as it's no longer
+	needed due to recent gnulib changes, where the strtod module no
+	longer uses the pow function.  strtold needs pow only because it's
+	sometimes aliased to strtod.  See
+	http://lists.gnu.org/archive/html/bug-gnulib/2010-07/msg00076.html
+
+2010-07-14  Pádraig Brady  <P@draigBrady.com>
+
+	build: update gnulib submodule to latest; update bootstrap, too
+	* gnulib: Update for xmemcoll0 and fix for systems without pthreads
+	* bootstrap: Update for translation project sync fix
+
+2010-07-13  Pádraig Brady  <P@draigBrady.com>
+
+	maint: reorganize latest NEWS
+	* NEWS: Add another blank line before the previous version.
+	(Bug fixes): Move to the start.
+	(Changes in behavior): Add the item about the du mem usage change
+	from the "New features" section.
+
+	maint: heap.c: simplify dynamic allocations
+	* gl/lib/heap.c (heap_alloc): Use the fact that the xalloc
+	routines will not return NULL.  Also remove the redundant
+	temporary variables.
+	(heap_insert): From Jim Meyering, use x2nrealloc() which
+	is simpler while handling overflow and increasing the
+	size more efficiently.  This reallocation is currently
+	unused by coreutils in any case as it preallocates enough.
+
+2010-07-13  Chen Guo  <chenguo4@yahoo.com>
+
+	sort: parallelize internal sort
+	This patch is by Gene Auyeung, Chris Dickens, Chen Guo, and Mike
+	Nichols, based off of a patch by Paul Eggert, Glen Lenker, et. al.,
+	with a basic heap implementation based off of the GDSL heap,
+	originally by Nicolas Darnis.
+
+	The number of sorts done in parallel is limited to the number
+	of available processors by default, or can be further restricted
+	with the --parallel option.
+
+	On a dual-die, 8 core Intel Xeon, results show sorting with
+	8 threads is almost 4 times faster than using a single thread.
+	Timings when sorting a 96MB file:
+	THREADS     TIME (s)
+	1            5.10
+	2            2.87
+	4            1.75
+	8            1.31
+
+	Single threaded sorting has also been improved,
+	especially for cheaper comparison operations:
+	COMMAND             BEFORE (s)  AFTER (s)
+	sort                 8.822       8.716
+	sort -g             10.336      10.222
+	sort -n              3.077       2.961
+	LANG=C sort          2.169       2.066
+
+	* bootstrap.conf: Add heap, pthread.
+	* coreutils.texi (sort): Describe the new --parallel option.
+	* gl/lib/heap.c: New file. Very basic heap implementation.
+	* gl/lib/heap.h: New file.
+	* gl/modules/heap: New file.
+	* src/Makefile.am: Add LIB_PTHREAD.
+	* src/sort.c: Include heap.h, nproc.h, pthread.h.
+	(MAX_MERGE): New macro.
+	(SUBTHREAD_LINES_HEURISTIC, PARALLEL_OPTION): New constants.
+	(MERGE_END, MERGE_ROOT): New constants.
+	(struct merge_node): New struct.
+	(struct merge_node_queue): New struct.
+	(sortlines temp): Remove declaration.
+	(usage, long_options, main): New option, --parallel.
+	(specify_nthreads): New function.
+	(mergelines): New signature, to emphasize the fact that the HI area
+	must be part of the destination.  All callers changed.
+	(sequential_sort): New function, renamed from sortlines. Merge in
+	the functionality of sortlines_temp.
+	(compare_nodes): New function.
+	(lock_node, unlock_node): New functions.
+	(queue_destroy): New function.
+	(queue_init): New function.
+	(queue_insert): New function.
+	(queue_pop): New function.
+	(write_unique): New function.
+	(mergelines_node): New function.
+	(check_insert): New function.
+	(update_parent): New function.
+	(merge_loop): New function.
+	(sortlines): Rewrite to support and use parallelism, with a new
+	signature. All callers changed.
+	(struct thread_args): New struct.
+	(sortlines_thread): New function.
+	(sortlines_temp): Remove.
+	(sort): New argument NTHREADS. All uses changed. Output moved to
+	mergelines_node.
+	(main): disable threading if we are sorting at random.
+	* tests/Makefile.am (TESTS): Add misc/sort-benchmark-random.
+	* tests/misc/sort-benchmark-random: New file.
+
+2010-07-13  Jim Meyering  <meyering@redhat.com>
+
+	di-set, ino-map: adjust a type, improve readability
+	* gl/lib/ino-map.c (ino_hash): Declare "i" as unsigned int.
+	Use an intermediate variable for the for-loop upper bound,
+	so it's a little more readable.  Adjust comment.
+	* gl/lib/di-set.c (di_ent_hash): Likewise.
+
+2010-07-13  Paul R. Eggert  <eggert@cs.ucla.edu>
+
+	dd: also spell out size on memory exhaustion
+	* src/dd.c (dd_copy): Use requested blocksize (not adjusted) in
+	diagnostic, to forestall user complaints that the numbers don't
+	match exactly.  Report both exact and human-readable sizes, using
+	a message format that is consistent with both "BBBB bytes (N XB)
+	copied" in dd.c and "memory exhausted" in lib/xmalloc.c.
+
+2010-07-09  Paul Eggert  <eggert@cs.ucla.edu>
+
+	chcon, chmod, chown, du: don't translate "%s"
+	* src/chcon.c (process_file): Replace _("%s") with "%s".
+	* src/chmod.c (process_file): Likewise.
+	* src/chown-core.c (change_file_owner): Likewise.
+	* src/du.c (process_file): Likewise.
+
+2010-07-07  Paul Eggert  <eggert@cs.ucla.edu>
+
+	du: avoid spurious warnings with 64-bit gcc -W
+	Problem reported by Jim Meyering in:
+	http://debbugs.gnu.org/cgi/bugreport.cgi?bug=6524#74
+	* gl/lib/di-set.c (di_ent_hash): Rework so that the compiler does
+	not incorrectly warn about shifting by 64-bits in unreachable code.
+	* gl/lib/ino-map.c (ino_hash): Likewise.
+
+2010-07-06  Paul Eggert  <eggert@cs.ucla.edu>
+
+	du: Hash with a mechanism that's simpler and takes less memory.
+	* gl/lib/dev-map.c, gl/lib/dev-map.h, gl/modules/dev-map: Remove.
+	* gl/lib/ino-map.c, gl/lib/ino-map.h, gl/modules/ino-map: New files.
+	* gl/modules/dev-map-tests, gl/tests/test-dev-map.c: Remove.
+	* gl/modules/ino-map-tests, gl/tests/test-ino-map.c: New files.
+	* gl/lib/di-set.h (struct di_set): Renamed from struct di_set_state,
+	and now private.  All uses changed.
+	(_ATTRIBUTE_NONNULL_): Don't assume C99.
+	(di_set_alloc): Renamed from di_set_init, with no size arg.
+	Now allocates the object rather than initializing it.
+	For now, this no longer takes an initial size; we can put this
+	back later if it is needed.
+	* gl/lib/di-set.c: Include hash.h, ino-map.h, and limits.h instead of
+	stdio.h, assert.h, stdint.h, sys/types.h (di-set.h includes that
+	now), sys/stat.h, and verify.h.
+	(N_DEV_BITS_4, N_INO_BITS_4, N_DEV_BITS_8, N_INO_BITS_8): Remove.
+	(struct dev_ino_4, struct dev_ino_8, struct dev_ino_full): Remove.
+	(enum di_mode): Remove.
+	(hashint): New typedef.
+	(HASHINT_MAX, LARGE_INO_MIN): New macros.
+	(struct di_ent): Now maps a dev_t to a inode set, instead of
+	containing a union.
+	(struct dev_map_ent): Remove.
+	(struct di_set): New type.
+	(is_encoded_ptr, decode_ptr, di_ent_create): Remove.
+	(di_ent_hash, di_ent_compare, di_ent_free, di_set_alloc, di_set_free):
+	(di_set_insert): Adjust to new representation.
+	(di_ino_hash, map_device, map_inode_number): New functions.
+	* gl/modules/di-set (Depends-on): Replace dev-map with ino-map.
+	Remove 'verify'.
+	* gl/tests/test-di-set.c: Adjust to the above changes to API.
+	* src/du.c (INITIAL_DI_SET_SIZE): Remove.
+	(hash_ins, main): Adjust to new di-set API.
+
+2010-07-05  Jim Meyering  <meyering@redhat.com>
+
+	stat: getfilecon failure now evokes nonzero exit status
+	Add comments and adjust interfaces to allow low-level failure
+	to propagate out to callers.
+	* src/stat.c (out_file_context): Return bool, not void,
+	so we can tell callers about failure.
+	(print_statfs, print_stat, print_it): Propagate failure to caller.
+	(do_statfs): Propagate print_it failure to caller.
+	(do_stat): Likewise.
+	I nearly forgot to update do_stat to propagate print_it failure,
+	and it compiled just fine in spite of that.  To prevent possibility
+	of a repeat, I've marked each function that returns non-void with
+	ATTRIBUTE_WARN_UNUSED_RESULT.
+
+	system.h: define ATTRIBUTE_WARN_UNUSED_RESULT
+	* src/system.h (ATTRIBUTE_WARN_UNUSED_RESULT): Define.
+
+2010-07-05  Pádraig Brady  <P@draigBrady.com>
+
+	tests: make tests requiring a delay to pass, more robust
+	* tests/init.cfg: Introduce a retry_delay_() function to
+	repeatedly call a test function that requires a delay.
+	This delay can now be shorter for the common case on fast
+	systems, but will double until a configurable limit it reached
+	before failing on slower systems.
+	* tests/dd/reblock: Use retry_delay_.
+	* tests/misc/cat-buf: Likewise.
+	* tests/misc/stdbuf: Likewise.
+	* tests/tail-2/F-vs-rename: Likewise.
+	* tests/tail-2/flush-initial: Likewise.
+	* tests/tail-2/tail-n0f: Likewise.
+	* tests/tail-2/wait: Likewise.
+	* test/dd/misc: Comment that delay is needed to trigger failure.
+
+2010-07-05  Paul Eggert  <eggert@cs.ucla.edu>
+
+	doc: Add advice about ChangeLogs and synchronizing submodules
+	* README-hacking: Update accordingly.
+
+2010-07-04  Jim Meyering  <meyering@redhat.com>
+
+	du: increase the initial dev-inode set size
+	* src/du.c (INITIAL_DI_SET_SIZE): Increase to the prime just under
+	1024.  This gives a speed-up of about 2% when processing a tree
+	containing 100,000 files, each with a link count greater than 1,
+	all pointing to files in some other tree.
+
+	du: use less than half as much memory when tracking hard links
+	When processing a hard-linked file, du must keep track of the file's
+	device and inode numbers in order to avoid counting its storage
+	more than once.  When du would process many hard linked files --
+	as are created by some backup tools -- the amount of memory required
+	for the supporting data structure could become prohibitively large.
+	This patch takes advantage of the fact that the amount of information
+	in the numbers of the typical dev,inode pair is far less than even
+	32 bits, and hence usually fits in the space of a pointer, be it
+	32 or 64 bits wide.  A typical du traversal examines files on no
+	more than a handful of distinct devices, so the device number can
+	be encoded in just a few bits.  Similarly, few inode numbers use
+	all of the high bits in an ino_t.  Before, we would represent the
+	dev,inode pair using a naive struct, and allocate space for each.
+	Thus, an entry in the hash table consisted of a pointer (to that
+	struct) and a "next" pointer.  With this change, we encode the
+	dev,inode information and put those bits in place of the pointer,
+	and thus do away with the need to allocate additional space for
+	each dev,inode pair.
+
+	* src/du.c: Include "di-set.h".
+	Don't include "hash.h"; it's no longer used.
+	(INITIAL_DI_SET_SIZE): Define.
+	(di_set): New global, to replace "htab".
+	(entry_hash, entry_compare, hash_init): Remove functions.
+	(hash_ins): Use di-set functions, rather than ones from the hash module.
+	(main): Likewise.
+	* bootstrap.conf (gnulib_modules): Add the new di-set module.
+	* NEWS (New features): Mention it.
+
+	di-set: manipulate sets of dev/inode pairs efficiently
+	* gl/lib/di-set.c: Implementation.
+	* gl/lib/di-set.h: Declarations.
+	* gl/modules/di-set: Define module.
+	* gl/modules/di-set-tests: Define test module.
+	* gl/tests/test-di-set.c: Likewise.
+
+	dev-map: map device number to small non-negative
+	* gl/lib/dev-map.c: New file.
+	* gl/lib/dev-map.h: Declarations.
+	* gl/modules/dev-map: Define primary modules.
+	* gl/modules/dev-map-tests: Define test module.
+	* gl/tests/test-dev-map.c: Test it.
+
+2010-07-03  Paul Eggert  <eggert@CS.UCLA.EDU>
+
+	du: don't miscount duplicate directories or link-count-1 files
+	* NEWS: Mention this.
+	* src/du.c (hash_all): New static var.
+	(process_file): Use it.
+	(main): Set it.
+	* tests/du/hard-link: Add a couple of test cases to help make
+	sure this bug stays squashed.
+	* tests/du/files0-from: Adjust existing tests to reflect
+	change in semantics with duplicate arguments.
+
+2010-07-02  Jim Meyering  <meyering@redhat.com>
+
+	build: update gnulib submodule to latest; update bootstrap, too
+	* gnulib: Update to latest, for hash.c improvement.
+	* bootstrap: Update from gnulib, too.
+
+2010-07-01  Pádraig Brady  <P@draigBrady.com>
+
+	cp: add an option to only copy the file attributes
+	* src/copy.c (copy_attr): A new function which merges copy_attr_by_fd
+	and copy_attr_by_name.  Also display all errors when --attributes-only
+	* src/copy.c (copy_reg): Skip copying the file contents if specified.
+	Refactor the SELinux error handling code a little and display all
+	SELinux errors when only copying attributes.
+	* src/copy.h (struct cp_options): Add a data_copy_required boolean
+	* src/cp.c (main): Default to copying data but don't if specified
+	* src/install.c: Default to copying data
+	* src/mv.c: Likewise
+	tests/cp/reflink-perm: Add a test to check that --attributes-only
+	does not copy data
+	* tests/cp/acl: Likewise. Also refactor to remove redundant
+	acl manipulation
+	* doc/coreutils.texi (cp invocation): Describe the new option
+	* NEWS: Mention the new feature
+
+	ls: use the POSIX date style when the locale does not specify one
+	Previously we defaulted to "long-iso" format in locales without
+	specific format translations, like the en_* locales for example.
+	This reverts part of commit 6837183d, 08-11-2005, "ls ... acts like
+	--time-style='posix-long-iso' if the locale settings are messed up"
+	* src/ls.c (decode_switches): Only use the ISO format when specified.
+	* NEWS: Mention the change in behavior.
+	Reported by Daniel Qarras at http://bugzilla.redhat.com/525134
+
+2010-06-30  Jim Meyering  <meyering@redhat.com>
+
+	tests: fail rather than infloop in tail's inotify-rotate test
+	* tests/tail-2/inotify-rotate: Switch to new init.sh-based framework.
+	(grep_timeout): New function.
+	Use it in place of open-coded loops that might infloop.
+	This was prompted by my encountering an inexplicable, and so far
+	unreproducible, infloop in the code that was waiting for "b" to
+	appear in "out".
+
+	tests: move most helper functions from test-lib.sh to new init.cfg
+	From there, they will be used by both test-lib.sh (as we phase it out)
+	and the newer init.sh, to which all tests will migrate.
+	* tests/test-lib.sh: Move most functions from here, ...
+	* tests/init.cfg: ...to here.  New file.
+	* tests/Makefile.am (EXTRA_DIST): Add init.cfg.
+
+	tests: sync tests/init.sh from gnulib
+	* tests/init.sh: Update from gnulib.
+
+2010-06-29  Jim Meyering  <meyering@redhat.com>
+
+	doc: df, du, ls: improve --blocksize description in --help
+	* src/du.c (usage): Print better --blocksize description.
+	Prompted by Samuel Thibault in <http://bugs.debian.org/353100>.
+	* src/df.c (usage): Likewise.
+	* src/ls.c (usage): Likewise.
+
+2010-06-29  Pádraig Brady  <P@draigBrady.com>
+
+	doc: reference POS syntax in --help for sort --key
+	* src/sort.c (usage): Reference the additional description
+	of the POS syntax.
+
+2010-06-27  Benno Schulenberg  <bensberg@justemail.net>
+
+	ln: print a clearer error message when linking fails
+
+2010-06-22  Jim Meyering  <meyering@redhat.com>
+
+	stat: remove support for deprecated --context (-Z) option
+	* src/stat.c (main): Remove support for the --context (-Z) option.
+	In upstream releases this option has always been a no-op.  It was
+	first ignored for compatibility, and since the June 2008 commit,
+	574f7614 (coreutils-7.0), its use has evoked a warning.
+	* NEWS (Changes in behavior): Mention it.
+
+2010-06-21  Jim Meyering  <meyering@redhat.com>
+
+	doc: fix comm's --help output so we generate a better man page
+	* src/comm.c (usage): Don't align example comments in --help output,
+	since the extra space (sequence of two spaces) there would be
+	interpreted by help2man and induce an unwanted line break
+	in the resulting man page.  Reported by Jari Aalto.
+
+2010-06-14  Eric Blake  <eblake@redhat.com>
+
+	maint: ignore another gnulib generated file
+	* .gnulib: Exclude lib/c++defs.h.
+
+	cat: improve documentation
+	* src/cat.c (usage): Clarify that -b overrides -n.
+	* doc/coreutils.texi (cat invocation): Likewise.
+	* THANKS: Update.
+	Suggested by Chas. Owens, in bug 6383.
+
+2010-06-14  Jim Meyering  <meyering@redhat.com>
+
+	doc: dd: discourage use of very large block sizes
+	* doc/coreutils.texi (dd invocation): Warn against using a very large
+	block size.  Suggested by Imre Péntek.
+
+	dd: print a better diagnostic for an invalid block size
+	* src/dd.c (dd_copy): Give a better diagnostic than
+	"dd: memory exhausted" for an over-large bs= block size setting.
+	Same for ibs= and obs=.  Reported by Imre Péntek in
+	http://bugs.launchpad.net/ubuntu/+source/coreutils/+bug/591969
+
+2010-06-11  Jim Meyering  <meyering@redhat.com>
+
+	build: update gnulib submodule to latest
+
+	build: don't let a large sparse temporary file cause "make dist" to fail
+	* bootstrap.conf (bootstrap_epilogue): Replace the offending grep
+	command from po/Makefile.in.in's $(DOMAIN).pot-update rule.
+
+2010-06-10  Jim Meyering  <meyering@redhat.com>
+
+	ls: avoid just-introduced buffer overrun
+	* src/ls.c (gobble_file): Revert part of my preceding change,
+	to avoid clobbering stack.
+
+2010-06-08  Jim Meyering  <meyering@redhat.com>
+
+	maint: adjust INT_BUFSIZE_BOUND usage for maintainability
+	* src/tail.c (xlseek): Give INT_BUFSIZE_BOUND a variable name,
+	not a type name.
+	* src/ls.c (gobble_file, format_user_or_group_width): Likewise.
+	* src/head.c (elide_tail_bytes_pipe): Likewise.
+	(elide_tail_lines_seekable, main): Likewise.
+	[This change is not complete -- there are doubtless other uses
+	that can be updated in the same way.]
+
+	sort: avoid unnecessary use of sprintf
+	sprintf is relatively heavy-weight.
+	* src/sort.c (key_warnings): Use umaxtostr and stpcpy rather
+	than sprintf.
+	Also, replace each INT_BUFSIZE_BOUND "type_name" argument
+	with the equivalent variable name.  More maintainable that way.
+
+2010-06-08  Eric Blake  <eblake@redhat.com>
+
+	dirname: tweak summary wording
+	* doc/coreutils.texi (dirname invocation): Reword to be more
+	precise.
+	* src/dirname.c (usage): Likewise.
+	* THANKS: Update.
+	Reported by Filipus Klutiero, bug 6175.
+
+2010-06-02  Jim Meyering  <meyering@redhat.com>
+
+	doc: mention the new coreutils@ mailing lists
+	* README-package-renamed-to-coreutils: Mention the new mailing list
+	and a mirror.
+
+	touch: remove support for --file=REF_FILE option
+	* src/touch.c (main): Remove support for the deprecated, long-named
+	--file option, which is an alternate name for --reference (-r).
+	That option was undocumented with the arrival of --reference, in
+	the 1995-10-29 commit, 8b92864e1d.  Since the 2009-02-09 commit,
+	ed85df444a, use of --file has elicited a warning.  Not only was
+	this code due for removal, but the long-name-use-detecting code
+	was buggy in that it would use a stale or uninitialized "long_idx",
+	as reported by Robin H. Johnson in http://bugs.gentoo.org/322421.
+	* NEWS (Changes in behavior): Mention it.
+
+2010-05-31  Jim Meyering  <meyering@redhat.com>
+
+	maint: make spacing around "=" consistent, even in IF_LINT
+	E.g.,
+	  -  size_t desired_width IF_LINT (= 0);
+	  +  size_t desired_width IF_LINT ( = 0);
+	Use this command:
+	  g grep -l IF_LINT | grep '\.[ch]$' \
+	    | xargs perl -pi -e 's/(IF_LINT \()= /$1 = /'
+
+	maint: replace each "for (;;)" with "while (true)"
+	Run this command:
+	  git ls-files | grep '\.[ch]$' \
+	    | xargs perl -pi -e 's/for \(;;\)/while (true)/g'
+	...except for randint.c, which does not include stdbool.h.
+	In that case, use "while (1)".
+	* gl/lib/randint.c (randint_genmax): Use "while (1)" for infloops.
+	* src/cat.c (simple_cat, cat): Use "while (true)" for infloops.
+	* gl/lib/randread.c (readsource, readisaac): Likewise.
+	* src/copy.c (copy_reg): Likewise.
+	* src/csplit.c (record_line_starts, process_regexp): Likewise.
+	* src/cut.c (set_fields): Likewise.
+	* src/dd.c (iread, parse_symbols): Likewise.
+	* src/df.c (find_mount_point, main): Likewise.
+	* src/du.c (main): Likewise.
+	* src/expand.c (expand): Likewise.
+	* src/factor.c (factor_using_division, do_stdin): Likewise.
+	* src/fmt.c (get_space): Likewise.
+	* src/ls.c (decode_switches): Likewise.
+	* src/od.c (main): Likewise.
+	* src/pr.c (main, read_line): Likewise.
+	* src/shred.c (dopass, genpattern): Likewise.
+	* src/sort.c (initbuf, fillbuf, getmonth, keycompare): Likewise.
+	* src/split.c (bytes_split, lines_split): Likewise.
+	* src/tac.c (tac_seekable): Likewise.
+	* src/test.c (and, or): Likewise.
+	* src/tr.c (squeeze_filter, main): Likewise.
+	* src/tsort.c (search_item): Likewise.
+	* src/unexpand.c (unexpand): Likewise.
+	* src/uniq.c (main): Likewise.
+	* src/yes.c (main): Likewise.
+
+	maint: correct indentation of case_GETOPT_* macro uses
+	* src/base64.c (main): Correct indentation of syntactically
+	questionable case_GETOPT_HELP_CHAR and case_GETOPT_VERSION_CHAR macros.
+	* src/who.c (main): Likewise.
+
+	stat: use gnulib's alignof module
+	* src/stat.c (alignof): Remove definition.
+	Instead, include "alignof.h", and sort the #include directives.
+	And get its definition from the gnulib module by that name:
+	* bootstrap.conf (gnulib_modules): Add alignof.
+
+	tests: remove unnecessary single quotes in perl hash use: ->{'SYM'}
+	Run this command:
+	  git grep -l "limits->{'" \
+	    | xargs perl -pi -e "s/limits->{'(.*?)'}/limits->{\$1}/g"
+	* cfg.mk (sc_prohibit_perl_hash_quotes): New rule to match.
+	* tests/misc/join: Remove quotes.
+	* tests/misc/sort: Likewise.
+	* tests/misc/sort-merge: Likewise.
+	* tests/misc/test: Likewise.
+	* tests/misc/unexpand: Likewise.
+	* tests/misc/uniq: Likewise.
+
+2010-05-29  Pádraig Brady  <P@draigBrady.com>
+
+	truncate: improve handling of non regular files
+	Previously we copied `dd` and suppressed error messages
+	when truncating neither regular files or shared mem objects.
+	This was valid for `dd`, as truncation is ancillary to copying
+	it may also do, but for `truncate` we should display all errors.
+	Also we used the st_size from non regular files which is undefined,
+	so we display an error when the user tries this.
+
+	* src/truncate (do_truncate):  Error when referencing the size
+	of non regular files or non shared memory objects.  Display all
+	errors returned by ftruncate().
+	(main): Error when referencing the size of non regular files or
+	non shared memory objects.  Don't suppress error messages for
+	any file types that can't be opened for writing.
+	* tests/misc/truncate-dir-fail: Check that referencing the
+	size of a directory is not supported.
+	* tests/misc/truncate-fifo: Ensure the test doesn't hang
+	by using the `timeout` command.  Don't test the return from
+	running ftruncate on the fifo as it's system dependent as
+	to whether this fails or not.
+	NEWS: Mention the change in behavior.
+	Reported by Jim Meyering.
+
+2010-05-28  Pádraig Brady  <P@draigBrady.com>
+
+	truncate: support sizes relative to an existing file
+	* doc/coreutils.texi (truncate invocation): Mention that --reference
+	bases the --size rather than just setting it.
+	* src/truncate.c (usage): Likewise. Also remove the clause
+	describing --size and --reference as being mutually exclusive.
+	(do_truncate): Add an extra parameter to hold the size
+	of a referenced file, and use it if positive.
+	(main): Pass the size of a referenced file to do_truncate().
+	* tests/misc/truncate-parameters: Adjust for the new combinations.
+	* NEWS: Mention the change
+	Suggested by Richard W.M. Jones
+
+2010-05-26  Jim Meyering  <meyering@redhat.com>
+
+	tests: update help-version to work with parted, too
+	* tests/misc/help-version: Add init code for GNU Parted.
+
+2010-05-25  Jim Meyering  <meyering@redhat.com>
+
+	maint: don't emit an extra newline in each of two diagnostics
+	* src/shuf.c (main): Remove a stray newline in a diagnostic.
+	* src/od.c (main): Likewise.
+	Detected via these:
+	  git grep -A1 'error *(.*,$' | grep -C1 '\\n"[,)]'
+	  git grep 'error *(.*;$' | grep '\\n"[,)]'
+
+	maint: remove unneeded double quotes on RHS of shell assignments
+	Run this command:
+	  git grep -l 'LC_[A-Z]*="' \
+	    | xargs perl -pi -e 's/(LC_[A-Z]*)="(.*?)"/$1=$2/'
+	* src/Makefile.am: Write LC_ALL=$$locale, not LC_ALL="$$locale".
+	* src/date.c (main): Similar, in a comment.
+	* tests/misc/sort-month: Write LC_ALL=$LOC, not LC_ALL="$LOC".
+
+2010-05-24  Pádraig Brady  <P@draigBrady.com>
+
+	maint: remove a redundant sort parameter from a test
+	* tests/misc/sort-month: Remove the -b option which
+	is redundant and ignored.
+
+	sort: adjust the leading blanks --debug warning
+	* src/sort.c (key_warnings): Always warn about significant leading
+	blanks when character offsets are specified, unless they key is
+	possibly a line offset, i.e. of the form -k1.x,1.y.  Also suppress
+	this warning if the user could be sorting right aligned indexes.
+
+2010-05-23  Jim Meyering  <meyering@redhat.com>
+
+	maint: make copyright comment consistent with all others
+	* tests/misc/mktemp: Change punctuation to make copyright
+	paragraph consistent with all of the others.
+
+2010-05-21  Jim Meyering  <meyering@redhat.com>
+
+	tests: fix cp-a-selinux to skip cleanly upon mkfs failure
+	* tests/cp/cp-a-selinux: Initialize skip, to avoid a syntax error
+	in subsequent "test".
+	Remove redirect-to-/dev/null, now that output is always to a log file.
+
+2010-05-19  Jon Ringuette  <jonr@scharp.org>
+
+	du: recognize -d N as equivalent to --max-depth=N
+	* NEWS (New features): Mention it.
+	* src/du.c (DEBUG_OPT): Remove.  Use long-named ---debug instead.
+	Commented out.
+	(MAX_DEPTH_OPTION): Remove.  Use 'd' instead.
+	(main): Insert literal "d:"; remove DEBUG_OPT.
+	* doc/coreutils.texi (du invocation): Add -d to indices.
+	* tests/du/max-depth: Exercise -d, too.
+
+2010-05-19  Jim Meyering  <meyering@redhat.com>
+
+	tests: exercise du's --max-depth option
+	* tests/Makefile.am (TESTS): Add du/max-depth.
+	* tests/du/max-depth: New file.
+
+2010-05-19  Pádraig Brady  <P@draigBrady.com>
+
+	tests: fix sort-debug-keys when fr_FR.utf8 not available
+	* tests/misc/sort-debug-keys: Correctly check for the absence
+	of the French UTF8 locale.
+
+2010-05-17  Jim Meyering  <meyering@redhat.com>
+
+	maint: fix the fs-magic-compare rule
+	* src/Makefile.am (fs-def): Sort definitions.
+	This is required by fs-magic-compare's use of join.
+
+	tests: update init.sh from gnulib
+	* tests/init.sh: Update from gnulib.
+
+	build: avoid a new -Wformat-induced warning
+	* src/sort.c (mark_key): Add a cast-to-int of a printf field width,
+	to placate -Wformat.
+
+2010-05-16  Pádraig Brady  <P@draigBrady.com>
+
+	doc: fix sort info about version sort skipping blanks
+	* doc/coreutils.text (sort invocation): leading blanks are
+	significant for 'V'.
+
+	sort: --debug: output data independent warnings and info
+	* src/sort.c (usage): Mention --debug can output warnings to stderr.
+	Also split the translatable string to aid translation.
+	(default_key_compare): A new function refactored from main(),
+	and now also called from the new key_warnings() function.
+	(key_to_opts): A new function refactored from incompatible_options(),
+	and now also called from the new key_warnings() function.
+	(key_numeric): A new function refactored to test if key is numeric.
+	(key_warnings): A new function to output warnings to stderr,
+	about questionable use of various options.  Currently it warns
+	about zero length keys and ineffective global options.
+	(incompatible_options): Refactor out key_to_opts()
+	(main): Use key_init() to initialize gkey.  Refactor out
+	default_key_compare().  Call key_warnings() in debug mode.
+	* doc/coreutils.texi (sort invocation): Mention that warnings
+	are output by --debug.
+	* tests/misc/sort-debug-warn: A new test for debug warnings.
+	* tests/Makefile.am: Reference the new test.
+	* NEWS: Mention the new feature
+
+2010-05-12  Pádraig Brady  <P@draigBrady.com>
+
+	tests: fix sort-debug-keys when fr_FR.utf8 not available
+	* tests/misc/sort-debug-keys: Don't verify (or even run)
+	the fr_FR tests when that locale is not available on the system.
+
+	sort: add a --debug option to highlight key extents
+	* src/sort (usage): Add description for --debug.
+	(write_bytes): Pass a line structure so it can subsequently
+	be passed to compare to highlight the keys when in debug mode.
+	Also transform TAB and NUL characters written to stdout so
+	that the highlighting in debug mode aligns correctly.
+	(human_numcompare): Pass an "endptr" so we can record the extent
+	of the number matched.
+	(general_numcompare): Likewise.
+	(find_unit_order): Likewise.
+	(getmonth): Likewise.
+	(numcompare): Likewise.  Note we reuse find_unit_order() for this,
+	which is a good enough approximation, and means we don't need to
+	change the strnumcmp() interface.
+	(check_mixed_SI_IEC): Return whether iec_present, so that can be
+	used to set the "endptr" in find_unit_order.  Also make the key
+	parameter optional, which will be the case from numcompare().
+	(count_tabs): A new function to determine how much to adjust
+	the mbswidth() values by (TABs don't have a width).
+	(mark_key): A new function to output the key highlighting to stdout.
+	(debug_key): A new function to determine the offset and width
+	of the key highlighting.
+	(key_compare): Pass the show_debug parameter so the key highlighting
+	is only displayed when explicitly called.  For each key type, set
+	the length (lena) and whether leading blanks are auto skipped (skipb)
+	which are then used by debug_key() to highlight the portion of the
+	key used in the comparison.
+	(compare): Pass the show_debug parameter so the key highlighting
+	is only displayed when explicitly called.  Call debug_key() to
+	highlight the last resort comparison.
+	(check): Output highlighting for disorder line to stdout.
+	(main): Process the --debug option and make it mutually exlusive
+	with the -o option as I don't see it useful there, even potentially
+	harmful if someone left a --debug in by mistake when updating a file.
+	Also restricting debug output to stdout, simplifies the logic
+	for dealing with temporary files.
+	* doc/coreutils.texi (sort invocation): Describe the --debug option,
+	and reference it from the --key description.
+	* tests/misc/sort-debug-keys: A new test for highlighting keys.
+	* tests/Makefile.am: Reference the new test.
+	* NEWS: Mention the new feature.
+
+2010-05-11  Jim Meyering  <meyering@redhat.com>
+
+	build: record the gettext-0.18 requirement also in configure.ac
+	* configure.ac: Require gettext-0.18 here, too.
+
+	build: update gnulib submodule to latest
+	* tests/init.sh: Update from gnulib, to fix typo.
+
+2010-05-10  Jim Meyering  <meyering@redhat.com>
+
+	build: record that when building from git, gettext-0.18 is required
+	* bootstrap.conf (buildreq): Require gettext-0.18.
+
+	tests: avoid a new syntax-check failure
+	* .x-sc_prohibit_fail_0: Exempt tests/init.sh.
+
+	tests: provide a definition of gl_trap_ in cfg.mk
+	* cfg.mk (gl_trap_): Define here, now that it's gone from maint.mk.
+	* gnulib: Update to latest.
+
+	tests: begin using init.sh
+	* tests/init.sh: New file.
+	* tests/Makefile.am (EXTRA_DIST): Add it here.
+
+2010-05-09  Jim Meyering  <meyering@redhat.com>
+
+	tests: update help-version
+	* tests/misc/help-version: Use init.sh, rather than test-lib.sh.
+	Add idutils' setup.
+
+	tests: move sc_prohibit_always-defined_macros to gnulib's maint.mk
+	* cfg.mk (sc_prohibit_always-defined_macros): Remove it from here.
+	* gnulib: Update to latest, for a maint.mk that includes that rule.
+
+	tests: rename a syntax-check
+	* cfg.mk (sc_prohibit_always-defined_macros): Rename from
+	sc_always_defined_macros.
+	* .x-sc_prohibit_always-defined_macros: New file, renamed from...
+	* .x-sc_always_defined_macros: ...removed.
+	* Makefile.am (syntax_check_exceptions): Rename here, too.
+
+	tests: loosen/tighten the always_defined_macros check
+	* cfg.mk (.re-defmac): Generate better regexps: allow white space
+	before the '#', and append a word-boundary requirement.
+	Without the latter, #define NULL_DEV ... would evoke a false-positive.
+
+	tests: improve the always_defined_macros check
+	* cfg.mk (sc_always_defined_macros): Adjust its helpers not to depend
+	on the existence of ./lib.  Instead, extract symbols directly from
+	gnulib/lib/*.in.h files.
+
+2010-05-03  Jim Meyering  <meyering@redhat.com>
+
+	doc: factor hard-coded project-specific bits from README-release, ...
+	using the new --mail-headers option to gnulib's announce-gen, and
+	the updated maint.mk rules to connect the pieces.
+	* README-release: Remove hard-coded To:, Cc: etc. parts, now
+	that they're emitted automatically into the announcement template.
+	* cfg.mk (announcement_Cc_): Override the default.
+	* gnulib: Update to latest, to get newer announce-gen and maint.mk.
+
+	doc: update release procedure
+	* README-release: Rearrange slightly: post the announcement to
+	Savannah first, so you can include a link to that post in the email.
+
+	maint: factor trap-related code out of two syntax-check rules
+	* cfg.mk (gl_trap_): Define, using a loop and eval'd trap,
+	rather than repeated "trap" uses.  Also handle "13", SIGPIPE.
+	(sc_always_defined_macros): Use it.
+	(sc_system_h_headers): Likewise.
+
+	maint: extend the always_defined_macros syntax-check
+	* cfg.mk (gl_generated_headers_): Define.
+	(headers_with_interesting_macro_defs): Remove headers covered
+	by the above.
+	(.re-defmac): Extract symbol names from many more files.
+	(sc_always_defined_macros): Use VC_LIST_EXCEPT, not VC_LIST, so
+	that we can use the usual exception mechanism.
+	Test for $(gnulib_dir), not system.h.
+	* .x-sc_always_defined_macros: New file.  Exempt src/seq.c.
+	* Makefile.am (syntax_check_exceptions): Add it here.
+
+	maint: remove now-redundant definitions provided by signal.h
+	* src/dd.c (SA_NODEFER, SA_RESETHAND): Remove definitions,
+	now that gnulib guarantees they are defined in <signal.h>.
+	* src/ls.c (SA_RESTART): Likewise.
+
+	maint: remove now-redundant definitions provided by sys/wait.h
+	* src/timeout.c (WIFSIGNALED, WTERMSIG): Remove definitions,
+	now that gnulib guarantees they are defined in <sys/wait.h>.
+	* src/operand2sig.c: Likewise.
+	* src/kill.c: Likewise.
+
+2010-05-02  Paul Eggert  <eggert@cs.ucla.edu>
+
+	sort: use long doubles only when effective
+	* src/sort.c (general_numcompare): Don't use long double if strtold
+	is not available, as it may introduce needless overhead.
+
+2010-04-30  Jim Meyering  <meyering@redhat.com>
+
+	build: update gnulib submodule to latest; bootstrap, too
+
+2010-04-29  Pádraig Brady  <P@draigBrady.com>
+
+	sort: use long doubles for general numeric mode
+	* src/sort.c (general_numcompare): Use long doubles unconditionally,
+	and strtold when available, to convert numbers with greater range and
+	precision.  Performance was seen to be on par with standard doubles.
+	* doc/coreutils.texi (sort invocation): Amend the -g description to
+	mention long double rather than double, and strtold rather than strtod.
+	* src/getlimits.c (main): Output floating point limits for use in tests.
+	* tests/misc/sort-float: A new test to ensure sort is using long
+	doubles when possible, and that locale specific floats are handled.
+	* tests/Makefile.am: Reference the new test.
+	* tests/test-lib.sh (getlimits_): Normalize indenting.
+	* NEWS: Mention the new behaviour.
+	Reported by Nelson Beebe.
+
+2010-04-29  Jim Meyering  <meyering@redhat.com>
+
+	build: remove now-duplicate use of AC_SYS_LARGEFILE
+	* m4/jm-macros.m4 (gl_CHECK_ALL_TYPES): Don't require AC_SYS_LARGEFILE,
+	now that gnulib does it.
+
+	build: remove now-useless configure-time header checks
+	* m4/jm-macros.m4 (gl_CHECK_ALL_HEADERS): Don't test for headers
+	that gnulib now provides: sys/ioctl.h, sys/time.h, sys/wait.h.
+
+2010-04-25  Jim Meyering  <meyering@redhat.com>
+
+	doc: tweak factor-describing wording
+	* doc/coreutils.texi (factor invocation): Don't say that "factoring
+	large prime numbers is hard".  A pedant might ding you, since it's
+	trivial to factor a number that is known to be prime.  Instead, say
+	that "factoring large numbers... is hard".  Reported by Andreas Eder.
+
+2010-04-24  Jim Meyering  <meyering@redhat.com>
+
+	maint: remove now-unnecessary #if HAVE_header_H tests.
+	* .x-sc_prohibit_always_true_header_tests: New file.
+	* Makefile.am (syntax_check_exceptions): Add it.
+	* src/cat.c: Remove #if HAVE_SYS_IOCTL_H test.
+	* src/copy.c: Likewise.
+	* src/ls.c: Likewise.
+	* src/stty.c: Likewise.
+	* src/install.c: Remove #if HAVE_SYS_WAIT_H test.
+	* src/kill.c: Likewise.
+	* src/operand2sig.c: Likewise.
+	* src/timeout.c: Likewise.
+	* src/pathchk.c: Remove #if HAVE_WCHAR_H test.
+	* src/stat.c: Remove #if HAVE_NETINET_IN_H test.
+
+	build: enable gnulib modules for more replacement headers
+	* bootstrap.conf (gnulib_modules): Add the following:
+	netinet_in, sys_ioctl, sys_wait, so that we can eliminate
+	the #if HAVE_<header>_H tests guarding their header inclusions.
+
+	tests: clean up also upon SIGQUIT
+	* tests/test-lib.sh: Also trap on SIGQUIT.
+	Spotted by Dmitry V. Levin.
+
 2010-04-23  Jim Meyering  <meyering@redhat.com>
+
+	post-release administrivia
+	* NEWS: Add header line for next release.
+	* .prev-version: Record previous version.
+	* cfg.mk (old_NEWS_hash): Auto-update.
 
 	version 8.5
 	* NEWS: Record release date.

@@ -39,15 +39,11 @@
 #include <config.h>
 #include <sys/types.h>
 
-#if HAVE_TERMIOS_H
-# include <termios.h>
-#endif
+#include <termios.h>
 #if HAVE_STROPTS_H
 # include <stropts.h>
 #endif
-#if HAVE_SYS_IOCTL_H
-# include <sys/ioctl.h>
-#endif
+#include <sys/ioctl.h>
 
 #ifdef WINSIZE_IN_PTEM
 # include <sys/stream.h>
@@ -77,9 +73,6 @@
 # if ! HAVE_SIGINTERRUPT
 #  define siginterrupt(sig, flag) /* empty */
 # endif
-#endif
-#ifndef SA_RESTART
-# define SA_RESTART 0
 #endif
 
 #include "system.h"
@@ -1640,7 +1633,7 @@ decode_switches (int argc, char **argv)
       }
   }
 
-  for (;;)
+  while (true)
     {
       int oi = -1;
       int c = getopt_long (argc, argv,
@@ -2037,7 +2030,6 @@ decode_switches (int argc, char **argv)
             break;
 
           case long_iso_time_style:
-          case_long_iso_time_style:
             long_time_format[0] = long_time_format[1] = "%Y-%m-%d %H:%M";
             break;
 
@@ -2049,17 +2041,10 @@ decode_switches (int argc, char **argv)
           case locale_time_style:
             if (hard_locale (LC_TIME))
               {
-                /* Ensure that the locale has translations for both
-                   formats.  If not, fall back on long-iso format.  */
                 int i;
                 for (i = 0; i < 2; i++)
-                  {
-                    char const *locale_format =
-                      dcgettext (NULL, long_time_format[i], LC_TIME);
-                    if (locale_format == long_time_format[i])
-                      goto case_long_iso_time_style;
-                    long_time_format[i] = locale_format;
-                  }
+                  long_time_format[i] =
+                    dcgettext (NULL, long_time_format[i], LC_TIME);
               }
           }
       /* Note we leave %5b etc. alone so user widths/flags are honored.  */
@@ -3587,7 +3572,7 @@ format_user_or_group_width (char const *name, unsigned long int id)
     }
   else
     {
-      char buf[INT_BUFSIZE_BOUND (unsigned long int)];
+      char buf[INT_BUFSIZE_BOUND (id)];
       sprintf (buf, "%lu", id);
       return strlen (buf);
     }
@@ -3854,7 +3839,7 @@ quote_name (FILE *out, const char *name, struct quoting_options const *options,
   char smallbuf[BUFSIZ];
   size_t len = quotearg_buffer (smallbuf, sizeof smallbuf, name, -1, options);
   char *buf;
-  size_t displayed_width IF_LINT (= 0);
+  size_t displayed_width IF_LINT ( = 0);
 
   if (len < sizeof smallbuf)
     buf = smallbuf;
@@ -4597,7 +4582,9 @@ Mandatory arguments to long options are mandatory for short options too.\n\
   -b, --escape               print C-style escapes for nongraphic characters\n\
 "), stdout);
       fputs (_("\
-      --block-size=SIZE      use SIZE-byte blocks.  See SIZE format below\n\
+      --block-size=SIZE      scale sizes by SIZE before printing them.  E.g.,\n\
+                               `--block-size=M' prints sizes in units of\n\
+                               1,048,576 bytes.  See SIZE format below.\n\
   -B, --ignore-backups       do not list implied entries ending with ~\n\
   -c                         with -lt: sort by, and show, ctime (time of last\n\
                                modification of file status information)\n\

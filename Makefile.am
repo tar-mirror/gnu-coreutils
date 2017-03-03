@@ -46,6 +46,7 @@ syntax_check_exceptions =		\
   .x-sc_obsolete_symbols		\
   .x-sc_po_check			\
   .x-sc_program_name			\
+  .x-sc_prohibit_always-defined_macros	\
   .x-sc_prohibit_atoi_atof		\
   .x-sc_prohibit_empty_lines_at_EOF	\
   .x-sc_prohibit_fail_0			\
@@ -59,6 +60,7 @@ syntax_check_exceptions =		\
   .x-sc_sun_os_names			\
   .x-sc_system_h_headers		\
   .x-sc_trailing_blank			\
+  .x-sc_prohibit_always_true_header_tests \
   .x-sc_unmarked_diagnostics		\
   .x-sc_useless_cpp_parens
 

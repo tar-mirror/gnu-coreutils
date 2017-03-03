@@ -28,7 +28,7 @@
 #include "argmatch.h"
 #include "error.h"
 #include "fd-reopen.h"
-#include "getdate.h"
+#include "parse-datetime.h"
 #include "posixtm.h"
 #include "posixver.h"
 #include "quote.h"
@@ -86,7 +86,6 @@ static struct option const longopts[] =
   {"time", required_argument, NULL, TIME_OPTION},
   {"no-create", no_argument, NULL, 'c'},
   {"date", required_argument, NULL, 'd'},
-  {"file", required_argument, NULL, 'r'}, /* FIXME: remove --file in 2010 */
   {"reference", required_argument, NULL, 'r'},
   {"no-dereference", no_argument, NULL, 'h'},
   {GETOPT_HELP_OPTION_DECL},
@@ -113,7 +112,7 @@ static void
 get_reldate (struct timespec *result,
              char const *flex_date, struct timespec const *now)
 {
-  if (! get_date (result, flex_date, now))
+  if (! parse_datetime (result, flex_date, now))
     error (EXIT_FAILURE, 0, _("invalid date format %s"), quote (flex_date));
 }
 
@@ -164,8 +163,9 @@ touch (const char *file)
       t = NULL;
     }
 
-  ok = ((no_dereference && fd == -1) ? lutimens (file, t)
-        : gl_futimens (fd, (fd == STDOUT_FILENO ? NULL : file), t)) == 0;
+  ok = (fdutimensat (fd, AT_FDCWD, (fd == STDOUT_FILENO ? NULL : file), t,
+                     (no_dereference && fd == -1) ? AT_SYMLINK_NOFOLLOW : 0)
+        == 0);
 
   if (fd == STDIN_FILENO)
     {
@@ -263,7 +263,6 @@ main (int argc, char **argv)
   bool date_set = false;
   bool ok = true;
   char const *flex_date = NULL;
-  int long_idx; /* FIXME: remove in 2010, when --file is removed */
 
   initialize_main (&argc, &argv);
   set_program_name (argv[0]);
@@ -276,7 +275,7 @@ main (int argc, char **argv)
   change_times = 0;
   no_create = use_ref = false;
 
-  while ((c = getopt_long (argc, argv, "acd:fhmr:t:", longopts, &long_idx)) != -1)
+  while ((c = getopt_long (argc, argv, "acd:fhmr:t:", longopts, NULL)) != -1)
     {
       switch (c)
         {
@@ -304,10 +303,6 @@ main (int argc, char **argv)
           break;
 
         case 'r':
-          if (long_idx == 3)
-            error (0, 0,
-                   _("warning: the --%s option is obsolete; use --reference"),
-                   longopts[long_idx].name);
           use_ref = true;
           ref_file = optarg;
           break;

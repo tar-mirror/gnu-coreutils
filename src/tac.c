@@ -245,7 +245,7 @@ tac_seekable (int input_fd, const char *file)
   if (sentinel_length)
     match_start -= match_length1;
 
-  for (;;)
+  while (true)
     {
       /* Search backward from `match_start' - 1 to `G_buffer' for a match
          with `separator'; for speed, use strncmp if `separator' contains no
@@ -633,7 +633,6 @@ main (int argc, char **argv)
   if (! (read_size < half_buffer_size && half_buffer_size < G_buffer_size))
     xalloc_die ();
   G_buffer = xmalloc (G_buffer_size);
-  void *buf = G_buffer;
   if (sentinel_length)
     {
       strcpy (G_buffer, separator);
@@ -666,6 +665,11 @@ main (int argc, char **argv)
       error (0, errno, "-");
       ok = false;
     }
-  free (buf);
+
+#ifdef lint
+  size_t offset = sentinel_length ? sentinel_length : 1;
+  free (G_buffer - offset);
+#endif
+
   exit (ok ? EXIT_SUCCESS : EXIT_FAILURE);
 }

@@ -13,8 +13,8 @@
 
 m4_ifndef([AC_AUTOCONF_VERSION],
   [m4_copy([m4_PACKAGE_VERSION], [AC_AUTOCONF_VERSION])])dnl
-m4_if(m4_defn([AC_AUTOCONF_VERSION]), [2.65.57-45695],,
-[m4_warning([this file was generated for autoconf 2.65.57-45695.
+m4_if(m4_defn([AC_AUTOCONF_VERSION]), [2.68.3-de12b],,
+[m4_warning([this file was generated for autoconf 2.68.3-de12b.
 You have another version of autoconf.  It may work, but is not guaranteed to.
 If you have problems, you may need to regenerate the build system entirely.
 To do so, use the procedure documented by the package, typically `autoreconf'.])])
@@ -255,7 +255,7 @@ AC_CACHE_CHECK([dependency style of $depcc],
 	break
       fi
       ;;
-    msvisualcpp | msvcmsys)
+    msvc7 | msvc7msys | msvisualcpp | msvcmsys)
       # This compiler won't grok `-c -o', but also, the minuso test has
       # not run yet.  These depmodes are late enough in the game, and
       # so weak that their functioning should not be impacted.
@@ -808,14 +808,14 @@ AU_DEFUN([fp_C_PROTOTYPES], [AM_C_PROTOTYPES])
 
 # Check to make sure that the build environment is sane.    -*- Autoconf -*-
 
-# Copyright (C) 1996, 1997, 2000, 2001, 2003, 2005, 2008, 2009
+# Copyright (C) 1996, 1997, 2000, 2001, 2003, 2005, 2008, 2009, 2010
 # Free Software Foundation, Inc.
 #
 # This file is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
 
-# serial 6
+# serial 7
 
 # AM_SANITY_CHECK
 # ---------------
@@ -840,14 +840,14 @@ esac
 # (eg FreeBSD returns the mod time of the symlink's containing
 # directory).
 if (
+   am_has_slept=no
    for am_try in 1 2; do
-     echo timestamp > conftest.file
+     echo "timestamp, slept: $am_has_slept" > conftest.file
      set X `ls -Lt "$srcdir/configure" conftest.file 2> /dev/null`
      if test "$[*]" = "X"; then
 	# -L didn't work.
 	set X `ls -t "$srcdir/configure" conftest.file`
      fi
-     rm -f conftest.file
      if test "$[*]" != "X $srcdir/configure conftest.file" \
 	&& test "$[*]" != "X conftest.file $srcdir/configure"; then
 
@@ -863,6 +863,7 @@ if (
      fi
      # Just in case.
      sleep 1
+     am_has_slept=yes
    done
    test "$[2]" = conftest.file
    )
@@ -873,28 +874,48 @@ else
    AC_MSG_ERROR([newly created file is older than distributed files!
 Check your system clock])
 fi
-AC_MSG_RESULT(yes)])
+AC_MSG_RESULT(yes)
+# If we didn't sleep, we still need to ensure time stamps of config.status and
+# generated files are strictly newer.
+am_sleep_pid=
+if grep 'slept: no' conftest.file >/dev/null 2>&1; then
+  ( sleep 1 ) &
+  am_sleep_pid=$!
+  AC_CONFIG_COMMANDS_PRE(
+    [if test -n "$am_sleep_pid"; then
+       AC_MSG_CHECKING([that generated files are newer than configure])
+       wait $am_sleep_pid
+       AC_MSG_RESULT([done])
+     fi])
+fi
+rm -f conftest.file
+])
 
-# Copyright (C) 2009  Free Software Foundation, Inc.
+# Copyright (C) 2009, 2010 Free Software Foundation, Inc.
 #
 # This file is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
 
-# serial 1
+# serial 2
 
 # AM_SILENT_RULES([DEFAULT])
 # --------------------------
 # Enable less verbose build rules; with the default set to DEFAULT
 # (`yes' being less verbose, `no' or empty being verbose).
 AC_DEFUN([AM_SILENT_RULES],
-[AC_ARG_ENABLE([silent-rules],
-[  --enable-silent-rules          less verbose build output (undo: `make V=1')
-  --disable-silent-rules         verbose build output (undo: `make V=0')])
-case $enable_silent_rules in
-yes) AM_DEFAULT_VERBOSITY=0;;
-no)  AM_DEFAULT_VERBOSITY=1;;
-*)   AM_DEFAULT_VERBOSITY=m4_if([$1], [yes], [0], [1]);;
+[AC_ARG_ENABLE([silent-rules], [dnl
+AS_HELP_STRING(
+  [--enable-silent-rules],
+  [less verbose build output (undo: `make V=1')])
+AS_HELP_STRING(
+  [--disable-silent-rules],
+  [verbose build output (undo: `make V=0')])dnl
+])
+case $enable_silent_rules in @%:@ (((
+  yes) AM_DEFAULT_VERBOSITY=0;;
+   no) AM_DEFAULT_VERBOSITY=1;;
+    *) AM_DEFAULT_VERBOSITY=m4_if([$1], [yes], [0], [1]);;
 esac
 AC_SUBST([AM_DEFAULT_VERBOSITY])dnl
 AM_BACKSLASH='\'
@@ -1050,8 +1071,8 @@ m4_include([m4/acl.m4])
 m4_include([m4/alloca.m4])
 m4_include([m4/argmatch.m4])
 m4_include([m4/arpa_inet_h.m4])
+m4_include([m4/asm-underscore.m4])
 m4_include([m4/assert.m4])
-m4_include([m4/atexit.m4])
 m4_include([m4/autobuild.m4])
 m4_include([m4/backupfile.m4])
 m4_include([m4/base64.m4])
@@ -1125,13 +1146,14 @@ m4_include([m4/fseeko.m4])
 m4_include([m4/fstypename.m4])
 m4_include([m4/fsusage.m4])
 m4_include([m4/fsync.m4])
+m4_include([m4/ftell.m4])
 m4_include([m4/ftello.m4])
 m4_include([m4/fts.m4])
+m4_include([m4/futimens.m4])
 m4_include([m4/getaddrinfo.m4])
 m4_include([m4/getcwd-abort-bug.m4])
 m4_include([m4/getcwd-path-max.m4])
 m4_include([m4/getcwd.m4])
-m4_include([m4/getdate.m4])
 m4_include([m4/getdelim.m4])
 m4_include([m4/getdtablesize.m4])
 m4_include([m4/getgroups.m4])
@@ -1187,12 +1209,14 @@ m4_include([m4/jm-winsz2.m4])
 m4_include([m4/langinfo_h.m4])
 m4_include([m4/lchmod.m4])
 m4_include([m4/lchown.m4])
+m4_include([m4/ldexp.m4])
 m4_include([m4/ldexpl.m4])
 m4_include([m4/lib-check.m4])
 m4_include([m4/lib-ignore.m4])
 m4_include([m4/lib-ld.m4])
 m4_include([m4/lib-link.m4])
 m4_include([m4/lib-prefix.m4])
+m4_include([m4/libunistring-base.m4])
 m4_include([m4/link-follow.m4])
 m4_include([m4/link.m4])
 m4_include([m4/linkat.m4])
@@ -1224,14 +1248,9 @@ m4_include([m4/mbswidth.m4])
 m4_include([m4/md5.m4])
 m4_include([m4/memcasecmp.m4])
 m4_include([m4/memchr.m4])
-m4_include([m4/memcmp.m4])
 m4_include([m4/memcoll.m4])
-m4_include([m4/memcpy.m4])
-m4_include([m4/memmove.m4])
 m4_include([m4/mempcpy.m4])
 m4_include([m4/memrchr.m4])
-m4_include([m4/memset.m4])
-m4_include([m4/memxfrm.m4])
 m4_include([m4/mgetgroups.m4])
 m4_include([m4/mkancesdirs.m4])
 m4_include([m4/mkdir-p.m4])
@@ -1253,6 +1272,7 @@ m4_include([m4/nocrash.m4])
 m4_include([m4/nproc.m4])
 m4_include([m4/open.m4])
 m4_include([m4/openat.m4])
+m4_include([m4/parse-datetime.m4])
 m4_include([m4/pathmax.m4])
 m4_include([m4/perl.m4])
 m4_include([m4/perror.m4])
@@ -1267,11 +1287,13 @@ m4_include([m4/printf-frexpl.m4])
 m4_include([m4/printf.m4])
 m4_include([m4/priv-set.m4])
 m4_include([m4/progtest.m4])
+m4_include([m4/pthread.m4])
 m4_include([m4/putenv.m4])
 m4_include([m4/quote.m4])
 m4_include([m4/quotearg.m4])
 m4_include([m4/read-file.m4])
 m4_include([m4/readlink.m4])
+m4_include([m4/readlinkat.m4])
 m4_include([m4/readtokens.m4])
 m4_include([m4/readutmp.m4])
 m4_include([m4/realloc.m4])
@@ -1287,6 +1309,7 @@ m4_include([m4/same.m4])
 m4_include([m4/save-cwd.m4])
 m4_include([m4/savedir.m4])
 m4_include([m4/savewd.m4])
+m4_include([m4/sched_h.m4])
 m4_include([m4/select.m4])
 m4_include([m4/selinux-context-h.m4])
 m4_include([m4/selinux-selinux-h.m4])
@@ -1304,6 +1327,7 @@ m4_include([m4/signbit.m4])
 m4_include([m4/size_max.m4])
 m4_include([m4/sleep.m4])
 m4_include([m4/snprintf.m4])
+m4_include([m4/socketlib.m4])
 m4_include([m4/sockets.m4])
 m4_include([m4/socklen.m4])
 m4_include([m4/sockpfaf.m4])
@@ -1323,7 +1347,6 @@ m4_include([m4/stdlib-safer.m4])
 m4_include([m4/stdlib_h.m4])
 m4_include([m4/stpcpy.m4])
 m4_include([m4/stpncpy.m4])
-m4_include([m4/strcspn.m4])
 m4_include([m4/strdup.m4])
 m4_include([m4/strerror.m4])
 m4_include([m4/strftime.m4])
@@ -1331,7 +1354,6 @@ m4_include([m4/string_h.m4])
 m4_include([m4/strndup.m4])
 m4_include([m4/strnlen.m4])
 m4_include([m4/strnumcmp.m4])
-m4_include([m4/strpbrk.m4])
 m4_include([m4/strsignal.m4])
 m4_include([m4/strstr.m4])
 m4_include([m4/strtod.m4])
@@ -1349,7 +1371,9 @@ m4_include([m4/sys_socket_h.m4])
 m4_include([m4/sys_stat_h.m4])
 m4_include([m4/sys_time_h.m4])
 m4_include([m4/sys_utsname_h.m4])
+m4_include([m4/sys_wait_h.m4])
 m4_include([m4/tempname.m4])
+m4_include([m4/termios_h.m4])
 m4_include([m4/thread.m4])
 m4_include([m4/threadlib.m4])
 m4_include([m4/time_h.m4])
@@ -1373,6 +1397,7 @@ m4_include([m4/usleep.m4])
 m4_include([m4/utimbuf.m4])
 m4_include([m4/utimecmp.m4])
 m4_include([m4/utimens.m4])
+m4_include([m4/utimensat.m4])
 m4_include([m4/utimes.m4])
 m4_include([m4/vasnprintf.m4])
 m4_include([m4/vasprintf-posix.m4])

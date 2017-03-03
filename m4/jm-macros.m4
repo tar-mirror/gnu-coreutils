@@ -1,4 +1,4 @@
-#serial 109   -*- autoconf -*-
+#serial 110   -*- autoconf -*-
 
 dnl Misc type-related macros for coreutils.
 
@@ -64,7 +64,6 @@ AC_DEFUN([coreutils_MACROS],
   LIBS=$coreutils_saved_libs
 
   # Used by sort.c.
-  AC_CHECK_FUNCS_ONCE([posix_fadvise])
   AC_CHECK_FUNCS_ONCE([nl_langinfo])
 
   # Used by tail.c.
@@ -173,14 +172,10 @@ AC_DEFUN([gl_CHECK_ALL_HEADERS],
     paths.h \
     priv.h \
     stropts.h \
-    sys/ioctl.h \
     sys/param.h \
     sys/resource.h \
     sys/systeminfo.h \
-    sys/time.h \
-    sys/wait.h \
     syslog.h \
-    termios.h \
   )
   AC_CHECK_HEADERS([sys/sysctl.h], [], [],
     [AC_INCLUDES_DEFAULT
@@ -192,11 +187,6 @@ AC_DEFUN([gl_CHECK_ALL_HEADERS],
 # This macro must be invoked before any tests that run the compiler.
 AC_DEFUN([gl_CHECK_ALL_TYPES],
 [
-  dnl This test must come as early as possible after the compiler configuration
-  dnl tests, because the choice of the file model can (in principle) affect
-  dnl whether functions and headers are available, whether they work, etc.
-  AC_REQUIRE([AC_SYS_LARGEFILE])
-
   dnl This test must precede tests of compiler characteristics like
   dnl that for the inline keyword, since it may change the degree to
   dnl which the compiler supports such features.
