@@ -1,5 +1,5 @@
 # Customize maint.mk                           -*- makefile -*-
-# Copyright (C) 2003-2015 Free Software Foundation, Inc.
+# Copyright (C) 2003-2016 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ export VERBOSE = yes
 # 4914152 9e
 export XZ_OPT = -8e
 
-old_NEWS_hash = 41e5c3133f5d8947e2ff13aab58fc52b
+old_NEWS_hash = f17fb1ab51acb854afd2f45b8940a029
 
 # Add an exemption for sc_makefile_at_at_check.
 _makefile_at_at_check_exceptions = ' && !/^cu_install_prog/ && !/dynamic-dep/'
@@ -140,6 +140,14 @@ sc_prohibit_colon_redirection:
 	       exit 1; }  \
 	  || :
 
+# Ensure emit_mandatory_arg_note() is called if required
+sc_ensure_emit_mandatory_arg_note:
+	@cd $(srcdir)/src && GIT_PAGER= git \
+	  grep -l -- '^ *-[^-].*--.*[^[]=' *.c \
+	  | xargs grep -L emit_mandatory_arg_note | grep . \
+	  && { echo '$(ME): '"emit_mandatory_arg_note() missing" 1>&2; \
+	       exit 1; } || :
+
 # Create a list of regular expressions matching the names
 # of files included from system.h.  Exclude a couple.
 .re-list:
@@ -175,6 +183,59 @@ sc_prohibit_quotes_notation:
 	  && { echo '$(ME): '"Use quote() to avoid quoted '%s' notation" 1>&2; \
 	       exit 1; }  \
 	  || :
+
+# Files in src/ should quote all strings in error() output, so that
+# unexpected input chars like \r etc. don't corrupt the error.
+# In edge cases this can be avoided by putting the format string
+# on a separate line to the following arguments.
+sc_error_quotes:
+	@cd $(srcdir)/src && GIT_PAGER= git grep -n 'error *(.*%s.*, [^(]*);$$'\
+	  *.c | grep -v ', q' \
+	  && { echo '$(ME): '"Use quote() for error string arguments" 1>&2; \
+	       exit 1; }  \
+	  || :
+
+# Files in src/ should quote all file names in error() output
+# using quotef(), to provide quoting only when necessary,
+# but also provide better support for copy and paste when used.
+sc_error_shell_quotes:
+	@cd $(srcdir)/src && \
+	  { GIT_PAGER= git grep -E \
+	    'error \(.*%s[:"], .*(name|file)[^"]*\);$$' *.c; \
+	    GIT_PAGER= git grep -E \
+	    ' quote[ _].*file' *.c; } \
+	  | grep -Ev '(quotef|q[^ ]*name)' \
+	  && { echo '$(ME): '"Use quotef() for colon delimited names" 1>&2; \
+	       exit 1; }  \
+	  || :
+
+# Files in src/ should quote all file names in error() output
+# using quoteaf() when the name is separated with spaces,
+# to distinguish the file name at issue and
+# to provide better support for copy and paste.
+sc_error_shell_always_quotes:
+	@cd $(srcdir)/src && GIT_PAGER= git grep -E \
+	    'error \(.*[^:] %s[ "].*, .*(name|file)[^"]*\);$$' \
+	    *.c | grep -Ev '(quoteaf|q[^ ]*name)' \
+	  && { echo '$(ME): '"Use quoteaf() for space delimited names" 1>&2; \
+	       exit 1; }  \
+	  || :
+	@cd $(srcdir)/src && GIT_PAGER= git grep -E -A1 \
+	    'error \([^%]*[^:] %s[ "]' *.c | grep 'quotef' \
+	  && { echo '$(ME): '"Use quoteaf() for space delimited names" 1>&2; \
+	       exit 1; }  \
+	  || :
+
+# Avoid unstyled quoting to internal slots and thus destined for diagnostics
+# as that can leak unescaped control characters to the output, when using
+# the default "literal" quoting style.
+# Instead use quotef(), or quoteaf() or in edge cases quotearg_n_style_colon().
+# A more general PCRE would be @prohibit='quotearg_.*(?!(style|buffer))'
+sc_prohibit-quotearg:
+	@prohibit='quotearg(_n)?(|_colon|_char|_mem) ' \
+	in_vc_files='\.c$$' \
+	halt='Unstyled diagnostic quoting detected' \
+	  $(_sc_search_regexp)
 
 sc_sun_os_names:
 	@grep -nEi \
@@ -260,7 +321,7 @@ sc_long_lines:
 	sed -r 1q /dev/null 2>/dev/null					\
 	   || { echo "$@: skipping: sed -r not supported"; exit 0; };	\
 	files=$$($(VC_LIST_EXCEPT) | xargs wc -L | sed -rn '/ total$$/d;\
-		  s/^ *(8[1-9]|9[0-9]|[0-9]\{3,\}) //p');		\
+		  s/^ *(8[1-9]|9[0-9]|[0-9]{3,}) //p');			\
 	halt='line(s) with more than 80 characters; reindent';		\
 	for file in $$files; do						\
 	  expand $$file | grep -nE '^.{80}.' |				\
@@ -292,6 +353,20 @@ check-x-vs-1:
 	  | tr -s ' ' '\n' | sed 's/\.1$$//')				\
 	  | $(ASSORT) -u | diff - $$t || { rm $$t; exit 1; };		\
 	rm $$t
+
+# Ensure that non-trivial .x files in the 'man/' subdirectory,
+# i.e., files exceeding a line count of 20 or a byte count of 1000,
+# contain a Copyright notice.
+.PHONY: sc_man_check_x_copyright
+sc_man_check_x_copyright:
+	@status=0;							\
+	cd $(srcdir) && wc -cl man/*.x | head -n-1			\
+	  | awk '$$1 >= 20 || $$2 >= 1000 {print $$3}'			\
+	  | xargs grep -L 'Copyright .* Free Software Foundation'	\
+	  | grep .							\
+	  && { echo  1>&2 '$@: exceeding file size/line count limit'	\
+		  '- please add a copyright note'; status=1; };		\
+	exit $$status
 
 # Writing a portable rule to generate a manpage like '[.1' would be
 # a nightmare, so filter that out.
@@ -417,7 +492,7 @@ sc_prohibit_fail_0:
 # independently check its contents and thus detect any crash messages.
 sc_prohibit_and_fail_1:
 	@prohibit='&& fail=1'						\
-	exclude='(stat|kill|test |EGREP|grep|env|compare|2> *[^/])'	\
+	exclude='(stat|kill|test |EGREP|grep|compare|2> *[^/])'		\
 	halt='&& fail=1 detected. Please use: returns_ 1 ... || fail=1'	\
 	in_vc_files='^tests/'						\
 	  $(_sc_search_regexp)
@@ -460,6 +535,20 @@ sc_prohibit_verbose_version:
 	halt='use the print_ver_ function instead...'			\
 	  $(_sc_search_regexp)
 
+# Enforce print_ver_ tracking of dependencies
+# Each coreutils specific program a test requires
+# should be tagged by calling through env(1).
+sc_env_test_dependencies:
+	@cd $(top_srcdir) && GIT_PAGER= git grep -E \
+	    "env ($$(build-aux/gen-lists-of-programs.sh --list-progs | \
+		grep -vF '[' |paste -d'|' -s))" tests | \
+	    sed "s/\([^:]\):.*env \([^)' ]*\).*/\1 \2/" | uniq | \
+	    while read test prog; do \
+	      printf '%s' $$test | grep -q '\.pl$$' && continue; \
+	      grep -q "print_ver_.* $$prog" $$test \
+		|| echo $$test should call: print_ver_ $$prog; \
+	    done | grep . && exit 1 || :
+
 # Use framework_failure_, not the old name without the trailing underscore.
 sc_prohibit_framework_failure:
 	@prohibit='\<framework_''failure\>'				\
@@ -489,12 +578,12 @@ sc_some_programs_must_avoid_exit_failure:
 	    && { echo '$(ME): do not use EXIT_FAILURE in the above'	\
 		  1>&2; exit 1; } || :
 
-# Ensure that tests call the require_ulimit_v_ function if using ulimit -v
+# Ensure that tests call the get_min_ulimit_v_ function if using ulimit -v
 sc_prohibit_test_ulimit_without_require_:
-	@(git grep -l require_ulimit_v_ $(srcdir)/tests;		\
+	@(git grep -l get_min_ulimit_v_ $(srcdir)/tests;		\
 	  git grep -l 'ulimit -v' $(srcdir)/tests)			\
 	  | sort | uniq -u | grep . && { echo "$(ME): the above test(s)"\
-	  " should match require_ulimit_v_ with ulimit -v" 1>&2; exit 1; } || :
+	  " should match get_min_ulimit_v_ with ulimit -v" 1>&2; exit 1; } || :
 
 # Ensure that tests call the cleanup_ function if using background processes
 sc_prohibit_test_background_without_cleanup_:
@@ -659,11 +748,17 @@ sc_gitignore_missing:
 	      sort | uniq -u | grep . && { echo '$(ME): Add above'	\
 		'entries to .gitignore' >&2; exit 1; } || :
 
-# Flag redundant entreis in .gitignore
+# Flag redundant entries in .gitignore
 sc_gitignore_redundant:
 	@{ grep ^/lib .gitignore; sed 's|^|/lib|' lib/.gitignore; } |	\
 	    sort | uniq -d | grep . && { echo '$(ME): Remove above'	\
 	      'entries from .gitignore' >&2; exit 1; } || :
+
+sc_prohibit-form-feed:
+	@prohibit=$$'\f' \
+	in_vc_files='\.[chly]$$' \
+	halt='Form Feed (^L) detected' \
+	  $(_sc_search_regexp)
 
 # Override the default Cc: used in generating an announcement.
 announcement_Cc_ = $(translation_project_), \
@@ -681,7 +776,8 @@ exclude_file_name_regexp--sc_space_tab = \
   ^(tests/pr/|tests/misc/nl\.sh$$|gl/.*\.diff$$|man/help2man$$)
 exclude_file_name_regexp--sc_bindtextdomain = \
   ^(gl/.*|lib/euidaccess-stat|src/make-prime-list)\.c$$
-exclude_file_name_regexp--sc_trailing_blank = ^(tests/pr/|man/help2man)
+exclude_file_name_regexp--sc_trailing_blank = \
+  ^(tests/pr/|gl/.*\.diff$$|man/help2man)
 exclude_file_name_regexp--sc_system_h_headers = \
   ^src/((system|copy)\.h|make-prime-list\.c)$$
 
@@ -703,6 +799,7 @@ exclude_file_name_regexp--sc_prohibit_always_true_header_tests = \
   ^m4/stat-prog\.m4$$
 exclude_file_name_regexp--sc_prohibit_fail_0 = \
   (^.*/git-hooks/commit-msg|^tests/init\.sh|Makefile\.am|\.mk|.*\.texi)$$
+exclude_file_name_regexp--sc_prohibit_test_minus_ao = *\.texi$$
 exclude_file_name_regexp--sc_prohibit_atoi_atof = ^lib/euidaccess-stat\.c$$
 
 # longlong.h is maintained elsewhere.
@@ -751,12 +848,18 @@ gnulib-tests_CFLAGS = $(GNULIB_TEST_WARN_CFLAGS)
 
 # Configuration to make the tight-scope syntax-check rule work with
 # non-recursive make.
-export _gl_TS_headers = $(srcdir)/cfg.mk
-_gl_TS_dir = .
-_gl_TS_obj_files = src/*.$(OBJEXT)
+# Note _gl_TS_headers use _single line_ extern function declarations,
+# while *_SOURCES use the _two line_ form.
+export _gl_TS_headers = $(noinst_HEADERS)
+# Add exceptions for --enable-single-binary renamed functions.
+_gl_TS_unmarked_extern_functions = main usage
+_gl_TS_unmarked_extern_functions += single_binary_main_.* _usage_.*
+# Headers to search for single line extern _data_ declarations.
 _gl_TS_other_headers = $(srcdir)/src/*.h src/*.h
-
 # Tell the tight_scope rule about an exceptional "extern" variable.
 # Normally, the rule would detect its declaration, but that uses a
 # different name, __clz_tab.
 _gl_TS_unmarked_extern_vars = factor_clz_tab
+# Other tight_scope settings
+_gl_TS_dir = .
+_gl_TS_obj_files = src/*.$(OBJEXT)

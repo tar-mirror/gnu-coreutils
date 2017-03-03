@@ -1,7 +1,7 @@
 #!/bin/sh
 # Validate timeout basic operation
 
-# Copyright (C) 2008-2015 Free Software Foundation, Inc.
+# Copyright (C) 2008-2016 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 . "${srcdir=.}/tests/init.sh"; path_prepend_ ./src
 print_ver_ timeout
+require_trap_signame_
 
 # no timeout
 timeout 10 true || fail=1
@@ -50,8 +51,7 @@ test $? = 124 && fail=1
 # Ensure 'timeout' is immune to parent's SIGCHLD handler
 # Use a subshell and an exec to work around a bug in FreeBSD 5.0 /bin/sh.
 (
-  # ash doesn't support "trap '' CHLD"; it knows only signal numbers.
-  sig=$(env kill -l CHLD 2>/dev/null) && trap '' $sig
+  trap '' CHLD
 
   exec timeout 10 true
 ) || fail=1

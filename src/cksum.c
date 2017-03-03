@@ -1,5 +1,5 @@
 /* cksum -- calculate and print POSIX checksums and sizes of files
-   Copyright (C) 1992-2015 Free Software Foundation, Inc.
+   Copyright (C) 1992-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
-
+
 /* Written by Q. Frank Xia, qx@math.columbia.edu.
    Cosmetic changes and reorganization by David MacKenzie, djm@gnu.ai.mit.edu.
 
@@ -201,7 +201,7 @@ cksum (const char *file, bool print_name)
       fp = fopen (file, (O_BINARY ? "rb" : "r"));
       if (fp == NULL)
         {
-          error (0, errno, "%s", file);
+          error (0, errno, "%s", quotef (file));
           return false;
         }
     }
@@ -213,7 +213,7 @@ cksum (const char *file, bool print_name)
       unsigned char *cp = buf;
 
       if (length + bytes_read < length)
-        error (EXIT_FAILURE, 0, _("%s: file too long"), file);
+        error (EXIT_FAILURE, 0, _("%s: file too long"), quotef (file));
       length += bytes_read;
       while (bytes_read--)
         crc = (crc << 8) ^ crctab[((crc >> 24) ^ *cp++) & 0xFF];
@@ -223,7 +223,7 @@ cksum (const char *file, bool print_name)
 
   if (ferror (fp))
     {
-      error (0, errno, "%s", file);
+      error (0, errno, "%s", quotef (file));
       if (!STREQ (file, "-"))
         fclose (fp);
       return false;
@@ -231,7 +231,7 @@ cksum (const char *file, bool print_name)
 
   if (!STREQ (file, "-") && fclose (fp) == EOF)
     {
-      error (0, errno, "%s", file);
+      error (0, errno, "%s", quotef (file));
       return false;
     }
 

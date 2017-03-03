@@ -1,5 +1,5 @@
 /* chown -- change user and group ownership of files
-   Copyright (C) 1989-2015 Free Software Foundation, Inc.
+   Copyright (C) 1989-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -287,7 +287,7 @@ main (int argc, char **argv)
       struct stat ref_stats;
       if (stat (reference_file, &ref_stats))
         error (EXIT_FAILURE, errno, _("failed to get attributes of %s"),
-               quote (reference_file));
+               quoteaf (reference_file));
 
       uid = ref_stats.st_uid;
       gid = ref_stats.st_gid;
@@ -316,7 +316,7 @@ main (int argc, char **argv)
       chopt.root_dev_ino = get_root_dev_ino (&dev_ino_buf);
       if (chopt.root_dev_ino == NULL)
         error (EXIT_FAILURE, errno, _("failed to get attributes of %s"),
-               quote ("/"));
+               quoteaf ("/"));
     }
 
   bit_flags |= FTS_DEFER_STAT;

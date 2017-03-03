@@ -1,7 +1,7 @@
 #!/bin/sh
 # Verify that internal failure in chroot gives exact status.
 
-# Copyright (C) 2009-2015 Free Software Foundation, Inc.
+# Copyright (C) 2009-2016 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,9 +18,7 @@
 
 
 . "${srcdir=.}/tests/init.sh"; path_prepend_ ./src
-print_ver_ chroot
-
-require_built_ chroot
+print_ver_ chroot pwd
 
 # These tests verify exact status of internal failure; since none of
 # them actually run a command, we don't need root privileges

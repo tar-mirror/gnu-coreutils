@@ -1,7 +1,7 @@
 # -*- autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-# Copyright (C) 1991-2015 Free Software Foundation, Inc.
+# Copyright (C) 1991-2016 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -354,7 +354,9 @@ coreutils_DUMMY_1
 AC_MSG_CHECKING([ut_host in struct utmp])
 AC_CACHE_VAL([su_cv_func_ut_host_in_utmp],
 [AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
-#include <utmp.h>]], [[struct utmp ut; return !sizeof ut.ut_host;]])],
+                                   #include <utmp.h>
+                                   struct utmp ut;
+                                   int s = sizeof ut.ut_host;]])],
   [su_cv_func_ut_host_in_utmp=yes],
   [su_cv_func_ut_host_in_utmp=no])])
 AC_MSG_RESULT([$su_cv_func_ut_host_in_utmp])
@@ -367,7 +369,9 @@ if test -z "$have_ut_host"; then
   AC_MSG_CHECKING([ut_host in struct utmpx])
   AC_CACHE_VAL([su_cv_func_ut_host_in_utmpx],
   [AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
-#include <utmpx.h>]], [[struct utmpx ut; return !sizeof ut.ut_host;]])],
+                                     #include <utmpx.h>
+                                     struct utmpx ut;
+                                     int s = sizeof ut.ut_host;]])],
     [su_cv_func_ut_host_in_utmpx=yes],
     [su_cv_func_ut_host_in_utmpx=no])])
   AC_MSG_RESULT([$su_cv_func_ut_host_in_utmpx])
@@ -404,10 +408,12 @@ yes
   AC_MSG_CHECKING([c_line in struct termios])
   AC_CACHE_VAL([su_cv_sys_c_line_in_termios],
   [AC_LINK_IFELSE([AC_LANG_PROGRAM([[#if TERMIOS_NEEDS_XOPEN_SOURCE
-#define _XOPEN_SOURCE
-#endif
-#include <sys/types.h>
-#include <termios.h>]], [[struct termios t; return !sizeof t.c_line;]])],
+                                      #define _XOPEN_SOURCE
+                                     #endif
+                                     #include <sys/types.h>
+                                     #include <termios.h>
+                                     struct termios t;
+                                     int s = sizeof t.c_line;]])],
     [su_cv_sys_c_line_in_termios=yes],
     [su_cv_sys_c_line_in_termios=no])])
   AC_MSG_RESULT([$su_cv_sys_c_line_in_termios])
@@ -475,7 +481,8 @@ AC_LINK_IFELSE(
     {
       stdbuf = 1;
     }]],[[
-    return !(stdbuf == 1);]])
+    if (stdbuf != 1)
+      return 1;]])
   ],
   [stdbuf_supported=yes])
 AC_MSG_RESULT([$stdbuf_supported])
@@ -517,7 +524,9 @@ man1_MANS=`
 
 # Not installed by "make install", but must be built when creating
 # a distribution tarball.
-EXTRA_MANS=`for p in $no_install_progs_default; do echo man/$p.1; done`
+EXTRA_MANS=`for p in $no_install_progs_default $gl_no_install_prog; do
+              echo man/$p.1
+            done`
 
 # Replace all the programs by the single binary and symlinks if specified.
 single_binary_progs=

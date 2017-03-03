@@ -1,5 +1,5 @@
 /* du -- summarize disk usage
-   Copyright (C) 1988-2015 Free Software Foundation, Inc.
+   Copyright (C) 1988-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -37,7 +37,6 @@
 #include "human.h"
 #include "mountlist.h"
 #include "quote.h"
-#include "quotearg.h"
 #include "stat-size.h"
 #include "stat-time.h"
 #include "stdio--.h"
@@ -380,7 +379,7 @@ show_date (const char *format, struct timespec when)
     {
       char buf[INT_BUFSIZE_BOUND (intmax_t)];
       char *when_str = timetostr (when.tv_sec, buf);
-      error (0, 0, _("time %s is out of range"), when_str);
+      error (0, 0, _("time %s is out of range"), quote (when_str));
       fputs (when_str, stdout);
       return;
     }
@@ -419,6 +418,33 @@ print_size (const struct duinfo *pdui, const char *string)
   fflush (stdout);
 }
 
+/* Fill the di_mnt set with local mount point dev/ino pairs.  */
+
+static void
+fill_mount_table (void)
+{
+  struct mount_entry *mnt_ent = read_file_system_list (false);
+  while (mnt_ent)
+    {
+      struct mount_entry *mnt_free;
+      if (!mnt_ent->me_remote && !mnt_ent->me_dummy)
+        {
+          struct stat buf;
+          if (!stat (mnt_ent->me_mountdir, &buf))
+            hash_ins (di_mnt, buf.st_ino, buf.st_dev);
+          else
+            {
+              /* Ignore stat failure.  False positives are too common.
+                 E.g., "Permission denied" on /run/user/<name>/gvfs.  */
+            }
+        }
+
+      mnt_free = mnt_ent;
+      mnt_ent = mnt_ent->me_next;
+      free_mount_entry (mnt_free);
+    }
+}
+
 /* This function checks whether any of the directories in the cycle that
    fts detected is a mount point.  */
 
@@ -426,6 +452,16 @@ static bool
 mount_point_in_fts_cycle (FTSENT const *ent)
 {
   FTSENT const *cycle_ent = ent->fts_cycle;
+
+  if (!di_mnt)
+    {
+      /* Initialize the set of dev,inode pairs.  */
+      di_mnt = di_set_alloc ();
+      if (!di_mnt)
+        xalloc_die ();
+
+      fill_mount_table ();
+    }
 
   while (ent && ent != cycle_ent)
     {
@@ -470,7 +506,7 @@ process_file (FTS *fts, FTSENT *ent)
   if (info == FTS_DNR)
     {
       /* An error occurred, but the size is known, so count it.  */
-      error (0, ent->fts_errno, _("cannot read directory %s"), quote (file));
+      error (0, ent->fts_errno, _("cannot read directory %s"), quoteaf (file));
       ok = false;
     }
   else if (info != FTS_DP)
@@ -490,7 +526,7 @@ process_file (FTS *fts, FTSENT *ent)
 
           if (info == FTS_NS || info == FTS_SLNONE)
             {
-              error (0, ent->fts_errno, _("cannot access %s"), quote (file));
+              error (0, ent->fts_errno, _("cannot access %s"), quoteaf (file));
               return false;
             }
 
@@ -530,7 +566,7 @@ process_file (FTS *fts, FTSENT *ent)
 
         case FTS_ERR:
           /* An error occurred, but the size is known, so count it.  */
-          error (0, ent->fts_errno, "%s", quote (file));
+          error (0, ent->fts_errno, "%s", quotef (file));
           ok = false;
           break;
 
@@ -655,7 +691,7 @@ du_files (char **files, int bit_flags)
               if (errno != 0)
                 {
                   error (0, errno, _("fts_read failed: %s"),
-                         quotearg_colon (fts->fts_path));
+                         quotef (fts->fts_path));
                   ok = false;
                 }
 
@@ -678,33 +714,6 @@ du_files (char **files, int bit_flags)
     }
 
   return ok;
-}
-
-/* Fill the di_mnt set with local mount point dev/ino pairs.  */
-
-static void
-fill_mount_table (void)
-{
-  struct mount_entry *mnt_ent = read_file_system_list (false);
-  while (mnt_ent)
-    {
-      struct mount_entry *mnt_free;
-      if (!mnt_ent->me_remote && !mnt_ent->me_dummy)
-        {
-          struct stat buf;
-          if (!stat (mnt_ent->me_mountdir, &buf))
-            hash_ins (di_mnt, buf.st_ino, buf.st_dev);
-          else
-            {
-              /* Ignore stat failure.  False positives are too common.
-                 E.g., "Permission denied" on /run/user/<name>/gvfs.  */
-            }
-        }
-
-      mnt_free = mnt_ent;
-      mnt_ent = mnt_ent->me_next;
-      free_mount_entry (mnt_free);
-    }
 }
 
 int
@@ -873,7 +882,7 @@ main (int argc, char **argv)
           if (add_exclude_file (add_exclude, exclude, optarg,
                                 EXCLUDE_WILDCARDS, '\n'))
             {
-              error (0, errno, "%s", quotearg_colon (optarg));
+              error (0, errno, "%s", quotef (optarg));
               ok = false;
             }
           break;
@@ -1011,7 +1020,7 @@ main (int argc, char **argv)
 
       if (! (STREQ (files_from, "-") || freopen (files_from, "r", stdin)))
         error (EXIT_FAILURE, errno, _("cannot open %s for reading"),
-               quote (files_from));
+               quoteaf (files_from));
 
       ai = argv_iter_init_stream (stdin);
 
@@ -1034,13 +1043,6 @@ main (int argc, char **argv)
     xalloc_die ();
 
   /* Initialize the set of dev,inode pairs.  */
-
-  di_mnt = di_set_alloc ();
-  if (!di_mnt)
-    xalloc_die ();
-
-  fill_mount_table ();
-
   di_files = di_set_alloc ();
   if (!di_files)
     xalloc_die ();
@@ -1066,7 +1068,7 @@ main (int argc, char **argv)
               goto argv_iter_done;
             case AI_ERR_READ:
               error (0, errno, _("%s: read error"),
-                     quotearg_colon (files_from));
+                     quotef (files_from));
               ok = false;
               goto argv_iter_done;
             case AI_ERR_MEM:
@@ -1081,7 +1083,7 @@ main (int argc, char **argv)
              printf - | du --files0-from=- */
           error (0, 0, _("when reading file names from stdin, "
                          "no file name of %s allowed"),
-                 quote (file_name));
+                 quoteaf (file_name));
           skip_file = true;
         }
 
@@ -1103,7 +1105,7 @@ main (int argc, char **argv)
                  not totally appropriate, since NUL is the separator, not NL,
                  but it might be better than nothing.  */
               unsigned long int file_number = argv_iter_n_args (ai);
-              error (0, 0, "%s:%lu: %s", quotearg_colon (files_from),
+              error (0, 0, "%s:%lu: %s", quotef (files_from),
                      file_number, _("invalid zero-length file name"));
             }
           skip_file = true;
@@ -1121,10 +1123,11 @@ main (int argc, char **argv)
 
   argv_iter_free (ai);
   di_set_free (di_files);
-  di_set_free (di_mnt);
+  if (di_mnt)
+    di_set_free (di_mnt);
 
   if (files_from && (ferror (stdin) || fclose (stdin) != 0) && ok)
-    error (EXIT_FAILURE, 0, _("error reading %s"), quote (files_from));
+    error (EXIT_FAILURE, 0, _("error reading %s"), quoteaf (files_from));
 
   if (print_grand_total)
     print_size (&tot_dui, _("total"));

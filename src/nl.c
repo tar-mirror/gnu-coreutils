@@ -1,5 +1,5 @@
 /* nl -- number lines of files
-   Copyright (C) 1989-2015 Free Software Foundation, Inc.
+   Copyright (C) 1989-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
-
+
 /* Written by Scott Bartram (nancy!scott@uunet.uu.net)
    Revised by David MacKenzie (djm@gnu.ai.mit.edu) */
 
@@ -255,7 +255,7 @@ build_type_arg (char const **typep,
         RE_SYNTAX_POSIX_BASIC & ~RE_CONTEXT_INVALID_DUP & ~RE_NO_EMPTY_RANGES;
       errmsg = re_compile_pattern (optarg, strlen (optarg), regexp);
       if (errmsg)
-        error (EXIT_FAILURE, 0, "%s", errmsg);
+        error (EXIT_FAILURE, 0, "%s", (errmsg));
       break;
     default:
       rval = false;
@@ -426,7 +426,7 @@ nl_file (char const *file)
       stream = fopen (file, "r");
       if (stream == NULL)
         {
-          error (0, errno, "%s", file);
+          error (0, errno, "%s", quotef (file));
           return false;
         }
     }
@@ -437,14 +437,14 @@ nl_file (char const *file)
 
   if (ferror (stream))
     {
-      error (0, errno, "%s", file);
+      error (0, errno, "%s", quotef (file));
       return false;
     }
   if (STREQ (file, "-"))
     clearerr (stream);		/* Also clear EOF. */
   else if (fclose (stream) == EOF)
     {
-      error (0, errno, "%s", file);
+      error (0, errno, "%s", quotef (file));
       return false;
     }
   return true;

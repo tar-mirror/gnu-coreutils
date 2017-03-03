@@ -1,5 +1,5 @@
 /* uniq -- remove duplicate lines from a sorted file
-   Copyright (C) 1986-2015 Free Software Foundation, Inc.
+   Copyright (C) 1986-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* Written by Richard M. Stallman and David MacKenzie. */
-
+
 #include <config.h>
 
 #include <getopt.h>
@@ -28,11 +28,11 @@
 #include "fadvise.h"
 #include "hard-locale.h"
 #include "posixver.h"
-#include "quote.h"
 #include "stdio--.h"
 #include "xmemcoll.h"
 #include "xstrtol.h"
 #include "memcasecmp.h"
+#include "quote.h"
 
 /* The official name of this program (e.g., no 'g' prefix).  */
 #define PROGRAM_NAME "uniq"
@@ -185,9 +185,10 @@ With no options, matching lines are merged to the first occurrence.\n\
   -d, --repeated        only print duplicate lines, one for each group\n\
 "), stdout);
      fputs (_("\
-  -D, --all-repeated[=METHOD]  print all duplicate lines;\n\
-                          groups can be delimited with an empty line;\n\
-                          METHOD={none(default),prepend,separate}\n\
+  -D                    print all duplicate lines\n\
+      --all-repeated[=METHOD]  like -D, but allow separating groups\n\
+                                 with an empty line;\n\
+                                 METHOD={none(default),prepend,separate}\n\
 "), stdout);
      fputs (_("\
   -f, --skip-fields=N   avoid comparing the first N fields\n\
@@ -260,9 +261,9 @@ find_field (struct linebuffer const *line)
 
   for (count = 0; count < skip_fields && i < size; count++)
     {
-      while (i < size && isblank (to_uchar (lp[i])))
+      while (i < size && field_sep (lp[i]))
         i++;
-      while (i < size && !isblank (to_uchar (lp[i])))
+      while (i < size && !field_sep (lp[i]))
         i++;
     }
 
@@ -326,9 +327,9 @@ check_file (const char *infile, const char *outfile, char delimiter)
   struct linebuffer *thisline, *prevline;
 
   if (! (STREQ (infile, "-") || freopen (infile, "r", stdin)))
-    error (EXIT_FAILURE, errno, "%s", infile);
+    error (EXIT_FAILURE, errno, "%s", quotef (infile));
   if (! (STREQ (outfile, "-") || freopen (outfile, "w", stdout)))
-    error (EXIT_FAILURE, errno, "%s", outfile);
+    error (EXIT_FAILURE, errno, "%s", quotef (outfile));
 
   fadvise (stdin, FADVISE_SEQUENTIAL);
 
@@ -461,7 +462,7 @@ check_file (const char *infile, const char *outfile, char delimiter)
 
  closefiles:
   if (ferror (stdin) || fclose (stdin) != 0)
-    error (EXIT_FAILURE, 0, _("error reading %s"), infile);
+    error (EXIT_FAILURE, 0, _("error reading %s"), quoteaf (infile));
 
   /* stdout is handled via the atexit-invoked close_stdout function.  */
 
@@ -482,7 +483,7 @@ main (int argc, char **argv)
   int optc = 0;
   bool posixly_correct = (getenv ("POSIXLY_CORRECT") != NULL);
   enum Skip_field_option_type skip_field_option_type = SFO_NONE;
-  int nfiles = 0;
+  unsigned int nfiles = 0;
   char const *file[2];
   char delimiter = '\n';	/* change with --zero-terminated, -z */
   bool output_option_used = false;   /* if true, one of -u/-d/-D/-c was used */

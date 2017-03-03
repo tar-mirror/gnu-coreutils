@@ -1,6 +1,6 @@
 /* mountlist.c -- return a list of mounted file systems
 
-   Copyright (C) 1991-1992, 1997-2015 Free Software Foundation, Inc.
+   Copyright (C) 1991-1992, 1997-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -432,7 +432,6 @@ read_file_system_list (bool need_fs_type)
   {
     struct tabmntent *mntlist, *p;
     struct mntent *mnt;
-    struct mount_entry *me;
 
     /* the third and fourth arguments could be used to filter mounts,
        but Crays doesn't seem to have any mounts that we want to
@@ -447,6 +446,7 @@ read_file_system_list (bool need_fs_type)
         me = xmalloc (sizeof *me);
         me->me_devname = xstrdup (mnt->mnt_fsname);
         me->me_mountdir = xstrdup (mnt->mnt_dir);
+        me->me_mntroot = NULL;
         me->me_type = xstrdup (mnt->mnt_type);
         me->me_type_malloced = 1;
         me->me_dummy = ME_DUMMY (me->me_devname, me->me_type);
@@ -478,7 +478,8 @@ read_file_system_list (bool need_fs_type)
         while (getline (&line, &buf_size, fp) != -1)
           {
             unsigned int devmaj, devmin;
-            int target_s, target_e, type_s, type_e, source_s, source_e;
+            int target_s, target_e, type_s, type_e;
+            int source_s, source_e, mntroot_s, mntroot_e;
             char test;
             char *dash;
             int rc;
@@ -486,13 +487,15 @@ read_file_system_list (bool need_fs_type)
             rc = sscanf(line, "%*u "        /* id - discarded  */
                               "%*u "        /* parent - discarded */
                               "%u:%u "      /* dev major:minor  */
-                              "%*s "        /* mountroot - discarded  */
+                              "%n%*s%n "    /* mountroot */
                               "%n%*s%n"     /* target, start and end  */
                               "%c",         /* more data...  */
                               &devmaj, &devmin,
+                              &mntroot_s, &mntroot_e,
                               &target_s, &target_e,
                               &test);
-            if (rc != 3 && rc != 5)  /* 5 if %n included in count.  */
+
+            if (rc != 3 && rc != 7)  /* 7 if %n included in count.  */
               continue;
 
             /* skip optional fields, terminated by " - "  */
@@ -511,16 +514,19 @@ read_file_system_list (bool need_fs_type)
               continue;
 
             /* manipulate the sub-strings in place.  */
+            line[mntroot_e] = '\0';
             line[target_e] = '\0';
             dash[type_e] = '\0';
             dash[source_e] = '\0';
             unescape_tab (dash + source_s);
             unescape_tab (line + target_s);
+            unescape_tab (line + mntroot_s);
 
             me = xmalloc (sizeof *me);
 
             me->me_devname = xstrdup (dash + source_s);
             me->me_mountdir = xstrdup (line + target_s);
+            me->me_mntroot = xstrdup (line + mntroot_s);
             me->me_type = xstrdup (dash + type_s);
             me->me_type_malloced = 1;
             me->me_dev = makedev (devmaj, devmin);
@@ -566,6 +572,7 @@ read_file_system_list (bool need_fs_type)
             me = xmalloc (sizeof *me);
             me->me_devname = xstrdup (mnt->mnt_fsname);
             me->me_mountdir = xstrdup (mnt->mnt_dir);
+            me->me_mntroot = NULL;
             me->me_type = xstrdup (mnt->mnt_type);
             me->me_type_malloced = 1;
             me->me_dummy = ME_DUMMY (me->me_devname, me->me_type, bind);
@@ -598,6 +605,7 @@ read_file_system_list (bool need_fs_type)
         me = xmalloc (sizeof *me);
         me->me_devname = xstrdup (fsp->f_mntfromname);
         me->me_mountdir = xstrdup (fsp->f_mntonname);
+        me->me_mntroot = NULL;
         me->me_type = fs_type;
         me->me_type_malloced = 0;
         me->me_dummy = ME_DUMMY (me->me_devname, me->me_type);
@@ -624,6 +632,7 @@ read_file_system_list (bool need_fs_type)
         me = xmalloc (sizeof *me);
         me->me_devname = xstrdup (fsp->f_mntfromname);
         me->me_mountdir = xstrdup (fsp->f_mntonname);
+        me->me_mntroot = NULL;
         me->me_type = xstrdup (fsp->f_fstypename);
         me->me_type_malloced = 1;
         me->me_dummy = ME_DUMMY (me->me_devname, me->me_type);
@@ -650,6 +659,7 @@ read_file_system_list (bool need_fs_type)
         me = xmalloc (sizeof *me);
         me->me_devname = xstrdup (fsd.fd_req.devname);
         me->me_mountdir = xstrdup (fsd.fd_req.path);
+        me->me_mntroot = NULL;
         me->me_type = gt_names[fsd.fd_req.fstype];
         me->me_type_malloced = 0;
         me->me_dummy = ME_DUMMY (me->me_devname, me->me_type);
@@ -748,6 +758,7 @@ read_file_system_list (bool need_fs_type)
           me->me_devname = xstrdup (fi.device_name[0] != '\0'
                                     ? fi.device_name : fi.fsh_name);
           me->me_mountdir = xstrdup (re != NULL ? re->name : fi.fsh_name);
+          me->me_mntroot = NULL;
           me->me_type = xstrdup (fi.fsh_name);
           me->me_type_malloced = 1;
           me->me_dev = fi.dev;
@@ -797,6 +808,7 @@ read_file_system_list (bool need_fs_type)
         me = xmalloc (sizeof *me);
         me->me_devname = xstrdup (stats[counter].f_mntfromname);
         me->me_mountdir = xstrdup (stats[counter].f_mntonname);
+        me->me_mntroot = NULL;
         me->me_type = xstrdup (FS_TYPE (stats[counter]));
         me->me_type_malloced = 1;
         me->me_dummy = ME_DUMMY (me->me_devname, me->me_type);
@@ -833,6 +845,7 @@ read_file_system_list (bool need_fs_type)
         strcpy (me->me_devname + 5, mnt.mt_dev);
 # endif
         me->me_mountdir = xstrdup (mnt.mt_filsys);
+        me->me_mntroot = NULL;
         me->me_dev = (dev_t) -1;        /* Magic; means not known yet. */
         me->me_type = "";
         me->me_type_malloced = 0;
@@ -880,6 +893,7 @@ read_file_system_list (bool need_fs_type)
         me = xmalloc (sizeof *me);
         me->me_devname = xstrdup ((*ent)->mt_resource);
         me->me_mountdir = xstrdup ((*ent)->mt_directory);
+        me->me_mntroot = NULL;
         me->me_type = xstrdup ((*ent)->mt_fstype);
         me->me_type_malloced = 1;
         me->me_dummy = ME_DUMMY (me->me_devname, me->me_type);
@@ -942,6 +956,7 @@ read_file_system_list (bool need_fs_type)
             me = xmalloc (sizeof *me);
             me->me_devname = xstrdup (mnt.mnt_special);
             me->me_mountdir = xstrdup (mnt.mnt_mountp);
+            me->me_mntroot = NULL;
             me->me_type = xstrdup (mnt.mnt_fstype);
             me->me_type_malloced = 1;
             me->me_dummy = MNT_IGNORE (&mnt) != 0;
@@ -1020,6 +1035,7 @@ read_file_system_list (bool need_fs_type)
                                       vmp->vmt_data[VMT_OBJECT].vmt_off);
           }
         me->me_mountdir = xstrdup (thisent + vmp->vmt_data[VMT_STUB].vmt_off);
+        me->me_mntroot = NULL;
         me->me_type = xstrdup (fstype_to_string (vmp->vmt_gfstype));
         me->me_type_malloced = 1;
         options = thisent + vmp->vmt_data[VMT_ARGS].vmt_off;
@@ -1063,6 +1079,7 @@ read_file_system_list (bool need_fs_type)
             me = xmalloc (sizeof *me);
             me->me_devname = xstrdup (dev.f_mntfromname);
             me->me_mountdir = xstrdup (dev.f_mntonname);
+            me->me_mntroot = NULL;
             me->me_type = xstrdup (dev.f_fstypename);
             me->me_type_malloced = 1;
             me->me_dummy = ME_DUMMY (me->me_devname, me->me_type);
@@ -1105,6 +1122,7 @@ void free_mount_entry (struct mount_entry *me)
 {
   free (me->me_devname);
   free (me->me_mountdir);
+  free (me->me_mntroot);
   if (me->me_type_malloced)
     free (me->me_type);
   free (me);

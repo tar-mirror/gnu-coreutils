@@ -1,5 +1,5 @@
 /* system-dependent definitions for coreutils
-   Copyright (C) 1989-2015 Free Software Foundation, Inc.
+   Copyright (C) 1989-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -154,6 +154,13 @@ enum
    a bit safer than casting to unsigned char, since it catches some type
    errors that the cast doesn't.  */
 static inline unsigned char to_uchar (char ch) { return ch; }
+
+/* '\n' is considered a field separator with  --zero-terminated.  */
+static inline bool
+field_sep (unsigned char ch)
+{
+  return isblank (ch) || ch == '\n';
+}
 
 #include <locale.h>
 
@@ -427,6 +434,15 @@ enum
 # define ATTRIBUTE_WARN_UNUSED_RESULT __attribute__ ((__warn_unused_result__))
 #endif
 
+#ifdef __GNUC__
+# define LIKELY(cond)    __builtin_expect ((cond), 1)
+# define UNLIKELY(cond)  __builtin_expect ((cond), 0)
+#else
+# define LIKELY(cond)    (cond)
+# define UNLIKELY(cond)  (cond)
+#endif
+
+
 #if defined strdupa
 # define ASSIGN_STRDUPA(DEST, S)		\
   do { DEST = strdupa (S); } while (0)
@@ -487,27 +503,54 @@ ptr_align (void const *ptr, size_t alignment)
 }
 
 /* Return whether the buffer consists entirely of NULs.
-   Note the word after the buffer must be non NUL. */
+   Based on memeqzero in CCAN by Rusty Russell under CC0 (Public domain).  */
 
 static inline bool _GL_ATTRIBUTE_PURE
-is_nul (void const *buf, size_t bufsize)
+is_nul (void const *buf, size_t length)
 {
-  typedef uintptr_t word;
-  void const *vp;
-  char const *cbuf = buf;
-  word const *wp = buf;
+  const unsigned char *p = buf;
+/* Using possibly unaligned access for the first 16 bytes
+   saves about 30-40 cycles, though it is strictly undefined behavior
+   and so would need __attribute__ ((__no_sanitize_undefined__))
+   to avoid -fsanitize=undefined warnings.
+   Considering coreutils is mainly concerned with relatively
+   large buffers, we'll just use the defined behavior.  */
+#if 0 && _STRING_ARCH_unaligned
+  unsigned long word;
+#else
+  unsigned char word;
+#endif
 
-  /* Find first nonzero *word*, or the word with the sentinel.  */
-  while (*wp++ == 0)
-    continue;
+  if (! length)
+      return true;
 
-  /* Find the first nonzero *byte*, or the sentinel.  */
-  vp = wp - 1;
-  char const *cp = vp;
-  while (*cp++ == 0)
-    continue;
+  /* Check len bytes not aligned on a word.  */
+  while (UNLIKELY (length & (sizeof word - 1)))
+    {
+      if (*p)
+        return false;
+      p++;
+      length--;
+      if (! length)
+        return true;
+   }
 
-  return cbuf + bufsize < cp;
+  /* Check up to 16 bytes a word at a time.  */
+  for (;;)
+    {
+      memcpy (&word, p, sizeof word);
+      if (word)
+        return false;
+      p += sizeof word;
+      length -= sizeof word;
+      if (! length)
+        return true;
+      if (UNLIKELY (length & 15) == 0)
+        break;
+   }
+
+   /* Now we know first 16 bytes are NUL, memcmp with self.  */
+   return memcmp (buf, p, length) == 0;
 }
 
 /* If 10*Accum + Digit_val is larger than the maximum value for Type,
@@ -657,7 +700,7 @@ WARNING: Circular directory structure.\n\
 This almost certainly means that you have a corrupted file system.\n\
 NOTIFY YOUR SYSTEM MANAGER.\n\
 The following directory is part of the cycle:\n  %s\n"), \
-             quote (file_name));	\
+             quotef (file_name));	\
     }					\
   while (0)
 
@@ -695,3 +738,22 @@ is_ENOTSUP (int err)
 {
   return err == EOPNOTSUPP || (ENOTSUP != EOPNOTSUPP && err == ENOTSUP);
 }
+
+
+/* How coreutils quotes filenames, to minimize use of outer quotes,
+   but also provide better support for copy and paste when used.  */
+#include "quotearg.h"
+
+/* Use these to shell quote only when necessary,
+   when the quoted item is already delimited with colons.  */
+#define quotef(arg) \
+  quotearg_n_style_colon (0, shell_escape_quoting_style, arg)
+#define quotef_n(n, arg) \
+  quotearg_n_style_colon (n, shell_escape_quoting_style, arg)
+
+/* Use these when there are spaces around the file name,
+   in the error message.  */
+#define quoteaf(arg) \
+  quotearg_style (shell_escape_always_quoting_style, arg)
+#define quoteaf_n(n, arg) \
+  quotearg_n_style (n, shell_escape_always_quoting_style, arg)

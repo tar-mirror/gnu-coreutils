@@ -1,7 +1,7 @@
 package Coreutils;
 # This is a testing framework.
 
-# Copyright (C) 1998-2015 Free Software Foundation, Inc.
+# Copyright (C) 1998-2016 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -224,6 +224,7 @@ sub run_tests ($$$$$)
   # To indicate that $prog is a shell built-in, you'd make it a string 'ref'.
   # E.g., call run_tests ($prog, \$prog, \@Tests, $save_temps, $verbose);
   # If it's a ref, invoke it via "env":
+  my $built_prog = ref $prog ? $$prog : $prog;
   my @prog = ref $prog ? (qw(env --), $$prog) : $prog;
 
   # Warn about empty t_spec.
@@ -270,6 +271,9 @@ sub run_tests ($$$$$)
         }
     }
   return 1 if $bad_test_name;
+
+  $ENV{built_programs} =~ /\b$built_prog\b/ ||
+    CuSkip::skip "required program(s) not built [$built_prog]\n";
 
   # FIXME check exit status
   system (@prog, '--version') if $verbose;

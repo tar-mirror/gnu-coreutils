@@ -1,7 +1,7 @@
 #!/bin/sh
 # Validate yes buffer handling
 
-# Copyright (C) 2015 Free Software Foundation, Inc.
+# Copyright (C) 2015-2016 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,7 +31,8 @@ done
 
 # Check the many small items case,
 # both fitting and overflowing the internal buffer
-if env true $(seq 4000); then
+external=env
+if external true $(seq 4000); then
   for i in 100 4000; do
     seq $i | paste -s -d ' ' | sed p > out.1
     yes $(seq $i) | head -n2 > out.2

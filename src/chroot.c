@@ -1,5 +1,5 @@
 /* chroot -- run command or shell with special root directory
-   Copyright (C) 1995-2015 Free Software Foundation, Inc.
+   Copyright (C) 1995-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -200,7 +200,7 @@ Run COMMAND with root directory set to NEWROOT.\n\
 "), stdout);
       printf (_("\
   --skip-chdir           do not change working directory to %s\n\
-"), quote ("/"));
+"), quoteaf ("/"));
 
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
@@ -284,7 +284,7 @@ main (int argc, char **argv)
   if (! is_oldroot && skip_chdir)
     {
       error (0, 0, _("option --skip-chdir only permitted if NEWROOT is old %s"),
-             quote ("/"));
+             quoteaf ("/"));
       usage (EXIT_CANCELED);
     }
 
@@ -327,7 +327,7 @@ main (int argc, char **argv)
 
   if (chroot (newroot) != 0)
     error (EXIT_CANCELED, errno, _("cannot change root directory to %s"),
-           quote (newroot));
+           quoteaf (newroot));
 
   if (! skip_chdir && chdir ("/"))
     error (EXIT_CANCELED, errno, _("cannot chdir to root directory"));
@@ -355,7 +355,7 @@ main (int argc, char **argv)
       char const *err = parse_user_spec (userspec, &uid, &gid, NULL, NULL);
 
       if (err && uid_unset (uid) && gid_unset (gid))
-        error (EXIT_CANCELED, errno, "%s", err);
+        error (EXIT_CANCELED, errno, "%s", (err));
     }
 
   /* If no gid is supplied or looked up, do so now.

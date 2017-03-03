@@ -1,5 +1,5 @@
 /* nice -- run a program with modified niceness
-   Copyright (C) 1990-2015 Free Software Foundation, Inc.
+   Copyright (C) 1990-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -215,6 +215,6 @@ main (int argc, char **argv)
   execvp (argv[i], &argv[i]);
 
   int exit_status = errno == ENOENT ? EXIT_ENOENT : EXIT_CANNOT_INVOKE;
-  error (0, errno, "%s", argv[i]);
+  error (0, errno, "%s", quote (argv[i]));
   return exit_status;
 }

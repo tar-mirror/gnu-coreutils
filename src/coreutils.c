@@ -1,4 +1,4 @@
-/* Copyright (C) 2014-2015 Free Software Foundation, Inc.
+/* Copyright (C) 2014-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -174,7 +174,8 @@ main (int argc, char **argv)
         {
           argv[nskip] = arg_name; /* XXX: Discards any specified path.  */
           launch_program (prog_name, argc - nskip, argv + nskip);
-          error (EXIT_FAILURE, 0, _("unknown program %s"), quote (prog_name));
+          error (EXIT_FAILURE, 0, _("unknown program %s"),
+                 quote (prog_name));
         }
     }
 
@@ -198,7 +199,8 @@ main (int argc, char **argv)
   /* Only print the error message when no options have been passed
      to coreutils.  */
   if (optind == 1 && prog_name && !STREQ (prog_name, "coreutils"))
-    error (0, 0, _("unknown program %s"), quote (prog_name));
+    error (0, 0, _("unknown program %s"),
+           quote (prog_name));
 
   usage (EXIT_FAILURE);
 }

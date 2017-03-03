@@ -1,6 +1,6 @@
-/* get-permissions.c - get permissions of a file
+/* Get permissions of a file.  -*- coding: utf-8 -*-
 
-   Copyright (C) 2002-2003, 2005-2015 Free Software Foundation, Inc.
+   Copyright (C) 2002-2003, 2005-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -59,6 +59,12 @@ get_permissions (const char *name, int desc, mode_t mode,
       if (ctx->default_acl == NULL)
 	return -1;
     }
+
+# if HAVE_ACL_TYPE_NFS4  /* FreeBSD */
+
+  /* TODO (see set_permissions). */
+
+# endif
 
 #  else /* HAVE_ACL_TYPE_EXTENDED */
   /* Mac OS X */

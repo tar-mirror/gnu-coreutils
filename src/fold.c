@@ -1,5 +1,5 @@
 /* fold -- wrap each input line to fit in specified width.
-   Copyright (C) 1991-2015 Free Software Foundation, Inc.
+   Copyright (C) 1991-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -136,7 +136,7 @@ fold_file (char const *filename, size_t width)
 
   if (istream == NULL)
     {
-      error (0, errno, "%s", filename);
+      error (0, errno, "%s", quotef (filename));
       return false;
     }
 
@@ -221,14 +221,14 @@ fold_file (char const *filename, size_t width)
 
   if (ferror (istream))
     {
-      error (0, saved_errno, "%s", filename);
+      error (0, saved_errno, "%s", quotef (filename));
       if (!STREQ (filename, "-"))
         fclose (istream);
       return false;
     }
   if (!STREQ (filename, "-") && fclose (istream) == EOF)
     {
-      error (0, errno, "%s", filename);
+      error (0, errno, "%s", quotef (filename));
       return false;
     }
 

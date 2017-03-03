@@ -1,5 +1,5 @@
 /* copy.c -- core functions for copying files and directories
-   Copyright (C) 1989-2015 Free Software Foundation, Inc.
+   Copyright (C) 1989-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -178,7 +178,7 @@ create_hole (int fd, char const *name, bool punch_holes, off_t size)
 
   if (file_end < 0)
     {
-      error (0, errno, _("cannot lseek %s"), quote (name));
+      error (0, errno, _("cannot lseek %s"), quoteaf (name));
       return false;
     }
 
@@ -188,7 +188,7 @@ create_hole (int fd, char const *name, bool punch_holes, off_t size)
      then make this allocation permanent.  */
   if (punch_holes && punch_hole (fd, file_end - size, size) < 0)
     {
-      error (0, errno, _("error deallocating %s"), quote (name));
+      error (0, errno, _("error deallocating %s"), quoteaf (name));
       return false;
     }
 
@@ -226,7 +226,7 @@ sparse_copy (int src_fd, int dest_fd, char *buf, size_t buf_size,
         {
           if (errno == EINTR)
             continue;
-          error (0, errno, _("error reading %s"), quote (src_name));
+          error (0, errno, _("error reading %s"), quoteaf (src_name));
           return false;
         }
       if (n_read == 0)
@@ -245,17 +245,7 @@ sparse_copy (int src_fd, int dest_fd, char *buf, size_t buf_size,
           csize = MIN (csize, n_read);
 
           if (hole_size && csize)
-            {
-              /* Setup sentinel required by is_nul().  */
-              typedef uintptr_t word;
-              word isnul_tmp;
-              memcpy (&isnul_tmp, cbuf + csize, sizeof (word));
-              memset (cbuf + csize, 1, sizeof (word));
-
-              make_hole = is_nul (cbuf, csize);
-
-              memcpy (cbuf + csize, &isnul_tmp, sizeof (word));
-            }
+            make_hole = is_nul (cbuf, csize);
 
           bool transition = (make_hole != prev_hole) && psize;
           bool last_chunk = (n_read == csize && ! make_hole) || ! csize;
@@ -269,7 +259,8 @@ sparse_copy (int src_fd, int dest_fd, char *buf, size_t buf_size,
                 {
                   if (full_write (dest_fd, pbuf, psize) != psize)
                     {
-                      error (0, errno, _("error writing %s"), quote (dst_name));
+                      error (0, errno, _("error writing %s"),
+                             quoteaf (dst_name));
                       return false;
                     }
                 }
@@ -299,7 +290,7 @@ sparse_copy (int src_fd, int dest_fd, char *buf, size_t buf_size,
                 psize += csize;
               else
                 {
-                  error (0, 0, _("overflow reading %s"), quote (src_name));
+                  error (0, 0, _("overflow reading %s"), quoteaf (src_name));
                   return false;
                 }
             }
@@ -417,7 +408,7 @@ extent_copy (int src_fd, int dest_fd, char *buf, size_t buf_size,
             }
 
           error (0, errno, _("%s: failed to get extents info"),
-                 quote (src_name));
+                 quotef (src_name));
           return false;
         }
 
@@ -441,6 +432,20 @@ extent_copy (int src_fd, int dest_fd, char *buf, size_t buf_size,
               ext_len = 0;
             }
 
+          /* Truncate extent to EOF.  Extents starting after EOF are
+             treated as zero length extents starting right after EOF.
+             Generally this will trigger with an extent starting after
+             src_total_size, and result in creating a hole or zeros until EOF.
+             Though in a file in which extents have changed since src_total_size
+             was determined, we might have an extent spanning that size,
+             in which case we'll only copy data up to that size.  */
+          if (src_total_size < ext_start + ext_len)
+            {
+              if (src_total_size < ext_start)
+                ext_start = src_total_size;
+              ext_len = src_total_size - ext_start;
+            }
+
           ext_hole_size = ext_start - last_ext_start - last_ext_len;
 
           wrote_hole_at_eof = false;
@@ -449,7 +454,7 @@ extent_copy (int src_fd, int dest_fd, char *buf, size_t buf_size,
             {
               if (lseek (src_fd, ext_start, SEEK_SET) < 0)
                 {
-                  error (0, errno, _("cannot lseek %s"), quote (src_name));
+                  error (0, errno, _("cannot lseek %s"), quoteaf (src_name));
                 fail:
                   extent_scan_free (&scan);
                   return false;
@@ -475,7 +480,8 @@ extent_copy (int src_fd, int dest_fd, char *buf, size_t buf_size,
 
                   if (! write_zeros (dest_fd, nzeros))
                     {
-                      error (0, errno, _("%s: write failed"), quote (dst_name));
+                      error (0, errno, _("%s: write failed"),
+                             quotef (dst_name));
                       goto fail;
                     }
 
@@ -503,14 +509,17 @@ extent_copy (int src_fd, int dest_fd, char *buf, size_t buf_size,
               off_t n_read;
               empty_extent = false;
               last_ext_len = ext_len;
+              bool read_hole;
 
               if ( ! sparse_copy (src_fd, dest_fd, buf, buf_size,
                                   sparse_mode == SPARSE_ALWAYS ? hole_size: 0,
                                   true, src_name, dst_name, ext_len, &n_read,
-                                  &wrote_hole_at_eof))
+                                  &read_hole))
                 goto fail;
 
               dest_pos = ext_start + n_read;
+              if (n_read)
+                wrote_hole_at_eof = read_hole;
             }
 
           /* If the file ends with unwritten extents not accounted for in the
@@ -544,14 +553,14 @@ extent_copy (int src_fd, int dest_fd, char *buf, size_t buf_size,
           ? ftruncate (dest_fd, src_total_size)
           : ! write_zeros (dest_fd, src_total_size - dest_pos)))
     {
-      error (0, errno, _("failed to extend %s"), quote (dst_name));
+      error (0, errno, _("failed to extend %s"), quoteaf (dst_name));
       return false;
     }
 
   if (sparse_mode == SPARSE_ALWAYS && dest_pos < src_total_size
       && punch_hole (dest_fd, dest_pos, src_total_size - dest_pos) < 0)
     {
-      error (0, errno, _("error deallocating %s"), quote (dst_name));
+      error (0, errno, _("error deallocating %s"), quoteaf (dst_name));
       return false;
     }
 
@@ -614,7 +623,7 @@ copy_attr_allerror (struct error_context *ctx _GL_UNUSED,
 static char const *
 copy_attr_quote (struct error_context *ctx _GL_UNUSED, char const *str)
 {
-  return quote (str);
+  return quoteaf (str);
 }
 
 static void
@@ -705,7 +714,7 @@ copy_dir (char const *src_name_in, char const *dst_name_in, bool new_dst,
     {
       /* This diagnostic is a bit vague because savedir can fail in
          several different ways.  */
-      error (0, errno, _("cannot access %s"), quote (src_name_in));
+      error (0, errno, _("cannot access %s"), quoteaf (src_name_in));
       return false;
     }
 
@@ -787,7 +796,7 @@ set_owner (const struct cp_options *x, char const *dst_name, int dest_desc,
         {
           if (! owner_failure_ok (x))
             error (0, errno, _("clearing permissions for %s"),
-                   quote (dst_name));
+                   quoteaf (dst_name));
           return -x->require_preserve;
         }
     }
@@ -822,7 +831,7 @@ set_owner (const struct cp_options *x, char const *dst_name, int dest_desc,
   if (! chown_failure_ok (x))
     {
       error (0, errno, _("failed to preserve ownership for %s"),
-             quote (dst_name));
+             quoteaf (dst_name));
       if (x->require_preserve)
         return -1;
     }
@@ -847,13 +856,13 @@ set_author (const char *dst_name, int dest_desc, const struct stat *src_sb)
                  ? file_name_lookup (dst_name, 0, 0)
                  : getdport (dest_desc));
   if (file == MACH_PORT_NULL)
-    error (0, errno, _("failed to lookup file %s"), quote (dst_name));
+    error (0, errno, _("failed to lookup file %s"), quoteaf (dst_name));
   else
     {
       error_t err = file_chauthor (file, src_sb->st_author);
       if (err)
         error (0, err, _("failed to preserve authorship for %s"),
-               quote (dst_name));
+               quoteaf (dst_name));
       mach_port_deallocate (mach_task_self (), file);
     }
 #else
@@ -905,7 +914,7 @@ set_process_security_ctx (char const *src_name, char const *dst_name,
             {
               error (0, errno,
                      _("failed to get security context of %s"),
-                     quote (src_name));
+                     quoteaf (src_name));
             }
           if (x->require_preserve_context)
             return false;
@@ -920,7 +929,7 @@ set_process_security_ctx (char const *src_name, char const *dst_name,
         {
           error (0, errno,
                  _("failed to set default file creation context for %s"),
-                 quote (dst_name));
+                 quoteaf (dst_name));
         }
     }
 
@@ -946,7 +955,7 @@ set_file_security_ctx (char const *dst_name, bool process_local,
     {
       if (all_errors || (some_errors && !errno_unsupported (errno)))
         error (0, errno, _("failed to set the security context of %s"),
-               quote_n (0, dst_name));
+               quoteaf_n (0, dst_name));
       return false;
     }
 
@@ -1018,13 +1027,13 @@ copy_reg (char const *src_name, char const *dst_name,
                        | (x->dereference == DEREF_NEVER ? O_NOFOLLOW : 0)));
   if (source_desc < 0)
     {
-      error (0, errno, _("cannot open %s for reading"), quote (src_name));
+      error (0, errno, _("cannot open %s for reading"), quoteaf (src_name));
       return false;
     }
 
   if (fstat (source_desc, &src_open_sb) != 0)
     {
-      error (0, errno, _("cannot fstat %s"), quote (src_name));
+      error (0, errno, _("cannot fstat %s"), quoteaf (src_name));
       return_val = false;
       goto close_src_desc;
     }
@@ -1035,7 +1044,7 @@ copy_reg (char const *src_name, char const *dst_name,
     {
       error (0, 0,
              _("skipping file %s, as it was replaced while being copied"),
-             quote (src_name));
+             quoteaf (src_name));
       return_val = false;
       goto close_src_desc;
     }
@@ -1074,12 +1083,12 @@ copy_reg (char const *src_name, char const *dst_name,
         {
           if (unlink (dst_name) != 0)
             {
-              error (0, errno, _("cannot remove %s"), quote (dst_name));
+              error (0, errno, _("cannot remove %s"), quoteaf (dst_name));
               return_val = false;
               goto close_src_desc;
             }
           if (x->verbose)
-            printf (_("removed %s\n"), quote (dst_name));
+            printf (_("removed %s\n"), quoteaf (dst_name));
 
           /* Tell caller that the destination file was unlinked.  */
           *new_dst = true;
@@ -1132,7 +1141,7 @@ copy_reg (char const *src_name, char const *dst_name,
               else
                 {
                   error (0, 0, _("not writing through dangling symlink %s"),
-                         quote (dst_name));
+                         quoteaf (dst_name));
                   return_val = false;
                   goto close_src_desc;
                 }
@@ -1170,14 +1179,14 @@ copy_reg (char const *src_name, char const *dst_name,
 
       /* Otherwise, it's an error.  */
       error (0, dest_errno, _("cannot create regular file %s"),
-             quote (dst_name));
+             quoteaf (dst_name));
       return_val = false;
       goto close_src_desc;
     }
 
   if (fstat (dest_desc, &sb) != 0)
     {
-      error (0, errno, _("cannot fstat %s"), quote (dst_name));
+      error (0, errno, _("cannot fstat %s"), quoteaf (dst_name));
       return_val = false;
       goto close_src_and_dst_desc;
     }
@@ -1191,7 +1200,7 @@ copy_reg (char const *src_name, char const *dst_name,
           if (!clone_ok)
             {
               error (0, errno, _("failed to clone %s from %s"),
-                     quote_n (0, dst_name), quote_n (1, src_name));
+                     quoteaf_n (0, dst_name), quoteaf_n (1, src_name));
               return_val = false;
               goto close_src_and_dst_desc;
             }
@@ -1201,11 +1210,8 @@ copy_reg (char const *src_name, char const *dst_name,
 
   if (data_copy_required)
     {
-      typedef uintptr_t word;
-
       /* Choose a suitable buffer size; it may be adjusted later.  */
-      size_t buf_alignment = lcm (getpagesize (), sizeof (word));
-      size_t buf_alignment_slop = sizeof (word) + buf_alignment - 1;
+      size_t buf_alignment = getpagesize ();
       size_t buf_size = io_blksize (sb);
       size_t hole_size = ST_BLKSIZE (sb);
 
@@ -1236,7 +1242,7 @@ copy_reg (char const *src_name, char const *dst_name,
         {
           /* Compute the least common multiple of the input and output
              buffer sizes, adjusting for outlandish values.  */
-          size_t blcm_max = MIN (SIZE_MAX, SSIZE_MAX) - buf_alignment_slop;
+          size_t blcm_max = MIN (SIZE_MAX, SSIZE_MAX) - buf_alignment;
           size_t blcm = buffer_lcm (io_blksize (src_open_sb), buf_size,
                                     blcm_max);
 
@@ -1254,8 +1260,7 @@ copy_reg (char const *src_name, char const *dst_name,
             buf_size = blcm;
         }
 
-      /* Make a buffer with space for a sentinel at the end.  */
-      buf_alloc = xmalloc (buf_size + buf_alignment_slop);
+      buf_alloc = xmalloc (buf_size + buf_alignment);
       buf = ptr_align (buf_alloc, buf_alignment);
 
       if (sparse_src)
@@ -1292,7 +1297,7 @@ copy_reg (char const *src_name, char const *dst_name,
         }
       else if (wrote_hole_at_eof && ftruncate (dest_desc, n_read) < 0)
         {
-          error (0, errno, _("failed to extend %s"), quote (dst_name));
+          error (0, errno, _("failed to extend %s"), quoteaf (dst_name));
           return_val = false;
           goto close_src_and_dst_desc;
         }
@@ -1307,7 +1312,7 @@ preserve_metadata:
 
       if (fdutimens (dest_desc, dst_name, timespec) != 0)
         {
-          error (0, errno, _("preserving times for %s"), quote (dst_name));
+          error (0, errno, _("preserving times for %s"), quoteaf (dst_name));
           if (x->require_preserve)
             {
               return_val = false;
@@ -1375,7 +1380,7 @@ preserve_metadata:
           && fchmod_or_lchmod (dest_desc, dst_name, dst_mode) != 0)
         {
           error (0, errno, _("preserving permissions for %s"),
-                 quote (dst_name));
+                 quoteaf (dst_name));
           if (x->require_preserve)
             return_val = false;
         }
@@ -1384,13 +1389,13 @@ preserve_metadata:
 close_src_and_dst_desc:
   if (close (dest_desc) < 0)
     {
-      error (0, errno, _("failed to close %s"), quote (dst_name));
+      error (0, errno, _("failed to close %s"), quoteaf (dst_name));
       return_val = false;
     }
 close_src_desc:
   if (close (source_desc) < 0)
     {
-      error (0, errno, _("failed to close %s"), quote (src_name));
+      error (0, errno, _("failed to close %s"), quoteaf (src_name));
       return_val = false;
     }
 
@@ -1668,14 +1673,14 @@ overwrite_ok (struct cp_options const *x, char const *dst_name,
                 || x->unlink_dest_after_failed_open)
                ? _("%s: replace %s, overriding mode %04lo (%s)? ")
                : _("%s: unwritable %s (mode %04lo, %s); try anyway? "),
-               program_name, quote (dst_name),
+               program_name, quoteaf (dst_name),
                (unsigned long int) (dst_sb->st_mode & CHMOD_MODE_BITS),
                &perms[1]);
     }
   else
     {
       fprintf (stderr, _("%s: overwrite %s? "),
-               program_name, quote (dst_name));
+               program_name, quoteaf (dst_name));
     }
 
   return yesno ();
@@ -1742,9 +1747,9 @@ abandon_move (const struct cp_options *x,
 static void
 emit_verbose (char const *src, char const *dst, char const *backup_dst_name)
 {
-  printf ("%s -> %s", quote_n (0, src), quote_n (1, dst));
+  printf ("%s -> %s", quoteaf_n (0, src), quoteaf_n (1, dst));
   if (backup_dst_name)
-    printf (_(" (backup: %s)"), quote (backup_dst_name));
+    printf (_(" (backup: %s)"), quoteaf (backup_dst_name));
   putchar ('\n');
 }
 
@@ -1781,11 +1786,11 @@ create_hard_link (char const *src_name, char const *dst_name,
     {
       if (unlink (dst_name) != 0)
         {
-          error (0, errno, _("cannot remove %s"), quote (dst_name));
+          error (0, errno, _("cannot remove %s"), quoteaf (dst_name));
           return false;
         }
       if (verbose)
-        printf (_("removed %s\n"), quote (dst_name));
+        printf (_("removed %s\n"), quoteaf (dst_name));
       link_failed = (linkat (AT_FDCWD, src_name, AT_FDCWD, dst_name, flags)
                      != 0);
     }
@@ -1793,7 +1798,7 @@ create_hard_link (char const *src_name, char const *dst_name,
   if (link_failed)
     {
       error (0, errno, _("cannot create hard link %s to %s"),
-             quote_n (0, dst_name), quote_n (1, src_name));
+             quoteaf_n (0, dst_name), quoteaf_n (1, src_name));
       return false;
     }
 
@@ -1814,7 +1819,7 @@ should_dereference (const struct cp_options *x, bool command_line_arg)
 /* Copy the file SRC_NAME to the file DST_NAME.  The files may be of
    any type.  NEW_DST should be true if the file DST_NAME cannot
    exist because its parent directory was just created; NEW_DST should
-   be false if DST_NAME might already exist.  A nonnull PARENT describes the
+   be false if DST_NAME might already exist.  A non-null PARENT describes the
    parent directory.  ANCESTORS points to a linked, null terminated list of
    devices and inodes of parent directories of SRC_NAME.  COMMAND_LINE_ARG
    is true iff SRC_NAME was specified on the command line.
@@ -1855,7 +1860,7 @@ copy_internal (char const *src_name, char const *dst_name,
 
   if (XSTAT (x, src_name, &src_sb) != 0)
     {
-      error (0, errno, _("cannot stat %s"), quote (src_name));
+      error (0, errno, _("cannot stat %s"), quoteaf (src_name));
       return false;
     }
 
@@ -1863,7 +1868,7 @@ copy_internal (char const *src_name, char const *dst_name,
 
   if (S_ISDIR (src_mode) && !x->recursive)
     {
-      error (0, 0, _("omitting directory %s"), quote (src_name));
+      error (0, 0, _("omitting directory %s"), quoteaf (src_name));
       return false;
     }
 
@@ -1878,7 +1883,7 @@ copy_internal (char const *src_name, char const *dst_name,
            && seen_file (x->src_info, src_name, &src_sb))
         {
           error (0, 0, _("warning: source file %s specified more than once"),
-                 quote (src_name));
+                 quoteaf (src_name));
           return true;
         }
 
@@ -1909,7 +1914,7 @@ copy_internal (char const *src_name, char const *dst_name,
         {
           if (errno != ENOENT)
             {
-              error (0, errno, _("cannot stat %s"), quote (dst_name));
+              error (0, errno, _("cannot stat %s"), quoteaf (dst_name));
               return false;
             }
           else
@@ -1927,7 +1932,7 @@ copy_internal (char const *src_name, char const *dst_name,
                               x, &return_now))
             {
               error (0, 0, _("%s and %s are the same file"),
-                     quote_n (0, src_name), quote_n (1, dst_name));
+                     quoteaf_n (0, src_name), quoteaf_n (1, dst_name));
               return false;
             }
 
@@ -2017,7 +2022,7 @@ copy_internal (char const *src_name, char const *dst_name,
                     {
                       error (0, 0,
                        _("cannot overwrite non-directory %s with directory %s"),
-                             quote_n (0, dst_name), quote_n (1, src_name));
+                             quoteaf_n (0, dst_name), quoteaf_n (1, src_name));
                       return false;
                     }
                 }
@@ -2035,7 +2040,7 @@ copy_internal (char const *src_name, char const *dst_name,
                 {
                   error (0, 0,
                          _("will not overwrite just-created %s with %s"),
-                         quote_n (0, dst_name), quote_n (1, src_name));
+                         quoteaf_n (0, dst_name), quoteaf_n (1, src_name));
                   return false;
                 }
             }
@@ -2053,7 +2058,7 @@ copy_internal (char const *src_name, char const *dst_name,
                     {
                       error (0, 0,
                          _("cannot overwrite directory %s with non-directory"),
-                             quote (dst_name));
+                             quoteaf (dst_name));
                       return false;
                     }
                 }
@@ -2067,7 +2072,7 @@ copy_internal (char const *src_name, char const *dst_name,
                 {
                   error (0, 0,
                        _("cannot move directory onto non-directory: %s -> %s"),
-                         quote_n (0, src_name), quote_n (0, dst_name));
+                         quotef_n (0, src_name), quotef_n (0, dst_name));
                   return false;
                 }
             }
@@ -2099,8 +2104,8 @@ copy_internal (char const *src_name, char const *dst_name,
                  ? _("backing up %s would destroy source;  %s not moved")
                  : _("backing up %s would destroy source;  %s not copied"));
                   error (0, 0, fmt,
-                         quote_n (0, dst_name),
-                         quote_n (1, src_name));
+                         quoteaf_n (0, dst_name),
+                         quoteaf_n (1, src_name));
                   free (tmp_backup);
                   return false;
                 }
@@ -2120,7 +2125,8 @@ copy_internal (char const *src_name, char const *dst_name,
                 {
                   if (errno != ENOENT)
                     {
-                      error (0, errno, _("cannot backup %s"), quote (dst_name));
+                      error (0, errno, _("cannot backup %s"),
+                             quoteaf (dst_name));
                       return false;
                     }
                   else
@@ -2145,12 +2151,12 @@ copy_internal (char const *src_name, char const *dst_name,
             {
               if (unlink (dst_name) != 0 && errno != ENOENT)
                 {
-                  error (0, errno, _("cannot remove %s"), quote (dst_name));
+                  error (0, errno, _("cannot remove %s"), quoteaf (dst_name));
                   return false;
                 }
               new_dst = true;
               if (x->verbose)
-                printf (_("removed %s\n"), quote (dst_name));
+                printf (_("removed %s\n"), quoteaf (dst_name));
             }
         }
     }
@@ -2185,7 +2191,7 @@ copy_internal (char const *src_name, char const *dst_name,
         {
           error (0, 0,
                  _("will not copy %s through just-created symlink %s"),
-                 quote_n (0, src_name), quote_n (1, dst_name));
+                 quoteaf_n (0, src_name), quoteaf_n (1, dst_name));
           return false;
         }
     }
@@ -2226,7 +2232,14 @@ copy_internal (char const *src_name, char const *dst_name,
      Also, with --recursive, record dev/ino of each command-line directory.
      We'll use that info to detect this problem: cp -R dir dir.  */
 
-  if (x->move_mode && src_sb.st_nlink == 1)
+  if (x->recursive && S_ISDIR (src_mode))
+    {
+      if (command_line_arg)
+        earlier_file = remember_copied (dst_name, src_sb.st_ino, src_sb.st_dev);
+      else
+        earlier_file = src_to_dest_lookup (src_sb.st_ino, src_sb.st_dev);
+    }
+  else if (x->move_mode && src_sb.st_nlink == 1)
     {
       earlier_file = src_to_dest_lookup (src_sb.st_ino, src_sb.st_dev);
     }
@@ -2238,13 +2251,6 @@ copy_internal (char const *src_name, char const *dst_name,
                || x->dereference == DEREF_ALWAYS))
     {
       earlier_file = remember_copied (dst_name, src_sb.st_ino, src_sb.st_dev);
-    }
-  else if (x->recursive && S_ISDIR (src_mode))
-    {
-      if (command_line_arg)
-        earlier_file = remember_copied (dst_name, src_sb.st_ino, src_sb.st_dev);
-      else
-        earlier_file = src_to_dest_lookup (src_sb.st_ino, src_sb.st_dev);
     }
 
   /* Did we copy this inode somewhere else (in this command line argument)
@@ -2262,8 +2268,8 @@ copy_internal (char const *src_name, char const *dst_name,
           if (same_name (src_name, earlier_file))
             {
               error (0, 0, _("cannot copy a directory, %s, into itself, %s"),
-                     quote_n (0, top_level_src_name),
-                     quote_n (1, top_level_dst_name));
+                     quoteaf_n (0, top_level_src_name),
+                     quoteaf_n (1, top_level_dst_name));
               *copy_into_self = true;
               goto un_backup;
             }
@@ -2271,11 +2277,15 @@ copy_internal (char const *src_name, char const *dst_name,
             {
               error (0, 0, _("warning: source directory %s "
                              "specified more than once"),
-                     quote (top_level_src_name));
-              /* We only do backups in move mode and for non dirs,
-                 and in move mode this won't be the issue as the source will
-                 be missing for subsequent attempts.
-                 There we just warn and return here.  */
+                     quoteaf (top_level_src_name));
+              /* In move mode, if a previous rename succeeded, then
+                 we won't be in this path as the source is missing.  If the
+                 rename previously failed, then that has been handled, so
+                 pretend this attempt succeeded so the source isn't removed.  */
+              if (x->move_mode && rename_succeeded)
+                *rename_succeeded = true;
+              /* We only do backups in move mode, and for non directories.
+                 So just ignore this repeated entry.  */
               return true;
             }
           else if (x->dereference == DEREF_ALWAYS
@@ -2292,7 +2302,7 @@ copy_internal (char const *src_name, char const *dst_name,
           else
             {
               error (0, 0, _("will not create hard link %s to directory %s"),
-                     quote_n (0, dst_name), quote_n (1, earlier_file));
+                     quoteaf_n (0, dst_name), quoteaf_n (1, earlier_file));
               goto un_backup;
             }
         }
@@ -2349,8 +2359,8 @@ copy_internal (char const *src_name, char const *dst_name,
              failing with a specific errno value.  Expect problems on
              non-POSIX systems.  */
           error (0, 0, _("cannot move %s to a subdirectory of itself, %s"),
-                 quote_n (0, top_level_src_name),
-                 quote_n (1, top_level_dst_name));
+                 quoteaf_n (0, top_level_src_name),
+                 quoteaf_n (1, top_level_dst_name));
 
           /* Note that there is no need to call forget_created here,
              (compare with the other calls in this file) since the
@@ -2369,7 +2379,7 @@ copy_internal (char const *src_name, char const *dst_name,
          If this happens to you, please do the following and send the output
          to the bug-reporting address (e.g., in the output of cp --help):
            touch k; perl -e 'rename "k","/tmp/k" or print "$!(",$!+0,")\n"'
-         where your current directory is on one partion and /tmp is the other.
+         where your current directory is on one partition and /tmp is the other.
          Also, please try to find the E* errno macro name corresponding to
          the diagnostic and parenthesized integer, and include that in your
          e-mail.  One way to do that is to run a command like this
@@ -2392,7 +2402,7 @@ copy_internal (char const *src_name, char const *dst_name,
              fail.  Etc.  */
           error (0, errno,
                  _("cannot move %s to %s"),
-                 quote_n (0, src_name), quote_n (1, dst_name));
+                 quoteaf_n (0, src_name), quoteaf_n (1, dst_name));
           forget_created (src_sb.st_ino, src_sb.st_dev);
           return false;
         }
@@ -2408,7 +2418,7 @@ copy_internal (char const *src_name, char const *dst_name,
         {
           error (0, errno,
              _("inter-device move failed: %s to %s; unable to remove target"),
-                 quote_n (0, src_name), quote_n (1, dst_name));
+                 quoteaf_n (0, src_name), quoteaf_n (1, dst_name));
           forget_created (src_sb.st_ino, src_sb.st_dev);
           return false;
         }
@@ -2448,7 +2458,7 @@ copy_internal (char const *src_name, char const *dst_name,
       if (is_ancestor (&src_sb, ancestors))
         {
           error (0, 0, _("cannot copy cyclic symbolic link %s"),
-                 quote (src_name));
+                 quoteaf (src_name));
           goto un_backup;
         }
 
@@ -2468,7 +2478,7 @@ copy_internal (char const *src_name, char const *dst_name,
           if (mkdir (dst_name, dst_mode_bits & ~omitted_permissions) != 0)
             {
               error (0, errno, _("cannot create directory %s"),
-                     quote (dst_name));
+                     quoteaf (dst_name));
               goto un_backup;
             }
 
@@ -2478,7 +2488,7 @@ copy_internal (char const *src_name, char const *dst_name,
 
           if (lstat (dst_name, &dst_sb) != 0)
             {
-              error (0, errno, _("cannot stat %s"), quote (dst_name));
+              error (0, errno, _("cannot stat %s"), quoteaf (dst_name));
               goto un_backup;
             }
           else if ((dst_sb.st_mode & S_IRWXU) != S_IRWXU)
@@ -2491,7 +2501,7 @@ copy_internal (char const *src_name, char const *dst_name,
               if (lchmod (dst_name, dst_mode | S_IRWXU) != 0)
                 {
                   error (0, errno, _("setting permissions for %s"),
-                         quote (dst_name));
+                         quoteaf (dst_name));
                   goto un_backup;
                 }
             }
@@ -2568,14 +2578,14 @@ copy_internal (char const *src_name, char const *dst_name,
             {
               error (0, 0,
            _("%s: can make relative symbolic links only in current directory"),
-                     quote (dst_name));
+                     quotef (dst_name));
               goto un_backup;
             }
         }
       if (symlink (src_name, dst_name) != 0)
         {
           error (0, errno, _("cannot create symbolic link %s to %s"),
-                 quote_n (0, dst_name), quote_n (1, src_name));
+                 quoteaf_n (0, dst_name), quoteaf_n (1, src_name));
           goto un_backup;
         }
     }
@@ -2626,7 +2636,7 @@ copy_internal (char const *src_name, char const *dst_name,
       if (mknod (dst_name, src_mode & ~omitted_permissions, 0) != 0)
         if (mkfifo (dst_name, src_mode & ~S_IFIFO & ~omitted_permissions) != 0)
           {
-            error (0, errno, _("cannot create fifo %s"), quote (dst_name));
+            error (0, errno, _("cannot create fifo %s"), quoteaf (dst_name));
             goto un_backup;
           }
     }
@@ -2636,7 +2646,7 @@ copy_internal (char const *src_name, char const *dst_name,
           != 0)
         {
           error (0, errno, _("cannot create special file %s"),
-                 quote (dst_name));
+                 quoteaf (dst_name));
           goto un_backup;
         }
     }
@@ -2646,7 +2656,8 @@ copy_internal (char const *src_name, char const *dst_name,
       dest_is_symlink = true;
       if (src_link_val == NULL)
         {
-          error (0, errno, _("cannot read symbolic link %s"), quote (src_name));
+          error (0, errno, _("cannot read symbolic link %s"),
+                 quoteaf (src_name));
           goto un_backup;
         }
 
@@ -2674,7 +2685,7 @@ copy_internal (char const *src_name, char const *dst_name,
           if (! same_link)
             {
               error (0, saved_errno, _("cannot create symbolic link %s"),
-                     quote (dst_name));
+                     quoteaf (dst_name));
               goto un_backup;
             }
         }
@@ -2705,7 +2716,7 @@ copy_internal (char const *src_name, char const *dst_name,
     }
   else
     {
-      error (0, 0, _("%s has unknown file type"), quote (src_name));
+      error (0, 0, _("%s has unknown file type"), quoteaf (src_name));
       goto un_backup;
     }
 
@@ -2764,7 +2775,7 @@ copy_internal (char const *src_name, char const *dst_name,
            : utimens (dst_name, timespec))
           != 0)
         {
-          error (0, errno, _("preserving times for %s"), quote (dst_name));
+          error (0, errno, _("preserving times for %s"), quoteaf (dst_name));
           if (x->require_preserve)
             return false;
         }
@@ -2828,7 +2839,7 @@ copy_internal (char const *src_name, char const *dst_name,
                  rules for special mode bits.  */
               if (new_dst && lstat (dst_name, &dst_sb) != 0)
                 {
-                  error (0, errno, _("cannot stat %s"), quote (dst_name));
+                  error (0, errno, _("cannot stat %s"), quoteaf (dst_name));
                   return false;
                 }
               dst_mode = dst_sb.st_mode;
@@ -2842,7 +2853,7 @@ copy_internal (char const *src_name, char const *dst_name,
           if (lchmod (dst_name, dst_mode | omitted_permissions) != 0)
             {
               error (0, errno, _("preserving permissions for %s"),
-                     quote (dst_name));
+                     quoteaf (dst_name));
               if (x->require_preserve)
                 return false;
             }
@@ -2868,12 +2879,12 @@ un_backup:
   if (dst_backup)
     {
       if (rename (dst_backup, dst_name) != 0)
-        error (0, errno, _("cannot un-backup %s"), quote (dst_name));
+        error (0, errno, _("cannot un-backup %s"), quoteaf (dst_name));
       else
         {
           if (x->verbose)
             printf (_("%s -> %s (unbackup)\n"),
-                    quote_n (0, dst_backup), quote_n (1, dst_name));
+                    quoteaf_n (0, dst_backup), quoteaf_n (1, dst_name));
         }
     }
   return false;

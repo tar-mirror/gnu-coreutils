@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in -*-Makefile-*-.
 
-## Copyright (C) 2007-2015 Free Software Foundation, Inc.
+## Copyright (C) 2007-2016 Free Software Foundation, Inc.
 
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ TESTSUITE_PERL = $(SHELL) $(srcdir)/no-perl
 endif
 
 # Options passed to the perl invocations running the perl test scripts.
-TESTSUITE_PERL_OPTIONS = -w -I$(srcdir)/tests -MCoreutils -MCuSkip
+TESTSUITE_PERL_OPTIONS = -w -I$(srcdir)/tests -MCuSkip -MCoreutils
 # '$f' is set by the Automake-generated test harness to the path of the
 # current test script stripped of VPATH components, and is used by the
 # CuTmpdir module to determine the name of the temporary files to be
@@ -274,6 +274,7 @@ all_tests =					\
   tests/misc/csplit.sh				\
   tests/misc/csplit-1000.sh			\
   tests/misc/csplit-heap.sh			\
+  tests/misc/csplit-io-err.sh			\
   tests/misc/csplit-suppress-matched.pl		\
   tests/misc/date-sec.sh			\
   tests/misc/dircolors.pl			\
@@ -290,6 +291,7 @@ all_tests =					\
   tests/misc/head-c.sh				\
   tests/misc/head-pos.sh			\
   tests/misc/head-write-error.sh		\
+  tests/misc/kill.sh				\
   tests/misc/md5sum.pl				\
   tests/misc/md5sum-bsd.sh			\
   tests/misc/md5sum-newline.pl			\
@@ -313,6 +315,7 @@ all_tests =					\
   tests/misc/printf-cov.pl			\
   tests/misc/printf-hex.sh			\
   tests/misc/printf-surprise.sh			\
+  tests/misc/printf-quote.sh			\
   tests/misc/pwd-long.sh			\
   tests/misc/readlink-fp-loop.sh		\
   tests/misc/readlink-root.sh			\
@@ -440,11 +443,10 @@ all_tests =					\
   tests/cp/dir-rm-dest.sh			\
   tests/cp/dir-slash.sh				\
   tests/cp/dir-vs-file.sh			\
-  tests/cp/duplicate-sources.sh			\
   tests/cp/existing-perm-dir.sh			\
   tests/cp/existing-perm-race.sh		\
   tests/cp/fail-perm.sh				\
-  tests/cp/fiemap-empty.sh			\
+  tests/cp/fiemap-extents.sh			\
   tests/cp/fiemap-FMR.sh			\
   tests/cp/fiemap-perf.sh			\
   tests/cp/fiemap-2.sh				\
@@ -536,7 +538,6 @@ all_tests =					\
   tests/id/no-context.sh			\
   tests/id/context.sh				\
   tests/id/uid.sh				\
-  tests/id/setgid.sh				\
   tests/id/zero.sh				\
   tests/id/smack.sh				\
   tests/install/basic-1.sh			\
@@ -569,6 +570,7 @@ all_tests =					\
   tests/ls/infloop.sh				\
   tests/ls/inode.sh				\
   tests/ls/m-option.sh				\
+  tests/ls/w-option.sh				\
   tests/ls/multihardlink.sh			\
   tests/ls/no-arg.sh				\
   tests/ls/no-cap.sh				\
@@ -600,7 +602,6 @@ all_tests =					\
   tests/mkdir/special-1.sh			\
   tests/mkdir/t-slash.sh			\
   tests/mkdir/smack-no-root.sh			\
-  tests/mkdir/smack-root.sh			\
   tests/mv/acl.sh				\
   tests/mv/atomic.sh				\
   tests/mv/atomic2.sh				\

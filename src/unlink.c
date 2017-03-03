@@ -1,5 +1,5 @@
 /* unlink utility for GNU.
-   Copyright (C) 2001-2015 Free Software Foundation, Inc.
+   Copyright (C) 2001-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ main (int argc, char **argv)
     }
 
   if (unlink (argv[optind]) != 0)
-    error (EXIT_FAILURE, errno, _("cannot unlink %s"), quote (argv[optind]));
+    error (EXIT_FAILURE, errno, _("cannot unlink %s"), quoteaf (argv[optind]));
 
   return EXIT_SUCCESS;
 }

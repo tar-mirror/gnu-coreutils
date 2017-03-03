@@ -1,5 +1,5 @@
 /* mkfifo -- make fifo's (named pipes)
-   Copyright (C) 1990-2015 Free Software Foundation, Inc.
+   Copyright (C) 1990-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -166,13 +166,13 @@ main (int argc, char **argv)
         defaultcon (argv[optind], S_IFIFO);
       if (mkfifo (argv[optind], newmode) != 0)
         {
-          error (0, errno, _("cannot create fifo %s"), quote (argv[optind]));
+          error (0, errno, _("cannot create fifo %s"), quoteaf (argv[optind]));
           exit_status = EXIT_FAILURE;
         }
       else if (specified_mode && lchmod (argv[optind], newmode) != 0)
         {
           error (0, errno, _("cannot set permissions of %s"),
-                 quote (argv[optind]));
+                 quoteaf (argv[optind]));
           exit_status = EXIT_FAILURE;
         }
     }

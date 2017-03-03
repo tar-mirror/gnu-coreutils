@@ -1,5 +1,5 @@
 /* sort - sort lines of text (with all kinds of options).
-   Copyright (C) 1988-2015 Free Software Foundation, Inc.
+   Copyright (C) 1988-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,7 +44,6 @@
 #include "physmem.h"
 #include "posixver.h"
 #include "quote.h"
-#include "quotearg.h"
 #include "randread.h"
 #include "readtokens0.h"
 #include "stdio--.h"
@@ -239,7 +238,7 @@ struct month
 struct merge_node
 {
   struct line *lo;              /* Lines to merge from LO child node. */
-  struct line *hi;              /* Lines to merge from HI child ndoe. */
+  struct line *hi;              /* Lines to merge from HI child node. */
   struct line *end_lo;          /* End of available lines from LO. */
   struct line *end_hi;          /* End of available lines from HI. */
   struct line **dest;           /* Pointer to destination of merge. */
@@ -408,7 +407,8 @@ static void die (char const *, char const *) ATTRIBUTE_NORETURN;
 static void
 die (char const *message, char const *file)
 {
-  error (0, errno, "%s: %s", message, file ? file : _("standard output"));
+  error (0, errno, "%s: %s", message,
+         quotef (file ? file : _("standard output")));
   exit (SORT_FAILURE);
 }
 
@@ -451,7 +451,7 @@ Ordering options:\n\
 "), stdout);
       fputs (_("\
   -n, --numeric-sort          compare according to string numerical value\n\
-  -R, --random-sort           sort by random hash of keys\n\
+  -R, --random-sort           shuffle, but group identical keys.  See shuf(1)\n\
       --random-source=FILE    get random bytes from FILE\n\
   -r, --reverse               reverse the result of comparisons\n\
 "), stdout);
@@ -518,7 +518,7 @@ effect, characters in a field are counted from the beginning of the preceding\n\
 whitespace.  OPTS is one or more single-letter ordering options [bdfgiMhnRrV],\
 \n\
 which override global ordering options for that key.  If no key is given, use\n\
-the entire line as the key.\n\
+the entire line as the key.  Use --debug to diagnose incorrect key usage.\n\
 \n\
 SIZE may be followed by the following multiplicative suffixes:\n\
 "), stdout);
@@ -678,7 +678,7 @@ struct sortfile
   /* The file's name.  */
   char const *name;
 
-  /* Nonnull if this is a temporary file, in which case NAME == TEMP->name.  */
+  /* Non-null if this is a temporary file, in which case NAME == TEMP->name.  */
   struct tempnode *temp;
 };
 
@@ -722,12 +722,12 @@ reap (pid_t pid)
 
   if (cpid < 0)
     error (SORT_FAILURE, errno, _("waiting for %s [-d]"),
-           compress_program);
+           quoteaf (compress_program));
   else if (0 < cpid && (0 < pid || delete_proc (cpid)))
     {
       if (! WIFEXITED (status) || WEXITSTATUS (status))
         error (SORT_FAILURE, 0, _("%s [-d] terminated abnormally"),
-               compress_program);
+               quoteaf (compress_program));
       --nprocs;
     }
 
@@ -881,7 +881,7 @@ create_temp_file (int *pfd, bool survive_fd_exhaustion)
     {
       if (! (survive_fd_exhaustion && errno == EMFILE))
         error (SORT_FAILURE, errno, _("cannot create temporary file in %s"),
-               quote (temp_dir));
+               quoteaf (temp_dir));
       free (node);
       node = NULL;
     }
@@ -957,7 +957,7 @@ stream_open (char const *file, char const *how)
     {
       if (file && ftruncate (STDOUT_FILENO, 0) != 0)
         error (SORT_FAILURE, errno, _("%s: error truncating"),
-               quote (file));
+               quotef (file));
       fp = stdout;
     }
   else
@@ -1176,7 +1176,7 @@ open_temp (struct tempnode *temp)
     case -1:
       if (errno != EMFILE)
         error (SORT_FAILURE, errno, _("couldn't create process for %s -d"),
-               compress_program);
+               quoteaf (compress_program));
       close (tempfd);
       errno = EMFILE;
       break;
@@ -1248,7 +1248,7 @@ zaptemp (char const *name)
   cs_leave (cs);
 
   if (unlink_status != 0)
-    error (0, unlink_errno, _("warning: cannot remove: %s"), name);
+    error (0, unlink_errno, _("warning: cannot remove: %s"), quotef (name));
   if (! next)
     temptail = pnode;
   free (node);
@@ -1275,9 +1275,9 @@ inittables (void)
 
   for (i = 0; i < UCHAR_LIM; ++i)
     {
-      blanks[i] = !! isblank (i);
+      blanks[i] = field_sep (i);
       nonprinting[i] = ! isprint (i);
-      nondictionary[i] = ! isalnum (i) && ! isblank (i);
+      nondictionary[i] = ! isalnum (i) && ! field_sep (i);
       fold_toupper[i] = toupper (i);
     }
 
@@ -2274,7 +2274,8 @@ debug_key (struct line const *line, struct keyfield const *key)
       if (key->eword != SIZE_MAX)
         lim = limfield (line, key);
 
-      if (key->skipsblanks || key->month || key_numeric (key))
+      if ((key->skipsblanks && key->sword == SIZE_MAX)
+          || key->month || key_numeric (key))
         {
           char saved = *lim;
           *lim = '\0';
@@ -2736,7 +2737,7 @@ compare (struct line const *a, struct line const *b)
 }
 
 /* Write LINE to output stream FP; the output file's name is
-   OUTPUT_FILE if OUTPUT_FILE is nonnull, and is the standard output
+   OUTPUT_FILE if OUTPUT_FILE is non-null, and is the standard output
    otherwise.  If debugging is enabled and FP is standard output,
    append some debugging information.  */
 
@@ -4024,7 +4025,7 @@ static void incompatible_options (char const *) ATTRIBUTE_NORETURN;
 static void
 incompatible_options (char const *opts)
 {
-  error (SORT_FAILURE, 0, _("options '-%s' are incompatible"), opts);
+  error (SORT_FAILURE, 0, _("options '-%s' are incompatible"), (opts));
   abort ();
 }
 
@@ -4187,10 +4188,11 @@ main (int argc, char **argv)
   char *files_from = NULL;
   struct Tokens tok;
   char const *outfile = NULL;
+  bool locale_ok;
 
   initialize_main (&argc, &argv);
   set_program_name (argv[0]);
-  setlocale (LC_ALL, "");
+  locale_ok = !! setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
 
@@ -4568,7 +4570,7 @@ main (int argc, char **argv)
          on the command-line.  */
       if (nfiles)
         {
-          error (0, 0, _("extra operand %s"), quote (files[0]));
+          error (0, 0, _("extra operand %s"), quoteaf (files[0]));
           fprintf (stderr, "%s\n",
                    _("file operands cannot be combined with --files0-from"));
           usage (SORT_FAILURE);
@@ -4581,14 +4583,14 @@ main (int argc, char **argv)
           stream = fopen (files_from, "r");
           if (stream == NULL)
             error (SORT_FAILURE, errno, _("cannot open %s for reading"),
-                   quote (files_from));
+                   quoteaf (files_from));
         }
 
       readtokens0_init (&tok);
 
       if (! readtokens0 (stream, &tok) || fclose (stream) != 0)
         error (SORT_FAILURE, 0, _("cannot read file names from %s"),
-               quote (files_from));
+               quoteaf (files_from));
 
       if (tok.n_tok)
         {
@@ -4601,7 +4603,7 @@ main (int argc, char **argv)
               if (STREQ (files[i], "-"))
                 error (SORT_FAILURE, 0, _("when reading file names from stdin, "
                                           "no file name of %s allowed"),
-                       quote (files[i]));
+                       quoteaf (files[i]));
               else if (files[i][0] == '\0')
                 {
                   /* Using the standard 'filename:line-number:' prefix here is
@@ -4610,13 +4612,13 @@ main (int argc, char **argv)
                   unsigned long int file_number = i + 1;
                   error (SORT_FAILURE, 0,
                          _("%s:%lu: invalid zero-length file name"),
-                         quotearg_colon (files_from), file_number);
+                         quotef (files_from), file_number);
                 }
             }
         }
       else
         error (SORT_FAILURE, 0, _("no input from %s"),
-               quote (files_from));
+               quoteaf (files_from));
     }
 
   /* Inheritance of global options to individual keys. */
@@ -4664,7 +4666,14 @@ main (int argc, char **argv)
         error (0, 0, _("using %s sorting rules"),
                quote (setlocale (LC_COLLATE, NULL)));
       else
-        error (0, 0, _("using simple byte comparison"));
+        {
+          /* OpenBSD can only set some categories with LC_ALL above,
+             so set LC_COLLATE explicitly to flag errors.  */
+          if (locale_ok)
+            locale_ok = !! setlocale (LC_COLLATE, "");
+          error (0, 0, "%s%s", locale_ok ? "" : _("failed to set locale; "),
+                 _("using simple byte comparison"));
+        }
       key_warnings (&gkey, gkey_only);
     }
 
@@ -4681,10 +4690,10 @@ main (int argc, char **argv)
 
   if (nfiles == 0)
     {
-      static char *minus = (char *) "-";
       nfiles = 1;
       free (files);
-      files = &minus;
+      files = xmalloc (sizeof *files);
+      *files = (char *) "-";
     }
 
   /* Need to re-check that we meet the minimum requirement for memory
@@ -4696,7 +4705,7 @@ main (int argc, char **argv)
     {
       if (nfiles > 1)
         error (SORT_FAILURE, 0, _("extra operand %s not allowed with -%c"),
-               quote (files[1]), checkonly);
+               quoteaf (files[1]), checkonly);
 
       if (outfile)
         {
@@ -4741,6 +4750,13 @@ main (int argc, char **argv)
 
       sort (files, nfiles, outfile, nthreads);
     }
+
+#ifdef lint
+  if (files_from)
+    readtokens0_free (&tok);
+  else
+    free (files);
+#endif
 
   if (have_read_stdin && fclose (stdin) == EOF)
     die (_("close failed"), "-");

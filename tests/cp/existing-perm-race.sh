@@ -1,7 +1,7 @@
 #!/bin/sh
 # Make sure cp -p isn't too generous with existing file permissions.
 
-# Copyright (C) 2006-2015 Free Software Foundation, Inc.
+# Copyright (C) 2006-2016 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@ require_membership_in_two_groups_
 
 # cp -p gives ENOTSUP on NFS on Linux 2.6.9 at least
 require_local_dir_
+
+require_no_default_acl_ .
 
 set _ $groups; shift
 g1=$1

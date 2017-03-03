@@ -1,7 +1,7 @@
-#! /bin/sh
+#!/bin/sh
 # Make sure stty can parse most of its options.
 
-# Copyright (C) 1998-2015 Free Software Foundation, Inc.
+# Copyright (C) 1998-2016 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,6 +21,8 @@
 print_ver_ stty
 
 require_controlling_input_terminal_
+require_trap_signame_
+
 trap '' TTOU # Ignore SIGTTOU
 
 # Get the reversible settings from stty.c.
@@ -32,6 +34,13 @@ stty $(cat $saved_state) || fail=1
 
 # This would segfault prior to sh-utils-2.0j.
 stty erase - || fail=1
+
+# Ensure "immediate" and "wait" mode supported, with and without settings
+for mode in '-drain' 'drain'; do
+  for opt in 'echo' ''; do
+    stty "$mode" $opt || fail=1
+  done
+done
 
 # These would improperly ignore invalid options through coreutils 5.2.1.
 returns_ 1 stty -F 2>/dev/null || fail=1

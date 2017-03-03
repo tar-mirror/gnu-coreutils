@@ -1,5 +1,5 @@
 /* df - summarize free disk space
-   Copyright (C) 1991-2015 Free Software Foundation, Inc.
+   Copyright (C) 1991-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* Written by David MacKenzie <djm@gnu.ai.mit.edu>.
-   --human-readable and --megabyte options added by lm@sgi.com.
+   --human-readable option added by lm@sgi.com.
    --si and large file support added by eggert@twinsun.com.  */
 
 #include <config.h>
@@ -641,6 +641,13 @@ filter_mount_list (bool devices_only)
 
           if (devlist)
             {
+              bool target_nearer_root = strlen (devlist->me->me_mountdir)
+                                        > strlen (me->me_mountdir);
+              /* With bind mounts, prefer items nearer the root of the source */
+              bool source_below_root = devlist->me->me_mntroot != NULL
+                                       && me->me_mntroot != NULL
+                                       && (strlen (devlist->me->me_mntroot)
+                                           < strlen (me->me_mntroot));
               if (! print_grand_total && me->me_remote && devlist->me->me_remote
                   && ! STREQ (devlist->me->me_devname, me->me_devname))
                 {
@@ -652,9 +659,8 @@ filter_mount_list (bool devices_only)
               else if ((strchr (me->me_devname, '/')
                        /* let "real" devices with '/' in the name win.  */
                         && ! strchr (devlist->me->me_devname, '/'))
-                       /* let a shorter mountdir win.  */
-                       || (strlen (devlist->me->me_mountdir)
-                           > strlen (me->me_mountdir))
+                       /* let points towards the root of the device win.  */
+                       || (target_nearer_root && ! source_below_root)
                        /* let an entry overmounted on a new device win...  */
                        || (! STREQ (devlist->me->me_devname, me->me_devname)
                            /* ... but only when matching an existing mnt point,
@@ -932,7 +938,7 @@ get_dev (char const *disk, char const *mount_point, char const* file,
         }
       else
         {
-          error (0, errno, "%s", quote (stat_file));
+          error (0, errno, "%s", quotef (stat_file));
           exit_status = EXIT_FAILURE;
           return;
         }
@@ -1234,7 +1240,7 @@ get_disk (char const *disk)
   else if (eclipsed_device)
     {
       error (0, 0, _("cannot access %s: over-mounted by another device"),
-             quote (file));
+             quoteaf (file));
       exit_status = EXIT_FAILURE;
       return true;
     }
@@ -1298,7 +1304,7 @@ get_point (const char *point, const struct stat *statp)
                    can't possibly be on this file system.  */
                 if (errno == EIO)
                   {
-                    error (0, errno, "%s", quote (me->me_mountdir));
+                    error (0, errno, "%s", quotef (me->me_mountdir));
                     exit_status = EXIT_FAILURE;
                   }
 
@@ -1644,6 +1650,8 @@ main (int argc, char **argv)
       return EXIT_FAILURE;
   }
 
+  assume (0 < optind);
+
   if (optind < argc)
     {
       int i;
@@ -1660,7 +1668,7 @@ main (int argc, char **argv)
           if ((fd < 0 || fstat (fd, &stats[i - optind]))
               && stat (argv[i], &stats[i - optind]))
             {
-              error (0, errno, "%s", quote (argv[i]));
+              error (0, errno, "%s", quotef (argv[i]));
               exit_status = EXIT_FAILURE;
               argv[i] = NULL;
             }

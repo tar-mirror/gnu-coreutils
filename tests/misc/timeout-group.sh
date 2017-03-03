@@ -1,7 +1,7 @@
 #!/bin/sh
 # test program group handling
 
-# Copyright (C) 2011-2015 Free Software Foundation, Inc.
+# Copyright (C) 2011-2016 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,6 +18,8 @@
 
 . "${srcdir=.}/tests/init.sh"; path_prepend_ ./src
 print_ver_ timeout
+require_trap_signame_
+require_kill_group_
 
 # construct a program group hierarchy as follows:
 #  timeout-group - foreground group
@@ -66,8 +68,7 @@ setsid ./group.sh & pid=$!
 # Wait 6.3s for timeout.cmd to start
 retry_delay_ check_timeout_cmd_running .1 6 || fail=1
 # Simulate a Ctrl-C to the group to test timely exit
-# Note dash doesn't support signalling groups (a leading -)
-env kill -INT -- -$pid
+kill -INT -- -$pid
 wait
 test -e int.received || fail=1
 

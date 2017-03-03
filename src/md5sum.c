@@ -1,5 +1,5 @@
 /* Compute checksums of files or strings.
-   Copyright (C) 1995-2015 Free Software Foundation, Inc.
+   Copyright (C) 1995-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -119,6 +119,9 @@ static bool status_only = false;
    improperly formatted checksum line.  */
 static bool warn = false;
 
+/* With --check, ignore missing files.  */
+static bool ignore_missing = false;
+
 /* With --check, suppress the "OK" printed for each verified file.  */
 static bool quiet = false;
 
@@ -133,7 +136,8 @@ static int bsd_reversed = -1;
    non-character as a pseudo short option, starting with CHAR_MAX + 1.  */
 enum
 {
-  STATUS_OPTION = CHAR_MAX + 1,
+  IGNORE_MISSING_OPTION = CHAR_MAX + 1,
+  STATUS_OPTION,
   QUIET_OPTION,
   STRICT_OPTION,
   TAG_OPTION
@@ -143,6 +147,7 @@ static struct option const long_options[] =
 {
   { "binary", no_argument, NULL, 'b' },
   { "check", no_argument, NULL, 'c' },
+  { "ignore-missing", no_argument, NULL, IGNORE_MISSING_OPTION},
   { "quiet", no_argument, NULL, QUIET_OPTION },
   { "status", no_argument, NULL, STATUS_OPTION },
   { "text", no_argument, NULL, 't' },
@@ -197,7 +202,8 @@ Print or check %s (%d-bit) checksums.\n\
 "), stdout);
       fputs (_("\
 \n\
-The following four options are useful only when verifying checksums:\n\
+The following five options are useful only when verifying checksums:\n\
+      --ignore-missing  don't fail or report status for missing files\n\
       --quiet          don't print OK for each successfully verified file\n\
       --status         don't output anything, status code shows success\n\
       --strict         exit non-zero for improperly formatted checksum lines\n\
@@ -416,6 +422,37 @@ hex_digits (unsigned char const *s)
   return *s == '\0';
 }
 
+/* If ESCAPE is true, then translate each NEWLINE byte to the string, "\\n",
+   and each backslash to "\\\\".  */
+static void
+print_filename (char const *file, bool escape)
+{
+  if (! escape)
+    {
+      fputs (file, stdout);
+      return;
+    }
+
+  while (*file)
+    {
+      switch (*file)
+        {
+        case '\n':
+          fputs ("\\n", stdout);
+          break;
+
+        case '\\':
+          fputs ("\\\\", stdout);
+          break;
+
+        default:
+          putchar (*file);
+          break;
+        }
+      file++;
+    }
+}
+
 /* An interface to the function, DIGEST_STREAM.
    Operate on FILENAME (it may be "-").
 
@@ -451,7 +488,12 @@ digest_file (const char *filename, int *binary, unsigned char *bin_result)
       fp = fopen (filename, (O_BINARY && *binary ? "rb" : "r"));
       if (fp == NULL)
         {
-          error (0, errno, "%s", filename);
+          if (ignore_missing && errno == ENOENT)
+            {
+              *bin_result = '\0';
+              return true;
+            }
+          error (0, errno, "%s", quotef (filename));
           return false;
         }
     }
@@ -461,7 +503,7 @@ digest_file (const char *filename, int *binary, unsigned char *bin_result)
   err = DIGEST_STREAM (fp, bin_result);
   if (err)
     {
-      error (0, errno, "%s", filename);
+      error (0, errno, "%s", quotef (filename));
       if (fp != stdin)
         fclose (fp);
       return false;
@@ -469,7 +511,7 @@ digest_file (const char *filename, int *binary, unsigned char *bin_result)
 
   if (!is_stdin && fclose (fp) != 0)
     {
-      error (0, errno, "%s", filename);
+      error (0, errno, "%s", quotef (filename));
       return false;
     }
 
@@ -481,10 +523,11 @@ digest_check (const char *checkfile_name)
 {
   FILE *checkfile_stream;
   uintmax_t n_misformatted_lines = 0;
-  uintmax_t n_properly_formatted_lines = 0;
   uintmax_t n_improperly_formatted_lines = 0;
   uintmax_t n_mismatched_checksums = 0;
   uintmax_t n_open_or_read_failures = 0;
+  bool properly_formatted_lines = false;
+  bool matched_checksums = false;
   unsigned char bin_buffer_unaligned[DIGEST_BIN_BYTES + DIGEST_ALIGN];
   /* Make sure bin_buffer is properly aligned. */
   unsigned char *bin_buffer = ptr_align (bin_buffer_unaligned, DIGEST_ALIGN);
@@ -504,7 +547,7 @@ digest_check (const char *checkfile_name)
       checkfile_stream = fopen (checkfile_name, "r");
       if (checkfile_stream == NULL)
         {
-          error (0, errno, "%s", checkfile_name);
+          error (0, errno, "%s", quotef (checkfile_name));
           return false;
         }
     }
@@ -522,7 +565,7 @@ digest_check (const char *checkfile_name)
       ++line_number;
       if (line_number == 0)
         error (EXIT_FAILURE, 0, _("%s: too many checksum lines"),
-               checkfile_name);
+               quotef (checkfile_name));
 
       line_length = getline (&line, &line_chars_allocated, checkfile_stream);
       if (line_length <= 0)
@@ -547,7 +590,7 @@ digest_check (const char *checkfile_name)
               error (0, 0,
                      _("%s: %" PRIuMAX
                        ": improperly formatted %s checksum line"),
-                     checkfile_name, line_number,
+                     quotef (checkfile_name), line_number,
                      DIGEST_TYPE_STRING);
             }
 
@@ -560,9 +603,13 @@ digest_check (const char *checkfile_name)
                                           '8', '9', 'a', 'b',
                                           'c', 'd', 'e', 'f' };
           bool ok;
+          /* Only escape in the edge case producing multiple lines,
+             to ease automatic processing of status output.  */
+          bool needs_escape = ! status_only && strchr (filename, '\n');
 
-          ++n_properly_formatted_lines;
+          properly_formatted_lines = true;
 
+          *bin_buffer = '\1'; /* flag set to 0 for ignored missing files.  */
           ok = digest_file (filename, &binary, bin_buffer);
 
           if (!ok)
@@ -570,13 +617,23 @@ digest_check (const char *checkfile_name)
               ++n_open_or_read_failures;
               if (!status_only)
                 {
-                  printf (_("%s: FAILED open or read\n"), filename);
+                  if (needs_escape)
+                    putchar ('\\');
+                  print_filename (filename, needs_escape);
+                  printf (": %s\n", _("FAILED open or read"));
                 }
+            }
+          else if (ignore_missing && ! *bin_buffer)
+            {
+              /* Treat an empty buffer as meaning a missing file,
+                 which is ignored with --ignore-missing.  */
+              ;
             }
           else
             {
               size_t digest_bin_bytes = digest_hex_bytes / 2;
               size_t cnt;
+
               /* Compare generated binary number with text representation
                  in check file.  Ignore case of hex digits.  */
               for (cnt = 0; cnt < digest_bin_bytes; ++cnt)
@@ -589,13 +646,22 @@ digest_check (const char *checkfile_name)
                 }
               if (cnt != digest_bin_bytes)
                 ++n_mismatched_checksums;
+              else
+                matched_checksums = true;
 
               if (!status_only)
                 {
+                  if (cnt != digest_bin_bytes || ! quiet)
+                    {
+                      if (needs_escape)
+                        putchar ('\\');
+                      print_filename (filename, needs_escape);
+                    }
+
                   if (cnt != digest_bin_bytes)
-                    printf ("%s: %s\n", filename, _("FAILED"));
+                    printf (": %s\n", _("FAILED"));
                   else if (!quiet)
-                    printf ("%s: %s\n", filename, _("OK"));
+                    printf (": %s\n", _("OK"));
                 }
             }
         }
@@ -606,21 +672,21 @@ digest_check (const char *checkfile_name)
 
   if (ferror (checkfile_stream))
     {
-      error (0, 0, _("%s: read error"), checkfile_name);
+      error (0, 0, _("%s: read error"), quotef (checkfile_name));
       return false;
     }
 
   if (!is_stdin && fclose (checkfile_stream) != 0)
     {
-      error (0, errno, "%s", checkfile_name);
+      error (0, errno, "%s", quotef (checkfile_name));
       return false;
     }
 
-  if (n_properly_formatted_lines == 0)
+  if (! properly_formatted_lines)
     {
       /* Warn if no tests are found.  */
       error (0, 0, _("%s: no properly formatted %s checksum lines found"),
-             checkfile_name, DIGEST_TYPE_STRING);
+             quotef (checkfile_name), DIGEST_TYPE_STRING);
     }
   else
     {
@@ -649,44 +715,18 @@ digest_check (const char *checkfile_name)
                      "WARNING: %" PRIuMAX " computed checksums did NOT match",
                      select_plural (n_mismatched_checksums))),
                    n_mismatched_checksums);
+
+          if (ignore_missing && ! matched_checksums)
+            error (0, 0, _("%s: no file was verified"),
+                   quotef (checkfile_name));
         }
     }
 
-  return (n_properly_formatted_lines != 0
+  return (properly_formatted_lines
+          && matched_checksums
           && n_mismatched_checksums == 0
           && n_open_or_read_failures == 0
           && (!strict || n_improperly_formatted_lines == 0));
-}
-
-/* If ESCAPE is true, then translate each NEWLINE byte to the string, "\\n",
-   and each backslash to "\\\\".  */
-static void
-print_filename (char const *file, bool escape)
-{
-  if (! escape)
-    {
-      fputs (file, stdout);
-      return;
-    }
-
-  while (*file)
-    {
-      switch (*file)
-        {
-        case '\n':
-          fputs ("\\n", stdout);
-          break;
-
-        case '\\':
-          fputs ("\\\\", stdout);
-          break;
-
-        default:
-          putchar (*file);
-          break;
-        }
-      file++;
-    }
 }
 
 int
@@ -736,6 +776,9 @@ main (int argc, char **argv)
         warn = true;
         quiet = false;
         break;
+      case IGNORE_MISSING_OPTION:
+        ignore_missing = true;
+        break;
       case QUIET_OPTION:
         status_only = false;
         warn = false;
@@ -779,6 +822,14 @@ main (int argc, char **argv)
     {
       error (0, 0, _("the --binary and --text options are meaningless when "
                      "verifying checksums"));
+      usage (EXIT_FAILURE);
+    }
+
+  if (ignore_missing && !do_check)
+    {
+      error (0, 0,
+             _("the --ignore-missing option is meaningful only when "
+               "verifying checksums"));
       usage (EXIT_FAILURE);
     }
 

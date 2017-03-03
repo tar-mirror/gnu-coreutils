@@ -1,6 +1,6 @@
 ## DO NOT EDIT! GENERATED AUTOMATICALLY!
 ## Process this file with automake to produce Makefile.in.
-# Copyright (C) 2002-2015 Free Software Foundation, Inc.
+# Copyright (C) 2002-2016 Free Software Foundation, Inc.
 #
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -159,20 +159,13 @@ EXTRA_DIST += test-arpa_inet.c
 
 ## end   gnulib module arpa_inet-tests
 
-## begin gnulib module array-list
+## begin gnulib module base32-tests
 
-libtests_a_SOURCES += gl_array_list.h gl_array_list.c
+TESTS += test-base32
+check_PROGRAMS += test-base32
+EXTRA_DIST += test-base32.c macros.h
 
-## end   gnulib module array-list
-
-## begin gnulib module array-list-tests
-
-TESTS += test-array_list
-check_PROGRAMS += test-array_list
-
-EXTRA_DIST += test-array_list.c macros.h
-
-## end   gnulib module array-list-tests
+## end   gnulib module base32-tests
 
 ## begin gnulib module base64-tests
 
@@ -237,7 +230,6 @@ EXTRA_DIST += test-btowc1.sh test-btowc2.sh test-btowc.c signature.h macros.h
 
 TESTS += test-c-ctype
 check_PROGRAMS += test-c-ctype
-
 EXTRA_DIST += test-c-ctype.c macros.h
 
 ## end   gnulib module c-ctype-tests
@@ -1161,14 +1153,6 @@ test_linkat_LDADD = $(LDADD) @LIBINTL@
 EXTRA_DIST += test-link.h test-linkat.c signature.h macros.h
 
 ## end   gnulib module linkat-tests
-
-## begin gnulib module linked-list-tests
-
-TESTS += test-linked_list
-check_PROGRAMS += test-linked_list
-EXTRA_DIST += test-linked_list.c macros.h
-
-## end   gnulib module linked-list-tests
 
 ## begin gnulib module listen
 
@@ -2235,6 +2219,26 @@ check_PROGRAMS += test-time
 EXTRA_DIST += test-time.c
 
 ## end   gnulib module time-tests
+
+## begin gnulib module timespec-add
+
+libtests_a_SOURCES += timespec-add.c
+
+## end   gnulib module timespec-add
+
+## begin gnulib module timespec-sub
+
+libtests_a_SOURCES += timespec-sub.c
+
+## end   gnulib module timespec-sub
+
+## begin gnulib module timespec-tests
+
+TESTS += test-timespec
+check_PROGRAMS += test-timespec
+EXTRA_DIST += test-timespec.c macros.h
+
+## end   gnulib module timespec-tests
 
 ## begin gnulib module tls-tests
 

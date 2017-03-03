@@ -1,5 +1,5 @@
 /* stat.c -- display file or file system status
-   Copyright (C) 2001-2015 Free Software Foundation, Inc.
+   Copyright (C) 2001-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -66,7 +66,6 @@
 #include "getopt.h"
 #include "mountlist.h"
 #include "quote.h"
-#include "quotearg.h"
 #include "stat-size.h"
 #include "stat-time.h"
 #include "strftime.h"
@@ -246,6 +245,8 @@ human_fstype (STRUCT_STATVFS const *statfsbuf)
          a comment.  The S_MAGIC_... name and constant are automatically
          combined to produce the #define directives in fs.h.  */
 
+    case S_MAGIC_ACFS: /* 0x61636673 remote */
+      return "acfs";
     case S_MAGIC_ADFS: /* 0xADF5 local */
       return "adfs";
     case S_MAGIC_AFFS: /* 0xADFF local */
@@ -267,10 +268,14 @@ human_fstype (STRUCT_STATVFS const *statfsbuf)
       return "bdevfs";
     case S_MAGIC_BFS: /* 0x1BADFACE local */
       return "bfs";
+    case S_MAGIC_BPF_FS: /* 0xCAFE4A11 local */
+      return "bpf_fs";
     case S_MAGIC_BINFMTFS: /* 0x42494E4D local */
       return "binfmt_misc";
     case S_MAGIC_BTRFS: /* 0x9123683E local */
       return "btrfs";
+    case S_MAGIC_BTRFS_TEST: /* 0x73727279 local */
+      return "btrfs_test";
     case S_MAGIC_CEPH: /* 0x00C36400 remote */
       return "ceph";
     case S_MAGIC_CGROUP: /* 0x0027E0EB local */
@@ -381,12 +386,19 @@ human_fstype (STRUCT_STATVFS const *statfsbuf)
       return "nfsd";
     case S_MAGIC_NILFS: /* 0x3434 local */
       return "nilfs";
+    case S_MAGIC_NSFS: /* 0x6E736673 local */
+      return "nsfs";
     case S_MAGIC_NTFS: /* 0x5346544E local */
       return "ntfs";
     case S_MAGIC_OPENPROM: /* 0x9FA1 local */
       return "openprom";
     case S_MAGIC_OCFS2: /* 0x7461636F remote */
       return "ocfs2";
+    case S_MAGIC_OVERLAYFS: /* 0x794C7630 remote */
+      /* This may overlay remote file systems.
+         Also there have been issues reported with inotify and overlayfs,
+         so mark as "remote" so that polling is used.  */
+      return "overlayfs";
     case S_MAGIC_PANFS: /* 0xAAD7AAEA remote */
       return "panfs";
     case S_MAGIC_PIPEFS: /* 0x50495045 remote */
@@ -432,6 +444,8 @@ human_fstype (STRUCT_STATVFS const *statfsbuf)
       return "sysv4";
     case S_MAGIC_TMPFS: /* 0x01021994 local */
       return "tmpfs";
+    case S_MAGIC_TRACEFS: /* 0x74726163 local */
+      return "tracefs";
     case S_MAGIC_UBIFS: /* 0x24051905 local */
       return "ubifs";
     case S_MAGIC_UDF: /* 0x15013346 local */
@@ -547,10 +561,13 @@ human_time (struct timespec t)
                        (INT_STRLEN_BOUND (int) /* YYYY */
                         + 1 /* because YYYY might equal INT_MAX + 1900 */
                         + sizeof "-MM-DD HH:MM:SS.NNNNNNNNN +ZZZZ"))];
+  static timezone_t tz;
+  if (!tz)
+    tz = tzalloc (getenv ("TZ"));
   struct tm const *tm = localtime (&t.tv_sec);
   if (tm == NULL)
     return timetostr (t.tv_sec, str);
-  nstrftime (str, sizeof str, "%Y-%m-%d %H:%M:%S.%N %z", tm, 0, t.tv_nsec);
+  nstrftime (str, sizeof str, "%Y-%m-%d %H:%M:%S.%N %z", tm, tz, t.tv_nsec);
   return str;
 }
 
@@ -731,7 +748,7 @@ out_file_context (char *pformat, size_t prefix_len, char const *filename)
        : lgetfilecon (filename, &scontext)) < 0)
     {
       error (0, errno, _("failed to get security context of %s"),
-             quote (filename));
+             quoteaf (filename));
       scontext = NULL;
       fail = true;
     }
@@ -887,7 +904,7 @@ out_mount_point (char const *filename, char *pformat, size_t prefix_len,
       char *resolved = canonicalize_file_name (filename);
       if (!resolved)
         {
-          error (0, errno, _("failed to canonicalize %s"), quote (filename));
+          error (0, errno, _("failed to canonicalize %s"), quoteaf (filename));
           goto print_mount_point;
         }
       bp = find_bind_mount (resolved);
@@ -977,18 +994,18 @@ print_stat (char *pformat, size_t prefix_len, unsigned int m,
       out_string (pformat, prefix_len, filename);
       break;
     case 'N':
-      out_string (pformat, prefix_len, quote (filename));
+      out_string (pformat, prefix_len, quoteaf (filename));
       if (S_ISLNK (statbuf->st_mode))
         {
           char *linkname = areadlink_with_size (filename, statbuf->st_size);
           if (linkname == NULL)
             {
               error (0, errno, _("cannot read symbolic link %s"),
-                     quote (filename));
+                     quoteaf (filename));
               return true;
             }
           printf (" -> ");
-          out_string (pformat, prefix_len, quote (linkname));
+          out_string (pformat, prefix_len, quoteaf (linkname));
           free (linkname);
         }
       break;
@@ -1185,7 +1202,7 @@ print_it (char const *format, int fd, char const *filename,
                     dest[len + 1] = *fmt_char;
                     dest[len + 2] = '\0';
                     error (EXIT_FAILURE, 0, _("%s: invalid directive"),
-                           quotearg_colon (dest));
+                           quote (dest));
                   }
                 putchar ('%');
                 break;
@@ -1263,14 +1280,14 @@ do_statfs (char const *filename, char const *format)
   if (STREQ (filename, "-"))
     {
       error (0, 0, _("using %s to denote standard input does not work"
-                     " in file system mode"), quote (filename));
+                     " in file system mode"), quoteaf (filename));
       return false;
     }
 
   if (STATFS (filename, &statfsbuf) != 0)
     {
       error (0, errno, _("cannot read file system information for %s"),
-             quote (filename));
+             quoteaf (filename));
       return false;
     }
 
@@ -1301,7 +1318,7 @@ do_stat (char const *filename, char const *format,
             ? stat (filename, &statbuf)
             : lstat (filename, &statbuf)) != 0)
     {
-      error (0, errno, _("cannot stat %s"), quote (filename));
+      error (0, errno, _("cannot stat %s"), quoteaf (filename));
       return false;
     }
 
@@ -1436,7 +1453,7 @@ Display file or file system status.\n\
       fputs (_("\n\
 The valid format sequences for files (without --file-system):\n\
 \n\
-  %a   access rights in octal\n\
+  %a   access rights in octal (note '#' and '0' printf flags)\n\
   %A   access rights in human readable form\n\
   %b   number of blocks allocated (see %B)\n\
   %B   the size in bytes of each block reported by %b\n\

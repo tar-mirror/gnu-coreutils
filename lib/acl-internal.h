@@ -1,6 +1,6 @@
-/* Internal implementation of access control lists.
+/* Internal implementation of access control lists.  -*- coding: utf-8 -*-
 
-   Copyright (C) 2002-2003, 2005-2015 Free Software Foundation, Inc.
+   Copyright (C) 2002-2003, 2005-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -155,6 +155,12 @@ extern int acl_extended_nontrivial (acl_t);
    Return 0 if it is trivial, i.e. equivalent to a simple stat() mode.
    Return -1 and set errno upon failure to determine it.  */
 extern int acl_access_nontrivial (acl_t);
+
+/* ACL is an ACL, from a file, stored as type ACL_TYPE_DEFAULT.
+   Return 1 if the given ACL is non-trivial.
+   Return 0 if it is trivial, i.e. equivalent to a simple stat() mode.
+   Return -1 and set errno upon failure to determine it.  */
+extern int acl_default_nontrivial (acl_t);
 #  endif
 
 # elif HAVE_FACL && defined GETACL /* Solaris, Cygwin, not HP-UX */
@@ -249,7 +255,7 @@ extern int acl_nontrivial (int count, struct acl *entries);
 
 struct permission_context {
   mode_t mode;
-#ifdef USE_ACL
+#if USE_ACL
 # if HAVE_ACL_GET_FILE /* Linux, FreeBSD, Mac OS X, IRIX, Tru64 */
   acl_t acl;
 #  if !HAVE_ACL_TYPE_EXTENDED

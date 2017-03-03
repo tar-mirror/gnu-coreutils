@@ -4,7 +4,7 @@
 # are established in tail_forever_inotify.  That new file would be ignored
 # indefinitely.
 
-# Copyright (C) 2015 Free Software Foundation, Inc.
+# Copyright (C) 2015-2016 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 . "${srcdir=.}/tests/init.sh"; path_prepend_ ./src
-print_ver_ tail
+print_ver_ tail sleep
 
 # Terminate any background gdb/tail process
 cleanup_() {

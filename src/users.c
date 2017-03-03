@@ -1,5 +1,5 @@
 /* GNU's users.
-   Copyright (C) 1992-2015 Free Software Foundation, Inc.
+   Copyright (C) 1992-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -88,7 +88,7 @@ users (const char *filename, int options)
   STRUCT_UTMP *utmp_buf;
 
   if (read_utmp (filename, &n_users, &utmp_buf, options) != 0)
-    error (EXIT_FAILURE, errno, "%s", filename);
+    error (EXIT_FAILURE, errno, "%s", quotef (filename));
 
   list_entries_users (n_users, utmp_buf);
 

@@ -1,5 +1,5 @@
 /* chcon -- change security context of files
-   Copyright (C) 2005-2015 Free Software Foundation, Inc.
+   Copyright (C) 2005-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@
 #include "error.h"
 #include "ignore-value.h"
 #include "quote.h"
-#include "quotearg.h"
 #include "root-dev-ino.h"
 #include "selinux-at.h"
 #include "xfts.h"
@@ -98,7 +97,7 @@ compute_context_from_mask (char const *context, context_t *ret)
   if (!new_context)
     {
       error (0, errno, _("failed to create security context: %s"),
-             quotearg_colon (context));
+             quote (context));
       return 1;
     }
 
@@ -154,7 +153,7 @@ change_file_context (int fd, char const *file)
       if (status < 0 && errno != ENODATA)
         {
           error (0, errno, _("failed to get security context of %s"),
-                 quote (file));
+                 quoteaf (file));
           return 1;
         }
 
@@ -164,7 +163,7 @@ change_file_context (int fd, char const *file)
       if (file_context == NULL)
         {
           error (0, 0, _("can't apply partial context to unlabeled file %s"),
-                 quote (file));
+                 quoteaf (file));
           return 1;
         }
 
@@ -188,7 +187,7 @@ change_file_context (int fd, char const *file)
         {
           errors = 1;
           error (0, errno, _("failed to change context of %s to %s"),
-                 quote_n (0, file), quote_n (1, context_string));
+                 quoteaf_n (0, file), quote_n (1, context_string));
         }
     }
 
@@ -252,18 +251,19 @@ process_file (FTS *fts, FTSENT *ent)
           fts_set (fts, ent, FTS_AGAIN);
           return true;
         }
-      error (0, ent->fts_errno, _("cannot access %s"), quote (file_full_name));
+      error (0, ent->fts_errno, _("cannot access %s"),
+             quoteaf (file_full_name));
       ok = false;
       break;
 
     case FTS_ERR:
-      error (0, ent->fts_errno, "%s", quote (file_full_name));
+      error (0, ent->fts_errno, "%s", quotef (file_full_name));
       ok = false;
       break;
 
     case FTS_DNR:
       error (0, ent->fts_errno, _("cannot read directory %s"),
-             quote (file_full_name));
+             quoteaf (file_full_name));
       ok = false;
       break;
 
@@ -290,7 +290,7 @@ process_file (FTS *fts, FTSENT *ent)
     {
       if (verbose)
         printf (_("changing security context of %s\n"),
-                quote (file_full_name));
+                quoteaf (file_full_name));
 
       if (change_file_context (fts->fts_cwd_fd, file) != 0)
         ok = false;
@@ -544,7 +544,7 @@ main (int argc, char **argv)
 
       if (getfilecon (reference_file, &ref_context) < 0)
         error (EXIT_FAILURE, errno, _("failed to get security context of %s"),
-               quote (reference_file));
+               quoteaf (reference_file));
 
       specified_context = ref_context;
     }
@@ -558,7 +558,7 @@ main (int argc, char **argv)
       specified_context = argv[optind++];
       if (security_check_context (se_const (specified_context)) < 0)
         error (EXIT_FAILURE, errno, _("invalid context: %s"),
-               quotearg_colon (specified_context));
+               quote (specified_context));
     }
 
   if (reference_file && component_specified)
@@ -573,7 +573,7 @@ main (int argc, char **argv)
       root_dev_ino = get_root_dev_ino (&dev_ino_buf);
       if (root_dev_ino == NULL)
         error (EXIT_FAILURE, errno, _("failed to get attributes of %s"),
-               quote ("/"));
+               quoteaf ("/"));
     }
   else
     {

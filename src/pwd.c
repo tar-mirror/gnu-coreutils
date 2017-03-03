@@ -1,5 +1,5 @@
 /* pwd - print current directory
-   Copyright (C) 1994-2015 Free Software Foundation, Inc.
+   Copyright (C) 1994-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -274,10 +274,10 @@ robust_getcwd (struct file_name *file_name)
 
   if (root_dev_ino == NULL)
     error (EXIT_FAILURE, errno, _("failed to get attributes of %s"),
-           quote ("/"));
+           quoteaf ("/"));
 
   if (stat (".", &dot_sb) < 0)
-    error (EXIT_FAILURE, errno, _("failed to stat %s"), quote ("."));
+    error (EXIT_FAILURE, errno, _("failed to stat %s"), quoteaf ("."));
 
   while (1)
     {

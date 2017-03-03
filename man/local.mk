@@ -1,7 +1,7 @@
 # Make coreutils man pages.				-*-Makefile-*-
 # This is included by the top-level Makefile.am.
 
-# Copyright (C) 2002-2015 Free Software Foundation, Inc.
+# Copyright (C) 2002-2016 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -60,6 +60,7 @@ man/arch.1:      src/uname$(EXEEXT)
 man/install.1:   src/ginstall$(EXEEXT)
 man/test.1:      src/[$(EXEEXT)
 
+man/base32.1:    src/base32$(EXEEXT)
 man/base64.1:    src/base64$(EXEEXT)
 man/basename.1:  src/basename$(EXEEXT)
 man/cat.1:       src/cat$(EXEEXT)
@@ -183,7 +184,8 @@ endif
 	  && $(MKDIR_P) $$t						\
 	  && (cd $$t && $(LN_S) '$(abs_top_builddir)/src/'$$prog$(EXEEXT) \
 				$$argv$(EXEEXT))			\
-	  && $(run_help2man)						\
+	&& : $${SOURCE_DATE_EPOCH=`cat $(srcdir)/.timestamp 2>/dev/null || :`} \
+	&& export SOURCE_DATE_EPOCH && $(run_help2man)			\
 		     --source='$(PACKAGE_STRING)'			\
 		     --include=$(srcdir)/man/$$name.x			\
 		     --output=$$t/$$name.1				\

@@ -1,7 +1,7 @@
 #!/bin/sh
 # Tests for ln -L/-P.
 
-# Copyright (C) 2009-2015 Free Software Foundation, Inc.
+# Copyright (C) 2009-2016 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -70,12 +70,12 @@ mkdir d || framework_failure_
 ln -s d link-to-dir || framework_failure_
 ln -L link-to-dir hard-to-dir-link 2>err && fail=1
 case $(cat err) in
-  *": 'link-to-dir': hard link not allowed for directory"*) ;;
+  *": link-to-dir: hard link not allowed for directory"*) ;;
   *) fail=1 ;;
 esac
 ln -P link-to-dir/ hard-to-dir-link 2>err && fail=1
 case $(cat err) in
-  *": 'link-to-dir/': hard link not allowed for directory"*) ;;
+  *": link-to-dir/: hard link not allowed for directory"*) ;;
   *) fail=1 ;;
 esac
 ln -P link-to-dir hard-to-dir-link || fail=1

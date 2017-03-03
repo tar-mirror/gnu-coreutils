@@ -66,6 +66,12 @@ src_libsinglebin___a_CFLAGS = "-Dmain=single_binary_main__ (int, char **);  int 
 noinst_LIBRARIES += src/libsinglebin_base64.a
 src_libsinglebin_base64_a_SOURCES = src/base64.c
 src_libsinglebin_base64_a_CFLAGS = "-Dmain=single_binary_main_base64 (int, char **);  int single_binary_main_base64"  -Dusage=_usage_base64 $(src_coreutils_CFLAGS)
+src_libsinglebin_base64_a_CPPFLAGS =   -DBASE_TYPE=64 $(AM_CPPFLAGS)
+# Command base32
+noinst_LIBRARIES += src/libsinglebin_base32.a
+src_libsinglebin_base32_a_SOURCES =   src/base64.c
+src_libsinglebin_base32_a_CFLAGS = "-Dmain=single_binary_main_base32 (int, char **);  int single_binary_main_base32"  -Dusage=_usage_base32 $(src_coreutils_CFLAGS)
+src_libsinglebin_base32_a_CPPFLAGS =   -DBASE_TYPE=32 $(AM_CPPFLAGS)
 # Command basename
 noinst_LIBRARIES += src/libsinglebin_basename.a
 src_libsinglebin_basename_a_SOURCES = src/basename.c
@@ -111,7 +117,7 @@ src_libsinglebin_csplit_a_SOURCES = src/csplit.c
 src_libsinglebin_csplit_a_CFLAGS = "-Dmain=single_binary_main_csplit (int, char **);  int single_binary_main_csplit"  -Dusage=_usage_csplit $(src_coreutils_CFLAGS)
 # Command cut
 noinst_LIBRARIES += src/libsinglebin_cut.a
-src_libsinglebin_cut_a_SOURCES = src/cut.c
+src_libsinglebin_cut_a_SOURCES =   src/cut.c src/set-fields.c
 src_libsinglebin_cut_a_CFLAGS = "-Dmain=single_binary_main_cut (int, char **);  int single_binary_main_cut"  -Dusage=_usage_cut $(src_coreutils_CFLAGS)
 # Command date
 noinst_LIBRARIES += src/libsinglebin_date.a
@@ -264,7 +270,7 @@ src_libsinglebin_nohup_a_SOURCES = src/nohup.c
 src_libsinglebin_nohup_a_CFLAGS = "-Dmain=single_binary_main_nohup (int, char **);  int single_binary_main_nohup"  -Dusage=_usage_nohup $(src_coreutils_CFLAGS)
 # Command numfmt
 noinst_LIBRARIES += src/libsinglebin_numfmt.a
-src_libsinglebin_numfmt_a_SOURCES = src/numfmt.c
+src_libsinglebin_numfmt_a_SOURCES =   src/numfmt.c src/set-fields.c
 src_libsinglebin_numfmt_a_CFLAGS = "-Dmain=single_binary_main_numfmt (int, char **);  int single_binary_main_numfmt"  -Dusage=_usage_numfmt $(src_coreutils_CFLAGS)
 # Command od
 noinst_LIBRARIES += src/libsinglebin_od.a
@@ -394,6 +400,7 @@ src_libsinglebin_sum_a_CFLAGS = "-Dmain=single_binary_main_sum (int, char **);  
 # Command sync
 noinst_LIBRARIES += src/libsinglebin_sync.a
 src_libsinglebin_sync_a_SOURCES = src/sync.c
+src_libsinglebin_sync_a_ldadd =   $(LIB_FDATASYNC)
 src_libsinglebin_sync_a_CFLAGS = "-Dmain=single_binary_main_sync (int, char **);  int single_binary_main_sync"  -Dusage=_usage_sync $(src_coreutils_CFLAGS)
 # Command tac
 noinst_LIBRARIES += src/libsinglebin_tac.a

@@ -1,5 +1,5 @@
 /* tee - read from standard input and write to standard output and files.
-   Copyright (C) 1985-2015 Free Software Foundation, Inc.
+   Copyright (C) 1985-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@
   proper_name ("Richard M. Stallman"), \
   proper_name ("David MacKenzie")
 
-static bool tee_files (int nfiles, const char **files);
+static bool tee_files (int nfiles, char **files);
 
 /* If true, append to output files rather than truncating them. */
 static bool append;
@@ -91,7 +91,8 @@ Copy standard input to each FILE, and also to standard output.\n\
   -i, --ignore-interrupts   ignore interrupt signals\n\
 "), stdout);
       fputs (_("\
-  -p, --output-error[=MODE]  behavior on write error.  See MODE details below\n\
+  -p                        diagnose errors writing to non pipes\n\
+      --output-error[=MODE]   set behavior on write error.  See MODE below\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
@@ -167,19 +168,19 @@ main (int argc, char **argv)
   /* Do *not* warn if tee is given no file arguments.
      POSIX requires that it work when given no arguments.  */
 
-  ok = tee_files (argc - optind, (const char **) &argv[optind]);
+  ok = tee_files (argc - optind, &argv[optind]);
   if (close (STDIN_FILENO) != 0)
-    error (EXIT_FAILURE, errno, _("standard input"));
+    error (EXIT_FAILURE, errno, "%s", _("standard input"));
 
   return ok ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 /* Copy the standard input into each of the NFILES files in FILES
-   and into the standard output.
+   and into the standard output.  As a side effect, modify FILES[-1].
    Return true if successful.  */
 
 static bool
-tee_files (int nfiles, const char **files)
+tee_files (int nfiles, char **files)
 {
   size_t n_outputs = 0;
   FILE **descriptors;
@@ -192,13 +193,6 @@ tee_files (int nfiles, const char **files)
      ? (append ? "ab" : "wb")
      : (append ? "a" : "w"));
 
-  descriptors = xnmalloc (nfiles + 1, sizeof *descriptors);
-
-  /* Move all the names 'up' one in the argv array to make room for
-     the entry for standard output.  This writes into argv[argc].  */
-  for (i = nfiles; i >= 1; i--)
-    files[i] = files[i - 1];
-
   if (O_BINARY && ! isatty (STDIN_FILENO))
     xfreopen (NULL, "rb", stdin);
   if (O_BINARY && ! isatty (STDOUT_FILENO))
@@ -206,10 +200,13 @@ tee_files (int nfiles, const char **files)
 
   fadvise (stdin, FADVISE_SEQUENTIAL);
 
-  /* In the array of NFILES + 1 descriptors, make
-     the first one correspond to standard output.   */
+  /* Set up FILES[0 .. NFILES] and DESCRIPTORS[0 .. NFILES].
+     In both arrays, entry 0 corresponds to standard output.  */
+
+  descriptors = xnmalloc (nfiles + 1, sizeof *descriptors);
+  files--;
   descriptors[0] = stdout;
-  files[0] = _("standard output");
+  files[0] = bad_cast (_("standard output"));
   setvbuf (stdout, NULL, _IONBF, 0);
   n_outputs++;
 
@@ -221,7 +218,7 @@ tee_files (int nfiles, const char **files)
         {
           error (output_error == output_error_exit
                  || output_error == output_error_exit_nopipe,
-                 errno, "%s", files[i]);
+                 errno, "%s", quotef (files[i]));
           ok = false;
         }
       else
@@ -254,7 +251,7 @@ tee_files (int nfiles, const char **files)
               {
                 error (output_error == output_error_exit
                        || output_error == output_error_exit_nopipe,
-                       w_errno, "%s", files[i]);
+                       w_errno, "%s", quotef (files[i]));
               }
             descriptors[i] = NULL;
             if (fail)
@@ -273,7 +270,7 @@ tee_files (int nfiles, const char **files)
   for (i = 1; i <= nfiles; i++)
     if (descriptors[i] && fclose (descriptors[i]) != 0)
       {
-        error (0, errno, "%s", files[i]);
+        error (0, errno, "%s", quotef (files[i]));
         ok = false;
       }
 

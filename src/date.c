@@ -1,5 +1,5 @@
 /* date - print or set the system date and time
-   Copyright (C) 1989-2015 Free Software Foundation, Inc.
+   Copyright (C) 1989-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@
 
 #define AUTHORS proper_name ("David MacKenzie")
 
-static bool show_date (const char *format, struct timespec when);
+static bool show_date (const char *, struct timespec, timezone_t);
 
 enum Time_spec
 {
@@ -272,7 +272,7 @@ Show the local time for 9AM next Friday on the west coast of the US\n\
    Return true if successful.  */
 
 static bool
-batch_convert (const char *input_filename, const char *format)
+batch_convert (const char *input_filename, const char *format, timezone_t tz)
 {
   bool ok;
   FILE *in_stream;
@@ -290,7 +290,7 @@ batch_convert (const char *input_filename, const char *format)
       in_stream = fopen (input_filename, "r");
       if (in_stream == NULL)
         {
-          error (EXIT_FAILURE, errno, "%s", quote (input_filename));
+          error (EXIT_FAILURE, errno, "%s", quotef (input_filename));
         }
     }
 
@@ -315,12 +315,12 @@ batch_convert (const char *input_filename, const char *format)
         }
       else
         {
-          ok &= show_date (format, when);
+          ok &= show_date (format, when, tz);
         }
     }
 
   if (fclose (in_stream) == EOF)
-    error (EXIT_FAILURE, errno, "%s", quote (input_filename));
+    error (EXIT_FAILURE, errno, "%s", quotef (input_filename));
 
   free (line);
 
@@ -382,10 +382,10 @@ main (int argc, char **argv)
             static char const iso_8601_format[][32] =
               {
                 "%Y-%m-%d",
-                "%Y-%m-%dT%H:%M:%S%z",
-                "%Y-%m-%dT%H:%M:%S,%N%z",
-                "%Y-%m-%dT%H%z",
-                "%Y-%m-%dT%H:%M%z"
+                "%Y-%m-%dT%H:%M:%S%:z",
+                "%Y-%m-%dT%H:%M:%S,%N%:z",
+                "%Y-%m-%dT%H%:z",
+                "%Y-%m-%dT%H:%M%:z"
               };
             enum Time_spec i =
               (optarg
@@ -485,8 +485,10 @@ main (int argc, char **argv)
         }
     }
 
+  timezone_t tz = tzalloc (getenv ("TZ"));
+
   if (batch_file != NULL)
-    ok = batch_convert (batch_file, format);
+    ok = batch_convert (batch_file, format, tz);
   else
     {
       bool valid_date = true;
@@ -518,7 +520,7 @@ main (int argc, char **argv)
           if (reference != NULL)
             {
               if (stat (reference, &refstats) != 0)
-                error (EXIT_FAILURE, errno, "%s", reference);
+                error (EXIT_FAILURE, errno, "%s", quotef (reference));
               when = get_stat_mtime (&refstats);
             }
           else
@@ -543,7 +545,7 @@ main (int argc, char **argv)
             }
         }
 
-      ok &= show_date (format, when);
+      ok &= show_date (format, when, tz);
     }
 
   return ok ? EXIT_SUCCESS : EXIT_FAILURE;
@@ -553,7 +555,7 @@ main (int argc, char **argv)
    in FORMAT, followed by a newline.  Return true if successful.  */
 
 static bool
-show_date (const char *format, struct timespec when)
+show_date (const char *format, struct timespec when, timezone_t tz)
 {
   struct tm *tm;
 
@@ -561,13 +563,14 @@ show_date (const char *format, struct timespec when)
   if (! tm)
     {
       char buf[INT_BUFSIZE_BOUND (intmax_t)];
-      error (0, 0, _("time %s is out of range"), timetostr (when.tv_sec, buf));
+      error (0, 0, _("time %s is out of range"),
+             quote (timetostr (when.tv_sec, buf)));
       return false;
     }
 
   if (format == rfc_2822_format)
     setlocale (LC_TIME, "C");
-  fprintftime (stdout, format, tm, 0, when.tv_nsec);
+  fprintftime (stdout, format, tm, tz, when.tv_nsec);
   fputc ('\n', stdout);
   if (format == rfc_2822_format)
     setlocale (LC_TIME, "");

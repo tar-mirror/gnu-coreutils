@@ -1,7 +1,7 @@
 #!/bin/sh
 # Ensure that stty diagnoses invalid inputs, rather than silently misbehaving.
 
-# Copyright (C) 2007-2015 Free Software Foundation, Inc.
+# Copyright (C) 2007-2016 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,6 +19,8 @@
 . "${srcdir=.}/tests/init.sh"; path_prepend_ ./src
 print_ver_ stty
 require_controlling_input_terminal_
+require_trap_signame_
+
 trap '' TTOU # Ignore SIGTTOU
 
 

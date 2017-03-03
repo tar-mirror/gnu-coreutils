@@ -1,5 +1,5 @@
 /* unexpand - convert blanks to tabs
-   Copyright (C) 1989-2015 Free Software Foundation, Inc.
+   Copyright (C) 1989-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -243,14 +243,14 @@ next_file (FILE *fp)
     {
       if (ferror (fp))
         {
-          error (0, errno, "%s", prev_file);
+          error (0, errno, "%s", quotef (prev_file));
           exit_status = EXIT_FAILURE;
         }
       if (STREQ (prev_file, "-"))
         clearerr (fp);		/* Also clear EOF.  */
       else if (fclose (fp) != 0)
         {
-          error (0, errno, "%s", prev_file);
+          error (0, errno, "%s", quotef (prev_file));
           exit_status = EXIT_FAILURE;
         }
     }
@@ -270,7 +270,7 @@ next_file (FILE *fp)
           fadvise (fp, FADVISE_SEQUENTIAL);
           return fp;
         }
-      error (0, errno, "%s", file);
+      error (0, errno, "%s", quotef (file));
       exit_status = EXIT_FAILURE;
     }
   return NULL;

@@ -4,7 +4,7 @@
 # Check also locally if --preserve=context, -a and --preserve=all
 # does work
 
-# Copyright (C) 2007-2015 Free Software Foundation, Inc.
+# Copyright (C) 2007-2016 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -73,7 +73,8 @@ old_type_d=$(get_selinux_type c_d)
 # and get the adjusted type for comparison
 cp -a c Z1 || fail=1
 cp -a c_d Z1_d || fail=1
-if restorecon Z1 Z1_d 2>/dev/null; then
+if restorecon Z1 Z1_d 2>restorecon.err \
+   && compare /dev/null restorecon.err; then
   new_type_f=$(get_selinux_type Z1)
   new_type_d=$(get_selinux_type Z1_d)
 

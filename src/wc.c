@@ -1,5 +1,5 @@
 /* wc - print the number of lines, words, and bytes in files
-   Copyright (C) 1985-2015 Free Software Foundation, Inc.
+   Copyright (C) 1985-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 
 /* Written by Paul Rubin, phr@ocf.berkeley.edu
    and David MacKenzie, djm@gnu.ai.mit.edu. */
-
+
 #include <config.h>
 
 #include <stdio.h>
@@ -32,8 +32,6 @@
 #include "fadvise.h"
 #include "mbchar.h"
 #include "physmem.h"
-#include "quote.h"
-#include "quotearg.h"
 #include "readtokens0.h"
 #include "safe-read.h"
 #include "stat-size.h"
@@ -184,7 +182,7 @@ write_counts (uintmax_t lines,
       printf (format_int, number_width, umaxtostr (linelength, buf));
     }
   if (file)
-    printf (" %s", file);
+    printf (" %s", strchr (file, '\n') ? quotef (file) : file);
   putchar ('\n');
 }
 
@@ -259,7 +257,7 @@ wc (int fd, char const *file_x, struct fstatus *fstatus, off_t current_pos)
         {
           if (bytes_read == SAFE_READ_ERROR)
             {
-              error (0, errno, "%s", file);
+              error (0, errno, "%s", quotef (file));
               ok = false;
               break;
             }
@@ -275,7 +273,7 @@ wc (int fd, char const *file_x, struct fstatus *fstatus, off_t current_pos)
         {
           if (bytes_read == SAFE_READ_ERROR)
             {
-              error (0, errno, "%s", file);
+              error (0, errno, "%s", quotef (file));
               ok = false;
               break;
             }
@@ -343,7 +341,7 @@ wc (int fd, char const *file_x, struct fstatus *fstatus, off_t current_pos)
 # endif
           if (bytes_read == SAFE_READ_ERROR)
             {
-              error (0, errno, "%s", file);
+              error (0, errno, "%s", quotef (file));
               ok = false;
               break;
             }
@@ -464,7 +462,7 @@ wc (int fd, char const *file_x, struct fstatus *fstatus, off_t current_pos)
           const char *p = buf;
           if (bytes_read == SAFE_READ_ERROR)
             {
-              error (0, errno, "%s", file);
+              error (0, errno, "%s", quotef (file));
               ok = false;
               break;
             }
@@ -541,7 +539,7 @@ wc_file (char const *file, struct fstatus *fstatus)
       int fd = open (file, O_RDONLY | O_BINARY);
       if (fd == -1)
         {
-          error (0, errno, "%s", file);
+          error (0, errno, "%s", quotef (file));
           return false;
         }
       else
@@ -549,7 +547,7 @@ wc_file (char const *file, struct fstatus *fstatus)
           bool ok = wc (fd, file, fstatus, 0);
           if (close (fd) != 0)
             {
-              error (0, errno, "%s", file);
+              error (0, errno, "%s", quotef (file));
               return false;
             }
           return ok;
@@ -697,7 +695,7 @@ main (int argc, char **argv)
          on the command-line.  */
       if (optind < argc)
         {
-          error (0, 0, _("extra operand %s"), quote (argv[optind]));
+          error (0, 0, _("extra operand %s"), quoteaf (argv[optind]));
           fprintf (stderr, "%s\n",
                    _("file operands cannot be combined with --files0-from"));
           usage (EXIT_FAILURE);
@@ -710,7 +708,7 @@ main (int argc, char **argv)
           stream = fopen (files_from, "r");
           if (stream == NULL)
             error (EXIT_FAILURE, errno, _("cannot open %s for reading"),
-                   quote (files_from));
+                   quoteaf (files_from));
         }
 
       /* Read the file list into RAM if we can detect its size and that
@@ -724,7 +722,7 @@ main (int argc, char **argv)
           readtokens0_init (&tok);
           if (! readtokens0 (stream, &tok) || fclose (stream) != 0)
             error (EXIT_FAILURE, 0, _("cannot read file names from %s"),
-                   quote (files_from));
+                   quoteaf (files_from));
           files = tok.tok;
           nfiles = tok.n_tok;
           ai = argv_iter_init_argv (files);
@@ -765,7 +763,7 @@ main (int argc, char **argv)
               goto argv_iter_done;
             case AI_ERR_READ:
               error (0, errno, _("%s: read error"),
-                     quotearg_colon (files_from));
+                     quotef (files_from));
               ok = false;
               goto argv_iter_done;
             case AI_ERR_MEM:
@@ -780,7 +778,7 @@ main (int argc, char **argv)
              printf - | wc --files0-from=- */
           error (0, 0, _("when reading file names from stdin, "
                          "no file name of %s allowed"),
-                 quote (file_name));
+                 quoteaf (file_name));
           skip_file = true;
         }
 
@@ -798,7 +796,7 @@ main (int argc, char **argv)
                  not totally appropriate, since NUL is the separator, not NL,
                  but it might be better than nothing.  */
               unsigned long int file_number = argv_iter_n_args (ai);
-              error (0, 0, "%s:%lu: %s", quotearg_colon (files_from),
+              error (0, 0, "%s:%lu: %s", quotef (files_from),
                      file_number, _("invalid zero-length file name"));
             }
           skip_file = true;

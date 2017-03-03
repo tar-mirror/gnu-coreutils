@@ -1,5 +1,5 @@
 /* GNU fmt -- simple text formatter.
-   Copyright (C) 1994-2015 Free Software Foundation, Inc.
+   Copyright (C) 1994-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,7 +29,6 @@
 #include "system.h"
 #include "error.h"
 #include "fadvise.h"
-#include "quote.h"
 #include "xdectoint.h"
 
 /* The official name of this program (e.g., no 'g' prefix).  */
@@ -431,14 +430,14 @@ main (int argc, char **argv)
                   fmt (in_stream);
                   if (fclose (in_stream) == EOF)
                     {
-                      error (0, errno, "%s", file);
+                      error (0, errno, "%s", quotef (file));
                       ok = false;
                     }
                 }
               else
                 {
                   error (0, errno, _("cannot open %s for reading"),
-                         quote (file));
+                         quoteaf (file));
                   ok = false;
                 }
             }

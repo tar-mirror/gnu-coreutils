@@ -1,5 +1,5 @@
 /* dircolors - output commands to set the LS_COLOR environment variable
-   Copyright (C) 1996-2015 Free Software Foundation, Inc.
+   Copyright (C) 1996-2016 Free Software Foundation, Inc.
    Copyright (C) 1994, 1995, 1997, 1998, 1999, 2000 H. Peter Anvin
 
    This program is free software: you can redistribute it and/or modify
@@ -18,6 +18,7 @@
 #include <config.h>
 
 #include <sys/types.h>
+#include <fnmatch.h>
 #include <getopt.h>
 
 #include "system.h"
@@ -284,7 +285,7 @@ dc_parse_stream (FILE *fp, const char *filename)
       if (arg == NULL)
         {
           error (0, 0, _("%s:%lu: invalid line;  missing second token"),
-                 filename, (unsigned long int) line_number);
+                 quotef (filename), (unsigned long int) line_number);
           ok = false;
           free (keywd);
           continue;
@@ -293,7 +294,7 @@ dc_parse_stream (FILE *fp, const char *filename)
       unrecognized = false;
       if (c_strcasecmp (keywd, "TERM") == 0)
         {
-          if (STREQ (arg, term))
+          if (fnmatch (arg, term, 0) == 0)
             state = ST_TERMSURE;
           else if (state != ST_TERMSURE)
             state = ST_TERMNO;
@@ -356,7 +357,7 @@ dc_parse_stream (FILE *fp, const char *filename)
       if (unrecognized && (state == ST_TERMSURE || state == ST_TERMYES))
         {
           error (0, 0, _("%s:%lu: unrecognized keyword %s"),
-                 (filename ? quote (filename) : _("<internal>")),
+                 (filename ? quotef (filename) : _("<internal>")),
                  (unsigned long int) line_number, keywd);
           ok = false;
         }
@@ -375,7 +376,7 @@ dc_parse_file (const char *filename)
 
   if (! STREQ (filename, "-") && freopen (filename, "r", stdin) == NULL)
     {
-      error (0, errno, "%s", filename);
+      error (0, errno, "%s", quotef (filename));
       return false;
     }
 
@@ -383,7 +384,7 @@ dc_parse_file (const char *filename)
 
   if (fclose (stdin) != 0)
     {
-      error (0, errno, "%s", quote (filename));
+      error (0, errno, "%s", quotef (filename));
       return false;
     }
 

@@ -1,5 +1,5 @@
 /* tsort - topological sort.
-   Copyright (C) 1998-2015 Free Software Foundation, Inc.
+   Copyright (C) 1998-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,9 +30,9 @@
 #include "long-options.h"
 #include "error.h"
 #include "fadvise.h"
-#include "quote.h"
 #include "readtokens.h"
 #include "stdio--.h"
+#include "quote.h"
 
 /* The official name of this program (e.g., no 'g' prefix).  */
 #define PROGRAM_NAME "tsort"
@@ -71,7 +71,7 @@ static struct item *loop = NULL;
 
 /* The number of strings to sort.  */
 static size_t n_strings = 0;
-
+
 void
 usage (int status)
 {
@@ -351,7 +351,7 @@ detect_loop (struct item *k)
                         {
                           struct item *tmp = loop->qlink;
 
-                          error (0, 0, "%s", loop->str);
+                          error (0, 0, "%s", (loop->str));
 
                           /* Until we encounter K again.  */
                           if (loop == k)
@@ -445,7 +445,7 @@ tsort (const char *file)
   root = new_item (NULL);
 
   if (!is_stdin && ! freopen (file, "r", stdin))
-    error (EXIT_FAILURE, errno, "%s", file);
+    error (EXIT_FAILURE, errno, "%s", quotef (file));
 
   fadvise (stdin, FADVISE_SEQUENTIAL);
 
@@ -473,7 +473,7 @@ tsort (const char *file)
 
   if (k != NULL)
     error (EXIT_FAILURE, 0, _("%s: input contains an odd number of tokens"),
-           file);
+           quotef (file));
 
   /* T1. Initialize (N <- n).  */
   walk_tree (root, count_items);
@@ -518,7 +518,7 @@ tsort (const char *file)
       if (n_strings > 0)
         {
           /* The input contains a loop.  */
-          error (0, 0, _("%s: input contains a loop:"), file);
+          error (0, 0, _("%s: input contains a loop:"), quotef (file));
           ok = false;
 
           /* Print the loop and remove a relation to break it.  */
@@ -528,9 +528,11 @@ tsort (const char *file)
         }
     }
 
+  IF_LINT (free (root));
+
   if (fclose (stdin) != 0)
     error (EXIT_FAILURE, errno, "%s",
-           is_stdin ? _("standard input") : quote (file));
+           is_stdin ? _("standard input") : quotef (file));
 
   return ok;
 }

@@ -1,5 +1,5 @@
 /* tail -- output the last part of file(s)
-   Copyright (C) 1989-2015 Free Software Foundation, Inc.
+   Copyright (C) 1989-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -180,6 +180,9 @@ static bool from_start;
 /* If true, print filename headers.  */
 static bool print_headers;
 
+/* Character to split lines by. */
+static char line_end;
+
 /* When to print the filename banners.  */
 enum header_mode
 {
@@ -238,6 +241,7 @@ static struct option const long_options[] =
   {"silent", no_argument, NULL, 'q'},
   {"sleep-interval", required_argument, NULL, 's'},
   {"verbose", no_argument, NULL, 'v'},
+  {"zero-terminated", no_argument, NULL, 'z'},
   {GETOPT_HELP_OPTION_DECL},
   {GETOPT_VERSION_OPTION_DECL},
   {NULL, 0, NULL, 0}
@@ -263,8 +267,8 @@ With more than one FILE, precede each with a header giving the file name.\n\
       emit_mandatory_arg_note ();
 
      fputs (_("\
-  -c, --bytes=K            output the last K bytes; or use -c +K to output\n\
-                             bytes starting with the Kth of each file\n\
+  -c, --bytes=[+]NUM       output the last NUM bytes; or use -c +NUM to\n\
+                             output starting with byte NUM of each file\n\
 "), stdout);
      fputs (_("\
   -f, --follow[={name|descriptor}]\n\
@@ -273,8 +277,8 @@ With more than one FILE, precede each with a header giving the file name.\n\
   -F                       same as --follow=name --retry\n\
 "), stdout);
      printf (_("\
-  -n, --lines=K            output the last K lines, instead of the last %d;\n\
-                             or use -n +K to output starting with the Kth\n\
+  -n, --lines=[+]NUM       output the last NUM lines, instead of the last %d;\n\
+                             or use -n +NUM to output starting with line NUM\n\
       --max-unchanged-stats=N\n\
                            with --follow=name, reopen a FILE which has not\n\
                              changed size after N (default %d) iterations\n\
@@ -297,13 +301,14 @@ With more than one FILE, precede each with a header giving the file name.\n\
                              least once every N seconds\n\
   -v, --verbose            always output headers giving file names\n\
 "), stdout);
+     fputs (_("\
+  -z, --zero-terminated    line delimiter is NUL, not newline\n\
+"), stdout);
      fputs (HELP_OPTION_DESCRIPTION, stdout);
      fputs (VERSION_OPTION_DESCRIPTION, stdout);
      fputs (_("\
 \n\
-If the first character of K (the number of bytes or lines) is a '+',\n\
-print beginning with the Kth item from the start of each file, otherwise,\n\
-print the last K items in the file.  K may have a multiplier suffix:\n\
+NUM may have a multiplier suffix:\n\
 b 512, kB 1000, K 1024, MB 1000*1000, M 1024*1024,\n\
 GB 1000*1000*1000, G 1024*1024*1024, and so on for T, P, E, Z, Y.\n\
 \n\
@@ -360,7 +365,7 @@ close_fd (int fd, const char *filename)
 {
   if (fd != -1 && fd != STDIN_FILENO && close (fd))
     {
-      error (0, errno, _("closing %s (fd=%d)"), filename, fd);
+      error (0, errno, _("closing %s (fd=%d)"), quoteaf (filename), fd);
     }
 }
 
@@ -383,7 +388,7 @@ xwrite_stdout (char const *buffer, size_t n_bytes)
     {
       clearerr (stdout); /* To avoid redundant close_stdout diagnostic.  */
       error (EXIT_FAILURE, errno, _("error writing %s"),
-             quote ("standard output"));
+             quoteaf ("standard output"));
     }
 }
 
@@ -408,7 +413,7 @@ dump_remainder (const char *pretty_filename, int fd, uintmax_t n_bytes)
         {
           if (errno != EAGAIN)
             error (EXIT_FAILURE, errno, _("error reading %s"),
-                   quote (pretty_filename));
+                   quoteaf (pretty_filename));
           break;
         }
       if (bytes_read == 0)
@@ -446,15 +451,15 @@ xlseek (int fd, off_t offset, int whence, char const *filename)
     {
     case SEEK_SET:
       error (0, errno, _("%s: cannot seek to offset %s"),
-             filename, s);
+             quotef (filename), s);
       break;
     case SEEK_CUR:
       error (0, errno, _("%s: cannot seek to relative offset %s"),
-             filename, s);
+             quotef (filename), s);
       break;
     case SEEK_END:
       error (0, errno, _("%s: cannot seek to end-relative offset %s"),
-             filename, s);
+             quotef (filename), s);
       break;
     default:
       abort ();
@@ -495,13 +500,13 @@ file_lines (const char *pretty_filename, int fd, uintmax_t n_lines,
   bytes_read = safe_read (fd, buffer, bytes_read);
   if (bytes_read == SAFE_READ_ERROR)
     {
-      error (0, errno, _("error reading %s"), quote (pretty_filename));
+      error (0, errno, _("error reading %s"), quoteaf (pretty_filename));
       return false;
     }
   *read_pos = pos + bytes_read;
 
   /* Count the incomplete line on files that don't end with a newline.  */
-  if (bytes_read && buffer[bytes_read - 1] != '\n')
+  if (bytes_read && buffer[bytes_read - 1] != line_end)
     --n_lines;
 
   do
@@ -512,7 +517,7 @@ file_lines (const char *pretty_filename, int fd, uintmax_t n_lines,
       while (n)
         {
           char const *nl;
-          nl = memrchr (buffer, '\n', n);
+          nl = memrchr (buffer, line_end, n);
           if (nl == NULL)
             break;
           n = nl - buffer;
@@ -544,7 +549,7 @@ file_lines (const char *pretty_filename, int fd, uintmax_t n_lines,
       bytes_read = safe_read (fd, buffer, BUFSIZ);
       if (bytes_read == SAFE_READ_ERROR)
         {
-          error (0, errno, _("error reading %s"), quote (pretty_filename));
+          error (0, errno, _("error reading %s"), quoteaf (pretty_filename));
           return false;
         }
 
@@ -597,7 +602,7 @@ pipe_lines (const char *pretty_filename, int fd, uintmax_t n_lines,
       {
         char const *buffer_end = tmp->buffer + n_read;
         char const *p = tmp->buffer;
-        while ((p = memchr (p, '\n', buffer_end - p)))
+        while ((p = memchr (p, line_end, buffer_end - p)))
           {
             ++p;
             ++tmp->nlines;
@@ -637,7 +642,7 @@ pipe_lines (const char *pretty_filename, int fd, uintmax_t n_lines,
 
   if (n_read == SAFE_READ_ERROR)
     {
-      error (0, errno, _("error reading %s"), quote (pretty_filename));
+      error (0, errno, _("error reading %s"), quoteaf (pretty_filename));
       ok = false;
       goto free_lbuffers;
     }
@@ -651,7 +656,7 @@ pipe_lines (const char *pretty_filename, int fd, uintmax_t n_lines,
     goto free_lbuffers;
 
   /* Count the incomplete line on files that don't end with a newline.  */
-  if (last->buffer[last->nbytes - 1] != '\n')
+  if (last->buffer[last->nbytes - 1] != line_end)
     {
       ++last->nlines;
       ++total_lines;
@@ -673,7 +678,7 @@ pipe_lines (const char *pretty_filename, int fd, uintmax_t n_lines,
         size_t j;
         for (j = total_lines - n_lines; j; --j)
           {
-            beg = memchr (beg, '\n', buffer_end - beg);
+            beg = memchr (beg, line_end, buffer_end - beg);
             assert (beg);
             ++beg;
           }
@@ -765,7 +770,7 @@ pipe_bytes (const char *pretty_filename, int fd, uintmax_t n_bytes,
 
   if (n_read == SAFE_READ_ERROR)
     {
-      error (0, errno, _("error reading %s"), quote (pretty_filename));
+      error (0, errno, _("error reading %s"), quoteaf (pretty_filename));
       ok = false;
       goto free_cbuffers;
     }
@@ -813,7 +818,7 @@ start_bytes (const char *pretty_filename, int fd, uintmax_t n_bytes,
         return -1;
       if (bytes_read == SAFE_READ_ERROR)
         {
-          error (0, errno, _("error reading %s"), quote (pretty_filename));
+          error (0, errno, _("error reading %s"), quoteaf (pretty_filename));
           return 1;
         }
       *read_pos += bytes_read;
@@ -850,7 +855,7 @@ start_lines (const char *pretty_filename, int fd, uintmax_t n_lines,
         return -1;
       if (bytes_read == SAFE_READ_ERROR) /* error */
         {
-          error (0, errno, _("error reading %s"), quote (pretty_filename));
+          error (0, errno, _("error reading %s"), quoteaf (pretty_filename));
           return 1;
         }
 
@@ -859,7 +864,7 @@ start_lines (const char *pretty_filename, int fd, uintmax_t n_lines,
       *read_pos += bytes_read;
 
       char *p = buffer;
-      while ((p = memchr (p, '\n', buffer_end - p)))
+      while ((p = memchr (p, line_end, buffer_end - p)))
         {
           ++p;
           if (--n_lines == 0)
@@ -891,7 +896,7 @@ fremote (int fd, const char *name)
          is open on a pipe.  Treat that like a remote file.  */
       if (errno != ENOSYS)
         error (0, errno, _("cannot determine location of %s. "
-                           "reverting to polling"), quote (name));
+                           "reverting to polling"), quoteaf (name));
     }
   else
     {
@@ -900,13 +905,9 @@ fremote (int fd, const char *name)
         case 0:
           break;
         case -1:
-          {
-            unsigned long int fs_type = buf.f_type;
-            error (0, 0, _("unrecognized file system type 0x%08lx for %s. "
-                           "please report this to %s. reverting to polling"),
-                   fs_type, quote (name), PACKAGE_BUGREPORT);
-            /* Treat as "remote", so caller polls.  */
-          }
+          /* Treat unrecognized file systems as "remote", so caller polls.
+             Note README-release has instructions for syncing the internal
+             list with the latest Linux kernel file system constants.  */
           break;
         case 1:
           remote = false;
@@ -956,7 +957,7 @@ recheck (struct File_spec *f, bool blocking)
       f->ignore = true;
 
       error (0, 0, _("%s has been replaced with a symbolic link. "
-                     "giving up on this name"), quote (pretty_name (f)));
+                     "giving up on this name"), quoteaf (pretty_name (f)));
     }
   else if (fd == -1 || fstat (fd, &new_stats) < 0)
     {
@@ -971,7 +972,7 @@ recheck (struct File_spec *f, bool blocking)
                  be seen to be the same file (dev/ino).  Otherwise, tail prints
                  the entire contents of the file when it becomes readable.  */
               error (0, f->errnum, _("%s has become inaccessible"),
-                     quote (pretty_name (f)));
+                     quoteaf (pretty_name (f)));
             }
           else
             {
@@ -979,9 +980,7 @@ recheck (struct File_spec *f, bool blocking)
             }
         }
       else if (prev_errnum != errno)
-        {
-          error (0, errno, "%s", pretty_name (f));
-        }
+        error (0, errno, "%s", quotef (pretty_name (f)));
     }
   else if (!IS_TAILABLE_FILE_TYPE (new_stats.st_mode))
     {
@@ -989,7 +988,7 @@ recheck (struct File_spec *f, bool blocking)
       f->errnum = -1;
       error (0, 0, _("%s has been replaced with an untailable file;\
  giving up on this name"),
-             quote (pretty_name (f)));
+             quoteaf (pretty_name (f)));
       f->ignore = true;
     }
   else if (!disable_inotify && fremote (fd, pretty_name (f)))
@@ -997,7 +996,7 @@ recheck (struct File_spec *f, bool blocking)
       ok = false;
       f->errnum = -1;
       error (0, 0, _("%s has been replaced with a remote file. "
-                     "giving up on this name"), quote (pretty_name (f)));
+                     "giving up on this name"), quoteaf (pretty_name (f)));
       f->ignore = true;
       f->remote = true;
     }
@@ -1017,7 +1016,7 @@ recheck (struct File_spec *f, bool blocking)
     {
       new_file = true;
       assert (f->fd == -1);
-      error (0, 0, _("%s has become accessible"), quote (pretty_name (f)));
+      error (0, 0, _("%s has become accessible"), quoteaf (pretty_name (f)));
     }
   else if (f->fd == -1)
     {
@@ -1030,7 +1029,7 @@ recheck (struct File_spec *f, bool blocking)
 
       error (0, 0,
              _("%s has appeared;  following new file"),
-             quote (pretty_name (f)));
+             quoteaf (pretty_name (f)));
     }
   else if (f->ino != new_stats.st_ino || f->dev != new_stats.st_dev)
     {
@@ -1040,7 +1039,7 @@ recheck (struct File_spec *f, bool blocking)
 
       error (0, 0,
              _("%s has been replaced;  following new file"),
-             quote (pretty_name (f)));
+             quoteaf (pretty_name (f)));
 
       /* Close the old one.  */
       close_fd (f->fd, pretty_name (f));
@@ -1156,7 +1155,8 @@ tail_forever (struct File_spec *f, size_t n_files, double sleep_interval)
                     }
                   else
                     error (EXIT_FAILURE, errno,
-                           _("%s: cannot change nonblocking mode"), name);
+                           _("%s: cannot change nonblocking mode"),
+                           quotef (name));
                 }
               else
                 f[i].blocking = blocking;
@@ -1168,7 +1168,7 @@ tail_forever (struct File_spec *f, size_t n_files, double sleep_interval)
                 {
                   f[i].fd = -1;
                   f[i].errnum = errno;
-                  error (0, errno, "%s", name);
+                  error (0, errno, "%s", quotef (name));
                   close (fd); /* ignore failure */
                   continue;
                 }
@@ -1201,7 +1201,7 @@ tail_forever (struct File_spec *f, size_t n_files, double sleep_interval)
                  (in which case we ignore new data <= size).  */
               if (S_ISREG (mode) && stats.st_size < f[i].size)
                 {
-                  error (0, 0, _("%s: file truncated"), name);
+                  error (0, 0, _("%s: file truncated"), quotef (name));
                   /* Assume the file was truncated to 0,
                      and therefore output all "new" data.  */
                   xlseek (fd, 0, SEEK_SET, name);
@@ -1266,6 +1266,20 @@ any_remote_file (const struct File_spec *f, size_t n_files)
 
   for (i = 0; i < n_files; i++)
     if (0 <= f[i].fd && f[i].remote)
+      return true;
+  return false;
+}
+
+/* Return true if any of the N_FILES files in F is non remote, i.e., has
+   an open file descriptor and is not on a network file system.  */
+
+static bool
+any_non_remote_file (const struct File_spec *f, size_t n_files)
+{
+  size_t i;
+
+  for (i = 0; i < n_files; i++)
+    if (0 <= f[i].fd && ! f[i].remote)
       return true;
   return false;
 }
@@ -1343,7 +1357,7 @@ check_fspec (struct File_spec *fspec, struct File_spec **prev_fspec)
      separate events for truncate() and write().  */
   if (S_ISREG (fspec->mode) && stats.st_size < fspec->size)
     {
-      error (0, 0, _("%s: file truncated"), name);
+      error (0, 0, _("%s: file truncated"), quotef (name));
       xlseek (fspec->fd, 0, SEEK_SET, name);
       fspec->size = 0;
     }
@@ -1429,8 +1443,8 @@ tail_forever_inotify (int wd, struct File_spec *f, size_t n_files,
                /* It's fine to add the same directory more than once.
                   In that case the same watch descriptor is returned.  */
               f[i].parent_wd = inotify_add_watch (wd, dirlen ? f[i].name : ".",
-                                                  (IN_CREATE | IN_MOVED_TO
-                                                   | IN_ATTRIB));
+                                                  (IN_CREATE | IN_DELETE
+                                                   | IN_MOVED_TO | IN_ATTRIB));
 
               f[i].name[dirlen] = prev;
 
@@ -1438,7 +1452,7 @@ tail_forever_inotify (int wd, struct File_spec *f, size_t n_files,
                 {
                   if (errno != ENOSPC) /* suppress confusing error.  */
                     error (0, errno, _("cannot watch parent directory of %s"),
-                           quote (f[i].name));
+                           quoteaf (f[i].name));
                   else
                     error (0, 0, _("inotify resources exhausted"));
                   found_unwatchable_dir = true;
@@ -1461,7 +1475,7 @@ tail_forever_inotify (int wd, struct File_spec *f, size_t n_files,
                   break;
                 }
               else if (errno != f[i].errnum)
-                error (0, errno, _("cannot watch %s"), quote (f[i].name));
+                error (0, errno, _("cannot watch %s"), quoteaf (f[i].name));
               continue;
             }
 
@@ -1511,7 +1525,7 @@ tail_forever_inotify (int wd, struct File_spec *f, size_t n_files,
                   && (f[i].dev != stats.st_dev || f[i].ino != stats.st_ino))
                 {
                   error (0, errno, _("%s was replaced"),
-                         quote (pretty_name (&(f[i]))));
+                         quoteaf (pretty_name (&(f[i]))));
                   hash_free (wd_to_name);
 
                   errno = 0;
@@ -1619,9 +1633,16 @@ tail_forever_inotify (int wd, struct File_spec *f, size_t n_files,
 
           fspec = &(f[j]);
 
-          /* Adding the same inode again will look up any existing wd.  */
-          int new_wd = inotify_add_watch (wd, f[j].name, inotify_wd_mask);
-          if (new_wd < 0)
+          int new_wd = -1;
+          bool deleting = !! (ev->mask & IN_DELETE);
+
+          if (! deleting)
+            {
+              /* Adding the same inode again will look up any existing wd.  */
+              new_wd = inotify_add_watch (wd, f[j].name, inotify_wd_mask);
+            }
+
+          if (! deleting && new_wd < 0)
             {
               if (errno == ENOSPC || errno == ENOMEM)
                 {
@@ -1633,13 +1654,14 @@ tail_forever_inotify (int wd, struct File_spec *f, size_t n_files,
               else
                 {
                   /* Can get ENOENT for a dangling symlink for example.  */
-                  error (0, errno, _("cannot watch %s"), quote (f[j].name));
+                  error (0, errno, _("cannot watch %s"), quoteaf (f[j].name));
                 }
               /* We'll continue below after removing the existing watch.  */
             }
 
           /* This will be false if only attributes of file change.  */
-          bool new_watch = fspec->wd < 0 || new_wd != fspec->wd;
+          bool new_watch;
+          new_watch = (! deleting) && (fspec->wd < 0 || new_wd != fspec->wd);
 
           if (new_watch)
             {
@@ -1683,7 +1705,7 @@ tail_forever_inotify (int wd, struct File_spec *f, size_t n_files,
       if (! fspec)
         continue;
 
-      if (ev->mask & (IN_ATTRIB | IN_DELETE_SELF | IN_MOVE_SELF))
+      if (ev->mask & (IN_ATTRIB | IN_DELETE | IN_DELETE_SELF | IN_MOVE_SELF))
         {
           /* Note for IN_MOVE_SELF (the file we're watching has
              been clobbered via a rename) we leave the watch
@@ -1694,6 +1716,14 @@ tail_forever_inotify (int wd, struct File_spec *f, size_t n_files,
               inotify_rm_watch (wd, fspec->wd);
               hash_delete (wd_to_name, fspec);
             }
+
+          /* Note we get IN_ATTRIB for unlink() as st_nlink decrements.
+             The usual path is a close() done in recheck() triggers
+             an IN_DELETE_SELF event as the inode is removed.
+             However sometimes open() will succeed as even though
+             st_nlink is decremented, the dentry (cache) is not updated.
+             Thus we depend on the IN_DELETE event on the directory
+             to trigger processing for the removed file.  */
 
           recheck (fspec, false);
 
@@ -1715,7 +1745,7 @@ tail_bytes (const char *pretty_filename, int fd, uintmax_t n_bytes,
 
   if (fstat (fd, &stats))
     {
-      error (0, errno, _("cannot fstat %s"), quote (pretty_filename));
+      error (0, errno, _("cannot fstat %s"), quoteaf (pretty_filename));
       return false;
     }
 
@@ -1771,7 +1801,7 @@ tail_lines (const char *pretty_filename, int fd, uintmax_t n_lines,
 
   if (fstat (fd, &stats))
     {
-      error (0, errno, _("cannot fstat %s"), quote (pretty_filename));
+      error (0, errno, _("cannot fstat %s"), quoteaf (pretty_filename));
       return false;
     }
 
@@ -1870,7 +1900,7 @@ tail_file (struct File_spec *f, uintmax_t n_units)
           f->dev = 0;
         }
       error (0, errno, _("cannot open %s for reading"),
-             quote (pretty_name (f)));
+             quoteaf (pretty_name (f)));
       ok = false;
     }
   else
@@ -1895,13 +1925,14 @@ tail_file (struct File_spec *f, uintmax_t n_units)
             {
               ok = false;
               f->errnum = errno;
-              error (0, errno, _("error reading %s"), quote (pretty_name (f)));
+              error (0, errno, _("error reading %s"),
+                     quoteaf (pretty_name (f)));
             }
           else if (!IS_TAILABLE_FILE_TYPE (stats.st_mode))
             {
               error (0, 0, _("%s: cannot follow end of this type of file;\
  giving up on this name"),
-                     pretty_name (f));
+                     quotef (pretty_name (f)));
               ok = false;
               f->errnum = -1;
               f->ignore = true;
@@ -1925,7 +1956,8 @@ tail_file (struct File_spec *f, uintmax_t n_units)
         {
           if (!is_stdin && close (fd))
             {
-              error (0, errno, _("error reading %s"), quote (pretty_name (f)));
+              error (0, errno, _("error reading %s"),
+                     quoteaf (pretty_name (f)));
               ok = false;
             }
         }
@@ -2036,7 +2068,7 @@ parse_options (int argc, char **argv,
 {
   int c;
 
-  while ((c = getopt_long (argc, argv, "c:n:fFqs:v0123456789",
+  while ((c = getopt_long (argc, argv, "c:n:fFqs:vz0123456789",
                            long_options, NULL))
          != -1)
     {
@@ -2111,6 +2143,10 @@ parse_options (int argc, char **argv,
 
         case 'v':
           *header_mode = always;
+          break;
+
+        case 'z':
+          line_end = '\0';
           break;
 
         case_GETOPT_HELP_CHAR;
@@ -2210,6 +2246,7 @@ main (int argc, char **argv)
 
   count_lines = true;
   forever = from_start = print_headers = false;
+  line_end = '\n';
   obsolete_option = parse_obsolete_option (argc, argv, &n_units);
   argc -= obsolete_option;
   argv += obsolete_option;
@@ -2247,7 +2284,7 @@ main (int argc, char **argv)
 
     /* When following by name, there must be a name.  */
     if (found_hyphen && follow_mode == Follow_name)
-      error (EXIT_FAILURE, 0, _("cannot follow %s by name"), quote ("-"));
+      error (EXIT_FAILURE, 0, _("cannot follow %s by name"), quoteaf ("-"));
 
     /* When following forever, warn if any file is '-'.
        This is only a warning, since tail's output (before a failing seek,
@@ -2290,6 +2327,11 @@ main (int argc, char **argv)
          in this case because it would miss any updates to the file
          that were not initiated from the local system.
 
+         any_non_remote_file() checks if the user has specified any
+         files that don't reside on remote file systems.  inotify is not used
+         if there are no open files, as we can't determine if those file
+         will be on a remote file system.
+
          any_symlinks() checks if the user has specified any symbolic links.
          inotify is not used in this case because it returns updated _targets_
          which would not match the specified names.  If we tried to always
@@ -2316,6 +2358,7 @@ main (int argc, char **argv)
          for one name when a name is specified multiple times.  */
       if (!disable_inotify && (tailable_stdin (F, n_files)
                                || any_remote_file (F, n_files)
+                               || ! any_non_remote_file (F, n_files)
                                || any_symlinks (F, n_files)
                                || (!ok && follow_mode == Follow_descriptor)))
         disable_inotify = true;
@@ -2353,6 +2396,8 @@ main (int argc, char **argv)
       disable_inotify = true;
       tail_forever (F, n_files, sleep_interval);
     }
+
+  IF_LINT (free (F));
 
   if (have_read_stdin && close (STDIN_FILENO) < 0)
     error (EXIT_FAILURE, errno, "-");

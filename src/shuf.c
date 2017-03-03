@@ -1,6 +1,6 @@
 /* Shuffle lines of text.
 
-   Copyright (C) 2006-2015 Free Software Foundation, Inc.
+   Copyright (C) 2006-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@
 #include "getopt.h"
 #include "linebuffer.h"
 #include "quote.h"
-#include "quotearg.h"
 #include "randint.h"
 #include "randperm.h"
 #include "read-file.h"
@@ -520,7 +519,7 @@ main (int argc, char **argv)
       if (n_operands == 1)
         if (! (STREQ (operand[0], "-") || ! head_lines
                || freopen (operand[0], "r", stdin)))
-          error (EXIT_FAILURE, errno, "%s", operand[0]);
+          error (EXIT_FAILURE, errno, "%s", quotef (operand[0]));
 
       fadvise (stdin, FADVISE_SEQUENTIAL);
 
@@ -545,7 +544,7 @@ main (int argc, char **argv)
                                      ? SIZE_MAX
                                      : randperm_bound (head_lines, n_lines)));
   if (! randint_source)
-    error (EXIT_FAILURE, errno, "%s", quotearg_colon (random_source));
+    error (EXIT_FAILURE, errno, "%s", quotef (random_source));
 
   if (use_reservoir_sampling)
     {
@@ -567,7 +566,7 @@ main (int argc, char **argv)
     permutation = randperm_new (randint_source, head_lines, n_lines);
 
   if (outfile && ! freopen (outfile, "w", stdout))
-    error (EXIT_FAILURE, errno, "%s", quotearg_colon (outfile));
+    error (EXIT_FAILURE, errno, "%s", quotef (outfile));
 
   /* Generate output according to requested method */
   if (repeat)

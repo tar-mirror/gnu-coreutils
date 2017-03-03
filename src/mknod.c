@@ -1,5 +1,5 @@
 /* mknod -- make special files
-   Copyright (C) 1990-2015 Free Software Foundation, Inc.
+   Copyright (C) 1990-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -242,14 +242,15 @@ main (int argc, char **argv)
         device = makedev (i_major, i_minor);
 #ifdef NODEV
         if (device == NODEV)
-          error (EXIT_FAILURE, 0, _("invalid device %s %s"), s_major, s_minor);
+          error (EXIT_FAILURE, 0, _("invalid device %s %s"),
+                 s_major, s_minor);
 #endif
 
         if (set_security_context)
           defaultcon (argv[optind], node_type);
 
         if (mknod (argv[optind], newmode | node_type, device) != 0)
-          error (EXIT_FAILURE, errno, "%s", quote (argv[optind]));
+          error (EXIT_FAILURE, errno, "%s", quotef (argv[optind]));
       }
       break;
 
@@ -257,7 +258,7 @@ main (int argc, char **argv)
       if (set_security_context)
         defaultcon (argv[optind], S_IFIFO);
       if (mkfifo (argv[optind], newmode) != 0)
-        error (EXIT_FAILURE, errno, "%s", quote (argv[optind]));
+        error (EXIT_FAILURE, errno, "%s", quotef (argv[optind]));
       break;
 
     default:
@@ -267,7 +268,7 @@ main (int argc, char **argv)
 
   if (specified_mode && lchmod (argv[optind], newmode) != 0)
     error (EXIT_FAILURE, errno, _("cannot set permissions of %s"),
-           quote (argv[optind]));
+           quoteaf (argv[optind]));
 
   return EXIT_SUCCESS;
 }

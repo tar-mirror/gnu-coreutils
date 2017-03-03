@@ -1,7 +1,7 @@
 #!/bin/sh
 # test splitting into newline delineated chunks (-n l/...)
 
-# Copyright (C) 2010-2015 Free Software Foundation, Inc.
+# Copyright (C) 2010-2016 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ echo "split: invalid number of chunks: '1o'" > exp
 split -n l/1o 2>err && fail=1
 compare exp err || fail=1
 
-echo "split: '-': cannot determine file size" > exp
+echo "split: -: cannot determine file size" > exp
 echo | split -n l/1 2>err && fail=1
 compare exp err || fail=1
 

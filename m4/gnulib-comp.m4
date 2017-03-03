@@ -1,5 +1,5 @@
 # DO NOT EDIT! GENERATED AUTOMATICALLY!
-# Copyright (C) 2002-2015 Free Software Foundation, Inc.
+# Copyright (C) 2002-2016 Free Software Foundation, Inc.
 #
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,7 +37,11 @@ AC_DEFUN([gl_EARLY],
   m4_pattern_allow([^gl_ES$])dnl a valid locale name
   m4_pattern_allow([^gl_LIBOBJS$])dnl a variable
   m4_pattern_allow([^gl_LTLIBOBJS$])dnl a variable
+
+  # Pre-early section.
+  AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
   AC_REQUIRE([gl_PROG_AR_RANLIB])
+
   AC_REQUIRE([AM_PROG_CC_C_O])
   # Code from module absolute-header:
   # Code from module accept:
@@ -64,14 +68,14 @@ AC_DEFUN([gl_EARLY],
   # Code from module argv-iter-tests:
   # Code from module arpa_inet:
   # Code from module arpa_inet-tests:
-  # Code from module array-list:
-  # Code from module array-list-tests:
   # Code from module assert:
   # Code from module assure:
   # Code from module at-internal:
   # Code from module autobuild:
   AB_INIT
   # Code from module backupfile:
+  # Code from module base32:
+  # Code from module base32-tests:
   # Code from module base64:
   # Code from module base64-tests:
   # Code from module binary-io:
@@ -158,7 +162,6 @@ AC_DEFUN([gl_EARLY],
   # Code from module exclude-tests:
   # Code from module exitfail:
   # Code from module extensions:
-  AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
   # Code from module extern-inline:
   # Code from module faccessat:
   # Code from module faccessat-tests:
@@ -379,9 +382,6 @@ AC_DEFUN([gl_EARLY],
   # Code from module link-tests:
   # Code from module linkat:
   # Code from module linkat-tests:
-  # Code from module linked-list:
-  # Code from module linked-list-tests:
-  # Code from module list:
   # Code from module listen:
   # Code from module listen-tests:
   # Code from module localcharset:
@@ -449,6 +449,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module mknod-tests:
   # Code from module mkstemp:
   # Code from module mktime:
+  # Code from module mktime-internal:
   # Code from module modechange:
   # Code from module mountlist:
   # Code from module mpsort:
@@ -690,8 +691,13 @@ AC_DEFUN([gl_EARLY],
   # Code from module time:
   # Code from module time-tests:
   # Code from module time_r:
+  # Code from module time_rz:
+  # Code from module timegm:
   # Code from module timer-time:
   # Code from module timespec:
+  # Code from module timespec-add:
+  # Code from module timespec-sub:
+  # Code from module timespec-tests:
   # Code from module tls:
   # Code from module tls-tests:
   # Code from module trim:
@@ -779,7 +785,6 @@ AC_DEFUN([gl_EARLY],
   # Code from module xgetcwd:
   # Code from module xgetgroups:
   # Code from module xgethostname:
-  # Code from module xlist:
   # Code from module xmemcoll:
   # Code from module xnanosleep:
   # Code from module xprintf:
@@ -828,6 +833,7 @@ AC_DEFUN([gl_INIT],
   gl_ASSERT
   AC_LIBOBJ([openat-proc])
   gl_BACKUPFILE
+  gl_FUNC_BASE32
   gl_FUNC_BASE64
   gl_FUNC_BTOWC
   if test $HAVE_BTOWC = 0 || test $REPLACE_BTOWC = 1; then
@@ -897,7 +903,8 @@ AC_DEFUN([gl_INIT],
   gl_DIRENT_SAFER
   gl_MODULE_INDICATOR([dirent-safer])
   gl_FUNC_DIRFD
-  if test $ac_cv_func_dirfd = no && test $gl_cv_func_dirfd_macro = no; then
+  if test $ac_cv_func_dirfd = no && test $gl_cv_func_dirfd_macro = no \
+     || test $REPLACE_DIRFD = 1; then
     AC_LIBOBJ([dirfd])
     gl_PREREQ_DIRFD
   fi
@@ -1475,6 +1482,11 @@ AC_DEFUN([gl_INIT],
     gl_PREREQ_MKTIME
   fi
   gl_TIME_MODULE_INDICATOR([mktime])
+  gl_FUNC_MKTIME_INTERNAL
+  if test $REPLACE_MKTIME = 1; then
+    AC_LIBOBJ([mktime])
+    gl_PREREQ_MKTIME
+  fi
   gl_MODECHANGE
   gl_MOUNTLIST
   if test $gl_cv_list_mounted_fs = yes; then
@@ -1482,11 +1494,11 @@ AC_DEFUN([gl_INIT],
     gl_PREREQ_MOUNTLIST_EXTRA
   fi
   gl_MPSORT
-  gl_MSVC_INVAL
+  AC_REQUIRE([gl_MSVC_INVAL])
   if test $HAVE_MSVC_INVALID_PARAMETER_HANDLER = 1; then
     AC_LIBOBJ([msvc-inval])
   fi
-  gl_MSVC_NOTHROW
+  AC_REQUIRE([gl_MSVC_NOTHROW])
   if test $HAVE_MSVC_INVALID_PARAMETER_HANDLER = 1; then
     AC_LIBOBJ([msvc-nothrow])
   fi
@@ -1876,6 +1888,17 @@ AC_DEFUN([gl_INIT],
     gl_PREREQ_TIME_R
   fi
   gl_TIME_MODULE_INDICATOR([time_r])
+  gl_TIME_RZ
+  if test "$HAVE_TIMEZONE_T" = 0; then
+    AC_LIBOBJ([time_rz])
+  fi
+  gl_TIME_MODULE_INDICATOR([time_rz])
+  gl_FUNC_TIMEGM
+  if test $HAVE_TIMEGM = 0 || test $REPLACE_TIMEGM = 1; then
+    AC_LIBOBJ([timegm])
+    gl_PREREQ_TIMEGM
+  fi
+  gl_TIME_MODULE_INDICATOR([timegm])
   gl_TIMER_TIME
   gl_TIMESPEC
   gl_TLS
@@ -2352,6 +2375,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/at-func2.c
   lib/backupfile.c
   lib/backupfile.h
+  lib/base32.c
+  lib/base32.h
   lib/base64.c
   lib/base64.h
   lib/basename-lgpl.c
@@ -2543,15 +2568,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/getugroups.c
   lib/getugroups.h
   lib/getusershell.c
-  lib/gl_anylinked_list1.h
-  lib/gl_anylinked_list2.h
-  lib/gl_linked_list.c
-  lib/gl_linked_list.h
-  lib/gl_list.c
-  lib/gl_list.h
   lib/gl_openssl.h
-  lib/gl_xlist.c
-  lib/gl_xlist.h
   lib/glthread/lock.c
   lib/glthread/lock.h
   lib/glthread/threadlib.c
@@ -2890,8 +2907,11 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/tempname.c
   lib/tempname.h
   lib/termios.in.h
+  lib/time-internal.h
   lib/time.in.h
   lib/time_r.c
+  lib/time_rz.c
+  lib/timegm.c
   lib/timespec.c
   lib/timespec.h
   lib/trim.c
@@ -3003,6 +3023,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/assert.m4
   m4/autobuild.m4
   m4/backupfile.m4
+  m4/base32.m4
   m4/base64.m4
   m4/bison.m4
   m4/btowc.m4
@@ -3336,6 +3357,8 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/threadlib.m4
   m4/time_h.m4
   m4/time_r.m4
+  m4/time_rz.m4
+  m4/timegm.m4
   m4/timer_time.m4
   m4/timespec.m4
   m4/tls.m4
@@ -3408,7 +3431,7 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-argmatch.c
   tests/test-argv-iter.c
   tests/test-arpa_inet.c
-  tests/test-array_list.c
+  tests/test-base32.c
   tests/test-base64.c
   tests/test-binary-io.c
   tests/test-binary-io.sh
@@ -3575,7 +3598,6 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-link.c
   tests/test-link.h
   tests/test-linkat.c
-  tests/test-linked_list.c
   tests/test-listen.c
   tests/test-locale.c
   tests/test-localeconv.c
@@ -3732,6 +3754,7 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-thread_create.c
   tests/test-thread_self.c
   tests/test-time.c
+  tests/test-timespec.c
   tests/test-tls.c
   tests/test-u64.c
   tests/test-uname.c
@@ -3799,8 +3822,6 @@ AC_DEFUN([gl_FILE_LIST], [
   tests=lib/binary-io.h
   tests=lib/bind.c
   tests=lib/connect.c
-  tests=lib/gl_array_list.c
-  tests=lib/gl_array_list.h
   tests=lib/glthread/thread.c
   tests=lib/glthread/thread.h
   tests=lib/glthread/yield.h
@@ -3816,6 +3837,8 @@ AC_DEFUN([gl_FILE_LIST], [
   tests=lib/socket.c
   tests=lib/strerror_r.c
   tests=lib/symlinkat.c
+  tests=lib/timespec-add.c
+  tests=lib/timespec-sub.c
   tests=lib/unlinkdir.c
   tests=lib/unlinkdir.h
   tests=lib/w32sock.h

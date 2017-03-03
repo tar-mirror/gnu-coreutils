@@ -1,7 +1,7 @@
 #!/bin/sh
 # basic tests for printf
 
-# Copyright (C) 2002-2015 Free Software Foundation, Inc.
+# Copyright (C) 2002-2016 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -119,8 +119,8 @@ sed 's/: Invalid.*/: expected a numeric value/' err > k && mv k err
 
 cat <<EOF > exp_err
 printf: warning: ": character(s) following character constant have been ignored
-printf: ": expected a numeric value
-printf: a: expected a numeric value
+printf: '"': expected a numeric value
+printf: 'a': expected a numeric value
 EOF
 
 compare exp out || fail=1

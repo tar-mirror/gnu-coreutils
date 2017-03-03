@@ -1,5 +1,5 @@
 /* head -- output first part of file(s)
-   Copyright (C) 1989-2015 Free Software Foundation, Inc.
+   Copyright (C) 1989-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -34,7 +34,6 @@
 #include "error.h"
 #include "full-read.h"
 #include "quote.h"
-#include "quotearg.h"
 #include "safe-read.h"
 #include "stat-size.h"
 #include "xfreopen.h"
@@ -58,6 +57,9 @@ static bool presume_input_pipe;
 
 /* If true, print filename headers. */
 static bool print_headers;
+
+/* Character to split lines by. */
+static char line_end;
 
 /* When to print the filename banners. */
 enum header_mode
@@ -91,6 +93,7 @@ static struct option const long_options[] =
   {"quiet", no_argument, NULL, 'q'},
   {"silent", no_argument, NULL, 'q'},
   {"verbose", no_argument, NULL, 'v'},
+  {"zero-terminated", no_argument, NULL, 'z'},
   {GETOPT_HELP_OPTION_DECL},
   {GETOPT_VERSION_OPTION_DECL},
   {NULL, 0, NULL, 0}
@@ -107,31 +110,34 @@ usage (int status)
 Usage: %s [OPTION]... [FILE]...\n\
 "),
               program_name);
-      fputs (_("\
-Print the first 10 lines of each FILE to standard output.\n\
+      printf (_("\
+Print the first %d lines of each FILE to standard output.\n\
 With more than one FILE, precede each with a header giving the file name.\n\
-"), stdout);
+"), DEFAULT_NUMBER);
 
       emit_stdin_note ();
       emit_mandatory_arg_note ();
 
-      fputs (_("\
-  -c, --bytes=[-]K         print the first K bytes of each file;\n\
+      printf (_("\
+  -c, --bytes=[-]NUM       print the first NUM bytes of each file;\n\
                              with the leading '-', print all but the last\n\
-                             K bytes of each file\n\
-  -n, --lines=[-]K         print the first K lines instead of the first 10;\n\
+                             NUM bytes of each file\n\
+  -n, --lines=[-]NUM       print the first NUM lines instead of the first %d;\n\
                              with the leading '-', print all but the last\n\
-                             K lines of each file\n\
-"), stdout);
+                             NUM lines of each file\n\
+"), DEFAULT_NUMBER);
       fputs (_("\
   -q, --quiet, --silent    never print headers giving file names\n\
   -v, --verbose            always print headers giving file names\n\
+"), stdout);
+      fputs (_("\
+  -z, --zero-terminated    line delimiter is NUL, not newline\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
       fputs (_("\
 \n\
-K may have a multiplier suffix:\n\
+NUM may have a multiplier suffix:\n\
 b 512, kB 1000, K 1024, MB 1000*1000, M 1024*1024,\n\
 GB 1000*1000*1000, G 1024*1024*1024, and so on for T, P, E, Z, Y.\n\
 "), stdout);
@@ -146,10 +152,10 @@ diagnose_copy_fd_failure (enum Copy_fd_status err, char const *filename)
   switch (err)
     {
     case COPY_FD_READ_ERROR:
-      error (0, errno, _("error reading %s"), quote (filename));
+      error (0, errno, _("error reading %s"), quoteaf (filename));
       break;
     case COPY_FD_UNEXPECTED_EOF:
-      error (0, errno, _("%s: file has shrunk too much"), quote (filename));
+      error (0, errno, _("%s: file has shrunk too much"), quotef (filename));
       break;
     default:
       abort ();
@@ -175,7 +181,7 @@ xwrite_stdout (char const *buffer, size_t n_bytes)
     {
       clearerr (stdout); /* To avoid redundant close_stdout diagnostic.  */
       error (EXIT_FAILURE, errno, _("error writing %s"),
-             quote ("standard output"));
+             quoteaf ("standard output"));
     }
 }
 
@@ -223,7 +229,7 @@ elseek (int fd, off_t offset, int whence, char const *filename)
            _(whence == SEEK_SET
              ? N_("%s: cannot seek to offset %s")
              : N_("%s: cannot seek to relative offset %s")),
-           quotearg_colon (filename),
+           quotef (filename),
            offtostr (offset, buf));
 
   return new_offset;
@@ -297,7 +303,7 @@ elide_tail_bytes_pipe (const char *filename, int fd, uintmax_t n_elide_0,
             {
               if (errno != 0)
                 {
-                  error (0, errno, _("error reading %s"), quote (filename));
+                  error (0, errno, _("error reading %s"), quoteaf (filename));
                   ok = false;
                   break;
                 }
@@ -379,7 +385,7 @@ elide_tail_bytes_pipe (const char *filename, int fd, uintmax_t n_elide_0,
             {
               if (errno != 0)
                 {
-                  error (0, errno, _("error reading %s"), quote (filename));
+                  error (0, errno, _("error reading %s"), quoteaf (filename));
                   ok = false;
                   goto free_mem;
                 }
@@ -533,7 +539,7 @@ elide_tail_lines_pipe (const char *filename, int fd, uintmax_t n_elide,
       {
         char const *buffer_end = tmp->buffer + n_read;
         char const *p = tmp->buffer;
-        while ((p = memchr (p, '\n', buffer_end - p)))
+        while ((p = memchr (p, line_end, buffer_end - p)))
           {
             ++p;
             ++tmp->nlines;
@@ -575,14 +581,14 @@ elide_tail_lines_pipe (const char *filename, int fd, uintmax_t n_elide,
 
   if (n_read == SAFE_READ_ERROR)
     {
-      error (0, errno, _("error reading %s"), quote (filename));
+      error (0, errno, _("error reading %s"), quoteaf (filename));
       ok = false;
       goto free_lbuffers;
     }
 
   /* If we read any bytes at all, count the incomplete line
      on files that don't end with a newline.  */
-  if (last->nbytes && last->buffer[last->nbytes - 1] != '\n')
+  if (last->nbytes && last->buffer[last->nbytes - 1] != line_end)
     {
       ++last->nlines;
       ++total_lines;
@@ -601,7 +607,7 @@ elide_tail_lines_pipe (const char *filename, int fd, uintmax_t n_elide,
       size_t n = total_lines - n_elide;
       char const *buffer_end = tmp->buffer + tmp->nbytes;
       char const *p = tmp->buffer;
-      while (n && (p = memchr (p, '\n', buffer_end - p)))
+      while (n && (p = memchr (p, line_end, buffer_end - p)))
         {
           ++p;
           ++tmp->nlines;
@@ -657,7 +663,7 @@ elide_tail_lines_seekable (const char *pretty_filename, int fd,
   bytes_read = safe_read (fd, buffer, bytes_read);
   if (bytes_read == SAFE_READ_ERROR)
     {
-      error (0, errno, _("error reading %s"), quote (pretty_filename));
+      error (0, errno, _("error reading %s"), quoteaf (pretty_filename));
       return false;
     }
 
@@ -665,7 +671,7 @@ elide_tail_lines_seekable (const char *pretty_filename, int fd,
   const bool all_lines = !n_lines;
 
   /* Count the incomplete line on files that don't end with a newline.  */
-  if (n_lines && bytes_read && buffer[bytes_read - 1] != '\n')
+  if (n_lines && bytes_read && buffer[bytes_read - 1] != line_end)
     --n_lines;
 
   while (1)
@@ -680,7 +686,7 @@ elide_tail_lines_seekable (const char *pretty_filename, int fd,
           else
             {
               char const *nl;
-              nl = memrchr (buffer, '\n', n);
+              nl = memrchr (buffer, line_end, n);
               if (nl == NULL)
                 break;
               n = nl - buffer;
@@ -726,7 +732,7 @@ elide_tail_lines_seekable (const char *pretty_filename, int fd,
       bytes_read = safe_read (fd, buffer, BUFSIZ);
       if (bytes_read == SAFE_READ_ERROR)
         {
-          error (0, errno, _("error reading %s"), quote (pretty_filename));
+          error (0, errno, _("error reading %s"), quoteaf (pretty_filename));
           return false;
         }
 
@@ -776,7 +782,7 @@ head_bytes (const char *filename, int fd, uintmax_t bytes_to_write)
       bytes_read = safe_read (fd, buffer, bytes_to_read);
       if (bytes_read == SAFE_READ_ERROR)
         {
-          error (0, errno, _("error reading %s"), quote (filename));
+          error (0, errno, _("error reading %s"), quoteaf (filename));
           return false;
         }
       if (bytes_read == 0)
@@ -799,13 +805,13 @@ head_lines (const char *filename, int fd, uintmax_t lines_to_write)
 
       if (bytes_read == SAFE_READ_ERROR)
         {
-          error (0, errno, _("error reading %s"), quote (filename));
+          error (0, errno, _("error reading %s"), quoteaf (filename));
           return false;
         }
       if (bytes_read == 0)
         break;
       while (bytes_to_write < bytes_read)
-        if (buffer[bytes_to_write++] == '\n' && --lines_to_write == 0)
+        if (buffer[bytes_to_write++] == line_end && --lines_to_write == 0)
           {
             off_t n_bytes_past_EOL = bytes_read - bytes_to_write;
             /* If we have read more data than that on the specified number
@@ -838,7 +844,7 @@ head (const char *filename, int fd, uintmax_t n_units, bool count_lines,
       if (fstat (fd, &st) != 0)
         {
           error (0, errno, _("cannot fstat %s"),
-                 quotearg_colon (filename));
+                 quoteaf (filename));
           return false;
         }
       if (! presume_input_pipe && usable_st_size (&st))
@@ -879,7 +885,7 @@ head_file (const char *filename, uintmax_t n_units, bool count_lines,
       fd = open (filename, O_RDONLY | O_BINARY);
       if (fd < 0)
         {
-          error (0, errno, _("cannot open %s for reading"), quote (filename));
+          error (0, errno, _("cannot open %s for reading"), quoteaf (filename));
           return false;
         }
     }
@@ -887,7 +893,7 @@ head_file (const char *filename, uintmax_t n_units, bool count_lines,
   ok = head (filename, fd, n_units, count_lines, elide_from_end);
   if (!is_stdin && close (fd) != 0)
     {
-      error (0, errno, _("failed to close %s"), quote (filename));
+      error (0, errno, _("failed to close %s"), quoteaf (filename));
       return false;
     }
   return ok;
@@ -943,6 +949,8 @@ main (int argc, char **argv)
 
   print_headers = false;
 
+  line_end = '\n';
+
   if (1 < argc && argv[1][0] == '-' && ISDIGIT (argv[1][1]))
     {
       char *a = argv[1];
@@ -987,6 +995,10 @@ main (int argc, char **argv)
               header_mode = always;
               break;
 
+            case 'z':
+              line_end = '\0';
+              break;
+
             default:
               error (0, 0, _("invalid trailing option -- %c"), *a);
               usage (EXIT_FAILURE);
@@ -1007,7 +1019,7 @@ main (int argc, char **argv)
       argc--;
     }
 
-  while ((c = getopt_long (argc, argv, "c:n:qv0123456789", long_options, NULL))
+  while ((c = getopt_long (argc, argv, "c:n:qvz0123456789", long_options, NULL))
          != -1)
     {
       switch (c)
@@ -1038,6 +1050,10 @@ main (int argc, char **argv)
 
         case 'v':
           header_mode = always;
+          break;
+
+        case 'z':
+          line_end = '\0';
           break;
 
         case_GETOPT_HELP_CHAR;

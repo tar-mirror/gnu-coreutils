@@ -1,7 +1,7 @@
 #!/bin/sh
 # make sure mkdir's -p options works properly
 
-# Copyright (C) 2000-2015 Free Software Foundation, Inc.
+# Copyright (C) 2000-2016 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 . "${srcdir=.}/tests/init.sh"; path_prepend_ ./src
 print_ver_ mkdir
 skip_if_setgid_
+require_no_default_acl_ .
 
 mkdir -m 700 e-dir || framework_failure_
 

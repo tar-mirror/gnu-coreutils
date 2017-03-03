@@ -1,5 +1,5 @@
 /* Reformat numbers like 11505426432 to the more human-readable 11G
-   Copyright (C) 2012-2015 Free Software Foundation, Inc.
+   Copyright (C) 2012-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,8 +29,8 @@
 #include "system.h"
 #include "xstrtol.h"
 #include "xstrndup.h"
-#include "gl_linked_list.h"
-#include "gl_xlist.h"
+
+#include "set-fields.h"
 
 #if HAVE_FPSETPREC
 # include <ieeefp.h>
@@ -147,6 +147,7 @@ static struct option const longopts[] =
   {"header", optional_argument, NULL, HEADER_OPTION},
   {"format", required_argument, NULL, FORMAT_OPTION},
   {"invalid", required_argument, NULL, INVALID_OPTION},
+  {"zero-terminated", no_argument, NULL, 'z'},
   {GETOPT_HELP_OPTION_DECL},
   {GETOPT_VERSION_OPTION_DECL},
   {NULL, 0, NULL, 0}
@@ -189,11 +190,12 @@ static int conv_exit_code = EXIT_CONVERSION_WARNINGS;
 /* auto-pad each line based on skipped whitespace.  */
 static int auto_padding = 0;
 static mbs_align_t padding_alignment = MBS_ALIGN_RIGHT;
-static bool all_fields = false;
-static size_t all_fields_after = 0;
-static size_t all_fields_before = 0;
-static gl_list_t field_list;
+
+/* field delimiter */
 static int delimiter = DELIMITER_DEFAULT;
+
+/* line delimiter.  */
+static unsigned char line_delim = '\n';
 
 /* if non-zero, the first 'header' lines from STDIN are skipped.  */
 static uintmax_t header = 0;
@@ -208,6 +210,7 @@ static int decimal_point_length;
 
 /* debugging for developers.  Enables devmsg().  */
 static bool dev_debug = false;
+
 
 static inline int
 default_scale_base (enum scale_type scale)
@@ -938,7 +941,9 @@ Reformat NUMBER(s), or the numbers from standard input if none are specified.\n\
       fputs (_("\
       --to-unit=N      the output unit size (instead of the default 1)\n\
 "), stdout);
-
+      fputs (_("\
+  -z, --zero-terminated    line delimiter is NUL, not newline\n\
+"), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
 
@@ -1313,141 +1318,6 @@ process_suffixed_number (char *text, long double *result,
   return (e == SSE_OK || e == SSE_OK_PRECISION_LOSS);
 }
 
-typedef struct range_pair
-{
-  size_t lo;
-  size_t hi;
-} range_pair_t;
-
-static int
-sort_field (const void *elt1, const void *elt2)
-{
-  range_pair_t* rp1 = (range_pair_t*) elt1;
-  range_pair_t* rp2 = (range_pair_t*) elt2;
-
-  if (rp1->lo < rp2->lo)
-    return -1;
-
-  return rp1->lo > rp2->lo;
-}
-
-static int
-match_field (const void *elt1, const void *elt2)
-{
-  range_pair_t* rp = (range_pair_t*) elt1;
-  size_t field = *(size_t*) elt2;
-
-  if (rp->lo <= field && field <= rp->hi)
-    return 0;
-
-  if (rp->lo < field)
-    return -1;
-
-  return 1;
-}
-
-static void
-free_field (const void *elt)
-{
-  void *p = (void *)elt;
-  free (p);
-}
-
-/* Add the specified fields to field_list.
-   The format recognized is similar to cut.
-   TODO: Refactor the more performant cut implementation
-   for use by both utilities.  */
-static void
-parse_field_arg (char *arg)
-{
-
-  char *start, *end;
-  range_pair_t *rp;
-  size_t field_val;
-  size_t range_val = 0;
-
-  start = end = arg;
-
-  if (STREQ (arg, "-"))
-    {
-      all_fields = true;
-
-      return;
-    }
-
-  if (*start == '-')
-    {
-      /* range -M */
-      ++start;
-
-      all_fields_before = strtol (start, &end, 10);
-
-      if (start == end || all_fields_before <=0)
-        error (EXIT_FAILURE, 0, _("invalid field value %s"),
-               quote (start));
-
-      return;
-    }
-
-  field_list = gl_list_create_empty (GL_LINKED_LIST,
-                                     NULL, NULL, free_field, false);
-
-  while (*end != '\0') {
-    field_val = strtol (start, &end, 10);
-
-    if (start == end || field_val <=0)
-      error (EXIT_FAILURE, 0, _("invalid field value %s"),
-             quote (start));
-
-    if (! range_val)
-      {
-        /* field N */
-        rp = xmalloc (sizeof (*rp));
-        rp->lo = rp->hi = field_val;
-        gl_sortedlist_add (field_list, sort_field, rp);
-      }
-    else
-      {
-        /* range N-M
-           The last field was the start of the field range. The current
-           field is the end of the field range.  We already added the
-           start field, so increment and add all the fields through
-           range end. */
-        if (field_val < range_val)
-          error (EXIT_FAILURE, 0, _("invalid decreasing range"));
-        rp = xmalloc (sizeof (*rp));
-        rp->lo = range_val + 1;
-        rp->hi = field_val;
-        gl_sortedlist_add (field_list, sort_field, rp);
-
-        range_val = 0;
-      }
-
-    switch (*end) {
-      case ',':
-        /* discrete field separator */
-        ++end;
-        start = end;
-        break;
-
-      case '-':
-        /* field range separator */
-        ++end;
-        start = end;
-        range_val = field_val;
-        break;
-    }
-  }
-
-  if (range_val)
-    {
-      /* range N-
-         range_val was not reset indicating ARG
-         ended with a trailing '-' */
-      all_fields_after = range_val;
-    }
-}
-
 /* Return a pointer to the beginning of the next field in line.
    The line pointer is moved to the end of the next field. */
 static char*
@@ -1468,10 +1338,10 @@ next_field (char **line)
   else
     {
       /* keep any space prefix in the returned field */
-      while (*field_end && isblank (to_uchar (*field_end)))
+      while (*field_end && field_sep (*field_end))
         ++field_end;
 
-      while (*field_end && !isblank (to_uchar (*field_end)))
+      while (*field_end && ! field_sep (*field_end))
         ++field_end;
     }
 
@@ -1479,23 +1349,20 @@ next_field (char **line)
   return field_start;
 }
 
-static bool
+static bool _GL_ATTRIBUTE_PURE
 include_field (size_t field)
 {
-  if (all_fields)
-    return true;
-
-  if (all_fields_after && all_fields_after <= field)
-    return true;
-
-  if (all_fields_before && field <= all_fields_before)
-    return true;
-
-  /* default to field 1 */
-  if (! field_list)
+  struct field_range_pair *p = frp;
+  if (!p)
     return field == 1;
 
-  return gl_sortedlist_search (field_list, match_field, &field);
+  while (p->lo != SIZE_MAX)
+    {
+      if (p->lo <= field && p->hi >= field)
+        return true;
+      ++p;
+    }
+  return false;
 }
 
 /* Convert and output the given field. If it is not included in the set
@@ -1562,7 +1429,7 @@ process_line (char *line, bool newline)
   }
 
   if (newline)
-    putchar ('\n');
+    putchar (line_delim);
 
   return valid_number;
 }
@@ -1571,10 +1438,11 @@ int
 main (int argc, char **argv)
 {
   int valid_numbers = 1;
+  bool locale_ok;
 
   initialize_main (&argc, &argv);
   set_program_name (argv[0]);
-  setlocale (LC_ALL, "");
+  locale_ok = setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
 
@@ -1592,7 +1460,7 @@ main (int argc, char **argv)
 
   while (true)
     {
-      int c = getopt_long (argc, argv, "d:", longopts, NULL);
+      int c = getopt_long (argc, argv, "d:z", longopts, NULL);
 
       if (c == -1)
         break;
@@ -1640,12 +1508,9 @@ main (int argc, char **argv)
           break;
 
         case FIELD_OPTION:
-          if (all_fields || all_fields_before || all_fields_after || field_list)
-            {
-              error (EXIT_FAILURE, 0,
-                     _("multiple field specifications"));
-            }
-          parse_field_arg (optarg);
+          if (n_frp)
+            error (EXIT_FAILURE, 0, _("multiple field specifications"));
+          set_fields (optarg, SETFLD_ALLOW_DASH);
           break;
 
         case 'd':
@@ -1654,6 +1519,10 @@ main (int argc, char **argv)
             error (EXIT_FAILURE, 0,
                    _("the delimiter must be a single character"));
           delimiter = optarg[0];
+          break;
+
+        case 'z':
+          line_delim = '\0';
           break;
 
         case SUFFIX_OPTION:
@@ -1703,6 +1572,9 @@ main (int argc, char **argv)
   if (format_str != NULL && grouping)
     error (EXIT_FAILURE, 0, _("--grouping cannot be combined with --format"));
 
+  if (debug && ! locale_ok)
+    error (0, 0, _("failed to set locale"));
+
   /* Warn about no-op.  */
   if (debug && scale_from == scale_none && scale_to == scale_none
       && !grouping && (padding_width == 0) && (format_str == NULL))
@@ -1740,12 +1612,14 @@ main (int argc, char **argv)
       size_t line_allocated = 0;
       ssize_t len;
 
-      while (header-- && getline (&line, &line_allocated, stdin) > 0)
+      while (header-- && getdelim (&line, &line_allocated,
+                                   line_delim, stdin) > 0)
         fputs (line, stdout);
 
-      while ((len = getline (&line, &line_allocated, stdin)) > 0)
+      while ((len = getdelim (&line, &line_allocated,
+                              line_delim, stdin)) > 0)
         {
-          bool newline = line[len - 1] == '\n';
+          bool newline = line[len - 1] == line_delim;
           if (newline)
             line[len - 1] = '\0';
           valid_numbers &= process_line (line, newline);
@@ -1761,9 +1635,7 @@ main (int argc, char **argv)
   free (padding_buffer);
   free (format_str_prefix);
   free (format_str_suffix);
-
-  if (field_list)
-    gl_list_free (field_list);
+  reset_fields ();
 #endif
 
   if (debug && !valid_numbers)

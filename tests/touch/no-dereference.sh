@@ -1,7 +1,7 @@
 #!/bin/sh
 # Ensure that touch -h works.
 
-# Copyright (C) 2009-2015 Free Software Foundation, Inc.
+# Copyright (C) 2009-2016 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 . "${srcdir=.}/tests/init.sh"; path_prepend_ ./src
-print_ver_ touch
+print_ver_ touch test
 
 ln -s nowhere dangling || framework_failure_
 touch file || framework_failure_

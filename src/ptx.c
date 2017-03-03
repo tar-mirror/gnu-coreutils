@@ -1,5 +1,5 @@
 /* Permuted index for GNU, with keywords in their context.
-   Copyright (C) 1990-2015 Free Software Foundation, Inc.
+   Copyright (C) 1990-2016 Free Software Foundation, Inc.
    François Pinard <pinard@iro.umontreal.ca>, 1988.
 
    This program is free software: you can redistribute it and/or modify
@@ -28,7 +28,6 @@
 #include "error.h"
 #include "fadvise.h"
 #include "quote.h"
-#include "quotearg.h"
 #include "read-file.h"
 #include "stdio--.h"
 #include "xstrtol.h"
@@ -55,7 +54,7 @@
 # define MALLOC_FUNC_CHECK 1
 # include <dmalloc.h>
 #endif
-
+
 /* Global definitions.  */
 
 /* FIXME: There are many unchecked integer overflows in this file,
@@ -273,7 +272,7 @@ static BLOCK head;		/* head field */
 static int head_truncation;	/* flag truncation before the head field */
 
 static BLOCK reference;		/* reference field for input reference mode */
-
+
 /* Miscellaneous routines.  */
 
 /* Diagnose an error in the regular expression matcher.  Then exit.  */
@@ -521,11 +520,11 @@ swallow_file_in_memory (const char *file_name, BLOCK *block)
     block->start = read_file (file_name, &used_length);
 
   if (!block->start)
-    error (EXIT_FAILURE, errno, "%s", quote (using_stdin ? "-" : file_name));
+    error (EXIT_FAILURE, errno, "%s", quotef (using_stdin ? "-" : file_name));
 
   block->end = block->start + used_length;
 }
-
+
 /* Sort and search routines.  */
 
 /*--------------------------------------------------------------------------.
@@ -635,7 +634,7 @@ sort_found_occurs (void)
     qsort (occurs_table[0], number_of_occurs[0], sizeof **occurs_table,
            compare_occurs);
 }
-
+
 /* Parameter files reading routines.  */
 
 /*----------------------------------------------------------------------.
@@ -737,7 +736,7 @@ digest_word_file (const char *file_name, WORD_TABLE *table)
 
   qsort (table->start, table->length, sizeof table->start[0], compare_words);
 }
-
+
 /* Keyword recognition and selection.  */
 
 /*----------------------------------------------------------------------.
@@ -1016,7 +1015,7 @@ find_occurs_in_text (size_t file_index)
         }
     }
 }
-
+
 /* Formatting and actual output - service routines.  */
 
 /*-----------------------------------------.
@@ -1190,7 +1189,7 @@ print_field (BLOCK field)
         putchar (*cursor);
     }
 }
-
+
 /* Formatting and actual output - planning routines.  */
 
 /*--------------------------------------------------------------------.
@@ -1553,7 +1552,7 @@ define_all_fields (OCCURS *occurs)
       SKIP_NON_WHITE (reference.end, right_context_end);
     }
 }
-
+
 /* Formatting and actual output - control routines.  */
 
 /*----------------------------------------------------------------------.
@@ -1803,7 +1802,7 @@ generate_all_output (void)
       occurs_cursor++;
     }
 }
-
+
 /* Option decoding and main program.  */
 
 /*------------------------------------------------------.
@@ -1949,7 +1948,7 @@ main (int argc, char **argv)
             if (xstrtoul (optarg, NULL, 0, &tmp_ulong, NULL) != LONGINT_OK
                 || ! (0 < tmp_ulong && tmp_ulong <= INT_MAX))
               error (EXIT_FAILURE, 0, _("invalid gap width: %s"),
-                     quotearg (optarg));
+                     quote (optarg));
             gap_size = tmp_ulong;
             break;
           }
@@ -1976,7 +1975,7 @@ main (int argc, char **argv)
             if (xstrtoul (optarg, NULL, 0, &tmp_ulong, NULL) != LONGINT_OK
                 || ! (0 < tmp_ulong && tmp_ulong <= INT_MAX))
               error (EXIT_FAILURE, 0, _("invalid line width: %s"),
-                     quotearg (optarg));
+                     quote (optarg));
             line_width = tmp_ulong;
             break;
           }
@@ -2077,7 +2076,7 @@ main (int argc, char **argv)
       if (optind < argc)
         {
           if (! freopen (argv[optind], "w", stdout))
-            error (EXIT_FAILURE, errno, "%s", argv[optind]);
+            error (EXIT_FAILURE, errno, "%s", quotef (argv[optind]));
           optind++;
         }
 

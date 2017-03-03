@@ -1,5 +1,5 @@
 /* id -- print real and effective UIDs and GIDs
-   Copyright (C) 1989-2015 Free Software Foundation, Inc.
+   Copyright (C) 1989-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -243,7 +243,7 @@ main (int argc, char **argv)
             }
         }
       if (pwd == NULL)
-        error (EXIT_FAILURE, 0, _("%s: no such user"), spec);
+        error (EXIT_FAILURE, 0, _("%s: no such user"), quote (spec));
       pw_name = xstrdup (pwd->pw_name);
       ruid = euid = pwd->pw_uid;
       rgid = egid = pwd->pw_gid;

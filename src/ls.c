@@ -1,5 +1,5 @@
 /* 'dir', 'vdir' and 'ls' directory listing programs for GNU.
-   Copyright (C) 1985-2015 Free Software Foundation, Inc.
+   Copyright (C) 1985-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -100,7 +100,6 @@
 #include "mpsort.h"
 #include "obstack.h"
 #include "quote.h"
-#include "quotearg.h"
 #include "smack.h"
 #include "stat-size.h"
 #include "stat-time.h"
@@ -279,7 +278,7 @@ static size_t print_name_with_quoting (const struct fileinfo *f,
 static void prep_non_filename_text (void);
 static bool print_type_indicator (bool stat_ok, mode_t mode,
                                   enum filetype type);
-static void print_with_commas (void);
+static void print_with_separator (char sep);
 static void queue_directory (char const *name, char const *realname,
                              bool command_line_arg);
 static void sort_files (void);
@@ -699,6 +698,10 @@ static bool print_dir_name;
 
 static size_t line_length;
 
+/* The local time zone rules, as per the TZ environment variable.  */
+
+static timezone_t localtz;
+
 /* If true, the file listing format requires that stat be called on
    each file.  */
 
@@ -942,7 +945,7 @@ static size_t dired_pos;
       }									\
     while (0)
 
-/* With --dired, store pairs of beginning and ending indices of filenames.  */
+/* With --dired, store pairs of beginning and ending indices of file names.  */
 static struct obstack dired_obstack;
 
 /* With --dired, store pairs of beginning and ending indices of any
@@ -1374,6 +1377,8 @@ main (int argc, char **argv)
       obstack_init (&dev_ino_obstack);
     }
 
+  localtz = tzalloc (getenv ("TZ"));
+
   format_needs_stat = sort_type == sort_time || sort_type == sort_size
     || format == long_format
     || print_scontext
@@ -1517,6 +1522,31 @@ main (int argc, char **argv)
   return exit_status;
 }
 
+/* Set the line length to the value given by SPEC.  Return true if
+   successful.  0 means no limit on line length.  */
+
+static bool
+set_line_length (char const *spec)
+{
+  uintmax_t val;
+
+  /* Treat too-large values as if they were SIZE_MAX, which is
+     effectively infinity.  */
+  switch (xstrtoumax (spec, NULL, 0, &val, ""))
+    {
+    case LONGINT_OK:
+      line_length = MIN (val, SIZE_MAX);
+      return true;
+
+    case LONGINT_OVERFLOW:
+      line_length = SIZE_MAX;
+      return true;
+
+    default:
+      return false;
+    }
+}
+
 /* Set all the option flags according to the switches specified.
    Return the index of the first non-option argument.  */
 
@@ -1551,6 +1581,7 @@ decode_switches (int argc, char **argv)
       if (isatty (STDOUT_FILENO))
         {
           format = many_per_line;
+          set_quoting_style (NULL, shell_escape_quoting_style);
           /* See description of qmark_funny_chars, above.  */
           qmark_funny_chars = true;
         }
@@ -1585,21 +1616,10 @@ decode_switches (int argc, char **argv)
   line_length = 80;
   {
     char const *p = getenv ("COLUMNS");
-    if (p && *p)
-      {
-        unsigned long int tmp_ulong;
-        if (xstrtoul (p, NULL, 0, &tmp_ulong, NULL) == LONGINT_OK
-            && 0 < tmp_ulong && tmp_ulong <= SIZE_MAX)
-          {
-            line_length = tmp_ulong;
-          }
-        else
-          {
-            error (0, 0,
-               _("ignoring invalid width in environment variable COLUMNS: %s"),
-                   quotearg (p));
-          }
-      }
+    if (p && *p && ! set_line_length (p))
+      error (0, 0,
+             _("ignoring invalid width in environment variable COLUMNS: %s"),
+             quote (p));
   }
 
 #ifdef TIOCGWINSZ
@@ -1627,7 +1647,7 @@ decode_switches (int argc, char **argv)
           {
             error (0, 0,
              _("ignoring invalid tab size in environment variable TABSIZE: %s"),
-                   quotearg (p));
+                   quote (p));
           }
       }
   }
@@ -1743,8 +1763,9 @@ decode_switches (int argc, char **argv)
           break;
 
         case 'w':
-          line_length = xnumtoumax (optarg, 0, 1, SIZE_MAX, "",
-                                    _("invalid line width"), LS_FAILURE);
+          if (! set_line_length (optarg))
+            error (LS_FAILURE, 0, "%s: %s", _("invalid line width"),
+                   quote (optarg));
           break;
 
         case 'x':
@@ -1958,7 +1979,11 @@ decode_switches (int argc, char **argv)
         }
     }
 
-  max_idx = MAX (1, line_length / MIN_COLUMN_WIDTH);
+  /* Determine the max possible number of display columns.  */
+  max_idx = line_length / MIN_COLUMN_WIDTH;
+  /* Account for first display column not having a separator,
+     or line_lengths shorter than MIN_COLUMN_WIDTH.  */
+  max_idx += line_length % MIN_COLUMN_WIDTH != 0;
 
   filename_quoting_options = clone_quoting_options (NULL);
   if (get_quoting_style (filename_quoting_options) == escape_quoting_style)
@@ -2131,7 +2156,7 @@ get_funky_string (char **dest, const char **src, bool equals_end,
               state = ST_END;	/* End of string */
               break;
             case '\\':
-              state = ST_BACKSLASH; /* Backslash scape sequence */
+              state = ST_BACKSLASH; /* Backslash escape sequence */
               ++p;
               break;
             case '^':
@@ -2320,7 +2345,7 @@ known_term_type (void)
     {
       if (STRNCMP_LIT (line, "TERM ") == 0)
         {
-          if (STREQ (term, line + 5))
+          if (fnmatch (line + 5, term, 0) == 0)
             return true;
         }
       line += strlen (line) + 1;
@@ -2425,7 +2450,7 @@ parse_ls_color (void)
                     }
                 }
               if (state == PS_FAIL)
-                error (0, 0, _("unrecognized prefix: %s"), quotearg (label));
+                error (0, 0, _("unrecognized prefix: %s"), quote (label));
             }
           break;
 
@@ -2486,7 +2511,7 @@ getenv_quoting_style (void)
       else
         error (0, 0,
        _("ignoring invalid value of environment variable QUOTING_STYLE: %s"),
-               quotearg (q_style));
+               quote (q_style));
     }
 }
 
@@ -2509,7 +2534,7 @@ set_exit_status (bool serious)
 static void
 file_failure (bool serious, char const *message, char const *file)
 {
-  error (0, errno, message, quotearg_colon (file));
+  error (0, errno, message, quoteaf (file));
   set_exit_status (serious);
 }
 
@@ -2576,7 +2601,7 @@ print_dir (char const *name, char const *realname, bool command_line_arg)
       if (visit_dir (dir_stat.st_dev, dir_stat.st_ino))
         {
           error (0, 0, _("%s: not listing already-listed directory"),
-                 quotearg_colon (name));
+                 quotef (name));
           closedir (dirp);
           set_exit_status (true);
           return;
@@ -3084,7 +3109,7 @@ gobble_file (char const *name, enum filetype type, ino_t inode,
           any_has_acl |= f->acl_type != ACL_T_NONE;
 
           if (err)
-            error (0, errno, "%s", quotearg_colon (absolute_name));
+            error (0, errno, "%s", quotef (absolute_name));
         }
 
       if (S_ISLNK (f->stat.st_mode)
@@ -3453,7 +3478,7 @@ cmp_name (struct fileinfo const *a, struct fileinfo const *b,
 }
 
 /* Compare file extensions.  Files with no extension are 'smallest'.
-   If extensions are the same, compare by filenames instead.  */
+   If extensions are the same, compare by file names instead.  */
 
 static inline int
 cmp_extension (struct fileinfo const *a, struct fileinfo const *b,
@@ -3626,15 +3651,21 @@ print_current_files (void)
       break;
 
     case many_per_line:
-      print_many_per_line ();
+      if (! line_length)
+        print_with_separator (' ');
+      else
+        print_many_per_line ();
       break;
 
     case horizontal:
-      print_horizontal ();
+      if (! line_length)
+        print_with_separator (' ');
+      else
+        print_horizontal ();
       break;
 
     case with_commas:
-      print_with_commas ();
+      print_with_separator (',');
       break;
 
     case long_format:
@@ -3654,7 +3685,7 @@ print_current_files (void)
 
 static size_t
 align_nstrftime (char *buf, size_t size, char const *fmt, struct tm const *tm,
-                 int __utc, int __ns)
+                 timezone_t tz, int ns)
 {
   const char *nfmt = fmt;
   /* In the unlikely event that rpl_fmt below is not large enough,
@@ -3674,7 +3705,7 @@ align_nstrftime (char *buf, size_t size, char const *fmt, struct tm const *tm,
           strcpy (pfmt, pb + 2);
         }
     }
-  size_t ret = nstrftime (buf, size, nfmt, tm, __utc, __ns);
+  size_t ret = nstrftime (buf, size, nfmt, tm, tz, ns);
   return ret;
 }
 
@@ -3702,7 +3733,8 @@ long_time_expected_width (void)
       if (tm)
         {
           size_t len =
-            align_nstrftime (buf, sizeof buf, long_time_format[0], tm, 0, 0);
+            align_nstrftime (buf, sizeof buf, long_time_format[0], tm,
+                             localtz, 0);
           if (len != 0)
             width = mbsnwidth (buf, len, 0);
         }
@@ -3987,7 +4019,7 @@ print_long_format (const struct fileinfo *f)
       /* We assume here that all time zones are offset from UTC by a
          whole number of seconds.  */
       s = align_nstrftime (p, TIME_STAMP_LEN_MAXIMUM + 1, fmt,
-                           when_local, 0, when_timespec.tv_nsec);
+                           when_local, localtz, when_timespec.tv_nsec);
     }
 
   if (s || !*p)
@@ -4051,7 +4083,11 @@ quote_name (FILE *out, const char *name, struct quoting_options const *options,
       quotearg_buffer (buf, len + 1, name, -1, options);
     }
 
-  if (qmark_funny_chars)
+  enum quoting_style qs = get_quoting_style (options);
+
+  if (qmark_funny_chars
+      && (qs == shell_quoting_style || qs == shell_always_quoting_style
+          || qs == literal_quoting_style))
     {
       if (MB_CUR_MAX > 1)
         {
@@ -4220,7 +4256,8 @@ print_name_with_quoting (const struct fileinfo *f,
   if (used_color_this_time)
     {
       prep_non_filename_text ();
-      if (start_col / line_length != (start_col + width - 1) / line_length)
+      if (line_length
+          && (start_col / line_length != (start_col + width - 1) / line_length))
         put_indicator (&color_indicator[C_CLR_TO_EOL]);
     }
 
@@ -4561,8 +4598,10 @@ print_horizontal (void)
   putchar ('\n');
 }
 
+/* Output name + SEP + ' '.  */
+
 static void
-print_with_commas (void)
+print_with_separator (char sep)
 {
   size_t filesno;
   size_t pos = 0;
@@ -4570,13 +4609,15 @@ print_with_commas (void)
   for (filesno = 0; filesno < cwd_n_used; filesno++)
     {
       struct fileinfo const *f = sorted_file[filesno];
-      size_t len = length_of_file_name_and_frills (f);
+      size_t len = line_length ? length_of_file_name_and_frills (f) : 0;
 
       if (filesno != 0)
         {
           char separator;
 
-          if (pos + len + 2 < line_length)
+          if (! line_length
+              || ((pos + len + 2 < line_length)
+                  && (pos <= SIZE_MAX - len - 2)))
             {
               pos += 2;
               separator = ' ';
@@ -4587,7 +4628,7 @@ print_with_commas (void)
               separator = '\n';
             }
 
-          putchar (',');
+          putchar (sep);
           putchar (separator);
         }
 
@@ -4870,8 +4911,8 @@ Sort entries alphabetically if none of -cftuvSUX nor --sort is specified.\n\
 \n\
   -Q, --quote-name           enclose entry names in double quotes\n\
       --quoting-style=WORD   use quoting style WORD for entry names:\n\
-                               literal, locale, shell, shell-always, c, escape\
-\n\
+                               literal, locale, shell, shell-always,\n\
+                               shell-escape, shell-escape-always, c, escape\n\
 "), stdout);
       fputs (_("\
   -r, --reverse              reverse order while sorting\n\
@@ -4913,7 +4954,7 @@ Sort entries alphabetically if none of -cftuvSUX nor --sort is specified.\n\
   -v                         natural sort of (version) numbers within text\n\
 "), stdout);
       fputs (_("\
-  -w, --width=COLS           assume screen width instead of current value\n\
+  -w, --width=COLS           set output width to COLS.  0 means no limit\n\
   -x                         list entries by lines instead of by columns\n\
   -X                         sort alphabetically by entry extension\n\
   -Z, --context              print any security context of each file\n\

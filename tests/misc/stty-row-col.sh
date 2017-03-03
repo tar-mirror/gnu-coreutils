@@ -1,7 +1,7 @@
-#! /bin/sh
+#!/bin/sh
 # Test "stty" with rows and columns.
 
-# Copyright (C) 1998-2015 Free Software Foundation, Inc.
+# Copyright (C) 1998-2016 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,6 +32,8 @@ export LC_ALL
 print_ver_ stty
 
 require_controlling_input_terminal_
+require_trap_signame_
+
 trap '' TTOU # Ignore SIGTTOU
 
 # Versions of GNU stty from shellutils-1.9.2c and earlier failed

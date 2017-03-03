@@ -1,5 +1,5 @@
 /* printf - format and print data
-   Copyright (C) 1990-2015 Free Software Foundation, Inc.
+   Copyright (C) 1990-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -40,6 +40,10 @@
 
    %b = print an argument string, interpreting backslash escapes,
      except that octal escapes are of the form \0 or \0ooo.
+
+   %q = print an argument string in a format that can be
+     reused as shell input.  Escaped characters used the proposed
+     POSIX $'' syntax supported by most shells.
 
    The 'format' argument is re-used as many times as necessary
    to convert all of the given arguments.
@@ -124,7 +128,9 @@ FORMAT controls the output as in C printf.  Interpreted sequences are:\n\
   %%      a single %\n\
   %b      ARGUMENT as a string with '\\' escapes interpreted,\n\
           except that octal escapes are of the form \\0 or \\0NNN\n\
-\n\
+  %q      ARGUMENT is printed in a format that can be reused as shell input,\n\
+          escaping non-printable characters with the proposed POSIX $'' syntax.\
+\n\n\
 and all C format specifications ending with one of diouxXfeEgGcs, with\n\
 ARGUMENTs converted to proper type first.  Variable widths are handled.\n\
 "), stdout);
@@ -139,15 +145,15 @@ verify_numeric (const char *s, const char *end)
 {
   if (errno)
     {
-      error (0, errno, "%s", s);
+      error (0, errno, "%s", quote (s));
       exit_status = EXIT_FAILURE;
     }
   else if (*end)
     {
       if (s == end)
-        error (0, 0, _("%s: expected a numeric value"), s);
+        error (0, 0, _("%s: expected a numeric value"), quote (s));
       else
-        error (0, 0, _("%s: value not completely converted"), s);
+        error (0, 0, _("%s: value not completely converted"), quote (s));
       exit_status = EXIT_FAILURE;
     }
 }
@@ -506,6 +512,18 @@ print_formatted (const char *format, int argc, char **argv)
               break;
             }
 
+          if (*f == 'q')
+            {
+              if (argc > 0)
+                {
+                  fputs (quotearg_style (shell_escape_quoting_style, *argv),
+                         stdout);
+                  ++argv;
+                  --argc;
+                }
+              break;
+            }
+
           memset (ok, 0, sizeof ok);
           ok['a'] = ok['A'] = ok['c'] = ok['d'] = ok['e'] = ok['E'] =
             ok['f'] = ok['F'] = ok['g'] = ok['G'] = ok['i'] = ok['o'] =
@@ -545,7 +563,7 @@ print_formatted (const char *format, int argc, char **argv)
                     field_width = width;
                   else
                     error (EXIT_FAILURE, 0, _("invalid field width: %s"),
-                           *argv);
+                           quote (*argv));
                   ++argv;
                   --argc;
                 }
@@ -580,7 +598,7 @@ print_formatted (const char *format, int argc, char **argv)
                         }
                       else if (INT_MAX < prec)
                         error (EXIT_FAILURE, 0, _("invalid precision: %s"),
-                               *argv);
+                               quote (*argv));
                       else
                         precision = prec;
                       ++argv;
