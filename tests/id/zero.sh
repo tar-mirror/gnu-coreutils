@@ -1,7 +1,7 @@
 #!/bin/sh
 # Exercise "id --zero".
 
-# Copyright (C) 2013 Free Software Foundation, Inc.
+# Copyright (C) 2013-2014 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ printf '%s\n' $users '' >> users || framework_failure_
 
 # Exercise "id -z" with various options.
 printf '\n' > exp || framework_failure_
-:> out || framework_failure_
+> out || framework_failure_
 
 while read u ; do
   for o in g gr G Gr u ur ; do

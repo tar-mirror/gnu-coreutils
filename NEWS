@@ -1,5 +1,178 @@
 GNU coreutils NEWS                                    -*- outline -*-
 
+* Noteworthy changes in release 8.23 (2014-07-18) [stable]
+
+** Bug fixes
+
+  chmod -Rc no longer issues erroneous warnings for files with special bits set.
+  [bug introduced in coreutils-6.0]
+
+  cp -a, mv, and install --preserve-context, once again set the correct SELinux
+  context for existing directories in the destination.  Previously they set
+  the context of an existing directory to that of its last copied descendent.
+  [bug introduced in coreutils-8.22]
+
+  cp -a, mv, and install --preserve-context, no longer seg fault when running
+  with SELinux enabled, when copying from file systems that return an error
+  when reading the SELinux context for a file.
+  [bug introduced in coreutils-8.22]
+
+  cp -a and mv now preserve xattrs of symlinks copied across file systems.
+  [bug introduced with extended attribute preservation feature in coreutils-7.1]
+
+  date could crash or go into an infinite loop when parsing a malformed TZ="".
+  [bug introduced with the --date='TZ="" ..' parsing feature in coreutils-5.3.0]
+
+  dd's ASCII and EBCDIC conversions were incompatible with common practice and
+  with POSIX, and have been corrected as follows.  First, conv=ascii now
+  implies conv=unblock, and conv=ebcdic and conv=ibm now imply conv=block.
+  Second, the translation tables for dd conv=ascii and conv=ebcdic have been
+  corrected as shown in the following table, where A is the ASCII value, W is
+  the old, wrong EBCDIC value, and E is the new, corrected EBCDIC value; all
+  values are in octal.
+
+      A   W   E
+     041 117 132
+     133 112 255
+     135 132 275
+     136 137 232
+     174 152 117
+     176 241 137
+     313 232 152
+     325 255 112
+     345 275 241
+
+  [These dd bugs were present in "the beginning".]
+
+  df has more fixes related to the newer dynamic representation of file systems:
+  Duplicates are elided for virtual file systems like tmpfs.
+  Details for the correct device are output for points mounted multiple times.
+  Placeholder values are output for inaccessible file systems, rather than
+  than error messages or values for the wrong file system.
+  [These bugs were present in "the beginning".]
+
+  df now outputs all appropriate entries in the presence of bind mounts.
+  On some systems, entries would have been incorrectly elided due to
+  them being considered "dummy" mounts.
+  [bug introduced in coreutils-8.22]
+
+  du now silently ignores directory cycles introduced with bind mounts.
+  Previously it would issue a warning and exit with a failure status.
+  [bug introduced in coreutils-8.1]
+
+  head --bytes=-N and --lines=-N now handles devices more
+  consistently, not ignoring data from virtual devices like /dev/zero,
+  or on BSD systems data from tty devices.
+  [bug introduced in coreutils-5.0.1]
+
+  head --bytes=-N - no longer fails with a bogus diagnostic when stdin's
+  seek pointer is not at the beginning.
+  [bug introduced with the --bytes=-N feature in coreutils-5.0.1]
+
+  head --lines=-0, when the input does not contain a trailing '\n',
+  now copies all input to stdout.  Previously nothing was output in this case.
+  [bug introduced with the --lines=-N feature in coreutils-5.0.1]
+
+  id, when invoked with no user name argument, now prints the correct group ID.
+  Previously, in the default output format, it would print the default group ID
+  in the password database, which may be neither real nor effective.  For e.g.,
+  when run set-GID, or when the database changes outside the current session.
+  [bug introduced in coreutils-8.1]
+
+  ln -sf now replaces symbolic links whose targets can't exist.  Previously
+  it would display an error, requiring --no-dereference to avoid the issue.
+  [bug introduced in coreutils-5.3.0]
+
+  ln -sr '' F no longer segfaults.  Now works as expected.
+  [bug introduced with the --relative feature in coreutils-8.16]
+
+  numfmt now handles blanks correctly in all unibyte locales.  Previously
+  in locales where character 0xA0 is a blank, numfmt would mishandle it.
+  [bug introduced when numfmt was added in coreutils-8.21]
+
+  ptx --format long option parsing no longer falls through into the --help case.
+  [bug introduced in TEXTUTILS-1_22i]
+
+  ptx now consistently trims whitespace when processing multiple files.
+  [This bug was present in "the beginning".]
+
+  seq again generates correct output with start or end values = -0.
+  [bug introduced in coreutils-8.20.]
+
+  shuf --repeat no longer dumps core if the input is empty.
+  [bug introduced with the --repeat feature in coreutils-8.22]
+
+  sort when using multiple threads now avoids undefined behavior with mutex
+  destruction, which could cause deadlocks on some implementations.
+  [bug introduced in coreutils-8.6]
+
+  tail -f now uses polling mode for VXFS to cater for its clustered mode.
+  [bug introduced with inotify support added in coreutils-7.5]
+
+** New features
+
+  od accepts a new option: --endian=TYPE to handle inputs with different byte
+  orders, or to provide consistent output on systems with disparate endianness.
+
+  configure accepts the new option --enable-single-binary to build all the
+  selected programs in a single binary called "coreutils".  The selected
+  programs can still be called directly using symlinks to "coreutils" or
+  shebangs with the option --coreutils-prog= passed to this program.  The
+  install behavior is determined by the option --enable-single-binary=symlinks
+  or --enable-single-binary=shebangs (the default).  With the symlinks option,
+  you can't make a second symlink to any program because that will change the
+  name of the called program, which is used by coreutils to determine the
+  desired program.  The shebangs option doesn't suffer from this problem, but
+  the /proc/$pid/cmdline file might not be updated on all the platforms.  The
+  functionality of each program is not affected but this single binary will
+  depend on all the required dynamic libraries even to run simple programs.
+  If you desire to build some tools outside the single binary file, you can
+  pass the option --enable-single-binary-exceptions=PROG_LIST with the comma
+  separated list of programs you want to build separately.  This flag
+  considerably reduces the overall size of the installed binaries which makes
+  it suitable for embedded system.
+
+** Changes in behavior
+
+  chroot with an argument of "/" no longer implicitly changes the current
+  directory to "/", allowing changing only user credentials for a command.
+
+  chroot --userspec will now unset supplemental groups associated with root,
+  and instead use the supplemental groups of the specified user.
+
+  cut -d$'\n' again outputs lines identified in the --fields list, having
+  not done so in v8.21 and v8.22.  Note using this non portable functionality
+  will result in the delayed output of lines.
+
+  ls with none of LS_COLORS or COLORTERM environment variables set,
+  will now honor an empty or unknown TERM environment variable,
+  and not output colors even with --colors=always.
+
+** Improvements
+
+  chroot has better --userspec and --group look-ups, with numeric IDs never
+  causing name look-up errors.  Also look-ups are first done outside the chroot,
+  in case the look-up within the chroot fails due to library conflicts etc.
+
+  install now allows the combination of the -D and -t options.
+
+  numfmt supports zero padding of numbers using the standard printf
+  syntax of a leading zero, for example --format="%010f".
+  Also throughput was improved by up to 800% by avoiding redundant processing.
+
+  shred now supports multiple passes on GNU/Linux tape devices by rewinding
+  the tape before each pass, avoids redundant writes to empty files,
+  uses direct I/O for all passes where possible, and attempts to clear
+  inode storage used for small files on some file systems.
+
+  split avoids unnecessary input buffering, immediately writing input to output
+  which is significant with --filter or when writing to fifos or stdout etc.
+
+  stat and tail work better with HFS+, HFSX, LogFS and ConfigFS.  stat -f
+  --format=%T now reports the file system type, and tail -f now uses inotify,
+  rather than the default of issuing a warning and reverting to polling.
+
+
 * Noteworthy changes in release 8.22 (2013-12-13) [stable]
 
 ** Bug fixes
@@ -78,7 +251,7 @@ GNU coreutils NEWS                                    -*- outline -*-
   a NUL instead of a white space character.
 
   id and ls with -Z report the SMACK security context where available.
-  mkdir, mkfifo and mknod with -Z set the SMACK context where available.
+  mkdir, mkfifo and mknod with --context set the SMACK context where available.
 
   id can now lookup by user ID, in addition to the existing name lookup.
 
@@ -160,6 +333,9 @@ GNU coreutils NEWS                                    -*- outline -*-
   with such a minimum SIZE (or a maximum SIZE if it is negative).
   du recognizes -t SIZE as equivalent, for compatibility with FreeBSD.
 
+  timeout now accepts the --preserve-status option to always propagate the exit
+  status, useful for commands that can run for an indeterminite amount of time.
+
 ** Bug fixes
 
   cp --no-preserve=mode now no longer exits non-zero.
@@ -222,6 +398,9 @@ GNU coreutils NEWS                                    -*- outline -*-
   df now properly outputs file system information with bind mounts present on
   the system by skipping duplicate entries (identified by the device number).
   Consequently, df also elides the early-boot pseudo file system type "rootfs".
+
+  cut -d$'\n' no longer outputs lines identified in the --fields list,
+  to align with other implementations and to avoid delayed output of lines.
 
   nl no longer supports the --page-increment option, which has been
   deprecated since coreutils-7.5.  Use --line-increment instead.
@@ -4038,7 +4217,7 @@ packages, see ./old/*/NEWS.
 
 ========================================================================
 
-Copyright (C) 2001-2013 Free Software Foundation, Inc.
+Copyright (C) 2001-2014 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or

@@ -1,5 +1,5 @@
 /* stdbuf -- setup the standard streams for a command
-   Copyright (C) 2009-2013 Free Software Foundation, Inc.
+   Copyright (C) 2009-2014 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -187,7 +187,12 @@ static void
 set_LD_PRELOAD (void)
 {
   int ret;
-  char *old_libs = getenv ("LD_PRELOAD");
+#ifdef __APPLE__
+  char const *preload_env = "DYLD_INSERT_LIBRARIES";
+#else
+  char const *preload_env = "LD_PRELOAD";
+#endif
+  char *old_libs = getenv (preload_env);
   char *LD_PRELOAD;
 
   /* Note this would auto add the appropriate search path for "libstdbuf.so":
@@ -195,7 +200,17 @@ set_LD_PRELOAD (void)
      However we want the lookup done for the exec'd command not stdbuf.
 
      Since we don't link against libstdbuf.so add it to PKGLIBEXECDIR
-     rather than to LIBDIR.  */
+     rather than to LIBDIR.
+
+     Note we could add "" as the penultimate item in the following list
+     to enable searching for libstdbuf.so in the default system lib paths.
+     However that would not indicate an error if libstdbuf.so was not found.
+     Also while this could support auto selecting the right arch in a multilib
+     environment, what we really want is to auto select based on the arch of the
+     command being run, rather than that of stdbuf itself.  This is currently
+     not supported due to the unusual need for controlling the stdio buffering
+     of programs that are a different architecture to the default on the
+     system (and that of stdbuf itself).  */
   char const *const search_path[] = {
     program_path,
     PKGLIBEXECDIR,
@@ -229,9 +244,9 @@ set_LD_PRELOAD (void)
   /* FIXME: Do we need to support libstdbuf.dll, c:, '\' separators etc?  */
 
   if (old_libs)
-    ret = asprintf (&LD_PRELOAD, "LD_PRELOAD=%s:%s", old_libs, libstdbuf);
+    ret = asprintf (&LD_PRELOAD, "%s=%s:%s", preload_env, old_libs, libstdbuf);
   else
-    ret = asprintf (&LD_PRELOAD, "LD_PRELOAD=%s", libstdbuf);
+    ret = asprintf (&LD_PRELOAD, "%s=%s", preload_env, libstdbuf);
 
   if (ret < 0)
     xalloc_die ();
@@ -239,6 +254,10 @@ set_LD_PRELOAD (void)
   free (libstdbuf);
 
   ret = putenv (LD_PRELOAD);
+#ifdef __APPLE__
+  if (ret == 0)
+    ret = putenv ("DYLD_FORCE_FLAT_NAMESPACE=y");
+#endif
 
   if (ret != 0)
     {

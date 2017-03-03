@@ -1,5 +1,5 @@
 /* uniq -- remove duplicate lines from a sorted file
-   Copyright (C) 1986-2013 Free Software Foundation, Inc.
+   Copyright (C) 1986-2014 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -200,7 +200,9 @@ With no options, matching lines are merged to the first occurrence.\n\
   -i, --ignore-case     ignore differences in case when comparing\n\
   -s, --skip-chars=N    avoid comparing the first N characters\n\
   -u, --unique          only print unique lines\n\
-  -z, --zero-terminated  end lines with 0 byte, not newline\n\
+"), stdout);
+      fputs (_("\
+  -z, --zero-terminated     line delimiter is NUL, not newline\n\
 "), stdout);
      fputs (_("\
   -w, --check-chars=N   compare no more than N characters in lines\n\

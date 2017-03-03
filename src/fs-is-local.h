@@ -22,6 +22,7 @@ is_local_fs_type (unsigned long int magic)
       case S_MAGIC_CIFS: return 0;
       case S_MAGIC_CODA: return 0;
       case S_MAGIC_COH: return 1;
+      case S_MAGIC_CONFIGFS: return 1;
       case S_MAGIC_CRAMFS: return 1;
       case S_MAGIC_CRAMFS_WEND: return 1;
       case S_MAGIC_DEBUGFS: return 1;
@@ -43,6 +44,8 @@ is_local_fs_type (unsigned long int magic)
       case S_MAGIC_GFS: return 0;
       case S_MAGIC_GPFS: return 0;
       case S_MAGIC_HFS: return 1;
+      case S_MAGIC_HFS_PLUS: return 1;
+      case S_MAGIC_HFS_X: return 1;
       case S_MAGIC_HOSTFS: return 1;
       case S_MAGIC_HPFS: return 1;
       case S_MAGIC_HUGETLBFS: return 1;
@@ -55,6 +58,7 @@ is_local_fs_type (unsigned long int magic)
       case S_MAGIC_JFFS2: return 1;
       case S_MAGIC_JFS: return 1;
       case S_MAGIC_KAFS: return 0;
+      case S_MAGIC_LOGFS: return 1;
       case S_MAGIC_LUSTRE: return 0;
       case S_MAGIC_MINIX: return 1;
       case S_MAGIC_MINIX_30: return 1;
@@ -98,7 +102,7 @@ is_local_fs_type (unsigned long int magic)
       case S_MAGIC_USBDEVFS: return 1;
       case S_MAGIC_V9FS: return 1;
       case S_MAGIC_VMHGFS: return 0;
-      case S_MAGIC_VXFS: return 1;
+      case S_MAGIC_VXFS: return 0;
       case S_MAGIC_VZFS: return 1;
       case S_MAGIC_XENFS: return 1;
       case S_MAGIC_XENIX: return 1;

@@ -1,5 +1,5 @@
 /* system-dependent definitions for coreutils
-   Copyright (C) 1989-2013 Free Software Foundation, Inc.
+   Copyright (C) 1989-2014 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -549,8 +549,8 @@ static inline void
 emit_size_note (void)
 {
   fputs (_("\n\
-SIZE is an integer and optional unit (example: 10M is 10*1024*1024).  Units\n\
-are K, M, G, T, P, E, Z, Y (powers of 1024) or KB, MB, ... (powers of 1000).\n\
+The SIZE argument is an integer and optional unit (example: 10K is 10*1024).\n\
+Units are K,M,G,T,P,E,Z,Y (powers of 1024) or KB,MB,... (powers of 1000).\n\
 "), stdout);
 }
 
@@ -617,6 +617,16 @@ usable_st_size (struct stat const *sb)
 
 void usage (int status) ATTRIBUTE_NORETURN;
 
+/* Like error(0, 0, ...), but without an implicit newline.
+   Also a noop unless the global DEV_DEBUG is set.  */
+#define devmsg(...)			\
+  do					\
+    {					\
+      if (dev_debug)			\
+        fprintf (stderr, __VA_ARGS__);	\
+    }					\
+  while (0)
+
 #define emit_cycle_warning(file_name)	\
   do					\
     {					\
@@ -647,3 +657,9 @@ stzncpy (char *restrict dest, char const *restrict src, size_t len)
 #ifndef ARRAY_CARDINALITY
 # define ARRAY_CARDINALITY(Array) (sizeof (Array) / sizeof *(Array))
 #endif
+
+/* Avoid const warnings by casting to more portable type.
+   This is to cater for the incorrect const function declarations
+   in selinux.h before libselinux-2.3 (May 2014).
+   When version >= 2.3 is ubiquitous remove this function.  */
+static inline char * se_const (char const * sctx) { return (char *) sctx; }

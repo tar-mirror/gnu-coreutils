@@ -1,5 +1,5 @@
 /* stty -- change and print terminal line settings
-   Copyright (C) 1990-2013 Free Software Foundation, Inc.
+   Copyright (C) 1990-2014 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -634,7 +634,7 @@ Output settings:\n\
 "), stdout);
       fputs (_("\
  * [-]ocrnl      translate carriage return to newline\n\
- * [-]ofdel      use delete characters for fill instead of null characters\n\
+ * [-]ofdel      use delete characters for fill instead of NUL characters\n\
  * [-]ofill      use fill (padding) characters instead of timing for delays\n\
  * [-]olcuc      translate lowercase characters to uppercase\n\
  * [-]onlcr      translate newline to carriage return-newline\n\

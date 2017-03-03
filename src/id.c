@@ -1,5 +1,5 @@
 /* id -- print real and effective UIDs and GIDs
-   Copyright (C) 1989-2013 Free Software Foundation, Inc.
+   Copyright (C) 1989-2014 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ static bool ok = true;
 
 /* The SELinux context.  Start with a known invalid value so print_full_info
    knows when 'context' has not been set to a meaningful value.  */
-static security_context_t context = NULL;
+static char *context = NULL;
 
 static struct option const longopts[] =
 {
@@ -89,7 +89,7 @@ or (when USER omitted) for the current user.\n\
              stdout);
       fputs (_("\
   -a             ignore, for compatibility with other versions\n\
-  -Z, --context  print only the security context of the current user\n\
+  -Z, --context  print only the security context of the process\n\
   -g, --group    print only the effective group ID\n\
   -G, --groups   print all group IDs\n\
   -n, --name     print a name instead of a number, for -ugG\n\
@@ -220,7 +220,7 @@ main (int argc, char **argv)
       /* Report failure only if --context (-Z) was explicitly requested.  */
       if ((selinux_enabled && getcon (&context) && just_context)
           || (smack_enabled
-              && smack_new_label_from_self ((char **) &context) < 0
+              && smack_new_label_from_self (&context) < 0
               && just_context))
         error (EXIT_FAILURE, 0, _("can't get process context"));
     }
@@ -399,19 +399,20 @@ print_full_info (const char *username)
     gid_t *groups;
     int i;
 
-    int n_groups = xgetgroups (username, (pwd ? pwd->pw_gid : -1),
-                               &groups);
+    gid_t primary_group;
+    if (username)
+      primary_group = pwd ? pwd->pw_gid : -1;
+    else
+      primary_group = egid;
+
+    int n_groups = xgetgroups (username, primary_group, &groups);
     if (n_groups < 0)
       {
         if (username)
-          {
-            error (0, errno, _("failed to get groups for user %s"),
-                   quote (username));
-          }
+          error (0, errno, _("failed to get groups for user %s"),
+                 quote (username));
         else
-          {
-            error (0, errno, _("failed to get groups for the current process"));
-          }
+          error (0, errno, _("failed to get groups for the current process"));
         ok = false;
         return;
       }

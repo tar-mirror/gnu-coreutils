@@ -1,5 +1,5 @@
 /* copy.c -- core functions for copying files and directories
-   Copyright (C) 1989-2013 Free Software Foundation, Inc.
+   Copyright (C) 1989-2014 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -98,6 +98,14 @@ rpl_mkfifo (char const *file, mode_t mode)
 #define SAME_GROUP(A, B) ((A).st_gid == (B).st_gid)
 #define SAME_OWNER_AND_GROUP(A, B) (SAME_OWNER (A, B) && SAME_GROUP (A, B))
 
+/* LINK_FOLLOWS_SYMLINKS is tri-state; if it is -1, we don't know
+   how link() behaves, so assume we can't hardlink symlinks in that case.  */
+#if defined HAVE_LINKAT || ! LINK_FOLLOWS_SYMLINKS
+# define CAN_HARDLINK_SYMLINKS 1
+#else
+# define CAN_HARDLINK_SYMLINKS 0
+#endif
+
 struct dir_list
 {
   struct dir_list *parent;
@@ -109,7 +117,7 @@ struct dir_list
 #define DEST_INFO_INITIAL_CAPACITY 61
 
 static bool copy_internal (char const *src_name, char const *dst_name,
-                           bool new_dst, dev_t device,
+                           bool new_dst, struct stat const *parent,
                            struct dir_list *ancestors,
                            const struct cp_options *x,
                            bool command_line_arg,
@@ -590,7 +598,7 @@ copy_dir (char const *src_name_in, char const *dst_name_in, bool new_dst,
   struct cp_options non_command_line_options = *x;
   bool ok = true;
 
-  name_space = savedir (src_name_in);
+  name_space = savedir (src_name_in, SAVEDIR_SORT_FASTREAD);
   if (name_space == NULL)
     {
       /* This diagnostic is a bit vague because savedir can fail in
@@ -613,7 +621,7 @@ copy_dir (char const *src_name_in, char const *dst_name_in, bool new_dst,
       char *dst_name = file_name_concat (dst_name_in, namep, NULL);
       bool first_dir_created = *first_dir_created_per_command_line_arg;
 
-      ok &= copy_internal (src_name, dst_name, new_dst, src_sb->st_dev,
+      ok &= copy_internal (src_name, dst_name, new_dst, src_sb,
                            ancestors, &non_command_line_options, false,
                            &first_dir_created,
                            &local_copy_into_self, NULL);
@@ -771,7 +779,7 @@ set_process_security_ctx (char const *src_name, char const *dst_name,
       /* Set the default context for the process to match the source.  */
       bool all_errors = !x->data_copy_required || x->require_preserve_context;
       bool some_errors = !all_errors && !x->reduce_diagnostics;
-      security_context_t con;
+      char *con;
 
       if (0 <= lgetfilecon (src_name, &con))
         {
@@ -1557,8 +1565,9 @@ writable_destination (char const *file, mode_t mode)
           || euidaccess (file, W_OK) == 0);
 }
 
-static void
-overwrite_prompt (char const *dst_name, struct stat const *dst_sb)
+static bool
+overwrite_ok (struct cp_options const *x, char const *dst_name,
+              struct stat const *dst_sb)
 {
   if (! writable_destination (dst_name, dst_sb->st_mode))
     {
@@ -1566,7 +1575,10 @@ overwrite_prompt (char const *dst_name, struct stat const *dst_sb)
       strmode (dst_sb->st_mode, perms);
       perms[10] = '\0';
       fprintf (stderr,
-               _("%s: try to overwrite %s, overriding mode %04lo (%s)? "),
+               (x->move_mode || x->unlink_dest_before_opening
+                || x->unlink_dest_after_failed_open)
+               ? _("%s: replace %s, overriding mode %04lo (%s)? ")
+               : _("%s: unwritable %s (mode %04lo, %s); try anyway? "),
                program_name, quote (dst_name),
                (unsigned long int) (dst_sb->st_mode & CHMOD_MODE_BITS),
                &perms[1]);
@@ -1576,6 +1588,8 @@ overwrite_prompt (char const *dst_name, struct stat const *dst_sb)
       fprintf (stderr, _("%s: overwrite %s? "),
                program_name, quote (dst_name));
     }
+
+  return yesno ();
 }
 
 /* Initialize the hash table implementing a set of F_triple entries
@@ -1630,8 +1644,7 @@ abandon_move (const struct cp_options *x,
                || (x->interactive == I_UNSPECIFIED
                    && x->stdin_tty
                    && ! writable_destination (dst_name, dst_sb->st_mode)))
-              && (overwrite_prompt (dst_name, dst_sb), 1)
-              && ! yesno ()));
+              && ! overwrite_ok (x, dst_name, dst_sb)));
 }
 
 /* Print --verbose output on standard output, e.g. 'new' -> 'old'.
@@ -1712,9 +1725,8 @@ should_dereference (const struct cp_options *x, bool command_line_arg)
 /* Copy the file SRC_NAME to the file DST_NAME.  The files may be of
    any type.  NEW_DST should be true if the file DST_NAME cannot
    exist because its parent directory was just created; NEW_DST should
-   be false if DST_NAME might already exist.  DEVICE is the device
-   number of the parent directory, or 0 if the parent of this file is
-   not known.  ANCESTORS points to a linked, null terminated list of
+   be false if DST_NAME might already exist.  A nonnull PARENT describes the
+   parent directory.  ANCESTORS points to a linked, null terminated list of
    devices and inodes of parent directories of SRC_NAME.  COMMAND_LINE_ARG
    is true iff SRC_NAME was specified on the command line.
    FIRST_DIR_CREATED_PER_COMMAND_LINE_ARG is both input and output.
@@ -1724,7 +1736,7 @@ should_dereference (const struct cp_options *x, bool command_line_arg)
 static bool
 copy_internal (char const *src_name, char const *dst_name,
                bool new_dst,
-               dev_t device,
+               struct stat const *parent,
                struct dir_list *ancestors,
                const struct cp_options *x,
                bool command_line_arg,
@@ -1905,8 +1917,7 @@ copy_internal (char const *src_name, char const *dst_name,
               if (! S_ISDIR (src_mode)
                   && (x->interactive == I_ALWAYS_NO
                       || (x->interactive == I_ASK_USER
-                          && (overwrite_prompt (dst_name, &dst_sb), 1)
-                          && ! yesno ())))
+                          && ! overwrite_ok (x, dst_name, &dst_sb))))
                 return true;
             }
 
@@ -2408,10 +2419,21 @@ copy_internal (char const *src_name, char const *dst_name,
       else
         {
           omitted_permissions = 0;
+
+          /* For directories, the process global context could be reset for
+             descendents, so use it to set the context for existing dirs here.
+             This will also give earlier indication of failure to set ctx.  */
+          if (x->set_security_context || x->preserve_security_context)
+            if (! set_file_security_ctx (dst_name, x->preserve_security_context,
+                                         false, x))
+              {
+                if (x->require_preserve_context)
+                  goto un_backup;
+              }
         }
 
       /* Decide whether to copy the contents of the directory.  */
-      if (x->one_file_system && device != 0 && device != src_sb.st_dev)
+      if (x->one_file_system && parent && parent->st_dev != src_sb.st_dev)
         {
           /* Here, we are crossing a file system boundary and cp's -x option
              is in effect: so don't copy the contents of this directory. */
@@ -2473,15 +2495,13 @@ copy_internal (char const *src_name, char const *dst_name,
      should not follow the link.  We can approximate the desired
      behavior by skipping this hard-link creating block and instead
      copying the symlink, via the 'S_ISLNK'- copying code below.
-     LINK_FOLLOWS_SYMLINKS is tri-state; if it is -1, we don't know
-     how link() behaves, so we use the fallback case for safety.
 
      Note gnulib's linkat module, guarantees that the symlink is not
      dereferenced.  However its emulation currently doesn't maintain
      timestamps or ownership so we only call it when we know the
      emulation will not be needed.  */
   else if (x->hard_link
-           && !(LINK_FOLLOWS_SYMLINKS && S_ISLNK (src_mode)
+           && !(! CAN_HARDLINK_SYMLINKS && S_ISLNK (src_mode)
                 && x->dereference == DEREF_NEVER))
     {
       if (! create_hard_link (src_name, dst_name, false, false, dereference))
@@ -2598,7 +2618,7 @@ copy_internal (char const *src_name, char const *dst_name,
 
   /* With -Z or --preserve=context, set the context for existing files.
      Note this is done already for copy_reg() for reasons described therein.  */
-  if (!new_dst && !x->copy_as_regular
+  if (!new_dst && !x->copy_as_regular && !S_ISDIR (src_mode)
       && (x->set_security_context || x->preserve_security_context))
     {
       if (! set_file_security_ctx (dst_name, x->preserve_security_context,
@@ -2621,7 +2641,7 @@ copy_internal (char const *src_name, char const *dst_name,
   /* If we've just created a hard-link due to cp's --link option,
      we're done.  */
   if (x->hard_link && ! S_ISDIR (src_mode)
-      && !(LINK_FOLLOWS_SYMLINKS && S_ISLNK (src_mode)
+      && !(! CAN_HARDLINK_SYMLINKS && S_ISLNK (src_mode)
            && x->dereference == DEREF_NEVER))
     return delayed_ok;
 
@@ -2657,12 +2677,8 @@ copy_internal (char const *src_name, char const *dst_name,
         }
     }
 
-  /* The operations beyond this point may dereference a symlink.  */
-  if (dest_is_symlink)
-    return delayed_ok;
-
   /* Avoid calling chown if we know it's not necessary.  */
-  if (x->preserve_ownership
+  if (!dest_is_symlink && x->preserve_ownership
       && (new_dst || !SAME_OWNER_AND_GROUP (src_sb, dst_sb)))
     {
       switch (set_owner (x, dst_name, -1, &src_sb, new_dst, &dst_sb))
@@ -2676,11 +2692,16 @@ copy_internal (char const *src_name, char const *dst_name,
         }
     }
 
-  set_author (dst_name, -1, &src_sb);
-
+  /* Set xattrs after ownership as changing owners will clear capabilities.  */
   if (x->preserve_xattr && ! copy_attr (src_name, -1, dst_name, -1, x)
       && x->require_preserve_xattr)
     return false;
+
+  /* The operations beyond this point may dereference a symlink.  */
+  if (dest_is_symlink)
+    return delayed_ok;
+
+  set_author (dst_name, -1, &src_sb);
 
   if (x->preserve_mode || x->move_mode)
     {
@@ -2806,7 +2827,7 @@ copy (char const *src_name, char const *dst_name,
   top_level_dst_name = dst_name;
 
   bool first_dir_created_per_command_line_arg = false;
-  return copy_internal (src_name, dst_name, nonexistent_dst, 0, NULL,
+  return copy_internal (src_name, dst_name, nonexistent_dst, NULL, NULL,
                         options, true,
                         &first_dir_created_per_command_line_arg,
                         copy_into_self, rename_succeeded);

@@ -1,5 +1,5 @@
 /* sort - sort lines of text (with all kinds of options).
-   Copyright (C) 1988-2013 Free Software Foundation, Inc.
+   Copyright (C) 1988-2014 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -504,7 +504,7 @@ Other options:\n\
 \n\
 "), DEFAULT_TMPDIR);
       fputs (_("\
-  -z, --zero-terminated     end lines with 0 byte, not newline\n\
+  -z, --zero-terminated     line delimiter is NUL, not newline\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
@@ -3237,8 +3237,17 @@ merge_tree_init (size_t nthreads, size_t nlines, struct line *dest)
 
 /* Destroy the merge tree. */
 static void
-merge_tree_destroy (struct merge_node *merge_tree)
+merge_tree_destroy (size_t nthreads, struct merge_node *merge_tree)
 {
+  size_t n_nodes = nthreads * 2;
+  struct merge_node *node = merge_tree;
+
+  while (n_nodes--)
+    {
+      pthread_mutex_destroy (&node->lock);
+      node++;
+    }
+
   free (merge_tree);
 }
 
@@ -3354,8 +3363,8 @@ queue_insert (struct merge_node_queue *queue, struct merge_node *node)
   pthread_mutex_lock (&queue->mutex);
   heap_insert (queue->priority_queue, node);
   node->queued = true;
-  pthread_mutex_unlock (&queue->mutex);
   pthread_cond_signal (&queue->cond);
+  pthread_mutex_unlock (&queue->mutex);
 }
 
 /* Pop the top node off the priority QUEUE, lock the node, return it.  */
@@ -3640,8 +3649,6 @@ sortlines (struct line *restrict lines, size_t nthreads,
       queue_insert (queue, node);
       merge_loop (queue, total_lines, tfp, temp_output);
     }
-
-  pthread_mutex_destroy (&node->lock);
 }
 
 /* Scan through FILES[NTEMPS .. NFILES-1] looking for files that are
@@ -3945,13 +3952,14 @@ sort (char *const *files, size_t nfiles, char const *output_file,
               queue_init (&queue, nthreads);
               struct merge_node *merge_tree =
                 merge_tree_init (nthreads, buf.nlines, line);
-              struct merge_node *root = merge_tree + 1;
 
-              sortlines (line, nthreads, buf.nlines, root,
+              sortlines (line, nthreads, buf.nlines, merge_tree + 1,
                          &queue, tfp, temp_output);
+
+#ifdef lint
+              merge_tree_destroy (nthreads, merge_tree);
               queue_destroy (&queue);
-              pthread_mutex_destroy (&root->lock);
-              merge_tree_destroy (merge_tree);
+#endif
             }
           else
             write_unique (line - 1, tfp, temp_output);

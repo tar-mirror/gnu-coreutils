@@ -5,7 +5,7 @@
 # indefinitely if no *other* data is appended, but it would be printed as
 # soon as any additional appended data is detected.
 
-# Copyright (C) 2009-2013 Free Software Foundation, Inc.
+# Copyright (C) 2009-2014 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ timeout 10s gdb -nx --batch-silent                 \
 # FIXME: The above is seen to _intermittently_ fail with:
 # warning: .dynamic section for "/lib/libc.so.6" is not at the expected address
 # warning: difference appears to be caused by prelink, adjusting expectations
-test -s gdb.out && { cat gdb.out; skip_ "can't set breakpoints in tail"; }
+compare /dev/null gdb.out || skip_ "can't set breakpoints in tail"
 
 # Run "tail -f file", stopping to append a line just before
 # inotify initialization, and then continue.  Before the fix,

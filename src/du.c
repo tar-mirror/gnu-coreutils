@@ -1,5 +1,5 @@
 /* du -- summarize disk usage
-   Copyright (C) 1988-2013 Free Software Foundation, Inc.
+   Copyright (C) 1988-2014 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -289,7 +289,7 @@ Summarize disk usage of each FILE, recursively for directories.\n\
       emit_mandatory_arg_note ();
 
       fputs (_("\
-  -0, --null            end each output line with 0 byte rather than newline\n\
+  -0, --null            end each output line with NUL, not newline\n\
   -a, --all             write counts for all files, not just directories\n\
       --apparent-size   print apparent sizes, rather than disk usage; although\
 \n\
@@ -514,15 +514,11 @@ process_file (FTS *fts, FTSENT *ent)
           break;
 
         case FTS_DC:
-          if (cycle_warning_required (fts, ent))
+          /* If not following symlinks and not a (bind) mount point.  */
+          if (cycle_warning_required (fts, ent)
+              && ! di_set_lookup (di_mnt, sb->st_dev, sb->st_ino))
             {
-              /* If this is a mount point, then diagnose it and avoid
-                 the cycle.  */
-              if (di_set_lookup (di_mnt, sb->st_dev, sb->st_ino))
-                error (0, 0, _("mount point %s already traversed"),
-                       quote (file));
-              else
-                emit_cycle_warning (file);
+              emit_cycle_warning (file);
               return false;
             }
           return true;

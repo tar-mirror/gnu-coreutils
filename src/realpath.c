@@ -1,5 +1,5 @@
 /* realpath - print the resolved path
-   Copyright (C) 2011-2013 Free Software Foundation, Inc.
+   Copyright (C) 2011-2014 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ all but the last component must exist\n\
       --relative-to=FILE       print the resolved path relative to FILE\n\
       --relative-base=FILE     print absolute paths unless paths below FILE\n\
   -s, --strip, --no-symlinks   don't expand symlinks\n\
-  -z, --zero                   separate output with NUL rather than newline\n\
+  -z, --zero                   end each output line with NUL, not newline\n\
 \n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);

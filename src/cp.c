@@ -1,5 +1,5 @@
 /* cp.c  -- file copying (main routines)
-   Copyright (C) 1989-2013 Free Software Foundation, Inc.
+   Copyright (C) 1989-2014 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -230,8 +230,10 @@ Copy SOURCE to DEST, or multiple SOURCE(s) to DIRECTORY.\n\
   -x, --one-file-system        stay on this file system\n\
 "), stdout);
       fputs (_("\
-  -Z, --context[=CTX]          set SELinux security context of destination\n\
-                                 file to default type, or to CTX if specified\n\
+  -Z                           set SELinux security context of destination\n\
+                                 file to default type\n\
+      --context[=CTX]          like -Z, or if CTX is specified then set the\n\
+                                 SELinux or SMACK security context to CTX\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
@@ -924,7 +926,7 @@ main (int argc, char **argv)
   bool copy_contents = false;
   char *target_directory = NULL;
   bool no_target_directory = false;
-  security_context_t scontext = NULL;
+  char const *scontext = NULL;
 
   initialize_main (&argc, &argv);
   set_program_name (argv[0]);
@@ -1194,7 +1196,7 @@ main (int argc, char **argv)
        if (scontext)
          restorecon (dst_path, 0, true);
    */
-  if (scontext && setfscreatecon (scontext) < 0)
+  if (scontext && setfscreatecon (se_const (scontext)) < 0)
     error (EXIT_FAILURE, errno,
            _("failed to set default file creation context to %s"),
            quote (scontext));

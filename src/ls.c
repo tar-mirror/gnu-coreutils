@@ -1,5 +1,5 @@
 /* 'dir', 'vdir' and 'ls' directory listing programs for GNU.
-   Copyright (C) 1985-2013 Free Software Foundation, Inc.
+   Copyright (C) 1985-2014 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -108,6 +108,7 @@
 #include "xstrtol.h"
 #include "areadlink.h"
 #include "mbsalign.h"
+#include "dircolors.h"
 
 /* Include <sys/capability.h> last to avoid a clash of <sys/types.h>
    include guards with some premature versions of libcap.
@@ -186,7 +187,7 @@ verify (sizeof filetype_letter - 1 == arg_directory + 1);
 enum acl_type
   {
     ACL_T_NONE,
-    ACL_T_SELINUX_ONLY,
+    ACL_T_LSM_CONTEXT_ONLY,
     ACL_T_YES
   };
 
@@ -206,8 +207,8 @@ struct fileinfo
        zero.  */
     mode_t linkmode;
 
-    /* SELinux security context.  */
-    security_context_t scontext;
+    /* security context.  */
+    char *scontext;
 
     bool stat_ok;
 
@@ -216,7 +217,7 @@ struct fileinfo
     bool linkok;
 
     /* For long listings, true if the file has an access control list,
-       or an SELinux security context.  */
+       or a security context.  */
     enum acl_type acl_type;
 
     /* For color listings, true if a regular file has capability info.  */
@@ -2326,6 +2327,30 @@ enum parse_state
     PS_FAIL
   };
 
+
+/* Check if the content of TERM is a valid name in dircolors.  */
+
+static bool
+known_term_type (void)
+{
+  char const *term = getenv ("TERM");
+  if (! term || ! *term)
+    return false;
+
+  char const *line = G_line;
+  while (line - G_line < sizeof (G_line))
+    {
+      if (STRNCMP_LIT (line, "TERM ") == 0)
+        {
+          if (STREQ (term, line + 5))
+            return true;
+        }
+      line += strlen (line) + 1;
+    }
+
+  return false;
+}
+
 static void
 parse_ls_color (void)
 {
@@ -2336,7 +2361,16 @@ parse_ls_color (void)
   struct color_ext_type *ext;	/* Extension we are working on */
 
   if ((p = getenv ("LS_COLORS")) == NULL || *p == '\0')
-    return;
+    {
+      /* LS_COLORS takes precedence, but if that's not set then
+         honor the COLORTERM and TERM env variables so that
+         we only go with the internal ANSI color codes if the
+         former is non empty or the latter is set to a known value.  */
+      char const *colorterm = getenv ("COLORTERM");
+      if (! (colorterm && *colorterm) && ! known_term_type ())
+        print_with_color = false;
+      return;
+    }
 
   ext = NULL;
   strcpy (label, "??");
@@ -2804,8 +2838,8 @@ errno_unsupported (int err)
 }
 
 /* Cache *getfilecon failure, when it's trivial to do so.
-   Like getfilecon/lgetfilecon, but when F's st_dev says it's on a known-
-   SELinux-challenged file system, fail with ENOTSUP immediately.  */
+   Like getfilecon/lgetfilecon, but when F's st_dev says it's doesn't
+   support getting the security context, fail with ENOTSUP immediately.  */
 static int
 getfilecon_cache (char const *file, struct fileinfo *f, bool deref)
 {
@@ -3052,7 +3086,7 @@ gobble_file (char const *name, enum filetype type, ino_t inode,
           f->acl_type = (!have_scontext && !have_acl
                          ? ACL_T_NONE
                          : (have_scontext && !have_acl
-                            ? ACL_T_SELINUX_ONLY
+                            ? ACL_T_LSM_CONTEXT_ONLY
                             : ACL_T_YES));
           any_has_acl |= f->acl_type != ACL_T_NONE;
 
@@ -3799,7 +3833,7 @@ print_long_format (const struct fileinfo *f)
   struct tm *when_local;
 
   /* Compute the mode string, except remove the trailing space if no
-     file in this directory has an ACL or SELinux security context.  */
+     file in this directory has an ACL or security context.  */
   if (f->stat_ok)
     filemodestring (&f->stat, modebuf);
   else
@@ -3810,7 +3844,7 @@ print_long_format (const struct fileinfo *f)
     }
   if (! any_has_acl)
     modebuf[10] = '\0';
-  else if (f->acl_type == ACL_T_SELINUX_ONLY)
+  else if (f->acl_type == ACL_T_LSM_CONTEXT_ONLY)
     modebuf[10] = '.';
   else if (f->acl_type == ACL_T_YES)
     modebuf[10] = '+';
@@ -4794,7 +4828,7 @@ Sort entries alphabetically if none of -cftuvSUX nor --sort is specified.\n\
 "), stdout);
       fputs (_("\
   -G, --no-group             in a long listing, don't print group names\n\
-  -h, --human-readable       with -l, print sizes in human readable format\n\
+  -h, --human-readable       with -l and/or -s, print human readable sizes\n\
                                (e.g., 1K 234M 2G)\n\
       --si                   likewise, but use powers of 1000 not 1024\n\
 "), stdout);
@@ -4886,7 +4920,7 @@ Sort entries alphabetically if none of -cftuvSUX nor --sort is specified.\n\
   -w, --width=COLS           assume screen width instead of current value\n\
   -x                         list entries by lines instead of by columns\n\
   -X                         sort alphabetically by entry extension\n\
-  -Z, --context              print any SELinux security context of each file\n\
+  -Z, --context              print any security context of each file\n\
   -1                         list one file per line\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);

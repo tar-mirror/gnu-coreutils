@@ -1,6 +1,6 @@
 /* Shuffle lines of text.
 
-   Copyright (C) 2006-2013 Free Software Foundation, Inc.
+   Copyright (C) 2006-2014 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -77,7 +77,9 @@ Write a random permutation of the input lines to standard output.\n\
   -o, --output=FILE         write result to FILE instead of standard output\n\
       --random-source=FILE  get random bytes from FILE\n\
   -r, --repeat              output lines can be repeated\n\
-  -z, --zero-terminated     end lines with 0 byte, not newline\n\
+"), stdout);
+      fputs (_("\
+  -z, --zero-terminated     line delimiter is NUL, not newline\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
@@ -576,11 +578,18 @@ main (int argc, char **argv)
   /* Generate output according to requested method */
   if (repeat)
     {
-      if (input_range)
-        i = write_random_numbers (randint_source, head_lines,
-                                  lo_input, hi_input, eolbyte);
+      if (head_lines == 0)
+        i = 0;
       else
-        i = write_random_lines (randint_source, head_lines, line, n_lines);
+        {
+          if (n_lines == 0)
+            error (EXIT_FAILURE, 0, _("no lines to repeat"));
+          if (input_range)
+            i = write_random_numbers (randint_source, head_lines,
+                                      lo_input, hi_input, eolbyte);
+          else
+            i = write_random_lines (randint_source, head_lines, line, n_lines);
+        }
     }
   else
     {
@@ -613,5 +622,5 @@ main (int argc, char **argv)
     }
 #endif
 
-  return EXIT_SUCCESS;
+  exit (EXIT_SUCCESS);
 }

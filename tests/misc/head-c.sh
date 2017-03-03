@@ -1,7 +1,7 @@
 #!/bin/sh
 # exercise head -c
 
-# Copyright (C) 2001-2013 Free Software Foundation, Inc.
+# Copyright (C) 2001-2014 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,6 +26,14 @@ echo abc > in || framework_failure_
 (head -c1; head -c1) < in > out || fail=1
 case "$(cat out)" in
   ab) ;;
+  *) fail=1 ;;
+esac
+
+# Test for a bug in coreutils 5.0.1 through 8.22.
+printf 'abc\ndef\n' > in1 || framework_failure_
+(dd bs=1 skip=1 count=0 status=none && head -c-4) < in1 > out1 || fail=1
+case "$(cat out1)" in
+  bc) ;;
   *) fail=1 ;;
 esac
 

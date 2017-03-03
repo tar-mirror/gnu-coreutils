@@ -1,7 +1,7 @@
 #!/bin/sh
 # test -C, --lines-bytes
 
-# Copyright (C) 2013 Free Software Foundation, Inc.
+# Copyright (C) 2013-2014 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -63,8 +63,8 @@ cat <<\EOF > no_eol_splits_exp
 EOF
 
 for b in $(seq 10); do
-  : > splits
-  : > no_eol_splits
+  > splits
+  > no_eol_splits
   for s in $(seq 11); do
     rm x??
     split ---io=$b -C$s in || fail=1

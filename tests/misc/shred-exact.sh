@@ -1,7 +1,7 @@
 #!/bin/sh
 # Test functionality of --exact
 
-# Copyright (C) 2000-2013 Free Software Foundation, Inc.
+# Copyright (C) 2000-2014 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,6 +40,10 @@ done
 # (i.e. we want to test failed writes not at the start).
 truncate -s1MiB file.slop || framework_failure_
 truncate -s+1 file.slop || framework_failure_
-shred --exact -n1 file.slop || fail=1
+shred --exact -n2 file.slop || fail=1
+
+# make sure direct I/O is handled appropriately at start of file
+truncate -s1 file.slop || framework_failure_
+shred --exact -n2 file.slop || fail=1
 
 Exit $fail

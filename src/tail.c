@@ -1,5 +1,5 @@
 /* tail -- output the last part of file(s)
-   Copyright (C) 1989-2013 Free Software Foundation, Inc.
+   Copyright (C) 1989-2014 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -339,13 +339,6 @@ pretty_name (struct File_spec const *f)
   return (STREQ (f->name, "-") ? _("standard input") : f->name);
 }
 
-static void
-xwrite_stdout (char const *buffer, size_t n_bytes)
-{
-  if (n_bytes > 0 && fwrite (buffer, 1, n_bytes, stdout) == 0)
-    error (EXIT_FAILURE, errno, _("write error"));
-}
-
 /* Record a file F with descriptor FD, size SIZE, status ST, and
    blocking status BLOCKING.  */
 
@@ -383,6 +376,20 @@ write_header (const char *pretty_filename)
 
   printf ("%s==> %s <==\n", (first_file ? "" : "\n"), pretty_filename);
   first_file = false;
+}
+
+/* Write N_BYTES from BUFFER to stdout.
+   Exit immediately on error with a single diagnostic.  */
+
+static void
+xwrite_stdout (char const *buffer, size_t n_bytes)
+{
+  if (n_bytes > 0 && fwrite (buffer, 1, n_bytes, stdout) < n_bytes)
+    {
+      clearerr (stdout); /* To avoid redundant close_stdout diagnostic.  */
+      error (EXIT_FAILURE, errno, _("error writing %s"),
+             quote ("standard output"));
+    }
 }
 
 /* Read and output N_BYTES of file PRETTY_FILENAME starting at the current

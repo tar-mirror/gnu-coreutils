@@ -1,7 +1,7 @@
 #!/bin/sh
 # Ensure that shuf randomizes its input.
 
-# Copyright (C) 2006-2013 Free Software Foundation, Inc.
+# Copyright (C) 2006-2014 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,6 +42,10 @@ compare in out1 || { fail=1; echo "not a permutation" 1>&2; }
 # Exercise shuf's -e option.
 t=$(shuf -e a b c d e | sort | fmt)
 test "$t" = 'a b c d e' || { fail=1; echo "not a permutation" 1>&2; }
+
+# coreutils-8.22 dumps core.
+shuf -er
+test $? -eq 1 || fail=1
 
 # Before coreutils-6.3, this would infloop.
 # "seq 1860" produces 8193 (8K + 1) bytes of output.

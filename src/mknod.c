@@ -1,5 +1,5 @@
 /* mknod -- make special files
-   Copyright (C) 1990-2013 Free Software Foundation, Inc.
+   Copyright (C) 1990-2014 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -63,8 +63,9 @@ Create the special file NAME of the given TYPE.\n\
   -m, --mode=MODE    set file permission bits to MODE, not a=rw - umask\n\
 "), stdout);
       fputs (_("\
-  -Z, --context[=CTX]  set the SELinux security context of NAME to\n\
-                         default type, or to CTX if specified\n\
+  -Z                   set the SELinux security context to default type\n\
+      --context[=CTX]  like -Z, or if CTX is specified then set the SELinux\n\
+                         or SMACK security context to CTX\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
@@ -95,7 +96,7 @@ main (int argc, char **argv)
   int optc;
   int expected_operands;
   mode_t node_type;
-  security_context_t scontext = NULL;
+  char const *scontext = NULL;
   bool set_security_context = false;
 
   initialize_main (&argc, &argv);
@@ -191,7 +192,7 @@ main (int argc, char **argv)
       if (is_smack_enabled ())
         ret = smack_set_label_for_self (scontext);
       else
-        ret = setfscreatecon (scontext);
+        ret = setfscreatecon (se_const (scontext));
 
       if (ret < 0)
         error (EXIT_FAILURE, errno,

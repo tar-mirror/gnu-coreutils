@@ -1,5 +1,5 @@
 /* seq - print sequence of numbers to standard output.
-   Copyright (C) 1994-2013 Free Software Foundation, Inc.
+   Copyright (C) 1994-2014 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -604,7 +604,7 @@ main (int argc, char **argv)
       if (asprintf (&s2, "%0.Lf", last.value) < 0)
         xalloc_die ();
 
-      if (seq_fast (s1, s2))
+      if (*s1 != '-' && *s2 != '-' && seq_fast (s1, s2))
         {
           IF_LINT (free (s1));
           IF_LINT (free (s2));

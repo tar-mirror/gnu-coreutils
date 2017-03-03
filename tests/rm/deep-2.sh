@@ -1,7 +1,7 @@
 #!/bin/sh
 # Ensure rm -r DIR does not prompt for very long full relative names in DIR.
 
-# Copyright (C) 2008-2013 Free Software Foundation, Inc.
+# Copyright (C) 2008-2014 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ echo n > no || framework_failure_
 rm ---presume-input-tty -r x < no > out || fail=1
 
 # expect empty output
-test -s out && fail=1
+compare /dev/null out || fail=1
 
 # the directory must have been removed
 test -d x && fail=1

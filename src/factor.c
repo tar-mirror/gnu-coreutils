@@ -1,5 +1,5 @@
 /* factor -- print prime factors of n.
-   Copyright (C) 1986-2013 Free Software Foundation, Inc.
+   Copyright (C) 1986-2014 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -688,22 +688,6 @@ verify (W <= WIDE_UINT_BITS);
 /* debugging for developers.  Enables devmsg().
    This flag is used only in the GMP code.  */
 static bool dev_debug = false;
-
-/* Like error(0, 0, ...), but without an implicit newline.
-   Also a noop unless the global DEV_DEBUG is set.
-   TODO: Replace with variadic macro in system.h or
-   move to a separate module.  */
-static inline void
-devmsg (char const *fmt, ...)
-{
-  if (dev_debug)
-    {
-      va_list ap;
-      va_start (ap, fmt);
-      vfprintf (stderr, fmt, ap);
-      va_end (ap);
-    }
-}
 
 /* Prove primality or run probabilistic tests.  */
 static bool flag_prove_primality = true;

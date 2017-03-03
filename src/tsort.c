@@ -1,5 +1,5 @@
 /* tsort - topological sort.
-   Copyright (C) 1998-2013 Free Software Foundation, Inc.
+   Copyright (C) 1998-2014 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -347,8 +347,7 @@ detect_loop (struct item *k)
                         {
                           struct item *tmp = loop->qlink;
 
-                          fprintf (stderr, "%s: %s\n", program_name,
-                                   loop->str);
+                          error (0, 0, "%s", loop->str);
 
                           /* Until we encounter K again.  */
                           if (loop == k)

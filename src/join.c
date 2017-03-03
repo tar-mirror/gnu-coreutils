@@ -1,5 +1,5 @@
 /* join - join lines of two files on a common field
-   Copyright (C) 1991-2013 Free Software Foundation, Inc.
+   Copyright (C) 1991-2014 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -218,7 +218,7 @@ by whitespace.  When FILE1 or FILE2 (not both) is -, read standard input.\n\
                       print them without trying to pair them\n\
 "), stdout);
       fputs (_("\
-  -z, --zero-terminated     end lines with 0 byte, not newline\n\
+  -z, --zero-terminated     line delimiter is NUL, not newline\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);

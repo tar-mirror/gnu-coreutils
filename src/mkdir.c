@@ -1,5 +1,5 @@
 /* mkdir -- make directories
-   Copyright (C) 1990-2013 Free Software Foundation, Inc.
+   Copyright (C) 1990-2014 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -66,8 +66,12 @@ Create the DIRECTORY(ies), if they do not already exist.\n\
   -m, --mode=MODE   set file mode (as in chmod), not a=rwx - umask\n\
   -p, --parents     no error if existing, make parent directories as needed\n\
   -v, --verbose     print a message for each created directory\n\
-  -Z, --context[=CTX]  set the SELinux security context of each created\n\
-                         directory to default type or to CTX if specified\n\
+"), stdout);
+      fputs (_("\
+  -Z                   set SELinux security context of each created directory\n\
+                         to the default type\n\
+      --context[=CTX]  like -Z, or if CTX is specified then set the SELinux\n\
+                         or SMACK security context to CTX\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
@@ -196,7 +200,7 @@ main (int argc, char **argv)
 {
   const char *specified_mode = NULL;
   int optc;
-  security_context_t scontext = NULL;
+  char const *scontext = NULL;
   struct mkdir_options options;
 
   options.make_ancestor_function = NULL;
@@ -268,7 +272,7 @@ main (int argc, char **argv)
       if (is_smack_enabled ())
         ret = smack_set_label_for_self (scontext);
       else
-        ret = setfscreatecon (scontext);
+        ret = setfscreatecon (se_const (scontext));
 
       if (ret < 0)
         error (EXIT_FAILURE, errno,

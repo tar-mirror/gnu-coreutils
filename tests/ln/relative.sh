@@ -1,7 +1,7 @@
 #!/bin/sh
 # Test "ln --relative".
 
-# Copyright (C) 2012-2013 Free Software Foundation, Inc.
+# Copyright (C) 2012-2014 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -44,5 +44,10 @@ ln -s beta latest
 mkdir web
 ln -sr latest web/latest
 test $(readlink web/latest) = '../release2' || fail=1
+
+# Expect this to fail with exit status 1, or to succeed quietly (freebsd).
+# Prior to coreutils-8.23, it would segfault.
+ln -sr '' F
+case $? in [01]) ;; *) fail=1;; esac
 
 Exit $fail

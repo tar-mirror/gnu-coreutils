@@ -13,7 +13,7 @@
 # This test is skipped on systems that lack LD_PRELOAD support; that's fine.
 # Similarly, on a system that lacks <dlfcn.h> or __xstat, skipping it is fine.
 
-# Copyright (C) 2012-2013 Free Software Foundation, Inc.
+# Copyright (C) 2012-2014 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ __xstat (int ver, const char *path, struct stat *st)
 EOF
 
 # Then compile/link it:
-$CC -shared -fPIC -O2 k.c -o k.so -ldl \
+gcc_shared_ k.c k.so \
   || framework_failure_ 'failed to build shared library'
 
 touch d2 || framework_failure_

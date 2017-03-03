@@ -1,5 +1,5 @@
 /* selinux - core functions for maintaining SELinux labeling
-   Copyright (C) 2012-2013 Red Hat, Inc.
+   Copyright (C) 2012-2014 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -72,10 +72,10 @@ mode_to_security_class (mode_t m)
 */
 
 static int
-computecon (char const *path, mode_t mode, security_context_t * con)
+computecon (char const *path, mode_t mode, char **con)
 {
-  security_context_t scon = NULL;
-  security_context_t tcon = NULL;
+  char *scon = NULL;
+  char *tcon = NULL;
   security_class_t tclass;
   int rc = -1;
 
@@ -111,7 +111,8 @@ int
 defaultcon (char const *path, mode_t mode)
 {
   int rc = -1;
-  security_context_t scon = NULL, tcon = NULL;
+  char *scon = NULL;
+  char *tcon = NULL;
   context_t scontext = 0, tcontext = 0;
   const char *contype;
   char *constr;
@@ -182,7 +183,8 @@ restorecon_private (char const *path, bool local)
 {
   int rc = -1;
   struct stat sb;
-  security_context_t scon = NULL, tcon = NULL;
+  char *scon = NULL;
+  char *tcon = NULL;
   context_t scontext = 0, tcontext = 0;
   const char *contype;
   char *constr;
@@ -192,6 +194,11 @@ restorecon_private (char const *path, bool local)
     {
       if (getfscreatecon (&tcon) < 0)
         return rc;
+      if (!tcon)
+        {
+          errno = ENODATA;
+          return rc;
+        }
       rc = lsetfilecon (path, tcon);
       freecon (tcon);
       return rc;

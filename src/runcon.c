@@ -1,5 +1,5 @@
 /* runcon -- run command with specified security context
-   Copyright (C) 2005-2013 Free Software Foundation, Inc.
+   Copyright (C) 2005-2014 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -115,9 +115,9 @@ main (int argc, char **argv)
   char *user = NULL;
   char *type = NULL;
   char *context = NULL;
-  security_context_t cur_context = NULL;
-  security_context_t file_context = NULL;
-  security_context_t new_context = NULL;
+  char *cur_context = NULL;
+  char *file_context = NULL;
+  char *new_context = NULL;
   bool compute_trans = false;
 
   context_t con;
