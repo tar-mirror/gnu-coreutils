@@ -1,3 +1,48 @@
+2006-05-12  Jim Meyering  <jim@meyering.net>
+
+	* Version 5.95.
+
+	mv -T DIR EMPTY_DIR no longer fails unconditionally
+	* src/copy.c (copy_internal): Don't manually prohibit a move where
+	the destination is an existing directory.  Sometimes doing that is
+	valid.  Let the rename system call enforce the rules.  That is
+	allowed only when the source is a directory and the destination
+	directory (to be replaced) is empty.  Reported by Eric Blake.
+	* tests/mv/no-target-dir: New file/test for this.
+	* tests/mv/Makefile.am (TESTS): Add no-target-dir.
+	* NEWS: Mention this.
+
+	* src/copy.c (copy_internal): Don't explicitly unlink the destination
+	when moving a symlink into the place of an existing non-directory.
+	Reported by Joshua Hudson.
+	* NEWS: mention this.
+
+2006-05-07  Paul Eggert  <eggert@cs.ucla.edu>
+
+	* src/df.c (show_dev): If the file system claims to have
+	more available than total blocks, report the number of used
+	blocks as being total - available (a negative number) rather
+	than as garbage.  Problem reported by Toralf Foerster.
+
+2006-05-06  Jim Meyering  <jim@meyering.net>
+
+	Fix a bug whereby a user with write access to a directory being removed
+	could cause the removal of that directory to fail with an erroneous
+	diagnostic about a directory cycle.  Reported by Vineet Chadha.
+	* src/remove.c (AD_pop_and_chdir): If the directory we're about to
+	leave (and try to rmdir) is the one whose dev_ino is being used to
+	detect a cycle, reset cycle_check_state.dev_ino to that of the parent.
+	* NEWS: Mention this.
+
+	* src/shred.c (fillrand): The assertion was way too weak, due to
+	what must be a typo.  Strengthen it to its intended value.
+	(dopass): Don't use alloca; it's not worth the aggravation here,
+	since it's used only to get a page-aligned buffer, and page
+	alignment doesn't buy us much here.  I'm suspicious that alloca
+	causes problems on some hosts, due to a recent bug report by Adam
+	Waltman: http://bugs.gentoo.org/130246.
+	* NEWS: Mention this change.
+
 2006-02-13  Jim Meyering  <jim@meyering.net>
 
 	* Version 5.94.

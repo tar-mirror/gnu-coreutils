@@ -1,5 +1,29 @@
 GNU coreutils NEWS                                    -*- outline -*-
 
+* Major changes in release 5.95 (2006-05-12) [stable]
+
+** Improved robustness
+
+  df: if the file system claims to have more available than total blocks,
+  report the number of used blocks as being "total - available"
+  (a negative number) rather than as garbage.
+
+  pwd and other programs using lib/getcwd.c work even on file systems
+  where dirent.d_ino values are inconsistent with those from stat.st_ino.
+
+** Bug fixes
+
+  mv: moving a symlink into the place of an existing non-directory is
+  now done atomically;  before, mv would first unlink the destination.
+
+  mv -T DIR EMPTY_DIR no longer fails unconditionally
+
+  rm -r's cycle detection code can no longer be tricked into reporting
+  a false positive (introduced in fileutils-4.1.9).
+
+  shred --remove FILE no longer segfaults on Gentoo systems
+
+
 * Major changes in release 5.94 (2006-02-13) [stable]
 
 ** Feature changes

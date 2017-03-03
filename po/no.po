@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GNU textutils 1.22i\n"
 "Report-Msgid-Bugs-To: bug-coreutils@gnu.org\n"
-"POT-Creation-Date: 2006-02-07 09:38+0100\n"
+"POT-Creation-Date: 2006-05-12 10:23+0200\n"
 "PO-Revision-Date: 1999-04-16 12:02 +02:00\n"
 "Last-Translator: Eivind Tagseth <eivindt@multinet.no>\n"
 "Language-Team: Norwegian <no@li.org>\n"
@@ -246,7 +246,7 @@ msgstr ""
 msgid "cannot chdir to directory %s"
 msgstr "kan ikke utføre ioctl på «%s»"
 
-#: lib/mkdir-p.c:243 lib/mkdir-p.c:278 src/copy.c:1447 src/mkdir.c:167
+#: lib/mkdir-p.c:243 lib/mkdir-p.c:278 src/copy.c:1441 src/mkdir.c:167
 #, fuzzy, c-format
 msgid "cannot create directory %s"
 msgstr "kan ikke utføre ioctl på «%s»"
@@ -265,7 +265,7 @@ msgstr ""
 msgid "unable to record current working directory"
 msgstr "kan ikke utføre ioctl på «%s»"
 
-#: lib/openat-die.c:49 src/df.c:519
+#: lib/openat-die.c:49 src/df.c:516
 msgid "failed to return to initial working directory"
 msgstr ""
 
@@ -483,7 +483,7 @@ msgstr ""
 
 #: src/basename.c:51 src/cat.c:91 src/chgrp.c:104 src/chmod.c:322
 #: src/chown.c:90 src/chroot.c:42 src/cksum.c:264 src/comm.c:69 src/cp.c:152
-#: src/csplit.c:1448 src/cut.c:184 src/date.c:128 src/dd.c:397 src/df.c:720
+#: src/csplit.c:1448 src/cut.c:184 src/date.c:128 src/dd.c:397 src/df.c:717
 #: src/dircolors.c:101 src/dirname.c:45 src/du.c:276 src/echo.c:60
 #: src/env.c:114 src/expand.c:107 src/expr.c:97 src/factor.c:70 src/fmt.c:269
 #: src/fold.c:66 src/head.c:105 src/hostid.c:44 src/hostname.c:61 src/id.c:74
@@ -535,7 +535,7 @@ msgstr ""
 
 #: src/basename.c:74 src/cat.c:128 src/chgrp.c:159 src/chmod.c:353
 #: src/chown.c:159 src/chroot.c:60 src/cksum.c:279 src/comm.c:94 src/cp.c:251
-#: src/csplit.c:1490 src/cut.c:235 src/date.c:241 src/dd.c:499 src/df.c:759
+#: src/csplit.c:1490 src/cut.c:235 src/date.c:241 src/dd.c:499 src/df.c:756
 #: src/dircolors.c:122 src/dirname.c:68 src/du.c:344 src/echo.c:98
 #: src/env.c:133 src/expand.c:132 src/expr.c:165 src/factor.c:90 src/fmt.c:300
 #: src/fold.c:89 src/head.c:140 src/hostid.c:57 src/hostname.c:74 src/id.c:95
@@ -1110,9 +1110,9 @@ msgstr "kan ikke utføre ioctl på «%s»"
 msgid "skipping file %s, as it was replaced while being copied"
 msgstr ""
 
-#: src/copy.c:265 src/copy.c:984 src/copy.c:1173 src/copy.c:1283 src/ln.c:312
-#: src/remove.c:788 src/remove.c:825 src/remove.c:965 src/remove.c:1092
-#: src/remove.c:1211
+#: src/copy.c:265 src/copy.c:984 src/copy.c:1167 src/copy.c:1277 src/ln.c:312
+#: src/remove.c:800 src/remove.c:837 src/remove.c:977 src/remove.c:1104
+#: src/remove.c:1223
 #, fuzzy, c-format
 msgid "cannot remove %s"
 msgstr "kan ikke utføre ioctl på «%s»"
@@ -1137,17 +1137,17 @@ msgstr "kan ikke utføre ioctl på «%s»"
 msgid "writing %s"
 msgstr "feil ved skriving til %s"
 
-#: src/copy.c:425 src/copy.c:1656
+#: src/copy.c:425 src/copy.c:1650
 #, c-format
 msgid "preserving times for %s"
 msgstr "bevarer tider for %s"
 
-#: src/copy.c:442 src/copy.c:1611 src/copy.c:1670 src/cp.c:324
+#: src/copy.c:442 src/copy.c:1605 src/copy.c:1664 src/cp.c:324
 #, fuzzy, c-format
 msgid "failed to preserve ownership for %s"
 msgstr "bevarer eierrettigheter for %s"
 
-#: src/copy.c:468 src/copy.c:1707
+#: src/copy.c:468 src/copy.c:1701
 #, fuzzy, c-format
 msgid "setting permissions for %s"
 msgstr "kan ikke utføre ioctl på «%s»"
@@ -1167,7 +1167,7 @@ msgstr "%s: overskrive «%s», uten hensyn til beskyttelse %04o?"
 msgid "%s: overwrite %s? "
 msgstr "%s: skrivefeil"
 
-#: src/copy.c:927 src/copy.c:965 src/df.c:496 src/install.c:445 src/stat.c:728
+#: src/copy.c:927 src/copy.c:965 src/df.c:493 src/install.c:445 src/stat.c:728
 #, fuzzy, c-format
 msgid "cannot stat %s"
 msgstr "kan ikke utføre ioctl på «%s»"
@@ -1202,129 +1202,124 @@ msgstr "%s: kan ikke overskrive filkatalog med annet enn filkatalog"
 msgid "cannot overwrite directory %s with non-directory"
 msgstr "kan ikke utføre ioctl på «%s»"
 
-#: src/copy.c:1101
-#, fuzzy, c-format
-msgid "cannot overwrite directory %s"
-msgstr "kan ikke utføre ioctl på «%s»"
-
-#: src/copy.c:1110
+#: src/copy.c:1102
 #, fuzzy, c-format
 msgid "cannot move directory onto non-directory: %s -> %s"
 msgstr "kan ikke utføre ioctl på «%s»"
 
-#: src/copy.c:1131
+#: src/copy.c:1123
 #, fuzzy, c-format
 msgid "backing up %s would destroy source;  %s not moved"
 msgstr ""
 "sikkerhetskopiering av «%s» vil overskrive kildefil.  «%s» er ikke flyttet"
 
-#: src/copy.c:1132
+#: src/copy.c:1124
 #, fuzzy, c-format
 msgid "backing up %s would destroy source;  %s not copied"
 msgstr ""
 "sikkerhetskopiering av «%s» vil overskrive kildefil.  «%s» er ikke kopiert"
 
-#: src/copy.c:1151 src/ln.c:267
+#: src/copy.c:1143 src/ln.c:267
 #, fuzzy, c-format
 msgid "cannot backup %s"
 msgstr "kan ikke utføre ioctl på «%s»"
 
-#: src/copy.c:1188 src/ln.c:283
+#: src/copy.c:1182 src/ln.c:283
 #, fuzzy, c-format
 msgid " (backup: %s)"
 msgstr "kan ikke gjøre sikkerhetskopi av «%s»"
 
-#: src/copy.c:1251
+#: src/copy.c:1245
 #, fuzzy, c-format
 msgid "cannot copy a directory, %s, into itself, %s"
 msgstr "kan ikke utføre ioctl på «%s»"
 
-#: src/copy.c:1268
+#: src/copy.c:1262
 #, fuzzy, c-format
 msgid "will not create hard link %s to directory %s"
 msgstr "kan ikke utføre ioctl på «%s»"
 
-#: src/copy.c:1291
+#: src/copy.c:1285
 #, fuzzy, c-format
 msgid "cannot create hard link %s to %s"
 msgstr "kan ikke utføre ioctl på «%s»"
 
-#: src/copy.c:1345
+#: src/copy.c:1339
 #, fuzzy, c-format
 msgid "cannot move %s to a subdirectory of itself, %s"
 msgstr "kan ikke utføre ioctl på «%s»"
 
-#: src/copy.c:1388
+#: src/copy.c:1382
 #, fuzzy, c-format
 msgid "cannot move %s to %s"
 msgstr "kan ikke utføre ioctl på «%s»"
 
-#: src/copy.c:1400
+#: src/copy.c:1394
 #, c-format
 msgid "inter-device move failed: %s to %s; unable to remove target"
 msgstr ""
 
-#: src/copy.c:1428
+#: src/copy.c:1422
 #, fuzzy, c-format
 msgid "cannot copy cyclic symbolic link %s"
 msgstr "%s: kan ikke kopiere syklisk symbolsk link"
 
-#: src/copy.c:1505
+#: src/copy.c:1499
 #, c-format
 msgid "%s: can make relative symbolic links only in current directory"
 msgstr "%s: kan bare lage relative symbolske linker i aktiv filkatalog"
 
-#: src/copy.c:1512
+#: src/copy.c:1506
 #, fuzzy, c-format
 msgid "cannot create symbolic link %s to %s"
 msgstr "kan ikke utføre ioctl på «%s»"
 
-#: src/copy.c:1523
+#: src/copy.c:1517
 #, fuzzy, c-format
 msgid "cannot create link %s"
 msgstr "kan ikke utføre ioctl på «%s»"
 
-#: src/copy.c:1545 src/mkfifo.c:129
+#: src/copy.c:1539 src/mkfifo.c:129
 #, fuzzy, c-format
 msgid "cannot create fifo %s"
 msgstr "kan ikke utføre ioctl på «%s»"
 
-#: src/copy.c:1556
+#: src/copy.c:1550
 #, fuzzy, c-format
 msgid "cannot create special file %s"
 msgstr "kan ikke utføre ioctl på «%s»"
 
-#: src/copy.c:1568 src/ls.c:2733 src/stat.c:436
+#: src/copy.c:1562 src/ls.c:2733 src/stat.c:436
 #, fuzzy, c-format
 msgid "cannot read symbolic link %s"
 msgstr "kan ikke utføre ioctl på «%s»"
 
-#: src/copy.c:1594
+#: src/copy.c:1588
 #, fuzzy, c-format
 msgid "cannot create symbolic link %s"
 msgstr "kan ikke utføre ioctl på «%s»"
 
-#: src/copy.c:1626
+#: src/copy.c:1620
 #, fuzzy, c-format
 msgid "%s has unknown file type"
 msgstr "%s: ukjent filtype"
 
-#: src/copy.c:1682
+#: src/copy.c:1676
 #, fuzzy, c-format
 msgid "failed to lookup file %s"
 msgstr "bevarer tider for %s"
 
-#: src/copy.c:1687
+#: src/copy.c:1681
 #, fuzzy, c-format
 msgid "failed to preserve authorship for %s"
 msgstr "bevarer eierrettigheter for %s"
 
-#: src/copy.c:1729 src/ln.c:329
+#: src/copy.c:1723 src/ln.c:329
 #, fuzzy, c-format
 msgid "cannot un-backup %s"
 msgstr "kan ikke utføre ioctl på «%s»"
 
-#: src/copy.c:1733
+#: src/copy.c:1727
 #, c-format
 msgid "%s -> %s (unbackup)\n"
 msgstr ""
@@ -1346,7 +1341,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/cp.c:166 src/csplit.c:1461 src/cut.c:196 src/df.c:730 src/du.c:288
+#: src/cp.c:166 src/csplit.c:1461 src/cut.c:196 src/df.c:727 src/du.c:288
 #: src/expand.c:120 src/fmt.c:279 src/fold.c:79 src/head.c:119
 #: src/install.c:646 src/kill.c:104 src/ln.c:357 src/ls.c:4106 src/mkdir.c:63
 #: src/mkfifo.c:60 src/mknod.c:61 src/mv.c:308 src/nl.c:181 src/paste.c:427
@@ -1599,7 +1594,7 @@ msgstr "sletter %s\n"
 msgid "target %s is not a directory"
 msgstr "«%s» er ikke en katalog"
 
-#: src/cp.c:504 src/install.c:311 src/ln.c:499 src/mv.c:443 src/shred.c:1558
+#: src/cp.c:504 src/install.c:311 src/ln.c:499 src/mv.c:443 src/shred.c:1553
 #: src/touch.c:412
 #, fuzzy
 msgid "missing file operand"
@@ -1807,7 +1802,7 @@ msgid ""
 "A line OFFSET is a required `+' or `-' followed by a positive integer.\n"
 msgstr ""
 
-#: src/cut.c:188 src/df.c:724 src/expand.c:111 src/fold.c:70 src/head.c:109
+#: src/cut.c:188 src/df.c:721 src/expand.c:111 src/fold.c:70 src/head.c:109
 #: src/ls.c:4100 src/nl.c:172 src/paste.c:417 src/pr.c:2768 src/sort.c:281
 #: src/sum.c:59 src/tac.c:132 src/tail.c:226 src/tee.c:62 src/unexpand.c:121
 #: src/wc.c:127
@@ -2434,29 +2429,29 @@ msgstr ""
 msgid " Mounted on\n"
 msgstr ""
 
-#: src/df.c:452
+#: src/df.c:449
 #, fuzzy
 msgid "cannot get current directory"
 msgstr "kan ikke utføre ioctl på «%s»"
 
-#: src/df.c:462 src/df.c:476 src/df.c:504
+#: src/df.c:459 src/df.c:473 src/df.c:501
 #, fuzzy, c-format
 msgid "cannot change to directory %s"
 msgstr "kan ikke utføre ioctl på «%s»"
 
-#: src/df.c:482
+#: src/df.c:479
 #, fuzzy, c-format
 msgid "cannot stat current directory (now %s)"
 msgstr "kan ikke utføre ioctl på «%s»"
 
-#: src/df.c:725
+#: src/df.c:722
 msgid ""
 "Show information about the file system on which each FILE resides,\n"
 "or all file systems by default.\n"
 "\n"
 msgstr ""
 
-#: src/df.c:733
+#: src/df.c:730
 msgid ""
 "  -a, --all             include dummy file systems\n"
 "  -B, --block-size=SIZE use SIZE-byte blocks\n"
@@ -2465,7 +2460,7 @@ msgid ""
 "  -H, --si              likewise, but use powers of 1000 not 1024\n"
 msgstr ""
 
-#: src/df.c:739
+#: src/df.c:736
 msgid ""
 "  -i, --inodes          list inode information instead of block usage\n"
 "  -k                    like --block-size=1K\n"
@@ -2474,7 +2469,7 @@ msgid ""
 "(default)\n"
 msgstr ""
 
-#: src/df.c:745
+#: src/df.c:742
 msgid ""
 "  -P, --portability     use the POSIX output format\n"
 "      --sync            invoke sync before getting usage info\n"
@@ -2484,27 +2479,27 @@ msgid ""
 "  -v                    (ignored)\n"
 msgstr ""
 
-#: src/df.c:755 src/du.c:340 src/ls.c:4224
+#: src/df.c:752 src/du.c:340 src/ls.c:4224
 msgid ""
 "\n"
 "SIZE may be (or may be an integer optionally followed by) one of following:\n"
 "kB 1000, K 1024, MB 1000*1000, M 1024*1024, and so on for G, T, P, E, Z, Y.\n"
 msgstr ""
 
-#: src/df.c:816 src/du.c:755 src/ls.c:1541
+#: src/df.c:813 src/du.c:755 src/ls.c:1541
 msgid "the --kilobytes option is deprecated; use -k instead"
 msgstr ""
 
-#: src/df.c:875
+#: src/df.c:872
 #, fuzzy, c-format
 msgid "file system type %s both selected and excluded"
 msgstr "filsystem av type «%s» er både valgt og ekskludert"
 
-#: src/df.c:919
+#: src/df.c:916
 msgid "Warning: "
 msgstr ""
 
-#: src/df.c:922
+#: src/df.c:919
 #, fuzzy, c-format
 msgid "%scannot read table of mounted file systems"
 msgstr "kan ikke lese tabellen over monterte filsystemer"
@@ -3802,7 +3797,7 @@ msgstr "kan ikke utføre ioctl på «%s»"
 msgid "%s: not listing already-listed directory"
 msgstr "kan ikke utføre ioctl på «%s»"
 
-#: src/ls.c:2351 src/pwd.c:238 src/remove.c:1001
+#: src/ls.c:2351 src/pwd.c:238 src/remove.c:1013
 #, fuzzy, c-format
 msgid "reading directory %s"
 msgstr "kan ikke utføre ioctl på «%s»"
@@ -5332,7 +5327,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/pwd.c:167 src/remove.c:874
+#: src/pwd.c:167 src/remove.c:886
 #, fuzzy, c-format
 msgid "cannot open directory %s"
 msgstr "kan ikke utføre ioctl på «%s»"
@@ -5389,68 +5384,68 @@ msgid ""
 "  -v, --verbose                 report error messages\n"
 msgstr ""
 
-#: src/remove.c:401
+#: src/remove.c:413
 #, fuzzy, c-format
 msgid "cannot chdir from %s to .."
 msgstr "kan ikke utføre ioctl på «%s»"
 
-#: src/remove.c:407 src/remove.c:503
+#: src/remove.c:419 src/remove.c:515
 #, fuzzy, c-format
 msgid "cannot lstat `.' in %s"
 msgstr "kan ikke kjøre %s"
 
-#: src/remove.c:412 src/remove.c:507
+#: src/remove.c:424 src/remove.c:519
 #, c-format
 msgid "%s changed dev/ino"
 msgstr ""
 
-#: src/remove.c:600 src/remove.c:809 src/remove.c:952 src/remove.c:1082
+#: src/remove.c:612 src/remove.c:821 src/remove.c:964 src/remove.c:1094
 #, fuzzy, c-format
 msgid "cannot lstat %s"
 msgstr "kan ikke utføre ioctl på «%s»"
 
-#: src/remove.c:608 src/remove.c:754 src/remove.c:832 src/remove.c:1068
-#: src/remove.c:1169
+#: src/remove.c:620 src/remove.c:766 src/remove.c:844 src/remove.c:1080
+#: src/remove.c:1181
 #, fuzzy, c-format
 msgid "cannot remove directory %s"
 msgstr "kan ikke utføre ioctl på «%s»"
 
-#: src/remove.c:637
+#: src/remove.c:649
 #, fuzzy, c-format
 msgid "%s: descend into write-protected directory %s? "
 msgstr "kan ikke utføre ioctl på «%s»"
 
-#: src/remove.c:638
+#: src/remove.c:650
 #, fuzzy, c-format
 msgid "%s: descend into directory %s? "
 msgstr "kan ikke utføre ioctl på «%s»"
 
-#: src/remove.c:648
+#: src/remove.c:660
 #, fuzzy, c-format
 msgid "%s: remove write-protected %s %s? "
 msgstr "%s: slette skrive-beskyttet fil «%s»? "
 
-#: src/remove.c:649
+#: src/remove.c:661
 #, fuzzy, c-format
 msgid "%s: remove %s %s? "
 msgstr "%s: slette «%s»? "
 
-#: src/remove.c:692
+#: src/remove.c:704
 #, fuzzy, c-format
 msgid "removed %s\n"
 msgstr "sletter %s\n"
 
-#: src/remove.c:707 src/remove.c:1164
+#: src/remove.c:719 src/remove.c:1176
 #, fuzzy, c-format
 msgid "removed directory: %s\n"
 msgstr "kan ikke utføre ioctl på «%s»"
 
-#: src/remove.c:968 src/remove.c:1097
+#: src/remove.c:980 src/remove.c:1109
 #, fuzzy, c-format
 msgid "cannot chdir from %s to %s"
 msgstr "kan ikke utføre ioctl på «%s»"
 
-#: src/remove.c:976
+#: src/remove.c:988
 #, fuzzy, c-format
 msgid ""
 "WARNING: Circular directory structure.\n"
@@ -5464,11 +5459,11 @@ msgstr ""
 "MELD IFRA TIL DIN SYSTEMADMININISTRATOR.\n"
 "Følgende to kataloger har samme inode-nummer:\n"
 
-#: src/remove.c:1203
+#: src/remove.c:1215
 msgid "cannot remove `.' or `..'"
 msgstr "kan ikke slette «.» eller «..»"
 
-#: src/remove.c:1257
+#: src/remove.c:1269
 #, fuzzy
 msgid "cannot restore current working directory"
 msgstr "kan ikke utføre ioctl på «%s»"
@@ -5774,107 +5769,107 @@ msgstr ""
 msgid "%s: fsync failed"
 msgstr ""
 
-#: src/shred.c:764
+#: src/shred.c:762
 #, fuzzy, c-format
 msgid "%s: cannot rewind"
 msgstr "kan ikke kjøre %s"
 
-#: src/shred.c:790
+#: src/shred.c:785
 #, c-format
 msgid "%s: pass %lu/%lu (%s)..."
 msgstr ""
 
-#: src/shred.c:841
+#: src/shred.c:836
 #, fuzzy, c-format
 msgid "%s: error writing at offset %s"
 msgstr "feil ved skriving til %s"
 
-#: src/shred.c:861
+#: src/shred.c:856
 #, fuzzy, c-format
 msgid "%s: lseek failed"
 msgstr "feil ved lukking av filen"
 
-#: src/shred.c:872
+#: src/shred.c:867
 #, fuzzy, c-format
 msgid "%s: file too large"
 msgstr "fil trunkert"
 
-#: src/shred.c:895
+#: src/shred.c:890
 #, c-format
 msgid "%s: pass %lu/%lu (%s)...%s"
 msgstr ""
 
-#: src/shred.c:911
+#: src/shred.c:906
 #, c-format
 msgid "%s: pass %lu/%lu (%s)...%s/%s %d%%"
 msgstr ""
 
-#: src/shred.c:1163
+#: src/shred.c:1158
 #, fuzzy, c-format
 msgid "%s: fstat failed"
 msgstr "feil ved skriving"
 
-#: src/shred.c:1174
+#: src/shred.c:1169
 #, fuzzy, c-format
 msgid "%s: invalid file type"
 msgstr "%s: ugyldig antall linjer"
 
-#: src/shred.c:1193
+#: src/shred.c:1188
 #, c-format
 msgid "%s: file has negative size"
 msgstr ""
 
-#: src/shred.c:1258
+#: src/shred.c:1253
 #, fuzzy, c-format
 msgid "%s: error truncating"
 msgstr "fil trunkert"
 
-#: src/shred.c:1274
+#: src/shred.c:1269
 #, fuzzy, c-format
 msgid "%s: fcntl failed"
 msgstr "feil ved skriving"
 
-#: src/shred.c:1279
+#: src/shred.c:1274
 #, c-format
 msgid "%s: cannot shred append-only file descriptor"
 msgstr ""
 
-#: src/shred.c:1359
+#: src/shred.c:1354
 #, fuzzy, c-format
 msgid "%s: removing"
 msgstr "sletter %s\n"
 
-#: src/shred.c:1383
+#: src/shred.c:1378
 #, fuzzy, c-format
 msgid "%s: renamed to %s"
 msgstr "%s: lesefeil"
 
-#: src/shred.c:1405
+#: src/shred.c:1400
 #, fuzzy, c-format
 msgid "%s: failed to remove"
 msgstr "fil trunkert"
 
-#: src/shred.c:1409
+#: src/shred.c:1404
 #, fuzzy, c-format
 msgid "%s: removed"
 msgstr "%s: slette «%s»? "
 
-#: src/shred.c:1416 src/shred.c:1459
+#: src/shred.c:1411 src/shred.c:1454
 #, fuzzy, c-format
 msgid "%s: failed to close"
 msgstr "fil trunkert"
 
-#: src/shred.c:1452
+#: src/shred.c:1447
 #, fuzzy, c-format
 msgid "%s: failed to open for writing"
 msgstr "fil trunkert"
 
-#: src/shred.c:1508
+#: src/shred.c:1503
 #, fuzzy, c-format
 msgid "%s: invalid number of passes"
 msgstr "%s: ugyldig antall sekunder"
 
-#: src/shred.c:1525
+#: src/shred.c:1520
 #, fuzzy, c-format
 msgid "%s: invalid file size"
 msgstr "%s: ugyldig antall linjer"
@@ -8027,6 +8022,10 @@ msgid ""
 "Repeatedly output a line with all specified STRING(s), or `y'.\n"
 "\n"
 msgstr ""
+
+#, fuzzy
+#~ msgid "cannot overwrite directory %s"
+#~ msgstr "kan ikke utføre ioctl på «%s»"
 
 #, fuzzy
 #~ msgid "program error"

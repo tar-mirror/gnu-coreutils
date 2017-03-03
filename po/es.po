@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GNU coreutils 5.2.1\n"
 "Report-Msgid-Bugs-To: bug-coreutils@gnu.org\n"
-"POT-Creation-Date: 2006-02-07 09:38+0100\n"
+"POT-Creation-Date: 2006-05-12 10:23+0200\n"
 "PO-Revision-Date: 2004-11-05 01:11+0100\n"
 "Last-Translator: Santiago Vila Doncel <sanvila@unex.es>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -276,7 +276,7 @@ msgstr "no se puede cambiar el propietario y/o el grupo de %s"
 msgid "cannot chdir to directory %s"
 msgstr "no se puede cambiar al directorio %s"
 
-#: lib/mkdir-p.c:243 lib/mkdir-p.c:278 src/copy.c:1447 src/mkdir.c:167
+#: lib/mkdir-p.c:243 lib/mkdir-p.c:278 src/copy.c:1441 src/mkdir.c:167
 #, c-format
 msgid "cannot create directory %s"
 msgstr "no se puede crear el directorio %s"
@@ -295,7 +295,7 @@ msgstr "memoria agotada"
 msgid "unable to record current working directory"
 msgstr "no se puede volver al directorio de trabajo inicial"
 
-#: lib/openat-die.c:49 src/df.c:519
+#: lib/openat-die.c:49 src/df.c:516
 msgid "failed to return to initial working directory"
 msgstr "no se puede volver al directorio de trabajo inicial"
 
@@ -546,7 +546,7 @@ msgstr "Las cadenas comparadas eran %s y %s."
 
 #: src/basename.c:51 src/cat.c:91 src/chgrp.c:104 src/chmod.c:322
 #: src/chown.c:90 src/chroot.c:42 src/cksum.c:264 src/comm.c:69 src/cp.c:152
-#: src/csplit.c:1448 src/cut.c:184 src/date.c:128 src/dd.c:397 src/df.c:720
+#: src/csplit.c:1448 src/cut.c:184 src/date.c:128 src/dd.c:397 src/df.c:717
 #: src/dircolors.c:101 src/dirname.c:45 src/du.c:276 src/echo.c:60
 #: src/env.c:114 src/expand.c:107 src/expr.c:97 src/factor.c:70 src/fmt.c:269
 #: src/fold.c:66 src/head.c:105 src/hostid.c:44 src/hostname.c:61 src/id.c:74
@@ -599,7 +599,7 @@ msgstr ""
 # Véase la excelente película "A bug's life".
 #: src/basename.c:74 src/cat.c:128 src/chgrp.c:159 src/chmod.c:353
 #: src/chown.c:159 src/chroot.c:60 src/cksum.c:279 src/comm.c:94 src/cp.c:251
-#: src/csplit.c:1490 src/cut.c:235 src/date.c:241 src/dd.c:499 src/df.c:759
+#: src/csplit.c:1490 src/cut.c:235 src/date.c:241 src/dd.c:499 src/df.c:756
 #: src/dircolors.c:122 src/dirname.c:68 src/du.c:344 src/echo.c:98
 #: src/env.c:133 src/expand.c:132 src/expr.c:165 src/factor.c:90 src/fmt.c:300
 #: src/fold.c:89 src/head.c:140 src/hostid.c:57 src/hostname.c:74 src/id.c:95
@@ -1338,9 +1338,9 @@ msgstr "no se puede efectuar `fstat' sobre %s"
 msgid "skipping file %s, as it was replaced while being copied"
 msgstr "saltando el fichero %s, ya que fue reemplazado mientras se copiaba"
 
-#: src/copy.c:265 src/copy.c:984 src/copy.c:1173 src/copy.c:1283 src/ln.c:312
-#: src/remove.c:788 src/remove.c:825 src/remove.c:965 src/remove.c:1092
-#: src/remove.c:1211
+#: src/copy.c:265 src/copy.c:984 src/copy.c:1167 src/copy.c:1277 src/ln.c:312
+#: src/remove.c:800 src/remove.c:837 src/remove.c:977 src/remove.c:1104
+#: src/remove.c:1223
 #, c-format
 msgid "cannot remove %s"
 msgstr "no se puede borrar %s"
@@ -1365,17 +1365,17 @@ msgstr "no se puede efectuar `lseek' sobre %s"
 msgid "writing %s"
 msgstr "escribiendo %s"
 
-#: src/copy.c:425 src/copy.c:1656
+#: src/copy.c:425 src/copy.c:1650
 #, c-format
 msgid "preserving times for %s"
 msgstr "se conserva las fechas de %s"
 
-#: src/copy.c:442 src/copy.c:1611 src/copy.c:1670 src/cp.c:324
+#: src/copy.c:442 src/copy.c:1605 src/copy.c:1664 src/cp.c:324
 #, c-format
 msgid "failed to preserve ownership for %s"
 msgstr "fallo al conservar el propietario de %s"
 
-#: src/copy.c:468 src/copy.c:1707
+#: src/copy.c:468 src/copy.c:1701
 #, c-format
 msgid "setting permissions for %s"
 msgstr "estableciendo los permisos de %s"
@@ -1397,7 +1397,7 @@ msgstr "%s: ¿sobreescribir %s, sustituyendo el modo %04lo? (s/n) "
 msgid "%s: overwrite %s? "
 msgstr "%s: ¿sobreescribir %s? (s/n) "
 
-#: src/copy.c:927 src/copy.c:965 src/df.c:496 src/install.c:445 src/stat.c:728
+#: src/copy.c:927 src/copy.c:965 src/df.c:493 src/install.c:445 src/stat.c:728
 #, c-format
 msgid "cannot stat %s"
 msgstr "no se puede efectuar `stat' sobre %s"
@@ -1432,64 +1432,59 @@ msgstr "no se sobreescribirá el fichero %s recién creado con %s"
 msgid "cannot overwrite directory %s with non-directory"
 msgstr "no se puede sobreescribir el directorio %s con un no directorio"
 
-#: src/copy.c:1101
-#, c-format
-msgid "cannot overwrite directory %s"
-msgstr "no se puede sobreescribir el directorio %s"
-
-#: src/copy.c:1110
+#: src/copy.c:1102
 #, c-format
 msgid "cannot move directory onto non-directory: %s -> %s"
 msgstr "no se puede sobreescribir un directorio con un no directorio: %s -> %s"
 
 # Nota: Este backing up *no* es un gerundio.
-#: src/copy.c:1131
+#: src/copy.c:1123
 #, c-format
 msgid "backing up %s would destroy source;  %s not moved"
 msgstr "respaldar %s destruiría el original; %s no se mueve"
 
 # Nota: Este backing up *tampoco* es un gerundio.
-#: src/copy.c:1132
+#: src/copy.c:1124
 #, c-format
 msgid "backing up %s would destroy source;  %s not copied"
 msgstr "respaldar %s destruiría el original; %s no se copia"
 
-#: src/copy.c:1151 src/ln.c:267
+#: src/copy.c:1143 src/ln.c:267
 #, c-format
 msgid "cannot backup %s"
 msgstr "no se puede respaldar %s"
 
-#: src/copy.c:1188 src/ln.c:283
+#: src/copy.c:1182 src/ln.c:283
 #, c-format
 msgid " (backup: %s)"
 msgstr " (respaldo: %s)"
 
-#: src/copy.c:1251
+#: src/copy.c:1245
 #, c-format
 msgid "cannot copy a directory, %s, into itself, %s"
 msgstr "no se puede copiar un directorio, %s, dentro de sí mismo, %s"
 
-#: src/copy.c:1268
+#: src/copy.c:1262
 #, c-format
 msgid "will not create hard link %s to directory %s"
 msgstr "no se crea el enlace duro %s al directorio %s"
 
-#: src/copy.c:1291
+#: src/copy.c:1285
 #, c-format
 msgid "cannot create hard link %s to %s"
 msgstr "crea el enlace duro %s a %s"
 
-#: src/copy.c:1345
+#: src/copy.c:1339
 #, c-format
 msgid "cannot move %s to a subdirectory of itself, %s"
 msgstr "no se puede mover %s a un directorio de sí mismo, %s"
 
-#: src/copy.c:1388
+#: src/copy.c:1382
 #, c-format
 msgid "cannot move %s to %s"
 msgstr "no se puede mover %s a %s"
 
-#: src/copy.c:1400
+#: src/copy.c:1394
 #, c-format
 msgid "inter-device move failed: %s to %s; unable to remove target"
 msgstr ""
@@ -1502,24 +1497,24 @@ msgstr ""
 # mkdir aa
 # cp -d bb aa
 # ls -l aa
-#: src/copy.c:1428
+#: src/copy.c:1422
 #, c-format
 msgid "cannot copy cyclic symbolic link %s"
 msgstr "no se puede copiar el enlace simbólico cíclico %s"
 
-#: src/copy.c:1505
+#: src/copy.c:1499
 #, c-format
 msgid "%s: can make relative symbolic links only in current directory"
 msgstr ""
 "%s: solamente se pueden crear enlaces simbólicos relativos\n"
 "en el directorio actual"
 
-#: src/copy.c:1512
+#: src/copy.c:1506
 #, c-format
 msgid "cannot create symbolic link %s to %s"
 msgstr "no se puede crear el enlace simbólico %s a %s"
 
-#: src/copy.c:1523
+#: src/copy.c:1517
 #, c-format
 msgid "cannot create link %s"
 msgstr "no se puede crear el enlace %s"
@@ -1558,37 +1553,37 @@ msgstr "no se puede crear el enlace %s"
 # tu lado :) Déjalo como está :D ipg
 #
 # Gracias a los dos. sv
-#: src/copy.c:1545 src/mkfifo.c:129
+#: src/copy.c:1539 src/mkfifo.c:129
 #, c-format
 msgid "cannot create fifo %s"
 msgstr "no se puede crear el fichero `fifo' %s"
 
-#: src/copy.c:1556
+#: src/copy.c:1550
 #, c-format
 msgid "cannot create special file %s"
 msgstr "no se puede crear el fichero especial %s"
 
-#: src/copy.c:1568 src/ls.c:2733 src/stat.c:436
+#: src/copy.c:1562 src/ls.c:2733 src/stat.c:436
 #, c-format
 msgid "cannot read symbolic link %s"
 msgstr "no se puede leer el enlace simbólico %s"
 
-#: src/copy.c:1594
+#: src/copy.c:1588
 #, c-format
 msgid "cannot create symbolic link %s"
 msgstr "no se puede crear el enlace simbólico %s"
 
-#: src/copy.c:1626
+#: src/copy.c:1620
 #, c-format
 msgid "%s has unknown file type"
 msgstr "%s tiene un tipo de fichero desconocido"
 
-#: src/copy.c:1682
+#: src/copy.c:1676
 #, c-format
 msgid "failed to lookup file %s"
 msgstr "fallo al buscar el fichero %s"
 
-#: src/copy.c:1687
+#: src/copy.c:1681
 #, c-format
 msgid "failed to preserve authorship for %s"
 msgstr "fallo al conservar el autor de %s"
@@ -1596,12 +1591,12 @@ msgstr "fallo al conservar el autor de %s"
 # Nota: Asegurarse de que significa eso.
 # Probablemente quiera decir que "no se puede recuperar `%s'" de la copia
 # de seguridad. tb
-#: src/copy.c:1729 src/ln.c:329
+#: src/copy.c:1723 src/ln.c:329
 #, c-format
 msgid "cannot un-backup %s"
 msgstr "no se puede restaurar %s"
 
-#: src/copy.c:1733
+#: src/copy.c:1727
 #, c-format
 msgid "%s -> %s (unbackup)\n"
 msgstr "%s -> %s (restauración)\n"
@@ -1625,7 +1620,7 @@ msgstr ""
 "Copia ORIGEN a DESTINO, o varios ORIGEN(es) a DIRECTORIO.\n"
 "\n"
 
-#: src/cp.c:166 src/csplit.c:1461 src/cut.c:196 src/df.c:730 src/du.c:288
+#: src/cp.c:166 src/csplit.c:1461 src/cut.c:196 src/df.c:727 src/du.c:288
 #: src/expand.c:120 src/fmt.c:279 src/fold.c:79 src/head.c:119
 #: src/install.c:646 src/kill.c:104 src/ln.c:357 src/ls.c:4106 src/mkdir.c:63
 #: src/mkfifo.c:60 src/mknod.c:61 src/mv.c:308 src/nl.c:181 src/paste.c:427
@@ -1909,7 +1904,7 @@ msgstr "accediendo a %s"
 msgid "target %s is not a directory"
 msgstr "el objetivo especificado, %s, no es un directorio"
 
-#: src/cp.c:504 src/install.c:311 src/ln.c:499 src/mv.c:443 src/shred.c:1558
+#: src/cp.c:504 src/install.c:311 src/ln.c:499 src/mv.c:443 src/shred.c:1553
 #: src/touch.c:412
 #, fuzzy
 msgid "missing file operand"
@@ -2156,7 +2151,7 @@ msgstr ""
 "\n"
 "Un DESPLAZamiento de línea es un número entero precedido de `+' o de `-'.\n"
 
-#: src/cut.c:188 src/df.c:724 src/expand.c:111 src/fold.c:70 src/head.c:109
+#: src/cut.c:188 src/df.c:721 src/expand.c:111 src/fold.c:70 src/head.c:109
 #: src/ls.c:4100 src/nl.c:172 src/paste.c:417 src/pr.c:2768 src/sort.c:281
 #: src/sum.c:59 src/tac.c:132 src/tail.c:226 src/tee.c:62 src/unexpand.c:121
 #: src/wc.c:127
@@ -2936,21 +2931,21 @@ msgstr " Bloques de %-4s Usado    Dispon Uso%%"
 msgid " Mounted on\n"
 msgstr " Montado en\n"
 
-#: src/df.c:452
+#: src/df.c:449
 msgid "cannot get current directory"
 msgstr "no se puede obtener el directorio actual"
 
-#: src/df.c:462 src/df.c:476 src/df.c:504
+#: src/df.c:459 src/df.c:473 src/df.c:501
 #, c-format
 msgid "cannot change to directory %s"
 msgstr "no se puede cambiar al directorio %s"
 
-#: src/df.c:482
+#: src/df.c:479
 #, c-format
 msgid "cannot stat current directory (now %s)"
 msgstr "no se puede efectuar `stat' sobre el directorio actual (ahora %s)"
 
-#: src/df.c:725
+#: src/df.c:722
 #, fuzzy
 msgid ""
 "Show information about the file system on which each FILE resides,\n"
@@ -2962,7 +2957,7 @@ msgstr ""
 "o por omisión sobre todos los sistemas de ficheros.\n"
 "\n"
 
-#: src/df.c:733
+#: src/df.c:730
 #, fuzzy
 msgid ""
 "  -a, --all             include dummy file systems\n"
@@ -2977,7 +2972,7 @@ msgstr ""
 "2G)\n"
 "  -H, --si             análogo, pero utiliza potencias de 1000 y no de 1024\n"
 
-#: src/df.c:739
+#: src/df.c:736
 #, fuzzy
 msgid ""
 "  -i, --inodes          list inode information instead of block usage\n"
@@ -2994,7 +2989,7 @@ msgstr ""
 "      --no-sync         no llama a sync antes de obtener el modo de empleo\n"
 "                        (por defecto)\n"
 
-#: src/df.c:745
+#: src/df.c:742
 #, fuzzy
 msgid ""
 "  -P, --portability     use the POSIX output format\n"
@@ -3014,7 +3009,7 @@ msgstr ""
 "                       no son del tipo TIPO\n"
 "  -v                   (no tiene efecto)\n"
 
-#: src/df.c:755 src/du.c:340 src/ls.c:4224
+#: src/df.c:752 src/du.c:340 src/ls.c:4224
 msgid ""
 "\n"
 "SIZE may be (or may be an integer optionally followed by) one of following:\n"
@@ -3025,21 +3020,21 @@ msgstr ""
 "de los siguientes: kB 1000, K 1024, MB 1000*1000, M 1024*1024, y así\n"
 "en adelante para G, T, P, E, Z, Y.\n"
 
-#: src/df.c:816 src/du.c:755 src/ls.c:1541
+#: src/df.c:813 src/du.c:755 src/ls.c:1541
 #, fuzzy
 msgid "the --kilobytes option is deprecated; use -k instead"
 msgstr "la opción --allow-missing está obsoleta; use --retry en su lugar"
 
-#: src/df.c:875
+#: src/df.c:872
 #, c-format
 msgid "file system type %s both selected and excluded"
 msgstr "el sistema de ficheros %s está simultánemente seleccionado y excluido"
 
-#: src/df.c:919
+#: src/df.c:916
 msgid "Warning: "
 msgstr "Atención: "
 
-#: src/df.c:922
+#: src/df.c:919
 #, fuzzy, c-format
 msgid "%scannot read table of mounted file systems"
 msgstr "%sno se puede leer la tabla de sistemas de ficheros montados"
@@ -4688,7 +4683,7 @@ msgstr "no se puede determinar el dispositivo y el nodo-i de %s"
 msgid "%s: not listing already-listed directory"
 msgstr "no se muestra el directorio ya mostrado: %s"
 
-#: src/ls.c:2351 src/pwd.c:238 src/remove.c:1001
+#: src/ls.c:2351 src/pwd.c:238 src/remove.c:1013
 #, c-format
 msgid "reading directory %s"
 msgstr "leyendo el directorio %s"
@@ -6854,7 +6849,7 @@ msgstr ""
 "Muestra el nombre de fichero completo del directorio de trabajo actual.\n"
 "\n"
 
-#: src/pwd.c:167 src/remove.c:874
+#: src/pwd.c:167 src/remove.c:886
 #, c-format
 msgid "cannot open directory %s"
 msgstr "no se puede abrir el directorio %s"
@@ -6912,48 +6907,48 @@ msgid ""
 "  -v, --verbose                 report error messages\n"
 msgstr ""
 
-#: src/remove.c:401
+#: src/remove.c:413
 #, c-format
 msgid "cannot chdir from %s to .."
 msgstr "no se puede cambiar de %s a .."
 
-#: src/remove.c:407 src/remove.c:503
+#: src/remove.c:419 src/remove.c:515
 #, c-format
 msgid "cannot lstat `.' in %s"
 msgstr "no se puede efectuar `lstat' sobre `.' en %s"
 
 # FIXME: ¿Por qué el original no dice inode, si es que es eso lo que quiere
 # decir?
-#: src/remove.c:412 src/remove.c:507
+#: src/remove.c:424 src/remove.c:519
 #, c-format
 msgid "%s changed dev/ino"
 msgstr "%s ha cambiado dev/nodo-i"
 
-#: src/remove.c:600 src/remove.c:809 src/remove.c:952 src/remove.c:1082
+#: src/remove.c:612 src/remove.c:821 src/remove.c:964 src/remove.c:1094
 #, c-format
 msgid "cannot lstat %s"
 msgstr "no se puede efectuar `lstat' sobre %s"
 
-#: src/remove.c:608 src/remove.c:754 src/remove.c:832 src/remove.c:1068
-#: src/remove.c:1169
+#: src/remove.c:620 src/remove.c:766 src/remove.c:844 src/remove.c:1080
+#: src/remove.c:1181
 #, c-format
 msgid "cannot remove directory %s"
 msgstr "no se puede borrar el directorio %s"
 
 # SIoNO
-#: src/remove.c:637
+#: src/remove.c:649
 #, c-format
 msgid "%s: descend into write-protected directory %s? "
 msgstr "%s: ¿descender al directorio protegido contra escritura %s? (s/n) "
 
 # SIoNO
-#: src/remove.c:638
+#: src/remove.c:650
 #, c-format
 msgid "%s: descend into directory %s? "
 msgstr "%s: ¿descender al directorio %s? (s/n) "
 
 # SIoNO
-#: src/remove.c:648
+#: src/remove.c:660
 #, c-format
 msgid "%s: remove write-protected %s %s? "
 msgstr "%s: ¿borrar el %s %s  protegido contra escritura? (s/n) "
@@ -6963,22 +6958,22 @@ msgstr "%s: ¿borrar el %s %s  protegido contra escritura? (s/n) "
 # ¿y el primero?
 #
 # SIoNO
-#: src/remove.c:649
+#: src/remove.c:661
 #, c-format
 msgid "%s: remove %s %s? "
 msgstr "%s: ¿borrar el %s %s? (s/n) "
 
-#: src/remove.c:692
+#: src/remove.c:704
 #, c-format
 msgid "removed %s\n"
 msgstr "%s borrado\n"
 
-#: src/remove.c:707 src/remove.c:1164
+#: src/remove.c:719 src/remove.c:1176
 #, c-format
 msgid "removed directory: %s\n"
 msgstr "directorio borrado: %s\n"
 
-#: src/remove.c:968 src/remove.c:1097
+#: src/remove.c:980 src/remove.c:1109
 #, c-format
 msgid "cannot chdir from %s to %s"
 msgstr "no se puede cambiar del directorio %s al %s"
@@ -6991,7 +6986,7 @@ msgstr "no se puede cambiar del directorio %s al %s"
 # seguridad esto se debe a que tiene un sistema de ficheros corrupto".
 # Pero... tb
 # Lo pensaré. sv
-#: src/remove.c:976
+#: src/remove.c:988
 #, c-format
 msgid ""
 "WARNING: Circular directory structure.\n"
@@ -7006,11 +7001,11 @@ msgstr ""
 "El siguiente directorio es parte del ciclo:\n"
 "  %s\n"
 
-#: src/remove.c:1203
+#: src/remove.c:1215
 msgid "cannot remove `.' or `..'"
 msgstr "no se puede borrar `.' o `..'"
 
-#: src/remove.c:1257
+#: src/remove.c:1269
 #, fuzzy
 msgid "cannot restore current working directory"
 msgstr "no se puede obtener el directorio actual"
@@ -7401,107 +7396,107 @@ msgstr "%s: seek falló"
 msgid "%s: fsync failed"
 msgstr "%s: seek falló"
 
-#: src/shred.c:764
+#: src/shred.c:762
 #, c-format
 msgid "%s: cannot rewind"
 msgstr "%s: no se puede rebobinar"
 
-#: src/shred.c:790
+#: src/shred.c:785
 #, c-format
 msgid "%s: pass %lu/%lu (%s)..."
 msgstr "%s: paso %lu/%lu (%s)..."
 
-#: src/shred.c:841
+#: src/shred.c:836
 #, c-format
 msgid "%s: error writing at offset %s"
 msgstr "%s: error al escribir en el desplazamiento %s"
 
-#: src/shred.c:861
+#: src/shred.c:856
 #, fuzzy, c-format
 msgid "%s: lseek failed"
 msgstr "%s: seek falló"
 
-#: src/shred.c:872
+#: src/shred.c:867
 #, c-format
 msgid "%s: file too large"
 msgstr "%s: fichero demasiado grande"
 
-#: src/shred.c:895
+#: src/shred.c:890
 #, c-format
 msgid "%s: pass %lu/%lu (%s)...%s"
 msgstr "%s: paso %lu/%lu (%s)...%s"
 
-#: src/shred.c:911
+#: src/shred.c:906
 #, c-format
 msgid "%s: pass %lu/%lu (%s)...%s/%s %d%%"
 msgstr "%s: paso %lu/%lu (%s)...%s/%s %d%%"
 
-#: src/shred.c:1163
+#: src/shred.c:1158
 #, fuzzy, c-format
 msgid "%s: fstat failed"
 msgstr "fallo en `stat'"
 
-#: src/shred.c:1174
+#: src/shred.c:1169
 #, c-format
 msgid "%s: invalid file type"
 msgstr "%s: tipo de fichero inválido"
 
-#: src/shred.c:1193
+#: src/shred.c:1188
 #, c-format
 msgid "%s: file has negative size"
 msgstr "%s: el fichero tiene un tamaño negativo"
 
-#: src/shred.c:1258
+#: src/shred.c:1253
 #, c-format
 msgid "%s: error truncating"
 msgstr "%s: error al truncar"
 
-#: src/shred.c:1274
+#: src/shred.c:1269
 #, fuzzy, c-format
 msgid "%s: fcntl failed"
 msgstr "%s: seek falló"
 
-#: src/shred.c:1279
+#: src/shred.c:1274
 #, c-format
 msgid "%s: cannot shred append-only file descriptor"
 msgstr "%s: no se puede efectuar shred un descriptor de fichero de sólo añadir"
 
-#: src/shred.c:1359
+#: src/shred.c:1354
 #, c-format
 msgid "%s: removing"
 msgstr "%s: borrando"
 
-#: src/shred.c:1383
+#: src/shred.c:1378
 #, c-format
 msgid "%s: renamed to %s"
 msgstr "%s: renombrado a %s"
 
-#: src/shred.c:1405
+#: src/shred.c:1400
 #, fuzzy, c-format
 msgid "%s: failed to remove"
 msgstr "%s: fichero demasiado grande"
 
-#: src/shred.c:1409
+#: src/shred.c:1404
 #, c-format
 msgid "%s: removed"
 msgstr "%s: borrado"
 
-#: src/shred.c:1416 src/shred.c:1459
+#: src/shred.c:1411 src/shred.c:1454
 #, fuzzy, c-format
 msgid "%s: failed to close"
 msgstr "%s: fichero demasiado largo"
 
-#: src/shred.c:1452
+#: src/shred.c:1447
 #, fuzzy, c-format
 msgid "%s: failed to open for writing"
 msgstr "%s: fichero demasiado largo"
 
-#: src/shred.c:1508
+#: src/shred.c:1503
 #, c-format
 msgid "%s: invalid number of passes"
 msgstr "%s: número inválido de pasos"
 
-#: src/shred.c:1525
+#: src/shred.c:1520
 #, c-format
 msgid "%s: invalid file size"
 msgstr "%s: tamaño de fichero inválido"
@@ -10253,6 +10248,9 @@ msgstr ""
 "Muestra repetidamente una línea con todas las CADENA(s) especificadas, o "
 "`y'.\n"
 "\n"
+
+#~ msgid "cannot overwrite directory %s"
+#~ msgstr "no se puede sobreescribir el directorio %s"
 
 #~ msgid ""
 #~ "This is free software; see the source for copying conditions.  There is "

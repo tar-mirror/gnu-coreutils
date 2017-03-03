@@ -1,5 +1,5 @@
 /* copy.c -- core functions for copying files and directories
-   Copyright (C) 89, 90, 91, 1995-2005 Free Software Foundation.
+   Copyright (C) 89, 90, 91, 1995-2006 Free Software Foundation.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -1095,14 +1095,6 @@ copy_internal (char const *src_name, char const *dst_name,
 
 	  if (x->move_mode)
 	    {
-	      /* In move_mode, DEST may not be an existing directory.  */
-	      if (S_ISDIR (dst_sb.st_mode))
-		{
-		  error (0, 0, _("cannot overwrite directory %s"),
-			 quote (dst_name));
-		  return false;
-		}
-
 	      /* Don't allow user to move a directory onto a non-directory.  */
 	      if (S_ISDIR (src_sb.st_mode) && !S_ISDIR (dst_sb.st_mode))
 		{
@@ -1165,8 +1157,10 @@ copy_internal (char const *src_name, char const *dst_name,
 	  else if (! S_ISDIR (dst_sb.st_mode)
 		   && (x->unlink_dest_before_opening
 		       || (x->preserve_links && 1 < dst_sb.st_nlink)
-		       || (x->dereference == DEREF_NEVER
-			   && S_ISLNK (src_sb.st_mode))))
+		       || (!x->move_mode
+			   && x->dereference == DEREF_NEVER
+			   && S_ISLNK (src_sb.st_mode))
+		       ))
 	    {
 	      if (unlink (dst_name) != 0 && errno != ENOENT)
 		{

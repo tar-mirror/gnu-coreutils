@@ -1,3 +1,21 @@
+2006-05-04  Jim Meyering  <jim@meyering.net>
+
+	From 2006-03-19  Jim Meyering  <jim@meyering.net>
+	Work even in a chroot where d_ino values for entries in "/"
+	don't match the stat.st_ino values for the same names.
+	* getcwd.c (__getcwd): When no d_ino value matches the target inode
+	number, iterate through all entries again, using lstat instead.
+	Reported by Kenshi Muto in http://bugs.debian.org/355810, and by
+	Zouhir Hafidi in https://bugzilla.redhat.com/bugzilla/190656.
+
+	* getcwd.c (__getcwd): Clarify a comment.
+	Use memcpy in place of a call to strcpy.
+
+	From 2006-02-20  Paul Eggert  <eggert@cs.ucla.edu>
+	* getcwd.c (AT_FDCWD): Work around a bug in Solaris 9 and 10, where
+	AT_FDCWD exceeds INT_MAX.
+	* openat.h (AT_FDCWD): Likewise.
+
 2006-01-26  Paul Eggert  <eggert@cs.ucla.edu>
 
 	* fts.c (diropen): Open with O_NOCTTY | O_NONBLOCK too.

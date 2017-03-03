@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coreutils 5.3.0\n"
 "Report-Msgid-Bugs-To: bug-coreutils@gnu.org\n"
-"POT-Creation-Date: 2006-02-07 09:38+0100\n"
+"POT-Creation-Date: 2006-05-12 10:23+0200\n"
 "PO-Revision-Date: 2005-04-04 10:55-0700\n"
 "Last-Translator: Steven Michael Murphy <murf@e-tools.com>\n"
 "Language-Team: Kinyarwanda <translation-team-rw@lists.sourceforge.net>\n"
@@ -271,7 +271,7 @@ msgstr "Guhindura>> Na Cyangwa Itsinda Bya"
 msgid "cannot chdir to directory %s"
 msgstr "Kuri bushyinguro"
 
-#: lib/mkdir-p.c:243 lib/mkdir-p.c:278 src/copy.c:1447 src/mkdir.c:167
+#: lib/mkdir-p.c:243 lib/mkdir-p.c:278 src/copy.c:1441 src/mkdir.c:167
 #, fuzzy, c-format
 msgid "cannot create directory %s"
 msgstr "Kurema bushyinguro"
@@ -291,7 +291,7 @@ msgstr "Ububiko"
 msgid "unable to record current working directory"
 msgstr "Kuri Icyabitswe KIGEZWEHO bushyinguro"
 
-#: lib/openat-die.c:49 src/df.c:519
+#: lib/openat-die.c:49 src/df.c:516
 #, fuzzy
 msgid "failed to return to initial working directory"
 msgstr "Byanze Kuri Garuka Kuri bushyinguro"
@@ -518,7 +518,7 @@ msgstr "Ikurikiranyanyuguti Na"
 
 #: src/basename.c:51 src/cat.c:91 src/chgrp.c:104 src/chmod.c:322
 #: src/chown.c:90 src/chroot.c:42 src/cksum.c:264 src/comm.c:69 src/cp.c:152
-#: src/csplit.c:1448 src/cut.c:184 src/date.c:128 src/dd.c:397 src/df.c:720
+#: src/csplit.c:1448 src/cut.c:184 src/date.c:128 src/dd.c:397 src/df.c:717
 #: src/dircolors.c:101 src/dirname.c:45 src/du.c:276 src/echo.c:60
 #: src/env.c:114 src/expand.c:107 src/expr.c:97 src/factor.c:70 src/fmt.c:269
 #: src/fold.c:66 src/head.c:105 src/hostid.c:44 src/hostname.c:61 src/id.c:74
@@ -565,7 +565,7 @@ msgstr ""
 
 #: src/basename.c:74 src/cat.c:128 src/chgrp.c:159 src/chmod.c:353
 #: src/chown.c:159 src/chroot.c:60 src/cksum.c:279 src/comm.c:94 src/cp.c:251
-#: src/csplit.c:1490 src/cut.c:235 src/date.c:241 src/dd.c:499 src/df.c:759
+#: src/csplit.c:1490 src/cut.c:235 src/date.c:241 src/dd.c:499 src/df.c:756
 #: src/dircolors.c:122 src/dirname.c:68 src/du.c:344 src/echo.c:98
 #: src/env.c:133 src/expand.c:132 src/expr.c:165 src/factor.c:90 src/fmt.c:300
 #: src/fold.c:89 src/head.c:140 src/hostid.c:57 src/hostname.c:74 src/id.c:95
@@ -1129,9 +1129,9 @@ msgstr ""
 msgid "skipping file %s, as it was replaced while being copied"
 msgstr "Gusimbuka: %s%s IDOSIYE Nka"
 
-#: src/copy.c:265 src/copy.c:984 src/copy.c:1173 src/copy.c:1283 src/ln.c:312
-#: src/remove.c:788 src/remove.c:825 src/remove.c:965 src/remove.c:1092
-#: src/remove.c:1211
+#: src/copy.c:265 src/copy.c:984 src/copy.c:1167 src/copy.c:1277 src/ln.c:312
+#: src/remove.c:800 src/remove.c:837 src/remove.c:977 src/remove.c:1104
+#: src/remove.c:1223
 #, fuzzy, c-format
 msgid "cannot remove %s"
 msgstr "Gukuraho..."
@@ -1156,17 +1156,17 @@ msgstr ""
 msgid "writing %s"
 msgstr ""
 
-#: src/copy.c:425 src/copy.c:1656
+#: src/copy.c:425 src/copy.c:1650
 #, fuzzy, c-format
 msgid "preserving times for %s"
 msgstr "Times kugirango"
 
-#: src/copy.c:442 src/copy.c:1611 src/copy.c:1670 src/cp.c:324
+#: src/copy.c:442 src/copy.c:1605 src/copy.c:1664 src/cp.c:324
 #, fuzzy, c-format
 msgid "failed to preserve ownership for %s"
 msgstr "Byanze Kuri kugirango"
 
-#: src/copy.c:468 src/copy.c:1707
+#: src/copy.c:468 src/copy.c:1701
 #, fuzzy, c-format
 msgid "setting permissions for %s"
 msgstr "Igenamiterere Uruhushya kugirango"
@@ -1186,7 +1186,7 @@ msgstr "%s:Guhindura Ubwoko"
 msgid "%s: overwrite %s? "
 msgstr "%s:Guhindura"
 
-#: src/copy.c:927 src/copy.c:965 src/df.c:496 src/install.c:445 src/stat.c:728
+#: src/copy.c:927 src/copy.c:965 src/df.c:493 src/install.c:445 src/stat.c:728
 #, c-format
 msgid "cannot stat %s"
 msgstr ""
@@ -1221,127 +1221,122 @@ msgstr "OYA Guhindura Byaremwe Na:"
 msgid "cannot overwrite directory %s with non-directory"
 msgstr "Guhindura bushyinguro Na: bushyinguro"
 
-#: src/copy.c:1101
-#, fuzzy, c-format
-msgid "cannot overwrite directory %s"
-msgstr "Guhindura bushyinguro"
-
-#: src/copy.c:1110
+#: src/copy.c:1102
 #, fuzzy, c-format
 msgid "cannot move directory onto non-directory: %s -> %s"
 msgstr "Kwimura bushyinguro bushyinguro"
 
-#: src/copy.c:1131
+#: src/copy.c:1123
 #, fuzzy, c-format
 msgid "backing up %s would destroy source;  %s not moved"
 msgstr "Hejuru Inkomoko OYA"
 
-#: src/copy.c:1132
+#: src/copy.c:1124
 #, fuzzy, c-format
 msgid "backing up %s would destroy source;  %s not copied"
 msgstr "Hejuru Inkomoko OYA"
 
-#: src/copy.c:1151 src/ln.c:267
+#: src/copy.c:1143 src/ln.c:267
 #, fuzzy, c-format
 msgid "cannot backup %s"
 msgstr "Inyibutsa"
 
-#: src/copy.c:1188 src/ln.c:283
+#: src/copy.c:1182 src/ln.c:283
 #, fuzzy, c-format
 msgid " (backup: %s)"
 msgstr "(Inyibutsa"
 
-#: src/copy.c:1251
+#: src/copy.c:1245
 #, fuzzy, c-format
 msgid "cannot copy a directory, %s, into itself, %s"
 msgstr "Gukoporora a bushyinguro"
 
-#: src/copy.c:1268
+#: src/copy.c:1262
 #, fuzzy, c-format
 msgid "will not create hard link %s to directory %s"
 msgstr "OYA Kurema Ikomeye Ihuza Kuri bushyinguro"
 
-#: src/copy.c:1291
+#: src/copy.c:1285
 #, fuzzy, c-format
 msgid "cannot create hard link %s to %s"
 msgstr "Kurema Ikomeye Ihuza Kuri"
 
-#: src/copy.c:1345
+#: src/copy.c:1339
 #, fuzzy, c-format
 msgid "cannot move %s to a subdirectory of itself, %s"
 msgstr "Kwimura Kuri a Bya"
 
-#: src/copy.c:1388
+#: src/copy.c:1382
 #, fuzzy, c-format
 msgid "cannot move %s to %s"
 msgstr "Kwimura Kuri"
 
-#: src/copy.c:1400
+#: src/copy.c:1394
 #, fuzzy, c-format
 msgid "inter-device move failed: %s to %s; unable to remove target"
 msgstr "APAREYE Kwimura Byanze Kuri Kuri Gukuraho... Intego"
 
-#: src/copy.c:1428
+#: src/copy.c:1422
 #, fuzzy, c-format
 msgid "cannot copy cyclic symbolic link %s"
 msgstr "Gukoporora Ihuza"
 
-#: src/copy.c:1505
+#: src/copy.c:1499
 #, fuzzy, c-format
 msgid "%s: can make relative symbolic links only in current directory"
 msgstr "%s:Ubwoko Bifitanye isano amahuza in KIGEZWEHO bushyinguro"
 
-#: src/copy.c:1512
+#: src/copy.c:1506
 #, fuzzy, c-format
 msgid "cannot create symbolic link %s to %s"
 msgstr "Kurema Ihuza Kuri"
 
-#: src/copy.c:1523
+#: src/copy.c:1517
 #, fuzzy, c-format
 msgid "cannot create link %s"
 msgstr "Kurema Ihuza"
 
-#: src/copy.c:1545 src/mkfifo.c:129
+#: src/copy.c:1539 src/mkfifo.c:129
 #, fuzzy, c-format
 msgid "cannot create fifo %s"
 msgstr "Kurema"
 
-#: src/copy.c:1556
+#: src/copy.c:1550
 #, fuzzy, c-format
 msgid "cannot create special file %s"
 msgstr "Kurema Bidasanzwe IDOSIYE"
 
-#: src/copy.c:1568 src/ls.c:2733 src/stat.c:436
+#: src/copy.c:1562 src/ls.c:2733 src/stat.c:436
 #, fuzzy, c-format
 msgid "cannot read symbolic link %s"
 msgstr "Gusoma Ihuza"
 
-#: src/copy.c:1594
+#: src/copy.c:1588
 #, fuzzy, c-format
 msgid "cannot create symbolic link %s"
 msgstr "Kurema Ihuza"
 
-#: src/copy.c:1626
+#: src/copy.c:1620
 #, fuzzy, c-format
 msgid "%s has unknown file type"
 msgstr "%sKitazwi IDOSIYE Ubwoko"
 
-#: src/copy.c:1682
+#: src/copy.c:1676
 #, fuzzy, c-format
 msgid "failed to lookup file %s"
 msgstr "Byanze Kuri GUSHAKISHA IDOSIYE"
 
-#: src/copy.c:1687
+#: src/copy.c:1681
 #, fuzzy, c-format
 msgid "failed to preserve authorship for %s"
 msgstr "Byanze Kuri kugirango"
 
-#: src/copy.c:1729 src/ln.c:329
+#: src/copy.c:1723 src/ln.c:329
 #, fuzzy, c-format
 msgid "cannot un-backup %s"
 msgstr "Inyibutsa"
 
-#: src/copy.c:1733
+#: src/copy.c:1727
 #, c-format
 msgid "%s -> %s (unbackup)\n"
 msgstr ""
@@ -1361,7 +1356,7 @@ msgid ""
 "\n"
 msgstr "Kuri Cyangwa Igikubo S Kuri"
 
-#: src/cp.c:166 src/csplit.c:1461 src/cut.c:196 src/df.c:730 src/du.c:288
+#: src/cp.c:166 src/csplit.c:1461 src/cut.c:196 src/df.c:727 src/du.c:288
 #: src/expand.c:120 src/fmt.c:279 src/fold.c:79 src/head.c:119
 #: src/install.c:646 src/kill.c:104 src/ln.c:357 src/ls.c:4106 src/mkdir.c:63
 #: src/mkfifo.c:60 src/mknod.c:61 src/mv.c:308 src/nl.c:181 src/paste.c:427
@@ -1552,7 +1547,7 @@ msgstr ""
 msgid "target %s is not a directory"
 msgstr "Intego ni OYA a bushyinguro"
 
-#: src/cp.c:504 src/install.c:311 src/ln.c:499 src/mv.c:443 src/shred.c:1558
+#: src/cp.c:504 src/install.c:311 src/ln.c:499 src/mv.c:443 src/shred.c:1553
 #: src/touch.c:412
 #, fuzzy
 msgid "missing file operand"
@@ -1781,7 +1776,7 @@ msgstr ""
 "Gusubiramo i Ibanjirije Ishusho Umubare Bya Gusubiramo i Ibanjirije Ishusho "
 "Nka Times Nka Umurongo ni a Bya ngombwa Cyangwa ku a Umubare wuzuye"
 
-#: src/cut.c:188 src/df.c:724 src/expand.c:111 src/fold.c:70 src/head.c:109
+#: src/cut.c:188 src/df.c:721 src/expand.c:111 src/fold.c:70 src/head.c:109
 #: src/ls.c:4100 src/nl.c:172 src/paste.c:417 src/pr.c:2768 src/sort.c:281
 #: src/sum.c:59 src/tac.c:132 src/tail.c:226 src/tee.c:62 src/unexpand.c:121
 #: src/wc.c:127
@@ -2618,23 +2613,23 @@ msgstr ""
 msgid " Mounted on\n"
 msgstr ""
 
-#: src/df.c:452
+#: src/df.c:449
 #, fuzzy
 msgid "cannot get current directory"
 msgstr "Kubona KIGEZWEHO bushyinguro"
 
 # svtools/source\dialogs\filedlg2.src:STR_FILEDLG_CANTCHDIR.text
-#: src/df.c:462 src/df.c:476 src/df.c:504
+#: src/df.c:459 src/df.c:473 src/df.c:501
 #, fuzzy, c-format
 msgid "cannot change to directory %s"
 msgstr "Gufungura ububiko ntibishoboka"
 
-#: src/df.c:482
+#: src/df.c:479
 #, fuzzy, c-format
 msgid "cannot stat current directory (now %s)"
 msgstr "KIGEZWEHO bushyinguro NONEAHA"
 
-#: src/df.c:725
+#: src/df.c:722
 #, fuzzy
 msgid ""
 "Show information about the file system on which each FILE resides,\n"
@@ -2644,7 +2639,7 @@ msgstr ""
 "Ibisobanuro Ibyerekeye i IDOSIYE Sisitemu ku Cyangwa Byose IDOSIYE ku "
 "Mburabuzi"
 
-#: src/df.c:733
+#: src/df.c:730
 #, fuzzy
 msgid ""
 "  -a, --all             include dummy file systems\n"
@@ -2654,7 +2649,7 @@ msgid ""
 "  -H, --si              likewise, but use powers of 1000 not 1024\n"
 msgstr "-g."
 
-#: src/df.c:739
+#: src/df.c:736
 #, fuzzy
 msgid ""
 "  -i, --inodes          list inode information instead of block usage\n"
@@ -2666,7 +2661,7 @@ msgstr ""
 "-i Urutonde Ibisobanuro Bya Funga K nka Funga Ingano L Kuri IDOSIYE Oya OYA "
 "Mbere Ikoresha: Ibisobanuro Mburabuzi"
 
-#: src/df.c:745
+#: src/df.c:742
 #, fuzzy
 msgid ""
 "  -P, --portability     use the POSIX output format\n"
@@ -2679,7 +2674,7 @@ msgstr ""
 "-Gukoresha i Ibisohoka Mbere Ikoresha: T Ubwoko Kuri IDOSIYE Bya Ubwoko "
 "Gucapa Ubwoko Gucapa IDOSIYE Sisitemu X Ubwoko Kuri IDOSIYE OYA Bya Ubwoko v"
 
-#: src/df.c:755 src/du.c:340 src/ls.c:4224
+#: src/df.c:752 src/du.c:340 src/ls.c:4224
 #, fuzzy
 msgid ""
 "\n"
@@ -2689,21 +2684,21 @@ msgstr ""
 "Gicurasi Cyangwa Gicurasi Umubare wuzuye ku Bya 1000 1000 1000 Na ku "
 "kugirango E"
 
-#: src/df.c:816 src/du.c:755 src/ls.c:1541
+#: src/df.c:813 src/du.c:755 src/ls.c:1541
 #, fuzzy
 msgid "the --kilobytes option is deprecated; use -k instead"
 msgstr "i Kwemerera Ibuze Ihitamo ni Bitemewe. Gukoresha Ongera ugerageze"
 
-#: src/df.c:875
+#: src/df.c:872
 #, fuzzy, c-format
 msgid "file system type %s both selected and excluded"
 msgstr "IDOSIYE Sisitemu Ubwoko Byombi Byahiswemo Na"
 
-#: src/df.c:919
+#: src/df.c:916
 msgid "Warning: "
 msgstr "Iburira:"
 
-#: src/df.c:922
+#: src/df.c:919
 #, fuzzy, c-format
 msgid "%scannot read table of mounted file systems"
 msgstr "%scannotGusoma imbonerahamwe# Bya IDOSIYE"
@@ -4029,7 +4024,7 @@ msgstr "APAREYE Na Bya"
 msgid "%s: not listing already-listed directory"
 msgstr "%s:OYA bushyinguro"
 
-#: src/ls.c:2351 src/pwd.c:238 src/remove.c:1001
+#: src/ls.c:2351 src/pwd.c:238 src/remove.c:1013
 #, fuzzy, c-format
 msgid "reading directory %s"
 msgstr "bushyinguro"
@@ -5695,7 +5690,7 @@ msgid ""
 "\n"
 msgstr "i Izina ry'idosiye: Bya i KIGEZWEHO bushyinguro"
 
-#: src/pwd.c:167 src/remove.c:874
+#: src/pwd.c:167 src/remove.c:886
 #, fuzzy, c-format
 msgid "cannot open directory %s"
 msgstr "Gufungura bushyinguro"
@@ -5757,7 +5752,7 @@ msgstr ""
 "Inzira Byose Inzira M Ibuze ku buri buri Bya i Inzira ku N Oya OYA Ibisohoka "
 "i Q S Ikosa v Icyegeranyo Ikosa"
 
-#: src/remove.c:401
+#: src/remove.c:413
 #, fuzzy, c-format
 msgid "cannot chdir from %s to .."
 msgstr ""
@@ -5770,65 +5765,65 @@ msgstr ""
 "X- Generator: KBabel 1. 0\n"
 "."
 
-#: src/remove.c:407 src/remove.c:503
+#: src/remove.c:419 src/remove.c:515
 #, fuzzy, c-format
 msgid "cannot lstat `.' in %s"
 msgstr "in"
 
-#: src/remove.c:412 src/remove.c:507
+#: src/remove.c:424 src/remove.c:519
 #, fuzzy, c-format
 msgid "%s changed dev/ino"
 msgstr "%sByahinduwe"
 
-#: src/remove.c:600 src/remove.c:809 src/remove.c:952 src/remove.c:1082
+#: src/remove.c:612 src/remove.c:821 src/remove.c:964 src/remove.c:1094
 #, c-format
 msgid "cannot lstat %s"
 msgstr ""
 
-#: src/remove.c:608 src/remove.c:754 src/remove.c:832 src/remove.c:1068
-#: src/remove.c:1169
+#: src/remove.c:620 src/remove.c:766 src/remove.c:844 src/remove.c:1080
+#: src/remove.c:1181
 #, fuzzy, c-format
 msgid "cannot remove directory %s"
 msgstr "Gukuraho... bushyinguro"
 
-#: src/remove.c:637
+#: src/remove.c:649
 #, fuzzy, c-format
 msgid "%s: descend into write-protected directory %s? "
 msgstr "%s:Kumanuka Kwandika Birinzwe bushyinguro"
 
-#: src/remove.c:638
+#: src/remove.c:650
 #, fuzzy, c-format
 msgid "%s: descend into directory %s? "
 msgstr "%s:Kumanuka bushyinguro"
 
-#: src/remove.c:648
+#: src/remove.c:660
 #, fuzzy, c-format
 msgid "%s: remove write-protected %s %s? "
 msgstr "%s:Gukuraho... Kwandika Birinzwe"
 
 # sfx2/source\toolbox\tbxcust.src:RID_TOOLBOXCUSTOMIZE.BTN_TB_REMOVE.text
-#: src/remove.c:649
+#: src/remove.c:661
 #, fuzzy, c-format
 msgid "%s: remove %s %s? "
 msgstr "%s:Gukuraho"
 
 # 5072
-#: src/remove.c:692
+#: src/remove.c:704
 #, fuzzy, c-format
 msgid "removed %s\n"
 msgstr "Cyavanyweho"
 
-#: src/remove.c:707 src/remove.c:1164
+#: src/remove.c:719 src/remove.c:1176
 #, fuzzy, c-format
 msgid "removed directory: %s\n"
 msgstr "Cyavanyweho bushyinguro"
 
-#: src/remove.c:968 src/remove.c:1097
+#: src/remove.c:980 src/remove.c:1109
 #, fuzzy, c-format
 msgid "cannot chdir from %s to %s"
 msgstr "Bivuye Kuri"
 
-#: src/remove.c:976
+#: src/remove.c:988
 #, fuzzy, c-format
 msgid ""
 "WARNING: Circular directory structure.\n"
@@ -5838,7 +5833,7 @@ msgid ""
 "  %s\n"
 msgstr "bushyinguro Imiterere a IDOSIYE Sisitemu bushyinguro ni Bya i Uruziga"
 
-#: src/remove.c:1203
+#: src/remove.c:1215
 #, fuzzy
 msgid "cannot remove `.' or `..'"
 msgstr ""
@@ -5851,7 +5846,7 @@ msgstr ""
 "X- Generator: KBabel 1. 0\n"
 "."
 
-#: src/remove.c:1257
+#: src/remove.c:1269
 #, fuzzy
 msgid "cannot restore current working directory"
 msgstr "Kugarura KIGEZWEHO bushyinguro"
@@ -6162,107 +6157,107 @@ msgstr "%s:Byanze"
 msgid "%s: fsync failed"
 msgstr "%s:Byanze"
 
-#: src/shred.c:764
+#: src/shred.c:762
 #, c-format
 msgid "%s: cannot rewind"
 msgstr ""
 
-#: src/shred.c:790
+#: src/shred.c:785
 #, c-format
 msgid "%s: pass %lu/%lu (%s)..."
 msgstr ""
 
-#: src/shred.c:841
+#: src/shred.c:836
 #, fuzzy, c-format
 msgid "%s: error writing at offset %s"
 msgstr "%s:Ikosa ku Nta- boneza"
 
-#: src/shred.c:861
+#: src/shred.c:856
 #, fuzzy, c-format
 msgid "%s: lseek failed"
 msgstr "%s:Byanze"
 
-#: src/shred.c:872
+#: src/shred.c:867
 #, fuzzy, c-format
 msgid "%s: file too large"
 msgstr "%s:IDOSIYE Binini"
 
-#: src/shred.c:895
+#: src/shred.c:890
 #, c-format
 msgid "%s: pass %lu/%lu (%s)...%s"
 msgstr ""
 
-#: src/shred.c:911
+#: src/shred.c:906
 #, c-format
 msgid "%s: pass %lu/%lu (%s)...%s/%s %d%%"
 msgstr ""
 
-#: src/shred.c:1163
+#: src/shred.c:1158
 #, fuzzy, c-format
 msgid "%s: fstat failed"
 msgstr "%s:Byanze"
 
-#: src/shred.c:1174
+#: src/shred.c:1169
 #, fuzzy, c-format
 msgid "%s: invalid file type"
 msgstr "%s:Sibyo IDOSIYE Ubwoko"
 
-#: src/shred.c:1193
+#: src/shred.c:1188
 #, fuzzy, c-format
 msgid "%s: file has negative size"
 msgstr "%s:IDOSIYE Ingano"
 
-#: src/shred.c:1258
+#: src/shred.c:1253
 #, fuzzy, c-format
 msgid "%s: error truncating"
 msgstr "%s:Ikosa"
 
-#: src/shred.c:1274
+#: src/shred.c:1269
 #, fuzzy, c-format
 msgid "%s: fcntl failed"
 msgstr "%s:Byanze"
 
-#: src/shred.c:1279
+#: src/shred.c:1274
 #, fuzzy, c-format
 msgid "%s: cannot shred append-only file descriptor"
 msgstr "%s:Kongeraho... IDOSIYE"
 
-#: src/shred.c:1359
+#: src/shred.c:1354
 #, c-format
 msgid "%s: removing"
 msgstr ""
 
-#: src/shred.c:1383
+#: src/shred.c:1378
 #, fuzzy, c-format
 msgid "%s: renamed to %s"
 msgstr "%s:Kuri"
 
-#: src/shred.c:1405
+#: src/shred.c:1400
 #, fuzzy, c-format
 msgid "%s: failed to remove"
 msgstr "%s:Byanze Kuri Gukuraho..."
 
-#: src/shred.c:1409
+#: src/shred.c:1404
 #, fuzzy, c-format
 msgid "%s: removed"
 msgstr "%s:Cyavanyweho"
 
-#: src/shred.c:1416 src/shred.c:1459
+#: src/shred.c:1411 src/shred.c:1454
 #, fuzzy, c-format
 msgid "%s: failed to close"
 msgstr "%s:Byanze Kuri Gufunga"
 
-#: src/shred.c:1452
+#: src/shred.c:1447
 #, fuzzy, c-format
 msgid "%s: failed to open for writing"
 msgstr "%s:Byanze Kuri Gufungura kugirango"
 
-#: src/shred.c:1508
+#: src/shred.c:1503
 #, fuzzy, c-format
 msgid "%s: invalid number of passes"
 msgstr "%s:Sibyo Umubare Bya"
 
-#: src/shred.c:1525
+#: src/shred.c:1520
 #, fuzzy, c-format
 msgid "%s: invalid file size"
 msgstr "%s:Sibyo IDOSIYE Ingano"
@@ -8565,6 +8560,10 @@ msgid ""
 "Repeatedly output a line with all specified STRING(s), or `y'.\n"
 "\n"
 msgstr "Ibisohoka a Umurongo Na: Byose S Cyangwa"
+
+#, fuzzy
+#~ msgid "cannot overwrite directory %s"
+#~ msgstr "Guhindura bushyinguro"
 
 #, fuzzy
 #~ msgid "openat: unable to restore working directory"
