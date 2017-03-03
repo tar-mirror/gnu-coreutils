@@ -1,5 +1,5 @@
 /* tail -- output the last part of file(s)
-   Copyright (C) 1989-1991, 1995-2006, 2008-2010 Free Software Foundation, Inc.
+   Copyright (C) 1989-1991, 1995-2006, 2008-2011 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -1546,7 +1546,8 @@ tail_forever_inotify (int wd, struct File_spec *f, size_t n_files,
              must continue to watch the file.  It's only when following
              by file descriptor that we must remove the watch.  */
           if ((ev->mask & IN_DELETE_SELF)
-              || ((ev->mask & IN_MOVE_SELF) && follow_mode == Follow_descriptor))
+              || ((ev->mask & IN_MOVE_SELF)
+                  && follow_mode == Follow_descriptor))
             {
               inotify_rm_watch (wd, fspec->wd);
               hash_delete (wd_to_name, fspec);

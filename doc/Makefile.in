@@ -17,7 +17,7 @@
 
 # Make coreutils documentation.				-*-Makefile-*-
 
-# Copyright (C) 1995-1998, 2001-2010 Free Software Foundation, Inc.
+# Copyright (C) 1995-1998, 2001-2011 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -165,10 +165,10 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/00gnulib.m4 \
 	$(top_srcdir)/m4/open.m4 $(top_srcdir)/m4/openat.m4 \
 	$(top_srcdir)/m4/parse-datetime.m4 $(top_srcdir)/m4/pathmax.m4 \
 	$(top_srcdir)/m4/perl.m4 $(top_srcdir)/m4/perror.m4 \
-	$(top_srcdir)/m4/physmem.m4 $(top_srcdir)/m4/po.m4 \
-	$(top_srcdir)/m4/posix-shell.m4 $(top_srcdir)/m4/posixtm.m4 \
-	$(top_srcdir)/m4/posixver.m4 $(top_srcdir)/m4/prereq.m4 \
-	$(top_srcdir)/m4/printf-frexp.m4 \
+	$(top_srcdir)/m4/physmem.m4 $(top_srcdir)/m4/pipe.m4 \
+	$(top_srcdir)/m4/po.m4 $(top_srcdir)/m4/posix-shell.m4 \
+	$(top_srcdir)/m4/posixtm.m4 $(top_srcdir)/m4/posixver.m4 \
+	$(top_srcdir)/m4/prereq.m4 $(top_srcdir)/m4/printf-frexp.m4 \
 	$(top_srcdir)/m4/printf-frexpl.m4 $(top_srcdir)/m4/printf.m4 \
 	$(top_srcdir)/m4/priv-set.m4 $(top_srcdir)/m4/progtest.m4 \
 	$(top_srcdir)/m4/pthread.m4 $(top_srcdir)/m4/putenv.m4 \
@@ -379,6 +379,7 @@ GNULIB_BIND = @GNULIB_BIND@
 GNULIB_BTOWC = @GNULIB_BTOWC@
 GNULIB_CALLOC_POSIX = @GNULIB_CALLOC_POSIX@
 GNULIB_CANONICALIZE_FILE_NAME = @GNULIB_CANONICALIZE_FILE_NAME@
+GNULIB_CEIL = @GNULIB_CEIL@
 GNULIB_CEILF = @GNULIB_CEILF@
 GNULIB_CEILL = @GNULIB_CEILL@
 GNULIB_CHOWN = @GNULIB_CHOWN@
@@ -401,6 +402,7 @@ GNULIB_FCLOSE = @GNULIB_FCLOSE@
 GNULIB_FCNTL = @GNULIB_FCNTL@
 GNULIB_FDOPENDIR = @GNULIB_FDOPENDIR@
 GNULIB_FFLUSH = @GNULIB_FFLUSH@
+GNULIB_FLOOR = @GNULIB_FLOOR@
 GNULIB_FLOORF = @GNULIB_FLOORF@
 GNULIB_FLOORL = @GNULIB_FLOORL@
 GNULIB_FOPEN = @GNULIB_FOPEN@
@@ -658,6 +660,7 @@ HAVE_DECL_IMAXDIV = @HAVE_DECL_IMAXDIV@
 HAVE_DECL_INET_NTOP = @HAVE_DECL_INET_NTOP@
 HAVE_DECL_INET_PTON = @HAVE_DECL_INET_PTON@
 HAVE_DECL_LDEXPL = @HAVE_DECL_LDEXPL@
+HAVE_DECL_LOCALTIME_R = @HAVE_DECL_LOCALTIME_R@
 HAVE_DECL_LOGB = @HAVE_DECL_LOGB@
 HAVE_DECL_LOGL = @HAVE_DECL_LOGL@
 HAVE_DECL_MEMMEM = @HAVE_DECL_MEMMEM@
@@ -732,7 +735,6 @@ HAVE_LCHMOD = @HAVE_LCHMOD@
 HAVE_LCHOWN = @HAVE_LCHOWN@
 HAVE_LINK = @HAVE_LINK@
 HAVE_LINKAT = @HAVE_LINKAT@
-HAVE_LOCALTIME_R = @HAVE_LOCALTIME_R@
 HAVE_LOGL = @HAVE_LOGL@
 HAVE_LONG_LONG_INT = @HAVE_LONG_LONG_INT@
 HAVE_LSTAT = @HAVE_LSTAT@
@@ -1015,6 +1017,7 @@ RANLIB = @RANLIB@
 REPLACE_BTOWC = @REPLACE_BTOWC@
 REPLACE_CALLOC = @REPLACE_CALLOC@
 REPLACE_CANONICALIZE_FILE_NAME = @REPLACE_CANONICALIZE_FILE_NAME@
+REPLACE_CEIL = @REPLACE_CEIL@
 REPLACE_CEILF = @REPLACE_CEILF@
 REPLACE_CEILL = @REPLACE_CEILL@
 REPLACE_CHOWN = @REPLACE_CHOWN@
@@ -1030,6 +1033,7 @@ REPLACE_FCLOSE = @REPLACE_FCLOSE@
 REPLACE_FCNTL = @REPLACE_FCNTL@
 REPLACE_FDOPENDIR = @REPLACE_FDOPENDIR@
 REPLACE_FFLUSH = @REPLACE_FFLUSH@
+REPLACE_FLOOR = @REPLACE_FLOOR@
 REPLACE_FLOORF = @REPLACE_FLOORF@
 REPLACE_FLOORL = @REPLACE_FLOORL@
 REPLACE_FOPEN = @REPLACE_FOPEN@
@@ -1050,6 +1054,7 @@ REPLACE_GETDELIM = @REPLACE_GETDELIM@
 REPLACE_GETDOMAINNAME = @REPLACE_GETDOMAINNAME@
 REPLACE_GETGROUPS = @REPLACE_GETGROUPS@
 REPLACE_GETLINE = @REPLACE_GETLINE@
+REPLACE_GETLOGIN_R = @REPLACE_GETLOGIN_R@
 REPLACE_GETPAGESIZE = @REPLACE_GETPAGESIZE@
 REPLACE_GETTIMEOFDAY = @REPLACE_GETTIMEOFDAY@
 REPLACE_HUGE_VAL = @REPLACE_HUGE_VAL@
@@ -1131,6 +1136,8 @@ REPLACE_STRTOK_R = @REPLACE_STRTOK_R@
 REPLACE_SYMLINK = @REPLACE_SYMLINK@
 REPLACE_TIMEGM = @REPLACE_TIMEGM@
 REPLACE_TMPFILE = @REPLACE_TMPFILE@
+REPLACE_TRUNC = @REPLACE_TRUNC@
+REPLACE_TRUNCF = @REPLACE_TRUNCF@
 REPLACE_TRUNCL = @REPLACE_TRUNCL@
 REPLACE_TTYNAME_R = @REPLACE_TTYNAME_R@
 REPLACE_UNLINK = @REPLACE_UNLINK@
@@ -1271,6 +1278,9 @@ syntax_checks = \
   sc-lower-case-var	\
   sc-use-small-caps-NUL
 
+
+# List words/regexps here that should not appear in the texinfo documentation.
+BAD_POSIX_PERL = /\bPOSIX\b/ && !/\@acronym{POSIX}/ && !/^\* / || /{posix}/
 
 # ME = $(subdir)/$(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 ME = doc/Makefile
@@ -1733,7 +1743,8 @@ constants.texi: $(top_srcdir)/src/tail.c $(top_srcdir)/src/shred.c
 	$(AM_V_GEN)LC_ALL=C; export LC_ALL; \
 	{ sed -n -e 's/^#define \(DEFAULT_MAX[_A-Z]*\) \(.*\)/@set \1 \2/p' \
 	    $(top_srcdir)/src/tail.c && \
-	  sed -n -e 's/.*\(DEFAULT_PASSES\)[ =]* \([0-9]*\).*/@set SHRED_\1 \2/p'\
+	  sed -n -e \
+	      's/.*\(DEFAULT_PASSES\)[ =]* \([0-9]*\).*/@set SHRED_\1 \2/p'\
 	    $(top_srcdir)/src/shred.c; } > t-$@ \
 	  && mv t-$@ $@
 
@@ -1741,8 +1752,6 @@ $(DVIS): $(EXTRA_DIST)
 $(INFO_DEPS): $(EXTRA_DIST)
 
 .PHONY: $(syntax_checks) check-texinfo
-
-# List words/regexps here that should not appear in the texinfo documentation.
 check-texinfo: $(syntax_checks)
 	$(AM_V_GEN)fail=0;						\
 	grep '@url{' $(srcdir)/*.texi && fail=1;			\
@@ -1752,7 +1761,7 @@ check-texinfo: $(syntax_checks)
 	    | $(EGREP) -v 'setfilename|[{]filename[}]'			\
 	  && fail=1;							\
 	$(PERL) -e 1 2> /dev/null && { $(PERL) -ne			\
-	  '/\bPOSIX\b/ && !/\@acronym{POSIX}/ && !/^\* / || /{posix}/ and print,exit 1' \
+	  '$(BAD_POSIX_PERL) and print,exit 1'				\
 	  $(srcdir)/*.texi 2> /dev/null || fail=1; };			\
 	exit $$fail
 
@@ -1791,7 +1800,8 @@ sc-avoid-non-zero:
 
 # Use `zeros', not `zeroes' (nothing wrong with `zeroes'. just be consistent).
 sc-avoid-zeroes:
-	$(AM_V_GEN)$(EGREP) -i '$(_W)zeroes$(W_)' $(srcdir)/*.texi && exit 1 || :
+	$(AM_V_GEN)$(EGREP) -i '$(_W)zeroes$(W_)' $(srcdir)/*.texi \
+	  && exit 1 || :
 sc-lower-case-var:
 	$(AM_V_GEN)$(PERL) -e 1 \
 	  && $(PERL) -lne $(find_upper_case_var) $(srcdir)/*.texi

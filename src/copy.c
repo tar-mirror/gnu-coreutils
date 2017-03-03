@@ -1,5 +1,5 @@
 /* copy.c -- core functions for copying files and directories
-   Copyright (C) 1989-1991, 1995-2010 Free Software Foundation, Inc.
+   Copyright (C) 1989-1991, 1995-2011 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -354,7 +354,8 @@ set_owner (const struct cp_options *x, char const *dst_name, int dest_desc,
           && qset_acl (dst_name, dest_desc, restrictive_temp_mode) != 0)
         {
           if (! owner_failure_ok (x))
-            error (0, errno, _("clearing permissions for %s"), quote (dst_name));
+            error (0, errno, _("clearing permissions for %s"),
+                   quote (dst_name));
           return -x->require_preserve;
         }
     }

@@ -1,6 +1,6 @@
 ## DO NOT EDIT! GENERATED AUTOMATICALLY!
 ## Process this file with automake to produce Makefile.in.
-# Copyright (C) 2002-2010 Free Software Foundation, Inc.
+# Copyright (C) 2002-2011 Free Software Foundation, Inc.
 #
 # This file is free software, distributed under the terms of the GNU
 # General Public License.  As a special exception to the GNU General
@@ -158,7 +158,7 @@ BUILT_SOURCES += arpa/inet.h
 
 # We need the following in order to create <arpa/inet.h> when the system
 # doesn't have one.
-arpa/inet.h: arpa_inet.in.h $(WARN_ON_USE_H) $(ARG_NONNULL_H)
+arpa/inet.h: arpa_inet.in.h $(CXXDEFS_H) $(WARN_ON_USE_H) $(ARG_NONNULL_H)
 	$(AM_V_at)$(MKDIR_P) arpa
 	$(AM_V_GEN)rm -f $@-t $@ && \
 	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
@@ -172,6 +172,7 @@ arpa/inet.h: arpa_inet.in.h $(WARN_ON_USE_H) $(ARG_NONNULL_H)
 	      -e 's|@''GNULIB_INET_PTON''@|$(GNULIB_INET_PTON)|g' \
 	      -e 's|@''HAVE_DECL_INET_NTOP''@|$(HAVE_DECL_INET_NTOP)|g' \
 	      -e 's|@''HAVE_DECL_INET_PTON''@|$(HAVE_DECL_INET_PTON)|g' \
+	      -e '/definitions of _GL_FUNCDECL_RPL/r $(CXXDEFS_H)' \
 	      -e '/definition of _GL_ARG_NONNULL/r $(ARG_NONNULL_H)' \
 	      -e '/definition of _GL_WARN_ON_USE/r $(WARN_ON_USE_H)' \
 	      < $(srcdir)/arpa_inet.in.h; \
@@ -1858,10 +1859,12 @@ math.h: math.in.h $(CXXDEFS_H) $(ARG_NONNULL_H) $(WARN_ON_USE_H)
 	      -e 's|@''GNULIB_ACOSL''@|$(GNULIB_ACOSL)|g' \
 	      -e 's|@''GNULIB_ASINL''@|$(GNULIB_ASINL)|g' \
 	      -e 's|@''GNULIB_ATANL''@|$(GNULIB_ATANL)|g' \
+	      -e 's|@''GNULIB_CEIL''@|$(GNULIB_CEIL)|g' \
 	      -e 's|@''GNULIB_CEILF''@|$(GNULIB_CEILF)|g' \
 	      -e 's|@''GNULIB_CEILL''@|$(GNULIB_CEILL)|g' \
 	      -e 's|@''GNULIB_COSL''@|$(GNULIB_COSL)|g' \
 	      -e 's|@''GNULIB_EXPL''@|$(GNULIB_EXPL)|g' \
+	      -e 's|@''GNULIB_FLOOR''@|$(GNULIB_FLOOR)|g' \
 	      -e 's|@''GNULIB_FLOORF''@|$(GNULIB_FLOORF)|g' \
 	      -e 's|@''GNULIB_FLOORL''@|$(GNULIB_FLOORL)|g' \
 	      -e 's|@''GNULIB_FREXP''@|$(GNULIB_FREXP)|g' \
@@ -1919,8 +1922,10 @@ math.h: math.in.h $(CXXDEFS_H) $(ARG_NONNULL_H) $(WARN_ON_USE_H)
 	      -e 's|@''HAVE_DECL_TRUNC''@|$(HAVE_DECL_TRUNC)|g' \
 	      -e 's|@''HAVE_DECL_TRUNCF''@|$(HAVE_DECL_TRUNCF)|g' \
 	      -e 's|@''HAVE_DECL_TRUNCL''@|$(HAVE_DECL_TRUNCL)|g' \
+	      -e 's|@''REPLACE_CEIL''@|$(REPLACE_CEIL)|g' \
 	      -e 's|@''REPLACE_CEILF''@|$(REPLACE_CEILF)|g' \
 	      -e 's|@''REPLACE_CEILL''@|$(REPLACE_CEILL)|g' \
+	      -e 's|@''REPLACE_FLOOR''@|$(REPLACE_FLOOR)|g' \
 	      -e 's|@''REPLACE_FLOORF''@|$(REPLACE_FLOORF)|g' \
 	      -e 's|@''REPLACE_FLOORL''@|$(REPLACE_FLOORL)|g' \
 	      -e 's|@''REPLACE_FREXP''@|$(REPLACE_FREXP)|g' \
@@ -1936,6 +1941,8 @@ math.h: math.in.h $(CXXDEFS_H) $(ARG_NONNULL_H) $(WARN_ON_USE_H)
 	      -e 's|@''REPLACE_ROUNDL''@|$(REPLACE_ROUNDL)|g' \
 	      -e 's|@''REPLACE_SIGNBIT''@|$(REPLACE_SIGNBIT)|g' \
 	      -e 's|@''REPLACE_SIGNBIT_USING_GCC''@|$(REPLACE_SIGNBIT_USING_GCC)|g' \
+	      -e 's|@''REPLACE_TRUNC''@|$(REPLACE_TRUNC)|g' \
+	      -e 's|@''REPLACE_TRUNCF''@|$(REPLACE_TRUNCF)|g' \
 	      -e 's|@''REPLACE_TRUNCL''@|$(REPLACE_TRUNCL)|g' \
 	      -e '/definitions of _GL_FUNCDECL_RPL/r $(CXXDEFS_H)' \
 	      -e '/definition of _GL_ARG_NONNULL/r $(ARG_NONNULL_H)' \
@@ -3781,7 +3788,7 @@ time.h: time.in.h $(CXXDEFS_H) $(ARG_NONNULL_H) $(WARN_ON_USE_H)
 	      -e 's|@''GNULIB_STRPTIME''@|$(GNULIB_STRPTIME)|g' \
 	      -e 's|@''GNULIB_TIMEGM''@|$(GNULIB_TIMEGM)|g' \
 	      -e 's|@''GNULIB_TIME_R''@|$(GNULIB_TIME_R)|g' \
-	      -e 's|@''HAVE_LOCALTIME_R''@|$(HAVE_LOCALTIME_R)|g' \
+	      -e 's|@''HAVE_DECL_LOCALTIME_R''@|$(HAVE_DECL_LOCALTIME_R)|g' \
 	      -e 's|@''HAVE_NANOSLEEP''@|$(HAVE_NANOSLEEP)|g' \
 	      -e 's|@''HAVE_STRPTIME''@|$(HAVE_STRPTIME)|g' \
 	      -e 's|@''HAVE_TIMEGM''@|$(HAVE_TIMEGM)|g' \
@@ -3956,6 +3963,7 @@ unistd.h: unistd.in.h $(CXXDEFS_H) $(ARG_NONNULL_H) $(WARN_ON_USE_H)
 	      -e 's|@''REPLACE_FCHOWNAT''@|$(REPLACE_FCHOWNAT)|g' \
 	      -e 's|@''REPLACE_GETCWD''@|$(REPLACE_GETCWD)|g' \
 	      -e 's|@''REPLACE_GETDOMAINNAME''@|$(REPLACE_GETDOMAINNAME)|g' \
+	      -e 's|@''REPLACE_GETLOGIN_R''@|$(REPLACE_GETLOGIN_R)|g' \
 	      -e 's|@''REPLACE_GETGROUPS''@|$(REPLACE_GETGROUPS)|g' \
 	      -e 's|@''REPLACE_GETPAGESIZE''@|$(REPLACE_GETPAGESIZE)|g' \
 	      -e 's|@''REPLACE_LCHOWN''@|$(REPLACE_LCHOWN)|g' \

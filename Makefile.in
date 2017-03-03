@@ -17,7 +17,7 @@
 
 # Make coreutils.					-*-Makefile-*-
 
-# Copyright (C) 1990, 1993-2010 Free Software Foundation, Inc.
+# Copyright (C) 1990, 1993-2011 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -170,10 +170,10 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/00gnulib.m4 \
 	$(top_srcdir)/m4/open.m4 $(top_srcdir)/m4/openat.m4 \
 	$(top_srcdir)/m4/parse-datetime.m4 $(top_srcdir)/m4/pathmax.m4 \
 	$(top_srcdir)/m4/perl.m4 $(top_srcdir)/m4/perror.m4 \
-	$(top_srcdir)/m4/physmem.m4 $(top_srcdir)/m4/po.m4 \
-	$(top_srcdir)/m4/posix-shell.m4 $(top_srcdir)/m4/posixtm.m4 \
-	$(top_srcdir)/m4/posixver.m4 $(top_srcdir)/m4/prereq.m4 \
-	$(top_srcdir)/m4/printf-frexp.m4 \
+	$(top_srcdir)/m4/physmem.m4 $(top_srcdir)/m4/pipe.m4 \
+	$(top_srcdir)/m4/po.m4 $(top_srcdir)/m4/posix-shell.m4 \
+	$(top_srcdir)/m4/posixtm.m4 $(top_srcdir)/m4/posixver.m4 \
+	$(top_srcdir)/m4/prereq.m4 $(top_srcdir)/m4/printf-frexp.m4 \
 	$(top_srcdir)/m4/printf-frexpl.m4 $(top_srcdir)/m4/printf.m4 \
 	$(top_srcdir)/m4/priv-set.m4 $(top_srcdir)/m4/progtest.m4 \
 	$(top_srcdir)/m4/pthread.m4 $(top_srcdir)/m4/putenv.m4 \
@@ -383,6 +383,7 @@ GNULIB_BIND = @GNULIB_BIND@
 GNULIB_BTOWC = @GNULIB_BTOWC@
 GNULIB_CALLOC_POSIX = @GNULIB_CALLOC_POSIX@
 GNULIB_CANONICALIZE_FILE_NAME = @GNULIB_CANONICALIZE_FILE_NAME@
+GNULIB_CEIL = @GNULIB_CEIL@
 GNULIB_CEILF = @GNULIB_CEILF@
 GNULIB_CEILL = @GNULIB_CEILL@
 GNULIB_CHOWN = @GNULIB_CHOWN@
@@ -405,6 +406,7 @@ GNULIB_FCLOSE = @GNULIB_FCLOSE@
 GNULIB_FCNTL = @GNULIB_FCNTL@
 GNULIB_FDOPENDIR = @GNULIB_FDOPENDIR@
 GNULIB_FFLUSH = @GNULIB_FFLUSH@
+GNULIB_FLOOR = @GNULIB_FLOOR@
 GNULIB_FLOORF = @GNULIB_FLOORF@
 GNULIB_FLOORL = @GNULIB_FLOORL@
 GNULIB_FOPEN = @GNULIB_FOPEN@
@@ -662,6 +664,7 @@ HAVE_DECL_IMAXDIV = @HAVE_DECL_IMAXDIV@
 HAVE_DECL_INET_NTOP = @HAVE_DECL_INET_NTOP@
 HAVE_DECL_INET_PTON = @HAVE_DECL_INET_PTON@
 HAVE_DECL_LDEXPL = @HAVE_DECL_LDEXPL@
+HAVE_DECL_LOCALTIME_R = @HAVE_DECL_LOCALTIME_R@
 HAVE_DECL_LOGB = @HAVE_DECL_LOGB@
 HAVE_DECL_LOGL = @HAVE_DECL_LOGL@
 HAVE_DECL_MEMMEM = @HAVE_DECL_MEMMEM@
@@ -736,7 +739,6 @@ HAVE_LCHMOD = @HAVE_LCHMOD@
 HAVE_LCHOWN = @HAVE_LCHOWN@
 HAVE_LINK = @HAVE_LINK@
 HAVE_LINKAT = @HAVE_LINKAT@
-HAVE_LOCALTIME_R = @HAVE_LOCALTIME_R@
 HAVE_LOGL = @HAVE_LOGL@
 HAVE_LONG_LONG_INT = @HAVE_LONG_LONG_INT@
 HAVE_LSTAT = @HAVE_LSTAT@
@@ -1019,6 +1021,7 @@ RANLIB = @RANLIB@
 REPLACE_BTOWC = @REPLACE_BTOWC@
 REPLACE_CALLOC = @REPLACE_CALLOC@
 REPLACE_CANONICALIZE_FILE_NAME = @REPLACE_CANONICALIZE_FILE_NAME@
+REPLACE_CEIL = @REPLACE_CEIL@
 REPLACE_CEILF = @REPLACE_CEILF@
 REPLACE_CEILL = @REPLACE_CEILL@
 REPLACE_CHOWN = @REPLACE_CHOWN@
@@ -1034,6 +1037,7 @@ REPLACE_FCLOSE = @REPLACE_FCLOSE@
 REPLACE_FCNTL = @REPLACE_FCNTL@
 REPLACE_FDOPENDIR = @REPLACE_FDOPENDIR@
 REPLACE_FFLUSH = @REPLACE_FFLUSH@
+REPLACE_FLOOR = @REPLACE_FLOOR@
 REPLACE_FLOORF = @REPLACE_FLOORF@
 REPLACE_FLOORL = @REPLACE_FLOORL@
 REPLACE_FOPEN = @REPLACE_FOPEN@
@@ -1054,6 +1058,7 @@ REPLACE_GETDELIM = @REPLACE_GETDELIM@
 REPLACE_GETDOMAINNAME = @REPLACE_GETDOMAINNAME@
 REPLACE_GETGROUPS = @REPLACE_GETGROUPS@
 REPLACE_GETLINE = @REPLACE_GETLINE@
+REPLACE_GETLOGIN_R = @REPLACE_GETLOGIN_R@
 REPLACE_GETPAGESIZE = @REPLACE_GETPAGESIZE@
 REPLACE_GETTIMEOFDAY = @REPLACE_GETTIMEOFDAY@
 REPLACE_HUGE_VAL = @REPLACE_HUGE_VAL@
@@ -1135,6 +1140,8 @@ REPLACE_STRTOK_R = @REPLACE_STRTOK_R@
 REPLACE_SYMLINK = @REPLACE_SYMLINK@
 REPLACE_TIMEGM = @REPLACE_TIMEGM@
 REPLACE_TMPFILE = @REPLACE_TMPFILE@
+REPLACE_TRUNC = @REPLACE_TRUNC@
+REPLACE_TRUNCF = @REPLACE_TRUNCF@
 REPLACE_TRUNCL = @REPLACE_TRUNCL@
 REPLACE_TTYNAME_R = @REPLACE_TTYNAME_R@
 REPLACE_UNLINK = @REPLACE_UNLINK@
@@ -1300,9 +1307,11 @@ syntax_check_exceptions = \
 EXTRA_DIST = \
   $(changelog_etc)			\
   $(syntax_check_exceptions)		\
+  .mailmap				\
   .prev-version				\
   .version				\
   .vg-suppressions			\
+  THANKS.in				\
   THANKS-to-translators			\
   THANKStt.in				\
   bootstrap				\
@@ -1311,7 +1320,8 @@ EXTRA_DIST = \
   cfg.mk				\
   dist-check.mk				\
   gl/modules/getloadavg.diff		\
-  maint.mk
+  maint.mk				\
+  thanks-gen
 
 ACLOCAL_AMFLAGS = -I m4
 
@@ -1329,6 +1339,14 @@ BUILT_SOURCES = .version
 gen_start_date = 2008-02-08
 DISTCLEANFILES = VERSION
 MAINTAINERCLEANFILES = THANKS-to-translators
+
+# Sort in traditional ASCII order, regardless of the current locale;
+# otherwise we may get into trouble with distinct strings that the
+# current locale considers to be equal.
+ASSORT = LC_ALL=C sort
+
+# Extract all lines up to the first one starting with "##".
+prologue = perl -ne '/^\#\#/ and exit; print' $(srcdir)/THANKS.in
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -1890,6 +1908,20 @@ check-ls-dircolors:
 	  |sed -n '/^  *"/p'|tr , '\n'|sed 's/^  *//'		\
 	  |sed -n 's/^"\(..\)"/\1/p'|sort -u);			\
 	test "$$dc" = "$$ls"
+
+THANKS: THANKS.in Makefile.am .mailmap thanks-gen .version
+	$(AM_V_GEN)							\
+	{								\
+	  $(prologue); echo;						\
+	  { perl -ne '/^$$/.../^$$/ and print' $(srcdir)/THANKS.in	\
+	      | grep -v '^$$' | perl -pe 's/  +/\0/';			\
+	    git log --pretty=format:'%aN%x00%aE'			\
+	      | $(ASSORT) -u;						\
+	  } | $(srcdir)/thanks-gen					\
+	    | LC_ALL=en_US.UTF-8 sort -f;				\
+	  echo;								\
+	  printf ';; %s\n' 'Local Variables:' 'coding: utf-8' End:;	\
+	} > $@-t && mv $@-t $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

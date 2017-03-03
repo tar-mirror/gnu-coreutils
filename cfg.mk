@@ -1,5 +1,5 @@
 # Customize maint.mk                           -*- makefile -*-
-# Copyright (C) 2003-2010 Free Software Foundation, Inc.
+# Copyright (C) 2003-2011 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ bootstrap-tools = autoconf,automake,gnulib,bison
 # Now that we have better tests, make this the default.
 export VERBOSE = yes
 
-old_NEWS_hash = e2a254a0d4c81397994ea10a15663ac3
+old_NEWS_hash = 5147e339b49d47675c34d0362060e973
 
 # Add an exemption for sc_makefile_at_at_check.
 _makefile_at_at_check_exceptions = ' && !/^cu_install_program =/'
@@ -149,6 +149,23 @@ ALL_RECURSIVE_TARGETS += sc_check-AUTHORS
 sc_check-AUTHORS:
 	@$(MAKE) -s -C src $@
 
+# Look for lines longer than 80 characters, except omit:
+# - program-generated long lines in diff headers,
+# - tests involving long checksum lines, and
+# - the 'pr' test cases.
+LINE_LEN_MAX = 80
+FILTER_LONG_LINES =						\
+  /^[^:]*\.diff:[^:]*:@@ / d;					\
+  \|^[^:]*tests/misc/sha[0-9]*sum[-:]| d;			\
+  \|^[^:]*tests/pr/|{ \|^[^:]*tests/pr/pr-tests:| !d; };
+sc_long_lines:
+	@files=$$($(VC_LIST_EXCEPT))					\
+	halt='line(s) with more than $(LINE_LEN_MAX) characters; reindent'; \
+	for file in $$files; do						\
+	  expand $$file | grep -nE '^.{$(LINE_LEN_MAX)}.' |		\
+	  sed -e "s|^|$$file:|" -e '$(FILTER_LONG_LINES)';		\
+	done | grep . && { msg="$$halt" $(_sc_say_and_exit) } || :
+
 # Option descriptions should not start with a capital letter
 # One could grep source directly as follows:
 # grep -E " {2,6}-.*[^.]  [A-Z][a-z]" $$($(VC_LIST_EXCEPT) | grep '\.c$$')
@@ -222,7 +239,8 @@ sc_prohibit_emacs__indent_tabs_mode__setting:
 	  $(_sc_search_regexp)
 
 # Ensure that each file that contains fail=1 also contains fail=0.
-# Otherwise, setting file=1 in the environment would make tests fail unexpectedly.
+# Otherwise, setting file=1 in the environment would make tests fail
+# unexpectedly.
 sc_prohibit_fail_0:
 	@prohibit='\<fail=0\>'						\
 	halt='fail=0 initialization'					\

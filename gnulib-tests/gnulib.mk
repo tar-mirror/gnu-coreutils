@@ -1,6 +1,6 @@
 ## DO NOT EDIT! GENERATED AUTOMATICALLY!
 ## Process this file with automake to produce Makefile.in.
-# Copyright (C) 2002-2010 Free Software Foundation, Inc.
+# Copyright (C) 2002-2011 Free Software Foundation, Inc.
 #
 # This file is free software, distributed under the terms of the GNU
 # General Public License.  As a special exception to the GNU General
@@ -1188,6 +1188,23 @@ check_PROGRAMS += test-perror
 EXTRA_DIST += signature.h test-perror.c test-perror.sh
 
 ## end   gnulib module perror-tests
+
+## begin gnulib module pipe-posix
+
+
+EXTRA_DIST += pipe.c
+
+EXTRA_libtests_a_SOURCES += pipe.c
+
+## end   gnulib module pipe-posix
+
+## begin gnulib module pipe-posix-tests
+
+TESTS += test-pipe
+check_PROGRAMS += test-pipe
+EXTRA_DIST += test-pipe.c signature.h macros.h
+
+## end   gnulib module pipe-posix-tests
 
 ## begin gnulib module posixtm-tests
 

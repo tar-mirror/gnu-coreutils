@@ -1,5 +1,5 @@
 /* remove.c -- core functions for removing files and directories
-   Copyright (C) 1988, 1990-1991, 1994-2010 Free Software Foundation, Inc.
+   Copyright (C) 1988, 1990-1991, 1994-2011 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-/* Extracted from rm.c and librarified, then rewritten twice by Jim Meyering.  */
+/* Extracted from rm.c, librarified, then rewritten twice by Jim Meyering.  */
 
 #include <config.h>
 #include <stdio.h>

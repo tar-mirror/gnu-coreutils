@@ -1,7 +1,7 @@
 # -*- buffer-read-only: t -*- vi: set ro:
 # DO NOT EDIT! GENERATED AUTOMATICALLY!
 # DO NOT EDIT! GENERATED AUTOMATICALLY!
-# Copyright (C) 2002-2010 Free Software Foundation, Inc.
+# Copyright (C) 2002-2011 Free Software Foundation, Inc.
 #
 # This file is free software, distributed under the terms of the GNU
 # General Public License.  As a special exception to the GNU General
@@ -390,6 +390,8 @@ AC_DEFUN([gl_EARLY],
   # Code from module perror:
   # Code from module perror-tests:
   # Code from module physmem:
+  # Code from module pipe-posix:
+  # Code from module pipe-posix-tests:
   # Code from module posix-shell:
   # Code from module posixtm:
   # Code from module posixtm-tests:
@@ -1294,6 +1296,7 @@ AC_DEFUN([gl_INIT],
   # Code from module snprintf:
   gl_FUNC_SNPRINTF
   gl_STDIO_MODULE_INDICATOR([snprintf])
+  gl_MODULE_INDICATOR([snprintf])
   # Code from module socketlib:
   gl_SOCKETLIB
   # Code from module sockets:
@@ -1672,8 +1675,10 @@ changequote([, ])dnl
   AC_CHECK_FUNCS_ONCE([getegid])
   gl_FUNC_PERROR
   gl_STRING_MODULE_INDICATOR([perror])
+  gl_FUNC_PIPE
+  gl_UNISTD_MODULE_INDICATOR([pipe])
   gl_FUNC_READ_FILE
-  AC_CHECK_HEADERS_ONCE([unistd.h sys/wait.h])
+  AC_CHECK_HEADERS_ONCE([sys/wait.h])
   AC_REQUIRE([gl_HEADER_SYS_SOCKET])
   if test "$ac_cv_header_winsock2_h" = yes; then
     AC_LIBOBJ([setsockopt])
@@ -2602,6 +2607,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/perl.m4
   m4/perror.m4
   m4/physmem.m4
+  m4/pipe.m4
   m4/posix-shell.m4
   m4/posixtm.m4
   m4/posixver.m4
@@ -2936,6 +2942,7 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-parse-datetime.c
   tests/test-perror.c
   tests/test-perror.sh
+  tests/test-pipe.c
   tests/test-posixtm.c
   tests/test-printf-frexp.c
   tests/test-printf-frexpl.c
@@ -3064,6 +3071,7 @@ AC_DEFUN([gl_FILE_LIST], [
   tests=lib/ioctl.c
   tests=lib/listen.c
   tests=lib/perror.c
+  tests=lib/pipe.c
   tests=lib/read-file.c
   tests=lib/read-file.h
   tests=lib/setsockopt.c

@@ -1,7 +1,7 @@
 /* -*- buffer-read-only: t -*- vi: set ro: */
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 /* Tests of linkat.
-   Copyright (C) 2009, 2010 Free Software Foundation, Inc.
+   Copyright (C) 2009-2011 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -55,6 +55,17 @@ do_link (char const *name1, char const *name2)
   return linkat (dfd1, name1, dfd2, name2, flag);
 }
 
+/* Can we expect that link() and linkat(), when called on a symlink,
+   increment the link count of that symlink?  */
+#if LINK_FOLLOWS_SYMLINKS == 0
+# define EXPECT_LINK_HARDLINKS_SYMLINKS 1
+#elif LINK_FOLLOWS_SYMLINKS == -1
+extern int __xpg4;
+# define EXPECT_LINK_HARDLINKS_SYMLINKS (__xpg4 == 0)
+#else
+# define EXPECT_LINK_HARDLINKS_SYMLINKS 0
+#endif
+
 /* Wrapper to see if two symlinks act the same.  */
 static void
 check_same_link (char const *name1, char const *name2)
@@ -70,7 +81,7 @@ check_same_link (char const *name1, char const *name2)
   ASSERT (contents1);
   ASSERT (contents2);
   ASSERT (strcmp (contents1, contents2) == 0);
-  if (!LINK_FOLLOWS_SYMLINKS)
+  if (EXPECT_LINK_HARDLINKS_SYMLINKS)
     ASSERT (SAME_INODE (st1, st2));
   free (contents1);
   free (contents2);
@@ -182,7 +193,7 @@ main (void)
   ASSERT (errno == EEXIST || errno == EPERM || errno == EACCES);
   errno = 0;
   ASSERT (linkat (dfd, BASE "link1", dfd, BASE "sub1/", 0) == -1);
-  ASSERT (errno == EEXIST);
+  ASSERT (errno == EEXIST || errno == ENOTDIR);
   errno = 0;
   ASSERT (linkat (dfd, BASE "link1", dfd, BASE "sub1",
                   AT_SYMLINK_FOLLOW) == -1);

@@ -1,5 +1,5 @@
 /* csplit - split a file into sections determined by context lines
-   Copyright (C) 1991, 1995-2010 Free Software Foundation, Inc.
+   Copyright (C) 1991, 1995-2011 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -917,19 +917,27 @@ make_filename (unsigned int num)
 static void
 create_output_file (void)
 {
-  sigset_t oldset;
   bool fopen_ok;
   int fopen_errno;
 
   output_filename = make_filename (files_created);
 
-  /* Create the output file in a critical section, to avoid races.  */
-  sigprocmask (SIG_BLOCK, &caught_signals, &oldset);
-  output_stream = fopen (output_filename, "w");
-  fopen_ok = (output_stream != NULL);
-  fopen_errno = errno;
-  files_created += fopen_ok;
-  sigprocmask (SIG_SETMASK, &oldset, NULL);
+  if (files_created == UINT_MAX)
+    {
+      fopen_ok = false;
+      fopen_errno = EOVERFLOW;
+    }
+  else
+    {
+      /* Create the output file in a critical section, to avoid races.  */
+      sigset_t oldset;
+      sigprocmask (SIG_BLOCK, &caught_signals, &oldset);
+      output_stream = fopen (output_filename, "w");
+      fopen_ok = (output_stream != NULL);
+      fopen_errno = errno;
+      files_created += fopen_ok;
+      sigprocmask (SIG_SETMASK, &oldset, NULL);
+    }
 
   if (! fopen_ok)
     {

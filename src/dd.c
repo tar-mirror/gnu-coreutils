@@ -1,5 +1,5 @@
 /* dd -- convert a file while copying it.
-   Copyright (C) 1985, 1990-1991, 1995-2010 Free Software Foundation, Inc.
+   Copyright (C) 1985, 1990-1991, 1995-2011 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -1939,7 +1939,8 @@ main (int argc, char **argv)
                   || S_ISDIR (stdout_stat.st_mode)
                   || S_TYPEISSHM (&stdout_stat))
                 error (EXIT_FAILURE, ftruncate_errno,
-                   _("failed to truncate to %"PRIuMAX" bytes in output file %s"),
+                       _("failed to truncate to %"PRIuMAX" bytes"
+                         " in output file %s"),
                        size, quote (output_file));
             }
         }

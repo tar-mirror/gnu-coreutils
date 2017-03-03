@@ -2,7 +2,7 @@
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 /* A substitute for ISO C99 <wctype.h>, for platforms that lack it.
 
-   Copyright (C) 2006-2010 Free Software Foundation, Inc.
+   Copyright (C) 2006-2011 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -286,9 +286,9 @@ towupper
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
 #   define iswblank rpl_iswblank
 #  endif
-extern int rpl_iswblank (wint_t wc);
+_GL_FUNCDECL_RPL (iswblank, int, (wint_t wc));
 # else
-extern int iswblank (wint_t wc);
+_GL_FUNCDECL_SYS (iswblank, int, (wint_t wc));
 # endif
 
 #endif

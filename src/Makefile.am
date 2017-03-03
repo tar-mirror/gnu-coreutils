@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in -*-Makefile-*-
 
-## Copyright (C) 1990-1991, 1993-2010 Free Software Foundation, Inc.
+## Copyright (C) 1990-1991, 1993-2011 Free Software Foundation, Inc.
 
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -726,7 +726,7 @@ sc_tight_scope: $(bin_PROGRAMS)
 	( printf 'main\nusage\n_.*\n';					\
 	  grep -h -A1 '^extern .*[^;]$$' $$src				\
 	    | grep -vE '^(extern |--)' | sed 's/ .*//';			\
-	  perl -ne '/^extern (?:enum )?\S+ (\S*) \(/ and print "$$1\n"' $$hdr;	\
+	  perl -ne '/^extern (?:enum )?\S+ (\S*) \(/ and print "$$1\n"' $$hdr; \
 	) | $(ASSORT) -u | sed 's/^/^/;s/$$/$$/' > $$t;			\
 	nm -e *.$(OBJEXT)						\
 	    | sed -n 's/.* T //p'					\

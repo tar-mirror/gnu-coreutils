@@ -1,5 +1,5 @@
 /* install - copy files and set attributes
-   Copyright (C) 1989-1991, 1995-2010 Free Software Foundation, Inc.
+   Copyright (C) 1989-1991, 1995-2011 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -986,7 +986,8 @@ Mandatory arguments to long options are mandatory for short options too.\n\
 "), stdout);
       fputs (_("\
       --preserve-context  preserve SELinux security context\n\
-  -Z, --context=CONTEXT  set SELinux security context of files and directories\n\
+  -Z, --context=CONTEXT  set SELinux security context of files and directories\
+\n\
 "), stdout);
 
       fputs (HELP_OPTION_DESCRIPTION, stdout);

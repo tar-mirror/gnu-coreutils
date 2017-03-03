@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # Test join.
 
-# Copyright (C) 2008-2010 Free Software Foundation, Inc.
+# Copyright (C) 2008-2011 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -216,7 +216,8 @@ my @tv = (
 # '--header' always outputs headers from the first file
 # even if the headers from the second file don't match
 ['header-5', '--header',
- [ "ID1 Name\n1 A\n2 B\n", "ID2 Color\n1 red\n"], "ID1 Name Color\n1 A red\n", 0],
+ [ "ID1 Name\n1 A\n2 B\n", "ID2 Color\n1 red\n"],
+   "ID1 Name Color\n1 A red\n", 0],
 
 );
 

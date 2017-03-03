@@ -1,5 +1,5 @@
 /* touch -- change modification and access times of files
-   Copyright (C) 1987, 1989-1991, 1995-2005, 2007-2010 Free Software
+   Copyright (C) 1987, 1989-1991, 1995-2005, 2007-2011 Free Software
    Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
@@ -132,9 +132,11 @@ touch (const char *file)
   else if (! (no_create || no_dereference))
     {
       /* Try to open FILE, creating it if necessary.  */
+      int default_permissions =
+        S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH;
       fd = fd_reopen (STDIN_FILENO, file,
                       O_WRONLY | O_CREAT | O_NONBLOCK | O_NOCTTY,
-                      S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
+                      default_permissions);
 
       /* Don't save a copy of errno if it's EISDIR, since that would lead
          touch to give a bogus diagnostic for e.g., `touch /' (assuming

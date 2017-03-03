@@ -1,7 +1,7 @@
 #!/bin/sh
 # Test the --interactive[=WHEN] changes added to coreutils 6.0
 
-# Copyright (C) 2006-2010 Free Software Foundation, Inc.
+# Copyright (C) 2006-2011 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -68,15 +68,15 @@ test -f file4-1 || fail=1
 
 cat <<\EOF > expout || fail=1
 EOF
-cat <<\EOF > experr || fail=1
+sed 's/@remove_empty/rm: remove regular empty file/g' <<\EOF > experr || fail=1
 no WHEN
-rm: remove regular empty file `file1-1'? rm: remove regular empty file `file1-2'? .
+@remove_empty `file1-1'? @remove_empty `file1-2'? .
 WHEN=never
 .
 WHEN=once
 rm: remove all arguments recursively? .
 WHEN=always
-rm: remove regular empty file `file4-1'? rm: remove regular empty file `file4-2'? .
+@remove_empty `file4-1'? @remove_empty `file4-2'? .
 -f overrides --interactive
 .
 --interactive overrides -f

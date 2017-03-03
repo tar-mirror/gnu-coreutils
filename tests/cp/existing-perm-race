@@ -1,7 +1,7 @@
 #!/bin/sh
 # Make sure cp -p isn't too generous with existing file permissions.
 
-# Copyright (C) 2006-2010 Free Software Foundation, Inc.
+# Copyright (C) 2006-2011 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -71,8 +71,8 @@ case $mode in
   # a $g2 process can maintain an open file descriptor to the
   # destination, but it's safer anyway.
   -rw-r-----*)
-    # If the file has group $g1 and is group-readable, that is definitely
-    # bogus, as neither the source nor the destination was readable to group $g1.
+    # If the file has group $g1 and is group-readable, that is definitely bogus,
+    # as neither the source nor the destination was readable to group $g1.
     test "$group" = "$g1" && fail=1;;
 
   *) fail=1;;

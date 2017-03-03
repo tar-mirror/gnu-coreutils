@@ -1,4 +1,132 @@
+2011-01-04  Jim Meyering  <meyering@redhat.com>
+
+	version 8.9
+	* NEWS: Record release date.
+
+	build: update gnulib to latest; portability fixes
+
+2011-01-01  Jim Meyering  <meyering@redhat.com>
+
+	maint: update all copyright year number ranges
+	Run "make update-copyright".
+
+	build: update gnulib for version-etc copyright year update
+	* tests/sample-test: Update copyright to 2011, to appease syntax-check.
+
+	maint: generate much of the THANKS file
+	Before this change, we had a tendency to manually list each
+	contributor's name in THANKS.  Now, each commit "Author" is
+	included in the generated THANKS file automatically, and most
+	of the old THANKS file is now a template, THANKS.in.
+	We'll still have to manually list the names of people who report
+	problems without a usable patch.
+
+	* THANKS.in: New file, derived from THANKS, but removing names of
+	those who are listed as git log 'Author:'s.
+	* THANKS: Remove file.
+	* thanks-gen: New file.
+	* Makefile.am (THANKS): New rule.
+	(EXTRA_DIST): Add .mailmap, THANKS.in and thanks-gen.
+	* .gitignore: Add THANKS and THANKS-to-translators.
+	* .mailmap: Unify on single address and name-spelling per contributor.
+
+2010-12-31  Eric Blake  <eblake@redhat.com>
+
+	maint: update to latest gnulib, for testsuite improvement
+	* gnulib: Update to latest for init.sh fix.
+	* bootstrap: Resync from gnulib.
+	* tests/init.sh: Likewise.
+
+2010-12-30  Eric Blake  <eblake@redhat.com>
+
+	maint: allow gettext 0.17 again
+	Commit 041c9c47 traded the 'gettext' module for the lighter 'gettext-h'
+	module, so as to not require the latest gettext release (we only need
+	the latest release if we ship gettext as a dependent library, but
+	coreutils has long preferred to use it as an external library).
+	But that commit overlooked two places necessary to allow the use of
+	gettext 0.17.
+
+	This does not force you to downgrade (using gettext 0.18.1.1 is still
+	just fine), nor does it affect tarballs (once a tarball is built
+	with a given gettext version, it can be built on other machines
+	regardless of what gettext version is present).
+
+	* bootstrap.conf (buildreq): Relax prerequisite.
+	* configure.ac (AM_GNU_GETTEXT_VERSION): Likewise.
+
+2010-12-30  Pádraig Brady  <P@draigBrady.com>
+
+	split: fix the suffix length calculation
+	* src/split.c (set_suffix_length): Only auto-calculate
+	the suffix length when the number of files is specified.
+	* tests/misc/split-a: Add a case to trigger the bug,
+	and exercise the suffix length auto-calculation.
+	* NEWS: Mention the fix.
+	Reported by Dmitry V. Levin and Sergey Vlasov at
+	https://bugzilla.altlinux.org/show_bug.cgi?id=24841
+
+2010-12-28  Paul Eggert  <eggert@cs.ucla.edu>
+
+	coreutils: keep lines within 80-column limits
+	* cfg.mk (LINE_LEN_MAX, FILTER_LONG_LINES): New macros.
+	(sc_long_lines): New rule.
+	* HACKING: Use shorter URLs to the same material.
+	* doc/Makefile.am, doc/coreutils.texi, m4/boottime.m4:
+	* man/help2man, man/stdbuf.x, src/Makefile.am, src/cat.c, src/copy.c:
+	* src/cp.c, src/dd.c, src/df.c, src/du.c, src/groups.c, src/install.c:
+	* src/ls.c, src/md5sum.c, src/mv.c, src/od.c, src/pinky.c, src/ptx.c:
+	* src/readlink.c, src/remove.c, src/rmdir.c, src/setuidgid.c:
+	* src/sort.c, src/tail.c, src/touch.c, tests/Coreutils.pm:
+	* tests/cp/existing-perm-race, tests/cp/perm, tests/cp/preserve-gid:
+	* tests/du/2g, tests/du/long-from-unreadable, tests/init.sh:
+	* tests/install/basic-1, tests/ls/nameless-uid:
+	* tests/ls/readdir-mountpoint-inode, tests/misc/chroot-credentials:
+	* tests/misc/cut, tests/misc/date, tests/misc/join, tests/misc/md5sum:
+	* tests/misc/sha1sum, tests/misc/sha224sum, tests/misc/sort:
+	* tests/misc/sort-continue, tests/misc/sort-files0-from:
+	* tests/misc/sort-rand, tests/misc/stdbuf, tests/misc/tr:
+	* tests/misc/uniq, tests/mv/atomic, tests/mv/part-fail:
+	* tests/mv/part-symlink, tests/mv/sticky-to-xpart, tests/pr/pr-tests:
+	* tests/rm/fail-2eperm, tests/rm/interactive-always:
+	Reformat to fit within 80 columns.
+	* doc/Makefile.am (BAD_POSIX_PERL): New macro.
+	* doc/coreutils.texi: Reword slightly, to make menus and
+	index lines shorter.
+	* src/md5sum.c: Redo --help output so that it fits within 79
+	columns, since that's a bit more portable and all the other --help
+	strings fit in 79 columns.
+
+2010-12-24  Jim Meyering  <meyering@redhat.com>
+
+	maint: avoid syntax-check failure due to unused #include
+	* src/getlimits.c: Don't include "c-ctype.h"; no longer used.
+
+2010-12-23  Paul Eggert  <eggert@cs.ucla.edu>
+
+	csplit: diagnose file counter wraparound
+	* src/csplit.c (create_output_file): Detect overflow when the
+	file counter wraps around, and exit with a diagnostic.  Formerly
+	the code silently wrapped around and wrote to the wrong file,
+	losing output data.
+
+	sort: minor performance tweak with num_processors
+	* src/sort.c (main): Don't invoke num_processors twice.
+
+	getlimits: port to hosts with very wide int, or non-ASCII
+	* src/getlimits.c (decimal_ascii_add): Remove, replacing with ...
+	(decimal_absval_add_one): New function, with different signature,
+	which does not assume ASCII.  All callers changed.
+	(print_int): Remove assumptions that integers fit in 206 bits, and
+	that characters are ASCII.  These assumptions are portable in
+	practice but are easy to remove here.
+
 2010-12-22  Jim Meyering  <meyering@redhat.com>
+
+	post-release administrivia
+	* NEWS: Add header line for next release.
+	* .prev-version: Record previous version.
+	* cfg.mk (old_NEWS_hash): Auto-update.
 
 	version 8.8
 	* NEWS: Record release date.

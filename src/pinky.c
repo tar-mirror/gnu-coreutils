@@ -1,5 +1,5 @@
 /* GNU's pinky.
-   Copyright (C) 1992-1997, 1999-2006, 2008-2010 Free Software Foundation, Inc.
+   Copyright (C) 1992-1997, 1999-2006, 2008-2011 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -220,7 +220,7 @@ print_entry (const STRUCT_UTMP *utmp_ent)
   else
     {
       strcpy (line, DEV_DIR_WITH_TRAILING_SLASH);
-      strncpy (line + DEV_DIR_LEN, utmp_ent->ut_line, sizeof (utmp_ent->ut_line));
+      strncpy (line + DEV_DIR_LEN, utmp_ent->ut_line, sizeof utmp_ent->ut_line);
       line[DEV_DIR_LEN + sizeof (utmp_ent->ut_line)] = '\0';
     }
 

@@ -13,8 +13,8 @@
 
 m4_ifndef([AC_AUTOCONF_VERSION],
   [m4_copy([m4_PACKAGE_VERSION], [AC_AUTOCONF_VERSION])])dnl
-m4_if(m4_defn([AC_AUTOCONF_VERSION]), [2.67.65-9144],,
-[m4_warning([this file was generated for autoconf 2.67.65-9144.
+m4_if(m4_defn([AC_AUTOCONF_VERSION]), [2.68.11-45b92],,
+[m4_warning([this file was generated for autoconf 2.68.11-45b92.
 You have another version of autoconf.  It may work, but is not guaranteed to.
 If you have problems, you may need to regenerate the build system entirely.
 To do so, use the procedure documented by the package, typically `autoreconf'.])])
@@ -151,7 +151,7 @@ fi])])
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
 
-# serial 12
+# serial 11
 
 # There are a few dirty hacks below to avoid letting `AC_PROG_CC' be
 # written in clear, in which case automake, when reading aclocal.m4,
@@ -314,13 +314,9 @@ AC_SUBST([DEPDIR], ["${am__leading_dot}deps"])dnl
 # AM_DEP_TRACK
 # ------------
 AC_DEFUN([AM_DEP_TRACK],
-[AC_ARG_ENABLE([dependency-tracking], [dnl
-AS_HELP_STRING(
-  [--enable-dependency-tracking],
-  [do not reject slow dependency extractors])
-AS_HELP_STRING(
-  [--disable-dependency-tracking],
-  [speeds up one-time build])])
+[AC_ARG_ENABLE(dependency-tracking,
+[  --disable-dependency-tracking  speeds up one-time build
+  --enable-dependency-tracking   do not reject slow dependency extractors])
 if test "x$enable_dependency_tracking" != xno; then
   am_depcomp="$ac_aux_dir/depcomp"
   AMDEPBACKSLASH='\'
@@ -1282,6 +1278,7 @@ m4_include([m4/pathmax.m4])
 m4_include([m4/perl.m4])
 m4_include([m4/perror.m4])
 m4_include([m4/physmem.m4])
+m4_include([m4/pipe.m4])
 m4_include([m4/po.m4])
 m4_include([m4/posix-shell.m4])
 m4_include([m4/posixtm.m4])
