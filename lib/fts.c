@@ -1,6 +1,6 @@
 /* Traverse a file hierarchy.
 
-   Copyright (C) 2004, 2005 Free Software Foundation, Inc.
+   Copyright (C) 2004, 2005, 2006 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -203,10 +203,7 @@ static int
 internal_function
 diropen (char const *dir)
 {
-  int fd = open (dir, O_RDONLY | O_DIRECTORY);
-  if (fd < 0)
-    fd = open (dir, O_WRONLY | O_DIRECTORY);
-  return fd;
+  return open (dir, O_RDONLY | O_DIRECTORY | O_NOCTTY | O_NONBLOCK);
 }
 
 FTS *
@@ -244,8 +241,11 @@ fts_open (char * const *argv,
 #ifndef MAXPATHLEN
 # define MAXPATHLEN 1024
 #endif
-	if (! fts_palloc(sp, MAX(fts_maxarglen(argv), MAXPATHLEN)))
-		goto mem1;
+	{
+	  size_t maxarglen = fts_maxarglen(argv);
+	  if (! fts_palloc(sp, MAX(maxarglen, MAXPATHLEN)))
+		  goto mem1;
+	}
 
 	/* Allocate/initialize root's parent. */
 	if ((parent = fts_alloc(sp, "", 0)) == NULL)
@@ -524,6 +524,7 @@ next:	tmp = p;
 		if (p->fts_level == FTS_ROOTLEVEL) {
 			if (FCHDIR(sp, sp->fts_rfd)) {
 				SET(FTS_STOP);
+				sp->fts_cur = p;
 				return (NULL);
 			}
 			fts_load(sp, p);
@@ -694,7 +695,9 @@ fts_children (register FTS *sp, int instr)
 		return (sp->fts_child = NULL);
 	sp->fts_child = fts_build(sp, instr);
 	if (fchdir(fd)) {
+		int saved_errno = errno;
 		(void)close(fd);
+		__set_errno (saved_errno);
 		return (NULL);
 	}
 	(void)close(fd);
@@ -1067,7 +1070,8 @@ fts_stat(FTS *sp, register FTSENT *p, bool follow)
 	if (ISSET(FTS_LOGICAL) || follow) {
 		if (stat(p->fts_accpath, sbp)) {
 			saved_errno = errno;
-			if (!lstat(p->fts_accpath, sbp)) {
+			if (errno == ENOENT
+			    && lstat(p->fts_accpath, sbp) == 0) {
 				__set_errno (0);
 				return (FTS_SLNONE);
 			}

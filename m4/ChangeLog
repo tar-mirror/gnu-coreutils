@@ -1,3 +1,50 @@
+2006-01-10  Jim Meyering  <jim@meyering.net>
+
+	* fpending.m4: Also include <stdio.h>, for Dragonfly.
+	Patch by Joerg Sonnenberger.
+
+2005-12-13  Paul Eggert  <eggert@cs.ucla.edu>
+
+	* stdbool.m4 (AC_HEADER_STDBOOL): Check for buggy compiler that
+	has _Bool but mishandles _Bool |= _Bool.
+
+2005-12-07  Paul Eggert  <eggert@cs.ucla.edu>
+
+	* stat-time.m4 (gl_STAT_TIME): Add check for
+	TYPEOF_STRUCT_STAT_ST_ATIM_IS_STRUCT_TIMESPEC, to fix IRIX 5.3
+	porting problem reported by Georg Schwarz in
+	<http://lists.gnu.org/archive/html/bug-coreutils/2005-12/msg00083.html>.
+
+2005-12-01  Paul Eggert  <eggert@cs.ucla.edu>
+
+	* regex.m4 (gl_REGEX): Check whether off_t can be used in a switch
+	statement, to work around an HP-UX 10.20 compiler bug reported by
+	Peter O'Gorman.
+
+2005-12-01  Bruno Haible  <bruno@clisp.org>
+
+	Import from gnulib.
+	* mbchar.m4 (gl_MBCHAR): Check for wchar.h and wctype.h. Don't compile
+	mbchar.c if they are not both present.
+	* mbiter.m4 (gl_MBITER): Likewise.
+	* strstr.m4 (gl_PREREQ_STRSTR): Use AC_REQUIRE.
+	* strcase.m4 (gl_PREREQ_STRCASECMP): Likewise.
+
+2005-11-25  Paul Eggert  <eggert@cs.ucla.edu>
+
+	* stdbool.m4 (gl_STDBOOL_H): New macro, from gnulib.
+	(AC_HEADER_STDBOOL): Sync with gnulib.
+
+2005-11-20  Jim Meyering  <jim@meyering.net>
+
+	* c.m4: Remove spurious space-before-TAB.
+
+2005-11-18  Paul Eggert  <eggert@cs.ucla.edu>
+
+	* c.m4: New file, to work around bugs in AIX cc.
+	Problem reported by James Lemley.  This file can go away
+	after Autoconf 2.60 comes out.
+
 2005-10-30  Paul Eggert  <eggert@cs.ucla.edu>
 
 	* chdir-long.m4 (gl_FUNC_CHDIR_LONG): Revamp wording and local

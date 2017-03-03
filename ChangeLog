@@ -1,8 +1,115 @@
+2006-02-13  Jim Meyering  <jim@meyering.net>
+
+	* Version 5.94.
+
+	* Makefile.maint (alpha beta major): Add code to abort `make major'
+	if I ever forget to remove the `-cvs' part of the version string again.
+
+	* configure.ac: Remove `-cvs'.
+	Put all copyright dates (was split w/duplicate years) back on one line.
+
+2006-02-07  Jim Meyering  <jim@meyering.net>
+
+	* tests/help-version (expected_failure_status_vdir):
+	Redirect an expected disk-full diagnostic to /dev/null.
+
+	* announce-gen: Accept new option, --gpg-key-id=ID and
+	emit a blurb telling how to use the .sig files.
+	* Makefile.cfg (gpg_key_ID): Define.
+	* Makefile.maint (announcement): Use new option and key.
+
+2006-02-04  Jim Meyering  <jim@meyering.net>
+
+	* src/copy.c (copy_internal): cp -RL would fail when encountering
+	the same directory more than once in the hierarchy beneath a single
+	command-line argument.  That is legitimate, e.g. when there are
+	two or more symbolic links, each pointing to some directory that
+	would not otherwise be copied.  Reported by Christophe LYON.
+	* tests/cp/cp-deref: New file.  Test for today's fix.
+	* tests/cp/Makefile.am (TESTS): Add cp-deref.
+	* NEWS: Document this.
+
+2006-01-24  Jim Meyering  <jim@meyering.net>
+
+	* src/tail.c (tail_forever): Don't exit-nonzero when an attempt
+	to put a regular file in O_NONBLOCK mode fails with EPERM.
+	That happens on Linux when using tail -f on a file with the
+	append-only attribute.  Reported by Dean Gaudet.  For details,
+	see http://savannah.gnu.org/bugs/?func=detailitem&item_id=15473.
+	* NEWS: Mention this fix.
+
+2006-01-10  Jim Meyering  <jim@meyering.net>  (tiny change)
+
+	* src/ls.c (gobble_file): Use DTTOIF only if it's defined.
+	This is necessary for Dragonfly.  Patch by Joerg Sonnenberger.
+
+2006-01-10  Jim Meyering  <jim@meyering.net>
+
+	* tests/chmod/no-x: Add a test for today's fts.c fix.
+
+2006-01-08  Jim Meyering  <jim@meyering.net>
+
+	* src/date.c (usage): Adjust the formatting of the entries for
+	%::z and %:::z (separate with two spaces, not one) so that help2man
+	formats them properly.  Reported by Philip Rowlands.
+
+2006-01-06  Jim Meyering  <jim@meyering.net>
+
+	* Makefile.maint (copyright-check): Use date +%Y in place of
+	hard-coded 2005.
+
+2006-01-02  Paul Eggert  <eggert@cs.ucla.edu>
+
+	* src/date.c (usage): Explain %g, %G, and %V a bit better.
+
+2005-12-16  Jim Meyering  <jim@meyering.net>
+
+	stat: revert behavior of --format=FMT (-c)
+	stat: add new option: --printf=FMT
+	* NEWS: Mention this.
+	* src/stat.c (isodigit, octtobin, hextobin): Define.
+	(PRINTF_OPTION): Define.
+	(interpret_backslash_escapes, trailing_delim): New globals.
+	(usage): Document them.  Alphabetize on long option names.
+	(print_esc_char): New function.
+	(print_it): Rewrite, in order to handle backslash escapes.
+	(main): Handle new option.  Set globals for --format, too.
+
+	* tests/misc/stat-printf: Test --printf and --format.
+	* tests/misc/Makefile.am (TESTS): Add stat-printf.
+
+2005-11-25  Paul Eggert  <eggert@cs.ucla.edu>
+
+	* NEWS: df updates for "none", "proc", inaccessible file systems.
+	* src/df.c (show_point): Ignore inaccessible file systems.
+	(usage): -a includes dummy file systems, not size-0 file systems.
+
+	* src/od.c (unsigned_long_long_int): Renamed from ulonglong_t,
+	to avoid collision with POSIX name space.  All uses changed.
+
+2005-11-18  Paul Eggert  <eggert@cs.ucla.edu>
+
+	* configure.ac (AM_PROG_CC_C_O): Add.  Needed for CVS Automake.
+	Problem reported by Eric Blake.
+	(AC_PROG_CC_STDC): Use this instead of AC_PROG_CC, so that
+	we get a standard-conforming compiler.  This relies on the new
+	m4/c.m4 file.  Note that it's a bit tricky, since c.m4 doesn't
+	define AC_PROG_CC_STDC; we are relying on Autoconf 2.59 internals.
+	m4/c.m4 can go away with Autoconf 2.60 comes out.
+
+2005-11-14  Jim Meyering  <jim@meyering.net>
+
+	* NEWS (sort): Mention consequences of today's mkstemp-safer.c fix.
+
+	* configure.ac: Use 5.94-cvs as the version string.
+	* NEWS: Adjust accordingly.
+
 2005-11-06  Jim Meyering  <jim@meyering.net>
 
 	* Version 5.93.
 
-	Merge this change from the trunk.
+	Merge this change from the trunk (Paul Eggert noticed that it
+	was missing).
 	* src/dircolors.c (ls_codes): Add missing comma.
 	Anonymous report and patch from
 	http://savannah.gnu.org/bugs/?func=detailitem&item_id=14849

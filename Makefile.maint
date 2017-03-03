@@ -2,7 +2,7 @@
 # This Makefile fragment is shared between the coreutils,
 # CPPI, Bison, and Autoconf.
 
-## Copyright (C) 2001-2005 Free Software Foundation, Inc.
+## Copyright (C) 2001-2006 Free Software Foundation, Inc.
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -379,7 +379,7 @@ v_etc_file = lib/version-etc.c
 # Make sure that the copyright date in $(v_etc_file) is up to date.
 copyright-check:
 	@if test -f $(v_etc_file); then \
-	  grep 'enum { COPYRIGHT_YEAR = 2005 };' $(v_etc_file) \
+	  grep 'enum { COPYRIGHT_YEAR = '$$(date +%Y)' };' $(v_etc_file) \
 	    >/dev/null \
 	  || { echo 'out of date copyright in $(v_etc_file); update it' 1>&2; \
 	       exit 1; }; \
@@ -487,6 +487,7 @@ announcement: NEWS ChangeLog $(rel-files)
 	    --prev=$(PREV_VERSION)					\
 	    --curr=$(VERSION)						\
 	    --release-archive-directory=$(release_archive_dir)		\
+	    --gpg-key-id=$(gpg_key_ID)					\
 	    --news=NEWS							\
 	    $(addprefix --url-dir=, $(url_dir_list))			\
 
@@ -605,6 +606,8 @@ $(xd-delta): $(release_archive_dir)/$(prev-tgz) $(distdir).tar.gz
 
 .PHONY: alpha beta major
 alpha beta major: news-date-check $(local-check)
+	test $@ = major && case $(VERSION) in *-cvs*) \
+	  echo "invalid version string: $(VERSION)" 1>&2; exit 1;; esac
 	$(MAKE) cvs-dist
 	$(MAKE) $(xd-delta)
 	$(MAKE) -s announcement RELEASE_TYPE=$@ > /tmp/announce-$(my_distdir)

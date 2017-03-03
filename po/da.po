@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coreutils 4.5.11\n"
 "Report-Msgid-Bugs-To: bug-coreutils@gnu.org\n"
-"POT-Creation-Date: 2005-11-06 09:59+0100\n"
+"POT-Creation-Date: 2006-02-07 09:38+0100\n"
 "PO-Revision-Date: 2003-03-30 19:53+0200\n"
 "Last-Translator: Keld Jørn Simonsen <keld@dkuug.dk>\n"
 "Language-Team: Danish <dansk@klid.dk>\n"
@@ -35,7 +35,7 @@ msgstr "Gyldige argumenter er: "
 #: lib/closeout.c:94 src/cat.c:193 src/cat.c:277 src/cat.c:327 src/cksum.c:255
 #: src/expand.c:336 src/expand.c:361 src/head.c:300 src/head.c:350
 #: src/head.c:758 src/head.c:799 src/od.c:966 src/paste.c:143 src/tail.c:315
-#: src/tail.c:1092 src/tr.c:1561 src/tr.c:1784 src/tr.c:1887
+#: src/tail.c:1103 src/tr.c:1561 src/tr.c:1784 src/tr.c:1887
 #: src/unexpand.c:435 src/unexpand.c:451
 msgid "write error"
 msgstr "fejl ved skrivning"
@@ -248,7 +248,7 @@ msgstr "kan ikke ændre ejer og/eller gruppe på %s"
 msgid "cannot chdir to directory %s"
 msgstr "kan ikke skifte katalog til %s"
 
-#: lib/mkdir-p.c:243 lib/mkdir-p.c:278 src/copy.c:1438 src/mkdir.c:167
+#: lib/mkdir-p.c:243 lib/mkdir-p.c:278 src/copy.c:1447 src/mkdir.c:167
 #, c-format
 msgid "cannot create directory %s"
 msgstr "kan ikke oprette katalog %s"
@@ -265,7 +265,7 @@ msgstr "hukommelsen opbrugt"
 #: lib/openat-die.c:36
 #, fuzzy
 msgid "unable to record current working directory"
-msgstr "kan ikke finde aktuelt katalog"
+msgstr "Mislykkedes med at returnere til oprindeligt arbejdskatalog"
 
 #: lib/openat-die.c:49 src/df.c:519
 msgid "failed to return to initial working directory"
@@ -362,7 +362,6 @@ msgid "(C)"
 msgstr ""
 
 #: lib/version-etc.c:74
-#, fuzzy
 msgid ""
 "\n"
 "This is free software.  You may redistribute copies of it under the terms "
@@ -371,15 +370,10 @@ msgid ""
 "There is NO WARRANTY, to the extent permitted by law.\n"
 "\n"
 msgstr ""
-"Dette program er frit programmel. Du kan redistribuere det og/eller\n"
-"ændre det under betingelserne givet i 'GNU General Public License' som\n"
-"udgivet af Free Software Foundation - enten version 2, eller (efter eget\n"
-"valg) en hvilken som helst senere version.\n"
-"\n"
 
 #. TRANSLATORS: %s denotes an author name.
 #: lib/version-etc.c:90
-#, fuzzy, c-format
+#, c-format
 msgid "Written by %s.\n"
 msgstr "Skrevet af %s.\n"
 
@@ -409,64 +403,64 @@ msgstr "Skrevet af %s.\n"
 #. You can use line breaks, estimating that each author name occupies
 #. ca. 16 screen columns and that a screen line has ca. 80 columns.
 #: lib/version-etc.c:110
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Written by %s, %s, %s,\n"
 "%s, and %s.\n"
-msgstr "Skrevet af %s.\n"
+msgstr ""
 
 #. TRANSLATORS: Each %s denotes an author name.
 #. You can use line breaks, estimating that each author name occupies
 #. ca. 16 screen columns and that a screen line has ca. 80 columns.
 #: lib/version-etc.c:116
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Written by %s, %s, %s,\n"
 "%s, %s, and %s.\n"
-msgstr "Skrevet af %s.\n"
+msgstr ""
 
 #. TRANSLATORS: Each %s denotes an author name.
 #. You can use line breaks, estimating that each author name occupies
 #. ca. 16 screen columns and that a screen line has ca. 80 columns.
 #: lib/version-etc.c:123
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Written by %s, %s, %s,\n"
 "%s, %s, %s, and %s.\n"
-msgstr "Skrevet af %s.\n"
+msgstr ""
 
 #. TRANSLATORS: Each %s denotes an author name.
 #. You can use line breaks, estimating that each author name occupies
 #. ca. 16 screen columns and that a screen line has ca. 80 columns.
 #: lib/version-etc.c:130
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Written by %s, %s, %s,\n"
 "%s, %s, %s, %s,\n"
 "and %s.\n"
-msgstr "Skrevet af %s.\n"
+msgstr ""
 
 #. TRANSLATORS: Each %s denotes an author name.
 #. You can use line breaks, estimating that each author name occupies
 #. ca. 16 screen columns and that a screen line has ca. 80 columns.
 #: lib/version-etc.c:138
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Written by %s, %s, %s,\n"
 "%s, %s, %s, %s,\n"
 "%s, and %s.\n"
-msgstr "Skrevet af %s.\n"
+msgstr ""
 
 #. TRANSLATORS: Each %s denotes an author name.
 #. You can use line breaks, estimating that each author name occupies
 #. ca. 16 screen columns and that a screen line has ca. 80 columns.
 #: lib/version-etc.c:148
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Written by %s, %s, %s,\n"
 "%s, %s, %s, %s,\n"
 "%s, %s, and others.\n"
-msgstr "Skrevet af %s.\n"
+msgstr ""
 
 #: lib/xfts.c:60
 #, fuzzy, c-format
@@ -488,7 +482,7 @@ msgstr "De sammenlignede strenge var '%s' og '%s'."
 
 #: src/basename.c:51 src/cat.c:91 src/chgrp.c:104 src/chmod.c:322
 #: src/chown.c:90 src/chroot.c:42 src/cksum.c:264 src/comm.c:69 src/cp.c:152
-#: src/csplit.c:1448 src/cut.c:184 src/date.c:128 src/dd.c:397 src/df.c:713
+#: src/csplit.c:1448 src/cut.c:184 src/date.c:128 src/dd.c:397 src/df.c:720
 #: src/dircolors.c:101 src/dirname.c:45 src/du.c:276 src/echo.c:60
 #: src/env.c:114 src/expand.c:107 src/expr.c:97 src/factor.c:70 src/fmt.c:269
 #: src/fold.c:66 src/head.c:105 src/hostid.c:44 src/hostname.c:61 src/id.c:74
@@ -499,7 +493,7 @@ msgstr "De sammenlignede strenge var '%s' og '%s'."
 #: src/pinky.c:510 src/pr.c:2764 src/printenv.c:57 src/printf.c:96
 #: src/ptx.c:1883 src/pwd.c:62 src/readlink.c:63 src/rm.c:131 src/rmdir.c:135
 #: src/seq.c:78 src/setuidgid.c:47 src/shred.c:151 src/sleep.c:44
-#: src/sort.c:277 src/split.c:103 src/stat.c:673 src/stty.c:507 src/su.c:404
+#: src/sort.c:277 src/split.c:103 src/stat.c:771 src/stty.c:507 src/su.c:404
 #: src/sum.c:55 src/sync.c:41 src/tac.c:128 src/tail.c:222 src/tee.c:58
 #: src/test.c:689 src/touch.c:229 src/tr.c:286 src/tsort.c:82 src/tty.c:65
 #: src/uname.c:113 src/unexpand.c:117 src/uniq.c:131 src/unlink.c:47
@@ -539,7 +533,7 @@ msgstr ""
 
 #: src/basename.c:74 src/cat.c:128 src/chgrp.c:159 src/chmod.c:353
 #: src/chown.c:159 src/chroot.c:60 src/cksum.c:279 src/comm.c:94 src/cp.c:251
-#: src/csplit.c:1490 src/cut.c:235 src/date.c:241 src/dd.c:499 src/df.c:752
+#: src/csplit.c:1490 src/cut.c:235 src/date.c:241 src/dd.c:499 src/df.c:759
 #: src/dircolors.c:122 src/dirname.c:68 src/du.c:344 src/echo.c:98
 #: src/env.c:133 src/expand.c:132 src/expr.c:165 src/factor.c:90 src/fmt.c:300
 #: src/fold.c:89 src/head.c:140 src/hostid.c:57 src/hostname.c:74 src/id.c:95
@@ -550,7 +544,7 @@ msgstr ""
 #: src/pinky.c:537 src/pr.c:2876 src/printenv.c:71 src/printf.c:145
 #: src/ptx.c:1930 src/pwd.c:74 src/readlink.c:87 src/rm.c:174 src/rmdir.c:154
 #: src/seq.c:106 src/setuidgid.c:67 src/shred.c:224 src/sleep.c:60
-#: src/sort.c:350 src/split.c:137 src/stat.c:746 src/stty.c:724 src/su.c:425
+#: src/sort.c:350 src/split.c:137 src/stat.c:850 src/stty.c:724 src/su.c:425
 #: src/sum.c:75 src/sync.c:52 src/tac.c:151 src/tail.c:293 src/tee.c:75
 #: src/test.c:776 src/touch.c:263 src/tr.c:359 src/true.c:54 src/tsort.c:94
 #: src/tty.c:77 src/uname.c:136 src/unexpand.c:141 src/uniq.c:170
@@ -569,7 +563,7 @@ msgstr ""
 #: src/expr.c:203 src/join.c:914 src/link.c:83 src/mkdir.c:120
 #: src/mkfifo.c:111 src/mknod.c:140 src/nohup.c:96 src/pathchk.c:158
 #: src/printf.c:669 src/readlink.c:146 src/rm.c:265 src/rmdir.c:197
-#: src/seq.c:367 src/setuidgid.c:95 src/sleep.c:122 src/stat.c:801
+#: src/seq.c:367 src/setuidgid.c:95 src/sleep.c:122 src/stat.c:913
 #: src/tr.c:1723 src/unlink.c:81
 #, fuzzy
 msgid "missing operand"
@@ -877,9 +871,8 @@ msgid ""
 msgstr ""
 
 #: src/chmod.c:460
-#, fuzzy
 msgid "cannot combine mode and --reference options"
-msgstr "kan ikke kombinere signal med -l eller -t"
+msgstr ""
 
 #: src/chmod.c:491
 #, fuzzy, c-format
@@ -899,7 +892,7 @@ msgstr "ændrede gruppe for %s til %s\n"
 #: src/chown-core.c:139
 #, fuzzy, c-format
 msgid "no change to ownership of %s\n"
-msgstr "kan ikke ændre adgangsrettigheder på %s"
+msgstr "ændrer ejerskab for %s"
 
 #: src/chown-core.c:142
 #, c-format
@@ -1125,13 +1118,13 @@ msgstr ""
 "  -3              se bort fra linjer som findes i begge filer\n"
 
 #: src/copy.c:229 src/csplit.c:647 src/du.c:947 src/fmt.c:431 src/head.c:849
-#: src/split.c:540 src/tac.c:543 src/tail.c:1290
+#: src/split.c:540 src/tac.c:543 src/tail.c:1301
 #, c-format
 msgid "cannot open %s for reading"
 msgstr "kan ikke åbne %s til læsning"
 
-#: src/copy.c:235 src/copy.c:289 src/copy.c:309 src/dd.c:1674 src/tail.c:1126
-#: src/tail.c:1192
+#: src/copy.c:235 src/copy.c:289 src/copy.c:309 src/dd.c:1674 src/tail.c:1137
+#: src/tail.c:1203
 #, c-format
 msgid "cannot fstat %s"
 msgstr "kan ikke udføre fstat() %s"
@@ -1141,7 +1134,7 @@ msgstr "kan ikke udføre fstat() %s"
 msgid "skipping file %s, as it was replaced while being copied"
 msgstr "overspringer fil %s, da den blev erstattet mens den blev kopieret"
 
-#: src/copy.c:265 src/copy.c:984 src/copy.c:1173 src/copy.c:1274 src/ln.c:312
+#: src/copy.c:265 src/copy.c:984 src/copy.c:1173 src/copy.c:1283 src/ln.c:312
 #: src/remove.c:788 src/remove.c:825 src/remove.c:965 src/remove.c:1092
 #: src/remove.c:1211
 #, c-format
@@ -1168,17 +1161,17 @@ msgstr "kan ikke udføre lseek() %s"
 msgid "writing %s"
 msgstr "skriver %s"
 
-#: src/copy.c:425 src/copy.c:1647
+#: src/copy.c:425 src/copy.c:1656
 #, c-format
 msgid "preserving times for %s"
 msgstr "beholder tider for %s"
 
-#: src/copy.c:442 src/copy.c:1602 src/copy.c:1661 src/cp.c:324
+#: src/copy.c:442 src/copy.c:1611 src/copy.c:1670 src/cp.c:324
 #, c-format
 msgid "failed to preserve ownership for %s"
 msgstr "kunne ikke bevare ejerskab for %s"
 
-#: src/copy.c:468 src/copy.c:1698
+#: src/copy.c:468 src/copy.c:1707
 #, c-format
 msgid "setting permissions for %s"
 msgstr "sætter adgangsrettigheder på %s"
@@ -1198,7 +1191,7 @@ msgstr "%s: overskriv %s, uden hensyn til tilstand %04lo?"
 msgid "%s: overwrite %s? "
 msgstr "%s: overskriv %s? "
 
-#: src/copy.c:927 src/copy.c:965 src/df.c:496 src/install.c:445 src/stat.c:630
+#: src/copy.c:927 src/copy.c:965 src/df.c:496 src/install.c:445 src/stat.c:728
 #, c-format
 msgid "cannot stat %s"
 msgstr "kan ikke udføre stat() %s"
@@ -1268,92 +1261,92 @@ msgstr " (sikkerhedskopi: %s)"
 msgid "cannot copy a directory, %s, into itself, %s"
 msgstr "kan ikke kopiere et katalog %s til sig selv %s"
 
-#: src/copy.c:1258
+#: src/copy.c:1268
 #, c-format
 msgid "will not create hard link %s to directory %s"
 msgstr "vil ikke oprette hård lænke %s til katalog %s"
 
-#: src/copy.c:1282
+#: src/copy.c:1291
 #, c-format
 msgid "cannot create hard link %s to %s"
 msgstr "kan ikke oprette hård lænke %s til %s"
 
-#: src/copy.c:1336
+#: src/copy.c:1345
 #, c-format
 msgid "cannot move %s to a subdirectory of itself, %s"
 msgstr "kan ikke flytte %s til et underkatalog af sig selv, %s"
 
-#: src/copy.c:1379
+#: src/copy.c:1388
 #, c-format
 msgid "cannot move %s to %s"
 msgstr "kan ikke flytte %s til %s"
 
-#: src/copy.c:1391
+#: src/copy.c:1400
 #, c-format
 msgid "inter-device move failed: %s to %s; unable to remove target"
 msgstr "flytning mellem enheder mislykkedes: %s til %s; kan ikke fjerne målet"
 
-#: src/copy.c:1419
+#: src/copy.c:1428
 #, c-format
 msgid "cannot copy cyclic symbolic link %s"
 msgstr "kan ikke kopiere cyklisk symbolsk lænke %s"
 
-#: src/copy.c:1496
+#: src/copy.c:1505
 #, c-format
 msgid "%s: can make relative symbolic links only in current directory"
 msgstr "%s: kan kun oprette relative symbolske lænker i aktuelt katalog"
 
-#: src/copy.c:1503
+#: src/copy.c:1512
 #, c-format
 msgid "cannot create symbolic link %s to %s"
 msgstr "kan ikke oprette symbolsk lænke %s til %s"
 
-#: src/copy.c:1514
+#: src/copy.c:1523
 #, c-format
 msgid "cannot create link %s"
 msgstr "kan ikke oprette lænke %s"
 
-#: src/copy.c:1536 src/mkfifo.c:129
+#: src/copy.c:1545 src/mkfifo.c:129
 #, c-format
 msgid "cannot create fifo %s"
 msgstr "kan ikke oprette fifo %s"
 
-#: src/copy.c:1547
+#: src/copy.c:1556
 #, c-format
 msgid "cannot create special file %s"
 msgstr "kan ikke oprette specialfil %s"
 
-#: src/copy.c:1559 src/ls.c:2733 src/stat.c:416
+#: src/copy.c:1568 src/ls.c:2733 src/stat.c:436
 #, c-format
 msgid "cannot read symbolic link %s"
 msgstr "kan ikke læse symbolsk lænke %s"
 
-#: src/copy.c:1585
+#: src/copy.c:1594
 #, c-format
 msgid "cannot create symbolic link %s"
 msgstr "kan ikke oprette symbolsk lænke %s"
 
-#: src/copy.c:1617
+#: src/copy.c:1626
 #, c-format
 msgid "%s has unknown file type"
 msgstr "%s har ukendt filtype"
 
-#: src/copy.c:1673
+#: src/copy.c:1682
 #, fuzzy, c-format
 msgid "failed to lookup file %s"
 msgstr "kunne ikke beholde tider for %s"
 
-#: src/copy.c:1678
+#: src/copy.c:1687
 #, c-format
 msgid "failed to preserve authorship for %s"
 msgstr "kunne ikke bevare forfatter af %s"
 
-#: src/copy.c:1720 src/ln.c:329
+#: src/copy.c:1729 src/ln.c:329
 #, c-format
 msgid "cannot un-backup %s"
 msgstr "kan ikke genoprette sikkerhedskopi af %s"
 
-#: src/copy.c:1724
+#: src/copy.c:1733
 #, c-format
 msgid "%s -> %s (unbackup)\n"
 msgstr "%s -> %s (genopret sikkerhedskopi)\n"
@@ -1377,7 +1370,7 @@ msgstr ""
 "Kopiér KILDE til MÅL eller en eller flere KILDE'r til KATALOG.\n"
 "\n"
 
-#: src/cp.c:166 src/csplit.c:1461 src/cut.c:196 src/df.c:723 src/du.c:288
+#: src/cp.c:166 src/csplit.c:1461 src/cut.c:196 src/df.c:730 src/du.c:288
 #: src/expand.c:120 src/fmt.c:279 src/fold.c:79 src/head.c:119
 #: src/install.c:646 src/kill.c:104 src/ln.c:357 src/ls.c:4106 src/mkdir.c:63
 #: src/mkfifo.c:60 src/mknod.c:61 src/mv.c:308 src/nl.c:181 src/paste.c:427
@@ -1390,7 +1383,6 @@ msgstr ""
 "Obligatoriske argumenter til lange flag er også obligatoriske for de korte.\n"
 
 #: src/cp.c:169
-#, fuzzy
 msgid ""
 "  -a, --archive                same as -dpR\n"
 "      --backup[=CONTROL]       make a backup of each existing destination "
@@ -1622,9 +1614,8 @@ msgid "missing destination file operand after %s"
 msgstr "manglende målfil"
 
 #: src/cp.c:515 src/install.c:322 src/mv.c:454
-#, fuzzy
 msgid "Cannot combine --target-directory (-t) and --no-target-directory (-T)"
-msgstr "%s: angivet målkatalog er ikke et katalog"
+msgstr ""
 
 #: src/cp.c:634
 #, fuzzy
@@ -1632,9 +1623,8 @@ msgid "with --parents, the destination must be a directory"
 msgstr "når stier beholdes, skal målet være et katalog"
 
 #: src/cp.c:910 src/mv.c:398
-#, fuzzy
 msgid "the --reply option is deprecated; use -i or -f instead"
-msgstr "Advarsel: -i vil blive fjernet i en fremtidig udgave; brug -u i stedet"
+msgstr ""
 
 #: src/cp.c:926 src/ln.c:459
 msgid "symbolic links are not supported on this system"
@@ -1840,7 +1830,7 @@ msgstr ""
 "\n"
 "En linje-POSITION skal være '+' eller '-' fulgt af et positivt heltal\n"
 
-#: src/cut.c:188 src/df.c:717 src/expand.c:111 src/fold.c:70 src/head.c:109
+#: src/cut.c:188 src/df.c:724 src/expand.c:111 src/fold.c:70 src/head.c:109
 #: src/ls.c:4100 src/nl.c:172 src/paste.c:417 src/pr.c:2768 src/sort.c:281
 #: src/sum.c:59 src/tac.c:132 src/tail.c:226 src/tee.c:62 src/unexpand.c:121
 #: src/wc.c:127
@@ -1937,7 +1927,7 @@ msgstr "%s er for stor"
 #: src/cut.c:470
 #, fuzzy, c-format
 msgid "field number %s is too large"
-msgstr "ugyldigt antal byte at sammenligne"
+msgstr "felt-nummeret er nul"
 
 #: src/cut.c:773 src/cut.c:781
 msgid "only one type of list may be specified"
@@ -2051,8 +2041,8 @@ msgstr ""
 #, fuzzy
 msgid ""
 "  %F   full date; same as %Y-%m-%d\n"
-"  %g   the last two digits of the year corresponding to the %V week number\n"
-"  %G   the year corresponding to the %V week number\n"
+"  %g   last two digits of year of ISO week number (see %G)\n"
+"  %G   year of ISO week number (see %V); normally useful only with %V\n"
 msgstr ""
 "  %F   samme som %Y-%m-%d\n"
 "  %g   det 2-cifrede årstal svarende til %V-ugenummeret\n"
@@ -2117,10 +2107,10 @@ msgstr ""
 #: src/date.c:206
 #, fuzzy
 msgid ""
-"  %U   week number of year with Sunday as first day of week (00..53)\n"
-"  %V   week number of year with Monday as first day of week (01..53)\n"
+"  %U   week number of year, with Sunday as first day of week (00..53)\n"
+"  %V   ISO week number, with Monday as first day of week (01..53)\n"
 "  %w   day of week (0..6); 0 is Sunday\n"
-"  %W   week number of year with Monday as first day of week (00..53)\n"
+"  %W   week number of year, with Monday as first day of week (00..53)\n"
 msgstr ""
 "  %U   ugenummer, med søndag som første dag i ugen (00-53)\n"
 "  %V   ugenummer, med mandag som første dag i ugen (01-53)\n"
@@ -2144,8 +2134,9 @@ msgstr ""
 msgid ""
 "  %z   +hhmm numeric timezone (e.g., -0400)\n"
 "  %:z  +hh:mm numeric timezone (e.g., -04:00)\n"
-"  %::z +hh:mm:ss numeric time zone (e.g., -04:00:00)\n"
-"  %:::z numeric time zone with : to necessary precision (e.g., -04, +05:30)\n"
+"  %::z  +hh:mm:ss numeric time zone (e.g., -04:00:00)\n"
+"  %:::z  numeric time zone with : to necessary precision (e.g., -04, "
+"+05:30)\n"
 "  %Z   alphabetic time zone abbreviation (e.g., EDT)\n"
 "\n"
 "By default, date pads numeric fields with zeroes.\n"
@@ -2218,7 +2209,7 @@ msgid ""
 "Usage: %s [OPERAND]...\n"
 "  or:  %s OPTION\n"
 msgstr ""
-"Brug:    %s [STRENG]...\n"
+"Brug:    %s [TAL]...\n"
 "  eller: %s FLAG\n"
 
 #: src/dd.c:406
@@ -2446,7 +2437,7 @@ msgstr "ugyldigt gruppenavn %s"
 #: src/dd.c:888
 #, fuzzy, c-format
 msgid "invalid status flag: %s"
-msgstr "ugyldigt gruppenavn %s"
+msgstr "ugyldigt datoformat %s"
 
 #: src/dd.c:924
 #, fuzzy, c-format
@@ -2465,12 +2456,12 @@ msgstr ""
 #: src/dd.c:952
 #, fuzzy
 msgid "cannot combine block and unblock"
-msgstr "kan ikke kombinere signal med -l eller -t"
+msgstr "kan ikke undlade både bruger *og* gruppe"
 
 #: src/dd.c:954
 #, fuzzy
 msgid "cannot combine lcase and ucase"
-msgstr "kan ikke kombinere signal med -l eller -t"
+msgstr "kan ikke sammenligne filnavnene %s og %s"
 
 #: src/dd.c:956
 #, fuzzy
@@ -2516,9 +2507,9 @@ msgid "fdatasync failed for %s"
 msgstr ""
 
 #: src/dd.c:1573
-#, fuzzy, c-format
+#, c-format
 msgid "fsync failed for %s"
-msgstr "kunne ikke beholde tider for %s"
+msgstr ""
 
 #: src/dd.c:1620 src/dd.c:1649
 #, c-format
@@ -2589,7 +2580,7 @@ msgstr "kan ikke gå til kataloget %s"
 msgid "cannot stat current directory (now %s)"
 msgstr "kan ikke finde aktuelt katalog"
 
-#: src/df.c:718
+#: src/df.c:725
 #, fuzzy
 msgid ""
 "Show information about the file system on which each FILE resides,\n"
@@ -2600,10 +2591,10 @@ msgstr ""
 "filsystemer.\n"
 "\n"
 
-#: src/df.c:726
+#: src/df.c:733
 #, fuzzy
 msgid ""
-"  -a, --all             include file systems having 0 blocks\n"
+"  -a, --all             include dummy file systems\n"
 "  -B, --block-size=SIZE use SIZE-byte blocks\n"
 "  -h, --human-readable  print sizes in human readable format (e.g., 1K 234M "
 "2G)\n"
@@ -2615,7 +2606,7 @@ msgstr ""
 "                        (f.eks. 1K 234M 2G)\n"
 "  -H, --si              det samme, men brug 1000 som grundtal, ikke 1024\n"
 
-#: src/df.c:732
+#: src/df.c:739
 #, fuzzy
 msgid ""
 "  -i, --inodes          list inode information instead of block usage\n"
@@ -2630,7 +2621,7 @@ msgstr ""
 "      --no-sync         kør ikke sync før hentning af information "
 "(standard)\n"
 
-#: src/df.c:738
+#: src/df.c:745
 #, fuzzy
 msgid ""
 "  -P, --portability     use the POSIX output format\n"
@@ -2647,7 +2638,7 @@ msgstr ""
 "  -x, --exclude-type=TYPE  vis kun filsystemer som ikke er af typen TYPE\n"
 "  -v                    (ignoreret)\n"
 
-#: src/df.c:748 src/du.c:340 src/ls.c:4224
+#: src/df.c:755 src/du.c:340 src/ls.c:4224
 #, fuzzy
 msgid ""
 "\n"
@@ -2660,21 +2651,20 @@ msgstr ""
 "kB 1000, K 1024, MB 1.000.000 og M 1.048.576, og så videre for G, T, P, E, Z "
 "og Y.\n"
 
-#: src/df.c:809 src/du.c:755 src/ls.c:1541
-#, fuzzy
+#: src/df.c:816 src/du.c:755 src/ls.c:1541
 msgid "the --kilobytes option is deprecated; use -k instead"
-msgstr "Advarsel: -i vil blive fjernet i en fremtidig udgave; brug -u i stedet"
+msgstr ""
 
-#: src/df.c:868
+#: src/df.c:875
 #, c-format
 msgid "file system type %s both selected and excluded"
 msgstr "filsystem af typen %s er både valgt og udeladt"
 
-#: src/df.c:912
+#: src/df.c:919
 msgid "Warning: "
 msgstr "Advarsel: "
 
-#: src/df.c:915
+#: src/df.c:922
 #, fuzzy, c-format
 msgid "%scannot read table of mounted file systems"
 msgstr "%s kan ikke læse tabellen over monterede filsystemer"
@@ -2816,7 +2806,6 @@ msgstr ""
 "  -D, --dereference-args  følg FIL'er når de er symbolske lænker\n"
 
 #: src/du.c:302
-#, fuzzy
 msgid ""
 "      --files0-from=F   summarize disk usage of the NUL-terminated file\n"
 "                          names specified in file F\n"
@@ -2830,11 +2819,6 @@ msgid ""
 "  -l, --count-links     count sizes many times if hard linked\n"
 "  -m                    like --block-size=1M\n"
 msgstr ""
-"  -h, --human-readable  skriv størrelser i et læsevenligt format \n"
-"                        (fx 1K 234M 2G)\n"
-"  -H, --si              det samme, men brug 1000 som grundtal, ikke 1024\n"
-"  -k, --kilobytes       ligesom --block-size=1024\n"
-"  -l, --count-links     tæl størrelsen med flere gange for hårde lænker\n"
 
 #: src/du.c:313
 #, fuzzy
@@ -2903,9 +2887,8 @@ msgid "invalid maximum depth %s"
 msgstr "ugyldig største dybde %s"
 
 #: src/du.c:782
-#, fuzzy
 msgid "the --megabytes option is deprecated; use -m instead"
-msgstr "Advarsel: -i vil blive fjernet i en fremtidig udgave; brug -u i stedet"
+msgstr ""
 
 #: src/du.c:864
 msgid "cannot both summarize and show all entries"
@@ -2930,9 +2913,8 @@ msgid "cannot read file names from %s"
 msgstr "kan ikke sammenligne filnavnene %s og %s"
 
 #: src/du.c:993 src/du.c:996
-#, fuzzy
 msgid "invalid zero-length file name"
-msgstr "%s: ugyldig filtype"
+msgstr ""
 
 #: src/echo.c:64
 #, c-format
@@ -3376,7 +3358,7 @@ msgstr ""
 #: src/head.c:151 src/head.c:264 src/head.c:336 src/head.c:540 src/head.c:622
 #: src/head.c:694 src/head.c:752 src/head.c:776 src/tail.c:377 src/tail.c:465
 #: src/tail.c:514 src/tail.c:607 src/tail.c:735 src/tail.c:783 src/tail.c:822
-#: src/tail.c:1316 src/tail.c:1345 src/uniq.c:377
+#: src/tail.c:1327 src/tail.c:1356 src/uniq.c:377
 #, c-format
 msgid "error reading %s"
 msgstr "fejl ved læsning af %s"
@@ -3424,11 +3406,11 @@ msgstr "antal linjer"
 msgid "number of bytes"
 msgstr "antal bytes"
 
-#: src/head.c:888 src/tail.c:1479
+#: src/head.c:888 src/tail.c:1490
 msgid "invalid number of lines"
 msgstr "ugyldigt antal linjer"
 
-#: src/head.c:889 src/tail.c:1480
+#: src/head.c:889 src/tail.c:1491
 msgid "invalid number of bytes"
 msgstr "ugyldigt antal byte"
 
@@ -3556,7 +3538,7 @@ msgstr "ugyldig rettighed %s"
 #: src/install.c:358 src/mkdir.c:154
 #, fuzzy
 msgid "cannot return to working directory"
-msgstr "kan ikke finde aktuelt katalog"
+msgstr "Mislykkedes med at returnere til oprindeligt arbejdskatalog"
 
 #: src/install.c:364 src/install.c:416
 #, c-format
@@ -4121,7 +4103,7 @@ msgstr "læser katalog %s"
 #: src/ls.c:2361
 #, fuzzy, c-format
 msgid "closing directory %s"
-msgstr "opretter katalog %s"
+msgstr "udelader katalog %s"
 
 #: src/ls.c:2851
 #, c-format
@@ -4486,7 +4468,7 @@ msgstr ""
 #: src/md5sum.c:417
 #, fuzzy, c-format
 msgid "%s: too many checksum lines"
-msgstr "forvildet tegn i feltangivelse"
+msgstr "%s: ingen rigtigt formatterede %s-kontrolsumlinjer fundet"
 
 #: src/md5sum.c:439
 #, fuzzy, c-format
@@ -4728,11 +4710,19 @@ msgstr ""
 "                                 det samme som --reply=query\n"
 
 #: src/mv.c:317
+#, fuzzy
 msgid ""
 "      --strip-trailing-slashes remove any trailing slashes from each SOURCE\n"
 "                                 argument\n"
 "  -S, --suffix=SUFFIX          override the usual backup suffix\n"
 msgstr ""
+"      --reply={yes,no,query}   angiv hvorledes forespørgsel om eksisterende "
+"målfil\n"
+"                                 skal behandles\n"
+"      --strip-trailing-slashes  fjern evt. skråstreger i slutningen af \n"
+"                               hvert MÅL-argument\n"
+"  -S, --suffix=ENDELSE         tilsidesæt den sædvanlige sikkerhedskopi-"
+"endelse\n"
 
 #: src/mv.c:322
 #, fuzzy
@@ -4756,7 +4746,7 @@ msgid "Usage: %s [OPTION] [COMMAND [ARG]...]\n"
 msgstr "Brug: %s [FLAG]... [KOMMANDO [ARG]...]\n"
 
 #: src/nice.c:80
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Run COMMAND with an adjusted niceness, which affects process scheduling.\n"
 "With no COMMAND, print the current niceness.  Nicenesses range from\n"
@@ -4764,12 +4754,6 @@ msgid ""
 "\n"
 "  -n, --adjustment=N   add integer N to the niceness (default 10)\n"
 msgstr ""
-"Kør KOMMANDO med en justeret behandlingsprioritet.\n"
-"Uden nogen KOMMANDO, udskriv nuværende behandlingsprioritet. JUSTERING\n"
-"er forvalgt til 10. Skalaen går fra -20 (højeste prioritet) til 19 "
-"(laveste).\n"
-"\n"
-"  -n, --adjustment=JUSTERING  øg prioriteten med JUSTERING først\n"
 
 #: src/nice.c:158
 #, fuzzy, c-format
@@ -5197,9 +5181,8 @@ msgid "Compatibility mode supports at most one file."
 msgstr "kompatibilitetstilstand støtter maksimum tre argumenter"
 
 #: src/od.c:1863
-#, fuzzy
 msgid "skip-bytes + read-bytes is too large"
-msgstr "ugyldigt antal byte at sammenligne"
+msgstr ""
 
 #: src/od.c:1906
 #, c-format
@@ -5389,9 +5372,8 @@ msgid "no username specified; at least one must be specified when using -l"
 msgstr "intet brugernavn angivet; mindst ét skal angives når -l bruges"
 
 #: src/pr.c:807 src/pr.c:817
-#, fuzzy
 msgid "page range"
-msgstr "ugyldig typestreng \"%s\""
+msgstr ""
 
 #: src/pr.c:914
 msgid "`--pages=FIRST_PAGE[:LAST_PAGE]' missing argument"
@@ -5450,9 +5432,8 @@ msgid "starting page number %<PRIuMAX> exceeds page count %<PRIuMAX>"
 msgstr ""
 
 #: src/pr.c:2407
-#, fuzzy
 msgid "Page number overflow"
-msgstr "felt-nummeret er nul"
+msgstr ""
 
 #: src/pr.c:2412
 #, c-format
@@ -5809,9 +5790,8 @@ msgid "warning: ignoring excess arguments, starting with %s"
 msgstr "advarsel: ignorerer overflødige argumenter, startende med '%s'"
 
 #: src/ptx.c:41
-#, fuzzy
 msgid "F. Pinard"
-msgstr "Skrevet af %s.\n"
+msgstr ""
 
 #: src/ptx.c:421
 #, fuzzy, c-format
@@ -5967,12 +5947,12 @@ msgstr "kan ikke åbne katalog %s"
 #: src/pwd.c:172
 #, fuzzy, c-format
 msgid "failed to chdir to %s"
-msgstr "kunne ikke beholde tider for %s"
+msgstr "kunne ikke ændre gruppe for %s til %s\n"
 
 #: src/pwd.c:176 src/pwd.c:286
 #, fuzzy, c-format
 msgid "failed to stat %s"
-msgstr "kunne ikke beholde tider for %s"
+msgstr "Kunne ikke hente attributter for %s"
 
 #: src/pwd.c:244
 #, c-format
@@ -6074,9 +6054,9 @@ msgid "removed directory: %s\n"
 msgstr "fjernede katalog %s\n"
 
 #: src/remove.c:968 src/remove.c:1097
-#, fuzzy, c-format
+#, c-format
 msgid "cannot chdir from %s to %s"
-msgstr "kan ikke skifte katalog fra %s til .."
+msgstr "kan ikke skifte katalog fra %s til %s"
 
 #: src/remove.c:976
 #, c-format
@@ -6451,12 +6431,12 @@ msgstr ""
 #: src/shred.c:685
 #, fuzzy, c-format
 msgid "%s: fdatasync failed"
-msgstr "fejl ved lukning af filen"
+msgstr "stat() mislykkedes"
 
 #: src/shred.c:696
-#, fuzzy, c-format
+#, c-format
 msgid "%s: fsync failed"
-msgstr "fejl ved lukning af filen"
+msgstr ""
 
 #: src/shred.c:764
 #, c-format
@@ -6516,7 +6496,7 @@ msgstr "%s: fejl ved afkortning"
 #: src/shred.c:1274
 #, fuzzy, c-format
 msgid "%s: fcntl failed"
-msgstr "fejl ved lukning af filen"
+msgstr "stat() mislykkedes"
 
 #: src/shred.c:1279
 #, c-format
@@ -6590,7 +6570,7 @@ msgstr ""
 msgid "invalid time interval %s"
 msgstr "ugyldigt tidsinterval '%s'"
 
-#: src/sleep.c:149 src/tail.c:1101
+#: src/sleep.c:149 src/tail.c:1112
 msgid "cannot read realtime clock"
 msgstr "kan ikke læse realtids-ur"
 
@@ -6923,24 +6903,47 @@ msgstr "%s: antallet `%.*s' er for stort"
 msgid "invalid number of lines: 0"
 msgstr "ugyldigt antal linjer"
 
-#: src/stat.c:601
+#: src/stat.c:590
+#, fuzzy, c-format
+msgid "warning: unrecognized escape `\\%c'"
+msgstr "%s: ugyldigt flag '%c%s'\n"
+
+#: src/stat.c:625
+#, fuzzy, c-format
+msgid "%s%s: invalid directive"
+msgstr "%%%c: ugyldigt direktiv"
+
+#: src/stat.c:670
+#, fuzzy
+msgid "warning: backslash at end of format"
+msgstr "ugyldig omvendt skråstreg-beskyttelse ved slutningen af streng"
+
+#: src/stat.c:699
 #, c-format
 msgid "cannot read file system information for %s"
 msgstr "kan ikke læse information om filsystem for %s"
 
-#: src/stat.c:677
+#: src/stat.c:775
 #, c-format
 msgid "Usage: %s [OPTION] FILE...\n"
 msgstr "Brug: %s [FLAG] FIL...\n"
 
-#: src/stat.c:678
-#, fuzzy
+#: src/stat.c:776
 msgid ""
 "Display file or file system status.\n"
 "\n"
-"  -f, --file-system     display file system status instead of file status\n"
-"  -c  --format=FORMAT   use the specified FORMAT instead of the default\n"
 "  -L, --dereference     follow links\n"
+"  -f, --file-system     display file system status instead of file status\n"
+msgstr ""
+
+#: src/stat.c:782
+#, fuzzy
+msgid ""
+"  -c  --format=FORMAT   use the specified FORMAT instead of the default;\n"
+"                          output a newline after each use of FORMAT\n"
+"      --printf=FORMAT   like --format, but interpret backslash escapes,\n"
+"                          and do not output a mandatory trailing newline.\n"
+"                          If you want a newline, include \\n in FORMAT.\n"
 "  -t, --terse           print the information in terse form\n"
 msgstr ""
 "Vis fils eller filsystems status.\n"
@@ -6950,7 +6953,7 @@ msgstr ""
 "  -L, --dereference     følg lænker\n"
 "  -t, --terse           udskriv informationen i sammentrængt form\n"
 
-#: src/stat.c:689
+#: src/stat.c:793
 #, fuzzy
 msgid ""
 "\n"
@@ -6969,7 +6972,7 @@ msgstr ""
 "  %B   Størrelsen i byte for hver blok rapporteret af '%b'\n"
 "  %b - Antal blokke allokeret (se %B)\n"
 
-#: src/stat.c:697
+#: src/stat.c:801
 #, fuzzy
 msgid ""
 "  %d   Device number in decimal\n"
@@ -6986,7 +6989,7 @@ msgstr ""
 "  %G - Gruppenavn på ejer\n"
 "  %g - Gruppe-ID på ejer\n"
 
-#: src/stat.c:705
+#: src/stat.c:809
 #, fuzzy
 msgid ""
 "  %h   Number of hard links\n"
@@ -7007,7 +7010,7 @@ msgstr ""
 "  %T - Større enhedstype i hex\n"
 "  %t - Mindre enhedstype i hex\n"
 
-#: src/stat.c:715
+#: src/stat.c:819
 #, fuzzy
 msgid ""
 "  %u   User ID of owner\n"
@@ -7030,7 +7033,7 @@ msgstr ""
 "  %z - Tidspunkt for sidste ændring\n"
 "\n"
 
-#: src/stat.c:727
+#: src/stat.c:831
 msgid ""
 "Valid format sequences for file systems:\n"
 "\n"
@@ -7048,7 +7051,7 @@ msgstr ""
 "  %d - Frie filnoder i filsystem\n"
 "  %f - Frie blokke i filsystem\n"
 
-#: src/stat.c:736
+#: src/stat.c:840
 #, fuzzy
 msgid ""
 "  %i   File System ID in hex\n"
@@ -7535,7 +7538,7 @@ msgstr "manglende argument til '%s'"
 #: src/stty.c:976
 #, fuzzy, c-format
 msgid "invalid line discipline %s"
-msgstr "ugyldig specifikation af felt: \"%s\""
+msgstr "ugyldig linjelængde: %s"
 
 #: src/stty.c:1047
 #, c-format
@@ -7883,66 +7886,66 @@ msgstr "'%s' er blevet oprettet. Følger efter slutningen af ny fil"
 msgid "%s has been replaced;  following end of new file"
 msgstr "'%s' er blevet erstattet.  Følger efter slutningen af ny fil"
 
-#: src/tail.c:1025
+#: src/tail.c:1033
 #, fuzzy, c-format
 msgid "%s: cannot change nonblocking mode"
 msgstr "%s: kunne ikke nulstille ikke-blokerende tilstand"
 
-#: src/tail.c:1064
+#: src/tail.c:1074
 #, c-format
 msgid "%s: file truncated"
 msgstr "%s: fil trunkeret"
 
-#: src/tail.c:1087
+#: src/tail.c:1098
 msgid "no files remaining"
 msgstr "ingen filer tilbage"
 
-#: src/tail.c:1320
+#: src/tail.c:1331
 #, c-format
 msgid "%s: cannot follow end of this type of file; giving up on this name"
 msgstr ""
 "%s: kan ikke følge slutningen på denne filtype; giver op for dette navn"
 
-#: src/tail.c:1436
+#: src/tail.c:1447
 #, fuzzy, c-format
 msgid "number in %s is too large"
-msgstr "ugyldigt antal byte at sammenligne"
+msgstr "%s er for stor"
 
-#: src/tail.c:1507
+#: src/tail.c:1518
 #, c-format
 msgid "%s: invalid maximum number of unchanged stats between opens"
 msgstr ""
 "%s: ugyldig maksimum antal af uændrede resultater af kald til stat() mellem "
 "kald til open()"
 
-#: src/tail.c:1519
+#: src/tail.c:1530
 #, c-format
 msgid "%s: invalid PID"
 msgstr "%s: ugyldig PID"
 
-#: src/tail.c:1538
+#: src/tail.c:1549
 #, c-format
 msgid "%s: invalid number of seconds"
 msgstr "%s: ugyldigt antal sekunder"
 
-#: src/tail.c:1557
+#: src/tail.c:1568
 msgid "warning: --retry is useful only when following by name"
 msgstr "advarsel: --retry er kun brugbart ved følgning af navn"
 
-#: src/tail.c:1561
+#: src/tail.c:1572
 msgid "warning: PID ignored; --pid=PID is useful only when following"
 msgstr "advarsel: PID ignoreret; --pid=PID er kun brugbart ved følgning"
 
-#: src/tail.c:1564
+#: src/tail.c:1575
 msgid "warning: --pid=PID is not supported on this system"
 msgstr "advarsel: --pid=PID er ikke understøttet på dette system"
 
-#: src/tail.c:1646
+#: src/tail.c:1657
 #, fuzzy, c-format
 msgid "cannot follow %s by name"
 msgstr "kan ikke finde ud af systemnavnet"
 
-#: src/tail.c:1652
+#: src/tail.c:1663
 msgid "warning: following standard input indefinitely is ineffective"
 msgstr ""
 
@@ -8191,7 +8194,7 @@ msgstr "manglende ']'\n"
 #: src/test.c:845
 #, fuzzy, c-format
 msgid "extra argument %s"
-msgstr "ugyldigt argument '%s'"
+msgstr "for mange argumenter"
 
 #: src/touch.c:112 src/touch.c:318
 #, c-format
@@ -8222,7 +8225,6 @@ msgstr ""
 "\n"
 
 #: src/touch.c:241
-#, fuzzy
 msgid ""
 "  -a                     change only the access time\n"
 "  -c, --no-create        do not create any files\n"
@@ -8513,26 +8515,12 @@ msgstr ""
 " eller: %s FLAG\n"
 
 #: src/true.c:49
-#, fuzzy
 msgid "Exit with a status code indicating success."
 msgstr ""
-"Brug:    %s [ignorerede kommandolinje-argumenter]\n"
-" eller:  %s FLAG\n"
-"Afslut med en statuskode der angiver succes.\n"
-"\n"
-"Disse navne på flag kan ikke forkortes.\n"
-"\n"
 
 #: src/true.c:50
-#, fuzzy
 msgid "Exit with a status code indicating failure."
 msgstr ""
-"Brug:    %s [ignorerede kommandolinje-argumenter]\n"
-" eller:  %s FLAG\n"
-"Afslut med en statuskode der angiver fejl.\n"
-"\n"
-"Disse navne på flag kan ikke forkortes.\n"
-"\n"
 
 #: src/tsort.c:86
 #, c-format
@@ -8709,7 +8697,7 @@ msgstr ""
 #: src/uniq.c:341
 #, fuzzy
 msgid "too many repeated lines"
-msgstr "forvildet tegn i feltangivelse"
+msgstr "for mange argumenter"
 
 #: src/uniq.c:476 src/uniq.c:503
 msgid "invalid number of fields to skip"
@@ -9025,57 +9013,104 @@ msgstr ""
 "Skriv gentagne gange en linje med alle specificerede STRENG'e, eller \"y\"\n"
 "\n"
 
-#, fuzzy
 #~ msgid ""
-#~ "  -i, --idle        add idle time as HOURS:MINUTES, . or old\n"
-#~ "                    (deprecated, use -u)\n"
-#~ "  -l, --login       print system login processes\n"
+#~ "This is free software; see the source for copying conditions.  There is "
+#~ "NO\n"
+#~ "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR "
+#~ "PURPOSE.\n"
 #~ msgstr ""
-#~ "  -i, --idle        tilføj brugerens inaktive tid som TIMER:MINUTTER,\n"
-#~ "                    . eller \"længe\" (forældet, brug -u)\n"
-#~ "  --login           udskriv indlogningsprocesser (det samme som SUS -l)\n"
+#~ "Dette er frit programmel; se kildeteksten for betingelser for kopiering. "
+#~ "Der er INGEN\n"
+#~ "garanti; ikke engang for SALGBARHED eller EGNETHED FOR ET SPECIELT "
+#~ "FORMÅL.\n"
 
-#, fuzzy
-#~ msgid "Warning: `-l' is deprecated; use `-L' instead"
+#~ msgid "too few arguments"
+#~ msgstr "for få argumenter"
+
+#~ msgid "Torbjorn Granlund and Richard M. Stallman"
+#~ msgstr "Torbjørn Granlund og Richard M. Stallman"
+
+#~ msgid "closing standard output"
+#~ msgstr "lukker standard-ud"
+
+#~ msgid "cannot change to null group"
+#~ msgstr "kan ikke ændre til nul-gruppe"
+
+#~ msgid "group number"
+#~ msgstr "gruppenummer"
+
+#~ msgid "invalid group number %s"
+#~ msgstr "ugyldigt gruppenummer %s"
+
+#~ msgid ""
+#~ "\n"
+#~ "Each MODE is one or more of the letters ugoa, one of the symbols +-= and\n"
+#~ "one or more of the letters rwxXstugo.\n"
 #~ msgstr ""
-#~ "Advarsel: -i vil blive fjernet i en fremtidig udgave; brug -u i stedet"
+#~ "\n"
+#~ "Hver TILSTAND skal være ét eller flere af bogstaverne ugoa, ét af "
+#~ "symbolerne +-=\n"
+#~ "og ét eller flere af bogstaverne rwxXstugo.\n"
 
-#, fuzzy
-#~ msgid "the --allow-missing option is deprecated; use --retry instead"
+#~ msgid "invalid mode string: %s"
+#~ msgstr "ugyldig tilstands-streng: %s"
+
+#~ msgid "unable to restore permissions of %s"
+#~ msgstr "kunne ikke genskabe adgangsrettigheder på %s"
+
+#~ msgid ""
+#~ "Usage: %s [OPTION]... OWNER[:[GROUP]] FILE...\n"
+#~ "  or:  %s [OPTION]... :GROUP FILE...\n"
+#~ "  or:  %s [OPTION]... --reference=RFILE FILE...\n"
 #~ msgstr ""
-#~ "Advarsel: -i vil blive fjernet i en fremtidig udgave; brug -u i stedet"
+#~ "Brug: %s [FLAG]... EJER[:[GRUPPE]] FIL...\n"
+#~ "  eller:  %s [FLAG]... :GRUPPE FIL...\n"
+#~ "  eller:  %s [FLAG]... --reference=RFIL FIL...\n"
 
-#~ msgid "cannot obtain time stamps for %s"
-#~ msgstr "kan ikke få tidsstempler for %s"
+#~ msgid "Richard Stallman and David MacKenzie"
+#~ msgstr "Richard Stallman og David MacKenzie"
 
-#, fuzzy
-#~ msgid "cannot open .. from %s"
-#~ msgstr "kan ikke åbne katalog %s"
+#~ msgid "Usage: %s [OPTION]... LEFT_FILE RIGHT_FILE\n"
+#~ msgstr "Brug: %s [FLAG]... VENSTRE_FIL HØJRE_FIL\n"
 
-#, fuzzy
-#~ msgid "cannot open %s from %s"
-#~ msgstr "kan ikke åbne katalog %s"
+#~ msgid "Torbjorn Granlund, David MacKenzie, and Jim Meyering"
+#~ msgstr "Torbjørn Granlund, David MacKenzie og Jim Meyering"
 
-#, fuzzy
-#~ msgid "cannot open %s"
-#~ msgstr "kan ikke fjerne %s"
+#~ msgid "%s: specified target is not a directory"
+#~ msgstr "%s: angivet mål er ikke et katalog"
 
-#, fuzzy
-#~ msgid "cannot open from %s to %s"
-#~ msgstr "kan ikke skifte katalog fra %s til %s"
+#~ msgid "copying multiple files, but last argument %s is not a directory"
+#~ msgstr "kopierer flere filer, men sidste argument, %s, er ikke et katalog"
 
-#, fuzzy
+#~ msgid ""
+#~ "warning: --version-control (-V) is obsolete;  support for it\n"
+#~ "will be removed in some future release.  Use --backup=%s instead."
+#~ msgstr ""
+#~ "advarsel: --version-control (-V) er forældet;  understøttelse for det\n"
+#~ "vil blive fjernet i en fremtidig udgave. Brug --backup=%s i stedet."
+
+#~ msgid "Stuart Kemp and David MacKenzie"
+#~ msgstr "Stuart Kemp og David MacKenzie"
+
+#~ msgid "%s: `+' or `-' expected after delimeter"
+#~ msgstr "%s: '+' eller '-' forventet efter skilletegn"
+
+#~ msgid "David Ihnat, David MacKenzie, and Jim Meyering"
+#~ msgstr "David Ihnat, David MacKenzie og Jim Meyering"
+
 #~ msgid ""
 #~ "Display the current time in the given FORMAT, or set the system date.\n"
 #~ "\n"
 #~ "  -d, --date=STRING         display time described by STRING, not `now'\n"
 #~ "  -f, --file=DATEFILE       like --date once for each line of DATEFILE\n"
-#~ "  -I[TIMESPEC], --iso-8601[=TIMESPEC]  output date/time in ISO 8601 "
+#~ "  -ITIMESPEC, --iso-8601[=TIMESPEC]  output date/time in ISO 8601 "
 #~ "format.\n"
-#~ "                            TIMESPEC=`date' for date only (the default),\n"
-#~ "                            `hours', `minutes', `seconds', or `ns' for "
-#~ "date and\n"
+#~ "                            TIMESPEC=`date' for date only,\n"
+#~ "                            `hours', `minutes', or `seconds' for date "
+#~ "and\n"
 #~ "                            time to the indicated precision.\n"
+#~ "                            --iso-8601 without TIMESPEC defaults to "
+#~ "`date'.\n"
 #~ msgstr ""
 #~ "Vis den nuværende tid i det givne FORMAT eller sæt systemdatoen.\n"
 #~ "\n"
@@ -9090,25 +9125,120 @@ msgstr ""
 #~ "                           --iso-8601 uden TIDSSPEC er det samme som "
 #~ "'date'.\n"
 
-#, fuzzy
 #~ msgid ""
-#~ "a format string may not be specified when using the --rfc-2822 (-R) option"
+#~ "  %z   RFC-822 style numeric timezone (-0500) (a nonstandard extension)\n"
+#~ "  %Z   time zone (e.g., EDT), or nothing if no time zone is determinable\n"
+#~ "\n"
+#~ "By default, date pads numeric fields with zeroes.  GNU date recognizes\n"
+#~ "the following modifiers between `%' and a numeric directive.\n"
+#~ "\n"
+#~ "  `-' (hyphen) do not pad the field\n"
+#~ "  `_' (underscore) pad the field with spaces\n"
+#~ msgstr ""
+#~ "  %z   RFC-822-numerisk tidszone (+0100) (en tilføjelse som ikke er "
+#~ "standard)\n"
+#~ "  %Z   tidszone (fx CET), eller intet hvis tidszonen ikke kunne "
+#~ "bestemmes\n"
+#~ "\n"
+#~ "Normalt udfylder date numeriske felter med nuller. GNU date forstår\n"
+#~ "følgende bestemningstegn mellem \"%\" og en numerisk anvisning.\n"
+#~ "\n"
+#~ "  \"-\" (bindestreg) udfyld ikke feltet\n"
+#~ "  \"_\" (understregning) udfyld feltet med blanktegn\n"
+
+#~ msgid "too many non-option arguments: %s%s"
+#~ msgstr "for mange argumenter der ikke er flag: %s%s"
+
+#~ msgid ""
+#~ "a format string may not be specified when using the --rfc-822 (-R) option"
 #~ msgstr "en formatstreng kan ikke angives når tilvalget --rfc-822 bruges"
 
 #~ msgid "undefined"
 #~ msgstr "ikke-defineret"
 
-#~ msgid "file offset out of range"
-#~ msgstr "filposition uden for interval"
+#~ msgid "cannot get time of day"
+#~ msgstr "kan ikke bestemme klokkeslæt"
 
-#~ msgid "cannot get priority"
-#~ msgstr "kan ikke bestemme prioritet"
+#~ msgid "Paul Rubin, David MacKenzie, and Stuart Kemp"
+#~ msgstr "Paul Rubin, David MacKenzie og Stuart Kemp"
 
-#~ msgid "cannot set priority"
-#~ msgstr "kan ikke sætte prioritet"
+#~ msgid "%s+%s records in\n"
+#~ msgstr "%s+%s blokke ind\n"
 
-#, fuzzy
+#~ msgid "%s+%s records out\n"
+#~ msgstr "%s+%s blokke ud\n"
+
+#~ msgid "truncated records"
+#~ msgstr "afkortede blokke"
+
 #~ msgid ""
+#~ "only one conv in {ascii,ebcdic,ibm}, {lcase,ucase}, {block,unblock}, "
+#~ "{unblock,sync}"
+#~ msgstr ""
+#~ "kun én konvertering i {ascii,ebcdic,ibm}, {lcase,ucase}, {block,unblock}, "
+#~ "{unblock,sync}"
+
+#~ msgid "Torbjorn Granlund, David MacKenzie, Larry McVoy, and Paul Eggert"
+#~ msgstr "Torbjørn Granlund, David MacKenzie, Larry McVoy og Paul Eggert"
+
+#~ msgid ""
+#~ "no FILE arguments may be used with the option to output\n"
+#~ "dircolors' internal database"
+#~ msgstr ""
+#~ "flaget for at udskrive dircolors' interne database til uddata\n"
+#~ "tillader ikke argumenter"
+
+#~ msgid "David MacKenzie and Jim Meyering"
+#~ msgstr "David MacKenzie og Jim Meyering"
+
+#~ msgid ""
+#~ "Torbjorn Granlund, David MacKenzie, Larry McVoy, Paul Eggert, and Jim "
+#~ "Meyering"
+#~ msgstr ""
+#~ "Torbjørn Granlund, David MacKenzie, Larry McVoy, Paul Eggert og Jim "
+#~ "Meyering"
+
+#~ msgid ""
+#~ "  -h, --human-readable  print sizes in human readable format (e.g., 1K "
+#~ "234M 2G)\n"
+#~ "  -H, --si              likewise, but use powers of 1000 not 1024\n"
+#~ "  -k                    like --block-size=1K\n"
+#~ "  -l, --count-links     count sizes many times if hard linked\n"
+#~ msgstr ""
+#~ "  -h, --human-readable  skriv størrelser i et læsevenligt format \n"
+#~ "                        (fx 1K 234M 2G)\n"
+#~ "  -H, --si              det samme, men brug 1000 som grundtal, ikke 1024\n"
+#~ "  -k, --kilobytes       ligesom --block-size=1024\n"
+#~ "  -l, --count-links     tæl størrelsen med flere gange for hårde lænker\n"
+
+#~ msgid "cannot change to parent of directory %s"
+#~ msgstr "kan ikke gå til overkatalog for kataloget %s"
+
+#~ msgid ""
+#~ "Echo the STRING(s) to standard output.\n"
+#~ "\n"
+#~ "  -n              do not output the trailing newline\n"
+#~ "  -e              enable interpretation of the backslash-escaped "
+#~ "characters\n"
+#~ "                    listed below\n"
+#~ "  -E              disable interpretation of those sequences in STRINGs\n"
+#~ msgstr ""
+#~ "Ekko STRENG'e til standard-ud.\n"
+#~ "\n"
+#~ "  -n              udskriv ikke det efterfølgende linjeskift\n"
+#~ "  -e              aktivér tolkning af sekvenserne med omvendt skråstreg "
+#~ "nævnt nedenfor\n"
+#~ "  -E              deaktivér tolkningen af disse sekvenser i STRENG'e\n"
+
+#~ msgid "Richard Mlynarik and David MacKenzie"
+#~ msgstr "Richard Mlynarik og David MacKenzie"
+
+#~ msgid "`-LIST' option is obsolete; use `-t LIST'"
+#~ msgstr "'-LIST'-flaget er forældet; brug '-t LIST'"
+
+#~ msgid ""
+#~ "Usage: %s [ignored command line arguments]\n"
+#~ "  or:  %s OPTION\n"
 #~ "Exit with a status code indicating failure.\n"
 #~ "\n"
 #~ "These option names may not be abbreviated.\n"
@@ -9121,20 +9251,74 @@ msgstr ""
 #~ "Disse navne på flag kan ikke forkortes.\n"
 #~ "\n"
 
-#, fuzzy
-#~ msgid "Only one operand may be specified when using --check."
-#~ msgstr "kun et argument kan angives når --check bruges"
+#~ msgid ""
+#~ "\n"
+#~ "In -wNUMBER, the letter `w' may be omitted.\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Ved -wTAL kan bogstavet 'w' udelades.\n"
+
+#~ msgid "invalid width option: `%s'"
+#~ msgstr "ugyldig linjelængdeflag: \"%s\""
+
+#~ msgid "`%s' option is obsolete; use `%s'"
+#~ msgstr "'%s'-flag er forældet; brug '%s'"
 
 #~ msgid ""
-#~ "This is free software; see the source for copying conditions.  There is "
-#~ "NO\n"
-#~ "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR "
-#~ "PURPOSE.\n"
+#~ "  -c, --bytes=SIZE         print first SIZE bytes\n"
+#~ "  -n, --lines=NUMBER       print first NUMBER lines instead of first 10\n"
 #~ msgstr ""
-#~ "Dette er frit programmel; se kildeteksten for betingelser for kopiering. "
-#~ "Der er INGEN\n"
-#~ "garanti; ikke engang for SALGBARHED eller EGNETHED FOR ET SPECIELT "
-#~ "FORMÅL.\n"
+#~ "  -c, --bytes=STØRRELSE    udskriv første STØRRELSE bytes\n"
+#~ "  -n, --lines=ANTAL        udskriv første ANTAL linjer i stedet for 10\n"
+
+#~ msgid "`-%s' option is obsolete; use `-%c %.*s%.*s%s'"
+#~ msgstr "'-%s'-flaget er forældet; brug '-%c %.*s%.*s%s'"
+
+#~ msgid "Arnold Robbins and David MacKenzie"
+#~ msgstr "Arnold Robbins og David MacKenzie"
+
+#~ msgid "installing multiple files, but last argument, %s is not a directory"
+#~ msgstr ""
+#~ "installerer flere filer, men sidste argument, %s, er ikke et katalog"
+
+#~ msgid "%s is a directory"
+#~ msgstr "%s er et katalog"
+
+#~ msgid "cannot obtain time stamps for %s"
+#~ msgstr "kan ikke få tidsstempler for %s"
+
+#~ msgid "invalid field number for file 1: `%s'"
+#~ msgstr "ugyldigt feltnummer for fil 1: \"%s\""
+
+#~ msgid "invalid field number for file 2: `%s'"
+#~ msgstr "ugyldigt feltnummer for fil 2: \"%s\""
+
+#~ msgid "too many non-option arguments"
+#~ msgstr "for mange argumenter, der ikke er flag"
+
+#~ msgid "too few non-option arguments"
+#~ msgstr "for få argumenter, der ikke er flag"
+
+#~ msgid "Mike Parker and David MacKenzie"
+#~ msgstr "Mike Parker og David MacKenzie"
+
+#~ msgid "%s: File exists"
+#~ msgstr "%s: Filen eksisterer"
+
+#~ msgid ""
+#~ "Usage: %s [OPTION]... TARGET [LINK_NAME]\n"
+#~ "  or:  %s [OPTION]... TARGET... DIRECTORY\n"
+#~ "  or:  %s [OPTION]... --target-directory=DIRECTORY TARGET...\n"
+#~ msgstr ""
+#~ "Brug: %s [FLAG]... MÅL [LÆNKENAVN]\n"
+#~ "   eller:   %s [FLAG]... MÅL... KATALOG\n"
+#~ "   eller:   %s [FLAG]... --target-directory=KATALOG MÅL...\n"
+
+#~ msgid "when making multiple links, last argument must be a directory"
+#~ msgstr "ved oprettelse af flere lænker skal sidste argument være et katalog"
+
+#~ msgid "Ulrich Drepper and Scott Miller"
+#~ msgstr "Ulrich Drepper og Scott Miller"
 
 #~ msgid ""
 #~ "\n"
@@ -9151,53 +9335,178 @@ msgstr ""
 #~ "  -t, --text            læs filerne i teksttilstand (forvalgt)\n"
 #~ "\n"
 
-#, fuzzy
+#~ msgid "file"
+#~ msgstr "fil"
+
+#~ msgid "files"
+#~ msgstr "filer"
+
+#~ msgid "checksum"
+#~ msgstr "kontrolsum"
+
+#~ msgid "checksums"
+#~ msgstr "kontrolsummer"
+
+#~ msgid "the --string and --check options are mutually exclusive"
+#~ msgstr "flagene --string og --check kan ikke bruges samtidigt"
+
+#~ msgid "no files may be specified when using --string"
+#~ msgstr "ingen fil kan angives når --string bruges"
+
+#~ msgid "only one argument may be specified when using --check"
+#~ msgstr "kun et argument kan angives når --check bruges"
+
+#~ msgid "wrong number of arguments"
+#~ msgstr "forkert antal argumenter"
+
+#~ msgid "major and minor device numbers may not be specified for fifo files"
+#~ msgstr "større- og mindre-nummer kan ikke angives for fifo-filer"
+
+#~ msgid "Mike Parker, David MacKenzie, and Jim Meyering"
+#~ msgstr "Mike Parker, David MacKenzie og Jim Meyering"
+
+#~ msgid "when moving multiple files, last argument must be a directory"
+#~ msgstr "ved flytning af flere filer skal sidste argument være et katalog"
+
 #~ msgid ""
-#~ "      --reply={yes,no,query}   specify how to handle the prompt about an\n"
-#~ "                                 existing destination file.  Note that\n"
-#~ "                                 --reply=no has an effect only when mv\n"
-#~ "                                 would prompt without -i or equivalent, i."
-#~ "e.,\n"
-#~ "                                 when a destination file exists and is "
-#~ "not\n"
-#~ "                                 writable, standard input is a terminal, "
-#~ "and\n"
-#~ "                                 no -f (or equivalent) option is "
-#~ "specified\n"
-#~ "      --strip-trailing-slashes remove any trailing slashes from each "
-#~ "SOURCE\n"
-#~ "                                 argument\n"
-#~ "  -S, --suffix=SUFFIX          override the usual backup suffix\n"
+#~ "Run COMMAND with an adjusted scheduling priority.\n"
+#~ "With no COMMAND, print the current scheduling priority.  ADJUST is 10\n"
+#~ "by default.  Range goes from -20 (highest priority) to 19 (lowest).\n"
+#~ "\n"
+#~ "  -n, --adjustment=ADJUST   increment priority by ADJUST first\n"
 #~ msgstr ""
-#~ "      --reply={yes,no,query}   angiv hvorledes forespørgsel om "
-#~ "eksisterende målfil\n"
-#~ "                                 skal behandles\n"
-#~ "      --strip-trailing-slashes  fjern evt. skråstreger i slutningen af \n"
-#~ "                               hvert MÅL-argument\n"
-#~ "  -S, --suffix=ENDELSE         tilsidesæt den sædvanlige sikkerhedskopi-"
-#~ "endelse\n"
+#~ "Kør KOMMANDO med en justeret behandlingsprioritet.\n"
+#~ "Uden nogen KOMMANDO, udskriv nuværende behandlingsprioritet. JUSTERING\n"
+#~ "er forvalgt til 10. Skalaen går fra -20 (højeste prioritet) til 19 "
+#~ "(laveste).\n"
+#~ "\n"
+#~ "  -n, --adjustment=JUSTERING  øg prioriteten med JUSTERING først\n"
 
-#, fuzzy
-#~ msgid "failed to redirect standard output"
-#~ msgstr "lukker standard-ud"
+#~ msgid "invalid option `%s'"
+#~ msgstr "ugyldigt flag '%s'"
 
-#~ msgid ""
-#~ "warning: --version-control (-V) is obsolete;  support for it\n"
-#~ "will be removed in some future release.  Use --backup=%s instead."
+#~ msgid "invalid priority `%s'"
+#~ msgstr "ugyldig prioritet '%s'"
+
+#~ msgid "cannot get priority"
+#~ msgstr "kan ikke bestemme prioritet"
+
+#~ msgid "cannot set priority"
+#~ msgstr "kan ikke sætte prioritet"
+
+#~ msgid "Scott Bartram and David MacKenzie"
+#~ msgstr "Scott Bartram og David MacKenzie"
+
+#~ msgid "old-style offset"
+#~ msgstr "position på gammel form"
+
+#~ msgid "invalid second operand in compatibility mode `%s'"
+#~ msgstr "ugyldig 2. operand i kompatibilitetstilstand '%s'"
+
+#~ msgid "in compatibility mode, the last two arguments must be offsets"
 #~ msgstr ""
-#~ "advarsel: --version-control (-V) er forældet;  understøttelse for det\n"
-#~ "vil blive fjernet i en fremtidig udgave. Brug --backup=%s i stedet."
+#~ "i kompatibilitetstilstand skal de sidste to argumenter være positioner"
 
-#, fuzzy
-#~ msgid "`%s' is too large"
-#~ msgstr "%s er for stor"
+#~ msgid "David M. Ihnat and David MacKenzie"
+#~ msgstr "David M. Ihnat og David MacKenzie"
 
-#, fuzzy
 #~ msgid ""
-#~ "* file systems that cache in temporary locations, such as NFS\n"
+#~ "Diagnose unportable constructs in NAME.\n"
+#~ "\n"
+#~ "  -p, --portability   check for all POSIX systems, not only this one\n"
+#~ msgstr ""
+#~ "Tjekker for ikke-portable konstruktioner i filNAVN.\n"
+#~ "\n"
+#~ "  -p, --portability   tjek for alle POSIX-systemer, ikke kun dette\n"
+
+#~ msgid "path `%s' contains nonportable character `%c'"
+#~ msgstr "stien '%s' indeholder et ikke-portabelt tegn '%c'"
+
+#~ msgid "`%s' is not a directory"
+#~ msgstr "'%s' er ikke et katalog"
+
+#~ msgid "directory `%s' is not searchable"
+#~ msgstr "kataloget '%s' er ikke søgbart"
+
+#~ msgid "name `%s' has length %ld; exceeds limit of %ld"
+#~ msgstr "navnet '%s' har længde %ld; overstiger grænsen på %ld"
+
+#~ msgid "path `%s' has length %d; exceeds limit of %ld"
+#~ msgstr "stien '%s' har længde %d; overstiger grænsen på %ld"
+
+#~ msgid "Joseph Arceneaux, David MacKenzie, and Kaveh Ghazi"
+#~ msgstr "Joseph Arceneaux, David MacKenzie og Kaveh Ghazi"
+
+#~ msgid "Pete TerMaat and Roland Huebner"
+#~ msgstr "Pete TerMaat og Roland Hübner"
+
+#~ msgid "`--pages' invalid range of page numbers: `%s'"
+#~ msgstr "'--pages' ugyldigt område for sidenumre: '%s'"
+
+#~ msgid "`--pages' invalid starting page number: `%s'"
+#~ msgstr "\"--pages\" ugyldigt startsidenummer: \"%s\""
+
+#~ msgid "`--pages' invalid ending page number: `%s'"
+#~ msgstr "\"--pages\" ugyldigt slutsidenummer: \"%s\""
+
+#~ msgid "`--pages' starting page number is larger than ending page number"
+#~ msgstr "'--pages' startsidenummeret er større end slutsidenummeret"
+
+#~ msgid "`--columns=COLUMN' invalid number of columns: `%s'"
+#~ msgstr "'--columns=KOLONNER' ugyldigt antal kolonner: '%s'"
+
+#~ msgid "%b %e %H:%M %Y"
+#~ msgstr "%Y-%m-%d %H:%M"
+
+#~ msgid "starting page number larger than total number of pages: `%d'"
+#~ msgstr "start-sidenummeret er større end totalt antal sider: '%d'"
+
+#~ msgid "Page %d"
+#~ msgstr "Side %d"
+
+#~ msgid "David MacKenzie and Richard Mlynarik"
+#~ msgstr "David MacKenzie og Richard Mlynarik"
+
+#~ msgid "\\%c: invalid escape"
+#~ msgstr "\\%c: ugyldig beskyttelse"
+
+#~ msgid "Usage: %s format [argument...]\n"
+#~ msgstr "Brug: %s format [argument...]\n"
+
+#~ msgid ""
+#~ "  -f, --canonicalize      canonicalize by following every symlink in "
+#~ "every\n"
+#~ "                          component of the given path recursively\n"
+#~ "  -n, --no-newline        do not output the trailing newline\n"
+#~ "  -q, --quiet,\n"
+#~ "  -s, --silent            suppress most error messages\n"
+#~ "  -v, --verbose           report error messages\n"
+#~ msgstr ""
+#~ "  -f, --canonicalize      normalisér ved at følge hver symlænke i hver\n"
+#~ "                          komponent i den givne sti rekursivt\n"
+#~ "  -n, --no-newline        udskriv ikke et afsluttende linjeskift\n"
+#~ "  -q, --quiet,\n"
+#~ "  -s, --silent            undertryk de fleste fejlmeddelelser\n"
+#~ "  -v, --verbose           rapportér fejlmeddelelser\n"
+
+#~ msgid "Paul Rubin, David MacKenzie, Richard Stallman, and Jim Meyering"
+#~ msgstr "Paul Rubin, David MacKenzie, Richard Stallman og Jim Meyering"
+
+#~ msgid ""
+#~ "when the starting value is larger than the limit,\n"
+#~ "the increment must be negative"
+#~ msgstr "når startværdien er større end grænsen skal øgningen være negativ"
+
+#~ msgid ""
+#~ "when the starting value is smaller than the limit,\n"
+#~ "the increment must be positive"
+#~ msgstr "når startværdien er mindre end grænsen skal øgningen være positiv"
+
+#~ msgid ""
+#~ "* filesystems that cache in temporary locations, such as NFS\n"
 #~ "  version 3 clients\n"
 #~ "\n"
-#~ "* compressed file systems\n"
+#~ "* compressed filesystems\n"
 #~ "\n"
 #~ "In addition, file system backups and remote mirrors may contain copies\n"
 #~ "of the file that cannot be removed, and that will allow a shredded file\n"
@@ -9214,47 +9523,74 @@ msgstr ""
 #~ "senere af\n"
 #~ "en makuleret fil.\n"
 
-#~ msgid "invalid argument `%s'"
-#~ msgstr "ugyldigt argument '%s'"
+#~ msgid "Jim Meyering and Paul Eggert"
+#~ msgstr "Jim Meyering og Paul Eggert"
+
+#~ msgid "Mike Haertel and Paul Eggert"
+#~ msgstr "Mike Haertel og Paul Eggert"
+
+#~ msgid "`-%d' option is obsolete; use `-l %d'"
+#~ msgstr "'-%d'-flaget er forældet; brug '-l %d'"
+
+#~ msgid "invalid number"
+#~ msgstr "ugyldigt tal"
+
+#~ msgid "*** invalid date/time ***"
+#~ msgstr "*** ugyldig datoi/klokkeslæt ***"
+
+#~ msgid "Kayvan Aghaiepour and David MacKenzie"
+#~ msgstr "Kayvan Aghaiepour og David MacKenzie"
+
+#~ msgid "Jay Lepreau and David MacKenzie"
+#~ msgstr "Jay Lepreau og David MacKenzie"
 
 #~ msgid "stdin: read error"
 #~ msgstr "stdind: læsefejl"
 
-#, fuzzy
-#~ msgid "openat: unable to restore working directory"
-#~ msgstr "kan ikke finde aktuelt katalog"
+#~ msgid "Paul Rubin, David MacKenzie, Ian Lance Taylor, and Jim Meyering"
+#~ msgstr "Paul Rubin, David MacKenzie, Ian Lance Taylor og Jim Meyering"
 
-#, fuzzy
-#~ msgid "fdopendir: unable to record current working directory"
-#~ msgstr "kan ikke finde aktuelt katalog"
+#~ msgid "%c: invalid suffix character in obsolescent option"
+#~ msgstr "%c: ugyldig suffiks-tegn i forældet flag"
 
-#, fuzzy
-#~ msgid "fdopendir: unable to restore working directory"
-#~ msgstr "kan ikke finde aktuelt katalog"
+#~ msgid ""
+#~ "too many arguments;  When using tail's obsolescent option syntax (%s)\n"
+#~ "there may be no more than one file argument.  Use the equivalent -n or -"
+#~ "c\n"
+#~ "option instead."
+#~ msgstr ""
+#~ "for mange argumenter;  Når 'tail's forældede flag-syntaks bruges (%s)\n"
+#~ "kan det ikke være mere end et filargument.  Brug det tilsvarende -n "
+#~ "eller\n"
+#~ "-c-flag i stedet."
 
-#, fuzzy
-#~ msgid "fstatat: unable to record current working directory"
-#~ msgstr "kan ikke finde aktuelt katalog"
+#~ msgid ""
+#~ "Warning: it is not portable to use two or more file arguments with\n"
+#~ "tail's obsolescent option syntax (%s).  Use the equivalent -n or -c\n"
+#~ "option instead."
+#~ msgstr ""
+#~ "Advarsel: det er ikke portabelt at bruge to eller flere filargumenter "
+#~ "med\n"
+#~ "tails gamle flagsyntaks (%s).  Brug det tilsvarende -n eller -c-\n"
+#~ "flaget i stedet."
 
-#, fuzzy
-#~ msgid "fstatat: unable to restore working directory"
-#~ msgstr "kan ikke finde aktuelt katalog"
+#~ msgid "`%s' option is obsolete; use `%s-%c %.*s'"
+#~ msgstr "'%s'-flaget er forældet; brug '%s-%c %.*s'"
 
-#, fuzzy
-#~ msgid "integer is too large: %s"
-#~ msgstr "%s er for stor"
+#~ msgid "%s is larger than the maximum file size on this system"
+#~ msgstr "%s er større end den maksimale filstørrelse på dette system"
 
-#, fuzzy
-#~ msgid "integer is too small: %s"
-#~ msgstr "%s er for stor"
+#~ msgid "%s: invalid maximum number of consecutive size changes"
+#~ msgstr "%s: ugyldig maksimum antal af efterfølgende ændringer i størrelse"
 
-#, fuzzy
-#~ msgid "%s: integer expression expected\n"
+#~ msgid "Mike Parker, Richard M. Stallman, and David MacKenzie"
+#~ msgstr "Mike Parker, Richard M. Stallman og David MacKenzie"
+
+#~ msgid "argument expected\n"
+#~ msgstr "argument forventet\n"
+
+#~ msgid "integer expression expected %s\n"
 #~ msgstr "forventet heltalsudtryk %s\n"
-
-#, fuzzy
-#~ msgid "integer is too large: %s\n"
-#~ msgstr "%s er for stor"
 
 #~ msgid "before -lt"
 #~ msgstr "før -lt"
@@ -9295,360 +9631,22 @@ msgstr ""
 #~ msgid "after -t"
 #~ msgstr "efter -t"
 
-#~ msgid ""
-#~ "\n"
-#~ "Each MODE is one or more of the letters ugoa, one of the symbols +-= and\n"
-#~ "one or more of the letters rwxXstugo.\n"
-#~ msgstr ""
-#~ "\n"
-#~ "Hver TILSTAND skal være ét eller flere af bogstaverne ugoa, ét af "
-#~ "symbolerne +-=\n"
-#~ "og ét eller flere af bogstaverne rwxXstugo.\n"
-
-#~ msgid "`-LIST' option is obsolete; use `-t LIST'"
-#~ msgstr "'-LIST'-flaget er forældet; brug '-t LIST'"
-
-#~ msgid "`%s' option is obsolete; use `%s'"
-#~ msgstr "'%s'-flag er forældet; brug '%s'"
-
-#~ msgid "`-%s' option is obsolete; use `-%c %.*s%.*s%s'"
-#~ msgstr "'-%s'-flaget er forældet; brug '-%c %.*s%.*s%s'"
-
-#~ msgid "invalid field number: `%s'"
-#~ msgstr "ugyldigt feltnummer: \"%s\""
-
-#~ msgid "invalid field number for file 1: `%s'"
-#~ msgstr "ugyldigt feltnummer for fil 1: \"%s\""
-
-#~ msgid "invalid field number for file 2: `%s'"
-#~ msgstr "ugyldigt feltnummer for fil 2: \"%s\""
-
-#, fuzzy
-#~ msgid "`-%s' option is obsolete; use `-l %s'"
-#~ msgstr "'-%d'-flaget er forældet; brug '-l %d'"
-
-#, fuzzy
-#~ msgid "`%s' option is obsolete; use `%s-%c %<PRIuMAX>'"
-#~ msgstr "'%s'-flaget er forældet; brug '%s-%c %.*s'"
-
-#~ msgid "`-LIST' option is obsolete; use `--first-only -t LIST'"
-#~ msgstr "'-LIST' flaget er forældet; brug '--first-only -t LIST'"
-
-#~ msgid "`-%lu' option is obsolete; use `-f %lu'"
-#~ msgstr "'-%lu'-flaget er forældet; brug '-f %lu'"
-
-#, fuzzy
-#~ msgid "%s: cannot find username for UID %lu\n"
-#~ msgstr "%s: kan ikke finde brugernavnet for UID %u\n"
-
-#~ msgid "closing standard output"
-#~ msgstr "lukker standard-ud"
-
-#~ msgid "%s+%s records in\n"
-#~ msgstr "%s+%s blokke ind\n"
-
-#~ msgid "%s+%s records out\n"
-#~ msgstr "%s+%s blokke ud\n"
-
-#~ msgid "truncated records"
-#~ msgstr "afkortede blokke"
-
-#, fuzzy
-#~ msgid "column count too large"
-#~ msgstr "%s: antallet `%.*s' er for stort"
-
-#, fuzzy
-#~ msgid ""
-#~ "  %z   RFC-2822 style numeric timezone (-0500) (a nonstandard extension)\n"
-#~ "  %Z   time zone (e.g., EDT), or nothing if no time zone is determinable\n"
-#~ "\n"
-#~ "By default, date pads numeric fields with zeroes.  GNU date recognizes\n"
-#~ "the following modifiers between `%' and a numeric directive.\n"
-#~ "\n"
-#~ "  `-' (hyphen) do not pad the field\n"
-#~ "  `_' (underscore) pad the field with spaces\n"
-#~ msgstr ""
-#~ "  %z   RFC-822-numerisk tidszone (+0100) (en tilføjelse som ikke er "
-#~ "standard)\n"
-#~ "  %Z   tidszone (fx CET), eller intet hvis tidszonen ikke kunne "
-#~ "bestemmes\n"
-#~ "\n"
-#~ "Normalt udfylder date numeriske felter med nuller. GNU date forstår\n"
-#~ "følgende bestemningstegn mellem \"%\" og en numerisk anvisning.\n"
-#~ "\n"
-#~ "  \"-\" (bindestreg) udfyld ikke feltet\n"
-#~ "  \"_\" (understregning) udfyld feltet med blanktegn\n"
-
-#~ msgid "cannot get time of day"
-#~ msgstr "kan ikke bestemme klokkeslæt"
-
-#, fuzzy
-#~ msgid "%s: number of bytes is large"
-#~ msgstr "antal bytes"
-
-#~ msgid "`--columns=COLUMN' invalid number of columns: `%s'"
-#~ msgstr "'--columns=KOLONNER' ugyldigt antal kolonner: '%s'"
-
-#, fuzzy
-#~ msgid "%s: integer is too large"
-#~ msgstr "%s er for stor"
-
-#~ msgid ""
-#~ "Diagnose unportable constructs in NAME.\n"
-#~ "\n"
-#~ "  -p, --portability   check for all POSIX systems, not only this one\n"
-#~ msgstr ""
-#~ "Tjekker for ikke-portable konstruktioner i filNAVN.\n"
-#~ "\n"
-#~ "  -p, --portability   tjek for alle POSIX-systemer, ikke kun dette\n"
-
-#, fuzzy
-#~ msgid "<anonymous temporary file>"
-#~ msgstr "kan ikke oprette midlertidig fil %s"
-
-#, fuzzy
-#~ msgid ""
-#~ "Usage: %s [OPTION]... [-T] SOURCE DEST        (1st form)\n"
-#~ "  or:  %s [OPTION]... SOURCE... DIRECTORY     (2nd form)\n"
-#~ "  or:  %s [OPTION]... -t DIRECTORY SOURCE...  (3rd form)\n"
-#~ "  or:  %s [OPTION]... -d DIRECTORY...         (4th form)\n"
-#~ msgstr ""
-#~ "Brug:   %s [FLAG]... KILDE MÅL                (1. format)\n"
-#~ " eller: %s [FLAG]... KILDE... KATALOG         (2. format)\n"
-#~ " eller: %s -d [FLAG]... KATALOG...            (3. format)\n"
-
-#~ msgid ""
-#~ "Echo the STRING(s) to standard output.\n"
-#~ "\n"
-#~ "  -n              do not output the trailing newline\n"
-#~ "  -e              enable interpretation of the backslash-escaped "
-#~ "characters\n"
-#~ "                    listed below\n"
-#~ "  -E              disable interpretation of those sequences in STRINGs\n"
-#~ msgstr ""
-#~ "Ekko STRENG'e til standard-ud.\n"
-#~ "\n"
-#~ "  -n              udskriv ikke det efterfølgende linjeskift\n"
-#~ "  -e              aktivér tolkning af sekvenserne med omvendt skråstreg "
-#~ "nævnt nedenfor\n"
-#~ "  -E              deaktivér tolkningen af disse sekvenser i STRENG'e\n"
-
-#~ msgid "`--pages' invalid range of page numbers: `%s'"
-#~ msgstr "'--pages' ugyldigt område for sidenumre: '%s'"
-
-#~ msgid "`--pages' invalid starting page number: `%s'"
-#~ msgstr "\"--pages\" ugyldigt startsidenummer: \"%s\""
-
-#~ msgid "`--pages' invalid ending page number: `%s'"
-#~ msgstr "\"--pages\" ugyldigt slutsidenummer: \"%s\""
-
-#~ msgid "`--pages' starting page number is larger than ending page number"
-#~ msgstr "'--pages' startsidenummeret er større end slutsidenummeret"
-
-#~ msgid "starting page number larger than total number of pages: `%d'"
-#~ msgstr "start-sidenummeret er større end totalt antal sider: '%d'"
-
-#~ msgid "Page %d"
-#~ msgstr "Side %d"
-
-#~ msgid "path `%s' contains nonportable character `%c'"
-#~ msgstr "stien '%s' indeholder et ikke-portabelt tegn '%c'"
-
-#~ msgid "`%s' is not a directory"
-#~ msgstr "'%s' er ikke et katalog"
-
-#~ msgid "directory `%s' is not searchable"
-#~ msgstr "kataloget '%s' er ikke søgbart"
-
-#~ msgid "name `%s' has length %ld; exceeds limit of %ld"
-#~ msgstr "navnet '%s' har længde %ld; overstiger grænsen på %ld"
-
-#, fuzzy
-#~ msgid "path `%s' has length %lu; exceeds limit of %ld"
-#~ msgstr "stien '%s' har længde %d; overstiger grænsen på %ld"
-
-#~ msgid "invalid mode string: %s"
-#~ msgstr "ugyldig tilstands-streng: %s"
-
-#~ msgid "the --string and --check options are mutually exclusive"
-#~ msgstr "flagene --string og --check kan ikke bruges samtidigt"
-
-#~ msgid "cannot omit both user and group"
-#~ msgstr "kan ikke undlade både bruger *og* gruppe"
-
-#~ msgid "cannot change to null group"
-#~ msgstr "kan ikke ændre til nul-gruppe"
-
-#~ msgid "invalid group name %s"
-#~ msgstr "ugyldigt gruppenavn %s"
-
-#~ msgid "group number"
-#~ msgstr "gruppenummer"
-
-#~ msgid "invalid group number %s"
-#~ msgstr "ugyldigt gruppenummer %s"
-
-#~ msgid ""
-#~ "Usage: %s [OPTION]... OWNER[:[GROUP]] FILE...\n"
-#~ "  or:  %s [OPTION]... :GROUP FILE...\n"
-#~ "  or:  %s [OPTION]... --reference=RFILE FILE...\n"
-#~ msgstr ""
-#~ "Brug: %s [FLAG]... EJER[:[GRUPPE]] FIL...\n"
-#~ "  eller:  %s [FLAG]... :GRUPPE FIL...\n"
-#~ "  eller:  %s [FLAG]... --reference=RFIL FIL...\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "\tonly one conv in {ascii,ebcdic,ibm}, {lcase,ucase}, {block,unblock}"
-#~ msgstr ""
-#~ "kun én konvertering i {ascii,ebcdic,ibm}, {lcase,ucase}, {block,unblock}, "
-#~ "{unblock,sync}"
-
-#, fuzzy
-#~ msgid "invalid width option: %s"
-#~ msgstr "ugyldig linjelængdeflag: \"%s\""
-
-#~ msgid "%s is a directory"
-#~ msgstr "%s er et katalog"
-
-#~ msgid "file"
-#~ msgstr "fil"
-
-#~ msgid "files"
-#~ msgstr "filer"
-
-#~ msgid "checksum"
-#~ msgstr "kontrolsum"
-
-#~ msgid "checksums"
-#~ msgstr "kontrolsummer"
-
-#~ msgid "invalid option `%s'"
-#~ msgstr "ugyldigt flag '%s'"
-
-#~ msgid "invalid priority `%s'"
-#~ msgstr "ugyldig prioritet '%s'"
-
-#~ msgid "old-style offset"
-#~ msgstr "position på gammel form"
-
-#~ msgid "invalid second operand in compatibility mode `%s'"
-#~ msgstr "ugyldig 2. operand i kompatibilitetstilstand '%s'"
-
-#~ msgid "in compatibility mode, the last two arguments must be offsets"
-#~ msgstr ""
-#~ "i kompatibilitetstilstand skal de sidste to argumenter være positioner"
-
-#~ msgid "%c: invalid suffix character in obsolescent option"
-#~ msgstr "%c: ugyldig suffiks-tegn i forældet flag"
-
-#~ msgid "%s: invalid maximum number of consecutive size changes"
-#~ msgstr "%s: ugyldig maksimum antal af efterfølgende ændringer i størrelse"
-
-#~ msgid "tab size contains an invalid character"
-#~ msgstr "tabulatorstørrelsen indeholder et ugyldigt tegn"
-
-#~ msgid "%%%c: invalid directive"
-#~ msgstr "%%%c: ugyldigt direktiv"
-
-#~ msgid ""
-#~ "  -f, --canonicalize      canonicalize by following every symlink in "
-#~ "every\n"
-#~ "                          component of the given path recursively\n"
-#~ "  -n, --no-newline        do not output the trailing newline\n"
-#~ "  -q, --quiet,\n"
-#~ "  -s, --silent            suppress most error messages\n"
-#~ "  -v, --verbose           report error messages\n"
-#~ msgstr ""
-#~ "  -f, --canonicalize      normalisér ved at følge hver symlænke i hver\n"
-#~ "                          komponent i den givne sti rekursivt\n"
-#~ "  -n, --no-newline        udskriv ikke et afsluttende linjeskift\n"
-#~ "  -q, --quiet,\n"
-#~ "  -s, --silent            undertryk de fleste fejlmeddelelser\n"
-#~ "  -v, --verbose           rapportér fejlmeddelelser\n"
-
-#~ msgid ""
-#~ "Usage: %s [OPTION]... TARGET [LINK_NAME]\n"
-#~ "  or:  %s [OPTION]... TARGET... DIRECTORY\n"
-#~ "  or:  %s [OPTION]... --target-directory=DIRECTORY TARGET...\n"
-#~ msgstr ""
-#~ "Brug: %s [FLAG]... MÅL [LÆNKENAVN]\n"
-#~ "   eller:   %s [FLAG]... MÅL... KATALOG\n"
-#~ "   eller:   %s [FLAG]... --target-directory=KATALOG MÅL...\n"
-
-#, fuzzy
-#~ msgid "%s: destination directory does not exist"
-#~ msgstr "%s: angivet målkatalog er ikke et katalog"
-
-#~ msgid "%s: specified target is not a directory"
-#~ msgstr "%s: angivet mål er ikke et katalog"
-
-#~ msgid "copying multiple files, but last argument %s is not a directory"
-#~ msgstr "kopierer flere filer, men sidste argument, %s, er ikke et katalog"
-
-#~ msgid "installing multiple files, but last argument, %s is not a directory"
-#~ msgstr ""
-#~ "installerer flere filer, men sidste argument, %s, er ikke et katalog"
-
-#~ msgid "%s: File exists"
-#~ msgstr "%s: Filen eksisterer"
-
-#~ msgid "when making multiple links, last argument must be a directory"
-#~ msgstr "ved oprettelse af flere lænker skal sidste argument være et katalog"
-
-#, fuzzy
-#~ msgid "missing file operand after %s"
-#~ msgstr "manglende argument efter '%s'"
-
-#~ msgid "when moving multiple files, last argument must be a directory"
-#~ msgstr "ved flytning af flere filer skal sidste argument være et katalog"
-
-#~ msgid "Usage: %s format [argument...]\n"
-#~ msgstr "Brug: %s format [argument...]\n"
-
-#, fuzzy
-#~ msgid "User name too long"
-#~ msgstr "%s: fil for lang"
-
-#~ msgid "too few arguments"
-#~ msgstr "for få argumenter"
-
-#~ msgid "too many arguments"
-#~ msgstr "for mange argumenter"
-
-#~ msgid "too many non-option arguments: %s%s"
-#~ msgstr "for mange argumenter der ikke er flag: %s%s"
-
-#~ msgid ""
-#~ "no FILE arguments may be used with the option to output\n"
-#~ "dircolors' internal database"
-#~ msgstr ""
-#~ "flaget for at udskrive dircolors' interne database til uddata\n"
-#~ "tillader ikke argumenter"
-
-#~ msgid "too many non-option arguments"
-#~ msgstr "for mange argumenter, der ikke er flag"
-
-#~ msgid "too few non-option arguments"
-#~ msgstr "for få argumenter, der ikke er flag"
-
-#~ msgid "no files may be specified when using --string"
-#~ msgstr "ingen fil kan angives når --string bruges"
-
-#~ msgid "wrong number of arguments"
-#~ msgstr "forkert antal argumenter"
-
-#~ msgid "major and minor device numbers may not be specified for fifo files"
-#~ msgstr "større- og mindre-nummer kan ikke angives for fifo-filer"
-
-#~ msgid "argument expected\n"
-#~ msgstr "argument forventet\n"
+#~ msgid "FIXME: ksb and mjb"
+#~ msgstr "FIXMIG: ksb og mjb"
 
 #~ msgid "too many arguments\n"
 #~ msgstr "for mange argumenter\n"
 
+#~ msgid ""
+#~ "Paul Rubin, Arnold Robbins, Jim Kingdon, David MacKenzie, and Randy Smith"
+#~ msgstr ""
+#~ "Paul Rubin, Arnold Robbins, Jim Kingdon, David MacKenzie og Randy Smith"
+
 #~ msgid "file arguments missing"
 #~ msgstr "filargumenter mangler"
+
+#~ msgid "invalid backslash escape `\\%c'"
+#~ msgstr "ugyldig omvendt skråstreg-beskyttelse '\\%c'"
 
 #~ msgid "two strings must be given when both deleting and squeezing repeats"
 #~ msgstr ""
@@ -9657,39 +9655,6 @@ msgstr ""
 
 #~ msgid "at least one string must be given when squeezing repeats"
 #~ msgstr "mindst en streng skal være givet ved sammenklemning af gentagelser"
-
-#~ msgid "only one argument may be specified"
-#~ msgstr "kun ét argument kan angives"
-
-#~ msgid "%b %e %H:%M %Y"
-#~ msgstr "%Y-%m-%d %H:%M"
-
-#~ msgid ""
-#~ "too many arguments;  When using tail's obsolescent option syntax (%s)\n"
-#~ "there may be no more than one file argument.  Use the equivalent -n or -"
-#~ "c\n"
-#~ "option instead."
-#~ msgstr ""
-#~ "for mange argumenter;  Når 'tail's forældede flag-syntaks bruges (%s)\n"
-#~ "kan det ikke være mere end et filargument.  Brug det tilsvarende -n "
-#~ "eller\n"
-#~ "-c-flag i stedet."
-
-#~ msgid ""
-#~ "Warning: it is not portable to use two or more file arguments with\n"
-#~ "tail's obsolescent option syntax (%s).  Use the equivalent -n or -c\n"
-#~ "option instead."
-#~ msgstr ""
-#~ "Advarsel: det er ikke portabelt at bruge to eller flere filargumenter "
-#~ "med\n"
-#~ "tails gamle flagsyntaks (%s).  Brug det tilsvarende -n eller -c-\n"
-#~ "flaget i stedet."
-
-#~ msgid "invalid backslash escape at end of string"
-#~ msgstr "ugyldig omvendt skråstreg-beskyttelse ved slutningen af streng"
-
-#~ msgid "invalid backslash escape `\\%c'"
-#~ msgstr "ugyldig omvendt skråstreg-beskyttelse '\\%c'"
 
 #~ msgid ""
 #~ "invalid identity mapping;  when translating, any [:lower:] or [:upper:]\n"
@@ -9702,234 +9667,48 @@ msgstr ""
 #~ "tilsvarende konstruktion (henholdsvis [:upper:] eller [:lower:]) i\n"
 #~ "streng2"
 
-#, fuzzy
-#~ msgid "%s+%s bytes in\n"
-#~ msgstr "%s+%s blokke ind\n"
-
-#, fuzzy
-#~ msgid "%s+%s bytes out\n"
-#~ msgstr "%s+%s blokke ud\n"
-
-#, fuzzy
-#~ msgid "unrecognized display= argument %s"
-#~ msgstr "ukendt præfiks: %s"
-
-#, fuzzy
-#~ msgid "no files specified in %s"
-#~ msgstr "ingen fil kan angives når --string bruges"
-
-#~ msgid "Usage: %s [OPTION]... LEFT_FILE RIGHT_FILE\n"
-#~ msgstr "Brug: %s [FLAG]... VENSTRE_FIL HØJRE_FIL\n"
-
-#~ msgid "*** invalid date/time ***"
-#~ msgstr "*** ugyldig datoi/klokkeslæt ***"
-
-#, fuzzy
-#~ msgid "Written by FIXME unknown."
-#~ msgstr "Skrevet af %s.\n"
-
-#, fuzzy
-#~ msgid "Written by Torbjorn Granlund and Richard M. Stallman."
-#~ msgstr "Torbjørn Granlund og Richard M. Stallman"
-
-#, fuzzy
-#~ msgid "Written by David MacKenzie and Jim Meyering."
-#~ msgstr "David MacKenzie og Jim Meyering"
-
-#, fuzzy
-#~ msgid "Written by David MacKenzie."
-#~ msgstr "Stuart Kemp og David MacKenzie"
-
-#, fuzzy
-#~ msgid "Written by Roland McGrath."
-#~ msgstr "Skrevet af %s.\n"
-
-#, fuzzy
-#~ msgid "Written by Q. Frank Xia."
-#~ msgstr "Skrevet af %s.\n"
-
-#, fuzzy
-#~ msgid "Written by Richard Stallman and David MacKenzie."
-#~ msgstr "Richard Stallman og David MacKenzie"
-
-#, fuzzy
-#~ msgid "Written by Torbjorn Granlund, David MacKenzie, and Jim Meyering."
-#~ msgstr "Torbjørn Granlund, David MacKenzie og Jim Meyering"
-
-#, fuzzy
-#~ msgid "Written by Stuart Kemp and David MacKenzie."
-#~ msgstr "Stuart Kemp og David MacKenzie"
-
-#, fuzzy
-#~ msgid "Written by David Ihnat, David MacKenzie, and Jim Meyering."
-#~ msgstr "David Ihnat, David MacKenzie og Jim Meyering"
-
-#, fuzzy
-#~ msgid "Written by Paul Rubin, David MacKenzie, and Stuart Kemp."
-#~ msgstr "Paul Rubin, David MacKenzie og Stuart Kemp"
-
-#, fuzzy
-#~ msgid "Written by Torbjorn Granlund, David MacKenzie, and Paul Eggert."
-#~ msgstr "Torbjørn Granlund, David MacKenzie, Larry McVoy og Paul Eggert"
-
-#, fuzzy
 #~ msgid ""
-#~ "Written by Torbjorn Granlund, David MacKenzie, Paul Eggert, and Jim "
-#~ "Meyering."
+#~ "Usage: %s [ignored command line arguments]\n"
+#~ "  or:  %s OPTION\n"
+#~ "Exit with a status code indicating success.\n"
+#~ "\n"
+#~ "These option names may not be abbreviated.\n"
+#~ "\n"
 #~ msgstr ""
-#~ "Torbjørn Granlund, David MacKenzie, Larry McVoy, Paul Eggert og Jim "
-#~ "Meyering"
+#~ "Brug:    %s [ignorerede kommandolinje-argumenter]\n"
+#~ " eller:  %s FLAG\n"
+#~ "Afslut med en statuskode der angiver succes.\n"
+#~ "\n"
+#~ "Disse navne på flag kan ikke forkortes.\n"
+#~ "\n"
 
-#, fuzzy
-#~ msgid "Written by Richard Mlynarik and David MacKenzie."
-#~ msgstr "Richard Mlynarik og David MacKenzie"
+#~ msgid "only one argument may be specified"
+#~ msgstr "kun ét argument kan angives"
 
-#, fuzzy
-#~ msgid "Written by Mike Parker."
-#~ msgstr "Skrevet af %s.\n"
+#~ msgid "`-LIST' option is obsolete; use `--first-only -t LIST'"
+#~ msgstr "'-LIST' flaget er forældet; brug '--first-only -t LIST'"
 
-#, fuzzy
-#~ msgid "Written by Paul Rubin."
-#~ msgstr "Skrevet af %s.\n"
+#~ msgid "`-%lu' option is obsolete; use `-f %lu'"
+#~ msgstr "'-%lu'-flaget er forældet; brug '-f %lu'"
 
-#, fuzzy
-#~ msgid "Written by Jim Meyering."
-#~ msgstr "Skrevet af %s.\n"
-
-#, fuzzy
-#~ msgid "Written by Ross Paterson."
-#~ msgstr "Skrevet af %s.\n"
-
-#, fuzzy
-#~ msgid "Written by Arnold Robbins and David MacKenzie."
-#~ msgstr "Arnold Robbins og David MacKenzie"
-
-#, fuzzy
-#~ msgid "Written by Mike Haertel."
-#~ msgstr "Skrevet af %s.\n"
-
-#, fuzzy
-#~ msgid "Written by Paul Eggert."
-#~ msgstr "Skrevet af %s.\n"
-
-#, fuzzy
-#~ msgid "Written by Michael Stone."
-#~ msgstr "Skrevet af %s.\n"
-
-#, fuzzy
-#~ msgid "Written by Mike Parker and David MacKenzie."
-#~ msgstr "Mike Parker og David MacKenzie"
-
-#, fuzzy
-#~ msgid "Written by Ulrich Drepper and Scott Miller."
-#~ msgstr "Ulrich Drepper og Scott Miller"
-
-#, fuzzy
-#~ msgid "Written by Mike Parker, David MacKenzie, and Jim Meyering."
-#~ msgstr "Mike Parker, David MacKenzie og Jim Meyering"
-
-#, fuzzy
-#~ msgid "Written by Scott Bartram and David MacKenzie."
-#~ msgstr "Scott Bartram og David MacKenzie"
-
-#, fuzzy
-#~ msgid "Written by David M. Ihnat and David MacKenzie."
-#~ msgstr "David M. Ihnat og David MacKenzie"
-
-#, fuzzy
-#~ msgid "Written by Joseph Arceneaux, David MacKenzie, and Kaveh Ghazi."
-#~ msgstr "Joseph Arceneaux, David MacKenzie og Kaveh Ghazi"
-
-#, fuzzy
-#~ msgid "Written by Pete TerMaat and Roland Huebner."
-#~ msgstr "Pete TerMaat og Roland Hübner"
-
-#, fuzzy
-#~ msgid "Written by David MacKenzie and Richard Mlynarik."
-#~ msgstr "David MacKenzie og Richard Mlynarik"
-
-#, fuzzy
-#~ msgid ""
-#~ "Written by Paul Rubin, David MacKenzie, Richard Stallman, and Jim "
-#~ "Meyering."
-#~ msgstr "Paul Rubin, David MacKenzie, Richard Stallman og Jim Meyering"
-
-#, fuzzy
-#~ msgid "Written by Colin Plumb."
-#~ msgstr "Skrevet af %s.\n"
-
-#, fuzzy
-#~ msgid "Written by Jim Meyering and Paul Eggert."
-#~ msgstr "Jim Meyering og Paul Eggert"
-
-#, fuzzy
-#~ msgid "Written by Mike Haertel and Paul Eggert."
-#~ msgstr "Mike Haertel og Paul Eggert"
-
-#, fuzzy
-#~ msgid "Written by Michael Meskes."
-#~ msgstr "Skrevet af %s.\n"
-
-#, fuzzy
-#~ msgid "Written by Kayvan Aghaiepour and David MacKenzie."
-#~ msgstr "Kayvan Aghaiepour og David MacKenzie"
-
-#, fuzzy
-#~ msgid "Written by Jay Lepreau and David MacKenzie."
-#~ msgstr "Jay Lepreau og David MacKenzie"
-
-#, fuzzy
-#~ msgid ""
-#~ "Written by Paul Rubin, David MacKenzie, Ian Lance Taylor, and Jim "
-#~ "Meyering."
-#~ msgstr "Paul Rubin, David MacKenzie, Ian Lance Taylor og Jim Meyering"
-
-#, fuzzy
-#~ msgid "Written by Mike Parker, Richard M. Stallman, and David MacKenzie."
-#~ msgstr "Mike Parker, Richard M. Stallman og David MacKenzie"
-
-#, fuzzy
-#~ msgid ""
-#~ "Written by Paul Rubin, Arnold Robbins, Jim Kingdon, David MacKenzie, and "
-#~ "Randy Smith."
-#~ msgstr ""
-#~ "Paul Rubin, Arnold Robbins, Jim Kingdon, David MacKenzie og Randy Smith"
-
-#, fuzzy
-#~ msgid "Written by Mark Kettenis."
-#~ msgstr "Skrevet af %s.\n"
-
-#, fuzzy
-#~ msgid "Written by Joseph Arceneaux and David MacKenzie."
+#~ msgid "Joseph Arceneaux and David MacKenzie"
 #~ msgstr "Joseph Arceneaux og David MacKenzie"
 
-#, fuzzy
-#~ msgid "Written by Paul Rubin and David MacKenzie."
+#~ msgid "Paul Rubin and David MacKenzie"
 #~ msgstr "Paul Rubin og David MacKenzie"
 
-#, fuzzy
-#~ msgid "Written by Joseph Arceneaux, David MacKenzie, and Michael Stone."
+#~ msgid "Joseph Arceneaux, David MacKenzie, and Michael Stone"
 #~ msgstr "Joseph Arceneaux, David MacKenzie og Michael Stone"
 
-#, fuzzy
-#~ msgid "Written by Richard Mlynarik."
-#~ msgstr "David MacKenzie og Richard Mlynarik"
-
-#~ msgid "%s: `+' or `-' expected after delimeter"
-#~ msgstr "%s: '+' eller '-' forventet efter skilletegn"
-
-#~ msgid "cannot change to parent of directory %s"
-#~ msgstr "kan ikke gå til overkatalog for kataloget %s"
-
 #~ msgid ""
-#~ "when the starting value is larger than the limit,\n"
-#~ "the increment must be negative"
-#~ msgstr "når startværdien er større end grænsen skal øgningen være negativ"
-
-#~ msgid ""
-#~ "when the starting value is smaller than the limit,\n"
-#~ "the increment must be positive"
-#~ msgstr "når startværdien er mindre end grænsen skal øgningen være positiv"
+#~ "  -i, --idle        add idle time as HOURS:MINUTES, . or old\n"
+#~ "                    (deprecated, use -u)\n"
+#~ "      --login       print system login processes\n"
+#~ "                    (equivalent to SUS -l)\n"
+#~ msgstr ""
+#~ "  -i, --idle        tilføj brugerens inaktive tid som TIMER:MINUTTER,\n"
+#~ "                    . eller \"længe\" (forældet, brug -u)\n"
+#~ "  --login           udskriv indlogningsprocesser (det samme som SUS -l)\n"
 
 #~ msgid ""
 #~ "Warning: the meaning of '-l' will change in a future release to conform "
@@ -9938,31 +9717,5 @@ msgstr ""
 #~ "Advarsel: betydningen af \"-l\" vil blive ændret i en fremtidig udgave "
 #~ "for at stemme med POSIX"
 
-#~ msgid "FIXME: ksb and mjb"
-#~ msgstr "FIXMIG: ksb og mjb"
-
-#~ msgid "unable to restore permissions of %s"
-#~ msgstr "kunne ikke genskabe adgangsrettigheder på %s"
-
-#~ msgid ""
-#~ "  -c, --bytes=SIZE         print first SIZE bytes\n"
-#~ "  -n, --lines=NUMBER       print first NUMBER lines instead of first 10\n"
-#~ msgstr ""
-#~ "  -c, --bytes=STØRRELSE    udskriv første STØRRELSE bytes\n"
-#~ "  -n, --lines=ANTAL        udskriv første ANTAL linjer i stedet for 10\n"
-
-#~ msgid ""
-#~ "\n"
-#~ "In -wNUMBER, the letter `w' may be omitted.\n"
-#~ msgstr ""
-#~ "\n"
-#~ "Ved -wTAL kan bogstavet 'w' udelades.\n"
-
-#~ msgid "%s is larger than the maximum file size on this system"
-#~ msgstr "%s er større end den maksimale filstørrelse på dette system"
-
-#~ msgid "invalid number"
-#~ msgstr "ugyldigt tal"
-
-#~ msgid "\\%c: invalid escape"
-#~ msgstr "\\%c: ugyldig beskyttelse"
+#~ msgid "%s: cannot find username for UID %u\n"
+#~ msgstr "%s: kan ikke finde brugernavnet for UID %u\n"

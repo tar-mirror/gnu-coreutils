@@ -1,5 +1,51 @@
 GNU coreutils NEWS                                    -*- outline -*-
 
+* Major changes in release 5.94 (2006-02-13) [stable]
+
+** Feature changes
+
+  df now considers "none" and "proc" file systems to be dummies and
+  therefore does not normally display them.  Also, inaccessible file
+  systems (which can be caused by shadowed mount points or by chrooted
+  bind mounts) are now dummies, too.
+
+  stat's --format=FMT option now works the way it did before 5.3.0:
+  FMT is automatically newline terminated.  The first stable release
+  containing this change was 5.92.
+
+  stat accepts the new option --printf=PFMT, where PFMT is *not* automatically
+  newline terminated.  Backslash escapes in PFMT *are* interpreted.
+
+  stat: backslash escapes are interpreted in a format string specified
+  via --printf=FMT, but not one specified via --format=FMT.  That includes
+  octal (\ooo, at most three octal digits), hexadecimal (\xhh, one or
+  two hex digits), and the standard sequences (\a, \b, \f, \n, \r, \t,
+  \v, \", \\).
+
+** Bug fixes
+
+  When `cp -RL' encounters the same directory more than once in the
+  hierarchy beneath a single command-line argument, it no longer confuses
+  them with hard-linked directories.
+
+  fts-using tools (chmod, chown, chgrp, du) no longer fail due to
+  a double-free bug -- it could be triggered by making a directory
+  inaccessible while e.g., du is traversing the hierarchy under it.
+
+  fts-using tools (chmod, chown, chgrp, du) no longer misinterpret
+  a very long symlink chain as a dangling symlink.  Before, such a
+  misinterpretation would cause these tools not to diagnose an ELOOP error.
+
+  sort would fail for large inputs (~50MB) on systems with a buggy
+  mkstemp function.  sort and tac now use the replacement mkstemp
+  function, and hence are no longer subject to limitations (of 26 or 32,
+  on the maximum number of files from a given template) on HP-UX 10.20,
+  SunOS 4.1.4, Solaris 2.5.1 and OSF1/Tru64 V4.0F&V5.1.
+
+  tail -f once again works on a file with the append-only
+  attribute (affects at least Linux ext2, ext3, xfs file systems)
+
+
 * Major changes in release 5.93 (2005-11-06) [stable]
 
 ** Bug fixes

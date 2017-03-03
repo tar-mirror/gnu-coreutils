@@ -4,7 +4,7 @@
 # Karl Eichwalder <ke@suse.de>, 2001-2002.
 # Lutz Behnke <lutz.behnke@gmx.de>, 1996, 1997, 1998, 1999, 2000, 2001.
 # Michael Schmidt <michael@guug.de>, 1996, 1997, 1998, 1999, 2000.
-# Michael Piefel <piefel@informatik.hu-berlin.de>, 2001, 2002, 2003.
+# Michael Piefel <piefel@informatik.hu-berlin.de>, 2001, 2002, 2003, 2004, 2005.
 #
 # The first 200+ lines are translations for the lib directory. This is very
 # similar or even identical to other tools' lib directories. Therefore take
@@ -37,12 +37,12 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU coreutils 5.3.0\n"
+"Project-Id-Version: GNU coreutils 5.93\n"
 "Report-Msgid-Bugs-To: bug-coreutils@gnu.org\n"
-"POT-Creation-Date: 2005-11-06 09:59+0100\n"
-"PO-Revision-Date: 2005-06-30 16:34+0200\n"
+"POT-Creation-Date: 2006-02-07 09:38+0100\n"
+"PO-Revision-Date: 2005-12-07 16:06+0100\n"
 "Last-Translator: Michael Piefel <piefel@informatik.hu-berlin.de>\n"
-"Language-Team: German <de@li.org>\n"
+"Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -66,7 +66,7 @@ msgstr "Gültige Argumente sind:"
 #: lib/closeout.c:94 src/cat.c:193 src/cat.c:277 src/cat.c:327 src/cksum.c:255
 #: src/expand.c:336 src/expand.c:361 src/head.c:300 src/head.c:350
 #: src/head.c:758 src/head.c:799 src/od.c:966 src/paste.c:143 src/tail.c:315
-#: src/tail.c:1092 src/tr.c:1561 src/tr.c:1784 src/tr.c:1887
+#: src/tail.c:1103 src/tr.c:1561 src/tr.c:1784 src/tr.c:1887
 #: src/unexpand.c:435 src/unexpand.c:451
 msgid "write error"
 msgstr "Schreibfehler"
@@ -128,81 +128,76 @@ msgid "weird file"
 msgstr "merkwürdige Datei"
 
 #: lib/gai_strerror.c:45
-#, fuzzy
 msgid "Address family for hostname not supported"
-msgstr "FIFO-Dateien werden nicht unterstützt"
+msgstr "Adressfamilie für Hostnamen nicht unterstützt"
 
 #: lib/gai_strerror.c:46
 msgid "Temporary failure in name resolution"
-msgstr ""
+msgstr "Vorübergehender Fehler bei Namensauflösung"
 
 #: lib/gai_strerror.c:47
 msgid "Bad value for ai_flags"
-msgstr ""
+msgstr "Ungültiger Wert für ai_flags"
 
 #: lib/gai_strerror.c:48
 msgid "Non-recoverable failure in name resolution"
-msgstr ""
+msgstr "Nicht behebbarer Fehler bei Namensauflösung"
 
 #: lib/gai_strerror.c:49
-#, fuzzy
 msgid "ai_family not supported"
-msgstr "FIFO-Dateien werden nicht unterstützt"
+msgstr "ai_family nicht unterstützt"
 
 #: lib/gai_strerror.c:50
 msgid "Memory allocation failure"
-msgstr ""
+msgstr "Fehler bei Speicheranforderung"
 
 #: lib/gai_strerror.c:51
 msgid "No address associated with hostname"
-msgstr ""
+msgstr "Keine Adresse mit Hostnamen verbunden"
 
 #: lib/gai_strerror.c:52
 msgid "Name or service not known"
-msgstr ""
+msgstr "Name oder Service unbekannt"
 
 #: lib/gai_strerror.c:53
 msgid "Servname not supported for ai_socktype"
-msgstr ""
+msgstr "Servname für ai_socktype nicht unterstützt"
 
 #: lib/gai_strerror.c:54
-#, fuzzy
 msgid "ai_socktype not supported"
-msgstr "FIFO-Dateien werden nicht unterstützt"
+msgstr "ai_socktype nicht unterstützt"
 
 #: lib/gai_strerror.c:55
-#, fuzzy
 msgid "System error"
-msgstr "Schreibfehler"
+msgstr "Systemfehler"
 
 #: lib/gai_strerror.c:57
 msgid "Processing request in progress"
-msgstr ""
+msgstr "Bearbeitungsanfrage läuft"
 
 #: lib/gai_strerror.c:58
 msgid "Request canceled"
-msgstr ""
+msgstr "Anfrage abgebrochen"
 
 #: lib/gai_strerror.c:59
 msgid "Request not canceled"
-msgstr ""
+msgstr "Anfrage nicht abgebrochen"
 
 #: lib/gai_strerror.c:60
 msgid "All requests done"
-msgstr ""
+msgstr "Alle Anfragen erledigt"
 
 #: lib/gai_strerror.c:61
 msgid "Interrupted by a signal"
-msgstr ""
+msgstr "Von einem Signal unterbrochen"
 
 #: lib/gai_strerror.c:62
 msgid "Parameter string not correctly encoded"
-msgstr ""
+msgstr "Parameterzeichenkette nicht korrekt codiert"
 
 #: lib/gai_strerror.c:74
-#, fuzzy
 msgid "Unknown error"
-msgstr "Unbekannter Systemfehler"
+msgstr "Unbekannter Fehler"
 
 #: lib/getopt.c:551 lib/getopt.c:570
 #, c-format
@@ -278,7 +273,7 @@ msgstr "kann Besitzer und/oder Gruppe von %s nicht ändern."
 msgid "cannot chdir to directory %s"
 msgstr "kann nicht in Verzeichnis %s wechseln"
 
-#: lib/mkdir-p.c:243 lib/mkdir-p.c:278 src/copy.c:1438 src/mkdir.c:167
+#: lib/mkdir-p.c:243 lib/mkdir-p.c:278 src/copy.c:1447 src/mkdir.c:167
 #, c-format
 msgid "cannot create directory %s"
 msgstr "kann Verzeichnis %s nicht anlegen"
@@ -293,9 +288,8 @@ msgid "memory exhausted"
 msgstr "Speicher ausgeschöpft"
 
 #: lib/openat-die.c:36
-#, fuzzy
 msgid "unable to record current working directory"
-msgstr "openat: kann aktuelles Verzeichnisses nicht aufzeichnen"
+msgstr "kann aktuelles Verzeichnisses nicht aufzeichnen"
 
 #: lib/openat-die.c:49 src/df.c:519
 msgid "failed to return to initial working directory"
@@ -390,10 +384,9 @@ msgstr "kann die Login-Gruppe einer numerischen UID nicht ermitteln"
 #. locale.  Otherwise, do not translate "(C)"; leave it as-is.
 #: lib/version-etc.c:72
 msgid "(C)"
-msgstr ""
+msgstr "©"
 
 #: lib/version-etc.c:74
-#, fuzzy
 msgid ""
 "\n"
 "This is free software.  You may redistribute copies of it under the terms "
@@ -402,11 +395,11 @@ msgid ""
 "There is NO WARRANTY, to the extent permitted by law.\n"
 "\n"
 msgstr ""
-"Dieses Programm ist freie Software; Sie dürfen es weitergeben und/oder\n"
-"verändern gemäß den Bestimmungen der GNU General Public License, "
-"veröffentlicht\n"
-"von der Free Software Foundation; entweder in Version 2, oder (nach Wahl)\n"
-"einer späteren Version.\n"
+"\n"
+"Dieses Programm ist freie Software. Sie dürfen Kopien davon weitergeben "
+"gemäß\n"
+"der GNU General Public License <http://www.gnu.org/licenses/gpl.html>.\n"
+"Es gibt KEINERLEI GARANTIE, so weit das Gesetz es erlaubt.\n"
 "\n"
 
 #. TRANSLATORS: %s denotes an author name.
@@ -537,7 +530,7 @@ msgstr "Die verglichenen Zeichenketten waren %s und %s."
 
 #: src/basename.c:51 src/cat.c:91 src/chgrp.c:104 src/chmod.c:322
 #: src/chown.c:90 src/chroot.c:42 src/cksum.c:264 src/comm.c:69 src/cp.c:152
-#: src/csplit.c:1448 src/cut.c:184 src/date.c:128 src/dd.c:397 src/df.c:713
+#: src/csplit.c:1448 src/cut.c:184 src/date.c:128 src/dd.c:397 src/df.c:720
 #: src/dircolors.c:101 src/dirname.c:45 src/du.c:276 src/echo.c:60
 #: src/env.c:114 src/expand.c:107 src/expr.c:97 src/factor.c:70 src/fmt.c:269
 #: src/fold.c:66 src/head.c:105 src/hostid.c:44 src/hostname.c:61 src/id.c:74
@@ -548,7 +541,7 @@ msgstr "Die verglichenen Zeichenketten waren %s und %s."
 #: src/pinky.c:510 src/pr.c:2764 src/printenv.c:57 src/printf.c:96
 #: src/ptx.c:1883 src/pwd.c:62 src/readlink.c:63 src/rm.c:131 src/rmdir.c:135
 #: src/seq.c:78 src/setuidgid.c:47 src/shred.c:151 src/sleep.c:44
-#: src/sort.c:277 src/split.c:103 src/stat.c:673 src/stty.c:507 src/su.c:404
+#: src/sort.c:277 src/split.c:103 src/stat.c:771 src/stty.c:507 src/su.c:404
 #: src/sum.c:55 src/sync.c:41 src/tac.c:128 src/tail.c:222 src/tee.c:58
 #: src/test.c:689 src/touch.c:229 src/tr.c:286 src/tsort.c:82 src/tty.c:65
 #: src/uname.c:113 src/unexpand.c:117 src/uniq.c:131 src/unlink.c:47
@@ -585,10 +578,14 @@ msgid ""
 "  %s /usr/bin/sort       Output \"sort\".\n"
 "  %s include/stdio.h .h  Output \"stdio\".\n"
 msgstr ""
+"\n"
+"Beispiele:\n"
+"  %s /usr/bin/sort        Ausgabe: „sort“.\n"
+"  %s include/stdio.h .h   Ausgabe: „stdio“.\n"
 
 #: src/basename.c:74 src/cat.c:128 src/chgrp.c:159 src/chmod.c:353
 #: src/chown.c:159 src/chroot.c:60 src/cksum.c:279 src/comm.c:94 src/cp.c:251
-#: src/csplit.c:1490 src/cut.c:235 src/date.c:241 src/dd.c:499 src/df.c:752
+#: src/csplit.c:1490 src/cut.c:235 src/date.c:241 src/dd.c:499 src/df.c:759
 #: src/dircolors.c:122 src/dirname.c:68 src/du.c:344 src/echo.c:98
 #: src/env.c:133 src/expand.c:132 src/expr.c:165 src/factor.c:90 src/fmt.c:300
 #: src/fold.c:89 src/head.c:140 src/hostid.c:57 src/hostname.c:74 src/id.c:95
@@ -599,7 +596,7 @@ msgstr ""
 #: src/pinky.c:537 src/pr.c:2876 src/printenv.c:71 src/printf.c:145
 #: src/ptx.c:1930 src/pwd.c:74 src/readlink.c:87 src/rm.c:174 src/rmdir.c:154
 #: src/seq.c:106 src/setuidgid.c:67 src/shred.c:224 src/sleep.c:60
-#: src/sort.c:350 src/split.c:137 src/stat.c:746 src/stty.c:724 src/su.c:425
+#: src/sort.c:350 src/split.c:137 src/stat.c:850 src/stty.c:724 src/su.c:425
 #: src/sum.c:75 src/sync.c:52 src/tac.c:151 src/tail.c:293 src/tee.c:75
 #: src/test.c:776 src/touch.c:263 src/tr.c:359 src/true.c:54 src/tsort.c:94
 #: src/tty.c:77 src/uname.c:136 src/unexpand.c:141 src/uniq.c:170
@@ -618,7 +615,7 @@ msgstr ""
 #: src/expr.c:203 src/join.c:914 src/link.c:83 src/mkdir.c:120
 #: src/mkfifo.c:111 src/mknod.c:140 src/nohup.c:96 src/pathchk.c:158
 #: src/printf.c:669 src/readlink.c:146 src/rm.c:265 src/rmdir.c:197
-#: src/seq.c:367 src/setuidgid.c:95 src/sleep.c:122 src/stat.c:801
+#: src/seq.c:367 src/setuidgid.c:95 src/sleep.c:122 src/stat.c:913
 #: src/tr.c:1723 src/unlink.c:81
 msgid "missing operand"
 msgstr "fehlender Operand"
@@ -689,9 +686,14 @@ msgid ""
 "  %s f - g  Output f's contents, then standard input, then g's contents.\n"
 "  %s        Copy standard input to standard output.\n"
 msgstr ""
+"\n"
+"Beispiele:\n"
+"  %s f - g  Gibt den Inhalt von f aus, dann die Standardeingabe,\n"
+"              schließlich den Inhalt von g.\n"
+"  %s        Kopiert die Standardeingabe in die Standardausgabe.\n"
 
 #: src/cat.c:316
-#, fuzzy, c-format
+#, c-format
 msgid "cannot do ioctl on %s"
 msgstr "Anwendung von ioctl auf „%s“ ist nicht möglich"
 
@@ -813,6 +815,11 @@ msgid ""
 "  %s staff /u      Change the group of /u to \"staff\".\n"
 "  %s -hR staff /u  Change the group of /u and subfiles to \"staff\".\n"
 msgstr ""
+"\n"
+"Beispiele:\n"
+"  %s staff /u      Ändert die Gruppe von /u zu „staff“.\n"
+"  %s -hR staff /u  Ändert die Gruppe von /u und enthaltener Dateien zu "
+"„staff“.\n"
 
 #: src/chgrp.c:249 src/chown.c:276
 msgid "-R --dereference requires either -H or -L"
@@ -884,9 +891,9 @@ msgid "changing permissions of %s"
 msgstr "Beim Setzen der Zugriffsrechte für %s"
 
 #: src/chmod.c:267
-#, fuzzy, c-format
+#, c-format
 msgid "%s: new permissions are %s, not %s"
-msgstr "Setzen der Zugriffsrechte für %s"
+msgstr "%s: neue Zugriffsrechte sind %s, nicht %s"
 
 #: src/chmod.c:301 src/chown-core.c:467 src/du.c:650
 msgid "fts_read failed"
@@ -941,10 +948,12 @@ msgid ""
 "\n"
 "Each MODE is of the form `[ugoa]*([-+=]([rwxXst]*|[ugo]))+'.\n"
 msgstr ""
+"\n"
+"Jeder MODUS hat die Form „[ugoa]*([-+=]([rwxXst]*|[ugo]))+“.\n"
 
 #: src/chmod.c:460
 msgid "cannot combine mode and --reference options"
-msgstr ""
+msgstr "Modus- und Referenz-Optionen können nicht kombiniert werden."
 
 #: src/chmod.c:491
 #, c-format
@@ -1101,6 +1110,12 @@ msgid ""
 "  %s root:staff /u  Likewise, but also change its group to \"staff\".\n"
 "  %s -hR root /u    Change the owner of /u and subfiles to \"root\".\n"
 msgstr ""
+"\n"
+"Beispiele:\n"
+"  %s root /u        Ändert den Eigentümer von /u auf „root“.\n"
+"  %s root:staff /u  Genauso, setzt zusätzlich die Gruppe auf „staff“.\n"
+"  %s -hR root /u    Ändert den Eigentümer von /u und enthaltener\n"
+"                      Dateien auf „root“.\n"
 
 #: src/chroot.c:46
 #, c-format
@@ -1179,6 +1194,11 @@ msgid ""
 "lines unique to FILE1, column two contains lines unique to FILE2,\n"
 "and column three contains lines common to both files.\n"
 msgstr ""
+"\n"
+"Ohne Optionen wird eine dreispaltige Ausgabe erzeugt. Spalte 1 enthält "
+"Zeilen,\n"
+"die nur in DATEI1 sind, Spalte 2 dementsprechend Zeilen aus DATEI2, und\n"
+"Spalte 3 die Zeilen, die in beiden Dateien gleich sind.\n"
 
 #: src/comm.c:86
 msgid ""
@@ -1193,13 +1213,13 @@ msgstr ""
 "  -3              Zeilen unterdrücken, die in beiden Dateien auftauchen\n"
 
 #: src/copy.c:229 src/csplit.c:647 src/du.c:947 src/fmt.c:431 src/head.c:849
-#: src/split.c:540 src/tac.c:543 src/tail.c:1290
+#: src/split.c:540 src/tac.c:543 src/tail.c:1301
 #, c-format
 msgid "cannot open %s for reading"
 msgstr "%s kann nicht zum Lesen geöffnet werden"
 
-#: src/copy.c:235 src/copy.c:289 src/copy.c:309 src/dd.c:1674 src/tail.c:1126
-#: src/tail.c:1192
+#: src/copy.c:235 src/copy.c:289 src/copy.c:309 src/dd.c:1674 src/tail.c:1137
+#: src/tail.c:1203
 #, c-format
 msgid "cannot fstat %s"
 msgstr "Aufruf von fstat für %s nicht möglich"
@@ -1209,7 +1229,7 @@ msgstr "Aufruf von fstat für %s nicht möglich"
 msgid "skipping file %s, as it was replaced while being copied"
 msgstr "überspringe Datei %s, da sie während des Kopierens ersetzt wurde"
 
-#: src/copy.c:265 src/copy.c:984 src/copy.c:1173 src/copy.c:1274 src/ln.c:312
+#: src/copy.c:265 src/copy.c:984 src/copy.c:1173 src/copy.c:1283 src/ln.c:312
 #: src/remove.c:788 src/remove.c:825 src/remove.c:965 src/remove.c:1092
 #: src/remove.c:1211
 #, c-format
@@ -1238,17 +1258,17 @@ msgstr "Aufruf von lseek für %s nicht möglich"
 msgid "writing %s"
 msgstr "Schreiben von %s"
 
-#: src/copy.c:425 src/copy.c:1647
+#: src/copy.c:425 src/copy.c:1656
 #, c-format
 msgid "preserving times for %s"
 msgstr "Erhalten der Zeiten für %s"
 
-#: src/copy.c:442 src/copy.c:1602 src/copy.c:1661 src/cp.c:324
+#: src/copy.c:442 src/copy.c:1611 src/copy.c:1670 src/cp.c:324
 #, c-format
 msgid "failed to preserve ownership for %s"
 msgstr "konnte den Eigentümer für %s nicht erhalten"
 
-#: src/copy.c:468 src/copy.c:1698
+#: src/copy.c:468 src/copy.c:1707
 #, c-format
 msgid "setting permissions for %s"
 msgstr "Setzen der Zugriffsrechte für %s"
@@ -1269,7 +1289,7 @@ msgstr "%s: Überschreiben von %s, über Modus %04lo hinwegsetzen? "
 msgid "%s: overwrite %s? "
 msgstr "%s: %s überschreiben? "
 
-#: src/copy.c:927 src/copy.c:965 src/df.c:496 src/install.c:445 src/stat.c:630
+#: src/copy.c:927 src/copy.c:965 src/df.c:496 src/install.c:445 src/stat.c:728
 #, c-format
 msgid "cannot stat %s"
 msgstr "Aufruf von stat für %s nicht möglich"
@@ -1342,96 +1362,96 @@ msgstr " (Sicherung: %s)"
 msgid "cannot copy a directory, %s, into itself, %s"
 msgstr "Kopieren eines Verzeichnisses, %s, in sich selbst (%s) nicht möglich"
 
-#: src/copy.c:1258
+#: src/copy.c:1268
 #, c-format
 msgid "will not create hard link %s to directory %s"
 msgstr "Harte Verknüpfung %s zu Verzeichnis %s wird nicht erzeugt"
 
-#: src/copy.c:1282
+#: src/copy.c:1291
 #, c-format
 msgid "cannot create hard link %s to %s"
 msgstr "Erzeugen von harter Verknüpfung %s zu Verzeichnis %s nicht möglich"
 
-#: src/copy.c:1336
+#: src/copy.c:1345
 #, c-format
 msgid "cannot move %s to a subdirectory of itself, %s"
 msgstr "Verschieben von %s in eigenes Unterverzeichnis (%s) nicht möglich"
 
-#: src/copy.c:1379
+#: src/copy.c:1388
 #, c-format
 msgid "cannot move %s to %s"
 msgstr "Verschieben von %s nach %s nicht möglich"
 
-#: src/copy.c:1391
+#: src/copy.c:1400
 #, c-format
 msgid "inter-device move failed: %s to %s; unable to remove target"
 msgstr ""
 "Verschieben zwischen Geräten fehlgeschlagen: %s zu %s; kann Ziel nicht "
 "entfernen"
 
-#: src/copy.c:1419
+#: src/copy.c:1428
 #, c-format
 msgid "cannot copy cyclic symbolic link %s"
 msgstr "Kopieren von zyklischer symbolischer Verknüpfung %s nicht möglich"
 
-#: src/copy.c:1496
+#: src/copy.c:1505
 #, c-format
 msgid "%s: can make relative symbolic links only in current directory"
 msgstr ""
 "%s: Erzeugen relativer symbolischer Verknüpfungen nur in momentanem "
 "Verzeichnis möglich"
 
-#: src/copy.c:1503
+#: src/copy.c:1512
 #, c-format
 msgid "cannot create symbolic link %s to %s"
 msgstr "Erzeugen der symbolischen Verknüpfung %s nach %s nicht möglich"
 
-#: src/copy.c:1514
+#: src/copy.c:1523
 #, c-format
 msgid "cannot create link %s"
 msgstr "Erzeugen von Verknüpfung %s nicht möglich"
 
-#: src/copy.c:1536 src/mkfifo.c:129
+#: src/copy.c:1545 src/mkfifo.c:129
 #, c-format
 msgid "cannot create fifo %s"
 msgstr "Erzeugen von FIFO %s nicht möglich"
 
-#: src/copy.c:1547
+#: src/copy.c:1556
 #, c-format
 msgid "cannot create special file %s"
 msgstr "Erzeugen der Spezialdatei %s nicht möglich"
 
-#: src/copy.c:1559 src/ls.c:2733 src/stat.c:416
+#: src/copy.c:1568 src/ls.c:2733 src/stat.c:436
 #, c-format
 msgid "cannot read symbolic link %s"
 msgstr "Lesen der symbolischen Verknüpfung %s nicht möglich"
 
-#: src/copy.c:1585
+#: src/copy.c:1594
 #, c-format
 msgid "cannot create symbolic link %s"
 msgstr "Erzeugen der symbolischen Verknüpfung %s nicht möglich"
 
-#: src/copy.c:1617
+#: src/copy.c:1626
 #, c-format
 msgid "%s has unknown file type"
 msgstr "%s hat einen unbekannten Dateityp"
 
-#: src/copy.c:1673
+#: src/copy.c:1682
 #, c-format
 msgid "failed to lookup file %s"
 msgstr "konnte die Datei %s nicht finden"
 
-#: src/copy.c:1678
+#: src/copy.c:1687
 #, c-format
 msgid "failed to preserve authorship for %s"
 msgstr "konnte den Urheber für %s nicht erhalten"
 
-#: src/copy.c:1720 src/ln.c:329
+#: src/copy.c:1729 src/ln.c:329
 #, c-format
 msgid "cannot un-backup %s"
 msgstr "Löschen der Sicherung von %s nicht möglich"
 
-#: src/copy.c:1724
+#: src/copy.c:1733
 #, c-format
 msgid "%s -> %s (unbackup)\n"
 msgstr "%s -> %s (Löschen der Sicherung)\n"
@@ -1455,7 +1475,7 @@ msgstr ""
 "Kopieren von QUELLE nach ZIEL, oder mehrere QUELLE(n) in VERZEICHNIS\n"
 "\n"
 
-#: src/cp.c:166 src/csplit.c:1461 src/cut.c:196 src/df.c:723 src/du.c:288
+#: src/cp.c:166 src/csplit.c:1461 src/cut.c:196 src/df.c:730 src/du.c:288
 #: src/expand.c:120 src/fmt.c:279 src/fold.c:79 src/head.c:119
 #: src/install.c:646 src/kill.c:104 src/ln.c:357 src/ls.c:4106 src/mkdir.c:63
 #: src/mkfifo.c:60 src/mknod.c:61 src/mv.c:308 src/nl.c:181 src/paste.c:427
@@ -1488,14 +1508,12 @@ msgstr ""
 "  -d                          genaus wie --no-dereference --preserve=link\n"
 
 #: src/cp.c:176
-#, fuzzy
 msgid ""
 "  -f, --force                  if an existing destination file cannot be\n"
 "                                 opened, remove it and try again\n"
 "  -i, --interactive            prompt before overwrite\n"
 "  -H                           follow command-line symbolic links\n"
 msgstr ""
-"      --no-dereference        nie symbolischen Verknüpfungen folgen\n"
 "  -f, --force                 wenn eine existierende Zieldatei nicht "
 "geöffnet\n"
 "                                werden kann wird sie gelöscht und es noch\n"
@@ -1510,21 +1528,20 @@ msgid ""
 "  -l, --link                   link files instead of copying\n"
 "  -L, --dereference            always follow symbolic links\n"
 msgstr ""
+"  -l, --link                  Dateien verknüpfen, statt zu kopieren\n"
+"  -L, --dereference           symbolischen Verknüpfungen immer folgen\n"
 
 #: src/cp.c:186
 msgid "  -P, --no-dereference         never follow symbolic links\n"
-msgstr ""
+msgstr "  -P, --no-dereference        symbolischen Verknüpfungen nie folgen\n"
 
 #: src/cp.c:189
-#, fuzzy
 msgid ""
 "  -p                           same as --preserve=mode,ownership,timestamps\n"
 "      --preserve[=ATTR_LIST]   preserve the specified attributes (default:\n"
 "                                 mode,ownership,timestamps), if possible\n"
 "                                 additional attributes: links, all\n"
 msgstr ""
-"  -l, --link                  Verknüpfung auf Datei statt Kopie erstellen.\n"
-"  -L, --dereference           symbolischen Verknüpfungen immer folgen\n"
 "  -p                          genau wie --preserve=mode,ownership,"
 "timestamps\n"
 "      --preserve[=ATTR_LIST]  angegebene Datei-Attribute (Voreinstellung: "
@@ -1534,14 +1551,12 @@ msgstr ""
 "                                Weitere Attribute: links, all\n"
 
 #: src/cp.c:195
-#, fuzzy
 msgid ""
 "      --no-preserve=ATTR_LIST  don't preserve the specified attributes\n"
 "      --parents                use full source file name under DIRECTORY\n"
 msgstr ""
 "      --no-preserve=ATTR_LIST  Angegebene Attribute nicht erhalten\n"
-"      --parents               Quell-Pfad an VERZEICHNIS anhängen\n"
-"  -P                          genau wie --no-dereference\n"
+"      --parents                Quell-Pfad an VERZEICHNIS anhängen\n"
 
 #: src/cp.c:199
 msgid ""
@@ -1551,20 +1566,16 @@ msgid ""
 "force)\n"
 msgstr ""
 "  -R, -r, --recursive         Verzeichnisse rekursiv kopieren\n"
-"      --remove--destination   jede Zieldatei vor dem Versuch, sie zu "
+"      --remove-destination    jede Zieldatei vor dem Versuch, sie zu "
 "öffnen,\n"
 "                                löschen (im Gegensatz zu --force)\n"
 
 #: src/cp.c:204
-#, fuzzy
 msgid ""
 "      --sparse=WHEN            control creation of sparse files\n"
 "      --strip-trailing-slashes remove any trailing slashes from each SOURCE\n"
 "                                 argument\n"
 msgstr ""
-"      --reply={yes,no,query}  Nachfrage bei existierender Zieldatei: immer "
-"ja,\n"
-"                                immer nein, nachfragen\n"
 "      --sparse=WANN           Erstellung von spärlich besetzter Dateien "
 "steuern\n"
 "      --strip-trailing-slashes  Schrägstriche vom Ende jedes QUELLE-"
@@ -1704,17 +1715,14 @@ msgstr ""
 "Kann --target-directory (-t) und --no-target-directory (-T) nicht kombinieren"
 
 #: src/cp.c:634
-#, fuzzy
 msgid "with --parents, the destination must be a directory"
-msgstr "Um die Pfade zu erhalten, muss das Ziel ein Verzeichnis sein"
+msgstr "mit --parents muss das Ziel ein Verzeichnis sein"
 
 #: src/cp.c:910 src/mv.c:398
-#, fuzzy
 msgid "the --reply option is deprecated; use -i or -f instead"
 msgstr ""
-"Warnung: „--allow-missing“ wird in einer kommenden Version aufgegeben "
-"werden;\n"
-"bitte verwenden Sie stattdessen „--retry“"
+"Warnung: „--reply“ wird in einer kommenden Version aufgegeben werden;\n"
+"bitte verwenden Sie stattdessen „-i“ oder „-f“."
 
 #: src/cp.c:926 src/ln.c:459
 msgid "symbolic links are not supported on this system"
@@ -1748,9 +1756,9 @@ msgid "%s: line number out of range"
 msgstr "%s: Zeilennummer nicht im zulässigen Bereich"
 
 #: src/csplit.c:707
-#, fuzzy, c-format
+#, c-format
 msgid "%s: %s: line number out of range"
-msgstr "%s: „%s“: Zeilennummer nicht im zulässigen Bereich"
+msgstr "%s: %s: Zeilennummer nicht im zulässigen Bereich"
 
 #: src/csplit.c:710 src/csplit.c:759
 #, c-format
@@ -1758,18 +1766,18 @@ msgid " on repetition %s\n"
 msgstr " bei Wiederholung %s\n"
 
 #: src/csplit.c:753
-#, fuzzy, c-format
+#, c-format
 msgid "%s: %s: match not found"
-msgstr "%s: „%s“: keine Entsprechung gefunden"
+msgstr "%s: %s: keine Entsprechung gefunden"
 
 #: src/csplit.c:817 src/csplit.c:857 src/nl.c:349 src/tac.c:274
 msgid "error in regular expression search"
 msgstr "Fehler bei Suche mit regulären Ausdrücken"
 
 #: src/csplit.c:982
-#, fuzzy, c-format
+#, c-format
 msgid "write error for %s"
-msgstr "Fehler beim Schreiben von „%s“"
+msgstr "Fehler beim Schreiben von %s"
 
 #: src/csplit.c:1058
 #, c-format
@@ -1807,14 +1815,14 @@ msgid "%s: line number must be greater than zero"
 msgstr "%s: Zeilennummer muss größer als Null sein"
 
 #: src/csplit.c:1169
-#, fuzzy, c-format
+#, c-format
 msgid "line number %s is smaller than preceding line number, %s"
-msgstr "Zeilennummer „%s“ ist kleiner als vorhergehende Zeilennummer, %s"
+msgstr "Zeilennummer %s ist kleiner als vorhergehende Zeilennummer %s"
 
 #: src/csplit.c:1175
-#, fuzzy, c-format
+#, c-format
 msgid "warning: line number %s is the same as preceding line number"
-msgstr "Warnung: Zeilennummer „%s“ ist dieselbe wie die vorhergehende"
+msgstr "Warnung: Zeilennummer %s ist dieselbe wie die vorhergehende"
 
 #: src/csplit.c:1228
 msgid "invalid format width"
@@ -1921,7 +1929,7 @@ msgstr ""
 "Ein Zeilen-OFFSET ist ein „+“ or „-“ gefolgt von einer positiven ganzen "
 "Zahl.\n"
 
-#: src/cut.c:188 src/df.c:717 src/expand.c:111 src/fold.c:70 src/head.c:109
+#: src/cut.c:188 src/df.c:724 src/expand.c:111 src/fold.c:70 src/head.c:109
 #: src/ls.c:4100 src/nl.c:172 src/paste.c:417 src/pr.c:2768 src/sort.c:281
 #: src/sum.c:59 src/tac.c:132 src/tail.c:226 src/tee.c:62 src/unexpand.c:121
 #: src/wc.c:127
@@ -1963,6 +1971,8 @@ msgid ""
 "      --complement        complement the set of selected bytes, characters\n"
 "                            or fields.\n"
 msgstr ""
+"      --complement        das Komplement der Menge der gewählten Bytes,\n"
+"                            Zeichen oder Felder bilden\n"
 
 #: src/cut.c:214
 msgid ""
@@ -2070,9 +2080,13 @@ msgid ""
 "  -d, --date=STRING         display time described by STRING, not `now'\n"
 "  -f, --file=DATEFILE       like --date once for each line of DATEFILE\n"
 msgstr ""
+"Die aktuelle Uhrzeit im angegebenen FORMAT anzeigen oder die Systemzeit "
+"setzen.\n"
+"\n"
+"  -d, --date=ZEICHENKETTE   Zeit gemäß ZEICHENKETTE anzeigen, nicht „jetzt“\n"
+"  -f, --file=DATEI          wie --date für jede Zeile in DATEI\n"
 
 #: src/date.c:143
-#, fuzzy
 msgid ""
 "  -r, --reference=FILE      display the last modification time of FILE\n"
 "  -R, --rfc-2822            output date and time in RFC 2822 format\n"
@@ -2084,11 +2098,13 @@ msgid ""
 msgstr ""
 "  -r, --reference=DATEI     Zeit der letzten Änderung von DATEI anzeigen\n"
 "  -R, --rfc-2822            Datumsausgabe gemäß RFC-2822 anzeigen\n"
+"      --rfc-3339=ZEITSPEZ   Datumsausgabe gemäß RFC-3339 anzeigen;\n"
+"                              ZEITSPEZ=„date“, „seconds“ oder „ns“ für\n"
+"                              Datum und Zeit mit angegebener Genauigkeit\n"
 "  -s, --set=ZEICHENKETTE    Zeit gemäß ZEICHENKETTE setzen\n"
 "  -u, --utc, --universal    Coordinated Universal Time anzeigen oder setzen\n"
 
 #: src/date.c:154
-#, fuzzy
 msgid ""
 "\n"
 "FORMAT controls the output.  The only valid option for the second form\n"
@@ -2102,46 +2118,42 @@ msgstr ""
 "Form ist Coordinated Universal Time.  Interpretierte Angaben sind:\n"
 "\n"
 "  %%   wörtliches %\n"
-"  %a   abgekürzter Name des Wochentags der Lokale (Mon..Son)\n"
+"  %a   abgekürzter Name des Wochentags der Lokale (z. B. Son)\n"
 
 #: src/date.c:162
-#, fuzzy
 msgid ""
 "  %A   locale's full weekday name (e.g., Sunday)\n"
 "  %b   locale's abbreviated month name (e.g., Jan)\n"
 "  %B   locale's full month name (e.g., January)\n"
 "  %c   locale's date and time (e.g., Thu Mar  3 23:05:25 2005)\n"
 msgstr ""
-"  %A   voller Name des Wochentags der Lokale, variable Länge (Montag.."
-"Sonntag)\n"
-"  %b   abgekürzter Monatsnameder Lokale  (Jan..Dez)\n"
-"  %B   voller Monatsname der Lokale, variable Länge (Januar..Dezember)\n"
-"  %c   Datum und Zeit der Lokale (Sam Nov 04 12:02:33 EST 1989)\n"
+"  %A   voller Name des Wochentags der Lokale, (z. B. Freitag)\n"
+"  %b   abgekürzter Monatsname der Lokale  (z. B. Nov)\n"
+"  %B   voller Monatsname der Lokale, variable Länge (z. B. November)\n"
+"  %c   Datum und Zeit der Lokale (z. B. Fr 18 Nov 2005 15:05:42 CET)\n"
 
 #: src/date.c:168
-#, fuzzy
 msgid ""
 "  %C   century; like %Y, except omit last two digits (e.g., 21)\n"
 "  %d   day of month (e.g, 01)\n"
 "  %D   date; same as %m/%d/%y\n"
 "  %e   day of month, space padded; same as %_d\n"
 msgstr ""
-"  %C   Jahrhundert (Jahr geteilt durch 100 und verkürzt auf eine Ganzzahl)\n"
-"         [00-99]\n"
-"  %d   Tag des Monats (01..31)\n"
-"  %D   Datum (mm/dd/yy)\n"
-"  %e   Tag des Monats, mit Leerzeichen aufgefüllt ( 1..31)\n"
+"  %C   Jahrhundert; wie %Y, aber ohne die letzten beiden Stellen (z. B. 20)\n"
+"  %d   Tag des Monats (z. B. 01)\n"
+"  %D   Datum; dasselbe wie %m/%d/%y\n"
+"  %e   Tag des Monats, mit Leerzeichen aufgefüllt; wie %_d\n"
 
 #: src/date.c:174
 #, fuzzy
 msgid ""
 "  %F   full date; same as %Y-%m-%d\n"
-"  %g   the last two digits of the year corresponding to the %V week number\n"
-"  %G   the year corresponding to the %V week number\n"
+"  %g   last two digits of year of ISO week number (see %G)\n"
+"  %G   year of ISO week number (see %V); normally useful only with %V\n"
 msgstr ""
-"  %F   dasselbe wie %Y-%m-%d\n"
-"  %g   Jahr als 2-stellige Zahl, bezüglich der Wochennummer %V\n"
-"  %G   Jahr als 4-stellige Zahl, bezüglich der Wochennummer %V\n"
+"  %F   volles Datum; dasselbe wie %Y-%m-%d\n"
+"  %g   Jahr als 2-stellige Zahl bezüglich der Wochennummer %V\n"
+"  %G   Jahr bezüglich der Wochennummer %V\n"
 
 #: src/date.c:179
 msgid ""
@@ -2168,7 +2180,6 @@ msgstr ""
 "  %M   Minute (00..59)\n"
 
 #: src/date.c:191
-#, fuzzy
 msgid ""
 "  %n   a newline\n"
 "  %N   nanoseconds (000000000..999999999)\n"
@@ -2180,60 +2191,58 @@ msgid ""
 msgstr ""
 "  %n   neue Zeile („newline“)\n"
 "  %N   Nanosekunden (000000000..999999999)\n"
-"  %p   AM (Vormittag) oder PM (Nachmittag) der Lokale in Großschreibung\n"
-"         (in vielen Lokalen nicht verwendet)\n"
-"  %P   am (Vormittag) oder pm (Nachmittag) der Lokale in Kleinschreibung\n"
-"         (in vielen Lokalen nicht verwendet)\n"
-"  %r   Zeit, 12-Stunden-Format (hh:mm:ss [AP]M)\n"
-"  %R   Zeit, 24-Stunden-Format (hh:mm)\n"
-"  %s   Sekunden seit „00:00:00 1970-01-01 UTC“ (eine GNU-Erweiterung)\n"
+"  %p   das Äquivalent von AM oder PM in der Lokale; leer wenn unbekannt\n"
+"  %P   wie %p, aber in Kleinbuchstaben\n"
+"  %r   Zeit im 12-Stunden-Format (z. B. 03:11:30)\n"
+"  %R   Zeit im 24-Stunden-Format; dasselbe wie %H:%M\n"
+"  %s   Sekunden seit „1970-01-01 00:00:00 UTC“\n"
 
 #: src/date.c:200
-#, fuzzy
 msgid ""
 "  %S   second (00..60)\n"
 "  %t   a tab\n"
 "  %T   time; same as %H:%M:%S\n"
 "  %u   day of week (1..7); 1 is Monday\n"
 msgstr ""
-"  %S   Sekunde (00..60); die 60 wird für eventuelle Schaltsekunden benötigt\n"
+"  %S   Sekunde (00..60)\n"
 "  %t   horizontaler Tabulatorstopp\n"
-"  %T   Zeit, 24-Stunden (hh:mm:ss)\n"
-"  %u   Tag der Woche (1..7);  1 steht für Montag\n"
+"  %T   Zeit; dasselbe wie %H:%M:%S\n"
+"  %u   Tag der Woche (1..7); 1 steht für Montag\n"
 
 #: src/date.c:206
 #, fuzzy
 msgid ""
-"  %U   week number of year with Sunday as first day of week (00..53)\n"
-"  %V   week number of year with Monday as first day of week (01..53)\n"
+"  %U   week number of year, with Sunday as first day of week (00..53)\n"
+"  %V   ISO week number, with Monday as first day of week (01..53)\n"
 "  %w   day of week (0..6); 0 is Sunday\n"
-"  %W   week number of year with Monday as first day of week (00..53)\n"
+"  %W   week number of year, with Monday as first day of week (00..53)\n"
 msgstr ""
 "  %U   Wochennummer des Jahres mit Sonntag als erstem Tag der Woche "
 "(00..53)\n"
 "  %V   Wochennummer des Jahres mit Montag als erstem Tag der Woche (01..53)\n"
-"  %w   Tag der Woche (0..6);  0 steht für Sonntag\n"
+"  %w   Tag der Woche (0..6); 0 steht für Sonntag\n"
 "  %W   Wochennummer des Jahres mit Montag als erstem Tag der Woche (00..53)\n"
 
 #: src/date.c:212
-#, fuzzy
 msgid ""
 "  %x   locale's date representation (e.g., 12/31/99)\n"
 "  %X   locale's time representation (e.g., 23:13:48)\n"
 "  %y   last two digits of year (00..99)\n"
 "  %Y   year\n"
 msgstr ""
-"  %x   Datumsrepräsentation der Lokale (dd.mm.yy)\n"
-"  %X   Zeitrepräsentation der Lokale (%H:%M:%S)\n"
+"  %x   Datumsrepräsentation der Lokale (z. B. 18.11.2005)\n"
+"  %X   Zeitrepräsentation der Lokale (z. B. 15:14:33)\n"
 "  %y   die letzten zwei Ziffern des Jahres (00..99)\n"
-"  %Y   Jahr (1970...)\n"
+"  %Y   Jahr\n"
 
 #: src/date.c:218
+#, fuzzy
 msgid ""
 "  %z   +hhmm numeric timezone (e.g., -0400)\n"
 "  %:z  +hh:mm numeric timezone (e.g., -04:00)\n"
-"  %::z +hh:mm:ss numeric time zone (e.g., -04:00:00)\n"
-"  %:::z numeric time zone with : to necessary precision (e.g., -04, +05:30)\n"
+"  %::z  +hh:mm:ss numeric time zone (e.g., -04:00:00)\n"
+"  %:::z  numeric time zone with : to necessary precision (e.g., -04, "
+"+05:30)\n"
 "  %Z   alphabetic time zone abbreviation (e.g., EDT)\n"
 "\n"
 "By default, date pads numeric fields with zeroes.\n"
@@ -2245,6 +2254,20 @@ msgid ""
 "  ^ use upper case if possible\n"
 "  # use opposite case if possible\n"
 msgstr ""
+"  %z   +hhmm  numerische Zeitzone (z. B. +0100)\n"
+"  %:z  +hh:mm numerische Zeitzone (z. B. +01:00)\n"
+"  %::z +hh:mm:ss numerische Zeitzone (z. B. +01:00:00)\n"
+"  %:::z numerische Zeitzone mit nötiger Zahl an „:“ (z. B. +01 oder +05:30)\n"
+"  %Z   alphabetische Zeitzoneabkürzung (z. B. CET)\n"
+"\n"
+"Die Vorgabe ist, numerische Felder mit Nullen aufzufüllen.\n"
+"Die folgenden Flags können „%“ folgen:\n"
+"\n"
+"  „-“  (Bindestrich/Minus) Feld nicht auffüllen\n"
+"  „_“  (Unterstrich) Feld mit Leerzeichen auffüllen\n"
+"  „0“  (Null) mit Nullen auffüllen\n"
+"  „^“  wenn möglich Großbuchstaben benutzen\n"
+"  „#“  wenn möglich Groß- und Kleinbuchstaben vertauschen\n"
 
 #: src/date.c:234
 msgid ""
@@ -2254,6 +2277,11 @@ msgid ""
 "E to use the locale's alternate representations if available, or\n"
 "O to use the locale's alternate numeric symbols if available.\n"
 msgstr ""
+"\n"
+"Nach jedem Flag kommt eine optionales Feldbreite, als Dezimalzahl;\n"
+"dann ein optionaler Modifikator, der entweder E oder O ist:\n"
+"E: die alternative Repräsentation der Locale verwenden (so vorhanden)\n"
+"O: die alternativen numerischen Symbole der Locale verwenden (so vorhanden)\n"
 
 #: src/date.c:262 src/dd.c:1614 src/head.c:840 src/md5sum.c:392
 #: src/md5sum.c:677 src/od.c:910 src/od.c:1932 src/pr.c:1178 src/pr.c:1381
@@ -2263,14 +2291,13 @@ msgid "standard input"
 msgstr "Standardeingabe"
 
 #: src/date.c:290 src/date.c:510
-#, fuzzy, c-format
+#, c-format
 msgid "invalid date %s"
-msgstr "ungültiges Datum „%s“"
+msgstr "ungültiges Datum %s"
 
 #: src/date.c:401 src/date.c:435
-#, fuzzy
 msgid "multiple output formats specified"
-msgstr "mehrere Ausgabedateien angegeben"
+msgstr "mehrere Ausgabeformate angegeben"
 
 #: src/date.c:413
 msgid "the options to specify dates for printing are mutually exclusive"
@@ -2284,7 +2311,7 @@ msgstr ""
 "nicht zugleich verwendet werden."
 
 #: src/date.c:441
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "the argument %s lacks a leading `+';\n"
 "When using an option to specify date(s), any non-option\n"
@@ -2305,16 +2332,15 @@ msgid "time %s is out of range"
 msgstr "Zeit %s außerhalb des zulässigen Bereichs"
 
 #: src/dd.c:401
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Usage: %s [OPERAND]...\n"
 "  or:  %s OPTION\n"
 msgstr ""
-"Aufruf: %s [STRING...]\n"
+"Aufruf: %s [OPERAND...]\n"
 " oder:  %s OPTION\n"
 
 #: src/dd.c:406
-#, fuzzy
 msgid ""
 "Copy a file, converting and formatting according to the operands.\n"
 "\n"
@@ -2324,17 +2350,16 @@ msgid ""
 "  count=BLOCKS    copy only BLOCKS input blocks\n"
 "  ibs=BYTES       read BYTES bytes at a time\n"
 msgstr ""
-"Kopieren einer Datei, Konvertierung und Formatierung gemäß der Optionen.\n"
+"Kopieren einer Datei, Konvertierung und Formatierung gemäß der Operanden.\n"
 "\n"
-"  bs=BYTES      ibs=BYTES und obs=BYTES erzwingen\n"
-"  cbs=BYTES     BYTES Bytes auf einmal konvertieren\n"
-"  conv=WÖRTER   Datei gemäß kommagetrennter Schlüsselwörter-Liste "
+"  bs=BYTES        ibs=BYTES und obs=BYTES erzwingen\n"
+"  cbs=BYTES       BYTES Bytes auf einmal konvertieren\n"
+"  conv=CONV       Datei gemäß kommagetrennter Schlüsselwörter-Liste "
 "konvertieren\n"
-"  count=BLÖCKE  nur BLÖCKE Eingabeblöcke kopieren\n"
-"  ibs=BYTES     Lesen von BYTES Bytes auf einmal\n"
+"  count=BLÖCKE    nur BLÖCKE Eingabeblöcke kopieren\n"
+"  ibs=BYTES       Lesen von BYTES Bytes auf einmal\n"
 
 #: src/dd.c:415
-#, fuzzy
 msgid ""
 "  if=FILE         read from FILE instead of stdin\n"
 "  iflag=FLAGS     read as per the comma separated symbol list\n"
@@ -2345,14 +2370,18 @@ msgid ""
 "  skip=BLOCKS     skip BLOCKS ibs-sized blocks at start of input\n"
 "  status=noxfer   suppress transfer statistics\n"
 msgstr ""
-"  if=DATEI      aus DATEI statt von der Standardeingabe lesen\n"
-"  obs=BYTES     BYTES Bytes auf einmal schreiben\n"
-"  of=DATEI      in DATEI statt in die Standardausgabe schreiben\n"
-"  seek=BLÖCKE   BLÖCKE obs-große Blöcke am Anfang der Ausgabe überspringen\n"
-"  skip=BLÖCKE   BLÖCKE ibs-große Blöcke am Anfang der Eingabe überspringen\n"
+"  if=DATEI        aus DATEI statt von der Standardeingabe lesen\n"
+"  iflag=FLAGS     anhand der kommagetrennten Symbolliste lesen\n"
+"  obs=BYTES       BYTES Bytes auf einmal schreiben\n"
+"  of=DATEI        in DATEI statt in die Standardausgabe schreiben\n"
+"  oflag=FLAGS     anhand der kommagetrennten Symbolliste schreiben\n"
+"  seek=BLÖCKE     BLÖCKE obs-große Blöcke am Anfang der Ausgabe "
+"überspringen\n"
+"  skip=BLÖCKE     BLÖCKE ibs-große Blöcke am Anfang der Eingabe "
+"überspringen\n"
+"  status=noxfer   Transferstatistik unterdrücken\n"
 
 #: src/dd.c:425
-#, fuzzy
 msgid ""
 "\n"
 "BLOCKS and BYTES may be followed by the following multiplicative suffixes:\n"
@@ -2363,14 +2392,14 @@ msgid ""
 "\n"
 msgstr ""
 "\n"
-"BLOCKS und BYTES können folgende multiplikativen Endungen tragen:\n"
+"BLÖCKE und BYTES können folgende multiplikativen Endungen tragen:\n"
 "xM M, c 1, w 2, b 512, kB 1000, K 1024, MB 1000×1000, M 1024×1024,\n"
 "GB 1000×1000×1000, G 1024×1024×1024, und so weiter für T, P, E, Z, Y.\n"
-"Jedes SCHLÜSSELWORT kann sein:\n"
+"\n"
+"Jedes CONV-Symbol kann sein:\n"
 "\n"
 
 #: src/dd.c:434
-#, fuzzy
 msgid ""
 "  ascii     from EBCDIC to ASCII\n"
 "  ebcdic    from ASCII to EBCDIC\n"
@@ -2379,18 +2408,16 @@ msgid ""
 "  unblock   replace trailing spaces in cbs-size records with newline\n"
 "  lcase     change upper case to lower case\n"
 msgstr ""
-"  ascii     von EBCDIC in ASCII.\n"
-"  ebcdic    von ASCII in EBCDIC.\n"
-"  ibm       von ASCII in alternatives EBCDIC.\n"
-"  block     Auffüllen von mit Zeilenumbrüchen terminierten Datensätzen "
-"durch\n"
-"              Leerzeichen bis zur cbs-Größe.\n"
-"  unblock   Ersetzen von nachlaufenden Leerzeichen in Datensätzen von\n"
-"              cbs-Größe mit Zeilenumbrüchen.\n"
-"  lcase     Ändern von Großbuchstaben in Kleinbuchstaben.\n"
+"  ascii     von EBCDIC in ASCII\n"
+"  ebcdic    von ASCII in EBCDIC\n"
+"  ibm       von ASCII in alternatives EBCDIC\n"
+"  block     mit Zeilenumbrüchen terminierte Datensätzen durch\n"
+"              Leerzeichen bis zur cbs-Größe auffüllen\n"
+"  unblock   nachlaufende Leerzeichen in Datensätzen von\n"
+"              cbs-Größe mit Zeilenumbrüchen ersetzen\n"
+"  lcase     Großbuchstaben in Kleinbuchstaben ändern\n"
 
 #: src/dd.c:442
-#, fuzzy
 msgid ""
 "  nocreat   do not create the output file\n"
 "  excl      fail if the output file already exists\n"
@@ -2403,12 +2430,16 @@ msgid ""
 "  fdatasync physically write output file data before finishing\n"
 "  fsync     likewise, but also write metadata\n"
 msgstr ""
-"  notrunc   Kein Abschneiden der Ausgabedatei.\n"
-"  ucase     Ändern von Kleinbuchstaben in Großbuchstaben.\n"
-"  swab      Jedes Paar von Eingabebytes vertauschen.\n"
-"  noerror   Nach Lesefehlern fortfahren.\n"
-"  sync      Jeden Eingabeblock mit NULLen zur ibs-Größe auffüllen; wenn mit\n"
-"              block oder unblock benutzt, stattdessen mit Leerzeichen.\n"
+"  nocreat   Ausgabedatei nicht anlegen\n"
+"  excl      wenn Ausgabedatei schon existiert, abbrechen\n"
+"  notrunc   Abschneiden nicht abschneiden\n"
+"  ucase     Kleinbuchstaben in Großbuchstaben ändern\n"
+"  swab      jedes Paar von Eingabebytes vertauschen\n"
+"  noerror   nach Lesefehlern fortfahren.\n"
+"  sync      jeden Eingabeblock mit NULLen zur ibs-Größe auffüllen; wenn mit\n"
+"              „block“ oder „unblock“ benutzt, stattdessen mit Leerzeichen.\n"
+"  fdatasync vor Beendigung Ausgabedatendatei physisch schreiben\n"
+"  fsync     genauso, zusätzlich auch die Metadaten\n"
 
 #: src/dd.c:454
 msgid ""
@@ -2417,41 +2448,45 @@ msgid ""
 "\n"
 "  append    append mode (makes sense only for output)\n"
 msgstr ""
+"\n"
+"Jedes Symbol FLAG kann sein:\n"
+"\n"
+"  append    Anfügemodus (nur für Ausgabe sinnvoll)\n"
 
 #: src/dd.c:461
 msgid "  direct    use direct I/O for data\n"
-msgstr ""
+msgstr "  direct    direkte Ein-/Ausgabe für Daten benutzen\n"
 
 #: src/dd.c:463
 msgid "  dsync     use synchronized I/O for data\n"
-msgstr ""
+msgstr "  dsync     synchronisierte Ein-/Ausgabe für Daten benutzen\n"
 
 #: src/dd.c:465
 msgid "  sync      likewise, but also for metadata\n"
-msgstr ""
+msgstr "  sync      genauso, aber auch für Metadaten\n"
 
 #: src/dd.c:467
 msgid "  nonblock  use non-blocking I/O\n"
-msgstr ""
+msgstr "  nonblock  nicht-blockierende  Ein-/Ausgabe benutzen\n"
 
 #: src/dd.c:469
 msgid "  nofollow  do not follow symlinks\n"
-msgstr ""
+msgstr "  nofollow  symbolischen Verknüpfungen nicht folgen\n"
 
 #: src/dd.c:471
 msgid "  noctty    do not assign controlling terminal from file\n"
-msgstr ""
+msgstr "  noctty    das kontrollierende Terminal nicht von Datei zuweisen\n"
 
 #: src/dd.c:474
 msgid "  binary    use binary I/O for data\n"
-msgstr ""
+msgstr "  binary    binäre Ein-/Ausgabe benutzen\n"
 
 #: src/dd.c:476
 msgid "  text      use text I/O for data\n"
-msgstr ""
+msgstr "  text      textuelle Ein-/Ausgabe benutzen\n"
 
 #: src/dd.c:480
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Sending a %s signal to a running `dd' process makes it\n"
@@ -2467,16 +2502,15 @@ msgid ""
 "\n"
 msgstr ""
 "\n"
-"Beachten Sie, dass man einem laufenden „dd“-Prozess ein SIGUSR1-Signal "
-"schicken\n"
-"kann. Dieser gibt dann auf der Standardfehlerausgabe die Anzahl der "
-"gelesenen\n"
-"und geschriebenen Datensätze aus und fährt mit dem Kopieren fort.\n"
+"Schickt man einem laufenden „dd“-Prozess ein %s-Signal, gibt dieser\n"
+"auf der Standardfehlerausgabe Eingabe-/Ausgabe-Statistiken aus und fährt\n"
+"mit dem Kopieren fort.\n"
 "\n"
 "  $ dd if=/dev/zero of=/dev/null& pid=$!\n"
-"  $ kill -USR1 $pid; sleep 1; kill $pid\n"
-"  10899206+0 Datensätze ein\n"
-"  10899206+0 Datensätze aus\n"
+"  $ kill -%s $pid; sleep 1; kill $pid\n"
+"  18335302+0 Datensätze ein\n"
+"  18335302+0 Datensätze aus\n"
+"  9387674624 Bytes (9,4 GB) kopiert, 34,6279 Sekunden, 271 MB/s\n"
 
 #: src/dd.c:536
 #, c-format
@@ -2484,31 +2518,33 @@ msgid ""
 "%<PRIuMAX>+%<PRIuMAX> records in\n"
 "%<PRIuMAX>+%<PRIuMAX> records out\n"
 msgstr ""
+"%<PRIuMAX>+%<PRIuMAX> Datensätze ein\n"
+"%<PRIuMAX>+%<PRIuMAX> Datensätze aus\n"
 
 #: src/dd.c:542
-#, fuzzy, c-format
+#, c-format
 msgid "1 truncated record\n"
 msgid_plural "%<PRIuMAX> truncated records\n"
-msgstr[0] "abgeschnittener Datensatz"
-msgstr[1] "abgeschnittener Datensatz"
+msgstr[0] "ein abgeschnittener Datensatz\n"
+msgstr[1] "%<PRIuMAX> abgeschnittene Datensätze\n"
 
 #: src/dd.c:554
 #, c-format
 msgid "1 byte (1 B) copied"
 msgid_plural "%<PRIuMAX> bytes (%s) copied"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "ein Byte (1 B) kopiert"
+msgstr[1] "%<PRIuMAX> Bytes (%s) kopiert"
 
 #: src/dd.c:572
 msgid "Infinity B"
-msgstr ""
+msgstr "unendlich B"
 
 #: src/dd.c:576
 #, c-format
 msgid ", %g second, %s/s\n"
 msgid_plural ", %g seconds, %s/s\n"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] ", %g Sekunde, %s/s\n"
+msgstr[1] ", %g Sekunden, %s/s\n"
 
 #: src/dd.c:586
 #, c-format
@@ -2526,9 +2562,9 @@ msgid "writing to %s"
 msgstr "Schreiben in %s"
 
 #: src/dd.c:868
-#, fuzzy, c-format
+#, c-format
 msgid "unrecognized operand %s"
-msgstr "unbekannte Option %s"
+msgstr "nicht erkannter Operand %s"
 
 #: src/dd.c:879
 #, c-format
@@ -2536,24 +2572,24 @@ msgid "invalid conversion: %s"
 msgstr "ungültige Konvertierung: %s"
 
 #: src/dd.c:882
-#, fuzzy, c-format
+#, c-format
 msgid "invalid input flag: %s"
-msgstr "ungültige Zeilenbreite: %s"
+msgstr "ungültiges Eingabeflag: %s"
 
 #: src/dd.c:885
-#, fuzzy, c-format
+#, c-format
 msgid "invalid output flag: %s"
-msgstr "Ungültiger Gruppenname %s"
+msgstr "ungültiges Ausgabeflag: %s"
 
 #: src/dd.c:888
-#, fuzzy, c-format
+#, c-format
 msgid "invalid status flag: %s"
-msgstr "Ungültiges Datumsformat %s"
+msgstr "ungültiges Statusflag%s"
 
 #: src/dd.c:924
-#, fuzzy, c-format
+#, c-format
 msgid "unrecognized operand %s=%s"
-msgstr "unbekannte Option %s=%s"
+msgstr "nicht erkannter Operand %s=%s"
 
 #: src/dd.c:930
 #, c-format
@@ -2562,22 +2598,19 @@ msgstr "ungültige Zahl %s"
 
 #: src/dd.c:950
 msgid "cannot combine any two of {ascii,ebcdic,ibm}"
-msgstr ""
+msgstr "{ascii,ebcdic,ibm} sind in keiner Weise kombinierbar"
 
 #: src/dd.c:952
-#, fuzzy
 msgid "cannot combine block and unblock"
-msgstr "kann nicht sowohl Benutzer als auch Gruppe weglassen"
+msgstr "block und unblock sind nicht kombinierbar"
 
 #: src/dd.c:954
-#, fuzzy
 msgid "cannot combine lcase and ucase"
-msgstr "Kann Dateinamen %s und %s nicht vergleichen."
+msgstr "lcase und ucase sind nicht kombinierbar"
 
 #: src/dd.c:956
-#, fuzzy
 msgid "cannot combine excl and nocreat"
-msgstr "es ist nicht möglich, Signale mit -l oder -t zu kombinieren"
+msgstr "excl und nocreat sind nicht kombinierbar"
 
 #: src/dd.c:1104
 #, c-format
@@ -2589,38 +2622,37 @@ msgstr ""
 "  des Typs mt_type=0x%0lx - siehe <sys/mtio.h> für die Liste der Typen"
 
 #: src/dd.c:1161 src/dd.c:1218
-#, fuzzy, c-format
+#, c-format
 msgid "%s: cannot seek"
-msgstr "%s: Entfernen nicht möglich"
+msgstr "%s: kann nicht zu Position springen"
 
 #: src/dd.c:1198
 #, c-format
 msgid "offset overflow while reading file %s"
-msgstr ""
+msgstr "Offset-Overflow beim Lesen der Datei %s"
 
 #: src/dd.c:1210
-#, fuzzy
 msgid "warning: screwy file offset after failed read"
-msgstr "Warnung: Quelldatei %s mehr als einmal angegeben"
+msgstr "Warnung: kaputter Datei-Offset nach fehlgeschlagenem Lesen"
 
 #: src/dd.c:1214
 msgid "cannot work around kernel bug after all"
-msgstr ""
+msgstr "kann nun einmal nicht um Kernel-Fehler herumarbeiten"
 
 #: src/dd.c:1325
-#, fuzzy, c-format
+#, c-format
 msgid "setting flags for %s"
-msgstr "Setzen der Zeiten für %s"
+msgstr "setze Flags für %s"
 
 #: src/dd.c:1563
 #, c-format
 msgid "fdatasync failed for %s"
-msgstr ""
+msgstr "fdatasync für %s fehlgeschlagen"
 
 #: src/dd.c:1573
-#, fuzzy, c-format
+#, c-format
 msgid "fsync failed for %s"
-msgstr "konnte %s nicht öffnen"
+msgstr "fsync für %s fehlgeschlagen"
 
 #: src/dd.c:1620 src/dd.c:1649
 #, c-format
@@ -2633,11 +2665,13 @@ msgid ""
 "offset too large: cannot truncate to a length of seek=%<PRIuMAX> (%lu-byte) "
 "blocks"
 msgstr ""
+"Offset zu groß: kann nicht auf eine Länge von seek=%<PRIuMAX> (%lu-Byte-) "
+"blocks abschneiden"
 
 #: src/dd.c:1680
-#, fuzzy, c-format
+#, c-format
 msgid "truncating at %<PRIuMAX> bytes in output file %s"
-msgstr "an %s Bytes vorbei fortbewegen in Ausgabedatei %s"
+msgstr "schneide bei %<PRIuMAX> Bytes in Ausgabedatei %s ab"
 
 #: src/df.c:150
 msgid "Filesystem    Type"
@@ -2691,8 +2725,7 @@ msgstr "Kann nicht in Verzeichnis %s wechseln"
 msgid "cannot stat current directory (now %s)"
 msgstr "Das aktuelle Verzeichnis (jetzt %s) ist nicht erreichbar"
 
-#: src/df.c:718
-#, fuzzy
+#: src/df.c:725
 msgid ""
 "Show information about the file system on which each FILE resides,\n"
 "or all file systems by default.\n"
@@ -2702,25 +2735,23 @@ msgstr ""
 "DATEI befindet, oder alle Dateisysteme als Standardvorgabe.\n"
 "\n"
 
-#: src/df.c:726
+#: src/df.c:733
 #, fuzzy
 msgid ""
-"  -a, --all             include file systems having 0 blocks\n"
+"  -a, --all             include dummy file systems\n"
 "  -B, --block-size=SIZE use SIZE-byte blocks\n"
 "  -h, --human-readable  print sizes in human readable format (e.g., 1K 234M "
 "2G)\n"
 "  -H, --si              likewise, but use powers of 1000 not 1024\n"
 msgstr ""
-"  -a, --all                 Einschließlich Dateisystemen von 0 Blöcken "
-"Größe.\n"
-"  -B, --block-size=GRÖßE    GRÖßE große Blöcken verwenden.\n"
+"  -a, --all                 Dateisystemen von 0 Blöcken Größe mit "
+"einschließen\n"
+"  -B, --block-size=GRÖßE    GRÖßE große Blöcke verwenden\n"
 "  -h, --human-readable      Größen in menschenlesbarem Format (z.B. 1K 234M "
 "2G)\n"
-"                              ausgeben.\n"
-"  -H, --si                  Wie „-h“, aber mit 1000 statt 1024 als Teiler.\n"
+"  -H, --si                  genauso, aber mit 1000 statt 1024 als Teiler\n"
 
-#: src/df.c:732
-#, fuzzy
+#: src/df.c:739
 msgid ""
 "  -i, --inodes          list inode information instead of block usage\n"
 "  -k                    like --block-size=1K\n"
@@ -2729,14 +2760,14 @@ msgid ""
 "(default)\n"
 msgstr ""
 "  -i, --inodes              INode-Information statt der Block-Benutzung\n"
-"                              auflisten.\n"
+"                              auflisten\n"
 "  -k                        wie „--block-size=1K“\n"
-"  -l, --local               Liste auf lokale Dateisysteme begrenzen.\n"
-"      --no-sync             „sync“ vor Erlangen der Benutzungsinformation\n"
-"                              nicht aufrufen (Standardvorgabe).\n"
+"  -l, --local               Liste auf lokale Dateisysteme begrenzen\n"
+"      --no-sync             nicht „sync“ vor Erlangen der "
+"Benutzungsinformation\n"
+"                              aufrufen (Standardvorgabe)\n"
 
-#: src/df.c:738
-#, fuzzy
+#: src/df.c:745
 msgid ""
 "  -P, --portability     use the POSIX output format\n"
 "      --sync            invoke sync before getting usage info\n"
@@ -2745,16 +2776,16 @@ msgid ""
 "  -x, --exclude-type=TYPE   limit listing to file systems not of type TYPE\n"
 "  -v                    (ignored)\n"
 msgstr ""
-"  -P, --portability         POSIX-Ausgabeformat verwenden.\n"
+"  -P, --portability         POSIX-Ausgabeformat verwenden\n"
 "      --sync                „sync“ vor Erlangen der Benutzungsinformation\n"
-"                              aufrufen.\n"
-"  -t, --type=TYP            Liste auf Dateisysteme des Typs TYP begrenzen.\n"
+"                              aufrufen\n"
+"  -t, --type=TYP            Liste auf Dateisysteme des Typs TYP begrenzen\n"
 "  -T, --print-type          Dateisystemtyp ausgeben.\n"
 "  -x, --exclude-type=TYP    Liste auf Dateisysteme nicht vom Typ TYP "
 "begrenzen.\n"
 "  -v                        (ignoriert)\n"
 
-#: src/df.c:748 src/du.c:340 src/ls.c:4224
+#: src/df.c:755 src/du.c:340 src/ls.c:4224
 msgid ""
 "\n"
 "SIZE may be (or may be an integer optionally followed by) one of following:\n"
@@ -2767,25 +2798,23 @@ msgstr ""
 "kB 1000, K 1024, MB 1000×1000, M 1024×1024 und so weiter für G, T, P, E, Z, "
 "Y.\n"
 
-#: src/df.c:809 src/du.c:755 src/ls.c:1541
-#, fuzzy
+#: src/df.c:816 src/du.c:755 src/ls.c:1541
 msgid "the --kilobytes option is deprecated; use -k instead"
 msgstr ""
-"Warnung: „--allow-missing“ wird in einer kommenden Version aufgegeben "
-"werden;\n"
-"bitte verwenden Sie stattdessen „--retry“"
+"Warnung: „--kilobytes“ wird in einer kommenden Version aufgegeben werden;\n"
+"bitte verwenden Sie stattdessen „-k“."
 
-#: src/df.c:868
+#: src/df.c:875
 #, c-format
 msgid "file system type %s both selected and excluded"
 msgstr "Dateisystemtyp %s ist sowohl ausgewählt als auch ausgeschlossen"
 
-#: src/df.c:912
+#: src/df.c:919
 msgid "Warning: "
 msgstr "Warnung: "
 
-#: src/df.c:915
-#, fuzzy, c-format
+#: src/df.c:922
+#, c-format
 msgid "%scannot read table of mounted file systems"
 msgstr "%sLesen der Tabelle eingehängter Dateisysteme nicht möglich"
 
@@ -2848,7 +2877,7 @@ msgstr ""
 
 #: src/dircolors.c:460
 msgid "File operands cannot be combined with --print-database (-p)."
-msgstr ""
+msgstr "Dateioperanden können nicht mit --print-database kombiniert werden"
 
 #: src/dircolors.c:483
 msgid "no SHELL environment variable, and no shell type option given"
@@ -2882,15 +2911,19 @@ msgid ""
 "  %s /usr/bin/sort  Output \"/usr/bin\".\n"
 "  %s stdio.h        Output \".\".\n"
 msgstr ""
+"\n"
+"Beispiele:\n"
+"  %s /usr/bin/sort   Ausgabe: „/usr/bin“.\n"
+"  %s stdio.h         Ausgabe: „.“.\n"
 
 #: src/du.c:280
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Usage: %s [OPTION]... [FILE]...\n"
 "  or:  %s [OPTION]... --files0-from=F\n"
 msgstr ""
-"Aufruf: %s [OPTION]... GRUPPE DATEI...\n"
-" oder:  %s [OPTION]... --reference=RDATEI DATEI...\n"
+"Aufruf: %s [OPTION]... [DATEI]...\n"
+" oder:  %s [OPTION]... --files0-from=DL\n"
 
 #: src/du.c:284
 msgid ""
@@ -2928,7 +2961,6 @@ msgstr ""
 "                             symbolische Verknüpfungen handelt\n"
 
 #: src/du.c:302
-#, fuzzy
 msgid ""
 "      --files0-from=F   summarize disk usage of the NUL-terminated file\n"
 "                          names specified in file F\n"
@@ -2942,14 +2974,20 @@ msgid ""
 "  -l, --count-links     count sizes many times if hard linked\n"
 "  -m                    like --block-size=1M\n"
 msgstr ""
+"      --files0-from=DL     zusammengefasste Größe der Dateien aus der Datei "
+"DL\n"
+"                             ausgeben (null-terminierte Dateinamen)\n"
+"  -H                       wie --si, aber mit Warnung; wird bald äquivalent "
+"zu\n"
+"                             --dereference-args (-D) sein\n"
 "  -h, --human-readable     Größen in menschenlesbarem Format (z.B. 1K 234M "
 "2G)\n"
 "                             ausgeben\n"
-"  -H, --si                 wie „-h“, aber mit 1000 statt 1024 als Teiler\n"
-"                             (überholt)\n"
+"      --si                 wie „-h“, aber mit 1000 statt 1024 als Teiler\n"
 "  -k                       Wie „--block-size=1K“\n"
 "  -l, --count-links        Größe mehrfach zählen, wenn durch harte\n"
 "                             Verknüpfungen verbunden\n"
+"  -m                       Wie „--block-size=1M“\n"
 
 #: src/du.c:313
 msgid ""
@@ -2971,7 +3009,6 @@ msgstr ""
 "  -s, --summarize          nur Summe für jedes Argument anzeigen\n"
 
 #: src/du.c:320
-#, fuzzy
 msgid ""
 "  -x, --one-file-system  skip directories on different file systems\n"
 "  -X FILE, --exclude-from=FILE  Exclude files that match any pattern in "
@@ -2984,11 +3021,10 @@ msgid ""
 "                          --summarize\n"
 msgstr ""
 "  -x, --one-file-system    Verzeichnis auf anderen Dateisystemen "
-"überspringen.\n"
-"  -X DATEI, --exclude-from=DATEI  Ausschließen von Dateien, die auf eines "
-"der \n"
-"                             Muster in DATEI passen.\n"
-"      --exclude=MUSTER     Dateien, die auf MUSTER passen, ausschließen.\n"
+"überspringen\n"
+"  -X DATEI, --exclude-from=DATEI  Dateien ausschließen, die auf eines der \n"
+"                             Muster in DATEI passen\n"
+"      --exclude=MUSTER     Dateien, die auf MUSTER passen, ausschließen\n"
 "      --max-depth=N        Summe für ein Verzeichnis ausgeben (oder einer \n"
 "                             Datei, mit „--all“) nur, wenn es N oder "
 "weniger \n"
@@ -3008,6 +3044,16 @@ msgid ""
 "                          full-iso, long-iso, iso, +FORMAT\n"
 "                          FORMAT is interpreted like `date'\n"
 msgstr ""
+"      --time               Zeit der letzten Änderung irgendeiner Datei im\n"
+"                             Verzeichnis oder einem seiner "
+"Unterverzeichnisse\n"
+"                             anzeigen\n"
+"      --time=WORT          Zeit als WORT anstelle der Änderungszeit "
+"anzeigen:\n"
+"                             atime, access, use, ctime or status\n"
+"      --time-style=STIL    Zeit in bestimmten Stil anzeigen:\n"
+"                             full-iso, long-iso, iso, +FORMAT\n"
+"                             FORMAT wird wie bei „date“ interpretiert\n"
 
 #: src/du.c:667 src/ls.c:2393 src/wc.c:657
 msgid "total"
@@ -3027,12 +3073,10 @@ msgid "invalid maximum depth %s"
 msgstr "Ungültige maximale Tiefe %s"
 
 #: src/du.c:782
-#, fuzzy
 msgid "the --megabytes option is deprecated; use -m instead"
 msgstr ""
-"Warnung: „--allow-missing“ wird in einer kommenden Version aufgegeben "
-"werden;\n"
-"bitte verwenden Sie stattdessen „--retry“"
+"Warnung: „--megabytes“ wird in einer kommenden Version aufgegeben werden;\n"
+"bitte verwenden Sie stattdessen „-m“."
 
 #: src/du.c:864
 msgid "cannot both summarize and show all entries"
@@ -3044,23 +3088,22 @@ msgid "warning: summarizing is the same as using --max-depth=0"
 msgstr "Warnung: Zusammenfassen ist das gleiche wie --max-depth=0"
 
 #: src/du.c:877
-#, fuzzy, c-format
+#, c-format
 msgid "warning: summarizing conflicts with --max-depth=%lu"
-msgstr "Warnung: Zusammenfassen widerspricht --max-depth=%d"
+msgstr "Warnung: Zusammenfassen widerspricht --max-depth=%lu"
 
 #: src/du.c:942
 msgid "File operands cannot be combined with --files0-from."
-msgstr ""
+msgstr "Dateioperanden können nicht mit --files0-from kombiniert werden."
 
 #: src/du.c:953
-#, fuzzy, c-format
+#, c-format
 msgid "cannot read file names from %s"
-msgstr "Kann Dateinamen %s und %s nicht vergleichen."
+msgstr "Kann Dateinamen  nicht aus %s lesen."
 
 #: src/du.c:993 src/du.c:996
-#, fuzzy
 msgid "invalid zero-length file name"
-msgstr "Ungültiger Gruppenname %s"
+msgstr "ungültiger Dateiname der Länge 0"
 
 #: src/echo.c:64
 #, c-format
@@ -3073,21 +3116,29 @@ msgid ""
 "\n"
 "  -n             do not output the trailing newline\n"
 msgstr ""
+"Die ZEICHENKETTEn auf die Standardausgabe ausgeben.\n"
+"\n"
+"  -n             den abschließenden Zeilenvorschub unterdrücken\n"
 
 #: src/echo.c:71
 msgid ""
 "  -e             enable interpretation of backslash escapes (default)\n"
 "  -E             disable interpretation of backslash escapes\n"
 msgstr ""
+"  -e             Interpretation von Backslash-Sequenzen anschalten "
+"(Voreinst.)\n"
+"  -E             Interpretation von Backslash-Sequenzen unterdrücken\n"
 
 #: src/echo.c:74
 msgid ""
 "  -e             enable interpretation of backslash escapes\n"
 "  -E             disable interpretation of backslash escapes (default)\n"
 msgstr ""
+"  -e             Interpretation von Backslash-Sequenzen anschalten\n"
+"  -E             Interpretation von Backslash-Sequenzen unterdrücken "
+"(Voreinst.)\n"
 
 #: src/echo.c:80
-#, fuzzy
 msgid ""
 "\n"
 "If -e is in effect, the following sequences are recognized:\n"
@@ -3098,9 +3149,9 @@ msgid ""
 "  \\b     backspace\n"
 msgstr ""
 "\n"
-"Ohne -E werden die folgenden Sequenzen erkannt und umgesetzt:\n"
+"Wenn -e aktiv ist, werden die folgenden Sequenzen erkannt und umgesetzt:\n"
 "\n"
-"  \\NNN   Zeichen mit dem ASCII-Code NNN (oktal)\n"
+"  \\0NNN  Zeichen mit dem ASCII-Code NNN (oktal)\n"
 "  \\\\     Backslash\n"
 "  \\a     Alarm (BEL)\n"
 "  \\b     Zeichen rückwärts löschen (Backspace)\n"
@@ -3159,13 +3210,12 @@ msgstr ""
 "\n"
 
 #: src/expand.c:123
-#, fuzzy
 msgid ""
 "  -i, --initial       do not convert tabs after non blanks\n"
 "  -t, --tabs=NUMBER   have tabs NUMBER characters apart, not 8\n"
 msgstr ""
 "  -i, --initial       Tabulatoren nicht nach Nicht-Freiraumzeichen (non\n"
-"                        whitespace) wandeln\n"
+"                        blanks) wandeln\n"
 "  -t, --tabs=ZAHL     Tabulator alle ZAHL Zeichen annehmen, nicht 8\n"
 
 #: src/expand.c:127
@@ -3194,9 +3244,8 @@ msgid "tab sizes must be ascending"
 msgstr "Tabulatorgrößen müssen aufsteigend sein"
 
 #: src/expand.c:332 src/expand.c:351 src/unexpand.c:382 src/unexpand.c:429
-#, fuzzy
 msgid "input line is too long"
-msgstr "Gruppenname zu lang"
+msgstr "Eingabezeile zu lang"
 
 #: src/expr.c:101
 #, c-format
@@ -3325,28 +3374,32 @@ msgid ""
 "null\n"
 "or 0, 2 if EXPRESSION is syntactically invalid, and 3 if an error occurred.\n"
 msgstr ""
+"\n"
+"Der Exit-Status ist 0, wenn der AUSDRUCK weder null noch 0 ist, 1, wenn\n"
+"AUSDRUCK null oder 0 ist, 2, wenn der AUSDRUCK syntaktisch ungültig ist, "
+"und\n"
+"3, wenn ein Fehler auftrat\n"
 
 #: src/expr.c:174
 msgid "syntax error"
 msgstr "Syntaxfehler"
 
 #: src/expr.c:424
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "warning: unportable BRE: %s: using `^' as the first character\n"
 "of the basic regular expression is not portable; it is being ignored"
 msgstr ""
-"Warnung: nicht portable BRE: „%s“: „^“ als erstes Zeichen eines einfachen\n"
+"Warnung: nicht portable BRE: %s: „^“ als erstes Zeichen eines einfachen\n"
 "regulären Ausdrucks ist nicht portabel; es wird ignoriert."
 
 #: src/expr.c:464 src/ptx.c:288
-#, fuzzy
 msgid "error in regular expression matcher"
 msgstr "Fehler bei Suche mit regulären Ausdrücken"
 
 #: src/expr.c:639 src/expr.c:681
 msgid "non-numeric argument"
-msgstr "Argumente, die keine Zahlen sind"
+msgstr "Argument, das keine Zahl ist"
 
 #: src/expr.c:645
 msgid "division by zero"
@@ -3370,15 +3423,14 @@ msgstr ""
 "\n"
 
 #: src/factor.c:85
-#, fuzzy
 msgid ""
 "\n"
 "Print the prime factors of all specified integer NUMBERs.  If no arguments\n"
 "are specified on the command line, they are read from standard input.\n"
 msgstr ""
 "\n"
-"  Die Primfaktoren aller angegebenen ganzen ZAHLen ausgeben. Wurden keine\n"
-"  Argumente in der Befehlszeile gegeben, werden diese von Standardeingabe "
+"Die Primfaktoren aller angegebenen ganzen ZAHLen ausgeben. Wurden keine\n"
+"Argumente in der Befehlszeile gegeben, werden diese von Standardeingabe "
 "gelesen.\n"
 
 #: src/factor.c:156 src/od.c:1678 src/od.c:1747
@@ -3387,9 +3439,9 @@ msgid "%s is too large"
 msgstr "%s ist zu groß"
 
 #: src/factor.c:158
-#, fuzzy, c-format
+#, c-format
 msgid "%s is not a valid positive integer"
-msgstr "„%s“ ist keine gültige positive ganze Zahl"
+msgstr "%s ist keine gültige positive ganze Zahl"
 
 #: src/fmt.c:273
 #, c-format
@@ -3406,7 +3458,6 @@ msgstr ""
 "Wurde keine DATEI angegeben, oder ist DATEI „-“, Standardeingabe lesen.\n"
 
 #: src/fmt.c:282
-#, fuzzy
 msgid ""
 "  -c, --crown-margin        preserve indentation of first two lines\n"
 "  -p, --prefix=STRING       reformat only lines beginning with STRING,\n"
@@ -3414,7 +3465,9 @@ msgid ""
 "  -s, --split-only          split long lines, but do not refill\n"
 msgstr ""
 "  -c, --crown-margin        Einrückung der ersten beiden Zeilen erhalten\n"
-"  -p, --prefix=ZKETTE       nur Zeilen mit ZKETTE als Präfix kombinieren\n"
+"  -p, --prefix=ZKETTE       nur Zeilen mit ZKETTE als Präfix neu "
+"formatiern,\n"
+"                              dabei ZKETTE jeder neuen Zeile voranstellen\n"
 "  -s, --split-only          lange Zeilen umbrechen, aber nicht auffüllen\n"
 
 #: src/fmt.c:289
@@ -3463,9 +3516,9 @@ msgstr ""
 "  -w, --width=BREITE  BREITE Spalten anstatt 80 benutzen\n"
 
 #: src/fold.c:291 src/pr.c:841
-#, fuzzy, c-format
+#, c-format
 msgid "invalid number of columns: %s"
-msgstr "Ungültige Anzahl Spalten: „%s“"
+msgstr "Ungültige Anzahl Spalten: %s"
 
 #: src/head.c:113
 msgid ""
@@ -3516,7 +3569,7 @@ msgstr ""
 #: src/head.c:151 src/head.c:264 src/head.c:336 src/head.c:540 src/head.c:622
 #: src/head.c:694 src/head.c:752 src/head.c:776 src/tail.c:377 src/tail.c:465
 #: src/tail.c:514 src/tail.c:607 src/tail.c:735 src/tail.c:783 src/tail.c:822
-#: src/tail.c:1316 src/tail.c:1345 src/uniq.c:377
+#: src/tail.c:1327 src/tail.c:1356 src/uniq.c:377
 #, c-format
 msgid "error reading %s"
 msgstr "Fehler beim Lesen von %s"
@@ -3564,11 +3617,11 @@ msgstr "Anzahl Zeilen"
 msgid "number of bytes"
 msgstr "Anzahl Bytes"
 
-#: src/head.c:888 src/tail.c:1479
+#: src/head.c:888 src/tail.c:1490
 msgid "invalid number of lines"
 msgstr "ungültige Anzahl von Zeilen"
 
-#: src/head.c:889 src/tail.c:1480
+#: src/head.c:889 src/tail.c:1491
 msgid "invalid number of bytes"
 msgstr "ungültige Anzahl von Bytes"
 
@@ -3604,9 +3657,9 @@ msgstr ""
 "\n"
 
 #: src/hostname.c:103
-#, fuzzy, c-format
+#, c-format
 msgid "cannot set name to %s"
-msgstr "Rechnername kann nicht auf „%s“ gesetzt werden."
+msgstr "kann Namen nicht auf %s setzen"
 
 #: src/hostname.c:106
 msgid "cannot set hostname; this system lacks the functionality"
@@ -3666,14 +3719,14 @@ msgid "%s: No such user"
 msgstr "%s: Einen solchen Benutzer gibt es nicht"
 
 #: src/id.c:205
-#, fuzzy, c-format
+#, c-format
 msgid "cannot find name for user ID %lu"
-msgstr "Es ist kein Name zur Nutzer-ID %u zu finden"
+msgstr "Es ist kein Name zur Nutzer-ID %lu zu finden"
 
 #: src/id.c:229
-#, fuzzy, c-format
+#, c-format
 msgid "cannot find name for group ID %lu"
-msgstr "Es ist kein Name zur Gruppen-ID %u zu finden"
+msgstr "Es ist kein Name zur Gruppen-ID %lu zu finden"
 
 #: src/id.c:271
 msgid "cannot get supplemental group list"
@@ -3690,11 +3743,9 @@ msgstr ""
 "werden"
 
 #: src/install.c:295
-#, fuzzy
 msgid "target directory not allowed when installing a directory"
 msgstr ""
-"die Option strip darf nicht bei Installation von Verzeichnissen benutzt "
-"werden"
+"Zielvereichnis darf nicht bei Installation von Verzeichnissen benutzt werden"
 
 #: src/install.c:343 src/mkdir.c:136
 #, c-format
@@ -3702,9 +3753,8 @@ msgid "invalid mode %s"
 msgstr "Ungültiger Modus %s"
 
 #: src/install.c:358 src/mkdir.c:154
-#, fuzzy
 msgid "cannot return to working directory"
-msgstr "kann aktuelles Verzeichnis nicht wieder herstellen"
+msgstr "kann nicht zum Arbeitsverzeichnis zurückkehren"
 
 #: src/install.c:364 src/install.c:416
 #, c-format
@@ -3712,9 +3762,8 @@ msgid "creating directory %s"
 msgstr "Verzeichnis %s angelegt"
 
 #: src/install.c:421
-#, fuzzy
 msgid "cannot return to current directory"
-msgstr "Das aktuelle Verzeichnis ist nicht erreichbar"
+msgstr "kann nicht zum aktuellen Verzeichnis zurückkehren"
 
 #: src/install.c:518
 #, c-format
@@ -3744,28 +3793,28 @@ msgid "invalid user %s"
 msgstr "Ungültiger Anwender %s"
 
 #: src/install.c:633
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Usage: %s [OPTION]... [-T] SOURCE DEST\n"
 "  or:  %s [OPTION]... SOURCE... DIRECTORY\n"
 "  or:  %s [OPTION]... -t DIRECTORY SOURCE...\n"
 "  or:  %s [OPTION]... -d DIRECTORY...\n"
 msgstr ""
-"Aufruf: %s [OPTION]... QUELLE ZIEL\n"
+"Aufruf: %s [OPTION]... [-T] QUELLE ZIEL\n"
 " oder:  %s [OPTION]... QUELLE... VERZEICHNIS\n"
-" oder:  %s [OPTION]... --target-directory=VERZEICHNIS QUELLE...\n"
+" oder:  %s [OPTION]... -t=VERZEICHNIS QUELLE...\n"
+" oder:  %s [OPTION]... -d=VERZEICHNIS...\n"
 
 #: src/install.c:640
-#, fuzzy
 msgid ""
 "In the first three forms, copy SOURCE to DEST or multiple SOURCE(s) to\n"
 "the existing DIRECTORY, while setting permission modes and owner/group.\n"
 "In the 4th form, create all components of the given DIRECTORY(ies).\n"
 "\n"
 msgstr ""
-"In den zwei ersten Formaten wird QUELLE nach ZIEL kopiert, oder mehrere\n"
+"In den drei ersten Formaten wird QUELLE nach ZIEL kopiert, oder mehrere\n"
 "QUELLEN in VERZEICHNIS, während die Zugriffsrechte und Besitzer und Gruppe\n"
-"der Dateien gesetzt werden. Im dritten Format werden alle Teile der/des\n"
+"der Dateien gesetzt werden. Im vierten Format werden alle Teile der/des\n"
 "angegebenen Verzeichnis(se) erzeugt.\n"
 "\n"
 
@@ -3787,7 +3836,6 @@ msgstr ""
 "                              zeichnisse.\n"
 
 #: src/install.c:656
-#, fuzzy
 msgid ""
 "  -D                  create all leading components of DEST except the "
 "last,\n"
@@ -3798,18 +3846,16 @@ msgid ""
 "x\n"
 "  -o, --owner=OWNER   set ownership (super-user only)\n"
 msgstr ""
-"  -D                        Alle führenden Elemente von ZIEL erzeugen "
+"  -D                        alle führenden Elemente von ZIEL erzeugen "
 "außer \n"
-"                              dem letzten, dann QUELLE nach ZIEL kopieren.\n"
-"                              Nützlich für das 1. Format.\n"
+"                              dem letzten, dann QUELLE nach ZIEL kopieren\n"
 "  -g, --group=GRUPPE        Gruppenbesitz setzen, statt der Gruppe des\n"
-"                              momentanen Prozesses.\n"
+"                              momentanen Prozesses\n"
 "  -m, --mode=MODUS          Modus der Zugriffsrechte setzen (wie in chmod),\n"
-"                               statt rwxr-xr-x.\n"
-"  -o, --owner=EIGENTÜMER    Setzen des Besitzers (nur für den Superuser).\n"
+"                               statt rwxr-xr-x\n"
+"  -o, --owner=EIGENTÜMER    Besitzers setzen (nur für den Superuser)\n"
 
 #: src/install.c:663
-#, fuzzy
 msgid ""
 "  -p, --preserve-timestamps   apply access/modification times of SOURCE "
 "files\n"
@@ -3822,13 +3868,14 @@ msgid ""
 "  -v, --verbose       print the name of each directory as it is created\n"
 msgstr ""
 "  -p, --preserve-timestamps   Einsetzen der Zugriffs-/Änderungszeiten der\n"
-"                              QUELL-Dateien.\n"
-"  -s, --strip               „strip“ der Symboltabellen, nur für 1. und 2.\n"
-"                              Format.\n"
-"  -S, --suffix=SUFFIX       Normale Anhänge für Sicherungen überschreiben.\n"
-"  -v, --verbose             Den Namen jedes Verzeichnisses ausgeben, "
+"                              QUELL-Dateien auf entsprechende ZIEL-Dateien\n"
+"  -s, --strip               Symboltabellen bereinigen\n"
+"  -S, --suffix=SUFFIX       normale Anhänge für Sicherungen überschreiben.\n"
+"  -t, --target-directory=VERZ  alle QUELL-Argumente in VERZ kopieren\n"
+"  -T, --no-target-directory    ZIEL als normale Datei behandeln\n"
+"  -v, --verbose             den Namen jedes Verzeichnisses ausgeben, "
 "während\n"
-"                              es erzeugt wird.\n"
+"                              es erzeugt wird\n"
 
 #: src/install.c:674 src/ln.c:383 src/mv.c:332
 msgid ""
@@ -3934,32 +3981,32 @@ msgid "invalid field number: %s"
 msgstr "Ungültige Feldnummer: %s"
 
 #: src/join.c:648 src/join.c:657
-#, fuzzy, c-format
+#, c-format
 msgid "invalid field specifier: %s"
-msgstr "Ungültiger Feldbezeichner: „%s“"
+msgstr "Ungültiger Feldbezeichner: %s"
 
 #: src/join.c:664
-#, fuzzy, c-format
+#, c-format
 msgid "invalid file number in field spec: %s"
-msgstr "Ungültige Feldnummer in Feldbezeichner: „%s“"
+msgstr "Ungültige Feldnummer in Feldbezeichner: %s"
 
 #: src/join.c:707
 #, c-format
 msgid "incompatible join fields %lu, %lu"
-msgstr ""
+msgstr "inkompatible Join-Felder: %lu, %lu"
 
 #: src/join.c:833
 msgid "conflicting empty-field replacement strings"
-msgstr ""
+msgstr "einander widersprechende Leerfeld-Ersetzungszeichenketten"
 
 #: src/join.c:874 src/sort.c:2354
 msgid "empty tab"
 msgstr "leerer Tabulator"
 
 #: src/join.c:880 src/sort.c:2365
-#, fuzzy, c-format
+#, c-format
 msgid "multi-character tab %s"
-msgstr "Multi-Zeichen-Tabulator „%s“"
+msgstr "Multi-Zeichen-Tabulator %s"
 
 #: src/join.c:884 src/sort.c:2370
 msgid "incompatible tabs"
@@ -4116,19 +4163,19 @@ msgid "creating hard link %s to %s"
 msgstr "Erzeugen der harten Verknüpfung %s zu %s"
 
 #: src/ln.c:342
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Usage: %s [OPTION]... [-T] TARGET LINK_NAME   (1st form)\n"
 "  or:  %s [OPTION]... TARGET                  (2nd form)\n"
 "  or:  %s [OPTION]... TARGET... DIRECTORY     (3rd form)\n"
 "  or:  %s [OPTION]... -t DIRECTORY TARGET...  (4th form)\n"
 msgstr ""
-"Aufruf: %s [OPTION]... QUELLE ZIEL           (1. Format)\n"
-" oder:  %s [OPTION]... QUELLE... VERZEICHNIS (2. Format)\n"
-" oder:  %s -d [OPTION]... VERZEICHNIS...     (3. Format)\n"
+"Aufruf: %s [OPTION]... [-T] ZIEL LINK_NAME     (1. Form)\n"
+" oder:  %s [OPTION]... ZIEL                    (2. Form)\n"
+" oder:  %s [OPTION]... ZIEL... VERZ            (3. Form)\n"
+" oder:  %s [OPTION]... -t VERZ ZIEL...         (4. Form)\n"
 
 #: src/ln.c:349
-#, fuzzy
 msgid ""
 "In the 1st form, create a link to TARGET with the name LINK_NAME.\n"
 "In the 2nd form, create a link to TARGET in the current directory.\n"
@@ -4137,15 +4184,13 @@ msgid ""
 "When creating hard links, each TARGET must exist.\n"
 "\n"
 msgstr ""
-"Erzeugen einer Verknüpfung des angegebenen ZIELES mit optionaler "
-"VERKNÜPFUNG.\n"
-"Wenn mehr als ein ZIEL angegeben wird, muss das letzte Argument ein "
-"Verzeichnis\n"
-"sein. Erzeugen von Verknüpfungen für jedes ZIEL in VERZEICHNIS. Als "
-"Standard-\n"
-"vorgabe werde harte Verknüpfungen erstellt, symbolische Verknüpfungen\n"
-"mit --symbolic. Beim Erzeugen von harten Verknüpfungen muss jedes ZIEL\n"
-"existieren.\n"
+"In der 1. Form: Eine Verknüpfung namens LINK_NAME auf ZIEL erstellen\n"
+"In der 2. Form: Eine Verknüpfung auf ZIEL im aktuellen Verzeichnis "
+"erstellen\n"
+"In der 3. und 4. Form: Verknüpfungen zu jedem ZIEL in VERZ erstellen\n"
+"Als Standardvorgabe werde harte Verknüpfungen erstellt, für symbolische\n"
+"Verknüpfungen ist die Option --symbolic anzugeben.\n"
+"Beim Erzeugen von harten Verknüpfungen muss jedes ZIEL existieren.\n"
 "\n"
 
 #: src/ln.c:360
@@ -4178,15 +4223,15 @@ msgid ""
 "  -i, --interactive           prompt whether to remove destinations\n"
 "  -s, --symbolic              make symbolic links instead of hard links\n"
 msgstr ""
-"  -n, --no-dereference         Ein Ziel, das eine symbolische Verknüpfung\n"
-"                                 auf ein Verzeichnis ist, wie normale Datei\n"
-"                                 behandeln.\n"
-"  -i, --interactive            Nachfrage vor Entfernen vorhandener Ziele.\n"
-"  -s, --symbolic               Symbolische statt harter Verknüpfung "
-"erzeugen.\n"
+"  -n, --no-dereference         Ziel, das eine symbolische Verknüpfung auf "
+"ein\n"
+"                                 Verzeichnis ist, wie normale Datei "
+"behandeln\n"
+"  -i, --interactive            vor Entfernen vorhandener Ziele nachfragen\n"
+"  -s, --symbolic               symbolische statt harter Verknüpfung "
+"erzeugen\n"
 
 #: src/ln.c:374
-#, fuzzy
 msgid ""
 "  -S, --suffix=SUFFIX         override the usual backup suffix\n"
 "  -t, --target-directory=DIRECTORY  specify the DIRECTORY in which to "
@@ -4195,18 +4240,17 @@ msgid ""
 "  -T, --no-target-directory   treat LINK_NAME as a normal file\n"
 "  -v, --verbose               print name of each file before linking\n"
 msgstr ""
-"  -S, --suffix=SUFFIX          Normale Anhänge für Sicherungen "
-"überschreiben.\n"
-"      --target-directory=VERZ  Angabe des VERZeichnisses, in dem die "
-"Verknüp-\n"
-"                                 fungen erstellt werden sollen.\n"
-"  -v, --verbose                Jeden Dateinamen vor dem Verknüpfen "
-"ausgeben.\n"
+"  -S, --suffix=SUFFIX          normale Anhänge für Sicherungen "
+"überschreiben\n"
+"  -t, --target-directory=VERZ  VERZeichnis angeben, in dem die "
+"Verknüpfungen\n"
+"                                 erstellt werden sollen\n"
+"  -T, --no-target-directory    LINK_NAME als Namen normaler Datei behandeln\n"
+"  -v, --verbose                jeden Dateinamen vor dem Verknüpfen ausgeben\n"
 
 #: src/ln.c:507
-#, fuzzy
 msgid "Cannot combine --target-directory and --no-target-directory"
-msgstr "%s: angegebenes Zielverzeichnis ist kein Verzeichnis"
+msgstr "--target-directory und --no-target-directory sind nicht kombinierbar"
 
 #: src/logname.c:44 src/pwd.c:66 src/sync.c:45
 #, c-format
@@ -4279,9 +4323,9 @@ msgid "cannot determine device and inode of %s"
 msgstr "kann Gerät und INode von %s nicht bestimmen"
 
 #: src/ls.c:2311
-#, fuzzy, c-format
+#, c-format
 msgid "%s: not listing already-listed directory"
-msgstr "zeige schon angezeigtes Verzeichnis nicht an: %s"
+msgstr "%s: zeige schon angezeigtes Verzeichnis nicht an"
 
 #: src/ls.c:2351 src/pwd.c:238 src/remove.c:1001
 #, c-format
@@ -4310,7 +4354,6 @@ msgstr ""
 "\n"
 
 #: src/ls.c:4109
-#, fuzzy
 msgid ""
 "  -a, --all                  do not ignore entries starting with .\n"
 "  -A, --almost-all           do not list implied . and ..\n"
@@ -4319,8 +4362,8 @@ msgid ""
 msgstr ""
 "  -a, --all                  Einträge, die mit . beginnen, nicht verstecken\n"
 "  -A, --almost-all           implizierte . und .. nicht anzeigen\n"
-"      --author               den Urheber jeder Datei ausgeben\n"
-"  -b, --escape               nicht-druckbarer Zeichen oktale ausgeben\n"
+"      --author               mit -l, den Urheber jeder Datei ausgeben\n"
+"  -b, --escape               nicht-druckbare Zeichen oktale ausgeben\n"
 
 #: src/ls.c:4115
 msgid ""
@@ -4365,7 +4408,6 @@ msgstr ""
 "formatieren\n"
 
 #: src/ls.c:4131
-#, fuzzy
 msgid ""
 "  -f                         do not sort, enable -aU, disable -lst\n"
 "  -F, --classify             append indicator (one of */=>@|) to entries\n"
@@ -4376,15 +4418,14 @@ msgid ""
 msgstr ""
 "  -f                         nicht sortieren, -aU aktivieren, -lst "
 "deaktiviern\n"
-"  -F, --classify             ein Zeichen (einen von */=@|) zur Typisierung\n"
-"                               anhängen\n"
+"  -F, --classify             ein Zeichen (aus */=>@|) zur Typisierung "
+"anhängen\n"
+"      --file-type            genauso, aber kein „*“ anhängen\n"
 "      --format=WORT          across -x, commas -m, horizontal -x, long -l,\n"
 "                               single-column -1, verbose -l, vertical -C\n"
-"      --full-time            sowohl volles Datum als auch volle Zeit "
-"anzeigen\n"
+"      --full-time            wie -l --time-style=full-iso\n"
 
 #: src/ls.c:4139
-#, fuzzy
 msgid ""
 "  -g                         like -l, but do not list owner\n"
 "  -G, --no-group             like -l, but do not list group\n"
@@ -4402,19 +4443,23 @@ msgid ""
 "                               (overridden by -a or -A)\n"
 msgstr ""
 "  -g                         wie -l, aber Eigner nicht auflisten\n"
-"  -G, --no-group             Ausgabe von Gruppen-Informationen unterdrücken\n"
-"  -h, --human-readable       Ausgabe von Größen in menschenlesbarem Format\n"
-"                               (z.B. 1K 234M 2G)\n"
-"      --si                   wie -h, aber mit 1000 statt 1024 als Teiler\n"
+"  -G, --no-group             wie -l, aber Gruppe nicht auflisten\n"
+"  -h, --human-readable       wie -l, Größenangaben in menschenlesbarem "
+"Format\n"
+"                               (z. B. 1K 234M 2G)\n"
+"      --si                   genauso, aber mit 1000 statt 1024 als Teiler\n"
 "  -H, --dereference-command-line   symbolischen Verknüpfungen, die auf der\n"
-"                               Kommandozeile aufgeführt sind, folgen.\n"
+"                               Kommandozeile aufgeführt sind, folgen\n"
 "      --dereference-command-line-symlink-to-dir\n"
 "                             symbolischen Verknüpfungen auf der "
 "Kommandozeile,\n"
-"                                die auf Verzeichnisse zeigen, folgen\n"
+"                               die auf Verzeichnisse zeigen, folgen\n"
+"      --hide=MUSTER          implizite Einträge, auf die Shell-MUSTER "
+"passt,\n"
+"                               nicht auflisten (überschrieben durch -a oder -"
+"A)\n"
 
 #: src/ls.c:4153
-#, fuzzy
 msgid ""
 "      --indicator-style=WORD append indicator with style WORD to entry "
 "names:\n"
@@ -4427,12 +4472,12 @@ msgid ""
 msgstr ""
 "      --indicator-style=WORT  Indikator des Stils WORT an Namen der "
 "Einträge\n"
-"                               anhängen: „none“ (Standardvorgabe),\n"
-"                               „classify“ (-F), „file-type“ (-p)\n"
-"  -i, --inode                INode-Nummer ausgeben\n"
-"  -I, --ignore=MUSTER        implizierte Einträge, die auf das Muster "
-"MUSTER\n"
-"                               passen, nicht anzeigen\n"
+"                               anhängen: „none“ (Standardvorgabe), „slash“ (-"
+"p)\n"
+"                               „file-type“ (--file-type), „classify“ (-F)\n"
+"  -i, --inode                mit -l, INode-Nummer ausgeben\n"
+"  -I, --ignore=MUSTER        implizierte Einträge, auf die Shell-MUSTER\n"
+"                               passt, nicht auflisten\n"
 "  -k                         wie „--block-size=1K“\n"
 
 #: src/ls.c:4161
@@ -4452,7 +4497,6 @@ msgstr ""
 "                               getrennt, in eine Zeile packen\n"
 
 #: src/ls.c:4168
-#, fuzzy
 msgid ""
 "  -n, --numeric-uid-gid      like -l, but list numeric user and group IDs\n"
 "  -N, --literal              print raw entry names (don't treat e.g. "
@@ -4462,13 +4506,11 @@ msgid ""
 "  -p, --indicator-style=slash\n"
 "                             append / indicator to directories\n"
 msgstr ""
-"  -n, --numeric-uid-gid      Wie -l, aber numerische UIDs und GIDs "
-"anzeigen.\n"
+"  -n, --numeric-uid-gid      wie -l, aber numerische UIDs und GIDs anzeigen\n"
 "  -N, --literal              rohe Eintragsnamen anzeigen (z. B. Kontroll‐\n"
 "                               zeichen nicht besonders behandeln)\n"
 "  -o                         wie -l, aber ohne Gruppen-Informationen\n"
-"  -p, --file-type            Anhängen eines Zeichens zur Typisierung jedes\n"
-"                               Eintrags (eines aus „/=@|“).\n"
+"  -p, --indicator-style=slash  an Verzeichnisse ein „/“ anhängen\n"
 
 #: src/ls.c:4176
 msgid ""
@@ -4492,7 +4534,6 @@ msgstr ""
 "escape\n"
 
 #: src/ls.c:4184
-#, fuzzy
 msgid ""
 "  -r, --reverse              reverse order while sorting\n"
 "  -R, --recursive            list subdirectories recursively\n"
@@ -4500,10 +4541,9 @@ msgid ""
 msgstr ""
 "  -r, --reverse              umgekehrte Reihenfolge beim Sortieren\n"
 "  -R, --recursive            Unterverzeichnissen rekursiv ausgeben\n"
-"  -s, --size                 Größe jeder Datei in Blöcken ausgeben\n"
+"  -s, --size                 mit -l, Größe jeder Datei in Blöcken ausgeben\n"
 
 #: src/ls.c:4189
-#, fuzzy
 msgid ""
 "  -S                         sort by file size\n"
 "      --sort=WORD            extension -X, none -U, size -S, time -t,\n"
@@ -4516,17 +4556,14 @@ msgid ""
 msgstr ""
 "  -S                         nach Dateigröße sortieren\n"
 "      --sort=WORT            extension -X, none -U, size -S, time -t,\n"
-"                               version -v\n"
-"                               status -c, time -t, atime -u, access -u, use -"
-"u\n"
-"      --time=WORT            Zeit als WORT anzeigen statt der "
-"Änderungszeit:\n"
+"                               version -v, status -c, time -t, atime -u,\n"
+"                               access -u, use -u\n"
+"      --time=WORT            mit -l, Zeit als WORT statt der Änderungszeit:\n"
 "                               atime, access, use, ctime oder status; die\n"
 "                               angegebene Zeit als Sortierkriterium\n"
 "                               bei --sort=time verwenden\n"
 
 #: src/ls.c:4198
-#, fuzzy
 msgid ""
 "      --time-style=STYLE     with -l, show times using style STYLE:\n"
 "                             full-iso, long-iso, iso, locale, +FORMAT.\n"
@@ -4539,8 +4576,8 @@ msgid ""
 "  -t                         sort by modification time\n"
 "  -T, --tabsize=COLS         assume tab stops at each COLS instead of 8\n"
 msgstr ""
-"      --time-style=STIL      Zeiten mittels Stil STIL anzeigen:\n"
-"                               full-iso, iso, locale, posix-iso, +FORMAT\n"
+"      --time-style=STIL      mit -l, Zeiten mittels Stil STIL anzeigen:\n"
+"                               full-iso, long-iso, iso, locale, +FORMAT\n"
 "                             FORMAT wie bei „date“; hat FORMAT die Form\n"
 "                             FORMAT1<newline>FORMAT2, wird FORMAT1 für "
 "nicht\n"
@@ -4548,8 +4585,7 @@ msgstr ""
 "FORMAT2\n"
 "                             für kürzlich geänderte; beginnt STIL mit "
 "„posix-“,\n"
-"                             ist STIL nur außerhalb der POSIX-Locale "
-"gültig;\n"
+"                             ist STIL nur außerhalb der POSIX-Locale gültig\n"
 "  -t                         nach Änderungszeit sortieren\n"
 "  -T, --tabsize=SPALTEN      Tabstops auf alle SPALTEN Zeichen setzen statt "
 "8\n"
@@ -4585,7 +4621,6 @@ msgstr ""
 "  -1                         eine Datei pro Zeile auflisten\n"
 
 #: src/ls.c:4228
-#, fuzzy
 msgid ""
 "\n"
 "By default, color is not used to distinguish types of files.  That is\n"
@@ -4598,20 +4633,26 @@ msgstr ""
 "\n"
 "Standardmäßig werden keine Farben zum Unterscheiden der Dateitypen "
 "verwandt. \n"
-"Das ist das Äquivalent zur Verwendung von --color=none. Verwendung der\n"
+"Das ist das äquivalent zur Verwendung von --color=none. Verwendung der\n"
 "--color-Option ohne das optionale WANN-Argument ist äquivalent zur "
 "Verwendung\n"
 "von --color=always. Mit --color=auto werden Farbcodes ausgegeben, wenn die\n"
-"Standardausgabe mit einem Terminal (tty) verbunden ist.\n"
+"Standardausgabe mit einem Terminal (tty) verbunden ist. Die "
+"Umgebungsvariable\n"
+"LS_COLORS kann die Farben beeinflussen und kann einfach mit dem Befehl\n"
+"„dircolors“ gesetzt werden.\n"
 
 #: src/ls.c:4237
 msgid ""
 "\n"
 "Exit status is 0 if OK, 1 if minor problems, 2 if serious trouble.\n"
 msgstr ""
+"\n"
+"Exi-Status ist 0, wenn alles OK ist, 1 bei einem kleinen Problem und\n"
+"3 bei richtigem Ärger.\n"
 
 #: src/md5sum.c:108
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Usage: %s [OPTION] [FILE]...\n"
 "Print or check %s (%d-bit) checksums.\n"
@@ -4619,7 +4660,6 @@ msgid ""
 "\n"
 msgstr ""
 "Aufruf: %s [OPTION] [DATEI]...\n"
-" oder:  %s [OPTION] --check [DATEI]\n"
 "%s-Prüfsummen (%d Bits) ausgeben oder überprüfen.\n"
 "Ohne DATEI oder wenn DATEI „-“ ist, Standardeingabe lesen.\n"
 
@@ -4628,31 +4668,32 @@ msgid ""
 "  -b, --binary            read in binary mode (default unless reading tty "
 "stdin)\n"
 msgstr ""
+"  -b, --binary            im Binärmodus lesen (Voreinstellung außer beim "
+"Lesen\n"
+"                            aus an Konsole gebundener Standardeingabe)\n"
 
 #: src/md5sum.c:122
-#, fuzzy
 msgid "  -b, --binary            read in binary mode\n"
-msgstr ""
-"\n"
-"  -B, --binary             binär auf das Konsolen-Gerät schreiben\n"
-"\n"
+msgstr "  -b, --binary            im Binärmodus lesen\n"
 
 #: src/md5sum.c:125
 #, c-format
 msgid "  -c, --check             read %s sums from the FILEs and check them\n"
 msgstr ""
+"  -c, --check             %s-Prüfsummen aus DATEIen lesen und überprüfen\n"
 
 #: src/md5sum.c:129
 msgid ""
 "  -t, --text              read in text mode (default if reading tty stdin)\n"
 msgstr ""
+"-t, --text              im Textmodus lesen (Voreinstellung beim Lesen\n"
+"                            aus an Konsole gebundener Standardeingabe)\n"
 
 #: src/md5sum.c:133
 msgid "  -t, --text              read in text mode (default)\n"
-msgstr ""
+msgstr "  -t, --text              im Textmodus lesen (Voreinstellung)\n"
 
 #: src/md5sum.c:136
-#, fuzzy
 msgid ""
 "\n"
 "The following two options are useful only when verifying checksums:\n"
@@ -4660,6 +4701,7 @@ msgid ""
 "  -w, --warn              warn about improperly formatted checksum lines\n"
 "\n"
 msgstr ""
+"\n"
 "Die folgenden beiden Optionen sind nur beim Überprüfen sinnvoll:\n"
 "      --status          nichts ausgeben, der Statuscode zeigt Erfolg an\n"
 "  -w, --warn            bei ungeeignet formatierten Prüfsummenzeilen warnen\n"
@@ -4675,34 +4717,34 @@ msgid ""
 "text), and name for each FILE.\n"
 msgstr ""
 "\n"
-"Die Summen werden berechnet, wie in %s beschrieben. Beim Überprüfen sollte\n"
-"die Eingabe eine frühere Ausgabe dieses Programms sein.  Die normale\n"
+"Die Summen werden berechnet wie in %s beschrieben. Beim Überprüfen\n"
+"sollte die Eingabe eine frühere Ausgabe dieses Programms sein.  Die normale\n"
 "Arbeitsweise ist es, eine Zeile mit Prüfsumme, einem Zeichen, das den Typ\n"
 "anzeigt („*“ für binär, „ “ für Text), und dem Namen jeder Datei "
 "auszugeben.\n"
 
 #: src/md5sum.c:417
-#, fuzzy, c-format
+#, c-format
 msgid "%s: too many checksum lines"
-msgstr "%s: keine korrekt formatierte %s-Prüfsummenzeile gefunden"
+msgstr "%s: zu viele Prüfsummenzeilen"
 
 #: src/md5sum.c:439
-#, fuzzy, c-format
+#, c-format
 msgid "%s: %<PRIuMAX>: improperly formatted %s checksum line"
-msgstr "%s: %lu: nicht korrekt formatierte %s-Prüfsummenzeile"
+msgstr "%s: %<PRIuMAX>: nicht korrekt formatierte %s-Prüfsummenzeile"
 
 #: src/md5sum.c:462
 #, c-format
 msgid "%s: FAILED open or read\n"
-msgstr "%s: Fehlschlag bei open oder read\n"
+msgstr "%s: FEHLSCHLAG bei open oder read\n"
 
 #: src/md5sum.c:486
 msgid "FAILED"
-msgstr "Fehlschlag"
+msgstr "FEHLSCHLAG"
 
 #: src/md5sum.c:486
 msgid "OK"
-msgstr "Ok"
+msgstr "OK"
 
 #: src/md5sum.c:498 src/od.c:950 src/tac.c:239 src/tac.c:350 src/tac.c:480
 #: src/tac.c:556
@@ -4716,26 +4758,29 @@ msgid "%s: no properly formatted %s checksum lines found"
 msgstr "%s: keine korrekt formatierte %s-Prüfsummenzeile gefunden"
 
 #: src/md5sum.c:520
-#, fuzzy, c-format
+#, c-format
 msgid "WARNING: %<PRIuMAX> of %<PRIuMAX> listed file could not be read"
 msgid_plural "WARNING: %<PRIuMAX> of %<PRIuMAX> listed files could not be read"
-msgstr[0] "WARNUNG: %d von %d aufgeführten %s konnten nicht gelesen werden"
-msgstr[1] "WARNUNG: %d von %d aufgeführten %s konnten nicht gelesen werden"
+msgstr[0] "WARNUNG: die eine aufgeführte Datei konnte nicht gelesen werden"
+msgstr[1] ""
+"WARNUNG: %<PRIuMAX> von %<PRIuMAX> aufgeführten Dateien konnten nicht "
+"gelesen werden"
 
 #: src/md5sum.c:532
-#, fuzzy, c-format
+#, c-format
 msgid "WARNING: %<PRIuMAX> of %<PRIuMAX> computed checksum did NOT match"
 msgid_plural ""
 "WARNING: %<PRIuMAX> of %<PRIuMAX> computed checksums did NOT match"
-msgstr[0] "Warnung: %d von %d berechneten %s passten NICHT"
-msgstr[1] "Warnung: %d von %d berechneten %s passten NICHT"
+msgstr[0] "Warnung: die berechnete Prüfsumme passte NICHT"
+msgstr[1] ""
+"Warnung: %<PRIuMAX> von %<PRIuMAX> berechneten Prüfsumme passten NICHT"
 
 #: src/md5sum.c:596
 msgid ""
 "the --binary and --text options are meaningless when verifying checksums"
 msgstr ""
 "Die Optionen --binary und --text sind bei der Kontrolle von Prüfsummen "
-"sinnlos"
+"nutzlos"
 
 #: src/md5sum.c:604
 msgid "the --status option is meaningful only when verifying checksums"
@@ -4858,16 +4903,14 @@ msgstr ""
 "  p      eine FIFO anlegen\n"
 
 #: src/mknod.c:145
-#, fuzzy
 msgid "Special files require major and minor device numbers."
 msgstr ""
-"Beim Erzeugen von Spezialdateien müssen Minor- und Major-\n"
-"Gerätenummern angegeben werden"
+"Beim Erzeugen von Spezialdateien müssen Major- und Minor-Gerätenummern "
+"angegeben werden"
 
 #: src/mknod.c:155
-#, fuzzy
 msgid "Fifos do not have major and minor device numbers."
-msgstr "Ungültige Minor-Gerätenummer %s"
+msgstr "Fifos habe keine Major- und Minor-Gerätenummern."
 
 #: src/mknod.c:166
 msgid "block special files not supported"
@@ -4911,7 +4954,6 @@ msgstr ""
 "\n"
 
 #: src/mv.c:311
-#, fuzzy
 msgid ""
 "      --backup[=CONTROL]       make a backup of each existing destination "
 "file\n"
@@ -4924,9 +4966,7 @@ msgstr ""
 "  -b                           wie --backup, akzeptiert aber keine "
 "Argumente\n"
 "  -f, --force                  vor Überschreiben nicht nachfragen\n"
-"                                 (äquivalent zu --reply=yes)\n"
 "  -i, --interactive            vor Überschreiben nachfragen\n"
-"                                 (äquivalent zu --reply=query)\n"
 
 #: src/mv.c:317
 msgid ""
@@ -4934,9 +4974,13 @@ msgid ""
 "                                 argument\n"
 "  -S, --suffix=SUFFIX          override the usual backup suffix\n"
 msgstr ""
+"      --strip-trailing-slashes  Schrägstriche vom Ende jedes QUELLE-"
+"Arguments\n"
+"                                 entfernen\n"
+"  -S, --suffix=SUFFIX          die normale Sicherungs-Erweiterung "
+"überschreiben\n"
 
 #: src/mv.c:322
-#, fuzzy
 msgid ""
 "  -t, --target-directory=DIRECTORY  move all SOURCE arguments into "
 "DIRECTORY\n"
@@ -4947,6 +4991,7 @@ msgid ""
 "  -v, --verbose                explain what is being done\n"
 msgstr ""
 "      --target-directory=VERZ  alle Quellen in Verzeichnis VERZ verschieben\n"
+"  -T, --no-target-directory    ZIEL als normale Datei behandeln\n"
 "  -u, --update                 nur ältere oder brandneue Dateien "
 "verschieben\n"
 "  -v, --verbose                Erklärung über Abläufe ausgeben\n"
@@ -4957,7 +5002,7 @@ msgid "Usage: %s [OPTION] [COMMAND [ARG]...]\n"
 msgstr "Aufruf: %s [OPTION] [BEFEHL [ARGUMENT]...]\n"
 
 #: src/nice.c:80
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Run COMMAND with an adjusted niceness, which affects process scheduling.\n"
 "With no COMMAND, print the current niceness.  Nicenesses range from\n"
@@ -4965,31 +5010,30 @@ msgid ""
 "\n"
 "  -n, --adjustment=N   add integer N to the niceness (default 10)\n"
 msgstr ""
-"BEFEHL mit festgelegter Priorität ausführen.\n"
-"Ohne BEFEHL, die aktuelle Priorität ausgeben.  PRIO ist voreingestellt mit "
-"10.\n"
-"Der Bereich reicht von -20 (höchste Priorität) bis 19 (niedrigste).\n"
+"BEFEHL mit festgelegter Priorität ausführen, was Zeitzuteilung beeinflusst.\n"
+"Ohne BEFEHL, die aktuelle Priorität ausgeben. Die Priorität reicht dabei "
+"von\n"
+"%d (vorteilhafteste Zeitzuteilung) bis %d (unvorteilhafteste "
+"Zeitzuteilung).\n"
 "\n"
-"  -n, --adjustment=PRIO     Priorität zunächst um PRIO erhöhen\n"
+"  -n, --adjustment=N     Priorität N erhöhen (Voreinstellung 10)\n"
 
 #: src/nice.c:158
-#, fuzzy, c-format
+#, c-format
 msgid "invalid adjustment %s"
-msgstr "ungültiges Argument „%s“"
+msgstr "ungültiges Argument %s"
 
 #: src/nice.c:167
 msgid "a command must be given with an adjustment"
 msgstr "Mit einer Priorität muss ein Befehl angegeben werden"
 
 #: src/nice.c:174 src/nice.c:185
-#, fuzzy
 msgid "cannot get niceness"
-msgstr "es ist nicht möglich, den Namen des Betriebssystems zu ermitteln"
+msgstr "kann aktuelle Priorität nicht ermitteln"
 
 #: src/nice.c:189
-#, fuzzy
 msgid "cannot set niceness"
-msgstr "das Datum kann nicht gesetzt werden"
+msgstr "kann Priorität nicht setzen"
 
 #: src/nl.c:176
 msgid ""
@@ -5057,7 +5101,6 @@ msgstr ""
 "Zeichen impliziert „:“.  Geben Sie \\\\ für \\ ein.  STIL ist einer aus:\n"
 
 #: src/nl.c:209
-#, fuzzy
 msgid ""
 "\n"
 "  a         number all lines\n"
@@ -5077,7 +5120,7 @@ msgstr ""
 "  a         alle Zeilen nummerieren\n"
 "  t         nur nichtleere Zeilen nummerieren\n"
 "  n         keine Zeilen nummerieren\n"
-"  pREGEXP   nur Zeilen nummerieren, auf die REGEXP passt\n"
+"  pREGEXP   nur Zeilen nummerieren, auf die die einfache REGEXP passt\n"
 "\n"
 "FORMAT ist eines der folgenden:\n"
 "\n"
@@ -5087,9 +5130,8 @@ msgstr ""
 "\n"
 
 #: src/nl.c:276
-#, fuzzy
 msgid "line number overflow"
-msgstr "Feldnummer ist Null"
+msgstr "Überlauf bei den Zeilennummern"
 
 #: src/nl.c:474
 #, c-format
@@ -5160,14 +5202,14 @@ msgstr "hänge Ausgabe an %s an"
 
 #: src/nohup.c:155
 msgid "failed to set the copy of stderr to close on exec"
-msgstr ""
+msgstr "konnte die Kopie von stderr bei Exec nicht auf Schließen setzen"
 
 #: src/nohup.c:161
 msgid "failed to redirect standard error"
 msgstr "konnte Standardfehlerausgabe nicht umleiten"
 
 #: src/od.c:307
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Usage: %s [OPTION]... [FILE]...\n"
 "  or:  %s [-abcdfilosx]... [FILE] [[+]OFFSET[.][b]]\n"
@@ -5175,7 +5217,9 @@ msgid ""
 "[b]]\n"
 msgstr ""
 "Aufruf: %s [OPTION]... [DATEI]...\n"
-" oder:  %s --traditional [DATEI] [[+]OFFSET [[+]MARKE]]\n"
+" oder:  %s [-abcdfilosx]... [DATEI] [[+]OFFSET[.][b]]\n"
+" oder:  %s --traditional [OPTION]... [DATEI] [[+]OFFSET[.][b] [+][LABEL][.]"
+"[b]]\n"
 
 #: src/od.c:313
 msgid ""
@@ -5209,7 +5253,6 @@ msgstr ""
 "                                übergehen\n"
 
 #: src/od.c:327
-#, fuzzy
 msgid ""
 "  -N, --read-bytes=BYTES      limit dump to BYTES input bytes\n"
 "  -S, --strings[=BYTES]       output strings of at least BYTES graphic "
@@ -5230,7 +5273,6 @@ msgstr ""
 "      --traditional           Argumente in traditioneller Form akzeptieren\n"
 
 #: src/od.c:337
-#, fuzzy
 msgid ""
 "\n"
 "Traditional format specifications may be intermixed; they accumulate:\n"
@@ -5243,12 +5285,11 @@ msgstr ""
 "Traditionell spezifizierte Formatangaben können gemischt werden; sie werden\n"
 "akkumuliert:\n"
 "  -a   dasselbe wie -t a,  benannte Zeichen wählen\n"
-"  -b   dasselbe wie -t oC, Oktalbytes wählen\n"
+"  -b   dasselbe wie -t o1, Oktalbytes wählen\n"
 "  -c   dasselbe wie -t c,  ASCII-Zeichen oder Backslash-Escapes wählen\n"
-"  -d   dasselbe wie -t u2, dezimale Shorts ohne Vorzeichen wählen\n"
+"  -d   dasselbe wie -t u2, dezimale vorzeichenlose 2-Byte-Zahlen wählen\n"
 
 #: src/od.c:345
-#, fuzzy
 msgid ""
 "  -f   same as -t fF, select floats\n"
 "  -i   same as -t dI, select decimal ints\n"
@@ -5258,14 +5299,13 @@ msgid ""
 "  -x   same as -t x2, select hexadecimal 2-byte units\n"
 msgstr ""
 "  -f   dasselbe wie -t fF, Fließkommazahlen wählen\n"
-"  -h   dasselbe wie -t x2, hexadezimale Shorts wählen\n"
-"  -i   dasselbe wie -t d2, dezimale Shorts wählen\n"
-"  -l   dasselbe wie -t d4, dezimale Longs wählen\n"
-"  -o   dasselbe wie -t o2, oktale Shorts wählen\n"
-"  -x   dasselbe wie -t x2, hexadezimale Shorts wählen\n"
+"  -i   dasselbe wie -t dI, dezimale Integer wählen\n"
+"  -l   dasselbe wie -t dL, dezimale Longs wählen\n"
+"  -o   dasselbe wie -t o2, oktale 2-Byte-Zahlen wählen\n"
+"  -s   dasselbe wie -t d2, dezimale 2-Byte-Zahlen wählen\n"
+"  -x   dasselbe wie -t x2, hexadezimale 2-Byte-Zahlen wählen\n"
 
 #: src/od.c:353
-#, fuzzy
 msgid ""
 "\n"
 "If first and second call formats both apply, the second format is assumed\n"
@@ -5281,14 +5321,17 @@ msgid ""
 "  c          ASCII character or backslash escape\n"
 msgstr ""
 "\n"
-"Bei Verwendung der älteren Syntax (dem zweiten Aufrufformat), steht OFFSET "
-"für\n"
-"-j OFFSET.  MARKE ist die Pseudoadresse des ersten auszugebenden Bytes; sie\n"
-"wird entsprechend erhöht, wenn die Ausgabe fortschreitet.  Für OFFSET und "
-"MARKE\n"
-"bedeutet ein 0x- oder 0X-Präfix hexadezimal, Suffixe können „.“ für oktal "
-"und\n"
-"„b“ für multipliziert mit 512 sein.\n"
+"Wenn die erste und zweite Aufrufform beide zutreffen, wird das zweite "
+"Format\n"
+"angenommen, wenn der letzte Operand mit + oder (wenn es zwei Operanden "
+"gibt)\n"
+"einer Ziffer anfängt. Ein OFFSET für -j OFFSET.  MARKE ist die "
+"Pseudoadresse\n"
+"des ersten auszugebenden Bytes; sie wird entsprechend erhöht, wenn die "
+"Ausgabe\n"
+"fortschreitet.  Für OFFSET und MARKE bedeutet ein 0x- oder 0X-Präfix\n"
+"hexadezimal; Suffixe können „.“ für oktal und „b“ für Vielfaches von 512 "
+"sein.\n"
 "\n"
 "TYP setzt sich zusammen aus einer oder mehreren dieser Spezifikationen:\n"
 "\n"
@@ -5353,32 +5396,32 @@ msgstr ""
 "Standard ist -A o -t d2 -w 16.\n"
 
 #: src/od.c:681 src/od.c:800
-#, fuzzy, c-format
+#, c-format
 msgid "invalid type string %s"
-msgstr "Ungültige Typbezeichnung „%s“"
+msgstr "Ungültige Typbezeichnung %s"
 
 #: src/od.c:691
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "invalid type string %s;\n"
 "this system doesn't provide a %lu-byte integral type"
 msgstr ""
-"Ungültiger Typ „%s“;\n"
+"Ungültige Typbezeichnung %s;\n"
 "dieses System hat keinen Typ für %lu-Byte große Ganzzahlen"
 
 #: src/od.c:810
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "invalid type string %s;\n"
 "this system doesn't provide a %lu-byte floating point type"
 msgstr ""
-"Ungültiger Typ „%s“;\n"
+"Ungültige Typbezeichnung %s;\n"
 "dieses System hat keinen Typ für %lu-Byte große Gleitkommazahlen"
 
 #: src/od.c:869
-#, fuzzy, c-format
+#, c-format
 msgid "invalid character `%c' in type string %s"
-msgstr "Ungültiges Zeichen „%c“ in Typenbezeichnung „%s“"
+msgstr "Ungültiges Zeichen „%c“ in Typenbezeichnung %s"
 
 #: src/od.c:1094
 msgid "cannot skip past end of combined input"
@@ -5412,10 +5455,8 @@ msgid "no type may be specified when dumping strings"
 msgstr "Bei der Ausgabe von Zeichenketten darf kein Typ angegeben werden"
 
 #: src/od.c:1842
-#, fuzzy
 msgid "Compatibility mode supports at most one file."
-msgstr ""
-"Im Kompatibilitätsmodus dürfen nicht mehr als 3 Argumente angegeben werden"
+msgstr "Der Kompatibilitätsmodus unterstützt höchstens eine Datei."
 
 #: src/od.c:1863
 msgid "skip-bytes + read-bytes is too large"
@@ -5470,36 +5511,41 @@ msgid ""
 "  -P                  check for empty names and leading \"-\"\n"
 "      --portability   check for all POSIX systems (equivalent to -p -P)\n"
 msgstr ""
+"Nicht portable Konstruktionen in NAME analysieren.\n"
+"\n"
+"  -p                  für die meisten POSIX-Systeme überprüfen\n"
+"  -P                  auf leere Namen und führendes „-“ prüfen\n"
+"      --portability   für alle POSIX-Systeme überprüfen (äquiv. zu -p -P)\n"
 
 #: src/pathchk.c:180
 #, c-format
 msgid "leading `-' in a component of file name %s"
-msgstr ""
+msgstr "führendes „-“ in einem Bestandteil des Dateinamens von %s"
 
 #: src/pathchk.c:206
-#, fuzzy, c-format
+#, c-format
 msgid "nonportable character %s in file name %s"
-msgstr "Ungültiges Zeichen %s in der Modus-Zeichenkette %s"
+msgstr "unportables Zeichen %s in Dateinamen %s"
 
 #: src/pathchk.c:282
-#, fuzzy
 msgid "empty file name"
-msgstr "reguläre leere Datei"
+msgstr "leerer Dateiname"
 
 #: src/pathchk.c:324
 #, c-format
 msgid "%s: unable to determine maximum file name length"
-msgstr ""
+msgstr "%s: kann maximale Dateinamenlänge nicht ermitteln"
 
 #: src/pathchk.c:335
 #, c-format
 msgid "limit %lu exceeded by length %lu of file name %s"
-msgstr ""
+msgstr "Obergrenze %lu durch Länge %lu des Dateinamen %s überschritten"
 
 #: src/pathchk.c:421
 #, c-format
 msgid "limit %lu exceeded by length %lu of file name component %s"
 msgstr ""
+"Obergrenze %lu durch Länge %lu des Dateinamensbestandteils %s überschritten"
 
 #: src/pinky.c:331
 #, c-format
@@ -5615,43 +5661,42 @@ msgstr ""
 "Option -l verwendet wird"
 
 #: src/pr.c:807 src/pr.c:817
-#, fuzzy
 msgid "page range"
-msgstr "zusätzlicher Operand „%s“"
+msgstr "Seitenbereich"
 
 #: src/pr.c:914
 msgid "`--pages=FIRST_PAGE[:LAST_PAGE]' missing argument"
 msgstr "--pages=ERSTE_SEITE[:LETZTE_SEITE]: fehlendes Argument"
 
 #: src/pr.c:916
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid page range %s"
-msgstr "Ungültige Typbezeichnung „%s“"
+msgstr "Ungültiger Seitenbereich „%s“"
 
 #: src/pr.c:981
-#, fuzzy, c-format
+#, c-format
 msgid "`-l PAGE_LENGTH' invalid number of lines: %s"
-msgstr "-l SEITEN_LÄNGE: ungültige Angabe der Zeilenanzahl: „%s“"
+msgstr "„-l SEITEN_LÄNGE“ ungültige Angabe der Zeilenanzahl: %s"
 
 #: src/pr.c:1005
-#, fuzzy, c-format
+#, c-format
 msgid "`-N NUMBER' invalid starting line number: %s"
-msgstr "-N ZAHL: ungültige Angabe der Startzeilennummer: „%s“"
+msgstr "„-N ZAHL“ ungültige Angabe der Startzeilennummer: %s"
 
 #: src/pr.c:1017
-#, fuzzy, c-format
+#, c-format
 msgid "`-o MARGIN' invalid line offset: %s"
-msgstr "-o RAND: ungültige Angabe des Zeilenoffsets: „%s“"
+msgstr "„-o RAND“ ungültige Angabe des Zeilenoffsets: %s"
 
 #: src/pr.c:1058
-#, fuzzy, c-format
+#, c-format
 msgid "`-w PAGE_WIDTH' invalid number of characters: %s"
-msgstr "-w SEITEN_BREITE: ungültige Angabe der Zeichenanzahl: „%s“"
+msgstr "„-w SEITEN_BREITE“ ungültige Angabe der Zeichenanzahl: %s"
 
 #: src/pr.c:1072
-#, fuzzy, c-format
+#, c-format
 msgid "`-W PAGE_WIDTH' invalid number of characters: %s"
-msgstr "-W SEITEN_BREITE: ungültige Angabe der Zeichenanzahl: „%s“"
+msgstr "„-W SEITEN_BREITE“ ungültige Angabe der Zeichenanzahl: %s"
 
 #: src/pr.c:1102
 msgid "Cannot specify number of columns when printing in parallel."
@@ -5666,9 +5711,9 @@ msgstr ""
 "festzulegen."
 
 #: src/pr.c:1202
-#, fuzzy, c-format
+#, c-format
 msgid "`-%c' extra characters or invalid number in the argument: %s"
-msgstr "„-%c“ Extrazeichen oder ungültige Zahl im Argument: „%s“"
+msgstr "„-%c“ Extrazeichen oder ungültige Zahl im Argument: %s"
 
 #: src/pr.c:1313
 msgid "page width too narrow"
@@ -5677,17 +5722,16 @@ msgstr "Seitenbreite zu schmal"
 #: src/pr.c:2377
 #, c-format
 msgid "starting page number %<PRIuMAX> exceeds page count %<PRIuMAX>"
-msgstr ""
+msgstr "Anfangsseitennummer %<PRIuMAX> übersteigt Seitenzahl %<PRIuMAX>"
 
 #: src/pr.c:2407
-#, fuzzy
 msgid "Page number overflow"
-msgstr "Feldnummer ist Null"
+msgstr "Überlauf bei den Seitennummern"
 
 #: src/pr.c:2412
 #, c-format
 msgid "Page %<PRIuMAX>"
-msgstr ""
+msgstr "Seite %<PRIuMAX>"
 
 #: src/pr.c:2773
 msgid ""
@@ -5988,16 +6032,15 @@ msgstr ""
 "  \\v      vertikaler Tabulatorstopp\n"
 
 #: src/printf.c:131
-#, fuzzy
 msgid ""
 "  \\xHH    byte with hexadecimal value HH (1 to 2 digits)\n"
 "  \\uHHHH  Unicode (ISO/IEC 10646) character with hex value HHHH (4 digits)\n"
 "  \\UHHHHHHHH  Unicode character with hex value HHHHHHHH (8 digits)\n"
 msgstr ""
-"  \\xNN    Byte mit hexadezimalem Wert NN (1 bis 2 Stellen)\n"
+"  \\xHH    Byte mit hexadezimalem Wert HH (1 bis 2 Stellen)\n"
 "\n"
-"  \\uNNNN  Zeichen mit hexadezimalem Wert NNNN (4 Stellen)\n"
-"  \\UNNNNNNNN  Zeichen mit hexadezimalem Wert NNNNNNNN (8 Stellen)\n"
+"  \\uHHHH  Unicode-Zeichen (ISO/IEC 10646) mit Hex-Wert HHHH (4 Stellen)\n"
+"  \\UHHHHHHHH  Unicode-Zeichen mit hexadezimalem Wert HHHHHHHH (8 Stellen)\n"
 
 #: src/printf.c:136
 msgid ""
@@ -6047,23 +6090,23 @@ msgid "invalid precision: %s"
 msgstr "ungültige Genauigkeit: %s"
 
 #: src/printf.c:616
-#, fuzzy, c-format
+#, c-format
 msgid "%.*s: invalid conversion specification"
-msgstr "%s: ungültige Feldangabe „%s“"
+msgstr "%.*s: ungültige Umwandlungsangabe"
 
 #: src/printf.c:687
-#, fuzzy, c-format
+#, c-format
 msgid "warning: ignoring excess arguments, starting with %s"
-msgstr "Warnung: überflüssige Argumente werden ignoriert, beginnend mit „%s“"
+msgstr "Warnung: überflüssige Argumente werden ignoriert, beginnend mit %s"
 
 #: src/ptx.c:41
 msgid "F. Pinard"
 msgstr "F. Pinard"
 
 #: src/ptx.c:421
-#, fuzzy, c-format
+#, c-format
 msgid "%s (for regexp %s)"
-msgstr "%s (für reguläre Ausdrücke „%s“)"
+msgstr "%s (für regulären Ausdruck %s)"
 
 #: src/ptx.c:1887
 #, c-format
@@ -6185,7 +6228,6 @@ msgstr ""
 "\n"
 
 #: src/ptx.c:2019
-#, fuzzy
 msgid ""
 "You should have received a copy of the GNU General Public License\n"
 "along with this program; if not, write to the Free Software Foundation,\n"
@@ -6193,16 +6235,14 @@ msgid ""
 msgstr ""
 "Sie sollten eine Kopie der GNU General Public License mit diesem Programm\n"
 "erhalten haben; falls nicht, schreiben Sie bitte an die\n"
-"\n"
-"        Free Software Foundation, Inc.\n"
-"        59 Temple Place - Suite 330\n"
-"        Boston, MA 02111-1307\n"
-"        USA\n"
+"Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor\n"
+"Boston, MA 02110-1301\n"
+"USA\n"
 
 #: src/ptx.c:2044
-#, fuzzy, c-format
+#, c-format
 msgid "invalid gap width: %s"
-msgstr "ungültige Zeilenbreite: %s"
+msgstr "ungültige Lückenbreite: %s"
 
 #: src/pwd.c:67
 msgid ""
@@ -6218,19 +6258,19 @@ msgid "cannot open directory %s"
 msgstr "Öffnen von Verzeichnis %s nicht möglich"
 
 #: src/pwd.c:172
-#, fuzzy, c-format
+#, c-format
 msgid "failed to chdir to %s"
-msgstr "konnte %s nicht öffnen"
+msgstr "konnte nicht nach %s wechseln"
 
 #: src/pwd.c:176 src/pwd.c:286
-#, fuzzy, c-format
+#, c-format
 msgid "failed to stat %s"
-msgstr "konnte %s nicht öffnen"
+msgstr "konnte auf %s nicht zugreifen"
 
 #: src/pwd.c:244
 #, c-format
 msgid "couldn't find directory entry in %s with matching i-node"
-msgstr ""
+msgstr "konnte in %s keine Verzeichniseintrag mit passendem Inode finden"
 
 #: src/pwd.c:320
 msgid "ignoring non-option arguments"
@@ -6269,6 +6309,26 @@ msgid ""
 "  -s, --silent                  suppress most error messages\n"
 "  -v, --verbose                 report error messages\n"
 msgstr ""
+"  -f, --canonicalize      kanonisieren, indem jeder symb. Verknüpfung in "
+"jeder\n"
+"                            Komponente des gegebenen Pfads rekursiv gefolgt "
+"wird;\n"
+"                            alle außer der letzten Komponente müssen "
+"existieren\n"
+"  -e, --canonicalize-existing  kanonisieren, indem jeder symb. Verknüpfung "
+"in jeder\n"
+"                            Komponente des gegebenen Pfads rekursiv gefolgt "
+"wird;\n"
+"                            alle Komponenten müssen existieren\n"
+"  -m, --canonicalize-missing   kanonisieren, indem jeder symb. Verknüpfung "
+"in jeder\n"
+"                            Komponente des gegebenen Pfads rekursiv gefolgt "
+"wird;\n"
+"                            ohne Anforderung an Existenz der Komponenten\n"
+"  -n, --no-newline        keinen abschließenden Zeilenvorschub ausgeben\n"
+"  -q, --quiet,\n"
+"  -s, --silent            Fehlermeldungen größtenteils unterdrücken\n"
+"  -v, --verbose           Fehlermeldungen ausgeben\n"
 
 #: src/remove.c:401
 #, c-format
@@ -6327,9 +6387,9 @@ msgid "removed directory: %s\n"
 msgstr "Verzeichnis wurde entfernt: %s\n"
 
 #: src/remove.c:968 src/remove.c:1097
-#, fuzzy, c-format
+#, c-format
 msgid "cannot chdir from %s to %s"
-msgstr "kann nicht von Verzeichnis %s nach .. wechseln"
+msgstr "kann nicht aus Verzeichnis %s in %s wechseln"
 
 #: src/remove.c:976
 #, c-format
@@ -6357,7 +6417,7 @@ msgstr "kann aktuelles Verzeichnis nicht wieder herstellen"
 #: src/rm.c:118
 #, c-format
 msgid "Try `%s ./%s' to remove the file %s.\n"
-msgstr ""
+msgstr "Versuchen Sie „%s ./%s“, um die Datei %s zu entfernen.\n"
 
 #: src/rm.c:136 src/touch.c:233
 #, c-format
@@ -6386,7 +6446,6 @@ msgstr ""
 "  -i, --interactive       vor jeder Entfernung nachfragen\n"
 
 #: src/rm.c:146
-#, fuzzy
 msgid ""
 "      --no-preserve-root do not treat `/' specially (the default)\n"
 "      --preserve-root   fail to operate recursively on `/'\n"
@@ -6405,6 +6464,12 @@ msgid ""
 "option to remove each listed directory, too, along with all of its "
 "contents.\n"
 msgstr ""
+"\n"
+"Per Voreinstellung entfernt rm keine Verzeichnisse. Bei Benutzung der "
+"Option\n"
+"--recursive (-r oder -R) wird jedes aufgeführte Verzeichnisse inklusive "
+"seiner\n"
+"Inhalte gelöscht.\n"
 
 #: src/rm.c:159
 #, c-format
@@ -6464,17 +6529,14 @@ msgstr ""
 "                  ein Verzeichnis nicht leer ist.\n"
 
 #: src/rmdir.c:147
-#, fuzzy
 msgid ""
 "  -p, --parents   Remove DIRECTORY and its ancestors.  E.g., `rmdir -p a/b/"
 "c' is\n"
 "                  similar to `rmdir a/b/c a/b a'.\n"
 "  -v, --verbose   output a diagnostic for every directory processed\n"
 msgstr ""
-"  -p, --parents   VERZEICHNIS entfernen, dann versuchen, jede Verzeichnis-\n"
-"                    komponente im Pfad zu entfernen; so ist „rmdir -p a/b/"
-"c“\n"
-"                    ist das gleiche wie „rmdir a/b/c a/b a“\n"
+"  -p, --parents   VERZEICHNIS und seine Vorfahren entfernen; damit ist\n"
+"                    „rmdir -p a/b/c“ ähnlich zu „rmdir a/b/c a/b a“\n"
 "  -v, --verbose   Diagnose für jedes bearbeitete Verzeichnis ausgeben\n"
 
 #: src/seq.c:82
@@ -6535,9 +6597,9 @@ msgid "invalid floating point argument: %s"
 msgstr "ungültiges Fließkommaargument: %s"
 
 #: src/seq.c:379
-#, fuzzy, c-format
+#, c-format
 msgid "invalid format string: %s"
-msgstr "ungültige Formatangabe: „%s“"
+msgstr "ungültige Formatangabe: %s"
 
 #: src/seq.c:399
 msgid "format string may not be specified when printing equal width strings"
@@ -6555,7 +6617,6 @@ msgstr ""
 " oder:  %s OPTION\n"
 
 #: src/setuidgid.c:57
-#, fuzzy
 msgid ""
 "Drop any supplemental groups, assume the user-ID and group-ID of\n"
 "the specified USERNAME, and run COMMAND with any specified ARGUMENTs.\n"
@@ -6657,7 +6718,6 @@ msgstr ""
 "\n"
 
 #: src/shred.c:188
-#, fuzzy
 msgid ""
 "CAUTION: Note that shred relies on a very important assumption:\n"
 "that the file system overwrites data in place.  This is the traditional\n"
@@ -6675,7 +6735,8 @@ msgstr ""
 "erfüllen\n"
 "diese Annahme nicht. Die folgenden Systeme sind Beispiele von "
 "Dateisystemen,\n"
-"auf denen „shred“ keine Wirkung hat:\n"
+"auf denen „shred“ keine Wirkung hat oder auf denen nicht für alle Datei-\n"
+"systemmodi eine Wirkung garantiert werden kann:\n"
 "\n"
 
 #: src/shred.c:196
@@ -6719,6 +6780,23 @@ msgid ""
 "of the file that cannot be removed, and that will allow a shredded file\n"
 "to be recovered later.\n"
 msgstr ""
+"* Dateisysteme, die an temporären Orten zwischenspeichern, so wie Klienten\n"
+"  unter NFS Version 3\n"
+"\n"
+"* komprimierte Dateisysteme\n"
+"\n"
+"Im Fall von ext3 trifft die obige Bemerkung nur zu, wenn der Modus "
+"data=journal\n"
+"gesetzt ist, der neben einem Journal für Metadaten auch eines für Daten\n"
+"schreibt. Sowohl im Modus data=ordered (Voreinstellung) und data=writeback\n"
+"funktioniert shred wie gewöhnlich. Die Journal-Optionen von ext3 können "
+"beim\n"
+"Einhängen gesetzt werden.\n"
+"\n"
+"Außerdem können Dateisystemsicherungen und entfernte Spiegel Kopien der "
+"Datei\n"
+"enthalten, die nicht entfernt werden können, und die es erlauben, eine\n"
+"zerhackte Datei wieder herzustellen.\n"
 
 #: src/shred.c:685
 #, c-format
@@ -6786,9 +6864,9 @@ msgid "%s: error truncating"
 msgstr "%s: Fehler beim Abschneiden"
 
 #: src/shred.c:1274
-#, fuzzy, c-format
+#, c-format
 msgid "%s: fcntl failed"
-msgstr "%s: Seek fehlgeschlagen"
+msgstr "%s: fcntl fehlgeschlagen"
 
 #: src/shred.c:1279
 #, c-format
@@ -6806,9 +6884,9 @@ msgid "%s: renamed to %s"
 msgstr "%s: in %s umbenannt"
 
 #: src/shred.c:1405
-#, fuzzy, c-format
+#, c-format
 msgid "%s: failed to remove"
-msgstr "%s: Datei zu groß"
+msgstr "%s: konnte nicht entfernen"
 
 #: src/shred.c:1409
 #, c-format
@@ -6816,14 +6894,14 @@ msgid "%s: removed"
 msgstr "%s: entfernt"
 
 #: src/shred.c:1416 src/shred.c:1459
-#, fuzzy, c-format
+#, c-format
 msgid "%s: failed to close"
-msgstr "%s: Datei zu lang"
+msgstr "%s: konnte nicht schließen"
 
 #: src/shred.c:1452
-#, fuzzy, c-format
+#, c-format
 msgid "%s: failed to open for writing"
-msgstr "%s: Datei zu lang"
+msgstr "%s: konnte nicht zum Schreiben öffnen"
 
 #: src/shred.c:1508
 #, c-format
@@ -6859,16 +6937,15 @@ msgstr ""
 "\n"
 
 #: src/sleep.c:138
-#, fuzzy, c-format
+#, c-format
 msgid "invalid time interval %s"
-msgstr "ungültiges Zeitintervall „%s“"
+msgstr "ungültiges Zeitintervall %s"
 
-#: src/sleep.c:149 src/tail.c:1101
+#: src/sleep.c:149 src/tail.c:1112
 msgid "cannot read realtime clock"
 msgstr "Echtzeit-Uhr kann nicht gelesen werden"
 
 #: src/sort.c:285
-#, fuzzy
 msgid ""
 "Write sorted concatenation of all FILE(s) to standard output.\n"
 "\n"
@@ -6876,17 +6953,16 @@ msgstr ""
 "Aneinanderfügung aller DATEI(en) sortiert nach der Standardausgabe "
 "schreiben.\n"
 "\n"
-"Sortieroptionen:\n"
-"\n"
 
 #: src/sort.c:292
 msgid ""
 "Ordering options:\n"
 "\n"
 msgstr ""
+"Sortieroptionen:\n"
+"\n"
 
 #: src/sort.c:296
-#, fuzzy
 msgid ""
 "  -b, --ignore-leading-blanks  ignore leading blanks\n"
 "  -d, --dictionary-order      consider only blanks and alphanumeric "
@@ -6917,7 +6993,6 @@ msgstr ""
 "\n"
 
 #: src/sort.c:309
-#, fuzzy
 msgid ""
 "Other options:\n"
 "\n"
@@ -6938,14 +7013,14 @@ msgstr ""
 "  -m, --merge               schon sortierte Dateien zusammenführen; nicht\n"
 "                              sortieren\n"
 "  -o, --output=DATEI        Ergebnis in DATEI schreiben statt "
-"Standardeingabe\n"
+"Standardausgabe\n"
 "  -s, --stable              Sortierung stabilisieren (dabei "
 "Rückzugssortierung\n"
 "                              deaktivieren)\n"
-"  -S, --buffer-size=GRÖSSE  GRÖSSE für Hauptspeicherpuffer benutzen\n"
+"  -S, --buffer-size=GRÖßE   GRÖßE für Hauptspeicherpuffer benutzen\n"
 
 #: src/sort.c:319
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "  -t, --field-separator=SEP  use SEP instead of non-blank to blank "
 "transition\n"
@@ -6959,10 +7034,8 @@ msgstr ""
 "  -t, --field-separator=SEP  SEP benutzen statt Übergang von Nichtleerraum "
 "zu\n"
 "                              Leerraum\n"
-"  -T, --temporary-directory=VERZ\n"
-"                            für temporäre Dateien VERZ statt $TMPDIR oder %"
-"s;\n"
-"                              kann mehrfach gegeben werden\n"
+"  -T, --temporary-directory=VERZ  für temporäre Dateien VERZ statt $TMPDIR\n"
+"                              oder %s; kann mehrfach gegeben werden\n"
 "  -u, --unique              mit -c: auf strikte Odnung prüfen; ohne -c: nur\n"
 "                              das erste von mehreren Gleichen ausgeben\n"
 
@@ -7025,25 +7098,24 @@ msgstr "temporäre Datei konnte nicht angelegt werden"
 
 #: src/sort.c:469
 msgid "open failed"
-msgstr "Fehler beim Öffnen"
+msgstr "Öffnen fehlgeschlagen"
 
 #: src/sort.c:491
-#, fuzzy
 msgid "fflush failed"
-msgstr "Fehler beim Schließen"
+msgstr "fflush fehlgeschlagen"
 
 #: src/sort.c:496 src/sort.c:2471
 msgid "close failed"
-msgstr "Fehler beim Schließen"
+msgstr "Schließen fehlgeschlagen"
 
 #: src/sort.c:505
 msgid "write failed"
-msgstr "Fehler beim Schreiben"
+msgstr "Schreiben fehlgeschlagen"
 
 #: src/sort.c:542
-#, fuzzy, c-format
+#, c-format
 msgid "warning: cannot remove: %s"
-msgstr "Entfernen von %s nicht möglich"
+msgstr "Warnung: kann %s nicht entfernen"
 
 #: src/sort.c:659
 msgid "sort size"
@@ -7067,9 +7139,9 @@ msgid "standard error"
 msgstr "Standardfehler"
 
 #: src/sort.c:1990
-#, fuzzy, c-format
+#, c-format
 msgid "%s: invalid field specification %s"
-msgstr "%s: ungültige Feldangabe „%s“"
+msgstr "%s: ungültige Feldangabe %s"
 
 #: src/sort.c:2017
 #, c-format
@@ -7077,9 +7149,9 @@ msgid "%s: count `%.*s' too large"
 msgstr "%s: Anzahl „%.*s“ zu groß"
 
 #: src/sort.c:2023
-#, fuzzy, c-format
+#, c-format
 msgid "%s: invalid count at start of %s"
-msgstr "%s: ungültige Zähler am Anfang von „%s“"
+msgstr "%s: ungültige Zähler am Anfang von %s"
 
 #: src/sort.c:2243
 msgid "invalid number after `-'"
@@ -7178,9 +7250,9 @@ msgid "Output file suffixes exhausted"
 msgstr "Kein Suffix für Ausgabedateien mehr verfügbar"
 
 #: src/split.c:212
-#, fuzzy, c-format
+#, c-format
 msgid "creating file %s\n"
-msgstr "Datei „%s“ wird angelgt\n"
+msgstr "Datei %s wird angelegt\n"
 
 #: src/split.c:371
 msgid "cannot split in more than one way"
@@ -7210,23 +7282,47 @@ msgstr "Zeilenanzahloption -%s%c... ist zu groß"
 msgid "invalid number of lines: 0"
 msgstr "ungültige Anzahl von Zeilen: 0"
 
-#: src/stat.c:601
+#: src/stat.c:590
+#, fuzzy, c-format
+msgid "warning: unrecognized escape `\\%c'"
+msgstr "%s: unbekannte Option „%c%s“\n"
+
+#: src/stat.c:625
+#, fuzzy, c-format
+msgid "%s%s: invalid directive"
+msgstr "%%%c: ungültige Anweisung"
+
+#: src/stat.c:670
+#, fuzzy
+msgid "warning: backslash at end of format"
+msgstr "Ungültiger Backslash (\\)  am Ende der Zeichenkette"
+
+#: src/stat.c:699
 #, c-format
 msgid "cannot read file system information for %s"
 msgstr "kann Dateisysteminformation für %s nicht lesen"
 
-#: src/stat.c:677
+#: src/stat.c:775
 #, c-format
 msgid "Usage: %s [OPTION] FILE...\n"
 msgstr "Aufruf: %s [OPTION] DATEI...\n"
 
-#: src/stat.c:678
+#: src/stat.c:776
 msgid ""
 "Display file or file system status.\n"
 "\n"
-"  -f, --file-system     display file system status instead of file status\n"
-"  -c  --format=FORMAT   use the specified FORMAT instead of the default\n"
 "  -L, --dereference     follow links\n"
+"  -f, --file-system     display file system status instead of file status\n"
+msgstr ""
+
+#: src/stat.c:782
+#, fuzzy
+msgid ""
+"  -c  --format=FORMAT   use the specified FORMAT instead of the default;\n"
+"                          output a newline after each use of FORMAT\n"
+"      --printf=FORMAT   like --format, but interpret backslash escapes,\n"
+"                          and do not output a mandatory trailing newline.\n"
+"                          If you want a newline, include \\n in FORMAT.\n"
 "  -t, --terse           print the information in terse form\n"
 msgstr ""
 "Datei- oder Dateisystem-Status anzeigen.\n"
@@ -7237,8 +7333,7 @@ msgstr ""
 "  -L, --dereference     Verknüpfungen folgen\n"
 "  -t, --terse           Informationen in knapper Form ausgeben\n"
 
-#: src/stat.c:689
-#, fuzzy
+#: src/stat.c:793
 msgid ""
 "\n"
 "The valid format sequences for files (without --file-system):\n"
@@ -7251,13 +7346,12 @@ msgstr ""
 "\n"
 "Die gültigen Formatangaben für Dateien (ohne --file-system):\n"
 "\n"
-"  %A   Zugriffsrechte in menschenlesbarer Form\n"
 "  %a   Zugriffsrechte im Oktalformat\n"
-"  %B   die Größe in Bytes jedes mit „%b“ gemeldeten Blocks\n"
+"  %A   Zugriffsrechte in menschenlesbarer Form\n"
 "  %b   Anzahl der beanspruchten Blöcke (siehe %B)\n"
+"  %B   die Größe in Bytes jedes mit „%b“ gemeldeten Blocks\n"
 
-#: src/stat.c:697
-#, fuzzy
+#: src/stat.c:801
 msgid ""
 "  %d   Device number in decimal\n"
 "  %D   Device number in hex\n"
@@ -7266,15 +7360,14 @@ msgid ""
 "  %g   Group ID of owner\n"
 "  %G   Group name of owner\n"
 msgstr ""
-"  %D   Gerätenummer in Hex\n"
 "  %d   Gerätenummer in Dezimal\n"
-"  %F   Dateityp\n"
+"  %D   Gerätenummer in Hex\n"
 "  %f   roher Modus in Hex\n"
-"  %G   Gruppenname des Eigners\n"
+"  %F   Dateityp\n"
 "  %g   Gruppen-ID des Eigners\n"
+"  %G   Gruppenname des Eigners\n"
 
-#: src/stat.c:705
-#, fuzzy
+#: src/stat.c:809
 msgid ""
 "  %h   Number of hard links\n"
 "  %i   Inode number\n"
@@ -7285,17 +7378,16 @@ msgid ""
 "  %t   Major device type in hex\n"
 "  %T   Minor device type in hex\n"
 msgstr ""
-"  %h   Anzahl der harten Verknüpfungen\n"
 "  %i   INode-Nummer\n"
-"  %N   „Quoted File Name“ mit Dereferenzierung bei symbolischer Verknüpfung\n"
+"  %h   Anzahl der harten Verknüpfungen\n"
 "  %n   Dateiname\n"
+"  %N   „Quoted File Name“ mit Dereferenzierung bei symbolischer Verknüpfung\n"
 "  %o   E/A-Blockgröße\n"
 "  %s   Gesamtgröße in Bytes\n"
-"  %T   Minor-Gerätetyp in Hex\n"
 "  %t   Major-Gerätetyp in Hex\n"
+"  %T   Minor-Gerätetyp in Hex\n"
 
-#: src/stat.c:715
-#, fuzzy
+#: src/stat.c:819
 msgid ""
 "  %u   User ID of owner\n"
 "  %U   User name of owner\n"
@@ -7307,17 +7399,17 @@ msgid ""
 "  %Z   Time of last change as seconds since Epoch\n"
 "\n"
 msgstr ""
-"  %U   Nutzername des Eigners\n"
 "  %u   Nutzer-ID des Eigners\n"
-"  %X   Zeit des letzten Zugriffs in Sekunden seit der Epoche\n"
+"  %U   Nutzername des Eigners\n"
 "  %x   Zeit des letzten Zugriffs\n"
-"  %Y   Zeit der letzten Modifikation in Sekunden seit der Epoche\n"
+"  %X   Zeit des letzten Zugriffs in Sekunden seit der Epoche\n"
 "  %y   Zeit der letzten Modifikation\n"
-"  %Z   Zeit der letzten Änderung in Sekunden seit der Epoche\n"
+"  %Y   Zeit der letzten Modifikation in Sekunden seit der Epoche\n"
 "  %z   Zeit der letzten Änderung\n"
+"  %Z   Zeit der letzten Änderung in Sekunden seit der Epoche\n"
 "\n"
 
-#: src/stat.c:727
+#: src/stat.c:831
 msgid ""
 "Valid format sequences for file systems:\n"
 "\n"
@@ -7335,8 +7427,7 @@ msgstr ""
 "  %d   Freie Dateiknoten im Dateisystem\n"
 "  %f   Freie Blöcke im Dateisystem\n"
 
-#: src/stat.c:736
-#, fuzzy
+#: src/stat.c:840
 msgid ""
 "  %i   File System ID in hex\n"
 "  %l   Maximum length of filenames\n"
@@ -7350,8 +7441,9 @@ msgstr ""
 "  %l   Maximale Länge von Dateinamen\n"
 "  %n   Dateiname\n"
 "  %s   Optimale Transfer-Blockgröße\n"
-"  %T   Typ in menschenlesbarer Form\n"
+"  %S   grundlegende Blockgröße (für Blockzahlen)\n"
 "  %t   Typ in Hex\n"
+"  %T   Typ in menschenlesbarer Form\n"
 
 #: src/stty.c:511
 #, c-format
@@ -7549,7 +7641,7 @@ msgstr ""
 
 #: src/stty.c:605
 msgid " * [-]iutf8      assume input characters are UTF-8 encoded\n"
-msgstr ""
+msgstr "* [-]iutf8      Eingabezeichen als UTF-8 annehmen\n"
 
 #: src/stty.c:608
 msgid ""
@@ -7814,20 +7906,20 @@ msgid "%s: couldn't reset non-blocking mode"
 msgstr "%s: Zurücksetzen auf nicht-blockierenden Modus ist nicht möglich"
 
 #: src/stty.c:885 src/stty.c:995
-#, fuzzy, c-format
+#, c-format
 msgid "invalid argument %s"
-msgstr "ungültiges Argument: %s"
+msgstr "ungültiges Argument %s"
 
 #: src/stty.c:896 src/stty.c:913 src/stty.c:925 src/stty.c:938 src/stty.c:950
 #: src/stty.c:970
-#, fuzzy, c-format
+#, c-format
 msgid "missing argument to %s"
-msgstr "fehlendes Argument für „%s“"
+msgstr "fehlendes Argument für %s"
 
 #: src/stty.c:976
-#, fuzzy, c-format
+#, c-format
 msgid "invalid line discipline %s"
-msgstr "Ungültige Line-Disziplin: „%s“"
+msgstr "ungültige Line-Disziplin %s"
 
 #: src/stty.c:1047
 #, c-format
@@ -7845,9 +7937,9 @@ msgid "%s: no size information for this device"
 msgstr "%s: Keine Information zur Größe dieses Gerätes"
 
 #: src/stty.c:1889
-#, fuzzy, c-format
+#, c-format
 msgid "invalid integer argument %s"
-msgstr "ungültiges Ganzzahlargument „%s“"
+msgstr "ungültiges Ganzzahlargument %s"
 
 #: src/su.c:265
 msgid "Password:"
@@ -7959,6 +8051,12 @@ msgid ""
 "the version described here.  Please refer to your shell's documentation\n"
 "for details about the options it supports.\n"
 msgstr ""
+"\n"
+"BEMERKUNG: Ihre Shell hat möglicherweise eine eigene Version von %s,\n"
+"welche normalerweise die hier beschriebene Version ersetzt. Bitte greifen "
+"Sie\n"
+"auf die Dokumentation der Shell zurück, um die dort unterstützten Optionen\n"
+"in Erfahrung zu bringen.\n"
 
 #: src/system.h:583
 msgid "      --help     display this help and exit\n"
@@ -8162,90 +8260,90 @@ msgstr ""
 "%s: es ist nicht möglich, vom Ende her zum relativen Offset %s zu springen"
 
 #: src/tail.c:875
-#, fuzzy, c-format
+#, c-format
 msgid "%s has become inaccessible"
-msgstr "auf „%s“ kann nicht mehr zugegriffen werden"
+msgstr "auf %s kann nicht mehr zugegriffen werden"
 
 #: src/tail.c:892
-#, fuzzy, c-format
+#, c-format
 msgid "%s has been replaced with an untailable file; giving up on this name"
-msgstr "„%s“ wurde ersetzt mit einer ungeeigneten Datei; kein weiterer Versuch"
+msgstr "%s wurde ersetzt durch eine ungeeigneten Datei; kein weiterer Versuch"
 
 #: src/tail.c:913
-#, fuzzy, c-format
+#, c-format
 msgid "%s has become accessible"
 msgstr "auf „%s“ kann jetzt zugegriffen werden"
 
 #: src/tail.c:921
-#, fuzzy, c-format
+#, c-format
 msgid "%s has appeared;  following end of new file"
-msgstr "„%s“ ist aufgetaucht; nach dem Ende einer neuen Datei"
+msgstr "%s ist aufgetaucht;  folge Ende der neuen Datei"
 
 #: src/tail.c:932
-#, fuzzy, c-format
+#, c-format
 msgid "%s has been replaced;  following end of new file"
-msgstr "„%s“ wurde ersetzt; nach dem Ende einer neuen Datei"
+msgstr "%s wurde ersetzt;  folge Ende der neuen Datei"
 
-#: src/tail.c:1025
+#: src/tail.c:1033
 #, c-format
 msgid "%s: cannot change nonblocking mode"
 msgstr "%s: Ändern desf nicht-blockierenden Modus ist nicht möglich"
 
-#: src/tail.c:1064
+#: src/tail.c:1074
 #, c-format
 msgid "%s: file truncated"
 msgstr "%s: Datei abgeschnitten"
 
-#: src/tail.c:1087
+#: src/tail.c:1098
 msgid "no files remaining"
 msgstr "Keine Dateien mehr übrig"
 
-#: src/tail.c:1320
+#: src/tail.c:1331
 #, c-format
 msgid "%s: cannot follow end of this type of file; giving up on this name"
 msgstr ""
 "%s: es ist nicht möglich, bis zum Ende dieses Dateityps vorgehen;\n"
 "  kein weiterer Versuch für diesen Namen"
 
-#: src/tail.c:1436
-#, fuzzy, c-format
+#: src/tail.c:1447
+#, c-format
 msgid "number in %s is too large"
-msgstr "Nummer in „%s“ ist zu groß"
+msgstr "Zahl in %s ist zu groß"
 
-#: src/tail.c:1507
+#: src/tail.c:1518
 #, c-format
 msgid "%s: invalid maximum number of unchanged stats between opens"
 msgstr ""
 "%s: ungültige maximale Anzahl von ungeänderten „stats“ zwischen Öffnungen"
 
-#: src/tail.c:1519
+#: src/tail.c:1530
 #, c-format
 msgid "%s: invalid PID"
 msgstr "%s: ungültige PID"
 
-#: src/tail.c:1538
+#: src/tail.c:1549
 #, c-format
 msgid "%s: invalid number of seconds"
 msgstr "%s: ungültige Anzahl von Sekunden"
 
-#: src/tail.c:1557
+#: src/tail.c:1568
 msgid "warning: --retry is useful only when following by name"
 msgstr "Warnung: --retry ist nur sinnvoll, wenn dieser Option ein Name folgt"
 
-#: src/tail.c:1561
+#: src/tail.c:1572
 msgid "warning: PID ignored; --pid=PID is useful only when following"
 msgstr "Warnung: PID ignoriert; --pid=PID ist nur sinnvoll, wenn es folgt"
 
-#: src/tail.c:1564
+#: src/tail.c:1575
 msgid "warning: --pid=PID is not supported on this system"
 msgstr "Warnung: --pid=PID wird auf diesem System nicht unterstützt"
 
-#: src/tail.c:1646
+#: src/tail.c:1657
 #, c-format
 msgid "cannot follow %s by name"
 msgstr "kann %s nicht nach Namen verfolgen"
 
-#: src/tail.c:1652
+#: src/tail.c:1663
 msgid "warning: following standard input indefinitely is ineffective"
 msgstr "Warnung: die Standardausgabe stetig zu verfolgen ist nicht wirksam"
 
@@ -8277,9 +8375,9 @@ msgid "missing argument after %s"
 msgstr "fehlendes Argument hinter „%s“"
 
 #: src/test.c:160
-#, fuzzy, c-format
+#, c-format
 msgid "invalid integer %s\n"
-msgstr "ungültige Zahl %s"
+msgstr "ungültige Zahl %s\n"
 
 #: src/test.c:241
 msgid "')' expected\n"
@@ -8317,7 +8415,6 @@ msgid "%s: binary operator expected\n"
 msgstr "%s: binärer Operator erwartet\n"
 
 #: src/test.c:693
-#, fuzzy
 msgid ""
 "Usage: test EXPRESSION\n"
 "  or:  test\n"
@@ -8330,8 +8427,6 @@ msgstr ""
 " oder:  [ AUSDRUCK ]\n"
 " oder:  [ ]\n"
 " oder:  [ OPTION\n"
-"Beendet sich mit dem Status, der sich aus AUSDRUCK ergibt.\n"
-"\n"
 
 #: src/test.c:700
 msgid ""
@@ -8427,7 +8522,6 @@ msgstr ""
 "  -e DATEI     DATEI existiert\n"
 
 #: src/test.c:748
-#, fuzzy
 msgid ""
 "  -f FILE     FILE exists and is a regular file\n"
 "  -g FILE     FILE exists and is set-group-ID\n"
@@ -8489,7 +8583,7 @@ msgstr ""
 
 #: src/test.c:775
 msgid "test and/or ["
-msgstr ""
+msgstr "test und/oder ["
 
 #: src/test.c:830
 msgid "missing `]'\n"
@@ -8562,7 +8656,6 @@ msgstr ""
 "wie -m\n"
 
 #: src/touch.c:257
-#, fuzzy
 msgid ""
 "\n"
 "Note that the -d and -t options accept different time-date formats.\n"
@@ -8571,6 +8664,8 @@ msgid ""
 msgstr ""
 "\n"
 "Beachten Sie, dass -d und -t verschiedene Zeit-Datum-Formate akzeptieren.\n"
+"\n"
+"Wenn DATEI - ist, wird auf die Standardausgabe zugegriffen.\n"
 
 #: src/touch.c:344
 msgid "cannot specify times from more than one source"
@@ -8726,13 +8821,13 @@ msgstr ""
 "und erscheint nach Wandlung und Löschung.\n"
 
 #: src/tr.c:518
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "warning: the ambiguous octal escape \\%c%c%c is being\n"
 "\tinterpreted as the 2-byte sequence \\0%c%c, %c"
 msgstr ""
-"Warnung: die mehrdeutige Oktal-Escape \\%c%c%c wird als 2-Byte-Folge\n"
-"\t \\0%c%c, „%c“ interpretiert"
+"Warnung: die mehrdeutige Oktal-Escape \\%c%c%c wird als\n"
+"\t2-Byte-Folge \\0%c%c, %c interpretiert"
 
 #: src/tr.c:681
 #, c-format
@@ -8741,9 +8836,9 @@ msgstr ""
 "Die Endpunkte des Bereiches „%s-%s“ sind in umgekehrter Sortierreihenfolge"
 
 #: src/tr.c:837
-#, fuzzy, c-format
+#, c-format
 msgid "invalid repeat count %s in [c*n] construct"
-msgstr "Ungültige Wiederholungsangabe „%s“ in [c*n]-Konstrukt"
+msgstr "Ungültige Wiederholungsangabe %s in [c*n]-Konstrukt"
 
 #: src/tr.c:918
 msgid "missing character class name `[::]'"
@@ -8754,9 +8849,9 @@ msgid "missing equivalence class character `[==]'"
 msgstr "Fehlendes Äquivalenzklassenzeichen „[==]“"
 
 #: src/tr.c:936
-#, fuzzy, c-format
+#, c-format
 msgid "invalid character class %s"
-msgstr "Ungültige Zeichenklasse „%s“"
+msgstr "Ungültige Zeichenklasse %s"
 
 #: src/tr.c:955
 #, c-format
@@ -8817,35 +8912,21 @@ msgid "misaligned [:upper:] and/or [:lower:] construct"
 msgstr "fehlerhaft positioniertes [:upper:]- und/oder [:lower:]-Konstrukt"
 
 #: src/true.c:42
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Usage: %s [ignored command line arguments]\n"
 "  or:  %s OPTION\n"
 msgstr ""
-"Aufruf: %s NAME\n"
+"Aufruf: %s [ignorierete Kommandozeilenargumente]\n"
 " oder:  %s OPTION\n"
 
 #: src/true.c:49
-#, fuzzy
 msgid "Exit with a status code indicating success."
-msgstr ""
-"Aufruf: %s [ignorierte Kommandzeilen-Argument]\n"
-" oder:  %s OPTION\n"
-"Mit einem Status-Code beenden, der erfolgreiche Ausführung signalisiert.\n"
-"\n"
-"Diese Optionen dürfen nicht abgekürzt werden.\n"
-"\n"
+msgstr "Mit einem Status beenden, der Erfolg signalisiert."
 
 #: src/true.c:50
-#, fuzzy
 msgid "Exit with a status code indicating failure."
-msgstr ""
-"Aufruf: %s [ignorierte Kommandozeilen-Argumente]\n"
-"  oder: %s OPTION\n"
-"Mit einem Status-Code beenden, der einen Fehler signalisiert.\n"
-"\n"
-"Diese Optionen dürfen nicht abgekürzt werden.\n"
-"\n"
+msgstr "Mit einem Status beenden, der Misserfolg signalisiert."
 
 #: src/tsort.c:86
 #, c-format
@@ -8856,7 +8937,6 @@ msgid ""
 "\n"
 msgstr ""
 "Aufruf: %s [OPTION] [DATEI]\n"
-"\n"
 "Vollkommen geordnete Liste in Übereinstimmung mit der partiellen Ordnung in\n"
 "DATEI schreiben.\n"
 "Ohne DATEI, oder falls DATEI - ist, Standardeingabe lesen.\n"
@@ -8894,7 +8974,6 @@ msgid "not a tty"
 msgstr "kein Ausgabegerät"
 
 #: src/uname.c:118
-#, fuzzy
 msgid ""
 "Print certain system information.  With no OPTION, same as -s.\n"
 "\n"
@@ -8904,15 +8983,16 @@ msgid ""
 "  -n, --nodename           print the network node hostname\n"
 "  -r, --kernel-release     print the kernel release\n"
 msgstr ""
-"Festgelegte Systeminformationen ausgeben.  Ohne OPTION dasselbe wie -s.\n"
+"Bestimmte Systeminformationen ausgeben.  Ohne OPTION dasselbe wie -s.\n"
 "\n"
-"  -a, --all                alle Informationen ausgeben\n"
+"  -a, --all                alle Informationen ausgeben, in der folgenden\n"
+"                             Reihenfolge (außer -p und -i wenn nicht "
+"bekannt):\n"
 "  -s, --kernel-name        Namen des Kernels ausgeben\n"
 "  -n, --nodename           Netzwerknamen der Maschine ausgeben\n"
-"  -r, --release            Release-Nummer des Betriebssystems ausgeben\n"
+"  -r, --kernel-release     Release-Nummer des Kernels ausgeben\n"
 
 #: src/uname.c:127
-#, fuzzy
 msgid ""
 "  -v, --kernel-version     print the kernel version\n"
 "  -m, --machine            print the machine hardware name\n"
@@ -8922,8 +9002,8 @@ msgid ""
 msgstr ""
 "  -v, --kernel-version     Version des Kernels ausgeben\n"
 "  -m, --machine            Maschinentyp (Hardware) ausgeben\n"
-"  -p, --processor          Typ des Prozessors ausgeben\n"
-"  -i, --hardware-platform  Hardwareplattform ausgeben\n"
+"  -p, --processor          Typ des Prozessors ausgeben (oder „unknown“)\n"
+"  -i, --hardware-platform  Hardwareplattform ausgeben (oder „unknown“)\n"
 "  -o, --operating-system   Namen des Betriebssystems ausgeben\n"
 
 #: src/uname.c:236
@@ -8956,12 +9036,11 @@ msgstr ""
 
 #: src/unexpand.c:161
 msgid "tabs are too far apart"
-msgstr ""
+msgstr "Tabulatoren sind zu weit auseinander"
 
 #: src/unexpand.c:513
-#, fuzzy
 msgid "tab stop value is too large"
-msgstr "Tabulatorstopp ist zu groß %s"
+msgstr "Tabulatorstopp ist zu groß"
 
 #: src/uniq.c:135
 #, c-format
@@ -9070,7 +9149,7 @@ msgstr "Entfernen (unlink) von %s nicht möglich"
 
 #: src/uptime.c:109
 msgid "couldn't get boot time"
-msgstr "es ist nicht möglich, die Startzeit des Rechners zu ermitteln"
+msgstr "Es ist nicht möglich, die Startzeit des Rechners zu ermitteln."
 
 #: src/uptime.c:117
 #, c-format
@@ -9099,7 +9178,7 @@ msgstr " ??:????  an "
 #: src/uptime.c:125
 #, c-format
 msgid "???? days ??:??,  "
-msgstr ""
+msgstr "???? Tage ??:??,  "
 
 #: src/uptime.c:129
 #, c-format
@@ -9162,7 +9241,7 @@ msgid ""
 "  -m, --chars            print the character counts\n"
 "  -l, --lines            print the newline counts\n"
 msgstr ""
-"Byte-, Wort- und Zeilenanzahl für jede DATEI ausgeben und eine Zeile mit "
+"Zeilen-, Wort- und Byteanzahl für jede DATEI ausgeben und eine Zeile mit "
 "der\n"
 "Gesamtsumme, wenn mehr als eine DATEI angegeben wurde.  Ohne DATEI, oder "
 "wenn\n"
@@ -9267,7 +9346,7 @@ msgstr ""
 
 #: src/who.c:643
 msgid "  -l, --login       print system login processes\n"
-msgstr ""
+msgstr "  -l, --login       Login-Prozesse des Systems ausgeben\n"
 
 #: src/who.c:646
 msgid ""
@@ -9315,21 +9394,18 @@ msgid ""
 "If ARG1 ARG2 given, -m presumed: `am i' or `mom likes' are usual.\n"
 msgstr ""
 "\n"
-"Wenn keine DATEI angegeben ist, „%s“ nehmen.  „%s“ ist als DATEI üblich.  "
-"Wenn\n"
-"ARG1 ARG2 angegeben sind, wird -m angenommen: gebräuchlich sind „bin ich“ "
-"oder\n"
-"„ist schlau“.\n"
+"Wenn keine DATEI angegeben ist, „%s“ nehmen. „%s“ ist als\n"
+"DATEI üblich. Wenn ARG1 ARG2 angegeben sind, wird -m angenommen:\n"
+"gebräuchlich sind „bin ich“ oder „am i“.\n"
 
 #: src/who.c:765
 msgid "Warning: -i will be removed in a future release;   use -u instead"
 msgstr ""
 "Warnung: -i wird in einem kommenden Release aufgegeben werden; bitte "
 "verwenden\n"
-"Sie stattdessen -u"
+"Sie stattdessen -u."
 
 #: src/whoami.c:51
-#, fuzzy
 msgid ""
 "Print the user name associated with the current effective user ID.\n"
 "Same as id -un.\n"
@@ -9340,9 +9416,9 @@ msgstr ""
 "\n"
 
 #: src/whoami.c:95
-#, fuzzy, c-format
+#, c-format
 msgid "%s: cannot find name for user ID %lu\n"
-msgstr "Es ist kein Name zur Nutzer-ID %u zu finden"
+msgstr "%s: Es ist kein Name zur Nutzer-ID %lu zu finden\n"
 
 #: src/yes.c:46
 #, c-format
@@ -9350,7 +9426,7 @@ msgid ""
 "Usage: %s [STRING]...\n"
 "  or:  %s OPTION\n"
 msgstr ""
-"Aufruf: %s [STRING...]\n"
+"Aufruf: %s [ZEICHENKETTE...]\n"
 " oder:  %s OPTION\n"
 
 #: src/yes.c:52
@@ -9358,114 +9434,13 @@ msgid ""
 "Repeatedly output a line with all specified STRING(s), or `y'.\n"
 "\n"
 msgstr ""
-"Eine Zeile mit allen angegebenen ZEICHENKETTEN oder „y“ wiederholt "
+"Eine Zeile mit allen angegebenen ZEICHENKETTEn oder „y“ wiederholt "
 "ausgeben.\n"
+"\n"
 
-#~ msgid ""
-#~ "  -i, --idle        add idle time as HOURS:MINUTES, . or old\n"
-#~ "                    (deprecated, use -u)\n"
-#~ "  -l, --login       print system login processes\n"
+#~ msgid "openat: unable to restore working directory"
 #~ msgstr ""
-#~ "  -i, --idle        die Untätigkeitszeit des Benutzers als STUNDEN:"
-#~ "MINUTEN, „.“\n"
-#~ "                      oder „old“ hinzufügen (von dieser Option wird "
-#~ "abgeraten,\n"
-#~ "                      bitte -u verwenden!)\n"
-#~ "  -l, --login       Login-Prozesse des Systems ausgeben\n"
-
-#~ msgid "Warning: `-l' is deprecated; use `-L' instead"
-#~ msgstr ""
-#~ "Warnung: „-l“ wird in einer kommenden Version aufgegeben werden;\n"
-#~ "bitte verwenden Sie stattdessen „-L“"
-
-#~ msgid "the --allow-missing option is deprecated; use --retry instead"
-#~ msgstr ""
-#~ "Warnung: „--allow-missing“ wird in einer kommenden Version aufgegeben "
-#~ "werden;\n"
-#~ "bitte verwenden Sie stattdessen „--retry“"
-
-#~ msgid "cannot obtain time stamps for %s"
-#~ msgstr "Erhalt des Zeitstempels für %s nicht möglich"
-
-#, fuzzy
-#~ msgid "cannot open .. from %s"
-#~ msgstr "Öffnen von Verzeichnis %s nicht möglich"
-
-#, fuzzy
-#~ msgid "cannot open %s from %s"
-#~ msgstr "Öffnen von Verzeichnis %s nicht möglich"
-
-#, fuzzy
-#~ msgid "cannot open %s"
-#~ msgstr "Entfernen von %s nicht möglich"
-
-#, fuzzy
-#~ msgid "cannot open from %s to %s"
-#~ msgstr "kann nicht aus Verzeichnis %s in %s wechseln"
-
-#, fuzzy
-#~ msgid ""
-#~ "Display the current time in the given FORMAT, or set the system date.\n"
-#~ "\n"
-#~ "  -d, --date=STRING         display time described by STRING, not `now'\n"
-#~ "  -f, --file=DATEFILE       like --date once for each line of DATEFILE\n"
-#~ "  -I[TIMESPEC], --iso-8601[=TIMESPEC]  output date/time in ISO 8601 "
-#~ "format.\n"
-#~ "                            TIMESPEC=`date' for date only (the default),\n"
-#~ "                            `hours', `minutes', `seconds', or `ns' for "
-#~ "date and\n"
-#~ "                            time to the indicated precision.\n"
-#~ msgstr ""
-#~ "Die aktuelle Uhrzeit im angegebenen FORMAT anzeigen oder die Systemzeit "
-#~ "setzen.\n"
-#~ "\n"
-#~ "  -d, --date=ZEICHENKETTE   Zeit gemäß ZEICHENKETTE anzeigen, nicht "
-#~ "„jetzt“\n"
-#~ "  -f, --file=DATEI          wie --date für jede Zeile in DATEI\n"
-#~ "  -IZEITSPEZ, --iso-8601[=ZEITSPEZ] Datum/Zeit gemäß ISO-8601 anzeigen.\n"
-#~ "                            ZEITSPEZ=„date“ für Datum alleine,\n"
-#~ "                            „hours“, „minutes“, oder „seconds“ für Datum "
-#~ "und\n"
-#~ "                            Zeit in der angegebenen Genauigkeit\n"
-#~ "                            --iso-8601 ohne ZEITSPEZ verhält sich wie "
-#~ "„date“.\n"
-
-#~ msgid ""
-#~ "a format string may not be specified when using the --rfc-2822 (-R) option"
-#~ msgstr ""
-#~ "eine Formatzeichenkette darf nicht angegeben werden, wenn die Option --"
-#~ "rfc-2822\n"
-#~ "(-R) verwendet wird"
-
-#~ msgid "undefined"
-#~ msgstr "undefiniert"
-
-#~ msgid "file offset out of range"
-#~ msgstr "Datei-Offset außerhalb des zulässigen Bereichs"
-
-#~ msgid "cannot get priority"
-#~ msgstr "Priorität ist nicht feststellbar"
-
-#~ msgid "cannot set priority"
-#~ msgstr "Priorität kann nicht gesetzt werden"
-
-#, fuzzy
-#~ msgid ""
-#~ "Exit with a status code indicating failure.\n"
-#~ "\n"
-#~ "These option names may not be abbreviated.\n"
-#~ "\n"
-#~ msgstr ""
-#~ "Aufruf: %s [ignorierte Kommandozeilen-Argumente]\n"
-#~ "  oder: %s OPTION\n"
-#~ "Mit einem Status-Code beenden, der einen Fehler signalisiert.\n"
-#~ "\n"
-#~ "Diese Optionen dürfen nicht abgekürzt werden.\n"
-#~ "\n"
-
-#, fuzzy
-#~ msgid "Only one operand may be specified when using --check."
-#~ msgstr "Bei Verwendung von --check ist nur ein Argument zulässig"
+#~ "openat: konnte nicht in ursprüngliches Arbeitsverzeichnis zurückkehren"
 
 #~ msgid ""
 #~ "This is free software; see the source for copying conditions.  There is "
@@ -9477,55 +9452,6 @@ msgstr ""
 #~ "Es\n"
 #~ "gibt keine Garantie; auch nicht für VERKAUFBARKEIT oder FÜR SPEZIELLE "
 #~ "ZWECKE.\n"
-
-#~ msgid ""
-#~ "\n"
-#~ "  -b, --binary            read files in binary mode (default on DOS/"
-#~ "Windows)\n"
-#~ "  -c, --check             check %s sums against given list\n"
-#~ "  -t, --text              read files in text mode (default)\n"
-#~ "\n"
-#~ msgstr ""
-#~ "\n"
-#~ "  -b, --binary          Dateien im Binärmodus lesen (Vorgabe unter DOS/"
-#~ "Windows)\n"
-#~ "  -c, --check           %s-Summen gegen angegebene Liste gegenprüfen\n"
-#~ "  -t, --text            Dateien im Textmodus lesen (Vorgabe)\n"
-#~ "\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "      --reply={yes,no,query}   specify how to handle the prompt about an\n"
-#~ "                                 existing destination file.  Note that\n"
-#~ "                                 --reply=no has an effect only when mv\n"
-#~ "                                 would prompt without -i or equivalent, i."
-#~ "e.,\n"
-#~ "                                 when a destination file exists and is "
-#~ "not\n"
-#~ "                                 writable, standard input is a terminal, "
-#~ "and\n"
-#~ "                                 no -f (or equivalent) option is "
-#~ "specified\n"
-#~ "      --strip-trailing-slashes remove any trailing slashes from each "
-#~ "SOURCE\n"
-#~ "                                 argument\n"
-#~ "  -S, --suffix=SUFFIX          override the usual backup suffix\n"
-#~ msgstr ""
-#~ "      --reply={yes,no,query}  Nachfrage bei existierender Zieldatei: "
-#~ "immer ja,\n"
-#~ "                                immer nein, nachfragen\n"
-#~ "      --strip-trailing-slashes  Schrägstriche vom Ende jedes QUELLE-"
-#~ "Arguments\n"
-#~ "                                 entfernen\n"
-#~ "  -S, --suffix=SUFFIX          die normale Sicherungs-Erweiterung "
-#~ "überschreiben\n"
-
-#~ msgid "failed to redirect standard output"
-#~ msgstr "konnte Standardausgabe nicht umleiten"
-
-#~ msgid "openat: unable to restore working directory"
-#~ msgstr ""
-#~ "openat: konnte nicht in ursprüngliches Arbeitsverzeichnis zurückkehren"
 
 #~ msgid "closing standard output"
 #~ msgstr "schließe Standardausgabe"
@@ -9571,23 +9497,45 @@ msgstr ""
 #~ "  „-“ (Bindestrich/Minus) Feld nicht auffüllen\n"
 #~ "  „_“ (Unterstrich) Feld mit Leerzeichen auffüllen\n"
 
+#~ msgid ""
+#~ "a format string may not be specified when using the --rfc-2822 (-R) option"
+#~ msgstr ""
+#~ "eine Formatzeichenkette darf nicht angegeben werden, wenn die Option --"
+#~ "rfc-2822\n"
+#~ "(-R) verwendet wird"
+
+#~ msgid "undefined"
+#~ msgstr "undefiniert"
+
 #~ msgid "cannot get time of day"
 #~ msgstr "die Zeit des Tages kann nicht ermittelt werden"
 
-#~ msgid "%s+%s records in\n"
-#~ msgstr "%s+%s Datensätze ein\n"
-
-#~ msgid "%s+%s records out\n"
-#~ msgstr "%s+%s Datensätze aus\n"
-
 #~ msgid "truncated records"
 #~ msgstr "abgeschnittene Datensätze"
+
+#~ msgid "file offset out of range"
+#~ msgstr "Datei-Offset außerhalb des zulässigen Bereichs"
 
 #~ msgid "`-LIST' option is obsolete; use `-t LIST'"
 #~ msgstr "die Option „-LIST“ ist überholt; bitte verwenden Sie „-t LIST“"
 
 #~ msgid "`%s' is too large"
 #~ msgstr "„%s“ ist zu groß"
+
+#~ msgid ""
+#~ "Usage: %s [ignored command line arguments]\n"
+#~ "  or:  %s OPTION\n"
+#~ "Exit with a status code indicating failure.\n"
+#~ "\n"
+#~ "These option names may not be abbreviated.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Aufruf: %s [ignorierte Kommandozeilen-Argumente]\n"
+#~ "  oder: %s OPTION\n"
+#~ "Mit einem Status-Code beenden, der einen Fehler signalisiert.\n"
+#~ "\n"
+#~ "Diese Optionen dürfen nicht abgekürzt werden.\n"
+#~ "\n"
 
 #~ msgid "`%s' option is obsolete; use `%s'"
 #~ msgstr "die Option „%s“ ist überholt; bitte verwenden Sie „%s“"
@@ -9598,6 +9546,9 @@ msgstr ""
 #~ msgid "`-%s' option is obsolete; use `-%c %.*s%.*s%s'"
 #~ msgstr "die Option „-%s“ ist überholt; bitte verwenden Sie „-%c %.*s%.*s%s“"
 
+#~ msgid "cannot obtain time stamps for %s"
+#~ msgstr "Erhalt des Zeitstempels für %s nicht möglich"
+
 #~ msgid "invalid field number: `%s'"
 #~ msgstr "Ungültige Feldnummer: „%s“"
 
@@ -9606,6 +9557,34 @@ msgstr ""
 
 #~ msgid "invalid field number for file 2: `%s'"
 #~ msgstr "Ungültige Feldnummer für Datei2: „%s“"
+
+#~ msgid ""
+#~ "\n"
+#~ "  -b, --binary            read files in binary mode (default on DOS/"
+#~ "Windows)\n"
+#~ "  -c, --check             check %s sums against given list\n"
+#~ "  -t, --text              read files in text mode (default)\n"
+#~ "\n"
+#~ msgstr ""
+#~ "\n"
+#~ "  -b, --binary          Dateien im Binärmodus lesen (Vorgabe unter DOS/"
+#~ "Windows)\n"
+#~ "  -c, --check           %s-Summen gegen angegebene Liste gegenprüfen\n"
+#~ "  -t, --text            Dateien im Textmodus lesen (Vorgabe)\n"
+#~ "\n"
+
+#, fuzzy
+#~ msgid "Only one operand may be specified when using --check."
+#~ msgstr "Bei Verwendung von --check ist nur ein Argument zulässig"
+
+#~ msgid "cannot get priority"
+#~ msgstr "Priorität ist nicht feststellbar"
+
+#~ msgid "cannot set priority"
+#~ msgstr "Priorität kann nicht gesetzt werden"
+
+#~ msgid "failed to redirect standard output"
+#~ msgstr "konnte Standardausgabe nicht umleiten"
 
 #~ msgid ""
 #~ "Diagnose unportable constructs in NAME.\n"
@@ -9647,6 +9626,11 @@ msgstr ""
 
 #~ msgid "`-%s' option is obsolete; use `-l %s'"
 #~ msgstr "die Option „-%s“ ist überholt; bitte verwenden Sie „-l %s“"
+
+#~ msgid "Warning: `-l' is deprecated; use `-L' instead"
+#~ msgstr ""
+#~ "Warnung: „-l“ wird in einer kommenden Version aufgegeben werden;\n"
+#~ "bitte verwenden Sie stattdessen „-L“"
 
 #~ msgid "invalid argument `%s'"
 #~ msgstr "ungültiges Argument „%s“"
@@ -9699,6 +9683,21 @@ msgstr ""
 #~ msgid "after -t"
 #~ msgstr "nach -t"
 
+#~ msgid ""
+#~ "Usage: %s [ignored command line arguments]\n"
+#~ "  or:  %s OPTION\n"
+#~ "Exit with a status code indicating success.\n"
+#~ "\n"
+#~ "These option names may not be abbreviated.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Aufruf: %s [ignorierte Kommandzeilen-Argument]\n"
+#~ " oder:  %s OPTION\n"
+#~ "Mit einem Status-Code beenden, der erfolgreiche Ausführung signalisiert.\n"
+#~ "\n"
+#~ "Diese Optionen dürfen nicht abgekürzt werden.\n"
+#~ "\n"
+
 #~ msgid "`-LIST' option is obsolete; use `--first-only -t LIST'"
 #~ msgstr ""
 #~ "die Option „-LIST“ ist überholt; bitte verwenden Sie „--first-only -t "
@@ -9706,6 +9705,18 @@ msgstr ""
 
 #~ msgid "`-%lu' option is obsolete; use `-f %lu'"
 #~ msgstr "die Option „-%lu“ ist überholt; bitte verwenden Sie „-f %lu“"
+
+#~ msgid ""
+#~ "  -i, --idle        add idle time as HOURS:MINUTES, . or old\n"
+#~ "                    (deprecated, use -u)\n"
+#~ "  -l, --login       print system login processes\n"
+#~ msgstr ""
+#~ "  -i, --idle        die Untätigkeitszeit des Benutzers als STUNDEN:"
+#~ "MINUTEN, „.“\n"
+#~ "                      oder „old“ hinzufügen (von dieser Option wird "
+#~ "abgeraten,\n"
+#~ "                      bitte -u verwenden!)\n"
+#~ "  -l, --login       Login-Prozesse des Systems ausgeben\n"
 
 #~ msgid "%s: cannot find username for UID %lu\n"
 #~ msgstr ""
@@ -9904,9 +9915,6 @@ msgstr ""
 #~ msgid "Page %d"
 #~ msgstr "Seite %d"
 
-#~ msgid "%%%c: invalid directive"
-#~ msgstr "%%%c: ungültige Anweisung"
-
 #~ msgid "Usage: %s format [argument...]\n"
 #~ msgstr "Aufruf: %s Format [Argument...]\n"
 
@@ -9963,9 +9971,6 @@ msgstr ""
 
 #~ msgid "file arguments missing"
 #~ msgstr "Dateiargumente fehlen"
-
-#~ msgid "invalid backslash escape at end of string"
-#~ msgstr "Ungültiger Backslash (\\)  am Ende der Zeichenkette"
 
 #~ msgid "invalid backslash escape `\\%c'"
 #~ msgstr "Ungültige Benutzung des Backslashs „\\%c“"

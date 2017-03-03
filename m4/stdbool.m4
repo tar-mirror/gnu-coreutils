@@ -28,6 +28,9 @@ AC_DEFUN([AM_STDBOOL_H],
   AC_SUBST([HAVE__BOOL])
 ])
 
+# AM_STDBOOL_H will be renamed to gl_STDBOOL_H in the future.
+AC_DEFUN([gl_STDBOOL_H], [AM_STDBOOL_H])
+
 # This macro is only needed in autoconf <= 2.59.  Newer versions of autoconf
 # have this macro built-in.
 
@@ -79,7 +82,7 @@ AC_DEFUN([AC_HEADER_STDBOOL],
 	      reject this program, as the initializer for xlcbug is
 	      not one of the forms that C requires support for.
 	      However, doing the test right would require a run-time
-	      test, and that would make crosss-compilation harder.
+	      test, and that would make cross-compilation harder.
 	      Let us hope that IBM fixes the xlc bug, and also adds
 	      support for this kind of constant expression.  In the
 	      meantime, this test will reject xlc, which is OK, since
@@ -87,10 +90,15 @@ AC_DEFUN([AC_HEADER_STDBOOL],
 	   char digs[] = "0123456789";
 	   int xlcbug = 1 / (&(digs + 5)[-2 + (bool) 1] == &digs[4] ? 1 : -1);
 	  #endif
+	  _Bool q = true;
+	  _Bool *pq = &q;
 	],
 	[
-	  return (!a + !b + !c + !d + !e + !f + !g + !h + !i + !j + !k + !l
-		  + !m + !n + !o + !p);
+	  *pq |= q;
+	  *pq |= ! q;
+	  /* Refer to every declared value, to avoid compiler optimizations.  */
+	  return (!a + !b + !c + !d + !e + !f + !g + !h + !i + !!j + !k + !!l
+		  + !m + !n + !o + !p + !q + !pq);
 	],
 	[ac_cv_header_stdbool_h=yes],
 	[ac_cv_header_stdbool_h=no])])

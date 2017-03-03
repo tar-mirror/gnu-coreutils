@@ -1,7 +1,6 @@
 dnl Process this file with autoconf to produce a configure script. -*-m4-*-
 
-dnl Copyright (C) 1991, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2005,
-dnl 2001, 2002, 2003, 2004, 2005 Free Software Foundation, Inc.
+dnl Copyright (C) 1991, 1993-2006 Free Software Foundation, Inc.
 
 dnl This program is free software; you can redistribute it and/or modify
 dnl it under the terms of the GNU General Public License as published by
@@ -19,7 +18,7 @@ dnl Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 dnl Written by Jim Meyering.
 
-AC_INIT([GNU coreutils],[5.93],[bug-coreutils@gnu.org])
+AC_INIT([GNU coreutils],[5.94],[bug-coreutils@gnu.org])
 AC_CONFIG_SRCDIR(src/ls.c)
 
 AC_CONFIG_AUX_DIR(build-aux)
@@ -31,7 +30,8 @@ AM_INIT_AUTOMAKE([1.8.3 gnits dist-bzip2])
 gl_DEFAULT_POSIX2_VERSION
 gl_USE_SYSTEM_EXTENSIONS
 gl_PERL
-AC_PROG_CC
+AC_PROG_CC_STDC
+AM_PROG_CC_C_O
 AC_PROG_CPP
 AC_PROG_GCC_TRADITIONAL
 AC_PROG_RANLIB
