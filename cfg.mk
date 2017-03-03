@@ -27,7 +27,7 @@ bootstrap-tools = autoconf,automake,gnulib,bison
 # Now that we have better tests, make this the default.
 export VERBOSE = yes
 
-old_NEWS_hash = f2ebf9f1f16209f7a4b9927a755956fa
+old_NEWS_hash = 99b06e7bb289add96b10127fceced4e9
 
 # Add an exemption for sc_makefile_at_at_check.
 _makefile_at_at_check_exceptions = ' && !/^cu_install_program =/'
@@ -39,8 +39,8 @@ _hv_file ?= $(srcdir)/tests/misc/help-version
 dd = $(srcdir)/src/dd.c
 sc_dd_O_FLAGS:
 	@rm -f $@.1 $@.2
-	@{ echo O_FULLBLOCK; perl -nle '/^ +\| (O_\w*)$$/ and print $$1' \
-	  $(dd); } | sort > $@.1
+	@{ echo O_FULLBLOCK; echo O_NOCACHE;				\
+	  perl -nle '/^ +\| (O_\w*)$$/ and print $$1' $(dd); } | sort > $@.1
 	@{ echo O_NOFOLLOW; perl -nle '/{"[a-z]+",\s*(O_\w+)},/ and print $$1' \
 	  $(dd); } | sort > $@.2
 	@diff -u $@.1 $@.2 || diff=1 || diff=;				\
@@ -92,19 +92,6 @@ sc_root_tests:
 	  && { echo 'tests/Makefile.am: missing check-root action'>&2;	\
 	       exit 1; } || :;						\
 	fi
-
-# Ensure that the syntax_check_exceptions file list in Makefile.am
-# stays in sync with corresponding files in the repository.
-sce = syntax_check_exceptions
-sc_x_sc_dist_check:
-	@test "$$( ($(VC_LIST) | sed -n '/\.x-sc_/p'			\
-		     | sed 's|^$(_dot_escaped_srcdir)/||';		\
-		   sed -n '/^$(sce) =[	 ]*\\$$/,/[^\]$$/p'		\
-		     $(srcdir)/Makefile.am				\
-		       | sed 's/^  *//;/^$(sce) =/d'			\
-		       | tr -s '\012\\' '  ' | fmt -1			\
-		   ) | sort | uniq -u)"					\
-	  && { echo 'Makefile.am: $(sce) mismatch' >&2; exit 1; } || :;
 
 # Create a list of regular expressions matching the names
 # of files included from system.h.  Exclude a couple.
@@ -186,7 +173,7 @@ sc_NEWS_two_empty_lines:
 	@sed -n 4,/Noteworthy/p $(srcdir)/NEWS				\
 	    | perl -n0e '/(^|\n)\n\n\* Noteworthy/ or exit 1'		\
 	  || { echo '$(ME): use two empty lines to separate NEWS sections' \
-		 1>&2; exit 1; } || :;					\
+		 1>&2; exit 1; } || :
 
 # Perl-based tests used to exec perl from a #!/bin/sh script.
 # Now they all start with #!/usr/bin/perl and the portability
@@ -328,6 +315,15 @@ sc_space_before_open_paren:
 	else :;								\
 	fi
 
+# Similar to the gnulib maint.mk rule for sc_prohibit_strcmp
+# Use STREQ_LEN or STRPREFIX rather than comparing strncmp == 0, or != 0.
+sc_prohibit_strncmp:
+	@grep -nE '! *str''ncmp *\(|\<str''ncmp *\(.+\) *[!=]='		\
+	    $$($(VC_LIST_EXCEPT))					\
+	  | grep -vE ':# *define STR(N?EQ_LEN|PREFIX)\(' &&		\
+	  { echo '$(ME): use STREQ_LEN or STRPREFIX instead of str''ncmp' \
+		1>&2; exit 1; } || :
+
 # Override the default Cc: used in generating an announcement.
 announcement_Cc_ = $(translation_project_), \
   coreutils@gnu.org, coreutils-announce@gnu.org
@@ -337,3 +333,36 @@ include $(srcdir)/dist-check.mk
 update-copyright-env = \
   UPDATE_COPYRIGHT_USE_INTERVALS=1 \
   UPDATE_COPYRIGHT_MAX_LINE_LENGTH=79
+
+# List syntax-check exemptions.
+exclude_file_name_regexp--sc_space_tab = \
+  ^(tests/pr/|tests/misc/nl$$|gl/.*\.diff$$)
+exclude_file_name_regexp--sc_bindtextdomain = ^(gl/.*|lib/euidaccess-stat)\.c$$
+exclude_file_name_regexp--sc_unmarked_diagnostics =    ^build-aux/cvsu$$
+exclude_file_name_regexp--sc_error_message_uppercase = ^build-aux/cvsu$$
+exclude_file_name_regexp--sc_trailing_blank = ^tests/pr/
+exclude_file_name_regexp--sc_system_h_headers = \
+  ^src/((system|copy)\.h|libstdbuf\.c)$$
+
+_src = (false|lbracket|ls-(dir|ls|vdir)|tac-pipe|uname-(arch|uname))
+exclude_file_name_regexp--sc_require_config_h_first = \
+  (^lib/buffer-lcm\.c|src/$(_src)\.c)$$
+exclude_file_name_regexp--sc_require_config_h = \
+  $(exclude_file_name_regexp--sc_require_config_h_first)
+
+exclude_file_name_regexp--sc_po_check = ^gl/
+exclude_file_name_regexp--sc_prohibit_always-defined_macros = ^src/seq\.c$$
+exclude_file_name_regexp--sc_prohibit_empty_lines_at_EOF = ^tests/pr/
+exclude_file_name_regexp--sc_program_name = ^(gl/.*|lib/euidaccess-stat)\.c$$
+exclude_file_name_regexp--sc_file_system = \
+  NEWS|^(tests/init\.cfg|src/df\.c|tests/misc/df-P)$$
+exclude_file_name_regexp--sc_prohibit_always_true_header_tests = \
+  ^m4/stat-prog\.m4$$
+exclude_file_name_regexp--sc_prohibit_fail_0 = \
+  (^tests/init\.sh|Makefile\.am|\.mk)$$
+exclude_file_name_regexp--sc_prohibit_atoi_atof = ^lib/euidaccess-stat\.c$$
+exclude_file_name_regexp--sc_prohibit_tab_based_indentation = \
+  ^tests/pr/|(^gl/lib/reg.*\.c\.diff|Makefile(\.am)?|\.mk|^man/help2man)$$
+
+exclude_file_name_regexp--sc_prohibit_stat_st_blocks = \
+  ^(src/system\.h|tests/du/2g)$$

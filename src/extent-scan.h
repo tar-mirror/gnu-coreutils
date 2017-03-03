@@ -41,6 +41,9 @@ struct extent_scan
   /* Next scan start offset.  */
   off_t scan_start;
 
+  /* Flags to use for scan.  */
+  uint32_t fm_flags;
+
   /* How many extent info returned for a scan.  */
   uint32_t ei_count;
 
@@ -63,6 +66,8 @@ static inline void
 extent_scan_free (struct extent_scan *scan)
 {
   free (scan->ext_info);
+  scan->ext_info = NULL;
+  scan->ei_count = 0;
 }
 
 #endif /* EXTENT_SCAN_H */

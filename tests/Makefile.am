@@ -11,6 +11,7 @@ EXTRA_DIST =		\
   check.mk		\
   envvar-check		\
   filefrag-extent-compare \
+  fiemap-capable	\
   init.cfg		\
   init.sh		\
   lang-default		\
@@ -26,7 +27,7 @@ root_tests =					\
   cp/special-bits				\
   cp/cp-mv-enotsup-xattr			\
   cp/capability					\
-  cp/sparse-fiemap                              \
+  cp/sparse-fiemap				\
   dd/skip-seek-past-dev				\
   install/install-C-root			\
   ls/capability					\
@@ -320,6 +321,7 @@ TESTS =						\
   cp/dir-vs-file				\
   cp/existing-perm-race				\
   cp/fail-perm					\
+  cp/fiemap-empty                               \
   cp/fiemap-perf                                \
   cp/fiemap-2                                   \
   cp/file-perm-race				\
@@ -327,6 +329,7 @@ TESTS =						\
   cp/link					\
   cp/link-no-deref				\
   cp/link-preserve				\
+  cp/link-symlink				\
   cp/no-deref-link1				\
   cp/no-deref-link2				\
   cp/no-deref-link3				\
@@ -351,6 +354,7 @@ TESTS =						\
   df/unreadable					\
   dd/direct					\
   dd/misc					\
+  dd/nocache					\
   dd/not-rewound				\
   dd/reblock					\
   dd/skip-seek					\
@@ -369,6 +373,7 @@ TESTS =						\
   du/exclude					\
   du/fd-leak					\
   du/files0-from				\
+  du/files0-from-dir				\
   du/hard-link					\
   du/inacc-dest					\
   du/inacc-dir					\

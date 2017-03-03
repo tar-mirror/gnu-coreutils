@@ -19,24 +19,10 @@
 /* Written by Jim Meyering.  */
 
 #include <config.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdint.h>
-
-#define ASSERT(expr) \
-  do                                                                         \
-    {                                                                        \
-      if (!(expr))                                                           \
-        {                                                                    \
-          fprintf (stderr, "%s:%d: assertion failed\n", __FILE__, __LINE__); \
-          fflush (stderr);                                                   \
-          abort ();                                                          \
-        }                                                                    \
-    }                                                                        \
-  while (0)
 
 #include "di-set.h"
+
+#include "macros.h"
 
 int
 main (void)
@@ -44,20 +30,24 @@ main (void)
   struct di_set *dis = di_set_alloc ();
   ASSERT (dis);
 
+  ASSERT (di_set_lookup (dis, 2, 5) == 0); /* initial lookup fails */
   ASSERT (di_set_insert (dis, 2, 5) == 1); /* first insertion succeeds */
   ASSERT (di_set_insert (dis, 2, 5) == 0); /* duplicate fails */
   ASSERT (di_set_insert (dis, 3, 5) == 1); /* diff dev, duplicate inode is ok */
   ASSERT (di_set_insert (dis, 2, 8) == 1); /* same dev, different inode is ok */
+  ASSERT (di_set_lookup (dis, 2, 5) == 1); /* now, the lookup succeeds */
 
   /* very large (or negative) inode number */
   ASSERT (di_set_insert (dis, 5, (ino_t) -1) == 1);
   ASSERT (di_set_insert (dis, 5, (ino_t) -1) == 0); /* dup */
 
-  unsigned int i;
-  for (i = 0; i < 3000; i++)
-    ASSERT (di_set_insert (dis, 9, i) == 1);
-  for (i = 0; i < 3000; i++)
-    ASSERT (di_set_insert (dis, 9, i) == 0); /* duplicate fails */
+  {
+    unsigned int i;
+    for (i = 0; i < 3000; i++)
+      ASSERT (di_set_insert (dis, 9, i) == 1);
+    for (i = 0; i < 3000; i++)
+      ASSERT (di_set_insert (dis, 9, i) == 0); /* duplicate fails */
+  }
 
   di_set_free (dis);
 

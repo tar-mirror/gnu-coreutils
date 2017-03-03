@@ -39,6 +39,7 @@
 #include "extent-scan.h"
 #include "error.h"
 #include "fcntl--.h"
+#include "fiemap.h"
 #include "file-set.h"
 #include "filemode.h"
 #include "filenamecat.h"
@@ -233,21 +234,6 @@ sparse_copy (int src_fd, int dest_fd, char *buf, size_t buf_size,
   return true;
 }
 
-/* If the file ends with a `hole' (i.e., if sparse_copy set wrote_hole_at_eof),
-   call this function to record the length of the output file.  */
-static bool
-sparse_copy_finalize (int dest_fd, char const *dst_name)
-{
-  off_t len = lseek (dest_fd, 0, SEEK_CUR);
-  if (0 <= len && ftruncate (dest_fd, len) < 0)
-    {
-      error (0, errno, _("truncating %s"), quote (dst_name));
-      return false;
-    }
-
-  return true;
-}
-
 /* Perform the O(1) btrfs clone operation, if possible.
    Upon success, return 0.  Otherwise, return -1 and set errno.  */
 static inline int
@@ -309,7 +295,7 @@ write_zeros (int fd, uint64_t n_bytes)
    return false.  */
 static bool
 extent_copy (int src_fd, int dest_fd, char *buf, size_t buf_size,
-             off_t src_total_size, bool make_holes,
+             off_t src_total_size, enum Sparse_type sparse_mode,
              char const *src_name, char const *dst_name,
              bool *require_normal_copy)
 {
@@ -345,56 +331,105 @@ extent_copy (int src_fd, int dest_fd, char *buf, size_t buf_size,
         }
 
       unsigned int i;
-      for (i = 0; i < scan.ei_count; i++)
+      bool empty_extent = false;
+      for (i = 0; i < scan.ei_count || empty_extent; i++)
         {
-          off_t ext_start = scan.ext_info[i].ext_logical;
-          uint64_t ext_len = scan.ext_info[i].ext_length;
+          off_t ext_start;
+          uint64_t ext_len;
+          uint64_t hole_size;
 
-          if (lseek (src_fd, ext_start, SEEK_SET) < 0)
+          if (i < scan.ei_count)
             {
-              error (0, errno, _("cannot lseek %s"), quote (src_name));
-            fail:
-              extent_scan_free (&scan);
-              return false;
+              ext_start = scan.ext_info[i].ext_logical;
+              ext_len = scan.ext_info[i].ext_length;
+            }
+          else /* empty extent at EOF.  */
+            {
+              i--;
+              ext_start = last_ext_start + scan.ext_info[i].ext_length;
+              ext_len = 0;
             }
 
-          if (make_holes)
+          hole_size = ext_start - last_ext_start - last_ext_len;
+
+          wrote_hole_at_eof = false;
+
+          if (hole_size)
             {
-              if (lseek (dest_fd, ext_start, SEEK_SET) < 0)
+              if (lseek (src_fd, ext_start, SEEK_SET) < 0)
                 {
-                  error (0, errno, _("cannot lseek %s"), quote (dst_name));
-                  goto fail;
+                  error (0, errno, _("cannot lseek %s"), quote (src_name));
+                fail:
+                  extent_scan_free (&scan);
+                  return false;
                 }
-            }
-          else
-            {
-              /* When not inducing holes and when there is a hole between
-                 the end of the previous extent and the beginning of the
-                 current one, write zeros to the destination file.  */
-              if (last_ext_start + last_ext_len < ext_start)
+
+              if ((empty_extent && sparse_mode == SPARSE_ALWAYS)
+                  || (!empty_extent && sparse_mode != SPARSE_NEVER))
                 {
-                  uint64_t hole_size = (ext_start
-                                        - last_ext_start
-                                        - last_ext_len);
-                  if (! write_zeros (dest_fd, hole_size))
+                  if (lseek (dest_fd, ext_start, SEEK_SET) < 0)
+                    {
+                      error (0, errno, _("cannot lseek %s"), quote (dst_name));
+                      goto fail;
+                    }
+                  wrote_hole_at_eof = true;
+                }
+              else
+                {
+                  /* When not inducing holes and when there is a hole between
+                     the end of the previous extent and the beginning of the
+                     current one, write zeros to the destination file.  */
+                  off_t nzeros = hole_size;
+                  if (empty_extent)
+                    nzeros = MIN (src_total_size - dest_pos, hole_size);
+
+                  if (! write_zeros (dest_fd, nzeros))
                     {
                       error (0, errno, _("%s: write failed"), quote (dst_name));
                       goto fail;
                     }
+
+                  dest_pos = MIN (src_total_size, ext_start);
                 }
             }
 
           last_ext_start = ext_start;
-          last_ext_len = ext_len;
 
-          off_t n_read;
-          if ( ! sparse_copy (src_fd, dest_fd, buf, buf_size,
-                              make_holes, src_name, dst_name,
-                              ext_len, &n_read,
-                              &wrote_hole_at_eof))
-            return false;
+          /* Treat an unwritten but allocated extent much like a hole.
+             I.E. don't read, but don't convert to a hole in the destination,
+             unless SPARSE_ALWAYS.  */
+          if (scan.ext_info[i].ext_flags & FIEMAP_EXTENT_UNWRITTEN)
+            {
+              empty_extent = true;
+              last_ext_len = 0;
+              if (ext_len == 0) /* The last extent is empty and processed.  */
+                empty_extent = false;
+            }
+          else
+            {
+              off_t n_read;
+              empty_extent = false;
+              last_ext_len = ext_len;
 
-          dest_pos = ext_start + n_read;
+              if ( ! sparse_copy (src_fd, dest_fd, buf, buf_size,
+                                  sparse_mode == SPARSE_ALWAYS,
+                                  src_name, dst_name, ext_len, &n_read,
+                                  &wrote_hole_at_eof))
+                goto fail;
+
+              dest_pos = ext_start + n_read;
+            }
+
+          /* If the file ends with unwritten extents not accounted for in the
+             size, then skip processing them, and the associated redundant
+             read() calls which will always return 0.  We will need to
+             remove this when we add fallocate() so that we can maintain
+             extents beyond the apparent size.  */
+          if (dest_pos == src_total_size)
+            {
+              scan.hit_final_extent = true;
+              break;
+            }
         }
 
       /* Release the space allocated to scan->ext_info.  */
@@ -412,7 +447,7 @@ extent_copy (int src_fd, int dest_fd, char *buf, size_t buf_size,
      just converted them to a hole in the destination, we must call ftruncate
      here in order to record the proper length in the destination.  */
   if ((dest_pos < src_total_size || wrote_hole_at_eof)
-      && (make_holes
+      && (sparse_mode != SPARSE_NEVER
           ? ftruncate (dest_fd, src_total_size)
           : ! write_zeros (dest_fd, src_total_size - dest_pos)))
     {
@@ -531,8 +566,11 @@ copy_attr (char const *src_path ATTRIBUTE_UNUSED,
    DST_NAME_IN is a directory that was created previously in the
    recursion.   SRC_SB and ANCESTORS describe SRC_NAME_IN.
    Set *COPY_INTO_SELF if SRC_NAME_IN is a parent of
-   FIRST_DIR_CREATED_PER_COMMAND_LINE_ARG  FIXME
    (or the same as) DST_NAME_IN; otherwise, clear it.
+   Propagate *FIRST_DIR_CREATED_PER_COMMAND_LINE_ARG from
+   caller to each invocation of copy_internal.  Be careful to
+   pass the address of a temporary, and to update
+   *FIRST_DIR_CREATED_PER_COMMAND_LINE_ARG only upon completion.
    Return true if successful.  */
 
 static bool
@@ -561,16 +599,18 @@ copy_dir (char const *src_name_in, char const *dst_name_in, bool new_dst,
   if (x->dereference == DEREF_COMMAND_LINE_ARGUMENTS)
     non_command_line_options.dereference = DEREF_NEVER;
 
+  bool new_first_dir_created = false;
   namep = name_space;
   while (*namep != '\0')
     {
       bool local_copy_into_self;
       char *src_name = file_name_concat (src_name_in, namep, NULL);
       char *dst_name = file_name_concat (dst_name_in, namep, NULL);
+      bool first_dir_created = *first_dir_created_per_command_line_arg;
 
       ok &= copy_internal (src_name, dst_name, new_dst, src_sb->st_dev,
                            ancestors, &non_command_line_options, false,
-                           first_dir_created_per_command_line_arg,
+                           &first_dir_created,
                            &local_copy_into_self, NULL);
       *copy_into_self |= local_copy_into_self;
 
@@ -583,9 +623,12 @@ copy_dir (char const *src_name_in, char const *dst_name_in, bool new_dst,
       if (local_copy_into_self)
         break;
 
+      new_first_dir_created |= first_dir_created;
       namep += strlen (namep) + 1;
     }
   free (name_space);
+  *first_dir_created_per_command_line_arg = new_first_dir_created;
+
   return ok;
 }
 
@@ -983,7 +1026,8 @@ copy_reg (char const *src_name, char const *dst_name,
          '--sparse=never' option is specified, write all data but use
          any extents to read more efficiently.  */
       if (extent_copy (source_desc, dest_desc, buf, buf_size,
-                       src_open_sb.st_size, make_holes,
+                       src_open_sb.st_size,
+                       S_ISREG (sb.st_mode) ? x->sparse_mode : SPARSE_NEVER,
                        src_name, dst_name, &normal_copy_required))
         goto preserve_metadata;
 
@@ -1000,8 +1044,9 @@ copy_reg (char const *src_name, char const *dst_name,
                           UINTMAX_MAX, &n_read,
                           &wrote_hole_at_eof)
            || (wrote_hole_at_eof &&
-               ! sparse_copy_finalize (dest_desc, dst_name)))
+               ftruncate (dest_desc, n_read) < 0))
         {
+          error (0, errno, _("failed to extend %s"), quote (dst_name));
           return_val = false;
           goto close_src_and_dst_desc;
         }
@@ -2184,13 +2229,24 @@ copy_internal (char const *src_name, char const *dst_name,
         }
     }
 
-  /* cp, invoked with `--link --no-dereference', should not follow the
-     link; we guarantee this with gnulib's linkat module (on systems
-     where link(2) follows the link, gnulib creates a symlink with
-     identical contents, which is good enough for our purposes).  */
+  /* POSIX 2008 states that it is implementation-defined whether
+     link() on a symlink creates a hard-link to the symlink, or only
+     to the referent (effectively dereferencing the symlink) (POSIX
+     2001 required the latter behavior, although many systems provided
+     the former).  Yet cp, invoked with `--link --no-dereference',
+     should not follow the link.  We can approximate the desired
+     behavior by skipping this hard-link creating block and instead
+     copying the symlink, via the `S_ISLNK'- copying code below.
+     LINK_FOLLOWS_SYMLINKS is tri-state; if it is -1, we don't know
+     how link() behaves, so we use the fallback case for safety.
+
+     Note gnulib's linkat module, guarantees that the symlink is not
+     dereferenced.  However its emulation currently doesn't maintain
+     timestamps or ownership so we only call it when we know the
+     emulation will not be needed.  */
   else if (x->hard_link
-           && (!S_ISLNK (src_mode)
-               || x->dereference != DEREF_NEVER))
+           && !(LINK_FOLLOWS_SYMLINKS && S_ISLNK (src_mode)
+                && x->dereference == DEREF_NEVER))
     {
        if (linkat (AT_FDCWD, src_name, AT_FDCWD, dst_name, 0))
         {
@@ -2313,7 +2369,9 @@ copy_internal (char const *src_name, char const *dst_name,
 
   /* If we've just created a hard-link due to cp's --link option,
      we're done.  */
-  if (x->hard_link && ! S_ISDIR (src_mode))
+  if (x->hard_link && ! S_ISDIR (src_mode)
+      && !(LINK_FOLLOWS_SYMLINKS && S_ISLNK (src_mode)
+           && x->dereference == DEREF_NEVER))
     return delayed_ok;
 
   if (copied_as_regular)

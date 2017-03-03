@@ -1,4 +1,668 @@
+2011-04-13  Jim Meyering  <meyering@redhat.com>
+
+	version 8.11
+	* NEWS: Record release date.
+
+2011-04-13  Pádraig Brady  <P@draigBrady.com>
+
+	maint: mention dd's new partial read warning in NEWS
+	* NEWS: Mention the new feature, from commits e1788d9e and 194c1e89
+
+	tests: fix a false positive fiemap test on some file systems
+	* tests/filefrag-extent-compare: Don't check the length of the
+	last extent, as this was seen to vary on XFS, where it leaves
+	trailing blocks allocated for performance reasons.
+	* tests/cp/fiemap-empty: Though not seen as an issue in practise,
+	try to avoid possible issues with the allocator in file systems,
+	by requesting to allocate a power of 2.
+
+2011-04-12  Pádraig Brady  <P@draigBrady.com>
+
+	maint: correct kernel version in test comment
+
+2011-04-12  Jim Meyering  <meyering@redhat.com>
+
+	maint: remove unnecessary inclusion of <stdio.h>
+	* src/extent-scan.c: Don't include <stdio.h>.  It was not used.
+
+2011-04-11  Jim Meyering  <meyering@redhat.com>
+
+	build: update gnulib submodule to latest
+
+	cfg.mk: remove useless semicolon and backslash
+	* cfg.mk (sc_NEWS_two_empty_lines): Remove semicolon and backslash.
+
+	doc: tweak NEWS
+	* NEWS: Slightly obfuscate a line to avoid a false-positive
+	doubled-word ("is-is") match.
+	Fix a grammar error in news for 8.2.
+	* cfg.mk (old_NEWS_hash): Resync.
+
+	maint: install: remove support for --preserve_context ("_", not "-")
+	* src/install.c: Its use has elicited a warning for two years.
+	Use --preserve-context instead.
+	* NEWS (changes in behavior): Mention this.
+
+	maint: reorder install.c to eliminate declarations of static functions
+	* src/install.c: Remove static function declarations.
+
+	maint: rename variables for clarity...
+	and to avoid a false-positive "TO to" in new doubled word check.
+	* src/install.c (change_timestamps): Rename parameters for
+	readability.  Make the comment match the code.
+
+	maint: remove doubled words in comments, e.g., s/to to/to/
+	* tests/ls/color-norm: s/to to/to/
+	* gl/lib/mbsalign.h (mbs_align_t): s/or or/or/
+	* src/extent-scan.c (extent_scan_read): s/the the/the/
+	* src/libstdbuf.c: s/the the/the/
+	* tests/misc/stdbuf: s/on on/on/
+	* ChangeLog-2005: s/for\n\tfor /for\n\t/
+
+2011-04-11  Pádraig Brady  <P@draigBrady.com>
+
+	maint: misc typo fixes
+	* src/fiemap.h: s/can not/cannot/
+	* NEWS: s/in/is/
+	* doc/coreutils.texi: Remove spurious "and".
+	s/effect/affect/
+	Use matched ``...'' quotes.
+
+2011-04-07  Pádraig Brady  <P@draigBrady.com>
+
+	maint: correct kernel version in NEWS
+	* NEWS: Adjust to match commit 1c3654cb, 2011-04-02,
+	"copy: require fiemap sync also for 2.6.38 kernels"
+
+	copy: handle mergeable extents across fiemap scans
+	* extent-scan.h (extent_scan_free): Init the pointer to NULL,
+	and reset the count to 0, so that we can realloc the buffer.
+	* src/extent-scan.c (extent_scan_init): Likewise.
+	(extent_scan_read): Loop over multiple fiemap scans, so we handle
+	mergeable extents that span across fiemap scan boundaries.  Once
+	we have enough unique extents, return so as to minimize memory use.
+
+	copy: fix an unlikely memory leak when a fiemap copy fails
+	* src/copy.c (extent_copy): Free the extents array when
+	sparse_copy() fails.
+
+2011-04-04  Jim Meyering  <meyering@redhat.com>
+
+	tests: avoid spurious parallel failure due to temporary disk full
+	Running the new fiemap-empty test uses 600MB of disk space via
+	fallocate, and in so doing caused failure in unrelated tests that
+	were running in parallel on a small file system.  Rather than
+	simply running fallocate (which allocates the space, inducing
+	disk full when it fails), skip the test if there is less than
+	800MB of free space, as computed via stat and awk.
+	* tests/init.cfg (require_file_system_bytes_free_): New function.
+	* tests/cp/fiemap-empty: Use it.
+
+	tests: don't ever leave a backgrounded "sleep 10m" process
+	* tests/misc/help-version: Sleep only ~30s, not 10m.
+	The latter was a problem when somehow that sleep process would
+	hang around and thereby prevent (for up to 10m) a normal unmount
+	of the temporary partition in which I'd run the tests.
+
+	tests: preserve-gid: don't chown temporary PATH dir to a nameless UID
+	* tests/cp/preserve-gid: Simply chmod a+rx instead.
+	That is safer, in case the nameless UID actually has an account,
+	and might take advantage of root running a program in a directory
+	under its control
+
+	tests: preserve-gid: remove useless use of "env"
+	* tests/cp/preserve-gid: Remove useless use of "env".
+
+	tests: convert common root-build test failure to a "skip"
+	* tests/mv/sticky-to-xpart: Skip rather than failing this test
+	when run as root and the binaries are not accessible by "nobody".
+
+	tests: minor improvement of sc_tight_scope rule
+	* src/Makefile.am (sc_tight_scope): Adjust rule to use an eval-based
+	trap-setting for-loop rather than 4x hard-coded 128+N constants.
+	Also catch SIGQUIT (3).  Tweak comments.
+
+2011-04-04  Eric Blake  <eblake@redhat.com>
+
+	docs: mention POSIX 2008
+	* doc/coreutils.texi (Standards conformance): Give value of
+	_POSIX2_VERSION matching the _POSIX_C_SOURCE of POSIX 2008.
+
+2011-04-03  Jim Meyering  <meyering@redhat.com>
+
+	maint: prohibit direct use of strncmp: prefer STREQ_LEN, STRNCMP_LIT
+	* cfg.mk (sc_prohibit_strncmp): New rule, mostly from libvirt.
+	* src/system.h (STREQ_LEN, STRPREFIX, STRNCMP_LIT): Define.
+	* src/df.c (get_dev, get_point): Convert.
+	* src/extent-scan.c (extent_need_sync): Likewise.
+	* src/ls.c (is_colored, decode_switches): Likewise.
+	(parse_ls_color, (print_color_indicator): Likewise.
+	* src/md5sum.c (split_3): Likewise.
+	* src/split.c (main, emit_ancillary_info): Likewise.
+	* src/tr.c (look_up_char_class): Likewise.
+	* src/uname.c (main): Likewise.
+	* src/who.c (scan_entries): Likewise.
+
+	copy: require fiemap sync also for 2.6.38 kernels
+	* src/extent-scan.c (extent_need_sync): Require sync also for 2.6.38.
+	Without this, part of the cp/fiemap-empty test would fail both on
+	F15-to-be (2.6.38.1-6.fc15.x86_64) and rawhide.  For details, see
+	http://thread.gmane.org/gmane.comp.gnu.coreutils.bugs/22190
+
+2011-04-02  Jim Meyering  <meyering@redhat.com>
+
+	cp: always detect copy-into-self: avoid infloop w/large PATH_MAX
+	When running the erroneous command, cp -rl A D D, and depending on the
+	structure of directories A and D and the file system type (because that
+	changes order of dir. entry traversal), cp would sometimes fail to
+	detect that D was being copied into D, and would create D/D/D/D/D/...
+	until it hit PATH_MAX or exhausted some resource.
+	I noticed this via the occasional failure of the cp/into-self test
+	when run using a ZFS file system.  It is occasional because the bug
+	is dependent on the order in which directory entries are traversed,
+	and that is apparently indeterminate with ZFS.
+	Technically, with the current recursive implementation, there is no
+	risk of an infinite loop, due to stack limitations, but with an
+	eventual fts-based implementation, it might have iterated until
+	disk space or inodes are exhausted.
+	* src/copy.c (copy_dir): Avoid copy-into-self interminable loop on
+	systems with large PATH_MAX.  On other systems, diagnose the copy-into-
+	self error consistently.  Handle the parameter,
+	first_dir_created_per_command_line_arg, correctly when there are two
+	or more sub-directories.
+
+	maint: fix a comment typo
+	* tests/cp/fiemap-empty: Correct typo in comment.  Add "FIXME".
+
+2011-04-01  Pádraig Brady  <P@draigBrady.com>
+
+	copy: process empty extents more efficiently
+	* src/copy.c (extent_copy): Treat an allocated but empty extent
+	much like a hole.  I.E. don't read data we know is going to be NUL.
+	Also we convert the empty extent to a hole only when SPARSE_ALWAYS
+	so that the source and dest have the same allocation.  This will
+	be improved soon, when we use fallocate() to do the allocation.
+	* tests/cp/fiemap-empty: A new test for efficiency and correctness
+	of copying empty extents.
+	* tests/Makefile.am: Reference the new test.
+	* NEWS: Mention the change in behavior.
+
+	copy: protect against overlapping extents
+	* src/extent-scan.c (extent_scan_read): Add a more stringent check
+	for OFF_T overflow, to ensure subsequent code is immune.
+	Detect overlapping extents and adjust, so as files always copied.
+	Detection using a single scan with fallback to a standard copy
+	was thought too expensive in memory or time.
+	* NEWS: Mention the fix
+
+	copy: link rather than copy symlinks, when --link used
+	This bug was introduced in commit ca9e212c, 2009-09-24,
+	"cp, mv: use linkat to guarantee semantics", which
+	inadvertently disabled the creation of hardlinks to symlinks.
+	However rather than implementing the intention of that commit
+	and relying on gnulib linkat emulation, we'll revert to the
+	previous emulation as that maintains ownership and timestamps.
+
+	* src/copy.c (copy_internal): Use our existing hardlink to
+	symlink emulation when link() might dereference the symlink.
+	Also ensure that we copy the timestamps of the original symlink
+	when we use the emulation.
+	* tests/cp/link-symlink: Add a test to ensure timestamps copied.
+	* tests/Makefile.am: Reference the new test.
+	* NEWS: Mention the fix.
+	Reported by Ruediger Meier
+
+2011-03-31  Jim Meyering  <meyering@redhat.com>
+
+	tests: inotify-rotate: avoid race condition with overloaded disk
+	* tests/tail-2/inotify-rotate: Wait 50% longer for grep to succeed.
+	Without this change, this test would fail consistently when using
+	"make -j25 check" with F15 in a virtio- and spinning-rust-backed
+	virtual machine.
+
+2011-03-31  Pádraig Brady  <P@draigBrady.com>
+
+	copy: with fiemap copy, only sync when needed
+	* src/extent-scan.h (struct extent_scan): Add the fm_flags member to
+	pass to the fiemap scan.
+	* src/extent-scan.c (extent_need_sync): A new function used to
+	detect Linux kernels before 2.6.38.
+	(extent_scan_init): Add FIEMAP_FLAG_SYNC when needed.
+	* tests/cp/sparse-fiemap: Adjust comment.
+	* NEWS: Mention the change in behavior.
+	Indirectly suggested by Mike Frysinger
+
+2011-03-28  Mathieu Bridon  <bochecha@fedoraproject.org>
+
+	tests: avoid unwarranted failure in mock-simulated non-SELinux env.
+	* tests/init.cfg (require_selinux_): Skip the test also when
+	/proc/filesystems does not list selinuxfs.
+	Add comments.
+	* cfg.mk (exclude_file_name_regexp--sc_file_system): Exempt
+	tests/init.cfg, with its use of /proc/filesystems.
+	Based on the patch by Mathieu Bridon in http://debbugs.gnu.org/8359.
+	More discussion in http://bugzilla.redhat.com/573111
+
+2011-03-28  Jim Meyering  <meyering@redhat.com>
+
+	maint: correct formatting style in a header
+	* src/find-mount-point.h: Move "*" to where it belongs.
+	Move "const", too.
+	* src/find-mount-point.c: Move "const" to conform.
+	* src/Makefile.am (sc_tight_scope): Allow `*'s before the function name.
+	Use perl's -l option and drop the \n after (and quotes around) $1.
+
+2011-03-23  Pádraig Brady  <P@draigBrady.com>
+
+	df: fix alignment of columns
+	* src/df.c (alloc_table_row): A new function to allocate storage
+	for a row of strings.
+	(print_table): A new function to interate over all stored strings in
+	the table, and apply alignment honoring the max width of each column.
+	(get_header): Renamed from print_header, and adjusted accordingly.
+	(get_dev): Renamed from show_dev.  Also we no longer wrap longer
+	device names over two lines, which can be an unexpected issue for
+	scripts parsing the output from df.
+	(get_disk): s/show_/get_/
+	(get_point): Likewise.
+	(get_entry): Likewise.
+	(get_all_entries): Likewise.
+	* NEWS: Mention the change.
+
+2011-03-22  Jim Meyering  <meyering@redhat.com>
+
+	build: update gnulib submodule to latest
+
+	tests: exercise tests new "==" operator
+	* tests/misc/test: Exercise the new operator.
+	* NEWS (Changes in behavior): Mention it.
+
+2011-03-22  David A. Wheeler  <dwheeler@dwheeler.com>
+
+	test: accept "==" as a synonym for "="
+	Make GNU coreutils' test recognize "==" as a synonym for "=".
+	This is already the case in GNU coreutils' expr, bash, ksh,
+	busybox ash, FreeBSD-current /bin/sh and /bin/test, and
+	OpenBSD's /bin/sh.
+
+	Before, env test a '==' a would fail with this diagnostic:
+	"test: ==: binary operator expected".  Now, it succeeds.
+	* src/test.c: Accept "==" as a synonym for "=".
+	* doc/coreutils.texi (String tests): Document it.
+	Reported as http://debbugs.gnu.org/8263
+	Also see http://austingroupbugs.net/view.php?id=375
+
+2011-03-21  Jim Meyering  <meyering@redhat.com>
+
+	tests: fix a bug in the cp/preserve-gid test
+	* tests/cp/preserve-gid: Ensure that every process under test uses
+	the cp binary we've just built.  Before this fix, with a restrictive
+	umask or build-dir permissions, the UID-changing tests would end up
+	using whatever cp happened to be available through $PATH
+	Analysis by arbogast.cedric@gmail.com in http://debbugs.gnu.org/8292.
+
+2011-03-20  Paul Eggert  <eggert@cs.ucla.edu>
+
+	bootstrap: do not exclude m4/message.m4
+	* bootstrap.conf (excluded_files): Don't exclude m4/lcmessage.m4,
+	as it's needed with the latest gnulib.
+
+2011-03-20  Jim Meyering  <meyering@redhat.com>
+
+	maint: remove a name from THANKS.in that is derived from git log
+	The names in THANKS are generated from two sources: the hard-coded
+	list, THANKS.in, and the names of committers from the git log.
+	When a contributor on the hard-coded list commits a change,
+	we remove their now-redundant name from THANKS.in.
+	* THANKS.in: Remove a now-duplicate name.
+
+2011-03-20  Pádraig Brady  <P@draigBrady.com>
+
+	tests: fix the sparse-fiemap test
+	* tests/filefrag-extent-compare: Merge adjacent extents in
+	each list before processing, so we correctly account for
+	split extents in either list.
+	* tests/cp/sparse-fiemap: Remove the explicit syncing,
+	which was only changing the way extents were arranged,
+	and thus working around the extent comparison issue
+	that was seen on ext4 loop back.
+
+2011-03-16  Jim Meyering  <meyering@redhat.com>
+
+	sort: avoid memory pressure of 130MB/thread when reading from pipe
+	* src/sort.c (INPUT_FILE_SIZE_GUESS): Decrease initial allocation
+	factor used to size buffer used when reading a non-regular file.
+	For motivation, see discussion here:
+	http://thread.gmane.org/gmane.comp.gnu.coreutils.general/878/focus=887
+
+	maint: stop using .x-sc_* files to list syntax-check exemptions
+	Instead, use the brand new mechanism with which you merely use a
+	variable (derived from the rule name) defined in cfg.mk to an ERE
+	matching the exempted file names.
+	* gnulib: Update to latest, to get maint.mk that implements this.
+	* Makefile.am (syntax_check_exceptions): Remove variable.
+	(EXTRA_DIST): Remove use of the variable.
+	* cfg.mk (sc_x_sc_dist_check): Remove rule, no longer useful.
+	(exclude_file_name_regexp--sc_space_tab): Define variable.
+	(exclude_file_name_regexp--sc_bindtextdomain): Likewise.
+	(exclude_file_name_regexp--sc_unmarked_diagnostics): Likewise.
+	(exclude_file_name_regexp--sc_error_message_uppercase): Likewise.
+	(exclude_file_name_regexp--sc_trailing_blank): Likewise.
+	(exclude_file_name_regexp--sc_system_h_headers): Likewise.
+	(exclude_file_name_regexp--sc_require_config_h_first): Likewise.
+	(exclude_file_name_regexp--sc_require_config_h): Likewise.
+	(exclude_file_name_regexp--sc_po_check): Likewise.
+	(exclude_file_name_regexp--sc_prohibit_always-defined_macros): Likewise.
+	(exclude_file_name_regexp--sc_prohibit_empty_lines_at_EOF): Likewise.
+	(exclude_file_name_regexp--sc_program_name): Likewise.
+	(exclude_file_name_regexp--sc_file_system): Likewise.
+	(exclude_file_name_regexp--sc_prohibit_always_true_header_tests):
+	Likewise.
+	(exclude_file_name_regexp--sc_prohibit_fail_0): Likewise.
+	(exclude_file_name_regexp--sc_prohibit_atoi_atof): Likewise.
+	(exclude_file_name_regexp--sc_prohibit_tab_based_indentation): Likewise.
+	(exclude_file_name_regexp--sc_prohibit_stat_st_blocks): Likewise.
+	* configure.ac [whether localtime caches TZ]: Use return 0/1, not
+	exit (0/1) to avoid triggering a sc_prohibit_magic_number_exit failure.
+	* .x-sc_GPL_version: Remove file.
+	* .x-sc_bindtextdomain: Likewise.
+	* .x-sc_error_message_uppercase: Likewise.
+	* .x-sc_file_system: Likewise.
+	* .x-sc_obsolete_symbols: Likewise.
+	* .x-sc_po_check: Likewise.
+	* .x-sc_program_name: Likewise.
+	* .x-sc_prohibit_always-defined_macros: Likewise.
+	* .x-sc_prohibit_always_true_header_tests: Likewise.
+	* .x-sc_prohibit_atoi_atof: Likewise.
+	* .x-sc_prohibit_empty_lines_at_EOF: Likewise.
+	* .x-sc_prohibit_fail_0: Likewise.
+	* .x-sc_prohibit_magic_number_exit: Likewise.
+	* .x-sc_prohibit_stat_st_blocks: Likewise.
+	* .x-sc_prohibit_strcmp: Likewise.
+	* .x-sc_prohibit_tab_based_indentation: Likewise.
+	* .x-sc_require_config_h: Likewise.
+	* .x-sc_require_config_h_first: Likewise.
+	* .x-sc_space_tab (config): Likewise.
+	* .x-sc_sun_os_names: Likewise.
+	* .x-sc_system_h_headers: Likewise.
+	* .x-sc_trailing_blank: Likewise.
+	* .x-sc_unmarked_diagnostics: Likewise.
+	* .x-sc_useless_cpp_parens: Likewise.
+
+2011-03-14  Pádraig Brady  <P@draigBrady.com>
+
+	maint: use wcswidth from gnulib
+	* gl/lib/mbsalign.c (rpl_wcswidth): Remove this in favor
+	of the equivalent wcswidth replacement in gnulib.
+	* bootstrap.conf: Depend on the wcswidth module.
+	Suggested by Bruno Haible.
+
+2011-03-13  Jim Meyering  <meyering@redhat.com>
+
+	touch: update to latest gnulib to fix Solaris 10 touch segfault
+	* gnulib: Update to latest, to address http://debbugs.gnu.org/8230.
+	When built on Solaris 9 and run on Solaris 10, touch would segfault.
+	Reported by Ben Walton.
+	* bootstrap: Update from gnulib.
+	* tests/init.sh: Likewise.
+	* NEWS (Bug fixes): Mention this.
+
+	sort: spawn fewer threads for small inputs
+	* src/sort.c (SUBTHREAD_LINES_HEURISTIC): Do not spawn a new thread
+	for every 4 lines.  Increase this from 4 to 128K.  128K lines seems
+	appropriate for a 5-year-old dual-core laptop, but it is too low for
+	some common combinations of short lines and/or newer systems.
+	* NEWS (Bug fixes): Mention it.
+
+2011-03-11  Pádraig Brady  <P@draigBrady.com>
+
+	copy: merge similar extents before processing
+	* src/extent-scan.c (extent_scan_read):  Merge adjacent extents
+	that vary only in size, so that we may process them more efficiently.
+	This will be especially useful when we introduce fallocate()
+	so that we don't reproduce fragmentation in the destination.
+
+2011-03-06  Paul Eggert  <eggert@cs.ucla.edu>
+
+	dd: avoid or diagnose some problems with short reads
+	* src/dd.c (warn_partial_read): New static var.
+	(iread): Diagnose partial reads if needed.
+	(iwrite): Don't diagnose them here; not needed any more.
+	(scanargs): Determine whether partial reads should be diagnosted.
+
+2011-03-05  Pádraig Brady  <P@draigBrady.com>
+
+	maint: fix dd nocache test to be independent of current stdin
+	* tests/dd/nocache: Don't assume stdin is a pipe
+
+	dd: add a flag to discard cached data
+	* src/dd.c (FFS_MASK): A new macro (Find First Set) refactored
+	from the following enum as it's now used twice.
+	(usage): Mention the new 'nocache' flag.
+	(cache_round): A new function to help ignore requests
+	to drop cache, that are less than page_size.
+	(invalidate_cache): A new function to call posix_fadvise()
+	with the appropriate offset and length.  Note we don't
+	use fdadvise() so we can detect errors when count=0.
+	(dd_copy): Call invalidate_cache() for the portions read.
+	(iwrite): Likewise for the portions written.
+	(main): Call invalidate_cache for page_size slop or
+	for full file when count=0.
+	* cfg.mk (sc_dd_O_FLAGS): Adjust to pass.
+	* doc/coreutils.texi (dd invocation): Describe the 'nocache' flag,
+	and give some examples of how it can be used.
+	* tests/dd/nocache: A new test.
+	* tests/Makefile.am: Reference the new test.
+	* NEWS: Mention the new feature.
+
+	doc: clarify that `dd bs=` can immediately output short reads
+	* doc/coreutils.texi (dd invocation): Clarify that bs= can
+	cause parital reads to be immediately written to output.
+	* src/dd.c (usage): Hint that bs= can cause partial writes.
+	See http://debbugs.gnu.org/cgi/bugreport.cgi?bug=8171
+
+	doc: group dd conv= options that are actually flags
+	* src/dd.c (usage): Move 'sync' up with other data transformation
+	options.  Having it alongside 'fsync' and 'fdatasync' is
+	particularly confusing.  Also the double line description of
+	the 'sync' option, serves as a visual break from the "flag"
+	type options that follow.
+	* doc/coreutils.texi (dd invocation):  Apply the same grouping
+	as above, by splitting the "conv=" table in two.
+
+	dd: warn when we disable oflag=direct not at EOF
+	An alternative to this is to auto enable iflag=fullblock
+	when oflag=direct and bs= is specified.
+	It was thought better though, to warn about the specific issue,
+	and give full control of dd's options to the user.
+
+	* src/dd.c (iwrite): Warn, when we write after having
+	disabled O_DIRECT.
+	See https://bugzilla.redhat.com/show_bug.cgi?id=614605
+
+2011-03-03  Jim Meyering  <meyering@redhat.com>
+
+	du: don't infloop for --files0-from=DIR
+	* src/du.c (main): Fail on AI_ERR_READ error, rather than merely
+	diagnosing and continuing.  Based on a patch by Stefan Vargyas.
+	Also move the handling of AI_ERR_EOF into the case stmt.
+	Do not report ferror/fclose(stdin) failure when we've
+	already diagnosed e.g., failure to read the DIR, above.
+	Bug introduced by 2008-11-24 commit 031e2fb5, "du: read and
+	process --files0-from= input a name at a time,".
+	* src/wc.c: Handle read failure as with du: do not exit
+	immediately, but rather go on to print any total and to clean-up.
+	As above, move the handling of AI_ERR_EOF into the case stmt.
+	* tests/du/files0-from-dir: New file, to test both du and wc.
+	* tests/Makefile.am (TESTS): Add it.
+	* NEWS (Bug fixes): Mention it.
+
+	wc: avoid NULL dereference on out-of-memory error
+	* src/wc.c (main): Diagnose failed argv_iter_init_* failure,
+	rather than falling through and dereferencing NULL.
+	Bug introduced by 2008-11-25 commit c2e56e0d,
+	"wc: read and process --files0-from= input a name at a time,".
+	* NEWS (Bug fixes): Mention it.
+
+2011-02-25  Pádraig Brady  <P@draigBrady.com>
+
+	tests: without filefrag, only skip part of sparse-fiemap
+	* tests/cp/sparse-fiemap: Move the PERL check to the top,
+	since we don't test anything without it.  In the loop,
+	don't use skip_test_ as it exits the test completely.
+
+2011-02-20  Gilles Espinasse  <g.esp@free.fr>
+
+	maint: replace spaces with tab in tests/Makefile.am
+	* tests/Makefile.am: Replace spaces with tabs for consistency
+
+2011-02-18  Jim Meyering  <meyering@redhat.com>
+
+	stdbuf: avoid even the appearance of a possible use-after-free
+	There was an execution path by which "libstdbuf" could be used after
+	being freed, but that would happen only if there were no libstdbuf.so
+	alongside the stdbuf program and there had been an installation error
+	leading to absence of the file, PKGLIBDIR/libstdbuf.so.
+	* src/stdbuf.c (set_LD_PRELOAD): Rearrange loop to make it perfectly
+	clear that there is no possibility of use-after-free.
+	Steve Grubb reported this possible use-after-free of "libstdbuf".
+
+2011-02-18  Gilles Espinasse  <g.esp@free.fr>
+
+	tests: correct racy sparse-to-pipe test
+	* tests/cp/sparse-to-pipe: Wait for backgrounded "cat" to complete
+	before comparing the results.
+
+2011-02-15  Paul Eggert  <eggert@cs.ucla.edu>
+
+	uptime: omit unnecessary #if
+	* src/uptime.c (print_uptime): Omit unnecessary "#if defined
+	HAVE_GETLOADAVG || defined C_GETLOADAVG".  This #if is always
+	true, and removing it will help us simplify the gnulib getloadavg
+	module.
+
+2011-02-15  Pádraig Brady  <P@draigBrady.com>
+
+	tests: support more file systems in the cp fiemap tests
+	* tests/cp/sparse-fiemap: Check for fiemap support against a file
+	rather than a directory to enable tests on BTRFS for example.
+	Explicity disable the test on ext3 or file systems where we
+	can't determine the type.
+	* tests/cp/fiemap-perf: Likewise.  Also disable the test on older
+	BTRFS (like in Fedora 14), where extents are returned for holes.
+	* tests/init.cfg: Comment that BTRFS only supports fiemap
+	for regular files.
+
+2011-02-11  Pádraig Brady  <P@draigBrady.com>
+
+	copy: adjust fiemap handling of sparse files
+	Don't depend on heuristics to detect sparse files
+	if fiemap is available.  Also don't scan for new
+	holes unless --sparse=always has been specified.
+
+	* src/copy.c (extent_copy): Pass the user specified
+	sparse mode, and handle as described above.
+
+	copy: suppress redundant lseeks when using fiemap
+	* src/copy.c (extent_copy): Suppress redundant lseek()s in both
+	the source and dest files, when there is no hole between extents.
+
+2011-02-10  Jim Meyering  <meyering@redhat.com>
+
+	tests: fix bug in preceding check.mk change
+	* tests/check.mk (.built-programs): Run cd'd submake in a subshell
+	so the redirected output ends up in the current directory, not ../src.
+
+	tests: print "python missing:..." diagnostic where more will see it
+	* tests/init.cfg (fiemap_capable_): Print with warn_, so that the
+	diagnostic shows up alongside the corresponding SKIP message.
+
+	tests: avoid gross inefficiency in "make test"
+	Do not run a sub-make to set up the environment for each
+	and every test script.  Instead, run it just once and store
+	the result in a file.
+	* tests/check.mk (built_programs): Remove definition.
+	(.built-programs): New rule to create the temporary file.
+	(CLEANFILES): Arrange to remove it.
+	(TESTS_ENVIRONMENT): Simply cat .built-programs, rather than
+	running the sub-make.
+	* .gitignore: Ignore it.
+
+2011-02-08  Pádraig Brady  <P@draigBrady.com>
+
+	test: improve the cp fiemap tests
+	* tests/cp/fiemap-2: Enable the fiemap check for files, which
+	will enable the test for files on ext3.
+	* tests/cp/fiemap-perf: Comment why we're not enabling for ext3.
+	* tests/cp/sparse-fiemap: Ditto.  Also sync the files before
+	doing a fiemap which was needed for ext4 loop back at least.
+	Add a comment that FIEMAP_FLAG_SYNC is ineffective, thus
+	requiring the explicit syncs.
+	* tests/fiemap-capable: A new python script to determine
+	if a specified path supports fiemap.
+	* tests/init.cfg (fiemap_capable_): Use the new python script.
+	* tests/Makefile.am (EXTRA_DIST): Include the new python script.
+
+2011-02-08  Jim Meyering  <meyering@redhat.com>
+
+	tests: randread-tests: use macro.h not "#define ASSERT..."
+	* gl/modules/randread-tests (Files): Add tests/macros.h
+	* gl/tests/test-rand-isaac.c: Remove now-unneeded #include directives.
+	(ASSERT): Remove definition.
+	Instead, include "macros.h".
+	Prompted by suggestions from Bruno Haible.
+
+2011-02-07  Jim Meyering  <meyering@redhat.com>
+
+	maint: move di-set and ino-map modules from ./gl to gnulib
+	* gl/lib/di-set.c: Remove file.
+	* gl/lib/di-set.h: Likewise.
+	* gl/lib/ino-map.c: Likewise.
+	* gl/lib/ino-map.h: Likewise.
+	* gl/modules/di-set: Likewise.
+	* gl/modules/di-set-tests: Likewise.
+	* gl/modules/ino-map: Likewise.
+	* gl/modules/ino-map-tests: Likewise.
+	* gl/tests/test-di-set.c: Likewise.
+	* gl/tests/test-ino-map.c: Likewise.
+	* gnulib: Update to latest, now that these two modules are there.
+
+	di-set: provide a lookup method
+	This is required for patch, and hence is about to move to gnulib.
+	* gl/lib/di-set.c (di_set_lookup): New function.
+	* gl/lib/di-set.h: Declare it.
+	* gl/tests/test-di-set.c (main): Exercise it.
+
+	The bug was introduced on 2004-12-04 via commit 7380cf79.
+
+	cut: don't segfault for large unbounded range
+	* src/cut.c (set_fields): When computing the maximum range endpoint,
+	take into consideration the start of any unbounded range, like "999-".
+	* NEWS (Bug fixes): Mention it.
+	* tests/misc/cut (big-unbounded-b,c,f): Add tests.
+	Reported by Paul Marinescu in http://debbugs.gnu.org/7993
+	The bug was introduced on 2004-12-04 via commit 7380cf79.
+
+2011-02-05  Jim Meyering  <meyering@redhat.com>
+
+	copy: don't let a failed lseek go undiagnosed
+	Upon failed lseek, sparse_copy_finalize would mistakenly return true.
+	Admittedly, that is very unlikely, since that particular lseek
+	is attempted only if the preceding call to sparse_copy induced
+	a hole at EOF (via lseek on the destination FD).  However, now
+	that sparse_copy has an output parameter, N_READ, there is no
+	longer any reason to call lseek (fd, 0, SEEK_CUR), so...
+	* src/copy.c (sparse_copy_finalize): Remove the function.
+	(copy_reg): Call ftruncate with n_read, rather than
+	sparse_copy_finalize with its now-unnecessary lseek.
+	Lasse Collin spotted the bug in sparse_copy_finalize.
+
 2011-02-04  Jim Meyering  <meyering@redhat.com>
+
+	post-release administrivia
+	* NEWS: Add header line for next release.
+	* .prev-version: Record previous version.
+	* cfg.mk (old_NEWS_hash): Auto-update.
 
 	version 8.10
 	* NEWS: Record release date.

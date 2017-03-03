@@ -333,7 +333,7 @@ EXTRA_DIST += test-ctype.c
 
 TESTS += test-di-set
 check_PROGRAMS += test-di-set
-EXTRA_DIST += test-di-set.c
+EXTRA_DIST += test-di-set.c macros.h
 
 ## end   gnulib module di-set-tests
 
@@ -725,6 +725,15 @@ EXTRA_DIST += test-getline.c signature.h macros.h
 
 ## end   gnulib module getline-tests
 
+## begin gnulib module getloadavg-tests
+
+TESTS += test-getloadavg
+check_PROGRAMS += test-getloadavg
+test_getloadavg_LDADD = $(LDADD) @GETLOADAVG_LIBS@
+EXTRA_DIST += test-getloadavg.c signature.h
+
+## end   gnulib module getloadavg-tests
+
 ## begin gnulib module getndelim2-tests
 
 TESTS += test-getndelim2
@@ -826,7 +835,7 @@ EXTRA_DIST += test-inet_pton.c signature.h macros.h
 
 TESTS += test-ino-map
 check_PROGRAMS += test-ino-map
-EXTRA_DIST += test-ino-map.c
+EXTRA_DIST += test-ino-map.c macros.h
 
 ## end   gnulib module ino-map-tests
 
@@ -890,6 +899,14 @@ EXTRA_DIST += test-isnanl-nolibm.c test-isnanl.h minus-zero.h nan.h macros.h
 
 ## end   gnulib module isnanl-nolibm-tests
 
+## begin gnulib module iswblank-tests
+
+TESTS += test-iswblank
+check_PROGRAMS += test-iswblank
+EXTRA_DIST += test-iswblank.c macros.h
+
+## end   gnulib module iswblank-tests
+
 ## begin gnulib module langinfo-tests
 
 TESTS += test-langinfo
@@ -941,6 +958,24 @@ check_PROGRAMS += test-locale
 EXTRA_DIST += test-locale.c
 
 ## end   gnulib module locale-tests
+
+## begin gnulib module localename
+
+libtests_a_SOURCES += localename.c
+
+EXTRA_DIST += localename.h
+
+## end   gnulib module localename
+
+## begin gnulib module localename-tests
+
+TESTS += test-localename
+check_PROGRAMS += test-localename
+test_localename_LDADD = $(LDADD) @INTL_MACOSX_LIBS@
+
+EXTRA_DIST += test-localename.c macros.h
+
+## end   gnulib module localename-tests
 
 ## begin gnulib module lock-tests
 
@@ -994,15 +1029,18 @@ EXTRA_DIST += test-math.c
 
 ## begin gnulib module mbrtowc-tests
 
-TESTS += test-mbrtowc1.sh test-mbrtowc2.sh test-mbrtowc3.sh test-mbrtowc4.sh
+TESTS += \
+  test-mbrtowc1.sh test-mbrtowc2.sh test-mbrtowc3.sh test-mbrtowc4.sh \
+  test-mbrtowc-w32-1.sh test-mbrtowc-w32-2.sh test-mbrtowc-w32-3.sh \
+  test-mbrtowc-w32-4.sh test-mbrtowc-w32-5.sh
 TESTS_ENVIRONMENT += \
   LOCALE_FR='@LOCALE_FR@' \
   LOCALE_FR_UTF8='@LOCALE_FR_UTF8@' \
   LOCALE_JA='@LOCALE_JA@' \
   LOCALE_ZH_CN='@LOCALE_ZH_CN@'
-check_PROGRAMS += test-mbrtowc
+check_PROGRAMS += test-mbrtowc test-mbrtowc-w32
 
-EXTRA_DIST += test-mbrtowc1.sh test-mbrtowc2.sh test-mbrtowc3.sh test-mbrtowc4.sh test-mbrtowc.c signature.h macros.h
+EXTRA_DIST += test-mbrtowc1.sh test-mbrtowc2.sh test-mbrtowc3.sh test-mbrtowc4.sh test-mbrtowc.c test-mbrtowc-w32-1.sh test-mbrtowc-w32-2.sh test-mbrtowc-w32-3.sh test-mbrtowc-w32-4.sh test-mbrtowc-w32-5.sh test-mbrtowc-w32.c signature.h macros.h
 
 ## end   gnulib module mbrtowc-tests
 
@@ -1259,7 +1297,7 @@ EXTRA_DIST += test-quotearg-simple.c test-quotearg.h macros.h
 
 TESTS += test-rand-isaac
 check_PROGRAMS += test-rand-isaac
-EXTRA_DIST += test-rand-isaac.c
+EXTRA_DIST += test-rand-isaac.c macros.h
 
 ## end   gnulib module randread-tests
 
@@ -1348,6 +1386,28 @@ check_PROGRAMS += test-setenv
 EXTRA_DIST += test-setenv.c signature.h macros.h
 
 ## end   gnulib module setenv-tests
+
+## begin gnulib module setlocale
+
+
+EXTRA_DIST += setlocale.c
+
+EXTRA_libtests_a_SOURCES += setlocale.c
+
+## end   gnulib module setlocale
+
+## begin gnulib module setlocale-tests
+
+TESTS += test-setlocale1.sh test-setlocale2.sh
+TESTS_ENVIRONMENT += \
+  LOCALE_FR='@LOCALE_FR@' \
+  LOCALE_FR_UTF8='@LOCALE_FR_UTF8@' \
+  LOCALE_JA='@LOCALE_JA@' \
+  LOCALE_ZH_CN='@LOCALE_ZH_CN@'
+check_PROGRAMS += test-setlocale1 test-setlocale2
+EXTRA_DIST += test-setlocale1.sh test-setlocale1.c test-setlocale2.sh test-setlocale2.c signature.h macros.h
+
+## end   gnulib module setlocale-tests
 
 ## begin gnulib module setsockopt
 
@@ -1490,6 +1550,14 @@ check_PROGRAMS += test-strerror
 EXTRA_DIST += test-strerror.c signature.h macros.h
 
 ## end   gnulib module strerror-tests
+
+## begin gnulib module strftime-tests
+
+TESTS += test-strftime
+check_PROGRAMS += test-strftime
+EXTRA_DIST += test-strftime.c macros.h
+
+## end   gnulib module strftime-tests
 
 ## begin gnulib module striconv-tests
 
@@ -1895,15 +1963,18 @@ EXTRA_DIST += test-wchar.c
 
 ## begin gnulib module wcrtomb-tests
 
-TESTS += test-wcrtomb.sh
+TESTS += \
+  test-wcrtomb.sh \
+  test-wcrtomb-w32-1.sh test-wcrtomb-w32-2.sh test-wcrtomb-w32-3.sh \
+  test-wcrtomb-w32-4.sh test-wcrtomb-w32-5.sh
 TESTS_ENVIRONMENT += \
   LOCALE_FR='@LOCALE_FR@' \
   LOCALE_FR_UTF8='@LOCALE_FR_UTF8@' \
   LOCALE_JA='@LOCALE_JA@' \
   LOCALE_ZH_CN='@LOCALE_ZH_CN@'
-check_PROGRAMS += test-wcrtomb
+check_PROGRAMS += test-wcrtomb test-wcrtomb-w32
 
-EXTRA_DIST += test-wcrtomb.sh test-wcrtomb.c signature.h macros.h
+EXTRA_DIST += test-wcrtomb.sh test-wcrtomb.c test-wcrtomb-w32-1.sh test-wcrtomb-w32-2.sh test-wcrtomb-w32-3.sh test-wcrtomb-w32-4.sh test-wcrtomb-w32-5.sh test-wcrtomb-w32.c signature.h macros.h
 
 ## end   gnulib module wcrtomb-tests
 
@@ -1916,13 +1987,22 @@ EXTRA_libtests_a_SOURCES += wctob.c
 
 ## end   gnulib module wctob
 
-## begin gnulib module wctype-tests
+## begin gnulib module wctomb
 
-TESTS += test-wctype
-check_PROGRAMS += test-wctype
-EXTRA_DIST += test-wctype.c macros.h
 
-## end   gnulib module wctype-tests
+EXTRA_DIST += wctomb-impl.h wctomb.c
+
+EXTRA_libtests_a_SOURCES += wctomb.c
+
+## end   gnulib module wctomb
+
+## begin gnulib module wctype-h-tests
+
+TESTS += test-wctype-h
+check_PROGRAMS += test-wctype-h
+EXTRA_DIST += test-wctype-h.c macros.h
+
+## end   gnulib module wctype-h-tests
 
 ## begin gnulib module wcwidth-tests
 

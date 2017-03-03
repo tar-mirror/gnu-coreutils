@@ -1,5 +1,61 @@
 GNU coreutils NEWS                                    -*- outline -*-
 
+* Noteworthy changes in release 8.11 (2011-04-13) [stable]
+
+** Bug fixes
+
+  cp -a --link would not create a hardlink to a symlink, instead
+  copying the symlink and then not preserving its timestamp.
+  [bug introduced in coreutils-8.0]
+
+  cp now avoids FIEMAP issues with BTRFS before Linux 2.6.38,
+  which could result in corrupt copies of sparse files.
+  [bug introduced in coreutils-8.10]
+
+  cut could segfault when invoked with a user-specified output
+  delimiter and an unbounded range like "-f1234567890-".
+  [bug introduced in coreutils-5.3.0]
+
+  du would infloop when given --files0-from=DIR
+  [bug introduced in coreutils-7.1]
+
+  sort no longer spawns 7 worker threads to sort 16 lines
+  [bug introduced in coreutils-8.6]
+
+  touch built on Solaris 9 would segfault when run on Solaris 10
+  [bug introduced in coreutils-8.8]
+
+  wc would dereference a NULL pointer upon an early out-of-memory error
+  [bug introduced in coreutils-7.1]
+
+** New features
+
+  dd now accepts the 'nocache' flag to the iflag and oflag options,
+  which will discard any cache associated with the files, or
+  processed portion thereof.
+
+  dd now warns that 'iflag=fullblock' should be used,
+  in various cases where partial reads can cause issues.
+
+** Changes in behavior
+
+  cp now avoids syncing files when possible, when doing a FIEMAP copy.
+  The sync is only needed on Linux kernels before 2.6.39.
+  [The sync was introduced in coreutils-8.10]
+
+  cp now copies empty extents efficiently, when doing a FIEMAP copy.
+  It no longer reads the zero bytes from the input, and also can efficiently
+  create a hole in the output file when --sparse=always is specified.
+
+  df now aligns columns consistently, and no longer wraps entries
+  with longer device identifiers, over two lines.
+
+  install now rejects its long-deprecated --preserve_context option.
+  Use --preserve-context instead.
+
+  test now accepts "==" as a synonym for "="
+
+
 * Noteworthy changes in release 8.10 (2011-02-04) [stable]
 
 ** Bug fixes
@@ -367,7 +423,7 @@ GNU coreutils NEWS                                    -*- outline -*-
   if it uses helper processes for compression and its parent
   ignores CHLD signals. [bug introduced in coreutils-6.9]
 
-  tail without -f no longer access uninitialized memory
+  tail without -f no longer accesses uninitialized memory
   [bug introduced in coreutils-7.6]
 
   timeout is now immune to the signal handling of its parent.
@@ -496,7 +552,7 @@ GNU coreutils NEWS                                    -*- outline -*-
 
   ls -LR exits with status 2, not 0, when it encounters a cycle
 
-  ls -is is now consistent with ls -lis in ignoring values returned
+  "ls -is" is now consistent with ls -lis in ignoring values returned
   from a failed stat/lstat.  For example ls -Lis now prints "?", not "0",
   for the inode number and allocated size of a dereferenced dangling symlink.
 

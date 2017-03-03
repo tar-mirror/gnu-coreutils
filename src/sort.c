@@ -109,12 +109,16 @@ struct rlimit { size_t rlim_cur; };
    and is responsible for merging TOTAL lines. */
 #define MAX_MERGE(total, level) (((total) >> (2 * ((level) + 1))) + 1)
 
-/* Heuristic value for the number of lines for which it is worth
-   creating a subthread, during an internal merge sort, on a machine
-   that has processors galore.  Currently this number is just a guess.
-   This value must be at least 4.  We don't know of any machine where
-   this number has any practical effect.  */
-enum { SUBTHREAD_LINES_HEURISTIC = 4 };
+/* Heuristic value for the number of lines for which it is worth creating
+   a subthread, during an internal merge sort.  I.e., it is a small number
+   of "average" lines for which sorting via two threads is faster than
+   sorting via one on an "average" system.  On an dual-core 2.0 GHz i686
+   system with 3GB of RAM and 2MB of L2 cache, a file containing 128K
+   lines of gensort -a output is sorted slightly faster with --parallel=2
+   than with --parallel=1.  By contrast, using --parallel=1 is about 10%
+   faster than using --parallel=2 with a 64K-line input.  */
+enum { SUBTHREAD_LINES_HEURISTIC = 128 * 1024 };
+verify (4 <= SUBTHREAD_LINES_HEURISTIC);
 
 /* The number of threads after which there are
    diminishing performance gains.  */
@@ -315,8 +319,12 @@ static size_t merge_buffer_size = MAX (MIN_MERGE_BUFFER_SIZE, 256 * 1024);
    specified by the user.  Zero if the user has not specified a size.  */
 static size_t sort_size;
 
-/* The guessed size for non-regular files.  */
-#define INPUT_FILE_SIZE_GUESS (1024 * 1024)
+/* The initial allocation factor for non-regular files.
+   This is used, e.g., when reading from a pipe.
+   Don't make it too big, since it is multiplied by ~130 to
+   obtain the size of the actual buffer sort will allocate.
+   Also, there may be 8 threads all doing this at the same time.  */
+#define INPUT_FILE_SIZE_GUESS (128 * 1024)
 
 /* Array of directory names in which any temporary files are to be created. */
 static char const **temp_dirs;

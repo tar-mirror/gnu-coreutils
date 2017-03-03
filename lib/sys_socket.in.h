@@ -52,6 +52,10 @@
    <sys/types.h>.  */
 # include <sys/types.h>
 
+/* On FreeBSD 6.4, <sys/socket.h> defines some macros that assume that NULL
+   is defined.  */
+# include <stddef.h>
+
 /* The include_next requires a split double-inclusion guard.  */
 # @INCLUDE_NEXT@ @NEXT_SYS_SOCKET_H@
 
@@ -69,7 +73,10 @@
 /* The definition of _GL_WARN_ON_USE is copied here.  */
 
 #if !@HAVE_SA_FAMILY_T@
+# if !GNULIB_defined_sa_family_t
 typedef unsigned short  sa_family_t;
+#  define GNULIB_defined_sa_family_t 1
+# endif
 #endif
 
 #if @HAVE_STRUCT_SOCKADDR_STORAGE@
@@ -91,12 +98,16 @@ typedef unsigned short  sa_family_t;
                   : alignof (__ss_aligntype))                           \
                  + sizeof (__ss_aligntype)))
 
+# if !GNULIB_defined_struct_sockaddr_storage
 struct sockaddr_storage
 {
   sa_family_t ss_family;      /* Address family, etc.  */
   __ss_aligntype __ss_align;  /* Force desired alignment.  */
   char __ss_padding[_SS_PADSIZE];
 };
+#  define GNULIB_defined_struct_sockaddr_storage 1
+# endif
+
 #endif
 
 #if @HAVE_SYS_SOCKET_H@
@@ -161,13 +172,18 @@ struct sockaddr_storage
 #  include <sys/types.h>
 #  include <io.h>
 
+#  if !GNULIB_defined_socklen_t
 typedef int socklen_t;
+#   define GNULIB_defined_socklen_t 1
+#  endif
 
 # endif
 
 #endif
 
 #if @HAVE_WINSOCK2_H@
+
+# if !GNULIB_defined_rpl_fd_isset
 
 /* Re-define FD_ISSET to avoid a WSA call while we are not using
    network sockets.  */
@@ -184,6 +200,9 @@ rpl_fd_isset (SOCKET fd, fd_set * set)
 
   return 0;
 }
+
+#  define GNULIB_defined_rpl_fd_isset 1
+# endif
 
 # undef FD_ISSET
 # define FD_ISSET(fd, set) rpl_fd_isset(fd, set)

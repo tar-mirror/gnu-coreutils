@@ -37,6 +37,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module alloca:
   # Code from module alloca-opt:
   # Code from module alloca-opt-tests:
+  # Code from module allocator:
   # Code from module announce-gen:
   # Code from module areadlink:
   # Code from module areadlink-tests:
@@ -77,6 +78,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module canon-host:
   # Code from module canonicalize:
   # Code from module canonicalize-tests:
+  # Code from module careadlinkat:
   # Code from module chdir-long:
   # Code from module chown:
   # Code from module chown-tests:
@@ -116,6 +118,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module dirname-lgpl:
   # Code from module dirname-tests:
   # Code from module do-release-commit-and-tag:
+  # Code from module dosname:
   # Code from module double-slash-root:
   # Code from module dtoastr:
   # Code from module dup2:
@@ -230,6 +233,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module getline:
   # Code from module getline-tests:
   # Code from module getloadavg:
+  # Code from module getloadavg-tests:
   # Code from module getndelim2:
   # Code from module getndelim2-tests:
   # Code from module getopt-gnu:
@@ -294,6 +298,8 @@ AC_DEFUN([gl_EARLY],
   # Code from module isnanf-nolibm-tests:
   # Code from module isnanl-nolibm:
   # Code from module isnanl-nolibm-tests:
+  # Code from module iswblank:
+  # Code from module iswblank-tests:
   # Code from module langinfo:
   # Code from module langinfo-tests:
   # Code from module lchmod:
@@ -311,6 +317,8 @@ AC_DEFUN([gl_EARLY],
   # Code from module localcharset:
   # Code from module locale:
   # Code from module locale-tests:
+  # Code from module localename:
+  # Code from module localename-tests:
   # Code from module lock:
   # Code from module lock-tests:
   # Code from module long-options:
@@ -343,6 +351,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module mbsstr:
   # Code from module mbsstr-tests:
   # Code from module mbswidth:
+  # Code from module mbtowc:
   # Code from module mbuiter:
   # Code from module memcasecmp:
   # Code from module memcasecmp-tests:
@@ -454,6 +463,8 @@ AC_DEFUN([gl_EARLY],
   # Code from module servent:
   # Code from module setenv:
   # Code from module setenv-tests:
+  # Code from module setlocale:
+  # Code from module setlocale-tests:
   # Code from module setsockopt:
   # Code from module settime:
   # Code from module sig2str:
@@ -504,6 +515,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module strerror:
   # Code from module strerror-tests:
   # Code from module strftime:
+  # Code from module strftime-tests:
   # Code from module striconv:
   # Code from module striconv-tests:
   # Code from module string:
@@ -616,9 +628,11 @@ AC_DEFUN([gl_EARLY],
   # Code from module wchar-tests:
   # Code from module wcrtomb:
   # Code from module wcrtomb-tests:
+  # Code from module wcswidth:
   # Code from module wctob:
-  # Code from module wctype:
-  # Code from module wctype-tests:
+  # Code from module wctomb:
+  # Code from module wctype-h:
+  # Code from module wctype-h-tests:
   # Code from module wcwidth:
   # Code from module wcwidth-tests:
   # Code from module winsz-ioctl:
@@ -677,6 +691,7 @@ AC_DEFUN([gl_INIT],
   # Code from module alloca:
   # Code from module alloca-opt:
   gl_FUNC_ALLOCA
+  # Code from module allocator:
   # Code from module announce-gen:
   # Code from module areadlink:
   # Code from module areadlink-with-size:
@@ -721,6 +736,8 @@ AC_DEFUN([gl_INIT],
   gl_MODULE_INDICATOR([canonicalize])
   gl_MODULE_INDICATOR_FOR_TESTS([canonicalize])
   gl_STDLIB_MODULE_INDICATOR([canonicalize_file_name])
+  # Code from module careadlinkat:
+  AC_CHECK_FUNCS_ONCE([readlinkat])
   # Code from module chdir-long:
   gl_FUNC_CHDIR_LONG
   # Code from module chown:
@@ -779,6 +796,7 @@ AC_DEFUN([gl_INIT],
   # Code from module dirname-lgpl:
   gl_DIRNAME_LGPL
   # Code from module do-release-commit-and-tag:
+  # Code from module dosname:
   # Code from module double-slash-root:
   gl_DOUBLE_SLASH_ROOT
   # Code from module dtoastr:
@@ -1035,6 +1053,9 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_ISNANF_NO_LIBM
   # Code from module isnanl-nolibm:
   gl_FUNC_ISNANL_NO_LIBM
+  # Code from module iswblank:
+  gl_FUNC_ISWBLANK
+  gl_WCTYPE_MODULE_INDICATOR([iswblank])
   # Code from module langinfo:
   gl_LANGINFO_H
   # Code from module lchmod:
@@ -1109,6 +1130,9 @@ AC_DEFUN([gl_INIT],
   gl_STRING_MODULE_INDICATOR([mbsstr])
   # Code from module mbswidth:
   gl_MBSWIDTH
+  # Code from module mbtowc:
+  gl_FUNC_MBTOWC
+  gl_STDLIB_MODULE_INDICATOR([mbtowc])
   # Code from module mbuiter:
   gl_MBITER
   # Code from module memcasecmp:
@@ -1509,7 +1533,10 @@ AC_DEFUN([gl_INIT],
   # Code from module wcrtomb:
   gl_FUNC_WCRTOMB
   gl_WCHAR_MODULE_INDICATOR([wcrtomb])
-  # Code from module wctype:
+  # Code from module wcswidth:
+  gl_FUNC_WCSWIDTH
+  gl_WCHAR_MODULE_INDICATOR([wcswidth])
+  # Code from module wctype-h:
   gl_WCTYPE_H
   # Code from module wcwidth:
   gl_FUNC_WCWIDTH
@@ -1649,6 +1676,8 @@ changequote([, ])dnl
   fi
   gl_SYS_SOCKET_MODULE_INDICATOR([listen])
   AC_CHECK_FUNCS_ONCE([newlocale])
+  gl_LOCALENAME
+  AC_CHECK_FUNCS_ONCE([newlocale])
   gt_LOCALE_FR
   gt_LOCALE_FR_UTF8
   gt_LOCALE_JA
@@ -1683,6 +1712,12 @@ changequote([, ])dnl
   gl_FUNC_PIPE
   gl_UNISTD_MODULE_INDICATOR([pipe])
   AC_CHECK_HEADERS_ONCE([sys/wait.h])
+  gl_FUNC_SETLOCALE
+  gl_LOCALE_MODULE_INDICATOR([setlocale])
+  gt_LOCALE_FR
+  gt_LOCALE_FR_UTF8
+  gt_LOCALE_JA
+  gt_LOCALE_ZH_CN
   AC_REQUIRE([gl_HEADER_SYS_SOCKET])
   if test "$ac_cv_header_winsock2_h" = yes; then
     AC_LIBOBJ([setsockopt])
@@ -1729,6 +1764,8 @@ changequote([, ])dnl
   gt_LOCALE_ZH_CN
   gl_FUNC_WCTOB
   gl_WCHAR_MODULE_INDICATOR([wctob])
+  gl_FUNC_WCTOMB
+  gl_STDLIB_MODULE_INDICATOR([wctomb])
   gl_YIELD
   m4_popdef([gl_MODULE_INDICATOR_CONDITION])
   m4_ifval(gltests_LIBSOURCES_LIST, [
@@ -1850,6 +1887,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/alignof.h
   lib/alloca.c
   lib/alloca.in.h
+  lib/allocator.c
+  lib/allocator.h
   lib/anytostr.c
   lib/areadlink-with-size.c
   lib/areadlink.c
@@ -1885,6 +1924,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/canon-host.h
   lib/canonicalize.c
   lib/canonicalize.h
+  lib/careadlinkat.c
+  lib/careadlinkat.h
   lib/chdir-long.c
   lib/chdir-long.h
   lib/chown.c
@@ -1919,6 +1960,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/dirname-lgpl.c
   lib/dirname.c
   lib/dirname.h
+  lib/dosname.h
   lib/dtoastr.c
   lib/dup-safer-flag.c
   lib/dup-safer.c
@@ -2109,11 +2151,14 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/mbscasecmp.c
   lib/mbsinit.c
   lib/mbslen.c
+  lib/mbsrtowcs-impl.h
   lib/mbsrtowcs-state.c
   lib/mbsrtowcs.c
   lib/mbsstr.c
   lib/mbswidth.c
   lib/mbswidth.h
+  lib/mbtowc-impl.h
+  lib/mbtowc.c
   lib/mbuiter.h
   lib/md5.c
   lib/md5.h
@@ -2281,7 +2326,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/stdio--.h
   lib/stdio-impl.h
   lib/stdio-safer.h
-  lib/stdio-write.c
   lib/stdio.in.h
   lib/stdlib--.h
   lib/stdlib-safer.h
@@ -2370,6 +2414,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/w32sock.h
   lib/wchar.in.h
   lib/wcrtomb.c
+  lib/wcswidth-impl.h
+  lib/wcswidth.c
   lib/wctype.in.h
   lib/wcwidth.c
   lib/write-any-file.c
@@ -2417,7 +2463,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/alloca.m4
   m4/argmatch.m4
   m4/arpa_inet_h.m4
-  m4/asm-underscore.m4
   m4/assert.m4
   m4/autobuild.m4
   m4/backupfile.m4
@@ -2447,7 +2492,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/dirent_h.m4
   m4/dirfd.m4
   m4/dirname.m4
-  m4/dos.m4
   m4/double-slash-root.m4
   m4/dup2.m4
   m4/eealloc.m4
@@ -2530,6 +2574,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/inet_ntop.m4
   m4/inet_pton.m4
   m4/inline.m4
+  m4/intlmacosx.m4
   m4/intmax_t.m4
   m4/inttostr.m4
   m4/inttypes-pri.m4
@@ -2541,11 +2586,13 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/isnand.m4
   m4/isnanf.m4
   m4/isnanl.m4
+  m4/iswblank.m4
   m4/jm-winsz1.m4
   m4/jm-winsz2.m4
   m4/langinfo_h.m4
   m4/lchmod.m4
   m4/lchown.m4
+  m4/lcmessage.m4
   m4/ldexp.m4
   m4/ldexpl.m4
   m4/lib-ignore.m4
@@ -2562,6 +2609,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/locale-tr.m4
   m4/locale-zh.m4
   m4/locale_h.m4
+  m4/localename.m4
   m4/lock.m4
   m4/long-options.m4
   m4/longlong.m4
@@ -2580,6 +2628,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/mbsrtowcs.m4
   m4/mbstate_t.m4
   m4/mbswidth.m4
+  m4/mbtowc.m4
   m4/md5.m4
   m4/memcasecmp.m4
   m4/memchr.m4
@@ -2647,6 +2696,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/selinux-selinux-h.m4
   m4/servent.m4
   m4/setenv.m4
+  m4/setlocale.m4
   m4/settime.m4
   m4/sha1.m4
   m4/sha256.m4
@@ -2740,7 +2790,9 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/wchar_h.m4
   m4/wchar_t.m4
   m4/wcrtomb.m4
+  m4/wcswidth.m4
   m4/wctob.m4
+  m4/wctomb.m4
   m4/wctype_h.m4
   m4/wcwidth.m4
   m4/wint_t.m4
@@ -2868,6 +2920,7 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-getgroups.c
   tests/test-gethostname.c
   tests/test-getline.c
+  tests/test-getloadavg.c
   tests/test-getndelim2.c
   tests/test-getopt.c
   tests/test-getopt.h
@@ -2890,6 +2943,7 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-isnanf.h
   tests/test-isnanl-nolibm.c
   tests/test-isnanl.h
+  tests/test-iswblank.c
   tests/test-langinfo.c
   tests/test-lchown.c
   tests/test-lchown.h
@@ -2897,6 +2951,7 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-link.h
   tests/test-linkat.c
   tests/test-locale.c
+  tests/test-localename.c
   tests/test-lock.c
   tests/test-lseek.c
   tests/test-lseek.sh
@@ -2906,6 +2961,12 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-malloc-gnu.c
   tests/test-malloca.c
   tests/test-math.c
+  tests/test-mbrtowc-w32-1.sh
+  tests/test-mbrtowc-w32-2.sh
+  tests/test-mbrtowc-w32-3.sh
+  tests/test-mbrtowc-w32-4.sh
+  tests/test-mbrtowc-w32-5.sh
+  tests/test-mbrtowc-w32.c
   tests/test-mbrtowc.c
   tests/test-mbrtowc1.sh
   tests/test-mbrtowc2.sh
@@ -2977,6 +3038,10 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-set-mode-acl.c
   tests/test-set-mode-acl.sh
   tests/test-setenv.c
+  tests/test-setlocale1.c
+  tests/test-setlocale1.sh
+  tests/test-setlocale2.c
+  tests/test-setlocale2.sh
   tests/test-sha1.c
   tests/test-sigaction.c
   tests/test-signal.c
@@ -2993,6 +3058,7 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-stdio.c
   tests/test-stdlib.c
   tests/test-strerror.c
+  tests/test-strftime.c
   tests/test-striconv.c
   tests/test-string.c
   tests/test-strnlen.c
@@ -3040,9 +3106,15 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-vprintf-posix.c
   tests/test-vprintf-posix.sh
   tests/test-wchar.c
+  tests/test-wcrtomb-w32-1.sh
+  tests/test-wcrtomb-w32-2.sh
+  tests/test-wcrtomb-w32-3.sh
+  tests/test-wcrtomb-w32-4.sh
+  tests/test-wcrtomb-w32-5.sh
+  tests/test-wcrtomb-w32.c
   tests/test-wcrtomb.c
   tests/test-wcrtomb.sh
-  tests/test-wctype.c
+  tests/test-wctype-h.c
   tests/test-wcwidth.c
   tests/test-xalloc-die.c
   tests/test-xalloc-die.sh
@@ -3075,8 +3147,11 @@ AC_DEFUN([gl_FILE_LIST], [
   tests=lib/inet_pton.c
   tests=lib/ioctl.c
   tests=lib/listen.c
+  tests=lib/localename.c
+  tests=lib/localename.h
   tests=lib/perror.c
   tests=lib/pipe.c
+  tests=lib/setlocale.c
   tests=lib/setsockopt.c
   tests=lib/sleep.c
   tests=lib/socket.c
@@ -3085,6 +3160,8 @@ AC_DEFUN([gl_FILE_LIST], [
   tests=lib/usleep.c
   tests=lib/w32sock.h
   tests=lib/wctob.c
+  tests=lib/wctomb-impl.h
+  tests=lib/wctomb.c
   top/GNUmakefile
   top/maint.mk
 ])

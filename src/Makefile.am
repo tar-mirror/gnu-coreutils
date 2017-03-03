@@ -707,8 +707,8 @@ sc_check-AUTHORS: $(all_programs)
 
 # Most functions in src/*.c should have static scope.
 # Any that don't must be marked with `extern', but `main'
-# and `usage' are exceptions.  They're always extern, but
-# don't need to be marked. Also functions starting with __
+# and `usage' are exceptions: they're always extern, but
+# do not need to be marked.  Also functions starting with __
 # are exempted due to possibly being added by the compiler
 # (when compiled as a shared library for example).
 #
@@ -717,9 +717,9 @@ sc_check-AUTHORS: $(all_programs)
 sc_tight_scope: $(bin_PROGRAMS)
 	@t=exceptions-$$$$;						\
 	trap 's=$$?; rm -f $$t; exit $$s' 0;				\
-	am__exit='(exit $s); exit $s';					\
-	trap "s=129; $$am__exit" 1; trap "s=130; $$am__exit" 2;		\
-	trap "s=141; $$am__exit" 13; trap "s=143; $$am__exit" 15;	\
+	for sig in 1 2 3 13 15; do					\
+	  eval "trap 'v=`expr $$sig + 128`; (exit $$v); exit $$v' $$sig"; \
+	done;								\
 	src=`for f in $(SOURCES); do					\
 	       test -f $$f && d= || d=$(srcdir)/; echo $$d$$f; done`;	\
 	hdr=`for f in $(noinst_HEADERS); do				\
@@ -727,7 +727,8 @@ sc_tight_scope: $(bin_PROGRAMS)
 	( printf 'main\nusage\n_.*\n';					\
 	  grep -h -A1 '^extern .*[^;]$$' $$src				\
 	    | grep -vE '^(extern |--)' | sed 's/ .*//';			\
-	  perl -ne '/^extern (?:enum )?\S+ (\S*) \(/ and print "$$1\n"' $$hdr; \
+	  perl -lne '/^extern (?:enum )?\S+ \**(\S*) \(/ and print $$1' \
+		$$hdr;							\
 	) | $(ASSORT) -u | sed 's/^/^/;s/$$/$$/' > $$t;			\
 	nm -e *.$(OBJEXT)						\
 	    | sed -n 's/.* T //p'					\
@@ -736,7 +737,7 @@ sc_tight_scope: $(bin_PROGRAMS)
 	  { echo 'the above functions should have static scope' 1>&2;	\
 	    exit 1; } || : ;						\
 	( printf '^program_name$$\n';					\
-	  perl -ne '/^extern .*?\**(\w+);/ and print "^$$1\$$\n"'	\
+	  perl -lne '/^extern .*?\**(\w+);/ and print "^$$1\$$"'	\
 	    $$hdr *.h ) | $(ASSORT) -u > $$t;				\
 	nm -e *.$(OBJEXT)						\
 	    | sed -n 's/.* [BD] //p'					\
