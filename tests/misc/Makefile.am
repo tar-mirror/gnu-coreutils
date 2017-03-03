@@ -1,7 +1,6 @@
 # Make miscellaneous coreutils tests.			-*-Makefile-*-
 
-# Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006 Free Software
-# Foundation, Inc.
+# Copyright (C) 200-2007 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,11 +21,16 @@ EXTRA_DIST = $(TESTS)
 
 TESTS_ENVIRONMENT = \
   top_srcdir=$(top_srcdir) \
+  abs_top_builddir=$(abs_top_builddir) \
   srcdir=$(srcdir) \
   PACKAGE_VERSION=$(PACKAGE_VERSION) \
   PERL="$(PERL)" \
   BUILD_SRC_DIR="`pwd`/../../src" \
+  CU_TEST_NAME=`basename $(abs_srcdir)`,$$tst \
   PATH="$(VG_PATH_PREFIX)`pwd`/../../src$(PATH_SEPARATOR)$$PATH" \
+  CONFIG_HEADER=$(CONFIG_HEADER) \
+  REPLACE_GETCWD=$(REPLACE_GETCWD) \
+  host_os=$(host_os) \
   PROG=`../../src/basename -- "$$tst"`
 
 # Do not choose a name that is a shell keyword like 'if', or a
@@ -36,6 +40,10 @@ TESTS_ENVIRONMENT = \
 # will execute the test script rather than the standard utility.
 
 TESTS = \
+  pr \
+  df-P \
+  pwd-unreadable-parent \
+  cut \
   wc-files0-from \
   wc-files0 \
   cat-proc \
@@ -67,6 +75,7 @@ TESTS = \
   sha384sum \
   sha512sum \
   shuf \
+  sort-compress \
   sort-merge \
   sort-rand \
   split-a \

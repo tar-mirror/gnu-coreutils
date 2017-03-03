@@ -1,10 +1,10 @@
 ## Process this file with automake to produce Makefile.in -*-Makefile-*-.
-AUTOMAKE_OPTIONS = 1.4 gnits
-
 TESTS = \
+  preserve-root \
   basic \
   deref \
   separator
 EXTRA_DIST = $(TESTS)
 TESTS_ENVIRONMENT = \
+  CU_TEST_NAME=`basename $(abs_srcdir)`,$$tst \
   PATH="$(VG_PATH_PREFIX)`pwd`/../../src$(PATH_SEPARATOR)$$PATH"

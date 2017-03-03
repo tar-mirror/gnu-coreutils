@@ -702,6 +702,24 @@ else
   esac
 fi
 test -s 8-bit-t.E || rm -f 8-bit-t.E
+$xx -1 340282366920938463463374607431768211456 -2 2 $srcdir/bigfield.I1 $srcdir/bigfield.I2 > bigfield.O 2> bigfield.E
+code=$?
+if test $code != 0; then
+  $echo "Test bigfield failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp bigfield.O $srcdir/bigfield.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed bigfield"; fi;;
+    1) $echo "Test bigfield failed: files bigfield.O and $srcdir/bigfield.X differ" 1>&2
+       (diff -c bigfield.O $srcdir/bigfield.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test bigfield may have failed." 1>&2
+       $echo The command "cmp bigfield.O $srcdir/bigfield.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s bigfield.E || rm -f bigfield.E
 $xx -j x  > invalid-j.O 2> invalid-j.E
 code=$?
 if test $code != 1; then
@@ -721,7 +739,7 @@ else
 fi
 test -s invalid-j.E || rm -f invalid-j.E
 if test $errors = 0; then
-  $echo Passed all 39 tests. 1>&2
+  $echo Passed all 40 tests. 1>&2
 else
   $echo Failed $errors tests. 1>&2
 fi

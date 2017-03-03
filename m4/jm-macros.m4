@@ -1,4 +1,4 @@
-#serial 104   -*- autoconf -*-
+#serial 105   -*- autoconf -*-
 
 dnl Misc type-related macros for coreutils.
 
@@ -49,9 +49,6 @@ AC_DEFUN([coreutils_MACROS],
 	    [Define to the function xargmatch calls on failures.])
   AC_DEFINE(ARGMATCH_DIE_DECL, [extern void usage ()],
 	    [Define to the declaration of the xargmatch failure function.])
-
-  dnl Used to define SETVBUF in ../src/system.h.
-  AC_FUNC_SETVBUF_REVERSED
 
   # used by ls
   AC_REQUIRE([gl_CLOCK_TIME])
@@ -112,10 +109,6 @@ AC_DEFUN([coreutils_MACROS],
   if test $gl_cv_list_mounted_fs = yes && test $gl_cv_fs_space = yes; then
     DF_PROG='df$(EXEEXT)'
   fi
-
-  # If any of these functions don't exist (e.g. DJGPP 2.03),
-  # use the corresponding stub.
-  AC_CHECK_FUNC([fchdir], , [AC_LIBOBJ(fchdir-stub)])
 ])
 
 AC_DEFUN([gl_CHECK_ALL_HEADERS],

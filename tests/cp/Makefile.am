@@ -1,7 +1,6 @@
 # Make coreutils tests for cp.				-*-Makefile-*-
 
-# Copyright (C) 1997, 1998, 1999, 2000, 2001, 2003, 2005, 2006 Free
-# Software Foundation, Inc.
+# Copyright (C) 1997-2001, 2003, 2005-2007 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,9 +17,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 # 02110-1301, USA.
 
-AUTOMAKE_OPTIONS = 1.1 gnits
-
 TESTS = \
+  file-perm-race parent-perm-race \
   backup-dir \
   src-base-dot \
   sparse \
@@ -33,7 +31,9 @@ TESTS = \
   perm cp-HL cp-i special-bits link dir-rm-dest cp-parents deref-slink \
   dir-vs-file into-self
 EXTRA_DIST = $(TESTS) trailing-slash
-TESTS_ENVIRONMENT = \
-  MAKE=$(MAKE) \
-  CONFIG_HEADER=$(CONFIG_HEADER) \
+TESTS_ENVIRONMENT =			\
+  MAKE=$(MAKE)				\
+  abs_top_builddir=$(abs_top_builddir)	\
+  CONFIG_HEADER=$(CONFIG_HEADER)	\
+  CU_TEST_NAME=`basename $(abs_srcdir)`,$$tst \
   PATH="$(VG_PATH_PREFIX)`pwd`/../../src$(PATH_SEPARATOR)$$PATH"

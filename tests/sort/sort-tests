@@ -360,6 +360,42 @@ else
   esac
 fi
 test -s 02c.E || rm -f 02c.E
+_POSIX2_VERSION=199209 $xx -C $srcdir/02d.I > 02d.O 2> 02d.E
+code=$?
+if test $code != 0; then
+  $echo "Test 02d(_POSIX2_VERSION=199209) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp 02d.O $srcdir/02d.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed 02d(_POSIX2_VERSION=199209)"; fi;;
+    1) $echo "Test 02d(_POSIX2_VERSION=199209) failed: files 02d.O and $srcdir/02d.X differ" 1>&2
+       (diff -c 02d.O $srcdir/02d.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test 02d(_POSIX2_VERSION=199209) may have failed." 1>&2
+       $echo The command "cmp 02d.O $srcdir/02d.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s 02d.E || rm -f 02d.E
+_POSIX2_VERSION=199209 $xx -C $srcdir/02e.I > 02e.O 2> 02e.E
+code=$?
+if test $code != 1; then
+  $echo "Test 02e(_POSIX2_VERSION=199209) failed: $xx return code $code differs from expected value 1" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp 02e.O $srcdir/02e.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed 02e(_POSIX2_VERSION=199209)"; fi;;
+    1) $echo "Test 02e(_POSIX2_VERSION=199209) failed: files 02e.O and $srcdir/02e.X differ" 1>&2
+       (diff -c 02e.O $srcdir/02e.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test 02e(_POSIX2_VERSION=199209) may have failed." 1>&2
+       $echo The command "cmp 02e.O $srcdir/02e.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s 02e.E || rm -f 02e.E
 _POSIX2_VERSION=199209 $xx -cu $srcdir/02m.I > 02m.O 2> 02m.E
 code=$?
 if test $code != 1; then
@@ -2106,6 +2142,42 @@ else
   esac
 fi
 test -s incompat4.E || rm -f incompat4.E
+_POSIX2_VERSION=199209 $xx -C -o /dev/null $srcdir/incompat5.I > incompat5.O 2> incompat5.E
+code=$?
+if test $code != 2; then
+  $echo "Test incompat5(_POSIX2_VERSION=199209) failed: $xx return code $code differs from expected value 2" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp incompat5.O $srcdir/incompat5.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed incompat5(_POSIX2_VERSION=199209)"; fi;;
+    1) $echo "Test incompat5(_POSIX2_VERSION=199209) failed: files incompat5.O and $srcdir/incompat5.X differ" 1>&2
+       (diff -c incompat5.O $srcdir/incompat5.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test incompat5(_POSIX2_VERSION=199209) may have failed." 1>&2
+       $echo The command "cmp incompat5.O $srcdir/incompat5.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s incompat5.E || rm -f incompat5.E
+_POSIX2_VERSION=199209 $xx -cC $srcdir/incompat6.I > incompat6.O 2> incompat6.E
+code=$?
+if test $code != 2; then
+  $echo "Test incompat6(_POSIX2_VERSION=199209) failed: $xx return code $code differs from expected value 2" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp incompat6.O $srcdir/incompat6.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed incompat6(_POSIX2_VERSION=199209)"; fi;;
+    1) $echo "Test incompat6(_POSIX2_VERSION=199209) failed: files incompat6.O and $srcdir/incompat6.X differ" 1>&2
+       (diff -c incompat6.O $srcdir/incompat6.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test incompat6(_POSIX2_VERSION=199209) may have failed." 1>&2
+       $echo The command "cmp incompat6.O $srcdir/incompat6.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s incompat6.E || rm -f incompat6.E
 _POSIX2_VERSION=199209 $xx -k2,2 -t '\0' $srcdir/nul-tab.I > nul-tab.O 2> nul-tab.E
 code=$?
 if test $code != 0; then
@@ -2124,8 +2196,26 @@ else
   esac
 fi
 test -s nul-tab.E || rm -f nul-tab.E
+_POSIX2_VERSION=199209 $xx -k 340282366920938463463374607431768211456 $srcdir/bigfield.I > bigfield.O 2> bigfield.E
+code=$?
+if test $code != 0; then
+  $echo "Test bigfield(_POSIX2_VERSION=199209) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp bigfield.O $srcdir/bigfield.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed bigfield(_POSIX2_VERSION=199209)"; fi;;
+    1) $echo "Test bigfield(_POSIX2_VERSION=199209) failed: files bigfield.O and $srcdir/bigfield.X differ" 1>&2
+       (diff -c bigfield.O $srcdir/bigfield.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test bigfield(_POSIX2_VERSION=199209) may have failed." 1>&2
+       $echo The command "cmp bigfield.O $srcdir/bigfield.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s bigfield.E || rm -f bigfield.E
 if test $errors = 0; then
-  $echo Passed all 117 tests. 1>&2
+  $echo Passed all 122 tests. 1>&2
 else
   $echo Failed $errors tests. 1>&2
 fi

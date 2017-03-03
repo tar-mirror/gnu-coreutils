@@ -1,6 +1,6 @@
 # Make coreutils tests for "rm".			-*-Makefile-*-
 
-# Copyright (C) 1997, 1998, 2000, 2001, 2002, 2003, 2004, 2005, 2006
+# Copyright (C) 1997, 1998, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007
 # Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
@@ -18,9 +18,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 # 02110-1301, USA.
 
-AUTOMAKE_OPTIONS = 1.1 gnits
-
 TESTS = \
+  i-never \
+  fail-eacces \
   one-file-system \
   ignorable \
   readdir-bug \
@@ -45,6 +45,7 @@ TESTS_ENVIRONMENT = \
   top_srcdir=$(top_srcdir) \
   srcdir=$(srcdir) \
   PERL="$(PERL)" \
+  CU_TEST_NAME=`basename $(abs_srcdir)`,$$tst \
   PATH="$(VG_PATH_PREFIX)`pwd`/../../src$(PATH_SEPARATOR)$$PATH" \
   PACKAGE_VERSION=$(PACKAGE_VERSION) \
   PROG=rm
