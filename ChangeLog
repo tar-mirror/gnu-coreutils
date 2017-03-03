@@ -1,3 +1,115 @@
+2006-06-22  Jim Meyering  <jim@meyering.net>
+
+	* Version 5.97.
+
+	* src/tee.c (tee_files): Rename from tee, to avoid conflict with
+	the function in glibc's <fcntl.h>.  Reported by Andreas Schwab.
+
+2006-06-12  Ralf Wildenhues  <Ralf.Wildenhues@gmx.de>
+
+	* tests/du/Makefile.am (TESTS_ENVIRONMENT): Pass $(PERL), for
+	files0-from test.
+
+2006-06-11  Jim Meyering  <jim@meyering.net>
+
+	Setting TIME_STYLE=long-iso in the environment would make the
+	cp/same-file test fail.
+	* tests/envvar-check (vars): Add TIME_STYLE to the list.
+	* tests/cp/same-file: Source the envvar-check script, to ensure
+	that TIME_STYLE settings don't affect these tests.
+
+2006-06-10  Jim Meyering  <jim@meyering.net>
+
+	* NEWS: Mention the AIX-strndup-bug vs. dircolors workaround.
+
+	Ensure that cat works with any of the options, -A -v -e -E -T,
+	when applied to files in /proc and /sys, even when the FIONREAD
+	ioctl produces nonsensical results.  Before this change, cat would
+	produce no output (or truncated output), for some linux kernels.
+
+	* src/cat.c (write_pending): New function, factored out of cat.
+	(cat): Also interpret a negative ioctl/FIONREAD count as indicating
+	that there are bytes to read.  Some versions of linux-2.6.16 do that.
+	Write any pending output before returning.
+	Reported by Dan Jacobson in <http://bugs.debian.org/370583>.
+	* NEWS: Mention this bug fix.
+	* tests/misc/cat-proc: New file.  Test for the above.
+	* tests/misc/Makefile.am (TESTS): Add cat-proc.
+
+2006-06-05  Paul Eggert  <eggert@cs.ucla.edu>
+
+	Fix problems when building with Solaris/SVR4/etc. make, which uses a
+	different and somewhat bogus implementation of VPATH.  In the
+	directory tests/misc, rename tests whose names might appear in the
+	Automake-generated rules.  For example, we can't use a test named
+	'test', since Automake generates a rule that contains the text
+	"if test -f ./$$tst; ...", and this might expand to something like
+	"if ../../../coreutils-6.0/tests/misc/test -f ./$$test; ...",
+	which executes the 'test' script rather than the 'test' command.
+	* tests/misc/false-status: Renamed from tests/misc/false.
+	* tests/misc/pwd-long: Renamed from tests/misc/pwd.
+	* tests/misc/sort-merge: Renamed from tests/misc/sort.
+	($prog): Set to 'sort' rather than to $PROG.
+	* tests/misc/Makefile.am (PROG): Take the basename of $$tst,
+	in case Solaris make has prepended the directory.
+	(TESTS): Adjust to above renamings.
+	* tests/misc/expand: Don't assign to PROG; no longer needed
+	now that Makefile.am sets PROG to the basename.
+	* tests/misc/fold: Likewise.
+
+2006-06-01  Jim Meyering  <jim@meyering.net>
+
+	Import from the trunk.
+
+	2006-06-01  Paul Eggert  <eggert@cs.ucla.edu>
+
+	Fix some porting problems in the test cases reported by
+	Ralf Wildenhues for HP-UX 11.23 in:
+	http://lists.gnu.org/archive/html/bug-coreutils/2006-05/msg00238.html
+	* tests/help-version: Don't assume that \< \> works in sed.
+	* tests/misc/close-stdout: Don't assume that >&- works.
+	Add a /dev/full test.
+	* tests/touch/no-create-missing: Don't assume that >&- works.
+
+2006-05-30  Jim Meyering  <jim@meyering.net>
+
+	* src/ls.c (usage): Add `v' to the list of sorting-related options.
+	From Justin Pryzby.
+
+2006-05-28  Ralf Wildenhues  <Ralf.Wildenhues@gmx.de>
+
+	* tests/cp/fail-perm: source lang-default.
+	* tests/rm/inaccessible: Likewise.
+
+2006-05-28  Jim Meyering  <jim@meyering.net>
+
+	* tests/rm/inaccessible: AIX 4.3.3 gives a different diagnostic.
+	Recognize it, too.  Reported by Ralf Wildenhues, in
+	http://lists.gnu.org/archive/html/bug-coreutils/2006-05/msg00192.html
+
+	Import this from the trunk, since it also affects AIX 4.3.3, according
+	to http://lists.gnu.org/archive/html/bug-coreutils/2006-05/msg00192.html
+
+	2005-11-16  Jim Meyering  <jim@meyering.net>
+
+	* tests/cp/fail-perm: Accommodate HPUX.  It appears to fail
+	with EACCES rather than EPERM.  Reported by Peter O'Gorman here:
+	http://article.gmane.org/gmane.comp.gnu.core-utils.bugs/5766
+
+2006-05-27  Jim Meyering  <jim@meyering.net>
+
+	* src/chgrp.c: Support new options: --preserve-root and
+	--no-preserve-root.  Somehow this program was skipped when those
+	options were added to chown, chmod, and rm.  Reported by
+	vaqflabuopac@spammotel.com in <http://bugs.debian.org/365656>.
+	* NEWS: Mention this.
+
+2006-05-25  Jim Meyering  <jim@meyering.net>
+
+	* configure.ac: Increase version to 5.97.
+	* configure: Regenerate with newer (from cvs) autoconf that
+	includes a fixed AC_FUNC_LSTAT_FOLLOWS_SLASHED_SYMLINK.
+
 2006-05-22  Jim Meyering  <jim@meyering.net>
 
 	* Version 5.96.

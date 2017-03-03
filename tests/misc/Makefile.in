@@ -300,15 +300,22 @@ TESTS_ENVIRONMENT = \
   PERL="$(PERL)" \
   BUILD_SRC_DIR="`pwd`/../../src" \
   PATH="`pwd`/../../src$(PATH_SEPARATOR)$$PATH" \
-  PROG=$$tst
+  PROG=`../../src/basename -- "$$tst"`
 
+
+# Do not choose a name that is a shell keyword like 'if', or a
+# commonly-used utility like 'cat' or 'test', as the name of a test.
+# Otherwise, VPATH builds will fail on hosts like Solaris, since they
+# will expand 'if test ...' to 'if .../test ...', and the '.../test'
+# will execute the test script rather than the standard utility.
 TESTS = \
+  cat-proc \
   stat-printf \
   stat-fmt \
   date \
   tac-continue \
   close-stdout \
-  pwd \
+  pwd-long \
   date-sec \
   paste-no-nl \
   expand \
@@ -316,10 +323,10 @@ TESTS = \
   nohup \
   head-elide-tail \
   split-fail \
-  false \
+  false-status \
   tty-eof \
   printf-hex \
-  nl split-l printf split-a head-pos sort head-c csplit nice pathchk1
+  nl split-l printf split-a head-pos sort-merge head-c csplit nice pathchk1
 
 all: all-am
 

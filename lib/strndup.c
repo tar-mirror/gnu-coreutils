@@ -28,7 +28,9 @@
 #include "strnlen.h"
 
 #undef __strndup
-#undef strndup
+#if _LIBC
+# undef strndup
+#endif
 
 #ifndef weak_alias
 # define __strndup strndup

@@ -1,9 +1,8 @@
-#serial 94   -*- autoconf -*-
+#serial 95   -*- autoconf -*-
 
 dnl Misc type-related macros for coreutils.
 
-# Copyright (C) 1998, 2000, 2001, 2002, 2003, 2004, 2005 Free Software
-# Foundation, Inc.
+# Copyright (C) 1998, 2000-2006 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,7 +22,7 @@ dnl Misc type-related macros for coreutils.
 
 AC_DEFUN([gl_MACROS],
 [
-  AC_PREREQ(2.58)
+  AC_PREREQ(2.59d)
 
   GNU_PACKAGE="GNU $PACKAGE"
   AC_DEFINE_UNQUOTED(GNU_PACKAGE, "$GNU_PACKAGE",

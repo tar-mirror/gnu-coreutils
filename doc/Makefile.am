@@ -11,7 +11,7 @@ EXTRA_DIST = perm.texi getdate.texi constants.texi doclicense.texi
 # Otherwise, it would also generate files with names like <package>.info-[123],
 # and those names all map to one 14-byte name (<package>.info-) on some crufty
 # old systems.
-MAKEINFO = makeinfo --no-split
+AM_MAKEINFOFLAGS = --no-split
 
 constants.texi: $(top_srcdir)/src/tail.c
 	LC_ALL=C \
@@ -40,14 +40,14 @@ check-texinfo:
 	$(EGREP) '$(_W)NUL$(W_)' $(srcdir)/*.texi && fail=1; \
 	grep '\$$@"' $(srcdir)/*.texi && fail=1; \
 	grep -n '[^[:punct:]]@footnote' $(srcdir)/*.texi && fail=1; \
-	grep -n filename $(srcdir)/*.texi|grep -vE 'setfilename|{filename}' \
+	grep -n filename $(srcdir)/*.texi|$(EGREP) -v 'setfilename|[{]filename[}]' \
 	  && fail=1; \
 	$(PERL) -e 1 2> /dev/null && { $(PERL) -ne \
 	  '/\bPOSIX\b/ && !/\@acronym{POSIX}/ && !/^\* / || /{posix}/ and print,exit 1' \
 	  $(srcdir)/*.texi 2> /dev/null || fail=1; }; \
-	grep -iwE 'builtins?' $(srcdir)/*.texi && fail=1; \
-	grep -iwE 'path(name)?s?' $(srcdir)/*.texi \
-	  | grep -vE '@vindex PATH$$|@env{PATH}' && fail=1; \
+	$(EGREP) -i '$(_W)builtins?$(W_)' $(srcdir)/*.texi && fail=1; \
+	$(EGREP) -i '$(_W)path(name)?s?$(W_)' $(srcdir)/*.texi \
+	  | $(EGREP) -v '@vindex PATH$$|@env[{]PATH[}]' && fail=1; \
 	exit $$fail
 
 check: check-texinfo

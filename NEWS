@@ -1,5 +1,28 @@
 GNU coreutils NEWS                                    -*- outline -*-
 
+* Major changes in release 5.97 (2006-06-24) [stable]
+
+** Bug fixes
+
+  rebuild with better autoconf test for when the lstat replacement
+  function is needed -- required for Solaris 9
+
+  cat with any of the options, -A -v -e -E -T, when applied to a
+  file in /proc or /sys (linux-specific), would truncate its output,
+  usually printing nothing.
+
+** Improved robustness
+
+  dircolors: a new autoconf run-test for AIX's buggy strndup function
+  prevents malfunction on that system;  may also affect cut, expand,
+  and unexpand.
+
+** New features
+
+  chgrp now supports --preserve-root, --no-preserve-root (default),
+  as it was documented to do, and just as chmod, chown, and rm do.
+
+
 * Major changes in release 5.96 (2006-05-22) [stable]
 
 ** Bug fixes

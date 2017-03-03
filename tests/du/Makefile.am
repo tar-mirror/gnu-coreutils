@@ -11,4 +11,5 @@ TESTS = \
   exclude no-x no-deref trailing-slash deref two-args slink
 EXTRA_DIST = $(TESTS)
 TESTS_ENVIRONMENT = \
+  PERL="$(PERL)" \
   PATH="`pwd`/../../src$(PATH_SEPARATOR)$$PATH"

@@ -1,3 +1,17 @@
+2006-06-12  Paul Eggert  <eggert@cs.ucla.edu>
+
+	* Makefile.am (check-texinfo): Use $(_W) and $(W_) instead of
+	assuming grep -w (which is not portable).
+
+2006-05-27  Ralf Wildenhues  <Ralf.Wildenhues@gmx.de>
+
+	* Makefile.am: Use `AM_MAKEINFOFLAGS' rather than
+	overwriting `MAKEINFO', so that `missing' can do its job.
+
+	* Makefile.am (check-texinfo): Use `$(EGREP)' instead of `grep -E'.
+	(check-texinfo): Use literal `{' only in brackets, i.e., [{] or [}],
+	to avoid triggering an error from Solaris 2.6's grep.
+
 2005-12-16  Jim Meyering  <jim@meyering.net>
 
 	* coreutils.texi (stat invocation) [--printf]: Describe new option.

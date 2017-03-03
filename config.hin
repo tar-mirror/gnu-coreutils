@@ -871,7 +871,7 @@
 /* Define to 1 if you have the `strncasecmp' function. */
 #undef HAVE_STRNCASECMP
 
-/* Define to 1 if you have the `strndup' function. */
+/* Define if you have the strndup() function and it works. */
 #undef HAVE_STRNDUP
 
 /* Define to 1 if you have the <stropts.h> header file. */
@@ -1415,7 +1415,7 @@
 
 /* If using the C implementation of alloca, define if you know the
    direction of stack growth for your system; otherwise it will be
-   automatically deduced at run-time.
+   automatically deduced at runtime.
 	STACK_DIRECTION > 0 => grows toward higher addresses
 	STACK_DIRECTION < 0 => grows toward lower addresses
 	STACK_DIRECTION = 0 => direction of growth unknown */
@@ -1739,6 +1739,9 @@
 
 /* Define to rpl_strcasecmp always. */
 #undef strcasecmp
+
+/* Define to rpl_strndup if the replacement function should be used, */
+#undef strndup
 
 /* Define to rpl_strnlen if the replacement function should be used. */
 #undef strnlen
