@@ -2,6 +2,8 @@
 AUTOMAKE_OPTIONS = 1.3 gnits
 
 TESTS = \
+  reply-no \
+  leak-fd \
   part-hardlink \
   hard-4 \
   hard-3 \

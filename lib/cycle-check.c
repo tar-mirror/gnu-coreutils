@@ -1,5 +1,6 @@
 /* help detect directory cycles efficiently
-   Copyright 2003 Free Software Foundation, Inc.
+
+   Copyright (C) 2003, 2004, 2005 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -14,11 +15,11 @@
    You should have received a copy of the GNU General Public License
    along with this program; see the file COPYING.
    If not, write to the Free Software Foundation,
-   59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* Written by Jim Meyering */
 
-#if HAVE_CONFIG_H
+#ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
@@ -31,7 +32,6 @@
 #include <stdbool.h>
 
 #include "cycle-check.h"
-#include "xalloc.h"
 
 #define SAME_INODE(Stat_buf_1, Stat_buf_2) \
   ((Stat_buf_1).st_ino == (Stat_buf_2).st_ino \
@@ -39,8 +39,10 @@
 
 #define CC_MAGIC 9827862
 
+/* Return true if I is a power of 2, or is zero.  */
+
 static inline bool
-is_power_of_two (unsigned int i)
+is_zero_or_power_of_two (uintmax_t i)
 {
   return (i & (i - 1)) == 0;
 }
@@ -73,8 +75,16 @@ cycle_check (struct cycle_check_state *state, struct stat const *sb)
 
   /* If the number of `descending' chdir calls is a power of two,
      record the dev/ino of the current directory.  */
-  if (is_power_of_two (++(state->chdir_counter)))
+  if (is_zero_or_power_of_two (++(state->chdir_counter)))
     {
+      /* On all architectures that we know about, if the counter
+	 overflows then there is a directory cycle here somewhere,
+	 even if we haven't detected it yet.  Typically this happens
+	 only after the counter is incremented 2**64 times, so it's a
+	 fairly theoretical point.  */
+      if (state->chdir_counter == 0)
+	return true;
+
       state->dev_ino.st_dev = sb->st_dev;
       state->dev_ino.st_ino = sb->st_ino;
     }

@@ -1,5 +1,7 @@
 /* Parse dates for touch and date.
-   Copyright (C) 1989, 1990, 1991, 1998, 2000-2003 Free Software Foundation Inc.
+
+   Copyright (C) 1989, 1990, 1991, 1998, 2000, 2001, 2002, 2003, 2004, 2005
+   Free Software Foundation Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -13,7 +15,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* Yacc-based version written by Jim Kingdon and David MacKenzie.
    Rewritten by Jim Meyering.  */
@@ -36,7 +38,10 @@
 #endif
 
 #include "posixtm.h"
-#include "unlocked-io.h"
+
+#if USE_UNLOCKED_IO
+# include "unlocked-io.h"
+#endif
 
 /* ISDIGIT differs from isdigit, as follows:
    - Its arg may be any int or unsigned int; it need not be an unsigned char.
@@ -45,7 +50,7 @@
    POSIX says that only '0' through '9' are digits.  Prefer ISDIGIT to
    ISDIGIT_LOCALE unless it's important to use the locale's definition
    of `digit' even when the host does not conform to POSIX.  */
-#define ISDIGIT(c) ((unsigned) (c) - '0' <= 9)
+#define ISDIGIT(c) ((unsigned int) (c) - '0' <= 9)
 
 time_t mktime ();
 
@@ -113,7 +118,7 @@ posix_time_parse (struct tm *tm, const char *s, unsigned int syntax_bits)
   const char *dot = NULL;
   int pair[6];
   int *p;
-  unsigned int i;
+  size_t i;
 
   size_t s_len = strlen (s);
   size_t len = (((syntax_bits & PDS_SECONDS) && (dot = strchr (s, '.')))
@@ -188,7 +193,15 @@ posix_time_parse (struct tm *tm, const char *s, unsigned int syntax_bits)
 bool
 posixtime (time_t *p, const char *s, unsigned int syntax_bits)
 {
-  struct tm tm0;
+  struct tm tm0
+#ifdef lint
+  /* Placate gcc-4's -Wuninitialized.
+     posix_time_parse fails to set all of tm0 only when it returns
+     nonzero (due to year() returning nonzero), and in that case,
+     this code doesn't use the tm0 at all.  */
+    = { 0, }
+#endif
+    ;
   struct tm tm1;
   struct tm const *tm;
   time_t t;
@@ -304,7 +317,7 @@ main (void)
 	{
 	  printf ("%-15s %2u ", time_str, syntax_bits);
 	  if (posixtime (&t, time_str, syntax_bits))
-	    printf ("%12ld %s", (long) t, ctime (&t));
+	    printf ("%12ld %s", (long int) t, ctime (&t));
 	  else
 	    printf ("%12s %s", "*", "*\n");
 	}

@@ -1,5 +1,5 @@
 /* csplit - split a file into sections determined by context lines
-   Copyright (C) 91, 1995-2004 Free Software Foundation, Inc.
+   Copyright (C) 91, 1995-2005 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -13,14 +13,13 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* Written by Stuart Kemp, cpsrk@groper.jcu.edu.au.
    Modified by David MacKenzie, djm@gnu.ai.mit.edu. */
 
 #include <config.h>
 
-#include <stdio.h>
 #include <getopt.h>
 #include <sys/types.h>
 #include <signal.h>
@@ -30,9 +29,23 @@
 #include <regex.h>
 
 #include "error.h"
+#include "fd-reopen.h"
 #include "inttostr.h"
+#include "quote.h"
 #include "safe-read.h"
+#include "stdio--.h"
 #include "xstrtol.h"
+
+/* Use SA_NOCLDSTOP as a proxy for whether the sigaction machinery is
+   present.  */
+#ifndef SA_NOCLDSTOP
+# define SA_NOCLDSTOP 0
+# define sigprocmask(How, Set, Oset) /* empty */
+# define sigset_t int
+# if ! HAVE_SIGINTERRUPT
+#  define siginterrupt(sig, flag) /* empty */
+# endif
+#endif
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "csplit"
@@ -85,9 +98,9 @@ struct cstring
    These structures are linked together if needed. */
 struct line
 {
-  unsigned int used;		/* Number of offsets used in this struct. */
-  unsigned int insert_index;	/* Next offset to use when inserting line. */
-  unsigned int retrieve_index;	/* Next index to use when retrieving line. */
+  size_t used;			/* Number of offsets used in this struct. */
+  size_t insert_index;		/* Next offset to use when inserting line. */
+  size_t retrieve_index;	/* Next index to use when retrieving line. */
   struct cstring starts[CTRL_SIZE]; /* Lines in the data area. */
   struct line *next;		/* Next in linked list. */
 };
@@ -110,15 +123,12 @@ struct buffer_record
 
 static void close_output_file (void);
 static void create_output_file (void);
-static void delete_all_files (void);
+static void delete_all_files (bool);
 static void save_line_to_file (const struct cstring *line);
 void usage (int status);
 
 /* The name this program was run with. */
 char *program_name;
-
-/* Input file descriptor. */
-static int input_desc = 0;
 
 /* Start of buffer list. */
 static struct buffer_record *head = NULL;
@@ -139,19 +149,19 @@ static uintmax_t current_line = 0;
 static bool have_read_eof = false;
 
 /* Name of output files. */
-static char *filename_space = NULL;
+static char * volatile filename_space = NULL;
 
 /* Prefix part of output file names. */
-static char *prefix = NULL;
+static char * volatile prefix = NULL;
 
 /* Suffix part of output file names. */
-static char *suffix = NULL;
+static char * volatile suffix = NULL;
 
 /* Number of digits to use in output file names. */
-static int digits = 2;
+static int volatile digits = 2;
 
 /* Number of files created so far. */
-static unsigned int files_created = 0;
+static unsigned int volatile files_created = 0;
 
 /* Number of bytes written to current file. */
 static uintmax_t bytes_written;
@@ -169,7 +179,7 @@ static char **global_argv;
 static bool suppress_count;
 
 /* If true, remove output files on error. */
-static bool remove_files;
+static bool volatile remove_files;
 
 /* If true, remove all output files which have a zero length. */
 static bool elide_empty_files;
@@ -180,6 +190,9 @@ static struct control *controls;
 
 /* Number of elements in `controls'. */
 static size_t control_used;
+
+/* The set of signals that are caught.  */
+static sigset_t caught_signals;
 
 static struct option const longopts[] =
 {
@@ -201,12 +214,16 @@ static struct option const longopts[] =
 static void
 cleanup (void)
 {
+  sigset_t oldset;
+
   close_output_file ();
 
-  if (remove_files)
-    delete_all_files ();
+  sigprocmask (SIG_BLOCK, &caught_signals, &oldset);
+  delete_all_files (false);
+  sigprocmask (SIG_SETMASK, &oldset, NULL);
 }
 
+static void cleanup_fatal (void) ATTRIBUTE_NORETURN;
 static void
 cleanup_fatal (void)
 {
@@ -214,34 +231,32 @@ cleanup_fatal (void)
   exit (EXIT_FAILURE);
 }
 
-static RETSIGTYPE
+extern void
+xalloc_die (void)
+{
+  error (0, 0, "%s", _("memory exhausted"));
+  cleanup_fatal ();
+}
+
+static void
 interrupt_handler (int sig)
 {
-#ifdef SA_NOCLDSTOP
-  struct sigaction sigact;
+  if (! SA_NOCLDSTOP)
+    signal (sig, SIG_IGN);
 
-  sigact.sa_handler = SIG_DFL;
-  sigemptyset (&sigact.sa_mask);
-  sigact.sa_flags = 0;
-  sigaction (sig, &sigact, NULL);
-#else
+  delete_all_files (true);
+
   signal (sig, SIG_DFL);
-#endif
-  cleanup ();
   raise (sig);
 }
 
 /* Keep track of NUM bytes of a partial line in buffer START.
-   These bytes will be retrieved later when another large buffer is read.
-   It is not necessary to create a new buffer for these bytes; instead,
-   we keep a pointer to the existing buffer.  This buffer *is* on the
-   free list, and when the next buffer is obtained from this list
-   (even if it is this one), these bytes will be placed at the
-   start of the new buffer. */
+   These bytes will be retrieved later when another large buffer is read.  */
 
 static void
 save_to_hold_area (char *start, size_t num)
 {
+  free (hold_area);
   hold_area = start;
   hold_count = num;
 }
@@ -257,7 +272,7 @@ read_input (char *dest, size_t max_n_bytes)
   if (max_n_bytes == 0)
     return 0;
 
-  bytes_read = safe_read (input_desc, dest, max_n_bytes);
+  bytes_read = safe_read (STDIN_FILENO, dest, max_n_bytes);
 
   if (bytes_read == 0)
     have_read_eof = true;
@@ -367,7 +382,7 @@ record_line_starts (struct buffer_record *b)
 	  lines++;
 	}
       else
-	save_to_hold_area (line_start, bytes_left);
+	save_to_hold_area (xmemdup (line_start, bytes_left), bytes_left);
     }
 
   b->num_lines = lines;
@@ -423,6 +438,7 @@ static void
 free_buffer (struct buffer_record *buf)
 {
   free (buf->buffer);
+  buf->buffer = NULL;
 }
 
 /* Append buffer BUF to the linked list of buffers that contain
@@ -476,7 +492,7 @@ load_buffer (void)
   if (bytes_wanted < hold_count)
     bytes_wanted = hold_count;
 
-  do
+  while (1)
     {
       b = get_new_buffer (bytes_wanted);
       bytes_avail = b->bytes_alloc; /* Size of buffer returned. */
@@ -485,8 +501,7 @@ load_buffer (void)
       /* First check the `holding' area for a partial line. */
       if (hold_count)
 	{
-	  if (p != hold_area)
-	    memcpy (p, hold_area, hold_count);
+	  memcpy (p, hold_area, hold_count);
 	  p += hold_count;
 	  b->bytes_used += hold_count;
 	  bytes_avail -= hold_count;
@@ -496,11 +511,18 @@ load_buffer (void)
       b->bytes_used += read_input (p, bytes_avail);
 
       lines_found = record_line_starts (b);
-      bytes_wanted = b->bytes_alloc * 2;
       if (!lines_found)
 	free_buffer (b);
+
+      if (lines_found || have_read_eof)
+	break;
+
+      if (xalloc_oversized (2, b->bytes_alloc))
+	xalloc_die ();
+      bytes_wanted = 2 * b->bytes_alloc;
+      free_buffer (b);
+      free (b);
     }
-  while (!lines_found && !have_read_eof);
 
   if (lines_found)
     save_buffer (b);
@@ -616,19 +638,13 @@ no_more_lines (void)
   return find_line (current_line + 1) == NULL;
 }
 
-/* Set the name of the input file to NAME and open it. */
+/* Open NAME as standard input.  */
 
 static void
 set_input_file (const char *name)
 {
-  if (STREQ (name, "-"))
-    input_desc = 0;
-  else
-    {
-      input_desc = open (name, O_RDONLY);
-      if (input_desc < 0)
-	error (EXIT_FAILURE, errno, "%s", name);
-    }
+  if (! STREQ (name, "-") && fd_reopen (STDIN_FILENO, name, O_RDONLY, 0) < 0)
+    error (EXIT_FAILURE, errno, _("cannot open %s for reading"), quote (name));
 }
 
 /* Write all lines from the beginning of the buffer up to, but
@@ -681,13 +697,15 @@ dump_rest_of_file (void)
 /* Handle an attempt to read beyond EOF under the control of record P,
    on iteration REPETITION if nonzero. */
 
+static void handle_line_error (const struct control *, uintmax_t)
+     ATTRIBUTE_NORETURN;
 static void
 handle_line_error (const struct control *p, uintmax_t repetition)
 {
   char buf[INT_BUFSIZE_BOUND (uintmax_t)];
 
-  fprintf (stderr, _("%s: `%s': line number out of range"),
-	   program_name, umaxtostr (p->lines_required, buf));
+  fprintf (stderr, _("%s: %s: line number out of range"),
+	   program_name, quote (umaxtostr (p->lines_required, buf)));
   if (repetition)
     fprintf (stderr, _(" on repetition %s\n"), umaxtostr (repetition, buf));
   else
@@ -728,11 +746,12 @@ process_line_count (const struct control *p, uintmax_t repetition)
     handle_line_error (p, repetition);
 }
 
+static void regexp_error (struct control *, uintmax_t, bool) ATTRIBUTE_NORETURN;
 static void
 regexp_error (struct control *p, uintmax_t repetition, bool ignore)
 {
-  fprintf (stderr, _("%s: `%s': match not found"),
-	   program_name, global_argv[p->argnum]);
+  fprintf (stderr, _("%s: %s: match not found"),
+	   program_name, quote (global_argv[p->argnum]));
 
   if (repetition)
     {
@@ -761,7 +780,7 @@ process_regexp (struct control *p, uintmax_t repetition)
   size_t line_len;		/* To make "$" in regexps work. */
   uintmax_t break_line;		/* First line number of next file. */
   bool ignore = p->ignore;	/* If true, skip this section. */
-  int ret;
+  regoff_t ret;
 
   if (!ignore)
     create_output_file ();
@@ -838,7 +857,7 @@ process_regexp (struct control *p, uintmax_t repetition)
 	      error (0, 0, _("error in regular expression search"));
 	      cleanup_fatal ();
 	    }
-	  if (ret >= 0)
+	  if (ret != -1)
 	    break;
 	}
     }
@@ -884,16 +903,21 @@ split_file (void)
   close_output_file ();
 }
 
-/* Return the name of output file number NUM. */
+/* Return the name of output file number NUM.
+
+   This function is called from a signal handler, so it should invoke
+   only reentrant functions that are async-signal-safe.  POSIX does
+   not guarantee this for the functions called below, but we don't
+   know of any hosts where this implementation isn't safe.  */
 
 static char *
 make_filename (unsigned int num)
 {
   strcpy (filename_space, prefix);
   if (suffix)
-    sprintf (filename_space+strlen(prefix), suffix, num);
+    sprintf (filename_space + strlen (prefix), suffix, num);
   else
-    sprintf (filename_space+strlen(prefix), "%0*u", digits, num);
+    sprintf (filename_space + strlen (prefix), "%0*u", digits, num);
   return filename_space;
 }
 
@@ -902,30 +926,47 @@ make_filename (unsigned int num)
 static void
 create_output_file (void)
 {
+  sigset_t oldset;
+  bool fopen_ok;
+  int fopen_errno;
+
   output_filename = make_filename (files_created);
+
+  /* Create the output file in a critical section, to avoid races.  */
+  sigprocmask (SIG_BLOCK, &caught_signals, &oldset);
   output_stream = fopen (output_filename, "w");
-  if (output_stream == NULL)
+  fopen_ok = (output_stream != NULL);
+  fopen_errno = errno;
+  files_created += fopen_ok;
+  sigprocmask (SIG_SETMASK, &oldset, NULL);
+
+  if (! fopen_ok)
     {
-      error (0, errno, "%s", output_filename);
+      error (0, fopen_errno, "%s", output_filename);
       cleanup_fatal ();
     }
-  files_created++;
   bytes_written = 0;
 }
 
-/* Delete all the files we have created. */
+/* If requested, delete all the files we have created.  This function
+   must be called only from critical sections.  */
 
 static void
-delete_all_files (void)
+delete_all_files (bool in_signal_handler)
 {
   unsigned int i;
+
+  if (! remove_files)
+    return;
 
   for (i = 0; i < files_created; i++)
     {
       const char *name = make_filename (i);
-      if (unlink (name))
+      if (unlink (name) != 0 && !in_signal_handler)
 	error (0, errno, "%s", name);
     }
+
+  files_created = 0;
 }
 
 /* Close the current output file and print the count
@@ -938,7 +979,7 @@ close_output_file (void)
     {
       if (ferror (output_stream))
 	{
-	  error (0, 0, _("write error for `%s'"), output_filename);
+	  error (0, 0, _("write error for %s"), quote (output_filename));
 	  output_stream = NULL;
 	  cleanup_fatal ();
 	}
@@ -950,9 +991,19 @@ close_output_file (void)
 	}
       if (bytes_written == 0 && elide_empty_files)
 	{
-	  if (unlink (output_filename))
-	    error (0, errno, "%s", output_filename);
-	  files_created--;
+	  sigset_t oldset;
+	  bool unlink_ok;
+	  int unlink_errno;
+
+	  /* Remove the output file in a critical section, to avoid races.  */
+	  sigprocmask (SIG_BLOCK, &caught_signals, &oldset);
+	  unlink_ok = (unlink (output_filename) == 0);
+	  unlink_errno = errno;
+	  files_created -= unlink_ok;
+	  sigprocmask (SIG_SETMASK, &oldset, NULL);
+
+	  if (! unlink_ok)
+	    error (0, unlink_errno, "%s", output_filename);
 	}
       else
 	{
@@ -985,7 +1036,7 @@ new_control_record (void)
   struct control *p;
 
   if (control_used == control_allocated)
-    controls = x2nrealloc (controls, &control_allocated, sizeof *controls);
+    controls = X2NREALLOC (controls, &control_allocated);
   p = &controls[control_used++];
   p->regexpr = NULL;
   p->repeat = 0;
@@ -1069,7 +1120,7 @@ extract_regexp (int argnum, bool ignore, char *str)
   p->re_compiled.allocated = len * 2;
   p->re_compiled.buffer = xmalloc (p->re_compiled.allocated);
   p->re_compiled.fastmap = xmalloc (1 << CHAR_BIT);
-  p->re_compiled.translate = 0;
+  p->re_compiled.translate = NULL;
   err = re_compile_pattern (p->regexpr, len, &p->re_compiled);
   if (err)
     {
@@ -1115,14 +1166,14 @@ parse_patterns (int argc, int start, char **argv)
 	    {
 	      char buf[INT_BUFSIZE_BOUND (uintmax_t)];
 	      error (EXIT_FAILURE, 0,
-	       _("line number `%s' is smaller than preceding line number, %s"),
-		     argv[i], umaxtostr (last_val, buf));
+	       _("line number %s is smaller than preceding line number, %s"),
+		     quote (argv[i]), umaxtostr (last_val, buf));
 	    }
 
 	  if (val == last_val)
 	    error (0, 0,
-	   _("warning: line number `%s' is the same as preceding line number"),
-		   argv[i]);
+	   _("warning: line number %s is the same as preceding line number"),
+		   quote (argv[i]));
 
 	  last_val = val;
 
@@ -1273,9 +1324,6 @@ main (int argc, char **argv)
 {
   int optc;
   unsigned long int val;
-#ifdef SA_NOCLDSTOP
-  struct sigaction oldact, newact;
-#endif
 
   initialize_main (&argc, &argv);
   program_name = argv[0];
@@ -1292,46 +1340,9 @@ main (int argc, char **argv)
   remove_files = true;
   prefix = DEFAULT_PREFIX;
 
-  /* Change the way xmalloc and xrealloc fail.  */
-  xalloc_fail_func = cleanup;
-
-#ifdef SA_NOCLDSTOP
-  newact.sa_handler = interrupt_handler;
-  sigemptyset (&newact.sa_mask);
-  newact.sa_flags = 0;
-
-  sigaction (SIGHUP, NULL, &oldact);
-  if (oldact.sa_handler != SIG_IGN)
-    sigaction (SIGHUP, &newact, NULL);
-
-  sigaction (SIGINT, NULL, &oldact);
-  if (oldact.sa_handler != SIG_IGN)
-    sigaction (SIGINT, &newact, NULL);
-
-  sigaction (SIGQUIT, NULL, &oldact);
-  if (oldact.sa_handler != SIG_IGN)
-    sigaction (SIGQUIT, &newact, NULL);
-
-  sigaction (SIGTERM, NULL, &oldact);
-  if (oldact.sa_handler != SIG_IGN)
-    sigaction (SIGTERM, &newact, NULL);
-#else
-  if (signal (SIGHUP, SIG_IGN) != SIG_IGN)
-    signal (SIGHUP, interrupt_handler);
-  if (signal (SIGINT, SIG_IGN) != SIG_IGN)
-    signal (SIGINT, interrupt_handler);
-  if (signal (SIGQUIT, SIG_IGN) != SIG_IGN)
-    signal (SIGQUIT, interrupt_handler);
-  if (signal (SIGTERM, SIG_IGN) != SIG_IGN)
-    signal (SIGTERM, interrupt_handler);
-#endif
-
   while ((optc = getopt_long (argc, argv, "f:b:kn:sqz", longopts, NULL)) != -1)
     switch (optc)
       {
-      case 0:
-	break;
-
       case 'f':
 	prefix = optarg;
 	break;
@@ -1348,7 +1359,7 @@ main (int argc, char **argv)
 	if (xstrtoul (optarg, NULL, 10, &val, "") != LONGINT_OK
 	    || val > INT_MAX)
 	  error (EXIT_FAILURE, 0, _("%s: invalid number"), optarg);
-	digits = (int) val;
+	digits = val;
 	break;
 
       case 's':
@@ -1370,7 +1381,10 @@ main (int argc, char **argv)
 
   if (argc - optind < 2)
     {
-      error (0, 0, _("too few arguments"));
+      if (argc <= optind)
+	error (0, 0, _("missing operand"));
+      else
+	error (0, 0, _("missing operand after %s"), quote (argv[argc - 1]));
       usage (EXIT_FAILURE);
     }
 
@@ -1383,9 +1397,42 @@ main (int argc, char **argv)
 
   parse_patterns (argc, optind, argv);
 
+  {
+    int i;
+    static int const sig[] = { SIGHUP, SIGINT, SIGQUIT, SIGTERM };
+    enum { nsigs = sizeof sig / sizeof sig[0] };
+
+#if SA_NOCLDSTOP
+    struct sigaction act;
+
+    sigemptyset (&caught_signals);
+    for (i = 0; i < nsigs; i++)
+      {
+	sigaction (sig[i], NULL, &act);
+	if (act.sa_handler != SIG_IGN)
+	  sigaddset (&caught_signals, sig[i]);
+      }
+
+    act.sa_handler = interrupt_handler;
+    act.sa_mask = caught_signals;
+    act.sa_flags = 0;
+
+    for (i = 0; i < nsigs; i++)
+      if (sigismember (&caught_signals, sig[i]))
+	sigaction (sig[i], &act, NULL);
+#else
+    for (i = 0; i < nsigs; i++)
+      if (signal (sig[i], SIG_IGN) != SIG_IGN)
+	{
+	  signal (sig[i], interrupt_handler);
+	  siginterrupt (sig[i], 1);
+	}
+#endif
+  }
+
   split_file ();
 
-  if (close (input_desc) < 0)
+  if (close (STDIN_FILENO) != 0)
     {
       error (0, errno, _("read error"));
       cleanup_fatal ();
@@ -1407,7 +1454,7 @@ Usage: %s [OPTION]... FILE PATTERN...\n\
 "),
 	      program_name);
       fputs (_("\
-Output pieces of FILE separated by PATTERN(s) to files `xx01', `xx02', ...,\n\
+Output pieces of FILE separated by PATTERN(s) to files `xx00', `xx01', ...,\n\
 and output byte counts of each piece to standard output.\n\
 \n\
 "), stdout);

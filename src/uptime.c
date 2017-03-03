@@ -1,5 +1,5 @@
 /* GNU's uptime.
-   Copyright (C) 1992-2002, 2004 Free Software Foundation, Inc.
+   Copyright (C) 1992-2002, 2004, 2005 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* Created by hacking who.c by Kaveh Ghazi ghazi@caip.rutgers.edu.  */
 
@@ -28,8 +28,10 @@
 # include <sys/sysctl.h>
 #endif
 
+#include "c-strtod.h"
 #include "error.h"
 #include "long-options.h"
+#include "quote.h"
 #include "readutmp.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
@@ -42,19 +44,14 @@ int getloadavg ();
 /* The name this program was run with. */
 char *program_name;
 
-static struct option const longopts[] =
-{
-  {NULL, 0, NULL, 0}
-};
-
 static void
-print_uptime (int n, const STRUCT_UTMP *this)
+print_uptime (size_t n, const STRUCT_UTMP *this)
 {
-  register int entries = 0;
+  size_t entries = 0;
   time_t boot_time = 0;
   time_t time_now;
   time_t uptime = 0;
-  int updays;
+  long int updays;
   int uphours;
   int upmins;
   struct tm *tmn;
@@ -68,16 +65,14 @@ print_uptime (int n, const STRUCT_UTMP *this)
   if (fp != NULL)
     {
       char buf[BUFSIZ];
-      int res;
       char *b = fgets (buf, BUFSIZ, fp);
       if (b == buf)
 	{
-	  /* The following sscanf must use the C locale.  */
-	  setlocale (LC_NUMERIC, "C");
-	  res = sscanf (buf, "%lf", &upsecs);
-	  setlocale (LC_NUMERIC, "");
-	  if (res == 1)
-	    uptime = (time_t) upsecs;
+	  char *end_ptr;
+	  upsecs = c_strtod (buf, &end_ptr);
+	  if (buf != end_ptr)
+	    uptime = (0 <= upsecs && upsecs < TYPE_MAXIMUM (time_t)
+		      ? upsecs : -1);
 	}
 
       fclose (fp);
@@ -100,26 +95,12 @@ print_uptime (int n, const STRUCT_UTMP *this)
      ones, also in the process possibly gleaning boottime. */
   while (n--)
     {
-      if (UT_USER (this) [0]
-#ifdef USER_PROCESS
-	  && this->ut_type == USER_PROCESS
-#endif
-	  )
-	{
-	  ++entries;
-	}
-      /* If BOOT_MSG is defined, we can get boottime from utmp.  This avoids
-	 possibly needing special privs to read /dev/kmem. */
-#ifdef BOOT_MSG
-# if HAVE_PROC_UPTIME
-      if (uptime == 0)
-# endif /* HAVE_PROC_UPTIME */
-	if (STREQ (this->ut_line, BOOT_MSG))
-	  boot_time = UT_TIME_MEMBER (this);
-#endif /* BOOT_MSG */
+      entries += IS_USER_PROCESS (this);
+      if (UT_TYPE_BOOT_TIME (this))
+	boot_time = UT_TIME_MEMBER (this);
       ++this;
     }
-  time_now = time (0);
+  time_now = time (NULL);
 #if defined HAVE_PROC_UPTIME
   if (uptime == 0)
 #endif
@@ -140,12 +121,18 @@ print_uptime (int n, const STRUCT_UTMP *this)
 	    tmn->tm_min, (tmn->tm_hour < 12 ? _("am") : _("pm")));
   else
     printf (_(" ??:????  up "));
-  if (updays > 0)
-    printf (ngettext("%d day", "%d days", updays), updays);
-  printf (" %2d:%02d,  ", uphours, upmins);
-  printf (ngettext ("%d user", "%d users", entries), entries);
+  if (uptime == (time_t) -1)
+    printf (_("???? days ??:??,  "));
+  else
+    {
+      if (0 < updays)
+	printf (ngettext ("%ld day", "%ld days", updays), updays);
+      printf (" %2d:%02d,  ", uphours, upmins);
+    }
+  printf (ngettext ("%lu user", "%lu users", entries),
+	  (unsigned long int) entries);
 
-#if defined (HAVE_GETLOADAVG) || defined (C_GETLOADAVG)
+#if defined HAVE_GETLOADAVG || defined C_GETLOADAVG
   loads = getloadavg (avg, 3);
 #else
   loads = -1;
@@ -167,16 +154,16 @@ print_uptime (int n, const STRUCT_UTMP *this)
 }
 
 /* Display the system uptime and the number of users on the system,
-   according to utmp file FILENAME. */
+   according to utmp file FILENAME.  Use read_utmp OPTIONS to read the
+   utmp file.  */
 
 static void
-uptime (const char *filename)
+uptime (const char *filename, int options)
 {
-  int n_users;
+  size_t n_users;
   STRUCT_UTMP *utmp_buf;
-  int fail = read_utmp (filename, &n_users, &utmp_buf);
 
-  if (fail)
+  if (read_utmp (filename, &n_users, &utmp_buf, options) != 0)
     error (EXIT_FAILURE, errno, "%s", filename);
 
   print_uptime (n_users, utmp_buf);
@@ -209,7 +196,6 @@ If FILE is not specified, use %s.  %s as FILE is common.\n\
 int
 main (int argc, char **argv)
 {
-  int optc, longind;
   initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
@@ -220,31 +206,21 @@ main (int argc, char **argv)
 
   parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
 		      usage, AUTHORS, (char const *) NULL);
-
-  while ((optc = getopt_long (argc, argv, "", longopts, &longind)) != -1)
-    {
-      switch (optc)
-	{
-	case 0:
-	  break;
-
-	default:
-	  usage (EXIT_FAILURE);
-	}
-    }
+  if (getopt_long (argc, argv, "", NULL, NULL) != -1)
+    usage (EXIT_FAILURE);
 
   switch (argc - optind)
     {
     case 0:			/* uptime */
-      uptime (UTMP_FILE);
+      uptime (UTMP_FILE, READ_UTMP_CHECK_PIDS);
       break;
 
     case 1:			/* uptime <utmp file> */
-      uptime (argv[optind]);
+      uptime (argv[optind], 0);
       break;
 
     default:			/* lose */
-      error (0, 0, _("too many arguments"));
+      error (0, 0, _("extra operand %s"), quote (argv[optind + 1]));
       usage (EXIT_FAILURE);
     }
 

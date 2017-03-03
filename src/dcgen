@@ -1,11 +1,7 @@
 #!/usr/bin/perl -w
-# -*- perl -*-
+# dcgen -- convert dircolors.hin to dircolors.h.
 
-eval 'exec /p/bin/perl -S $0 ${1+"$@"}'
-    if 0;
-
-# dcgen -- generate C declarations of arrays of lines and line lengths
-# Copyright (C) 1996, 1998 Free Software Foundation, Inc.
+# Copyright (C) 1996, 1998, 2004, 2005 Free Software Foundation, Inc.
 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,52 +15,41 @@ eval 'exec /p/bin/perl -S $0 ${1+"$@"}'
 
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-# 02111-1307, USA.
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301, USA.
 
 # written by Jim Meyering
 
-# If you uncomment the following lines, you should also do
-# s/chop/chomp and s/local/my/.
-#require 5.002;
-#use strict;
+require 5.002;
+use strict;
+(my $ME = $0) =~ s|.*/||;
 
-# Convert an arbitrary file to dcl of two arrays.
-# One of lines, the other of lengths.
+# A global destructor to close standard output with error checking.
+sub END
+{
+  defined fileno STDOUT
+    or return;
+  close STDOUT
+    and return;
+  warn "$ME: closing standard output: $!\n";
+  $? ||= 1;
+}
 
-local $prefix = 'G_';
-
-local @line;
+my @line;
 while (<>)
   {
-    chop;
-    push (@line, $_);
+    chomp;
+    s/[[:blank:]]+/ /g;
+    $_
+      and push @line, $_;
   }
 
-local $n = @line;
-print "#define ${prefix}N_LINES $n\n\n";
+my $last_line = pop @line;
+my $indent = '  ';
 
-local $indent = '  ';
-print "const size_t ${prefix}line_length[${prefix}N_LINES] =\n{\n$indent";
-local $ind = $indent;
-local $i;
-for ($i = 0; $i < @line; $i++)
+print "static char const G_line[] =\n";
+foreach (@line)
   {
-    local $comma = ($i < @line - 1 ? ',' : '');
-    $ind = '' if $i == @line - 1;
-    local $sep = ($i && $i % 18 == 0 || $i == @line - 1 ? "\n$ind" : ' ');
-    print length ($line[$i]), $comma, $sep;
+    print "$indent\"$_\\0\"\n";
   }
-print "};\n\n";
-
-print "const char *const ${prefix}line[${prefix}N_LINES] =\n{\n";
-while (1)
-  {
-    $_ = shift (@line);
-    local $comma = (@line ? ',' : '');
-    print "$indent\"$_\"$comma\n";
-    last if !@line;
-  }
-print "};\n";
-
-exit (0);
+print "$indent\"$last_line\";\n";

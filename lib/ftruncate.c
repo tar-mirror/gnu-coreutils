@@ -1,7 +1,7 @@
 /* ftruncate emulations that work on some System V's.
    This file is in the public domain.  */
 
-#if HAVE_CONFIG_H
+#ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
@@ -23,9 +23,7 @@ ftruncate (int fd, off_t length)
 
 #  include <sys/stat.h>
 #  include <errno.h>
-#  if HAVE_UNISTD_H
-#   include <unistd.h>
-#  endif
+#  include <unistd.h>
 
 int
 ftruncate (int fd, off_t length)
@@ -79,9 +77,6 @@ ftruncate (int fd, off_t length)
 #  else /* not F_CHSIZE nor F_FREESP nor HAVE_CHSIZE */
 
 #   include <errno.h>
-#   ifndef errno
-extern int errno;
-#   endif
 
 int
 ftruncate (int fd, off_t length)

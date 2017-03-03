@@ -1,5 +1,5 @@
 /* sleep - delay for a specified amount of time.
-   Copyright (C) 84, 1991-1997, 1999-2004 Free Software Foundation, Inc.
+   Copyright (C) 84, 1991-1997, 1999-2005 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 #include <config.h>
 #include <stdio.h>
@@ -25,6 +25,7 @@
 #include "c-strtod.h"
 #include "error.h"
 #include "long-options.h"
+#include "quote.h"
 #include "xnanosleep.h"
 #include "xstrtod.h"
 
@@ -35,11 +36,6 @@
 
 /* The name by which this program was run. */
 char *program_name;
-
-static struct option const long_options[] =
-{
-  {0, 0, 0, 0}
-};
 
 void
 usage (int status)
@@ -70,12 +66,12 @@ point number.\n\
    scale *X by the multiplier implied by SUFFIX_CHAR.  SUFFIX_CHAR may
    be the NUL byte or `s' to denote seconds, `m' for minutes, `h' for
    hours, or `d' for days.  If SUFFIX_CHAR is invalid, don't modify *X
-   and return nonzero.  Otherwise return zero.  */
+   and return false.  Otherwise return true.  */
 
-static int
+static bool
 apply_suffix (double *x, char suffix_char)
 {
-  unsigned int multiplier;
+  int multiplier;
 
   switch (suffix_char)
     {
@@ -93,15 +89,12 @@ apply_suffix (double *x, char suffix_char)
       multiplier = 60 * 60 * 24;
       break;
     default:
-      multiplier = 0;
+      return false;
     }
-
-  if (multiplier == 0)
-    return 1;
 
   *x *= multiplier;
 
-  return 0;
+  return true;
 }
 
 int
@@ -109,8 +102,7 @@ main (int argc, char **argv)
 {
   int i;
   double seconds = 0.0;
-  int c;
-  int fail = 0;
+  bool ok = true;
 
   initialize_main (&argc, &argv);
   program_name = argv[0];
@@ -122,22 +114,12 @@ main (int argc, char **argv)
 
   parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
 		      usage, AUTHORS, (char const *) NULL);
-
-  while ((c = getopt_long (argc, argv, "", long_options, NULL)) != -1)
-    {
-      switch (c)
-	{
-	case 0:
-	  break;
-
-	default:
-	  usage (EXIT_FAILURE);
-	}
-    }
+  if (getopt_long (argc, argv, "", NULL, NULL) != -1)
+    usage (EXIT_FAILURE);
 
   if (argc == 1)
     {
-      error (0, 0, _("too few arguments"));
+      error (0, 0, _("missing operand"));
       usage (EXIT_FAILURE);
     }
 
@@ -145,22 +127,22 @@ main (int argc, char **argv)
     {
       double s;
       const char *p;
-      if (xstrtod (argv[i], &p, &s, c_strtod)
+      if (! xstrtod (argv[i], &p, &s, c_strtod)
 	  /* Nonnegative interval.  */
 	  || ! (0 <= s)
 	  /* No extra chars after the number and an optional s,m,h,d char.  */
 	  || (*p && *(p+1))
 	  /* Check any suffix char and update S based on the suffix.  */
-	  || apply_suffix (&s, *p))
+	  || ! apply_suffix (&s, *p))
 	{
-	  error (0, 0, _("invalid time interval `%s'"), argv[i]);
-	  fail = 1;
+	  error (0, 0, _("invalid time interval %s"), quote (argv[i]));
+	  ok = false;
 	}
 
       seconds += s;
     }
 
-  if (fail)
+  if (!ok)
     usage (EXIT_FAILURE);
 
   if (xnanosleep (seconds))

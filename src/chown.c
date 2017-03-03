@@ -1,5 +1,5 @@
 /* chown -- change user and group ownership of files
-   Copyright (C) 89, 90, 91, 1995-2004 Free Software Foundation, Inc.
+   Copyright (C) 89, 90, 91, 1995-2005 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /*
               |		              user
@@ -67,20 +67,20 @@ enum
 
 static struct option const long_options[] =
 {
-  {"recursive", no_argument, 0, 'R'},
-  {"changes", no_argument, 0, 'c'},
-  {"dereference", no_argument, 0, DEREFERENCE_OPTION},
-  {"from", required_argument, 0, FROM_OPTION},
-  {"no-dereference", no_argument, 0, 'h'},
-  {"no-preserve-root", no_argument, 0, NO_PRESERVE_ROOT},
-  {"preserve-root", no_argument, 0, PRESERVE_ROOT},
-  {"quiet", no_argument, 0, 'f'},
-  {"silent", no_argument, 0, 'f'},
-  {"reference", required_argument, 0, REFERENCE_FILE_OPTION},
-  {"verbose", no_argument, 0, 'v'},
+  {"recursive", no_argument, NULL, 'R'},
+  {"changes", no_argument, NULL, 'c'},
+  {"dereference", no_argument, NULL, DEREFERENCE_OPTION},
+  {"from", required_argument, NULL, FROM_OPTION},
+  {"no-dereference", no_argument, NULL, 'h'},
+  {"no-preserve-root", no_argument, NULL, NO_PRESERVE_ROOT},
+  {"preserve-root", no_argument, NULL, PRESERVE_ROOT},
+  {"quiet", no_argument, NULL, 'f'},
+  {"silent", no_argument, NULL, 'f'},
+  {"reference", required_argument, NULL, REFERENCE_FILE_OPTION},
+  {"verbose", no_argument, NULL, 'v'},
   {GETOPT_HELP_OPTION_DECL},
   {GETOPT_VERSION_OPTION_DECL},
-  {0, 0, 0, 0}
+  {NULL, 0, NULL, 0}
 };
 
 void
@@ -92,18 +92,17 @@ usage (int status)
   else
     {
       printf (_("\
-Usage: %s [OPTION]... OWNER[:[GROUP]] FILE...\n\
-  or:  %s [OPTION]... :GROUP FILE...\n\
+Usage: %s [OPTION]... [OWNER][:[GROUP]] FILE...\n\
   or:  %s [OPTION]... --reference=RFILE FILE...\n\
 "),
-	      program_name, program_name, program_name);
+	      program_name, program_name);
       fputs (_("\
 Change the owner and/or group of each FILE to OWNER and/or GROUP.\n\
 With --reference, change the owner and group of each FILE to those of RFILE.\n\
 \n\
   -c, --changes          like verbose but report only when a change is made\n\
       --dereference      affect the referent of each symbolic link, rather\n\
-                         than the symbolic link itself\n\
+                         than the symbolic link itself (this is the default)\n\
 "), stdout);
       fputs (_("\
   -h, --no-dereference   affect each symbolic link instead of any referenced\n\
@@ -146,9 +145,17 @@ one takes effect.\n\
       fputs (_("\
 \n\
 Owner is unchanged if missing.  Group is unchanged if missing, but changed\n\
-to login group if implied by a `:'.  OWNER and GROUP may be numeric as well\n\
-as symbolic.\n\
+to login group if implied by a `:' following a symbolic OWNER.\n\
+OWNER and GROUP may be numeric as well as symbolic.\n\
 "), stdout);
+      printf (_("\
+\n\
+Examples:\n\
+  %s root /u        Change the owner of /u to \"root\".\n\
+  %s root:staff /u  Likewise, but also change its group to \"staff\".\n\
+  %s -hR root /u    Change the owner of /u and subfiles to \"root\".\n\
+"),
+	      program_name, program_name, program_name);
       printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
     }
   exit (status);
@@ -170,8 +177,12 @@ main (int argc, char **argv)
   /* Bit flags that control how fts works.  */
   int bit_flags = FTS_PHYSICAL;
 
+  /* 1 if --dereference, 0 if --no-dereference, -1 if neither has been
+     specified.  */
+  int dereference = -1;
+
   struct Chown_option chopt;
-  int fail;
+  bool ok;
   int optc;
 
   initialize_main (&argc, &argv);
@@ -189,11 +200,8 @@ main (int argc, char **argv)
     {
       switch (optc)
 	{
-	case 0:
-	  break;
-
 	case 'H': /* Traverse command-line symlinks-to-directories.  */
-	  bit_flags = FTS_COMFOLLOW;
+	  bit_flags = FTS_COMFOLLOW | FTS_PHYSICAL;
 	  break;
 
 	case 'L': /* Traverse all symlinks-to-directories.  */
@@ -205,12 +213,12 @@ main (int argc, char **argv)
 	  break;
 
 	case 'h': /* --no-dereference: affect symlinks */
-	  chopt.affect_symlink_referent = false;
+	  dereference = 0;
 	  break;
 
 	case DEREFERENCE_OPTION: /* --dereference: affect the referent
 				    of each symlink */
-	  chopt.affect_symlink_referent = true;
+	  dereference = 1;
 	  break;
 
 	case NO_PRESERVE_ROOT:
@@ -259,9 +267,34 @@ main (int argc, char **argv)
 	}
     }
 
-  if (argc - optind + (reference_file ? 1 : 0) <= 1)
+  if (chopt.recurse)
     {
-      error (0, 0, _("too few arguments"));
+      if (bit_flags == FTS_PHYSICAL)
+	{
+	  if (dereference == 1)
+	    error (EXIT_FAILURE, 0,
+		   _("-R --dereference requires either -H or -L"));
+	  chopt.affect_symlink_referent = false;
+	}
+      else
+	{
+	  if (dereference == 0)
+	    error (EXIT_FAILURE, 0, _("-R -h requires -P"));
+	  chopt.affect_symlink_referent = true;
+	}
+    }
+  else
+    {
+      bit_flags = FTS_PHYSICAL;
+      chopt.affect_symlink_referent = (dereference != 0);
+    }
+
+  if (argc - optind < (reference_file ? 1 : 2))
+    {
+      if (argc <= optind)
+	error (0, 0, _("missing operand"));
+      else
+	error (0, 0, _("missing operand after %s"), quote (argv[argc - 1]));
       usage (EXIT_FAILURE);
     }
 
@@ -284,14 +317,16 @@ main (int argc, char **argv)
       if (e)
         error (EXIT_FAILURE, 0, "%s: %s", quote (argv[optind]), e);
 
-      /* FIXME: set it to the empty string?  */
-      if (chopt.user_name == NULL)
+      /* If a group is specified but no user, set the user name to the
+	 empty string so that diagnostics say "ownership :GROUP"
+	 rather than "group GROUP".  */
+      if (!chopt.user_name && chopt.group_name)
         chopt.user_name = "";
 
       optind++;
     }
 
-  if (chopt.recurse && preserve_root)
+  if (chopt.recurse & preserve_root)
     {
       static struct dev_ino dev_ino_buf;
       chopt.root_dev_ino = get_root_dev_ino (&dev_ino_buf);
@@ -300,11 +335,11 @@ main (int argc, char **argv)
 	       quote ("/"));
     }
 
-  fail = chown_files (argv + optind, bit_flags,
-		      uid, gid,
-		      required_uid, required_gid, &chopt);
+  ok = chown_files (argv + optind, bit_flags,
+		    uid, gid,
+		    required_uid, required_gid, &chopt);
 
   chopt_free (&chopt);
 
-  exit (fail ? EXIT_FAILURE : EXIT_SUCCESS);
+  exit (ok ? EXIT_SUCCESS : EXIT_FAILURE);
 }

@@ -1,4 +1,4 @@
-/* Copyright (C) 1998, 2001, 2002, 2003 Free Software Foundation, Inc.
+/* Copyright (C) 1998, 2001, 2002, 2003, 2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify it
    under the terms of the GNU General Public License as published by the
@@ -12,7 +12,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* derived from a function in touch.c */
 
@@ -34,9 +34,6 @@
 
 #include <unistd.h>
 #include <errno.h>
-#ifndef errno
-extern int errno;
-#endif
 
 #include "full-write.h"
 #include "safe-read.h"

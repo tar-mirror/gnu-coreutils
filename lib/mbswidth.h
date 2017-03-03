@@ -1,5 +1,5 @@
 /* Determine the number of screen columns needed for a string.
-   Copyright (C) 2000-2003 Free Software Foundation, Inc.
+   Copyright (C) 2000-2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -13,15 +13,25 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 #include <stddef.h>
 
 /* Avoid a clash of our mbswidth() with a function of the same name defined
    in UnixWare 7.1.1 <wchar.h>.  We need this #include before the #define
-   below.  */
-#if HAVE_WCHAR_H
+   below.
+   However, we don't want to #include <wchar.h> on all platforms because
+   - Tru64 with Desktop Toolkit C has a bug: <stdio.h> must be included before
+     <wchar.h>.
+   - BSD/OS 4.1 has a bug: <stdio.h> and <time.h> must be included before
+     <wchar.h>.  */
+#if HAVE_DECL_MBSWIDTH_IN_WCHAR_H
 # include <wchar.h>
+#endif
+
+
+#ifdef	__cplusplus
+extern "C" {
 #endif
 
 
@@ -44,3 +54,8 @@ extern int mbswidth (const char *string, int flags);
 /* Returns the number of screen columns needed for the NBYTES bytes
    starting at BUF.  */
 extern int mbsnwidth (const char *buf, size_t nbytes, int flags);
+
+
+#ifdef	__cplusplus
+}
+#endif

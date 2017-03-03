@@ -11,7 +11,7 @@ $PERL -e 1 > /dev/null 2>&1 || {
 }
 
 d=$srcdir/..
-exec $PERL -w -I$d -MFetish -- - << \EOF
+exec $PERL -w -I$d -MCoreutils -- - << \EOF
 require 5.003;
 use strict;
 
@@ -29,6 +29,8 @@ my @Tests =
      ['c', '5 \* 6', {OUT => '30'}],
      ['d', '100 / 6', {OUT => '16'}],
      ['e', '100 % 6', {OUT => '4'}],
+     ['f', '3 + -2', {OUT => '1'}],
+     ['g', '-2 + -2', {OUT => '-4'}],
 
      ['paren1', '\( 100 % 6 \)', {OUT => '4'}],
      ['paren2', '\( 100 % 6 \) - 8', {OUT => '-4'}],
@@ -57,9 +59,13 @@ my @Tests =
      ['fail-a', '3 + -', {ERR => "$prog: non-numeric argument\n"},
       {EXIT => 3}],
 
+     # This erroneously succeeded before 5.3.1.
+     ['bigcmp', '-- -2417851639229258349412352 \< 2417851639229258349412352',
+      {OUT => '1'}, {EXIT => 0}],
+
      ['fail-b', '9 9', {ERR => "$prog: syntax error\n"},
       {EXIT => 2}],
-     ['fail-c', {ERR => "$prog: too few arguments\n"
+     ['fail-c', {ERR => "$prog: missing operand\n"
 		 . "Try `$prog --help' for more information.\n"},
       {EXIT => 2}],
     );

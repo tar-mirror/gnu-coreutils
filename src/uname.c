@@ -1,7 +1,7 @@
 /* uname -- print system information
 
    Copyright 1989, 1992, 1993, 1996, 1997, 1999, 2000, 2001, 2002,
-   2003, 2004 Free Software Foundation, Inc.
+   2003, 2004, 2005 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* Written by David MacKenzie <djm@gnu.ai.mit.edu> */
 
@@ -29,8 +29,10 @@
 # include <sys/systeminfo.h>
 #endif
 
-#if HAVE_SYSCTL && HAVE_SYS_SYSCTL_H
-# include <sys/param.h> /* needed for OpenBSD 3.0 */
+#if HAVE_SYS_SYSCTL_H
+# if HAVE_SYS_PARAM_H
+#  include <sys/param.h> /* needed for OpenBSD 3.0 */
+# endif
 # include <sys/sysctl.h>
 # ifdef HW_MODEL
 #  ifdef HW_MACHINE_ARCH
@@ -44,8 +46,14 @@
 # endif
 #endif
 
+#ifdef __APPLE__
+# include <mach/machine.h>
+# include <mach-o/arch.h>
+#endif
+
 #include "system.h"
 #include "error.h"
+#include "quote.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "uname"
@@ -110,7 +118,8 @@ usage (int status)
       fputs (_("\
 Print certain system information.  With no OPTION, same as -s.\n\
 \n\
-  -a, --all                print all information, in the following order:\n\
+  -a, --all                print all information, in the following order,\n\
+                             except omit -p and -i if unknown:\n\
   -s, --kernel-name        print the kernel name\n\
   -n, --nodename           print the network node hostname\n\
   -r, --kernel-release     print the kernel release\n\
@@ -118,8 +127,8 @@ Print certain system information.  With no OPTION, same as -s.\n\
       fputs (_("\
   -v, --kernel-version     print the kernel version\n\
   -m, --machine            print the machine hardware name\n\
-  -p, --processor          print the processor type\n\
-  -i, --hardware-platform  print the hardware platform\n\
+  -p, --processor          print the processor type or \"unknown\"\n\
+  -i, --hardware-platform  print the hardware platform or \"unknown\"\n\
   -o, --operating-system   print the operating system\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
@@ -135,9 +144,10 @@ Print certain system information.  With no OPTION, same as -s.\n\
 static void
 print_element (char const *element)
 {
-  static int printed;
-  if (printed++)
+  static bool printed;
+  if (printed)
     putchar (' ');
+  printed = true;
   fputs (element, stdout);
 }
 
@@ -148,7 +158,7 @@ main (int argc, char **argv)
   static char const unknown[] = "unknown";
 
   /* Mask indicating which elements to print. */
-  unsigned toprint = 0;
+  unsigned int toprint = 0;
 
   initialize_main (&argc, &argv);
   program_name = argv[0];
@@ -162,11 +172,8 @@ main (int argc, char **argv)
     {
       switch (c)
 	{
-	case 0:
-	  break;
-
 	case 'a':
-	  toprint = -1;
+	  toprint = UINT_MAX;
 	  break;
 
 	case 's':
@@ -210,9 +217,9 @@ main (int argc, char **argv)
 	}
     }
 
-  if (argc < optind)
+  if (argc != optind)
     {
-      error (0, 0, _("too many arguments"));
+      error (0, 0, _("extra operand %s"), quote (argv[optind]));
       usage (EXIT_FAILURE);
     }
 
@@ -258,9 +265,30 @@ main (int argc, char **argv)
 	  static int mib[] = { CTL_HW, UNAME_PROCESSOR };
 	  if (sysctl (mib, 2, processor, &s, 0, 0) >= 0)
 	    element = processor;
+
+# ifdef __APPLE__
+	  /* This kludge works around a bug in Mac OS X.  */
+	  if (element == unknown)
+	    {
+	      cpu_type_t cputype;
+	      size_t s = sizeof cputype;
+	      NXArchInfo const *ai;
+	      if (sysctlbyname ("hw.cputype", &cputype, &s, NULL, 0) == 0
+		  && (ai = NXGetArchInfoFromCpuType (cputype,
+						     CPU_SUBTYPE_MULTIPLE))
+		  != NULL)
+		element = ai->name;
+
+	      /* Hack "safely" around the ppc vs. powerpc return value. */
+	      if (cputype == CPU_TYPE_POWERPC
+		  && strncmp (element, "ppc", 3) == 0)
+		element = "powerpc";
+	    }
+# endif
 	}
 #endif
-      print_element (element);
+      if (! (toprint == UINT_MAX && element == unknown))
+	print_element (element);
     }
 
   if (toprint & PRINT_HARDWARE_PLATFORM)
@@ -284,7 +312,8 @@ main (int argc, char **argv)
 	    element = hardware_platform;
 	}
 #endif
-      print_element (element);
+      if (! (toprint == UINT_MAX && element == unknown))
+	print_element (element);
     }
 
   if (toprint & PRINT_OPERATING_SYSTEM)

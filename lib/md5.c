@@ -1,6 +1,6 @@
 /* md5.c - Functions to compute MD5 message digest of files or memory blocks
    according to the definition of MD5 in RFC 1321 from April 1992.
-   Copyright (C) 1995, 1996, 2001, 2003 Free Software Foundation, Inc.
+   Copyright (C) 1995, 1996, 2001, 2003, 2004, 2005 Free Software Foundation, Inc.
    NOTE: The canonical source of this file is maintained with the GNU C
    Library.  Bugs can be reported to bug-glibc@prep.ai.mit.edu.
 
@@ -16,7 +16,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* Written by Ulrich Drepper <drepper@gnu.ai.mit.edu>, 1995.  */
 
@@ -26,12 +26,12 @@
 
 #include "md5.h"
 
-#include <sys/types.h>
-
-#include <stdlib.h>
+#include <stddef.h>
 #include <string.h>
 
-#include "unlocked-io.h"
+#if USE_UNLOCKED_IO
+# include "unlocked-io.h"
+#endif
 
 #ifdef _LIBC
 # include <endian.h>
@@ -57,10 +57,8 @@
 #endif
 
 #define BLOCKSIZE 4096
-/* Ensure that BLOCKSIZE is a multiple of 64.  */
 #if BLOCKSIZE % 64 != 0
-/* FIXME-someday (soon?): use #error instead of this kludge.  */
-"invalid BLOCKSIZE"
+# error "invalid BLOCKSIZE"
 #endif
 
 /* This array contains the bytes used to pad the buffer to the next
@@ -246,13 +244,8 @@ md5_process_bytes (const void *buffer, size_t len, struct md5_ctx *ctx)
   if (len >= 64)
     {
 #if !_STRING_ARCH_unaligned
-/* To check alignment gcc has an appropriate operator.  Other
-   compilers don't.  */
-# if __GNUC__ >= 2
-#  define UNALIGNED_P(p) (((md5_uintptr) p) % __alignof__ (md5_uint32) != 0)
-# else
-#  define UNALIGNED_P(p) (((md5_uintptr) p) % sizeof (md5_uint32) != 0)
-# endif
+# define alignof(type) offsetof (struct { char c; type x; }, x)
+# define UNALIGNED_P(p) (((size_t) p) % alignof (md5_uint32) != 0)
       if (UNALIGNED_P (buffer))
 	while (len > 64)
 	  {
@@ -340,15 +333,22 @@ md5_process_block (const void *buffer, size_t len, struct md5_ctx *ctx)
         {								\
 	  a += FF (b, c, d) + (*cwp++ = SWAP (*words)) + T;		\
 	  ++words;							\
-	  a = rol (a, s);						\
+	  CYCLIC (a, s);						\
 	  a += b;							\
         }								\
       while (0)
 
+      /* It is unfortunate that C does not provide an operator for
+	 cyclic rotation.  Hope the C compiler is smart enough.  */
+#define CYCLIC(w, s) (w = (w << s) | (w >> (32 - s)))
+
       /* Before we start, one word to the strange constants.
 	 They are defined in RFC 1321 as
 
-	 T[i] = (int) (4294967296.0 * fabs (sin (i))), i=1..64, or
+	 T[i] = (int) (4294967296.0 * fabs (sin (i))), i=1..64
+
+	 Here is an equivalent invocation using Perl:
+
 	 perl -e 'foreach(1..64){printf "0x%08x\n", int (4294967296 * abs (sin $_))}'
        */
 
@@ -378,7 +378,7 @@ md5_process_block (const void *buffer, size_t len, struct md5_ctx *ctx)
       do								\
 	{								\
 	  a += f (b, c, d) + correct_words[k] + T;			\
-	  a = rol (a, s);						\
+	  CYCLIC (a, s);						\
 	  a += b;							\
 	}								\
       while (0)

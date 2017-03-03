@@ -1,6 +1,12 @@
-#serial 6
+#serial 8
+
+# Copyright (C) 1996, 1999, 2001, 2002, 2004 Free Software Foundation, Inc.
+# This file is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
+
 dnl From Jim Meyering and Paul Eggert.
-AC_DEFUN([jm_HEADER_TIOCGWINSZ_IN_TERMIOS_H],
+AC_DEFUN([gl_HEADER_TIOCGWINSZ_IN_TERMIOS_H],
 [AC_REQUIRE([AC_SYS_POSIX_TERMIOS])
  AC_CACHE_CHECK([whether use of TIOCGWINSZ requires termios.h],
 	        jm_cv_sys_tiocgwinsz_needs_termios_h,
@@ -18,7 +24,7 @@ AC_DEFUN([jm_HEADER_TIOCGWINSZ_IN_TERMIOS_H],
   ])
 ])
 
-AC_DEFUN([jm_WINSIZE_IN_PTEM],
+AC_DEFUN([gl_WINSIZE_IN_PTEM],
   [AC_REQUIRE([AC_SYS_POSIX_TERMIOS])
    AC_CACHE_CHECK([whether use of struct winsize requires sys/ptem.h],
      jm_cv_sys_struct_winsize_needs_sys_ptem_h,

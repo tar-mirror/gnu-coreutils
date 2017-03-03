@@ -7,6 +7,7 @@ if test "$VERBOSE" = yes; then
   cp --version
 fi
 
+. $srcdir/../envvar-check
 . $srcdir/../lang-default
 
 pwd=`pwd`
@@ -37,4 +38,4 @@ set `ls -l s`
 # call and so cp ends up dereferencing the symlink and copying the directory.
 test "$*" = 'total 0' && : || fail=1
 
-(exit $fail); exit
+(exit $fail); exit $fail

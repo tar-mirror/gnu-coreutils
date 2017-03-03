@@ -1,5 +1,7 @@
 /* Determine whether two file names refer to the same file.
-   Copyright (C) 1997-2000, 2002-2003 Free Software Foundation, Inc.
+
+   Copyright (C) 1997, 1998, 1999, 2000, 2002, 2003, 2004, 2005 Free
+   Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -13,27 +15,22 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* written by Jim Meyering */
 
-#if HAVE_CONFIG_H
+#ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
 #include <stdbool.h>
 #include <stdio.h>
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
-#endif
+#include <unistd.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <ctype.h>
 #include <errno.h>
-#ifndef errno
-extern int errno;
-#endif
 
 #include <string.h>
 
@@ -47,7 +44,9 @@ extern int errno;
 #include "error.h"
 #include "xalloc.h"
 
-#define MIN(a, b) ((a) < (b) ? (a) : (b))
+#ifndef MIN
+# define MIN(a, b) ((a) < (b) ? (a) : (b))
+#endif
 
 #define SAME_INODE(Stat_buf_1, Stat_buf_2) \
   ((Stat_buf_1).st_ino == (Stat_buf_2).st_ino \
@@ -56,7 +55,7 @@ extern int errno;
 /* Return nonzero if SOURCE and DEST point to the same name in the same
    directory.  */
 
-int
+bool
 same_name (const char *source, const char *dest)
 {
   /* Compare the basenames.  */
@@ -71,7 +70,7 @@ same_name (const char *source, const char *dest)
   bool same = false;
 
 #if ! _POSIX_NO_TRUNC && HAVE_PATHCONF && defined _PC_NAME_MAX
-  /* This implementation silently truncates pathname components.  If
+  /* This implementation silently truncates components of file names.  If
      the base names might be truncated, check whether the truncated
      base names are the same, while checking the directories.  */
   size_t slen_max = HAVE_LONG_FILE_NAMES ? 255 : _POSIX_NAME_MAX;

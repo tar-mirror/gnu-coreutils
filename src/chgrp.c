@@ -1,5 +1,5 @@
 /* chgrp -- change group ownership of files
-   Copyright (C) 89, 90, 91, 1995-2004 Free Software Foundation, Inc.
+   Copyright (C) 89, 90, 91, 1995-2005 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* Written by David MacKenzie <djm@gnu.ai.mit.edu>. */
 
@@ -37,10 +37,6 @@
 
 #define AUTHORS "David MacKenzie", "Jim Meyering"
 
-#ifndef _POSIX_VERSION
-struct group *getgrnam ();
-#endif
-
 #if ! HAVE_ENDGRENT
 # define endgrent() ((void) 0)
 #endif
@@ -62,50 +58,43 @@ enum
 
 static struct option const long_options[] =
 {
-  {"recursive", no_argument, 0, 'R'},
-  {"changes", no_argument, 0, 'c'},
-  {"dereference", no_argument, 0, DEREFERENCE_OPTION},
-  {"no-dereference", no_argument, 0, 'h'},
-  {"quiet", no_argument, 0, 'f'},
-  {"silent", no_argument, 0, 'f'},
-  {"reference", required_argument, 0, REFERENCE_FILE_OPTION},
-  {"verbose", no_argument, 0, 'v'},
+  {"recursive", no_argument, NULL, 'R'},
+  {"changes", no_argument, NULL, 'c'},
+  {"dereference", no_argument, NULL, DEREFERENCE_OPTION},
+  {"no-dereference", no_argument, NULL, 'h'},
+  {"quiet", no_argument, NULL, 'f'},
+  {"silent", no_argument, NULL, 'f'},
+  {"reference", required_argument, NULL, REFERENCE_FILE_OPTION},
+  {"verbose", no_argument, NULL, 'v'},
   {GETOPT_HELP_OPTION_DECL},
   {GETOPT_VERSION_OPTION_DECL},
-  {0, 0, 0, 0}
+  {NULL, 0, NULL, 0}
 };
 
-/* Set *G according to NAME. */
+/* Return the group ID of NAME, or -1 if no name was specified.  */
 
-static void
-parse_group (const char *name, gid_t *g)
+static gid_t
+parse_group (const char *name)
 {
-  struct group *grp;
+  gid_t gid = -1;
 
-  if (*name == '\0')
-    error (EXIT_FAILURE, 0, _("cannot change to null group"));
-
-  grp = getgrnam (name);
-  if (grp == NULL)
+  if (*name)
     {
-      strtol_error s_err;
-      unsigned long int tmp_long;
-
-      if (!ISDIGIT (*name))
-	error (EXIT_FAILURE, 0, _("invalid group name %s"), quote (name));
-
-      s_err = xstrtoul (name, NULL, 0, &tmp_long, NULL);
-      if (s_err != LONGINT_OK)
-	STRTOL_FATAL_ERROR (name, _("group number"), s_err);
-
-      if (tmp_long > GID_T_MAX)
-	error (EXIT_FAILURE, 0, _("invalid group number %s"), quote (name));
-
-      *g = tmp_long;
+      struct group *grp = getgrnam (name);
+      if (grp)
+	gid = grp->gr_gid;
+      else
+	{
+	  unsigned long int tmp;
+	  if (! (xstrtoul (name, NULL, 10, &tmp, "") == LONGINT_OK
+		 && tmp <= GID_T_MAX))
+	    error (EXIT_FAILURE, 0, _("invalid group %s"), quote (name));
+	  gid = tmp;
+	}
+      endgrent ();		/* Save a file descriptor. */
     }
-  else
-    *g = grp->gr_gid;
-  endgrent ();		/* Save a file descriptor. */
+
+  return gid;
 }
 
 void
@@ -127,7 +116,7 @@ With --reference, change the group of each FILE to that of RFILE.\n\
 \n\
   -c, --changes          like verbose but report only when a change is made\n\
       --dereference      affect the referent of each symbolic link, rather\n\
-                         than the symbolic link itself\n\
+                         than the symbolic link itself (this is the default)\n\
 "), stdout);
       fputs (_("\
   -h, --no-dereference   affect each symbolic link instead of any referenced\n\
@@ -160,6 +149,13 @@ one takes effect.\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
+      printf (_("\
+\n\
+Examples:\n\
+  %s staff /u      Change the group of /u to \"staff\".\n\
+  %s -hR staff /u  Change the group of /u and subfiles to \"staff\".\n\
+"),
+	      program_name, program_name);
       printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
     }
   exit (status);
@@ -169,10 +165,16 @@ int
 main (int argc, char **argv)
 {
   gid_t gid;
+
   /* Bit flags that control how fts works.  */
   int bit_flags = FTS_PHYSICAL;
+
+  /* 1 if --dereference, 0 if --no-dereference, -1 if neither has been
+     specified.  */
+  int dereference = -1;
+
   struct Chown_option chopt;
-  int fail = 0;
+  bool ok;
   int optc;
 
   initialize_main (&argc, &argv);
@@ -190,11 +192,8 @@ main (int argc, char **argv)
     {
       switch (optc)
 	{
-	case 0:
-	  break;
-
 	case 'H': /* Traverse command-line symlinks-to-directories.  */
-	  bit_flags = FTS_COMFOLLOW;
+	  bit_flags = FTS_COMFOLLOW | FTS_PHYSICAL;
 	  break;
 
 	case 'L': /* Traverse all symlinks-to-directories.  */
@@ -206,12 +205,12 @@ main (int argc, char **argv)
 	  break;
 
 	case 'h': /* --no-dereference: affect symlinks */
-	  chopt.affect_symlink_referent = false;
+	  dereference = 0;
 	  break;
 
 	case DEREFERENCE_OPTION: /* --dereference: affect the referent
 				    of each symlink */
-	  chopt.affect_symlink_referent = true;
+	  dereference = 1;
 	  break;
 
 	case REFERENCE_FILE_OPTION:
@@ -241,9 +240,34 @@ main (int argc, char **argv)
 	}
     }
 
-  if (argc - optind + (reference_file ? 1 : 0) <= 1)
+  if (chopt.recurse)
     {
-      error (0, 0, _("too few arguments"));
+      if (bit_flags == FTS_PHYSICAL)
+	{
+	  if (dereference == 1)
+	    error (EXIT_FAILURE, 0,
+		   _("-R --dereference requires either -H or -L"));
+	  chopt.affect_symlink_referent = false;
+	}
+      else
+	{
+	  if (dereference == 0)
+	    error (EXIT_FAILURE, 0, _("-R -h requires -P"));
+	  chopt.affect_symlink_referent = true;
+	}
+    }
+  else
+    {
+      bit_flags = FTS_PHYSICAL;
+      chopt.affect_symlink_referent = (dereference != 0);
+    }
+
+  if (argc - optind < (reference_file ? 1 : 2))
+    {
+      if (argc <= optind)
+	error (0, 0, _("missing operand"));
+      else
+	error (0, 0, _("missing operand after %s"), quote (argv[argc - 1]));
       usage (EXIT_FAILURE);
     }
 
@@ -254,20 +278,21 @@ main (int argc, char **argv)
 	error (EXIT_FAILURE, errno, _("failed to get attributes of %s"),
 	       quote (reference_file));
 
-      chopt.group_name = gid_to_name (ref_stats.st_gid);
       gid = ref_stats.st_gid;
+      chopt.group_name = gid_to_name (ref_stats.st_gid);
     }
   else
     {
-      chopt.group_name = argv[optind++];
-      parse_group (chopt.group_name, &gid);
+      char *group_name = argv[optind++];
+      chopt.group_name = (*group_name ? group_name : NULL);
+      gid = parse_group (group_name);
     }
 
-  fail = chown_files (argv + optind, bit_flags,
-		      (uid_t) -1, gid,
-		      (uid_t) -1, (gid_t) -1, &chopt);
+  ok = chown_files (argv + optind, bit_flags,
+		    (uid_t) -1, gid,
+		    (uid_t) -1, (gid_t) -1, &chopt);
 
   chopt_free (&chopt);
 
-  exit (fail ? EXIT_FAILURE : EXIT_SUCCESS);
+  exit (ok ? EXIT_SUCCESS : EXIT_FAILURE);
 }

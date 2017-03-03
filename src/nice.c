@@ -1,5 +1,5 @@
-/* nice -- run a program with modified scheduling priority
-   Copyright (C) 1990-2004 Free Software Foundation, Inc.
+/* nice -- run a program with modified niceness
+   Copyright (C) 1990-2005 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* David MacKenzie <djm@gnu.ai.mit.edu> */
 
@@ -27,7 +27,7 @@
 
 #include "system.h"
 
-#ifndef NICE_PRIORITY
+#if ! HAVE_NICE
 /* Include this after "system.h" so we're sure to have definitions
    (from time.h or sys/time.h) required for e.g. the ru_utime member.  */
 # include <sys/resource.h>
@@ -35,7 +35,7 @@
 
 #include "error.h"
 #include "long-options.h"
-#include "posixver.h"
+#include "quote.h"
 #include "xstrtol.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
@@ -43,10 +43,20 @@
 
 #define AUTHORS "David MacKenzie"
 
-#ifdef NICE_PRIORITY
-# define GET_PRIORITY() nice (0)
+#if HAVE_NICE
+# define GET_NICENESS() nice (0)
 #else
-# define GET_PRIORITY() getpriority (PRIO_PROCESS, 0)
+# define GET_NICENESS() getpriority (PRIO_PROCESS, 0)
+#endif
+
+#ifndef NZERO
+# define NZERO 20
+#endif
+
+/* This is required for Darwin Kernel Version 7.7.0.  */
+#if NZERO == 0
+# undef  NZERO
+# define NZERO 20
 #endif
 
 /* The name this program was run with. */
@@ -67,15 +77,17 @@ usage (int status)
   else
     {
       printf (_("Usage: %s [OPTION] [COMMAND [ARG]...]\n"), program_name);
-      fputs (_("\
-Run COMMAND with an adjusted scheduling priority.\n\
-With no COMMAND, print the current scheduling priority.  ADJUST is 10\n\
-by default.  Range goes from -20 (highest priority) to 19 (lowest).\n\
+      printf (_("\
+Run COMMAND with an adjusted niceness, which affects process scheduling.\n\
+With no COMMAND, print the current niceness.  Nicenesses range from\n\
+%d (most favorable scheduling) to %d (least favorable).\n\
 \n\
-  -n, --adjustment=ADJUST   increment priority by ADJUST first\n\
-"), stdout);
+  -n, --adjustment=N   add integer N to the niceness (default 10)\n\
+"),
+	      - NZERO, NZERO - 1);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
+      printf (USAGE_BUILTIN_WARNING, PROGRAM_NAME);
       printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
     }
   exit (status);
@@ -84,10 +96,10 @@ by default.  Range goes from -20 (highest priority) to 19 (lowest).\n\
 int
 main (int argc, char **argv)
 {
-  int current_priority;
-  long int adjustment = 0;
-  int minusflag = 0;
-  int adjustment_given = 0;
+  int current_niceness;
+  int adjustment = 10;
+  char const *adjustment_given = NULL;
+  bool ok;
   int i;
 
   initialize_main (&argc, &argv);
@@ -104,69 +116,49 @@ main (int argc, char **argv)
 
   for (i = 1; i < argc; /* empty */)
     {
-      char *s = argv[i];
+      char const *s = argv[i];
 
-      if (s[0] == '-' && s[1] == '-' && ISDIGIT (s[2])
-	  && posix2_version () < 200112)
+      if (s[0] == '-' && ISDIGIT (s[1 + (s[1] == '-' || s[1] == '+')]))
 	{
-	  if (xstrtol (&s[2], NULL, 10, &adjustment, "") != LONGINT_OK)
-	    error (EXIT_FAIL, 0, _("invalid option `%s'"), s);
-
-	  minusflag = 1;
-	  adjustment_given = 1;
-	  ++i;
-	}
-      else if (s[0] == '-'
-	       && (ISDIGIT (s[1]) || (s[1] == '+' && ISDIGIT (s[2])))
-	       && posix2_version () < 200112)
-	{
-	  if (s[1] == '+')
-	    ++s;
-	  if (xstrtol (&s[1], NULL, 10, &adjustment, "") != LONGINT_OK)
-	    error (EXIT_FAIL, 0, _("invalid option `%s'"), s);
-
-	  minusflag = 0;
-	  adjustment_given = 1;
+	  adjustment_given = s + 1;
 	  ++i;
 	}
       else
 	{
 	  int optc;
-	  char **fake_argv = argv + i - 1;
+	  int fake_argc = argc - (i - 1);
+	  char **fake_argv = argv + (i - 1);
+
+	  /* Ensure that any getopt diagnostics use the right name.  */
+	  fake_argv[0] = program_name;
 
 	  /* Initialize getopt_long's internal state.  */
 	  optind = 0;
 
-	  if ((optc = getopt_long (argc - (i - 1), fake_argv, "+n:",
-				   longopts, NULL)) != -1)
-	    {
-	      switch (optc)
-		{
-		case '?':
-		  usage (EXIT_FAIL);
-
-		case 'n':
-		  if (xstrtol (optarg, NULL, 10, &adjustment, "")
-		      != LONGINT_OK)
-		    error (EXIT_FAIL, 0, _("invalid priority `%s'"), optarg);
-
-		  minusflag = 0;
-		  adjustment_given = 1;
-		  break;
-		}
-	    }
-
+	  optc = getopt_long (fake_argc, fake_argv, "+n:", longopts, NULL);
 	  i += optind - 1;
 
-	  if (optc == EOF)
+	  if (optc == '?')
+	    usage (EXIT_FAIL);
+	  else if (optc == 'n')
+	    adjustment_given = optarg;
+	  else /* optc == -1 */
 	    break;
 	}
     }
 
-  if (minusflag)
-    adjustment = -adjustment;
-  if (!adjustment_given)
-    adjustment = 10;
+  if (adjustment_given)
+    {
+      /* If the requested adjustment is outside the valid range,
+	 silently bring it to just within range; this mimics what
+	 "setpriority" and "nice" do.  */
+      enum { MIN_ADJUSTMENT = 1 - 2 * NZERO, MAX_ADJUSTMENT = 2 * NZERO - 1 };
+      long int tmp;
+      if (LONGINT_OVERFLOW < xstrtol (adjustment_given, NULL, 10, &tmp, ""))
+	error (EXIT_FAIL, 0, _("invalid adjustment %s"),
+	       quote (adjustment_given));
+      adjustment = MAX (MIN_ADJUSTMENT, MIN (tmp, MAX_ADJUSTMENT));
+    }
 
   if (i == argc)
     {
@@ -175,25 +167,26 @@ main (int argc, char **argv)
 	  error (0, 0, _("a command must be given with an adjustment"));
 	  usage (EXIT_FAIL);
 	}
-      /* No command given; print the priority. */
+      /* No command given; print the niceness.  */
       errno = 0;
-      current_priority = GET_PRIORITY ();
-      if (current_priority == -1 && errno != 0)
-	error (EXIT_FAIL, errno, _("cannot get priority"));
-      printf ("%d\n", current_priority);
+      current_niceness = GET_NICENESS ();
+      if (current_niceness == -1 && errno != 0)
+	error (EXIT_FAIL, errno, _("cannot get niceness"));
+      printf ("%d\n", current_niceness);
       exit (EXIT_SUCCESS);
     }
 
-#ifndef NICE_PRIORITY
   errno = 0;
-  current_priority = GET_PRIORITY ();
-  if (current_priority == -1 && errno != 0)
-    error (EXIT_FAIL, errno, _("cannot get priority"));
-  if (setpriority (PRIO_PROCESS, 0, current_priority + adjustment))
+#if HAVE_NICE
+  ok = (nice (adjustment) != -1 || errno == 0);
 #else
-  if (nice (adjustment) == -1)
+  current_niceness = GET_NICENESS ();
+  if (current_niceness == -1 && errno != 0)
+    error (EXIT_FAIL, errno, _("cannot get niceness"));
+  ok = (setpriority (PRIO_PROCESS, 0, current_niceness + adjustment) == 0);
 #endif
-    error (EXIT_FAIL, errno, _("cannot set priority"));
+  if (!ok)
+    error (errno == EPERM ? 0 : EXIT_FAIL, errno, _("cannot set niceness"));
 
   execvp (argv[i], &argv[i]);
 

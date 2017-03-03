@@ -1,6 +1,6 @@
-éminence
-überhaupt
+Ã©minence
+Ã¼berhaupt
 's-Gravenhage
-aëroclub
+aÃ«roclub
 Aag
 aagtappels

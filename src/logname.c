@@ -1,5 +1,5 @@
 /* logname -- print user's login name
-   Copyright (C) 1990-1997, 1999-2004 Free Software Foundation, Inc.
+   Copyright (C) 1990-1997, 1999-2005 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 #include <config.h>
 #include <stdio.h>
@@ -23,6 +23,7 @@
 #include "system.h"
 #include "error.h"
 #include "long-options.h"
+#include "quote.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "logname"
@@ -31,11 +32,6 @@
 
 /* The name this program was run with. */
 char *program_name;
-
-static struct option const long_options[] =
-{
-  {0, 0, 0, 0}
-};
 
 void
 usage (int status)
@@ -60,8 +56,7 @@ Print the name of the current user.\n\
 int
 main (int argc, char **argv)
 {
-  register char *cp;
-  int c;
+  char *cp;
 
   initialize_main (&argc, &argv);
   program_name = argv[0];
@@ -73,22 +68,12 @@ main (int argc, char **argv)
 
   parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
 		      usage, AUTHORS, (char const *) NULL);
-
-  while ((c = getopt_long (argc, argv, "", long_options, NULL)) != -1)
-    {
-      switch (c)
-	{
-	case 0:
-	  break;
-
-	default:
-	  usage (EXIT_FAILURE);
-	}
-    }
+  if (getopt_long (argc, argv, "", NULL, NULL) != -1)
+    usage (EXIT_FAILURE);
 
   if (optind < argc)
     {
-      error (0, 0, _("too many arguments"));
+      error (0, 0, _("extra operand %s"), quote (argv[optind]));
       usage (EXIT_FAILURE);
     }
 

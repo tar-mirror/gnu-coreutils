@@ -1,6 +1,6 @@
 /* whoami -- print effective userid
 
-   Copyright (C) 89,90, 1991-1997, 1999-2002, 2004 Free Software
+   Copyright (C) 89,90, 1991-1997, 1999-2002, 2004, 2005 Free Software
    Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* Equivalent to `id -un'. */
 /* Written by Richard Mlynarik. */
@@ -27,7 +27,9 @@
 #include <getopt.h>
 
 #include "system.h"
+#include "error.h"
 #include "long-options.h"
+#include "quote.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "whoami"
@@ -36,11 +38,6 @@
 
 /* The name this program was run with. */
 char *program_name;
-
-static struct option const long_options[] =
-{
-  {0, 0, 0, 0}
-};
 
 void
 usage (int status)
@@ -52,7 +49,7 @@ usage (int status)
     {
       printf (_("Usage: %s [OPTION]...\n"), program_name);
       fputs (_("\
-Print the user name associated with the current effective user id.\n\
+Print the user name associated with the current effective user ID.\n\
 Same as id -un.\n\
 \n\
 "), stdout);
@@ -66,9 +63,8 @@ Same as id -un.\n\
 int
 main (int argc, char **argv)
 {
-  register struct passwd *pw;
-  register uid_t uid;
-  int c;
+  struct passwd *pw;
+  uid_t uid;
 
   initialize_main (&argc, &argv);
   program_name = argv[0];
@@ -80,21 +76,14 @@ main (int argc, char **argv)
 
   parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
 		      usage, AUTHORS, (char const *) NULL);
-
-  while ((c = getopt_long (argc, argv, "", long_options, NULL)) != -1)
-    {
-      switch (c)
-	{
-	case 0:
-	  break;
-
-	default:
-	  usage (EXIT_FAILURE);
-	}
-    }
+  if (getopt_long (argc, argv, "", NULL, NULL) != -1)
+    usage (EXIT_FAILURE);
 
   if (optind != argc)
-    usage (EXIT_FAILURE);
+    {
+      error (0, 0, _("extra operand %s"), quote (argv[optind]));
+      usage (EXIT_FAILURE);
+    }
 
   uid = geteuid ();
   pw = getpwuid (uid);
@@ -103,7 +92,7 @@ main (int argc, char **argv)
       puts (pw->pw_name);
       exit (EXIT_SUCCESS);
     }
-  fprintf (stderr, _("%s: cannot find username for UID %u\n"),
-	   program_name, (unsigned) uid);
+  fprintf (stderr, _("%s: cannot find name for user ID %lu\n"),
+	   program_name, (unsigned long int) uid);
   exit (EXIT_FAILURE);
 }

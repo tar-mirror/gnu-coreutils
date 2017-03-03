@@ -1,6 +1,6 @@
 /* Convert string to double, using the C locale.
 
-   Copyright (C) 2003 Free Software Foundation, Inc.
+   Copyright (C) 2003, 2004 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -14,9 +14,13 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* Written by Paul Eggert.  */
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 
 #include "c-strtod.h"
 
@@ -25,10 +29,36 @@
 
 #include "xalloc.h"
 
-double
-c_strtod (char const *nptr, char **endptr)
+#if LONG
+# define C_STRTOD c_strtold
+# define DOUBLE long double
+# define STRTOD_L strtold_l
+#else
+# define C_STRTOD c_strtod
+# define DOUBLE double
+# define STRTOD_L strtod_l
+#endif
+
+/* c_strtold falls back on strtod if strtold doesn't conform to C99.  */
+#if LONG && HAVE_C99_STRTOLD
+# define STRTOD strtold
+#else
+# define STRTOD strtod
+#endif
+
+DOUBLE
+C_STRTOD (char const *nptr, char **endptr)
 {
-  double r;
+  DOUBLE r;
+
+#ifdef LC_ALL_MASK
+
+  locale_t c_locale = newlocale (LC_ALL_MASK, "C", 0);
+  r = STRTOD_L (nptr, endptr, c_locale);
+  freelocale (c_locale);
+
+#else
+
   char *saved_locale = setlocale (LC_NUMERIC, NULL);
 
   if (saved_locale)
@@ -37,13 +67,15 @@ c_strtod (char const *nptr, char **endptr)
       setlocale (LC_NUMERIC, "C");
     }
 
-  r = strtod (nptr, endptr);
+  r = STRTOD (nptr, endptr);
 
   if (saved_locale)
     {
       setlocale (LC_NUMERIC, saved_locale);
       free (saved_locale);
     }
+
+#endif
 
   return r;
 }

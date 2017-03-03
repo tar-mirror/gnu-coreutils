@@ -33,7 +33,7 @@ fi
 
 fail=0
 
-chgrp -HR $g2 1s 2 || fail=1
+chgrp -H -R $g2 1s 2 || fail=1
 
 # These must have group $g2.
 # =========================
@@ -41,14 +41,14 @@ changed='
 1
 1/1F
 2
-2/2s
 2/2F
+3
 '
 for i in $changed; do
   # Filter out symlinks (entries that end in `s'), since it's not
   # possible to change their group/owner information on some systems.
   case $i in *s) continue;; esac
-  set _ `ls -dg $i`; shift
+  set _ `ls -dgn $i`; shift
   group=$3
   test $group = $g2 || fail=1
 done
@@ -56,15 +56,15 @@ done
 # These must have group $g1.
 # =========================
 not_changed='
-3
-3/3F
 1s
+2/2s
+3/3F
 '
 for i in $not_changed; do
   # Filter out symlinks (entries that end in `s'), since it's not
   # possible to change their group/owner information on some systems.
   case $i in *s) continue;; esac
-  set _ `ls -dg $i`; shift
+  set _ `ls -dgn $i`; shift
   group=$3
   test $group = $g1 || fail=1
 done

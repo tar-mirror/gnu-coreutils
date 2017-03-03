@@ -1,4 +1,570 @@
 GNU coreutils NEWS                                    -*- outline -*-
+
+* Major changes in release 5.92 (2005-10-22) [stable]
+
+** Bug fixes
+
+  chmod now diagnoses an invalid mode string starting with an octal digit
+
+  dircolors now properly quotes single-quote characters
+
+* Major changes in release 5.91 (2005-10-17) [stable candidate]
+
+** Bug fixes
+
+  "mkdir -p /a/b/c" no longer fails merely because a leading prefix
+  directory (e.g., /a or /a/b) exists on a read-only file system.
+
+** Removed options
+
+  tail's --allow-missing option has been removed.  Use --retry instead.
+
+  stat's --link and -l options have been removed.
+  Use --dereference (-L) instead.
+
+** Deprecated options
+
+  Using ls, du, or df with the --kilobytes option now evokes a warning
+  that the long-named option is deprecated.  Use `-k' instead.
+
+  du's long-named --megabytes option now evokes a warning.
+  Use -m instead.
+
+
+* Major changes in release 5.90 (2005-09-29) [unstable]
+
+** Bring back support for `head -NUM', `tail -NUM', etc. even when
+  conforming to POSIX 1003.1-2001.  The following changes apply only
+  when conforming to POSIX 1003.1-2001; there is no effect when
+  conforming to older POSIX versions.
+
+  The following usages now behave just as when conforming to older POSIX:
+
+    date -I
+    expand -TAB1[,TAB2,...]
+    fold -WIDTH
+    head -NUM
+    join -j FIELD
+    join -j1 FIELD
+    join -j2 FIELD
+    join -o FIELD_NAME1 FIELD_NAME2...
+    nice -NUM
+    od -w
+    pr -S
+    split -NUM
+    tail -[NUM][bcl][f] [FILE]
+
+  The following usages no longer work, due to the above changes:
+
+    date -I TIMESPEC  (use `date -ITIMESPEC' instead)
+    od -w WIDTH       (use `od -wWIDTH' instead)
+    pr -S STRING      (use `pr -SSTRING' instead)
+
+  A few usages still have behavior that depends on which POSIX standard is
+  being conformed to, and portable applications should beware these
+  problematic usages.  These include:
+
+    Problematic       Standard-conforming replacement, depending on
+       usage            whether you prefer the behavior of:
+                      POSIX 1003.2-1992    POSIX 1003.1-2001
+    sort +4           sort -k 5            sort ./+4
+    tail +4           tail -n +4           tail ./+4
+    tail - f          tail f               [see (*) below]
+    tail -c 4         tail -c 10 ./4       tail -c4
+    touch 12312359 f  touch -t 12312359 f  touch ./12312359 f
+    uniq +4           uniq -s 4            uniq ./+4
+
+    (*) "tail - f" does not conform to POSIX 1003.1-2001; to read
+    standard input and then "f", use the command "tail -- - f".
+
+  These changes are in response to decisions taken in the January 2005
+  Austin Group standardization meeting.  For more details, please see
+  "Utility Syntax Guidelines" in the Minutes of the January 2005
+  Meeting <http://www.opengroup.org/austin/docs/austin_239.html>.
+
+** Binary input and output are now implemented more consistently.
+  These changes affect only platforms like MS-DOS that distinguish
+  between binary and text files.
+
+  The following programs now always use text input/output:
+
+    expand unexpand
+
+  The following programs now always use binary input/output to copy data:
+
+    cp install mv shred
+
+  The following programs now always use binary input/output to copy
+  data, except for stdin and stdout when it is a terminal.
+
+    head tac tail tee tr
+    (cat behaves similarly, unless one of the options -bensAE is used.)
+
+  cat's --binary or -B option has been removed.  It existed only on
+  MS-DOS-like platforms, and didn't work as documented there.
+
+  md5sum and sha1sum now obey the -b or --binary option, even if
+  standard input is a terminal, and they no longer report files to be
+  binary if they actually read them in text mode.
+
+** Changes for better conformance to POSIX
+
+  cp, ln, mv, rm changes:
+
+    Leading white space is now significant in responses to yes-or-no questions.
+    For example, if "rm" asks "remove regular file `foo'?" and you respond
+    with " y" (i.e., space before "y"), it counts as "no".
+
+  dd changes:
+
+    On a QUIT or PIPE signal, dd now exits without printing statistics.
+
+    On hosts lacking the INFO signal, dd no longer treats the USR1
+    signal as if it were INFO when POSIXLY_CORRECT is set.
+
+    If the file F is non-seekable and contains fewer than N blocks,
+    then before copying "dd seek=N of=F" now extends F with zeroed
+    blocks until F contains N blocks.
+
+  fold changes:
+
+    When POSIXLY_CORRECT is set, "fold file -3" is now equivalent to
+    "fold file ./-3", not the obviously-erroneous "fold file ./-w3".
+
+  ls changes:
+
+    -p now marks only directories; it is equivalent to the new option
+    --indicator-style=slash.  Use --file-type or
+    --indicator-style=file-type to get -p's old behavior.
+
+  nice changes:
+
+    Documentation and diagnostics now refer to "nicenesses" (commonly
+    in the range -20...19) rather than "nice values" (commonly 0...39).
+
+  nohup changes:
+
+    nohup now ignores the umask when creating nohup.out.
+
+    nohup now closes stderr if it is a terminal and stdout is closed.
+
+    nohup now exits with status 127 (not 1) when given an invalid option.
+
+  pathchk changes:
+
+    It now rejects the empty name in the normal case.  That is,
+    "pathchk -p ''" now fails, and "pathchk ''" fails unless the
+    current host (contra POSIX) allows empty file names.
+
+    The new -P option checks whether a file name component has leading "-",
+    as suggested in interpretation "Austin-039:XCU:pathchk:pathchk -p"
+    <http://www.opengroup.org/austin/interps/doc.tpl?gdid=6232>.
+    It also rejects the empty name even if the current host accepts it; see
+    <http://www.opengroup.org/austin/interps/doc.tpl?gdid=6233>.
+
+    The --portability option is now equivalent to -p -P.
+
+** Bug fixes
+
+  chmod, mkdir, mkfifo, and mknod formerly mishandled rarely-used symbolic
+  permissions like =xX and =u, and did not properly diagnose some invalid
+  strings like g+gr, ug,+x, and +1.  These bugs have been fixed.
+
+  csplit could produce corrupt output, given input lines longer than 8KB
+
+  dd now computes statistics using a realtime clock (if available)
+  rather than the time-of-day clock, to avoid glitches if the
+  time-of-day is changed while dd is running.  Also, it avoids
+  using unsafe code in signal handlers; this fixes some core dumps.
+
+  expr and test now correctly compare integers of unlimited magnitude.
+
+  expr now detects integer overflow when converting strings to integers,
+  rather than silently wrapping around.
+
+  ls now refuses to generate time stamps containing more than 1000 bytes, to
+  foil potential denial-of-service attacks on hosts with very large stacks.
+
+  "mkdir -m =+x dir" no longer ignores the umask when evaluating "+x",
+  and similarly for mkfifo and mknod.
+
+  "mkdir -p /tmp/a/b dir" no longer attempts to create the `.'-relative
+  directory, dir (in /tmp/a), when, after creating /tmp/a/b, it is unable
+  to return to its initial working directory.  Similarly for "install -D
+  file /tmp/a/b/file".
+
+  "pr -D FORMAT" now accepts the same formats that "date +FORMAT" does.
+
+  stat now exits nonzero if a file operand does not exist
+
+** Improved robustness
+
+  Date no longer needs to allocate virtual memory to do its job,
+  so it can no longer fail due to an out-of-memory condition,
+  no matter how large the result.
+
+** Improved portability
+
+  hostid now prints exactly 8 hexadecimal digits, possibly with leading zeros,
+  and without any spurious leading "fff..." on 64-bit hosts.
+
+  nice now works on Darwin 7.7.0 in spite of its invalid definition of NZERO.
+
+  `rm -r' can remove all entries in a directory even when it is on a
+  file system for which readdir is buggy and that was not checked by
+  coreutils' old configure-time run-test.
+
+  sleep no longer fails when resumed after being suspended on linux-2.6.8.1,
+  in spite of that kernel's buggy nanosleep implementation.
+
+** New features
+
+  chmod -w now complains if its behavior differs from what chmod a-w
+  would do, and similarly for chmod -r, chmod -x, etc.
+
+  cp and mv: the --reply=X option is deprecated
+
+  date accepts the new option --rfc-3339=TIMESPEC.  The old --iso-8602 (-I)
+  option is deprecated; it still works, but new applications should avoid it.
+  date, du, ls, and pr's time formats now support new %:z, %::z, %:::z
+  specifiers for numeric time zone offsets like -07:00, -07:00:00, and -07.
+
+  dd has new iflag= and oflag= flags "binary" and "text", which have an
+  effect only on nonstandard platforms that distinguish text from binary I/O.
+
+  dircolors now supports SETUID, SETGID, STICKY_OTHER_WRITABLE,
+  OTHER_WRITABLE, and STICKY, with ls providing default colors for these
+  categories if not specified by dircolors.
+
+  du accepts new options: --time[=TYPE] and --time-style=STYLE
+
+  join now supports a NUL field separator, e.g., "join -t '\0'".
+  join now detects and reports incompatible options, e.g., "join -t x -t y",
+
+  ls no longer outputs an extra space between the mode and the link count
+  when none of the listed files has an ACL.
+
+  md5sum --check now accepts multiple input files, and similarly for sha1sum.
+
+  If stdin is a terminal, nohup now redirects it from /dev/null to
+  prevent the command from tying up an OpenSSH session after you logout.
+
+  "rm -FOO" now suggests "rm ./-FOO" if the file "-FOO" exists and
+  "-FOO" is not a valid option.
+
+  stat -f -c %S outputs the fundamental block size (used for block counts).
+  stat -f's default output format has been changed to output this size as well.
+  stat -f recognizes file systems of type XFS and JFS
+
+  "touch -" now touches standard output, not a file named "-".
+
+  uname -a no longer generates the -p and -i outputs if they are unknown.
+
+* Major changes in release 5.3.0 (2005-01-08) [unstable]
+
+** Bug fixes
+
+  Several fixes to chgrp and chown for compatibility with POSIX and BSD:
+
+    Do not affect symbolic links by default.
+    Now, operate on whatever a symbolic link points to, instead.
+    To get the old behavior, use --no-dereference (-h).
+
+    --dereference now works, even when the specified owner
+    and/or group match those of an affected symlink.
+
+    Check for incompatible options.  When -R and --dereference are
+    both used, then either -H or -L must also be used.  When -R and -h
+    are both used, then -P must be in effect.
+
+    -H, -L, and -P have no effect unless -R is also specified.
+    If -P and -R are both specified, -h is assumed.
+
+    Do not optimize away the chown() system call when the file's owner
+    and group already have the desired value.  This optimization was
+    incorrect, as it failed to update the last-changed time and reset
+    special permission bits, as POSIX requires.
+
+    "chown : file", "chown '' file", and "chgrp '' file" now succeed
+    without changing the uid or gid, instead of reporting an error.
+
+    Do not report an error if the owner or group of a
+    recursively-encountered symbolic link cannot be updated because
+    the file system does not support it.
+
+  chmod now accepts multiple mode-like options, e.g., "chmod -r -w f".
+
+  chown is no longer subject to a race condition vulnerability, when
+  used with --from=O:G and without the (-h) --no-dereference option.
+
+  cut's --output-delimiter=D option works with abutting byte ranges.
+
+  dircolors's documentation now recommends that shell scripts eval
+  "`dircolors`" rather than `dircolors`, to avoid shell expansion pitfalls.
+
+  du no longer segfaults when a subdirectory of an operand
+  directory is removed while du is traversing that subdirectory.
+  Since the bug was in the underlying fts.c module, it also affected
+  chown, chmod, and chgrp.
+
+  du's --exclude-from=FILE and --exclude=P options now compare patterns
+  against the entire name of each file, rather than against just the
+  final component.
+
+  echo now conforms to POSIX better.  It supports the \0ooo syntax for
+  octal escapes, and \c now terminates printing immediately.  If
+  POSIXLY_CORRECT is set and the first argument is not "-n", echo now
+  outputs all option-like arguments instead of treating them as options.
+
+  expand and unexpand now conform to POSIX better.  They check for
+  blanks (which can include characters other than space and tab in
+  non-POSIX locales) instead of spaces and tabs.  Unexpand now
+  preserves some blanks instead of converting them to tabs or spaces.
+
+  "ln x d/" now reports an error if d/x is a directory and x a file,
+  instead of incorrectly creating a link to d/x/x.
+
+  ls no longer segfaults on systems for which SIZE_MAX != (size_t) -1.
+
+  md5sum and sha1sum now report an error when given so many input
+  lines that their line counter overflows, instead of silently
+  reporting incorrect results.
+
+  Fixes for "nice":
+
+    If it fails to lower the niceness due to lack of permissions,
+    it goes ahead and runs the command anyway, as POSIX requires.
+
+    It no longer incorrectly reports an error if the current niceness
+    happens to be -1.
+
+    It no longer assumes that nicenesses range from -20 through 19.
+
+    It now consistently adjusts out-of-range nicenesses to the
+    closest values in range; formerly it sometimes reported an error.
+
+  pathchk no longer accepts trailing options, e.g., "pathchk -p foo -b"
+  now treats -b as a file name to check, not as an invalid option.
+
+  `pr --columns=N' was not equivalent to `pr -N' when also using
+  either -s or -w.
+
+  pr now supports page numbers up to 2**64 on most hosts, and it
+  detects page number overflow instead of silently wrapping around.
+  pr now accepts file names that begin with "+" so long as the rest of
+  the file name does not look like a page range.
+
+  printf has several changes:
+
+    It now uses 'intmax_t' (not 'long int') to format integers, so it
+    can now format 64-bit integers on most modern hosts.
+
+    On modern hosts it now supports the C99-inspired %a, %A, %F conversion
+    specs, the "'" and "0" flags, and the ll, j, t, and z length modifiers
+    (this is compatible with recent Bash versions).
+
+    The printf command now rejects invalid conversion specifications
+    like %#d, instead of relying on undefined behavior in the underlying
+    printf function.
+
+  ptx now diagnoses invalid values for its --width=N (-w)
+  and --gap-size=N (-g) options.
+
+  mv (when moving between partitions) no longer fails when
+  operating on too many command-line-specified nonempty directories.
+
+  rm (without -f) no longer hangs when attempting to remove a symlink
+  to a file on an off-line NFS-mounted partition.
+
+  rm no longer gets a failed assertion under some unusual conditions.
+
+  rm no longer requires read access to the current directory.
+
+  "rm -r" would mistakenly fail to remove files under a directory
+  for some types of errors (e.g., read-only file system, I/O error)
+  when first encountering the directory.
+
+  "sort" fixes:
+
+    "sort -o -" now writes to a file named "-" instead of to standard
+    output; POSIX requires this.
+
+    An unlikely race condition has been fixed where "sort" could have
+    mistakenly removed a temporary file belonging to some other process.
+
+    "sort" no longer has O(N**2) behavior when it creates many temporary files.
+
+  tac can now handle regular, nonseekable files like Linux's
+  /proc/modules.  Before, it would produce no output for such a file.
+
+  tac would exit immediately upon I/O or temp-file creation failure.
+  Now it continues on, processing any remaining command line arguments.
+
+  "tail -f" no longer mishandles pipes and fifos.  With no operands,
+  tail now ignores -f if standard input is a pipe, as POSIX requires.
+  When conforming to POSIX 1003.2-1992, tail now supports the SUSv2 b
+  modifier (e.g., "tail -10b file") and it handles some obscure cases
+  more correctly, e.g., "tail +cl" now reads the file "+cl" rather
+  than reporting an error, "tail -c file" no longer reports an error,
+  and "tail - file" no longer reads standard input.
+
+  tee now exits when it gets a SIGPIPE signal, as POSIX requires.
+  To get tee's old behavior, use the shell command "(trap '' PIPE; tee)".
+  Also, "tee -" now writes to standard output instead of to a file named "-".
+
+  "touch -- MMDDhhmm[yy] file" is now equivalent to
+  "touch MMDDhhmm[yy] file" even when conforming to pre-2001 POSIX.
+
+  tr no longer mishandles a second operand with leading "-".
+
+  who now prints user names in full instead of truncating them after 8 bytes.
+
+  The following commands now reject unknown options instead of
+  accepting them as operands, so that users are properly warned that
+  options may be added later.  Formerly they accepted unknown options
+  as operands; e.g., "basename -a a" acted like "basename -- -a a".
+
+    basename dirname factor hostname link nohup sync unlink yes
+
+** New features
+
+  For efficiency, `sort -m' no longer copies input to a temporary file
+  merely because the input happens to come from a pipe.  As a result,
+  some relatively-contrived examples like `cat F | sort -m -o F - G'
+  are no longer safe, as `sort' might start writing F before `cat' is
+  done reading it.  This problem cannot occur unless `-m' is used.
+
+  When outside the default POSIX locale, the 'who' and 'pinky'
+  commands now output time stamps like "2004-06-21 13:09" instead of
+  the traditional "Jun 21 13:09".
+
+  pwd now works even when run from a working directory whose name
+  is longer than PATH_MAX.
+
+  cp, install, ln, and mv have a new --no-target-directory (-T) option,
+  and -t is now a short name for their --target-directory option.
+
+  cp -pu and mv -u (when copying) now don't bother to update the
+  destination if the resulting time stamp would be no newer than the
+  preexisting time stamp.  This saves work in the common case when
+  copying or moving multiple times to the same destination in a file
+  system with a coarse time stamp resolution.
+
+  cut accepts a new option, --complement, to complement the set of
+  selected bytes, characters, or fields.
+
+  dd now also prints the number of bytes transferred, the time, and the
+  transfer rate.  The new "status=noxfer" operand suppresses this change.
+
+  dd has new conversions for the conv= option:
+
+    nocreat   do not create the output file
+    excl      fail if the output file already exists
+    fdatasync physically write output file data before finishing
+    fsync     likewise, but also write metadata
+
+  dd has new iflag= and oflag= options with the following flags:
+
+    append    append mode (makes sense for output file only)
+    direct    use direct I/O for data
+    dsync     use synchronized I/O for data
+    sync      likewise, but also for metadata
+    nonblock  use non-blocking I/O
+    nofollow  do not follow symlinks
+    noctty    do not assign controlling terminal from file
+
+  stty now provides support (iutf8) for setting UTF-8 input mode.
+
+  With stat, a specified format is no longer automatically newline terminated.
+  If you want a newline at the end of your output, append `\n' to the format
+  string.
+
+  'df', 'du', and 'ls' now take the default block size from the
+  BLOCKSIZE environment variable if the BLOCK_SIZE, DF_BLOCK_SIZE,
+  DU_BLOCK_SIZE, and LS_BLOCK_SIZE environment variables are not set.
+  Unlike the other variables, though, BLOCKSIZE does not affect
+  values like 'ls -l' sizes that are normally displayed as bytes.
+  This new behavior is for compatibility with BSD.
+
+  du accepts a new option --files0-from=FILE, where FILE contains a
+  list of NUL-terminated file names.
+
+  Date syntax as used by date -d, date -f, and touch -d has been
+  changed as follows:
+
+    Dates like `January 32' with out-of-range components are now rejected.
+
+    Dates can have fractional time stamps like 2004-02-27 14:19:13.489392193.
+
+    Dates can be entered via integer counts of seconds since 1970 when
+    prefixed by `@'.  For example, `@321' represents 1970-01-01 00:05:21 UTC.
+
+    Time zone corrections can now separate hours and minutes with a colon,
+    and can follow standard abbreviations like "UTC".  For example,
+    "UTC +0530" and "+05:30" are supported, and are both equivalent to "+0530".
+
+    Date values can now have leading TZ="..." assignments that override
+    the environment only while that date is being processed.  For example,
+    the following shell command converts from Paris to New York time:
+
+      TZ="America/New_York" date --date='TZ="Europe/Paris" 2004-10-31 06:30'
+
+  `date' has a new option --iso-8601=ns that outputs
+  nanosecond-resolution time stamps.
+
+  echo -e '\xHH' now outputs a byte whose hexadecimal value is HH,
+  for compatibility with bash.
+
+  ls now exits with status 1 on minor problems, 2 if serious trouble.
+
+  ls has a new --hide=PATTERN option that behaves like
+  --ignore=PATTERN, except that it is overridden by -a or -A.
+  This can be useful for aliases, e.g., if lh is an alias for
+  "ls --hide='*~'", then "lh -A" lists the file "README~".
+
+  In the following cases POSIX allows the default GNU behavior,
+  so when POSIXLY_CORRECT is set:
+
+    false, printf, true, unlink, and yes all support --help and --option.
+    ls supports TABSIZE.
+    pr no longer depends on LC_TIME for the date format in non-POSIX locales.
+    printf supports \u, \U, \x.
+    tail supports two or more files when using the obsolete option syntax.
+
+  The usual `--' operand is now supported by chroot, hostid, hostname,
+  pwd, sync, and yes.
+
+  `od' now conforms to POSIX better, and is more compatible with BSD:
+
+    The older syntax "od [-abcdfilosx]... [FILE] [[+]OFFSET[.][b]]" now works
+    even without --traditional.  This is a change in behavior if there
+    are one or two operands and the last one begins with +, or if
+    there are two operands and the latter one begins with a digit.
+    For example, "od foo 10" and "od +10" now treat the last operand as
+    an offset, not as a file name.
+
+    -h is no longer documented, and may be withdrawn in future versions.
+    Use -x or -t x2 instead.
+
+    -i is now equivalent to -t dI (not -t d2), and
+    -l is now equivalent to -t dL (not -t d4).
+
+    -s is now equivalent to -t d2.  The old "-s[NUM]" or "-s NUM"
+    option has been renamed to "-S NUM".
+
+    The default output format is now -t oS, not -t o2, i.e., short int
+    rather than two-byte int.  This makes a difference only on hosts like
+    Cray systems where the C short int type requires more than two bytes.
+
+  The stat option --filesystem has been renamed to --file-system, for
+  consistency with POSIX "file system" and with cp and du --one-file-system.
+
+** Removed features
+
+  md5sum and sha1sum's undocumented --string option has been removed.
+
+  tail's undocumented --max-consecutive-size-changes option has been removed.
+
 * Major changes in release 5.2.1 (2004-03-12) [stable]
 
 ** Bug fixes
@@ -100,6 +666,7 @@ GNU coreutils NEWS                                    -*- outline -*-
   "-o LIST1,LIST2..." respectively.  If join was compiled on a
   POSIX 1003.1-2001 system, you may enable the old behavior
   by setting _POSIX2_VERSION=199209 in your environment.
+  [This change was reverted in coreutils 5.3.1.]
 
 
 * Major changes in release 5.1.0 (2003-12-21):
@@ -648,10 +1215,10 @@ point at which the packages merged to form the coreutils:
    --process (-p), --runlevel (-r), --short (-s), --time (-t), --users (-u).
    The -u option now produces POSIX-specified results and is the same as
    the long option `--users'.  --idle is no longer the same as -u.
-* The following changes apply on systems conforming to POSIX 1003.1-2001,
-  and are required by the new POSIX standard:
+* The following changes apply on systems conforming to POSIX 1003.1-2001:
    - `date -I' is no longer supported.  Instead, use `date --iso-8601'.
    - `nice -NUM' is no longer supported.  Instead, use `nice -n NUM'.
+  [This change was reverted in coreutils 5.3.1.]
 * New 'uname' options -i or --hardware-platform, and -o or --operating-system.
    'uname -a' now outputs -i and -o information at the end.
    New uname option --kernel-version is an alias for -v.

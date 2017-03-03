@@ -6,11 +6,6 @@ if test "$VERBOSE" = yes; then
   od --version
 fi
 
-# FIXME: . $srcdir/../envvar-check
-# FIXME: . $srcdir/../lang-default
-# FIXME: PRIV_CHECK_ARG=require-root . $srcdir/../priv-check
-# FIXME: PRIV_CHECK_ARG=require-non-root . $srcdir/../priv-check
-
 pwd=`pwd`
 tmp=od-N.$$
 trap 'status=$?; cd $pwd; rm -rf $tmp && exit $status' 0
@@ -23,7 +18,7 @@ echo abcdefg > in || framework_failure=1
 
 if test $framework_failure = 1; then
   echo 'failure in testing framework' 1>&2
-  (exit 1); exit
+  (exit 1); exit 1
 fi
 
 fail=0
@@ -38,4 +33,4 @@ cmp out exp || {
   diff out exp 2> /dev/null
   }
 
-(exit $fail); exit
+(exit $fail); exit $fail

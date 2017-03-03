@@ -3,7 +3,7 @@ package Test;
 require 5.002;
 use strict;
 
-# Tell head to accept old-style options like `-1'.
+# Tell sort to accept old-style options like `+1'.
 $Test::env_default = ['_POSIX2_VERSION=199209'];
 
 my @tv = (
@@ -147,8 +147,8 @@ my @tv = (
 
 # From Erick Branderhorst -- fixed around 1.19e
 ["16a", '-f',
- "éminence\nüberhaupt\n's-Gravenhage\naëroclub\nAag\naagtappels\n",
- "'s-Gravenhage\nAag\naagtappels\naëroclub\néminence\nüberhaupt\n",
+ "Ã©minence\nÃ¼berhaupt\n's-Gravenhage\naÃ«roclub\nAag\naagtappels\n",
+ "'s-Gravenhage\nAag\naagtappels\naÃ«roclub\nÃ©minence\nÃ¼berhaupt\n",
  0],
 
 # This provokes a one-byte memory overrun of a malloc'd block for versions
@@ -162,15 +162,16 @@ my @tv = (
 # key specifier when a key-specific option (`n' in this case) is used.
 ["18b", '-b -k1.1,1.2n', " 901\n100\n", " 901\n100\n", 0],
 
-# No change from above because the `b' on the key-end part of the
-# key specifier makes sort ignore only trailing blanks
-["18c", '-k1.1,1.2nb', " 901\n100\n", " 901\n100\n", 0],
+# Here we're comparing ` 90' and `10', because the `b' on the key-end specifier
+# makes sort ignore leading blanks when determining that key's *end*.
+["18c", '-k1.1,1.2nb', " 901\n100\n", "100\n 901\n", 0],
 
-# Here we're comparing `90' and `10', because the `b' on the key-start
-# specifier makes sort ignore *leading* blanks on that key.
-["18d", '-k1.1b,1.2n', " 901\n100\n", "100\n 901\n", 0],
+# Here we're comparing `9' and `10', because the `b' on the key-start specifier
+# makes sort ignore leading blanks when determining that key's *start*.
+["18d", '-k1.1b,1.2n', " 901\n100\n", " 901\n100\n", 0],
 
-# Equivalent to above, except it ignores both leading and trailing blanks.
+# This compares `90' and `10', as it ignores leading blanks for both
+# key start and key end.
 ["18e", '-nb -k1.1,1.2', " 901\n100\n", "100\n 901\n", 0],
 
 # This looks odd, but works properly -- 2nd keyspec is never

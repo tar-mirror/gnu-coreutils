@@ -1,12 +1,19 @@
-#serial 3
+#serial 5
+
+# Copyright (C) 2001, 2003, 2004 Free Software Foundation, Inc.
+# This file is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
+
+# Written by Paul Eggert.
 
 dnl From Paul Eggert.
 
 # Define HOST_OPERATING_SYSTEM to a name for the host operating system.
-AC_DEFUN([UTILS_HOST_OS],
+AC_DEFUN([gl_HOST_OS],
 [
   AC_CACHE_CHECK([host operating system],
-    utils_cv_host_operating_system,
+    gl_cv_host_operating_system,
 
     [[case $host_os in
 
@@ -32,8 +39,8 @@ AC_DEFUN([UTILS_HOST_OS],
        nonstopux*)	os='NonStop-UX';;
        netbsd*-gnu*)	os='GNU/NetBSD';; # NetBSD kernel+libc, GNU userland
        netbsd*)		os='NetBSD';;
-       knetbsd*-gnu)	os='GNU/KNetBSD';; # NetBSD kernel, GNU libc+userland
-       kfreebsd*-gnu)	os='GNU/KFreeBSD';; # FreeBSD kernel, GNU libc+userland
+       knetbsd*-gnu)	os='GNU/kNetBSD';; # NetBSD kernel, GNU libc+userland
+       kfreebsd*-gnu)	os='GNU/kFreeBSD';; # FreeBSD kernel, GNU libc+userland
        msdosdjgpp*)	os='DJGPP';;
        mpeix*)		os='MPE/iX';;
        mint*)		os='MiNT';;
@@ -67,8 +74,8 @@ AC_DEFUN([UTILS_HOST_OS],
        *)
 	 os=$host_os;;
      esac
-     utils_cv_host_operating_system=$os]])
+     gl_cv_host_operating_system=$os]])
   AC_DEFINE_UNQUOTED(HOST_OPERATING_SYSTEM,
-    "$utils_cv_host_operating_system",
+    "$gl_cv_host_operating_system",
     [The host operating system.])
 ])

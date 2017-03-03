@@ -1,13 +1,17 @@
-#serial 1
+#serial 9
+
+# Copyright (C) 2003, 2004, 2005 Free Software Foundation, Inc.
+# This file is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
+
+# Written by Jim Meyering.
+
 AC_DEFUN([AC_FUNC_CANONICALIZE_FILE_NAME],
   [
-    AC_REQUIRE([AC_HEADER_STDC])
-    AC_CHECK_HEADERS(string.h sys/param.h stddef.h)
-    AC_CHECK_FUNCS(resolvepath)
-    AC_REQUIRE([AC_HEADER_STAT])
+    AC_LIBSOURCES([canonicalize.c, canonicalize.h])
+    AC_LIBOBJ([canonicalize])
 
-    # This would simply be AC_REPLACE_FUNC([canonicalize_file_name])
-    # if the function name weren't so long.  Besides, I would rather
-    # not have underscores in file names.
-    AC_CHECK_FUNC([canonicalize_file_name], , [AC_LIBOBJ(canonicalize)])
+    AC_CHECK_HEADERS(sys/param.h)
+    AC_CHECK_FUNCS(resolvepath canonicalize_file_name)
   ])

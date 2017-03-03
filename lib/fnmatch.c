@@ -1,4 +1,4 @@
-/* Copyright (C) 1991,1992,1993,1996,1997,1998,1999,2000,2001,2002,2003,2004
+/* Copyright (C) 1991,1992,1993,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005
 	Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
@@ -13,9 +13,9 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
-#if HAVE_CONFIG_H
+#ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
@@ -24,37 +24,24 @@
 # define _GNU_SOURCE	1
 #endif
 
-#ifdef __GNUC__
-# define alloca __builtin_alloca
-# define HAVE_ALLOCA 1
-#else
-# if defined HAVE_ALLOCA_H || defined _LIBC
-#  include <alloca.h>
-# else
-#  ifdef _AIX
- #  pragma alloca
-#  else
-#   ifndef alloca
-char *alloca ();
-#   endif
-#  endif
-# endif
-#endif
-
 #if ! defined __builtin_expect && __GNUC__ < 3
 # define __builtin_expect(expr, expected) (expr)
 #endif
 
 #include <fnmatch.h>
 
+#include <alloca.h>
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>
 #include <stddef.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define WIDE_CHAR_SUPPORT (HAVE_WCTYPE_H && HAVE_WCHAR_H && HAVE_BTOWC)
+#define WIDE_CHAR_SUPPORT \
+  (HAVE_WCTYPE_H && HAVE_WCHAR_H && HAVE_BTOWC \
+   && HAVE_WMEMCHR && (HAVE_WMEMCPY || HAVE_WMEMPCPY))
 
 /* For platform which support the ISO C amendement 1 functionality we
    support user defined character classes.  */
@@ -171,10 +158,6 @@ extern int fnmatch (const char *pattern, const char *string, int flags);
 
 /* Avoid depending on library functions or files
    whose names are inconsistent.  */
-
-# ifndef errno
-extern int errno;
-# endif
 
 /* Global variable.  */
 static int posixly_correct;
@@ -336,54 +319,51 @@ fnmatch (const char *pattern, const char *string, int flags)
 	 wide characters.  */
       memset (&ps, '\0', sizeof (ps));
       patsize = mbsrtowcs (NULL, &pattern, 0, &ps) + 1;
-      if (__builtin_expect (patsize == 0, 0))
-	/* Something wrong.
-	   XXX Do we have to set `errno' to something which mbsrtows hasn't
-	   already done?  */
-	return -1;
-      assert (mbsinit (&ps));
-      strsize = mbsrtowcs (NULL, &string, 0, &ps) + 1;
-      if (__builtin_expect (strsize == 0, 0))
-	/* Something wrong.
-	   XXX Do we have to set `errno' to something which mbsrtows hasn't
-	   already done?  */
-	return -1;
-      assert (mbsinit (&ps));
-      totsize = patsize + strsize;
-      if (__builtin_expect (! (patsize <= totsize
-			       && totsize <= SIZE_MAX / sizeof (wchar_t)),
-			    0))
+      if (__builtin_expect (patsize != 0, 1))
 	{
-	  errno = ENOMEM;
-	  return -1;
-	}
-
-      /* Allocate room for the wide characters.  */
-      if (__builtin_expect (totsize < ALLOCA_LIMIT, 1))
-	wpattern = (wchar_t *) alloca (totsize * sizeof (wchar_t));
-      else
-	{
-	  wpattern = malloc (totsize * sizeof (wchar_t));
-	  if (__builtin_expect (! wpattern, 0))
+	  assert (mbsinit (&ps));
+	  strsize = mbsrtowcs (NULL, &string, 0, &ps) + 1;
+	  if (__builtin_expect (strsize != 0, 1))
 	    {
-	      errno = ENOMEM;
-	      return -1;
+	      assert (mbsinit (&ps));
+	      totsize = patsize + strsize;
+	      if (__builtin_expect (! (patsize <= totsize
+				       && totsize <= SIZE_MAX / sizeof (wchar_t)),
+				    0))
+		{
+		  errno = ENOMEM;
+		  return -1;
+		}
+
+	      /* Allocate room for the wide characters.  */
+	      if (__builtin_expect (totsize < ALLOCA_LIMIT, 1))
+		wpattern = (wchar_t *) alloca (totsize * sizeof (wchar_t));
+	      else
+		{
+		  wpattern = malloc (totsize * sizeof (wchar_t));
+		  if (__builtin_expect (! wpattern, 0))
+		    {
+		      errno = ENOMEM;
+		      return -1;
+		    }
+		}
+	      wstring = wpattern + patsize;
+
+	      /* Convert the strings into wide characters.  */
+	      mbsrtowcs (wpattern, &pattern, patsize, &ps);
+	      assert (mbsinit (&ps));
+	      mbsrtowcs (wstring, &string, strsize, &ps);
+
+	      res = internal_fnwmatch (wpattern, wstring, wstring + strsize - 1,
+				       flags & FNM_PERIOD, flags);
+
+	      if (__builtin_expect (! (totsize < ALLOCA_LIMIT), 0))
+		free (wpattern);
+	      return res;
 	    }
 	}
-      wstring = wpattern + patsize;
-
-      /* Convert the strings into wide characters.  */
-      mbsrtowcs (wpattern, &pattern, patsize, &ps);
-      assert (mbsinit (&ps));
-      mbsrtowcs (wstring, &string, strsize, &ps);
-
-      res = internal_fnwmatch (wpattern, wstring, wstring + strsize - 1,
-			       flags & FNM_PERIOD, flags);
-
-      if (__builtin_expect (! (totsize < ALLOCA_LIMIT), 0))
-	free (wpattern);
-      return res;
     }
+
 # endif /* HANDLE_MULTIBYTE */
 
   return internal_fnmatch (pattern, string, string + strlen (string),

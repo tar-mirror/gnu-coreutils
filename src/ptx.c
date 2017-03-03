@@ -1,5 +1,5 @@
 /* Permuted index for GNU, with keywords in their context.
-   Copyright (C) 1990, 1991, 1993, 1998-2003 Free Software Foundation, Inc.
+   Copyright (C) 1990, 1991, 1993, 1998-2005 Free Software Foundation, Inc.
    François Pinard <pinard@iro.umontreal.ca>, 1988.
 
    This program is free software; you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
    François Pinard <pinard@iro.umontreal.ca> */
 
@@ -27,7 +27,10 @@
 #include "argmatch.h"
 #include "diacrit.h"
 #include "error.h"
+#include "quote.h"
+#include "quotearg.h"
 #include "regex.h"
+#include "xstrtol.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "ptx"
@@ -54,6 +57,11 @@
 
 /* Global definitions.  */
 
+/* FIXME: There are many unchecked integer overflows in this file,
+   that will cause this command to misbehave given large inputs or
+   options.  Many of the "int" values below should be "size_t" or
+   something else like that.  */
+
 /* Reallocation step when swallowing non regular files.  The value is not
    the actual reallocation step, but its base two logarithm.  */
 #define SWALLOW_REALLOC_LOG 12
@@ -74,26 +82,26 @@ enum Format
   TEX_FORMAT			/* output for `TeX' or `LaTeX' */
 };
 
-int gnu_extensions = 1;		/* trigger all GNU extensions */
-int auto_reference = 0;		/* references are `file_name:line_number:' */
-int input_reference = 0;	/* references at beginning of input lines */
-int right_reference = 0;	/* output references after right context  */
-int line_width = 72;		/* output line width in characters */
-int gap_size = 3;		/* number of spaces between output fields */
-const char *truncation_string = "/";
+static bool gnu_extensions = true;	/* trigger all GNU extensions */
+static bool auto_reference = false;	/* refs are `file_name:line_number:' */
+static bool input_reference = false;	/* refs at beginning of input lines */
+static bool right_reference = false;	/* output refs after right context  */
+static int line_width = 72;	/* output line width in characters */
+static int gap_size = 3;	/* number of spaces between output fields */
+static const char *truncation_string = "/";
 				/* string used to mark line truncations */
-const char *macro_name = "xx";	/* macro name for roff or TeX output */
-enum Format output_format = UNKNOWN_FORMAT;
+static const char *macro_name = "xx";	/* macro name for roff or TeX output */
+static enum Format output_format = UNKNOWN_FORMAT;
 				/* output format */
 
-int ignore_case = 0;		/* fold lower to upper case for sorting */
-const char *context_regex_string = NULL;
+static bool ignore_case = false;	/* fold lower to upper for sorting */
+static const char *context_regex_string = NULL;
 				/* raw regex for end of context */
-const char *word_regex_string = NULL;
+static const char *word_regex_string = NULL;
 				/* raw regex for a keyword */
-const char *break_file = NULL;	/* name of the `Break characters' file */
-const char *only_file = NULL;	/* name of the `Only words' file */
-const char *ignore_file = NULL;	/* name of the `Ignore words' file */
+static const char *break_file = NULL;	/* name of the `Break characters' file */
+static const char *only_file = NULL;	/* name of the `Only words' file */
+static const char *ignore_file = NULL;	/* name of the `Ignore words' file */
 
 /* A BLOCK delimit a region in memory of arbitrary size, like the copy of a
    whole file.  A WORD is something smaller, its length should fit in a
@@ -109,7 +117,7 @@ BLOCK;
 typedef struct
   {
     char *start;		/* pointer to beginning of region */
-    short size;			/* length of the region */
+    short int size;		/* length of the region */
   }
 WORD;
 
@@ -124,51 +132,46 @@ WORD_TABLE;
 /* Pattern description tables.  */
 
 /* For each character, provide its folded equivalent.  */
-unsigned char folded_chars[CHAR_SET_SIZE];
-
-/* For each character, indicate if it is part of a word.  */
-char syntax_table[CHAR_SET_SIZE];
-char *re_syntax_table = syntax_table;
+static unsigned char folded_chars[CHAR_SET_SIZE];
 
 /* Compiled regex for end of context.  */
-struct re_pattern_buffer *context_regex;
+static struct re_pattern_buffer *context_regex;
 
 /* End of context pattern register indices.  */
-struct re_registers context_regs;
+static struct re_registers context_regs;
 
 /* Compiled regex for a keyword.  */
-struct re_pattern_buffer *word_regex;
+static struct re_pattern_buffer *word_regex;
 
 /* Keyword pattern register indices.  */
-struct re_registers word_regs;
+static struct re_registers word_regs;
 
 /* A word characters fastmap is used only when no word regexp has been
    provided.  A word is then made up of a sequence of one or more characters
    allowed by the fastmap.  Contains !0 if character allowed in word.  Not
    only this is faster in most cases, but it simplifies the implementation
    of the Break files.  */
-char word_fastmap[CHAR_SET_SIZE];
+static char word_fastmap[CHAR_SET_SIZE];
 
 /* Maximum length of any word read.  */
-int maximum_word_length;
+static int maximum_word_length;
 
 /* Maximum width of any reference used.  */
-int reference_max_width;
+static int reference_max_width;
 
 /* Ignore and Only word tables.  */
 
-WORD_TABLE ignore_table;	/* table of words to ignore */
-WORD_TABLE only_table;		/* table of words to select */
+static WORD_TABLE ignore_table;	/* table of words to ignore */
+static WORD_TABLE only_table;		/* table of words to select */
 
 /* Source text table, and scanning macros.  */
 
-int number_input_files;		/* number of text input files */
-int total_line_count;		/* total number of lines seen so far */
-const char **input_file_name;	/* array of text input file names */
-int *file_line_count;		/* array of `total_line_count' values at end */
+static int number_input_files;	/* number of text input files */
+static int total_line_count;	/* total number of lines seen so far */
+static const char **input_file_name;	/* array of text input file names */
+static int *file_line_count;	/* array of `total_line_count' values at end */
 
-BLOCK text_buffer;		/* file to study */
-char *text_buffer_maxend;	/* allocated end of text_buffer */
+static BLOCK text_buffer;	/* file to study */
 
 /* SKIP_NON_WHITE used only for getting or skipping the reference.  */
 
@@ -187,12 +190,14 @@ char *text_buffer_maxend;	/* allocated end of text_buffer */
 #define SKIP_SOMETHING(cursor, limit) \
   if (word_regex_string)						\
     {									\
-      int count;							\
+      regoff_t count;							\
       count = re_match (word_regex, cursor, limit - cursor, 0, NULL);	\
-      cursor += count <= 0 ? 1 : count;					\
+      if (count == -2)							\
+        matcher_error ();						\
+      cursor += count == -1 ? 1 : count;				\
     }									\
-  else if (word_fastmap[(unsigned char) *cursor])			\
-    while (cursor < limit && word_fastmap[(unsigned char) *cursor])	\
+  else if (word_fastmap[to_uchar (*cursor)])				\
+    while (cursor < limit && word_fastmap[to_uchar (*cursor)])		\
       cursor++;								\
   else									\
     cursor++
@@ -224,7 +229,7 @@ char *text_buffer_maxend;	/* allocated end of text_buffer */
    start of the reference field, it is of type (DELTA) and usually
    negative.  */
 
-typedef short DELTA;		/* to hold displacement within one context */
+typedef short int DELTA;	/* to hold displacement within one context */
 
 typedef struct
   {
@@ -238,20 +243,20 @@ OCCURS;
 /* The various OCCURS tables are indexed by the language.  But the time
    being, there is no such multiple language support.  */
 
-OCCURS *occurs_table[1];	/* all words retained from the read text */
-size_t occurs_alloc[1];		/* allocated size of occurs_table */
-size_t number_of_occurs[1];	/* number of used slots in occurs_table */
+static OCCURS *occurs_table[1];	/* all words retained from the read text */
+static size_t occurs_alloc[1];	/* allocated size of occurs_table */
+static size_t number_of_occurs[1]; /* number of used slots in occurs_table */
 
 
 /* Communication among output routines.  */
 
 /* Indicate if special output processing is requested for each character.  */
-char edited_flag[CHAR_SET_SIZE];
+static char edited_flag[CHAR_SET_SIZE];
 
-int half_line_width;		/* half of line width, reference excluded */
-int before_max_width;		/* maximum width of before field */
-int keyafter_max_width;		/* maximum width of keyword-and-after field */
-int truncation_string_length;	/* length of string used to flag truncation */
+static int half_line_width;	/* half of line width, reference excluded */
+static int before_max_width;	/* maximum width of before field */
+static int keyafter_max_width;	/* maximum width of keyword-and-after field */
+static int truncation_string_length;/* length of string used to flag truncation */
 
 /* When context is limited by lines, wraparound may happen on final output:
    the `head' pointer gives access to some supplementary left context which
@@ -259,21 +264,30 @@ int truncation_string_length;	/* length of string used to flag truncation */
    access to some supplementary right context which will be seen at the
    beginning of the output line. */
 
-BLOCK tail;			/* tail field */
-int tail_truncation;		/* flag truncation after the tail field */
+static BLOCK tail;		/* tail field */
+static int tail_truncation;	/* flag truncation after the tail field */
 
-BLOCK before;			/* before field */
-int before_truncation;		/* flag truncation before the before field */
+static BLOCK before;		/* before field */
+static int before_truncation;	/* flag truncation before the before field */
 
-BLOCK keyafter;			/* keyword-and-after field */
-int keyafter_truncation;	/* flag truncation after the keyafter field */
+static BLOCK keyafter;		/* keyword-and-after field */
+static int keyafter_truncation;	/* flag truncation after the keyafter field */
 
-BLOCK head;			/* head field */
-int head_truncation;		/* flag truncation before the head field */
+static BLOCK head;		/* head field */
+static int head_truncation;	/* flag truncation before the head field */
 
-BLOCK reference;		/* reference field for input reference mode */
+static BLOCK reference;		/* reference field for input reference mode */
 
 /* Miscellaneous routines.  */
+
+/* Diagnose an error in the regular expression matcher.  Then exit.  */
+
+static void ATTRIBUTE_NORETURN
+matcher_error (void)
+{
+  error (0, errno, _("error in regular expression matcher"));
+  exit (EXIT_FAILURE);
+}
 
 /*------------------------------------------------------.
 | Duplicate string STRING, while evaluating \-escapes.  |
@@ -395,7 +409,7 @@ alloc_and_compile_regex (const char *string)
   const char *message;		/* error message returned by regex.c */
 
   pattern = xmalloc (sizeof *pattern);
-  memset (pattern, 0, sizeof (struct re_pattern_buffer));
+  memset (pattern, 0, sizeof *pattern);
 
   pattern->buffer = NULL;
   pattern->allocated = 0;
@@ -404,7 +418,7 @@ alloc_and_compile_regex (const char *string)
 
   message = re_compile_pattern (string, (int) strlen (string), pattern);
   if (message)
-    error (EXIT_FAILURE, 0, _("%s (for regexp `%s')"), message, string);
+    error (EXIT_FAILURE, 0, _("%s (for regexp %s)"), message, quote (string));
 
   /* The fastmap should be compiled before `re_match'.  The following
      call is not mandatory, because `re_search' is always called sooner,
@@ -414,12 +428,8 @@ alloc_and_compile_regex (const char *string)
 
   /* Do not waste extra allocated space.  */
 
-  if (pattern->allocated > pattern->used)
-    {
-      pattern->buffer
-	= xrealloc (pattern->buffer, (size_t) pattern->used);
-      pattern->allocated = pattern->used;
-    }
+  pattern->buffer = xrealloc (pattern->buffer, pattern->used);
+  pattern->allocated = pattern->used;
 
   return pattern;
 }
@@ -433,11 +443,6 @@ static void
 initialize_regex (void)
 {
   int character;		/* character value */
-
-  /* Initialize the regex syntax table.  */
-
-  for (character = 0; character < CHAR_SET_SIZE; character++)
-    syntax_table[character] = ISALPHA (character) ? Sword : 0;
 
   /* Initialize the case folding table.  */
 
@@ -457,7 +462,7 @@ initialize_regex (void)
       if (!*context_regex_string)
 	context_regex_string = NULL;
     }
-  else if (gnu_extensions && !input_reference)
+  else if (gnu_extensions & !input_reference)
     context_regex_string = "[.?!][]\"')}]*\\($\\|\t\\|  \\)[ \t\n]*";
   else
     context_regex_string = "\n";
@@ -521,7 +526,7 @@ swallow_file_in_memory (const char *file_name, BLOCK *block)
   /* As special cases, a file name which is NULL or "-" indicates standard
      input, which is already opened.  In all other cases, open the file from
      its name.  */
-  bool using_stdin = !file_name || !*file_name || strcmp (file_name, "-") == 0;
+  bool using_stdin = !file_name || !*file_name || STREQ (file_name, "-");
   if (using_stdin)
     file_handle = STDIN_FILENO;
   else
@@ -619,8 +624,8 @@ compare_words (const void *void_first, const void *void_second)
     {
       for (counter = 0; counter < length; counter++)
 	{
-	  value = (folded_chars [(unsigned char) (first->start[counter])]
-		   - folded_chars [(unsigned char) (second->start[counter])]);
+	  value = (folded_chars [to_uchar (first->start[counter])]
+		   - folded_chars [to_uchar (second->start[counter])]);
 	  if (value != 0)
 	    return value;
 	}
@@ -629,8 +634,8 @@ compare_words (const void *void_first, const void *void_second)
     {
       for (counter = 0; counter < length; counter++)
 	{
-	  value = ((unsigned char) first->start[counter]
-		   - (unsigned char) second->start[counter]);
+	  value = (to_uchar (first->start[counter])
+		   - to_uchar (second->start[counter]));
 	  if (value != 0)
 	    return value;
 	}
@@ -700,7 +705,7 @@ sort_found_occurs (void)
 
   /* Only one language for the time being.  */
 
-  qsort (occurs_table[0], number_of_occurs[0], sizeof (OCCURS),
+  qsort (occurs_table[0], number_of_occurs[0], sizeof **occurs_table,
 	 compare_occurs);
 }
 
@@ -724,7 +729,7 @@ digest_break_file (const char *file_name)
 
   memset (word_fastmap, 1, CHAR_SET_SIZE);
   for (cursor = file_contents.start; cursor < file_contents.end; cursor++)
-    word_fastmap[(unsigned char) *cursor] = 0;
+    word_fastmap[to_uchar (*cursor)] = 0;
 
   if (!gnu_extensions)
     {
@@ -803,7 +808,7 @@ digest_word_file (const char *file_name, WORD_TABLE *table)
 
   /* Finally, sort all the words read.  */
 
-  qsort (table->start, table->length, (size_t) sizeof (WORD), compare_words);
+  qsort (table->start, table->length, sizeof table->start[0], compare_words);
 }
 
 /* Keyword recognition and selection.  */
@@ -874,14 +879,21 @@ find_occurs_in_text (void)
 	 This test also accounts for the case of an incomplete line or
 	 sentence at the end of the buffer.  */
 
-      if (context_regex_string
-	  && (re_search (context_regex, cursor, text_buffer.end - cursor,
-			 0, text_buffer.end - cursor, &context_regs)
-	      >= 0))
-	next_context_start = cursor + context_regs.end[0];
+      next_context_start = text_buffer.end;
+      if (context_regex_string)
+	switch (re_search (context_regex, cursor, text_buffer.end - cursor,
+			   0, text_buffer.end - cursor, &context_regs))
+	  {
+	  case -2:
+	    matcher_error ();
 
-      else
-	next_context_start = text_buffer.end;
+	  case -1:
+	    break;
+
+	  default:
+	    next_context_start = cursor + context_regs.end[0];
+	    break;
+	  }
 
       /* Include the separator into the right context, but not any suffix
 	 white space in this separator; this insures it will be seen in
@@ -902,9 +914,11 @@ find_occurs_in_text (void)
 	       the loop.  */
 
 	    {
-	      if (re_search (word_regex, cursor, context_end - cursor,
-			     0, context_end - cursor, &word_regs)
-		  < 0)
+	      regoff_t r = re_search (word_regex, cursor, context_end - cursor,
+				      0, context_end - cursor, &word_regs);
+	      if (r == -2)
+		matcher_error ();
+	      if (r == -1)
 		break;
 	      word_start = cursor + word_regs.start[0];
 	      word_end = cursor + word_regs.end[0];
@@ -918,7 +932,7 @@ find_occurs_in_text (void)
 	    {
 	      scan = cursor;
 	      while (scan < context_end
-		     && !word_fastmap[(unsigned char) *scan])
+		     && !word_fastmap[to_uchar (*scan)])
 		scan++;
 
 	      if (scan == context_end)
@@ -927,7 +941,7 @@ find_occurs_in_text (void)
 	      word_start = scan;
 
 	      while (scan < context_end
-		     && word_fastmap[(unsigned char) *scan])
+		     && word_fastmap[to_uchar (*scan)])
 		scan++;
 
 	      word_end = scan;
@@ -1093,7 +1107,6 @@ static void
 print_field (BLOCK field)
 {
   char *cursor;			/* Cursor in field to print */
-  int character;		/* Current character */
   int base;			/* Base character, without diacritic */
   int diacritic;		/* Diacritic code for the character */
 
@@ -1102,7 +1115,7 @@ print_field (BLOCK field)
 
   for (cursor = field.start; cursor < field.end; cursor++)
     {
-      character = (unsigned char) *cursor;
+      unsigned char character = *cursor;
       if (edited_flag[character])
 	{
 
@@ -1288,7 +1301,7 @@ fix_output_parameters (void)
   /* If the reference appears to the left of the output line, reserve some
      space for it right away, including one gap size.  */
 
-  if ((auto_reference || input_reference) && !right_reference)
+  if ((auto_reference | input_reference) & !right_reference)
     line_width -= reference_max_width + gap_size;
 
   /* The output lines, minimally, will contain from left to right a left
@@ -1387,7 +1400,7 @@ fix_output_parameters (void)
       /* Various characters need special processing.  */
 
       for (cursor = "$%&#_{}\\"; *cursor; cursor++)
-	edited_flag[(unsigned char) *cursor] = 1;
+	edited_flag[to_uchar (*cursor)] = 1;
 
       /* Any character with 8th bit set will print to a single space, unless
 	 it is diacriticized.  */
@@ -1650,7 +1663,7 @@ output_one_roff_line (void)
 
   /* Conditionally output the `reference' field.  */
 
-  if (auto_reference || input_reference)
+  if (auto_reference | input_reference)
     {
       fputs (" \"", stdout);
       print_field (reference);
@@ -1689,7 +1702,7 @@ output_one_tex_line (void)
   fputs ("}{", stdout);
   print_field (head);
   putchar ('}');
-  if (auto_reference || input_reference)
+  if (auto_reference | input_reference)
     {
       putchar ('{');
       print_field (reference);
@@ -1781,12 +1794,12 @@ output_one_dumb_line (void)
     }
   else
 
-    if ((auto_reference || input_reference) && right_reference)
+    if ((auto_reference | input_reference) & right_reference)
       print_spaces (half_line_width
 		    - (keyafter.end - keyafter.start)
 		    - (keyafter_truncation ? truncation_string_length : 0));
 
-  if ((auto_reference || input_reference) && right_reference)
+  if ((auto_reference | input_reference) & right_reference)
     {
       /* Output the `reference' field.  */
 
@@ -1946,12 +1959,12 @@ static const struct option long_options[] =
   {"word-regexp", required_argument, NULL, 'W'},
   {GETOPT_HELP_OPTION_DECL},
   {GETOPT_VERSION_OPTION_DECL},
-  {0, 0, 0, 0},
+  {NULL, 0, NULL, 0},
 };
 
 static char const* const format_args[] =
 {
-  "roff", "tex", 0
+  "roff", "tex", NULL
 };
 
 static enum Format const format_vals[] =
@@ -1988,9 +2001,6 @@ main (int argc, char **argv)
 	default:
 	  usage (EXIT_FAILURE);
 
-	case 0:
-	  break;
-
 	case 'C':
 	  fputs (_("\
 This program is free software; you can redistribute it and/or modify\n\
@@ -2009,13 +2019,13 @@ GNU General Public License for more details.\n\
 	  fputs (_("\
 You should have received a copy of the GNU General Public License\n\
 along with this program; if not, write to the Free Software Foundation,\n\
-Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.\n"),
+Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.\n"),
 		 stdout);
 
 	  exit (EXIT_SUCCESS);
 
 	case 'G':
-	  gnu_extensions = 0;
+	  gnu_extensions = false;
 	  break;
 
 	case 'b':
@@ -2023,12 +2033,19 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.\n"),
 	  break;
 
 	case 'f':
-	  ignore_case = 1;
+	  ignore_case = true;
 	  break;
 
 	case 'g':
-	  gap_size = atoi (optarg);
-	  break;
+	  {
+	    unsigned long int tmp_ulong;
+	    if (xstrtoul (optarg, NULL, 0, &tmp_ulong, NULL) != LONGINT_OK
+		|| ! (0 < tmp_ulong && tmp_ulong <= INT_MAX))
+	      error (EXIT_FAILURE, 0, _("invalid gap width: %s"),
+		     quotearg (optarg));
+	    gap_size = tmp_ulong;
+	    break;
+	  }
 
 	case 'i':
 	  ignore_file = optarg;
@@ -2039,7 +2056,7 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.\n"),
 	  break;
 
 	case 'r':
-	  input_reference = 1;
+	  input_reference = true;
 	  break;
 
 	case 't':
@@ -2047,11 +2064,18 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.\n"),
 	  break;
 
 	case 'w':
-	  line_width = atoi (optarg);
-	  break;
+	  {
+	    unsigned long int tmp_ulong;
+	    if (xstrtoul (optarg, NULL, 0, &tmp_ulong, NULL) != LONGINT_OK
+		|| ! (0 < tmp_ulong && tmp_ulong <= INT_MAX))
+	      error (EXIT_FAILURE, 0, _("invalid line width: %s"),
+		     quotearg (optarg));
+	    line_width = tmp_ulong;
+	    break;
+	  }
 
 	case 'A':
-	  auto_reference = 1;
+	  auto_reference = true;
 	  break;
 
 	case 'F':
@@ -2067,7 +2091,7 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.\n"),
 	  break;
 
 	case 'R':
-	  right_reference = 1;
+	  right_reference = true;
 	  break;
 
 	case 'S':
@@ -2121,7 +2145,7 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.\n"),
       for (file_index = 0; file_index < number_input_files; file_index++)
 	{
 	  input_file_name[file_index] = argv[optind];
-	  if (!*argv[optind] || strcmp (argv[optind], "-") == 0)
+	  if (!*argv[optind] || STREQ (argv[optind], "-"))
 	    input_file_name[0] = NULL;
 	  else
 	    input_file_name[0] = argv[optind];
@@ -2136,7 +2160,7 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.\n"),
       number_input_files = 1;
       input_file_name = xmalloc (sizeof *input_file_name);
       file_line_count = xmalloc (sizeof *file_line_count);
-      if (!*argv[optind] || strcmp (argv[optind], "-") == 0)
+      if (!*argv[optind] || STREQ (argv[optind], "-"))
 	input_file_name[0] = NULL;
       else
 	input_file_name[0] = argv[optind];
@@ -2146,9 +2170,7 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.\n"),
 
       if (optind < argc)
 	{
-	  /* FIXME: don't fclose here? */
-	  fclose (stdout);
-	  if (fopen (argv[optind], "w") == NULL)
+	  if (! freopen (argv[optind], "w", stdout))
 	    error (EXIT_FAILURE, errno, "%s", argv[optind]);
 	  optind++;
 	}
@@ -2156,7 +2178,10 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.\n"),
       /* Diagnose any other argument as an error.  */
 
       if (optind < argc)
-	usage (EXIT_FAILURE);
+	{
+	  error (0, 0, _("extra operand %s"), quote (argv[optind]));
+	  usage (EXIT_FAILURE);
+	}
     }
 
   /* If the output format has not been explicitly selected, choose dumb

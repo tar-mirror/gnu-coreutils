@@ -7,16 +7,21 @@ TESTS_ENVIRONMENT = \
   srcdir=$(srcdir) \
   PACKAGE_VERSION=$(PACKAGE_VERSION) \
   PERL="$(PERL)" \
+  BUILD_SRC_DIR="`pwd`/../../src" \
   PATH="`pwd`/../../src$(PATH_SEPARATOR)$$PATH" \
   PROG=$$tst
 
 TESTS = \
+  date \
+  tac-continue \
+  close-stdout \
+  pwd \
+  date-sec \
   paste-no-nl \
   stat-fmt \
   expand \
   fold \
   nohup \
-  readlink \
   head-elide-tail \
   split-fail \
   false \

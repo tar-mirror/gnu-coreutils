@@ -1,5 +1,5 @@
 /* settime -- set the system clock
-   Copyright (C) 2002 Free Software Foundation, Inc.
+   Copyright (C) 2002, 2004, 2005 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* Written by Paul Eggert.  */
 
@@ -23,16 +23,34 @@
 
 #include "timespec.h"
 
+#include <unistd.h>
+
+#include <errno.h>
+
+/* Some systems don't have ENOSYS.  */
+#ifndef ENOSYS
+# ifdef ENOTSUP
+#  define ENOSYS ENOTSUP
+# else
+/* Some systems don't have ENOTSUP either.  */
+#  define ENOSYS EINVAL
+# endif
+#endif
+
 /* Set the system time.  */
 
 int
 settime (struct timespec const *ts)
 {
 #if defined CLOCK_REALTIME && HAVE_CLOCK_SETTIME
-  if (clock_settime (CLOCK_REALTIME, ts) == 0)
-    return 0;
+  {
+    int r = clock_settime (CLOCK_REALTIME, ts);
+    if (r == 0 || errno == EPERM)
+      return r;
+  }
 #endif
 
+#if HAVE_SETTIMEOFDAY
   {
     struct timeval tv;
 
@@ -40,4 +58,13 @@ settime (struct timespec const *ts)
     tv.tv_usec = ts->tv_nsec / 1000;
     return settimeofday (&tv, 0);
   }
+#elif HAVE_STIME
+  /* This fails to compile on OSF1 V5.1, due to stime requiring
+     a `long int*' and tv_sec is `int'.  But that system does provide
+     settimeofday.  */
+  return stime (&ts->tv_sec);
+#else
+  errno = ENOSYS;
+  return -1;
+#endif
 }

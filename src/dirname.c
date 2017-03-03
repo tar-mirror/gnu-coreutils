@@ -1,5 +1,7 @@
-/* dirname -- strip filename suffix from pathname
-   Copyright (C) 1990-1997, 1999-2002, 2004 Free Software Foundation, Inc.
+/* dirname -- strip suffix from file name
+
+   Copyright (C) 1990-1997, 1999-2002, 2004, 2005 Free Software
+   Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -13,11 +15,12 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* Written by David MacKenzie and Jim Meyering. */
 
 #include <config.h>
+#include <getopt.h>
 #include <stdio.h>
 #include <sys/types.h>
 
@@ -25,6 +28,7 @@
 #include "long-options.h"
 #include "error.h"
 #include "dirname.h"
+#include "quote.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "dirname"
@@ -54,6 +58,13 @@ output `.' (meaning the current directory).\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
+      printf (_("\
+\n\
+Examples:\n\
+  %s /usr/bin/sort  Output \"/usr/bin\".\n\
+  %s stdio.h        Output \".\".\n\
+"),
+	      program_name, program_name);
       printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
     }
   exit (status);
@@ -76,22 +87,22 @@ main (int argc, char **argv)
 
   parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
 		      usage, AUTHORS, (char const *) NULL);
-  /* The above handles --help and --version.
-     Since there is no other invocation of getopt, handle `--' here.  */
-  if (argc > 1 && STREQ (argv[1], "--"))
-    {
-      --argc;
-      ++argv;
-    }
+  if (getopt_long (argc, argv, "+", NULL, NULL) != -1)
+    usage (EXIT_FAILURE);
 
-  if (argc != 2)
+  if (argc < optind + 1)
     {
-      error (0, 0, argc < 2 ? _("too few arguments")
-	     : _("too many arguments"));
+      error (0, 0, _("missing operand"));
       usage (EXIT_FAILURE);
     }
 
-  result = argv[1];
+  if (optind + 1 < argc)
+    {
+      error (0, 0, _("extra operand %s"), quote (argv[optind + 1]));
+      usage (EXIT_FAILURE);
+    }
+
+  result = argv[optind];
   len = dir_len (result);
 
   if (! len)

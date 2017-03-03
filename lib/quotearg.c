@@ -1,5 +1,7 @@
 /* quotearg.c - quote arguments for output
-   Copyright (C) 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+
+   Copyright (C) 1998, 1999, 2000, 2001, 2002, 2004, 2005 Free Software
+   Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -13,11 +15,11 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* Written by Paul Eggert <eggert@twinsun.com> */
 
-#if HAVE_CONFIG_H
+#ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
@@ -28,6 +30,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <limits.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -81,7 +84,7 @@ struct quoting_options
 
   /* Quote the characters indicated by this bit vector even if the
      quoting style would not normally require them to be quoted.  */
-  int quote_these_too[(UCHAR_MAX / INT_BITS) + 1];
+  unsigned int quote_these_too[(UCHAR_MAX / INT_BITS) + 1];
 };
 
 /* Names of quoting styles.  */
@@ -149,7 +152,8 @@ int
 set_char_quoting (struct quoting_options *o, char c, int i)
 {
   unsigned char uc = c;
-  int *p = (o ? o : &default_quoting_options)->quote_these_too + uc / INT_BITS;
+  unsigned int *p =
+    (o ? o : &default_quoting_options)->quote_these_too + uc / INT_BITS;
   int shift = uc % INT_BITS;
   int r = (*p >> shift) & 1;
   *p ^= ((i & 1) ^ r) << shift;
@@ -174,7 +178,7 @@ gettext_quote (char const *msgid, enum quoting_style s)
    size of the output, not counting the terminating null.
    If BUFFERSIZE is too small to store the output string, return the
    value that would have been returned had BUFFERSIZE been large enough.
-   If ARGSIZE is -1, use the string length of the argument for ARGSIZE.
+   If ARGSIZE is SIZE_MAX, use the string length of the argument for ARGSIZE.
 
    This function acts like quotearg_buffer (BUFFER, BUFFERSIZE, ARG,
    ARGSIZE, O), except it uses QUOTING_STYLE instead of the quoting
@@ -190,8 +194,8 @@ quotearg_buffer_restyled (char *buffer, size_t buffersize,
   size_t len = 0;
   char const *quote_string = 0;
   size_t quote_string_len = 0;
-  int backslash_escapes = 0;
-  int unibyte_locale = MB_CUR_MAX == 1;
+  bool backslash_escapes = false;
+  bool unibyte_locale = MB_CUR_MAX == 1;
 
 #define STORE(c) \
     do \
@@ -206,19 +210,20 @@ quotearg_buffer_restyled (char *buffer, size_t buffersize,
     {
     case c_quoting_style:
       STORE ('"');
-      backslash_escapes = 1;
+      backslash_escapes = true;
       quote_string = "\"";
       quote_string_len = 1;
       break;
 
     case escape_quoting_style:
-      backslash_escapes = 1;
+      backslash_escapes = true;
       break;
 
     case locale_quoting_style:
     case clocale_quoting_style:
       {
-	/* Get translations for open and closing quotation marks.
+	/* TRANSLATORS:
+	   Get translations for open and closing quotation marks.
 
 	   The message catalog should translate "`" to a left
 	   quotation mark suitable for the locale, and similarly for
@@ -231,13 +236,17 @@ quotearg_buffer_restyled (char *buffer, size_t buffersize,
 	   should translate "'" to U+201D (RIGHT DOUBLE QUOTATION
 	   MARK).  A British English Unicode locale should instead
 	   translate these to U+2018 (LEFT SINGLE QUOTATION MARK) and
-	   U+2019 (RIGHT SINGLE QUOTATION MARK), respectively.  */
+	   U+2019 (RIGHT SINGLE QUOTATION MARK), respectively.
+
+	   If you don't know what to put here, please see
+	   <http://en.wikipedia.org/wiki/Quotation_mark#Glyphs>
+	   and use glyphs suitable for your language.  */
 
 	char const *left = gettext_quote (N_("`"), quoting_style);
 	char const *right = gettext_quote (N_("'"), quoting_style);
 	for (quote_string = left; *quote_string; quote_string++)
 	  STORE (*quote_string);
-	backslash_escapes = 1;
+	backslash_escapes = true;
 	quote_string = right;
 	quote_string_len = strlen (quote_string);
       }
@@ -326,6 +335,10 @@ quotearg_buffer_restyled (char *buffer, size_t buffersize,
 	    }
 	  break;
 
+	case '{': case '}': /* sometimes special if isolated */
+	  if (! (argsize == SIZE_MAX ? arg[1] == '\0' : argsize == 1))
+	    break;
+	  /* Fall through.  */
 	case '#': case '~':
 	  if (i != 0)
 	    break;
@@ -334,7 +347,9 @@ quotearg_buffer_restyled (char *buffer, size_t buffersize,
 	case '!': /* special in bash */
 	case '"': case '$': case '&':
 	case '(': case ')': case '*': case ';':
-	case '<': case '>': case '[':
+	case '<':
+	case '=': /* sometimes special in 0th or (with "set -k") later args */
+	case '>': case '[':
 	case '^': /* special in old /bin/sh, e.g. SunOS 4.1.4 */
 	case '`': case '|':
 	  /* A shell special character.  In theory, '$' and '`' could
@@ -364,7 +379,7 @@ quotearg_buffer_restyled (char *buffer, size_t buffersize,
 
 	case '%': case '+': case ',': case '-': case '.': case '/':
 	case '0': case '1': case '2': case '3': case '4': case '5':
-	case '6': case '7': case '8': case '9': case ':': case '=':
+	case '6': case '7': case '8': case '9': case ':':
 	case 'A': case 'B': case 'C': case 'D': case 'E': case 'F':
 	case 'G': case 'H': case 'I': case 'J': case 'K': case 'L':
 	case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R':
@@ -374,7 +389,6 @@ quotearg_buffer_restyled (char *buffer, size_t buffersize,
 	case 'i': case 'j': case 'k': case 'l': case 'm': case 'n':
 	case 'o': case 'p': case 'q': case 'r': case 's': case 't':
 	case 'u': case 'v': case 'w': case 'x': case 'y': case 'z':
-	case '{': case '}':
 	  /* These characters don't cause problems, no matter what the
 	     quoting style is.  They cannot start multibyte sequences.  */
 	  break;
@@ -389,12 +403,12 @@ quotearg_buffer_restyled (char *buffer, size_t buffersize,
 	    /* Length of multibyte sequence found so far.  */
 	    size_t m;
 
-	    int printable;
+	    bool printable;
 
 	    if (unibyte_locale)
 	      {
 		m = 1;
-		printable = isprint (c);
+		printable = isprint (c) != 0;
 	      }
 	    else
 	      {
@@ -402,7 +416,7 @@ quotearg_buffer_restyled (char *buffer, size_t buffersize,
 		memset (&mbstate, 0, sizeof mbstate);
 
 		m = 0;
-		printable = 1;
+		printable = true;
 		if (argsize == SIZE_MAX)
 		  argsize = strlen (arg);
 
@@ -415,20 +429,36 @@ quotearg_buffer_restyled (char *buffer, size_t buffersize,
 		      break;
 		    else if (bytes == (size_t) -1)
 		      {
-			printable = 0;
+			printable = false;
 			break;
 		      }
 		    else if (bytes == (size_t) -2)
 		      {
-			printable = 0;
+			printable = false;
 			while (i + m < argsize && arg[i + m])
 			  m++;
 			break;
 		      }
 		    else
 		      {
+			/* Work around a bug with older shells that "see" a '\'
+			   that is really the 2nd byte of a multibyte character.
+			   In practice the problem is limited to ASCII
+			   chars >= '@' that are shell special chars.  */
+			if ('[' == 0x5b && quoting_style == shell_quoting_style)
+			  {
+			    size_t j;
+			    for (j = 1; j < bytes; j++)
+			      switch (arg[i + m + j])
+				{
+				case '[': case '\\': case '^':
+				case '`': case '|':
+				  goto use_shell_always_quoting_style;
+				}
+			  }
+
 			if (! iswprint (w))
-			  printable = 0;
+			  printable = false;
 			m += bytes;
 		      }
 		  }
@@ -472,6 +502,9 @@ quotearg_buffer_restyled (char *buffer, size_t buffersize,
       STORE (c);
     }
 
+  if (i == 0 && quoting_style == shell_quoting_style)
+    goto use_shell_always_quoting_style;
+
   if (quote_string)
     for (; *quote_string; quote_string++)
       STORE (*quote_string);
@@ -492,7 +525,8 @@ quotearg_buffer_restyled (char *buffer, size_t buffersize,
    size of the output, not counting the terminating null.
    If BUFFERSIZE is too small to store the output string, return the
    value that would have been returned had BUFFERSIZE been large enough.
-   If ARGSIZE is -1, use the string length of the argument for ARGSIZE.  */
+   If ARGSIZE is SIZE_MAX, use the string length of the argument for
+   ARGSIZE.  */
 size_t
 quotearg_buffer (char *buffer, size_t buffersize,
 		 char const *arg, size_t argsize,
@@ -506,8 +540,23 @@ quotearg_buffer (char *buffer, size_t buffersize,
   return r;
 }
 
+/* Like quotearg_buffer (..., ARG, ARGSIZE, O), except return newly
+   allocated storage containing the quoted string.  */
+char *
+quotearg_alloc (char const *arg, size_t argsize,
+		struct quoting_options const *o)
+{
+  int e = errno;
+  size_t bufsize = quotearg_buffer (0, 0, arg, argsize, o) + 1;
+  char *buf = xmalloc (bufsize);
+  quotearg_buffer (buf, bufsize, arg, argsize, o);
+  errno = e;
+  return buf;
+}
+
 /* Use storage slot N to return a quoted version of argument ARG.
-   ARG is of size ARGSIZE, but if that is -1, ARG is a null-terminated string.
+   ARG is of size ARGSIZE, but if that is SIZE_MAX, ARG is a
+   null-terminated string.
    OPTIONS specifies the quoting options.
    The returned value points to static storage that can be
    reused by the next call to this function with the same value of N.
@@ -537,7 +586,12 @@ quotearg_n_options (int n, char const *arg, size_t argsize,
 
   if (nslots <= n0)
     {
-      unsigned int n1 = n0 + 1;
+      /* FIXME: technically, the type of n1 should be `unsigned int',
+	 but that evokes an unsuppressible warning from gcc-4.0.1 and
+	 older.  If gcc ever provides an option to suppress that warning,
+	 revert to the original type, so that the test in xalloc_oversized
+	 is once again performed only at compile time.  */
+      size_t n1 = n0 + 1;
 
       if (xalloc_oversized (n1, sizeof *slotvec))
 	xalloc_die ();

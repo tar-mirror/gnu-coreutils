@@ -1,5 +1,5 @@
 /* dircolors - output commands to set the LS_COLOR environment variable
-   Copyright (C) 1996-2004 Free Software Foundation, Inc.
+   Copyright (C) 1996-2005 Free Software Foundation, Inc.
    Copyright (C) 1994, 1995, 1997, 1998, 1999, 2000 H. Peter Anvin
 
    This program is free software; you can redistribute it and/or modify
@@ -14,9 +14,9 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
-#if HAVE_CONFIG_H
+#ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
@@ -31,6 +31,7 @@
 #include "getline.h"
 #include "obstack.h"
 #include "quote.h"
+#include "strcase.h"
 #include "xstrndup.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
@@ -61,22 +62,21 @@ enum Shell_syntax
    variable.  */
 static struct obstack lsc_obstack;
 
-/* Nonzero if the input file was the standard input. */
-static int have_read_stdin;
-
 /* FIXME: associate with ls_codes? */
 static const char *const slack_codes[] =
 {
   "NORMAL", "NORM", "FILE", "DIR", "LNK", "LINK",
   "SYMLINK", "ORPHAN", "MISSING", "FIFO", "PIPE", "SOCK", "BLK", "BLOCK",
   "CHR", "CHAR", "DOOR", "EXEC", "LEFT", "LEFTCODE", "RIGHT", "RIGHTCODE",
-  "END", "ENDCODE", NULL
+  "END", "ENDCODE", "SUID", "SETUID", "SGID", "SETGID", "STICKY",
+  "OTHER_WRITABLE", "OWR", "STICKY_OTHER_WRITABLE", "OWT", NULL
 };
 
 static const char *const ls_codes[] =
 {
   "no", "no", "fi", "di", "ln", "ln", "ln", "or", "mi", "pi", "pi",
   "so", "bd", "bd", "cd", "cd", "do", "ex", "lc", "lc", "rc", "rc", "ec", "ec"
+  "su", "su", "sg", "sg", "st", "ow", "ow", "tw", "tw", NULL
 };
 
 static struct option const long_options[] =
@@ -145,16 +145,16 @@ guess_shell_syntax (void)
 }
 
 static void
-parse_line (unsigned char const *line, char **keyword, char **arg)
+parse_line (char const *line, char **keyword, char **arg)
 {
-  unsigned char const *p;
-  unsigned char const *keyword_start;
-  unsigned char const *arg_start;
+  char const *p;
+  char const *keyword_start;
+  char const *arg_start;
 
   *keyword = NULL;
   *arg = NULL;
 
-  for (p = line; ISSPACE (*p); ++p)
+  for (p = line; ISSPACE (to_uchar (*p)); ++p)
     ;
 
   /* Ignore blank lines and shell-style comments.  */
@@ -163,12 +163,12 @@ parse_line (unsigned char const *line, char **keyword, char **arg)
 
   keyword_start = p;
 
-  while (!ISSPACE (*p) && *p != '\0')
+  while (!ISSPACE (to_uchar (*p)) && *p != '\0')
     {
       ++p;
     }
 
-  *keyword = xstrndup ((const char *) keyword_start, p - keyword_start);
+  *keyword = xstrndup (keyword_start, p - keyword_start);
   if (*p  == '\0')
     return;
 
@@ -176,7 +176,7 @@ parse_line (unsigned char const *line, char **keyword, char **arg)
     {
       ++p;
     }
-  while (ISSPACE (*p));
+  while (ISSPACE (to_uchar (*p)));
 
   if (*p == '\0' || *p == '#')
     return;
@@ -186,13 +186,13 @@ parse_line (unsigned char const *line, char **keyword, char **arg)
   while (*p != '\0' && *p != '#')
     ++p;
 
-  for (--p; ISSPACE (*p); --p)
+  for (--p; ISSPACE (to_uchar (*p)); --p)
     {
       /* empty */
     }
   ++p;
 
-  *arg = xstrndup ((const char *) arg_start, p - arg_start);
+  *arg = xstrndup (arg_start, p - arg_start);
 }
 
 /* FIXME: Write a string to standard out, while watching for "dangerous"
@@ -201,12 +201,19 @@ parse_line (unsigned char const *line, char **keyword, char **arg)
 static void
 append_quoted (const char *str)
 {
-  int need_backslash = 1;
+  bool need_backslash = true;
 
   while (*str != '\0')
     {
       switch (*str)
 	{
+	case '\'':
+	  APPEND_CHAR ('\'');
+	  APPEND_CHAR ('\\');
+	  APPEND_CHAR ('\'');
+	  need_backslash = true;
+	  break;
+
 	case '\\':
 	case '^':
 	  need_backslash = !need_backslash;
@@ -219,7 +226,7 @@ append_quoted (const char *str)
 	  /* Fall through */
 
 	default:
-	  need_backslash = 1;
+	  need_backslash = true;
 	  break;
 	}
 
@@ -231,24 +238,23 @@ append_quoted (const char *str)
 /* Read the file open on FP (with name FILENAME).  First, look for a
    `TERM name' directive where name matches the current terminal type.
    Once found, translate and accumulate the associated directives onto
-   the global obstack LSC_OBSTACK.  Give a diagnostic and return nonzero
+   the global obstack LSC_OBSTACK.  Give a diagnostic
    upon failure (unrecognized keyword is the only way to fail here).
-   Return zero otherwise.  */
+   Return true if successful.  */
 
-static int
+static bool
 dc_parse_stream (FILE *fp, const char *filename)
 {
   size_t line_number = 0;
-  char *line = NULL;
-  size_t line_chars_allocated = 0;
-  int state;
+  char const *next_G_line = G_line;
+  char *input_line = NULL;
+  size_t input_line_size = 0;
+  char const *line;
   char *term;
-  int err = 0;
+  bool ok = true;
 
   /* State for the parser.  */
-  enum states { ST_TERMNO, ST_TERMYES, ST_TERMSURE, ST_GLOBAL };
-
-  state = ST_GLOBAL;
+  enum { ST_TERMNO, ST_TERMYES, ST_TERMSURE, ST_GLOBAL } state = ST_GLOBAL;
 
   /* Get terminal type */
   term = getenv ("TERM");
@@ -257,31 +263,29 @@ dc_parse_stream (FILE *fp, const char *filename)
 
   while (1)
     {
-      int line_length;
       char *keywd, *arg;
-      int unrecognized;
+      bool unrecognized;
 
       ++line_number;
 
       if (fp)
 	{
-	  line_length = getline (&line, &line_chars_allocated, fp);
-	  if (line_length <= 0)
+	  if (getline (&input_line, &input_line_size, fp) <= 0)
 	    {
-	      if (line)
-		free (line);
+	      free (input_line);
 	      break;
 	    }
+	  line = input_line;
 	}
       else
 	{
-	  line = (char *) (G_line[line_number - 1]);
-	  line_length = G_line_length[line_number - 1];
-	  if (line_number > G_N_LINES)
+	  if (next_G_line == G_line + sizeof G_line)
 	    break;
+	  line = next_G_line;
+	  next_G_line += strlen (next_G_line) + 1;
 	}
 
-      parse_line ((unsigned char *) line, &keywd, &arg);
+      parse_line (line, &keywd, &arg);
 
       if (keywd == NULL)
 	continue;
@@ -289,13 +293,13 @@ dc_parse_stream (FILE *fp, const char *filename)
       if (arg == NULL)
 	{
 	  error (0, 0, _("%s:%lu: invalid line;  missing second token"),
-		 filename, (long unsigned) line_number);
-	  err = 1;
+		 filename, (unsigned long int) line_number);
+	  ok = false;
 	  free (keywd);
 	  continue;
 	}
 
-      unrecognized = 0;
+      unrecognized = false;
       if (strcasecmp (keywd, "TERM") == 0)
 	{
 	  if (STREQ (arg, term))
@@ -348,13 +352,13 @@ dc_parse_stream (FILE *fp, const char *filename)
 		    }
 		  else
 		    {
-		      unrecognized = 1;
+		      unrecognized = true;
 		    }
 		}
 	    }
 	  else
 	    {
-	      unrecognized = 1;
+	      unrecognized = true;
 	    }
 	}
 
@@ -362,61 +366,46 @@ dc_parse_stream (FILE *fp, const char *filename)
 	{
 	  error (0, 0, _("%s:%lu: unrecognized keyword %s"),
 		 (filename ? quote (filename) : _("<internal>")),
-		 (long unsigned) line_number, keywd);
-	  err = 1;
+		 (unsigned long int) line_number, keywd);
+	  ok = false;
 	}
 
       free (keywd);
-      if (arg)
-	free (arg);
+      free (arg);
     }
 
-  return err;
+  return ok;
 }
 
-static int
+static bool
 dc_parse_file (const char *filename)
 {
-  FILE *fp;
-  int err;
+  bool ok;
 
-  if (STREQ (filename, "-"))
+  if (! STREQ (filename, "-") && freopen (filename, "r", stdin) == NULL)
     {
-      have_read_stdin = 1;
-      fp = stdin;
-    }
-  else
-    {
-      /* OPENOPTS is a macro.  It varies with the system.
-	 Some systems distinguish between internal and
-	 external text representations.  */
-
-      fp = fopen (filename, "r");
-      if (fp == NULL)
-	{
-	  error (0, errno, "%s", quote (filename));
-	  return 1;
-	}
+      error (0, errno, "%s", filename);
+      return false;
     }
 
-  err = dc_parse_stream (fp, filename);
+  ok = dc_parse_stream (stdin, filename);
 
-  if (fp != stdin && fclose (fp) == EOF)
+  if (fclose (stdin) != 0)
     {
       error (0, errno, "%s", quote (filename));
-      return 1;
+      return false;
     }
 
-  return err;
+  return ok;
 }
 
 int
 main (int argc, char **argv)
 {
-  int err = 0;
+  bool ok = true;
   int optc;
   enum Shell_syntax syntax = SHELL_SYNTAX_UNKNOWN;
-  int print_database = 0;
+  bool print_database = false;
 
   initialize_main (&argc, &argv);
   program_name = argv[0];
@@ -438,7 +427,7 @@ main (int argc, char **argv)
 	break;
 
       case 'p':
-	print_database = 1;
+	print_database = true;
 	break;
 
       case_GETOPT_HELP_CHAR;
@@ -462,27 +451,23 @@ to select a shell syntax are mutually exclusive"));
       usage (EXIT_FAILURE);
     }
 
-  if (print_database && argc > 0)
+  if (!print_database < argc)
     {
-      error (0, 0,
-	     _("no FILE arguments may be used with the option to output\n\
-dircolors' internal database"));
-      usage (EXIT_FAILURE);
-    }
-
-  if (!print_database && argc > 1)
-    {
-      error (0, 0, _("too many arguments"));
+      error (0, 0, _("extra operand %s"), quote (argv[!print_database]));
+      if (print_database)
+	fprintf (stderr, "%s\n",
+		 _("File operands cannot be combined with "
+		   "--print-database (-p)."));
       usage (EXIT_FAILURE);
     }
 
   if (print_database)
     {
-      int i;
-      for (i = 0; i < G_N_LINES; i++)
+      char const *p = G_line;
+      while (p < G_line + sizeof G_line)
 	{
-	  fwrite (G_line[i], 1, G_line_length[i], stdout);
-	  fputc ('\n', stdout);
+	  puts (p);
+	  p += strlen (p) + 1;
 	}
     }
   else
@@ -500,11 +485,11 @@ dircolors' internal database"));
 
       obstack_init (&lsc_obstack);
       if (argc == 0)
-	err = dc_parse_stream (NULL, NULL);
+	ok = dc_parse_stream (NULL, NULL);
       else
-	err = dc_parse_file (argv[0]);
+	ok = dc_parse_file (argv[0]);
 
-      if (!err)
+      if (ok)
 	{
 	  size_t len = obstack_object_size (&lsc_obstack);
 	  char *s = obstack_finish (&lsc_obstack);
@@ -527,9 +512,5 @@ dircolors' internal database"));
 	}
     }
 
-
-  if (have_read_stdin && fclose (stdin) == EOF)
-    error (EXIT_FAILURE, errno, _("standard input"));
-
-  exit (err == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
+  exit (ok ? EXIT_SUCCESS : EXIT_FAILURE);
 }

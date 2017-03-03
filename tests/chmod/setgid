@@ -32,11 +32,11 @@ mkdir d || framework_failure=1
 
 chmod g+s d 2> /dev/null ||
   {
-    # This is required because on some systems (at least  NetBSD 1.4.2A),
+    # This is required because on some systems (at least NetBSD 1.4.2A),
     # it may happen that when you create a directory, its group isn't one
     # to which you belong.  When that happens, the above chmod fails.  So
     # here, upon failure, we try to set the group, then rerun the chmod command.
-    group=${FETISH_GROUP-`(id -ng || /usr/xpg4/bin/id -ng) 2>/dev/null`}
+    group=${COREUTILS_GROUP-`(id -g || /usr/xpg4/bin/id -g) 2>/dev/null`}
     if test "$group"; then
       chgrp "$group" d || framework_failure=1
       chmod g+s d || framework_failure=1
@@ -47,7 +47,7 @@ chmod g+s d 2> /dev/null ||
 
 if test $framework_failure = 1; then
   echo 'failure in testing framework' 1>&2
-  (exit 1); exit
+  (exit 1); exit 1
 fi
 
 fail=0
@@ -70,4 +70,4 @@ chmod 755 d
 # For now, this test simply confirms the existing behavior.
 p=`ls -ld d|sed 's/ .*//'`; case $p in drwxr-xr-x);; *) fail=1;; esac
 
-(exit $fail); exit
+(exit $fail); exit $fail

@@ -1,5 +1,5 @@
 /* factor -- print prime factors of n.
-   Copyright (C) 86, 1995-2004 Free Software Foundation, Inc.
+   Copyright (C) 86, 1995-2005 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -13,12 +13,13 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* Written by Paul Rubin <phr@ocf.berkeley.edu>.
    Adapted for GNU, fixed to factor UINT_MAX by Jim Meyering.  */
 
 #include <config.h>
+#include <getopt.h>
 #include <stdio.h>
 #include <sys/types.h>
 
@@ -29,6 +30,7 @@
 #include "error.h"
 #include "inttostr.h"
 #include "long-options.h"
+#include "quote.h"
 #include "readtokens.h"
 #include "xstrtol.h"
 
@@ -40,9 +42,8 @@
 /* Token delimiters when reading from a file.  */
 #define DELIM "\n\t "
 
-/* FIXME: if this program is ever modified to factor integers larger
-   than 2^128, this constant (and the algorithm :-) will have to change.  */
-#define MAX_N_FACTORS 128
+/* The maximum number of factors, including -1, for negative numbers.  */
+#define MAX_N_FACTORS (sizeof (uintmax_t) * CHAR_BIT)
 
 /* The trial divisor increment wheel.  Use it to skip over divisors that
    are composites of 2, 3, 5, 7, or 11.  The part from WHEEL_START up to
@@ -51,7 +52,7 @@
    http://www.utm.edu/research/primes/glossary/WheelFactorization.html  */
 
 #include "wheel-size.h"  /* For the definition of WHEEL_SIZE.  */
-static const unsigned int wheel_tab[] =
+static const unsigned char wheel_tab[] =
   {
 #include "wheel.h"
   };
@@ -83,8 +84,8 @@ Print the prime factors of each NUMBER.\n\
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
       fputs (_("\
 \n\
-  Print the prime factors of all specified integer NUMBERs.  If no arguments\n\
-  are specified on the command line, they are read from standard input.\n\
+Print the prime factors of all specified integer NUMBERs.  If no arguments\n\
+are specified on the command line, they are read from standard input.\n\
 "), stdout);
       printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
     }
@@ -93,14 +94,14 @@ Print the prime factors of each NUMBER.\n\
 
 /* FIXME: comment */
 
-static int
-factor (uintmax_t n0, int max_n_factors, uintmax_t *factors)
+static size_t
+factor (uintmax_t n0, size_t max_n_factors, uintmax_t *factors)
 {
-  register uintmax_t n = n0, d, q;
-  int n_factors = 0;
-  unsigned int const *w = wheel_tab;
+  uintmax_t n = n0, d, q;
+  size_t n_factors = 0;
+  unsigned char const *w = wheel_tab;
 
-  if (n < 1)
+  if (n <= 1)
     return n_factors;
 
   /* The exit condition in the following loop is correct because
@@ -139,59 +140,57 @@ factor (uintmax_t n0, int max_n_factors, uintmax_t *factors)
 
 /* FIXME: comment */
 
-static int
+static bool
 print_factors (const char *s)
 {
   uintmax_t factors[MAX_N_FACTORS];
   uintmax_t n;
-  int n_factors;
-  int i;
+  size_t n_factors;
+  size_t i;
   char buf[INT_BUFSIZE_BOUND (uintmax_t)];
   strtol_error err;
 
   if ((err = xstrtoumax (s, NULL, 10, &n, "")) != LONGINT_OK)
     {
       if (err == LONGINT_OVERFLOW)
-	error (0, 0, _("`%s' is too large"), s);
+	error (0, 0, _("%s is too large"), quote (s));
       else
-	error (0, 0, _("`%s' is not a valid positive integer"), s);
-      return 1;
+	error (0, 0, _("%s is not a valid positive integer"), quote (s));
+      return false;
     }
   n_factors = factor (n, MAX_N_FACTORS, factors);
   printf ("%s:", umaxtostr (n, buf));
   for (i = 0; i < n_factors; i++)
     printf (" %s", umaxtostr (factors[i], buf));
   putchar ('\n');
-  return 0;
+  return true;
 }
 
-static int
+static bool
 do_stdin (void)
 {
-  int fail = 0;
+  bool ok = true;
   token_buffer tokenbuffer;
 
   init_tokenbuffer (&tokenbuffer);
 
   for (;;)
     {
-      long int token_length;
-
-      token_length = readtoken (stdin, DELIM, sizeof (DELIM) - 1,
-				&tokenbuffer);
-      if (token_length < 0)
+      size_t token_length = readtoken (stdin, DELIM, sizeof (DELIM) - 1,
+				       &tokenbuffer);
+      if (token_length == (size_t) -1)
 	break;
-      fail |= print_factors (tokenbuffer.buffer);
+      ok &= print_factors (tokenbuffer.buffer);
     }
   free (tokenbuffer.buffer);
 
-  return fail;
+  return ok;
 }
 
 int
 main (int argc, char **argv)
 {
-  int fail;
+  bool ok;
 
   initialize_main (&argc, &argv);
   program_name = argv[0];
@@ -203,25 +202,19 @@ main (int argc, char **argv)
 
   parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
 		      usage, AUTHORS, (char const *) NULL);
-  /* The above handles --help and --version.
-     Since there is no other invocation of getopt, handle `--' here.  */
-  if (argc > 1 && STREQ (argv[1], "--"))
-    {
-      --argc;
-      ++argv;
-    }
+  if (getopt_long (argc, argv, "", NULL, NULL) != -1)
+    usage (EXIT_FAILURE);
 
-  fail = 0;
-  if (argc == 1)
-    fail = do_stdin ();
+  if (argc <= optind)
+    ok = do_stdin ();
   else
     {
       int i;
-      for (i = 1; i < argc; i++)
-	fail |= print_factors (argv[i]);
-      if (fail)
-	usage (EXIT_FAILURE);
+      ok = true;
+      for (i = optind; i < argc; i++)
+	if (! print_factors (argv[i]))
+	  ok = false;
     }
 
-  exit (fail ? EXIT_FAILURE : EXIT_SUCCESS);
+  exit (ok ? EXIT_SUCCESS : EXIT_FAILURE);
 }

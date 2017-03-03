@@ -1,7 +1,7 @@
 /* Compare strings while treating digits characters numerically.
-   Copyright (C) 1997, 2000, 2002 Free Software Foundation, Inc.
+   Copyright (C) 1997, 2000, 2002, 2004 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
-   Contributed by Jean-François Bignolles <bignolle@ecoledoc.ibp.fr>, 1997.
+   Contributed by Jean-FranÃ§ois Bignolles <bignolle@ecoledoc.ibp.fr>, 1997.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,9 +15,9 @@
 
    You should have received a copy of the GNU General Public License along
    with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
-#if HAVE_CONFIG_H
+#ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
@@ -43,7 +43,7 @@
    POSIX says that only '0' through '9' are digits.  Prefer ISDIGIT to
    ISDIGIT_LOCALE unless it's important to use the locale's definition
    of `digit' even when the host does not conform to POSIX.  */
-#define ISDIGIT(c) ((unsigned) (c) - '0' <= 9)
+#define ISDIGIT(c) ((unsigned int) (c) - '0' <= 9)
 
 #undef __strverscmp
 #undef strverscmp

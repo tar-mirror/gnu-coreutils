@@ -1,10 +1,17 @@
-#serial 5
+#serial 7
 
 dnl From Jim Meyering.
 dnl Find a new-enough version of Perl.
 dnl
 
-AC_DEFUN([jm_PERL],
+# Copyright (C) 1998, 1999, 2000, 2001, 2003, 2004 Free Software
+# Foundation, Inc.
+#
+# This file is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
+
+AC_DEFUN([gl_PERL],
 [
   dnl FIXME: don't hard-code 5.003
   dnl FIXME: should we cache the result?

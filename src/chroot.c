@@ -13,11 +13,12 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* Written by Roland McGrath.  */
 
 #include <config.h>
+#include <getopt.h>
 #include <stdio.h>
 #include <sys/types.h>
 
@@ -75,19 +76,22 @@ main (int argc, char **argv)
 
   parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
 		      usage, AUTHORS, (char const *) NULL);
-  if (argc <= 1)
+  if (getopt_long (argc, argv, "+", NULL, NULL) != -1)
+    usage (EXIT_FAIL);
+
+  if (argc <= optind)
     {
-      error (0, 0, _("too few arguments"));
+      error (0, 0, _("missing operand"));
       usage (EXIT_FAIL);
     }
 
-  if (chroot (argv[1]))
+  if (chroot (argv[optind]) != 0)
     error (EXIT_FAIL, errno, _("cannot change root directory to %s"), argv[1]);
 
   if (chdir ("/"))
     error (EXIT_FAIL, errno, _("cannot chdir to root directory"));
 
-  if (argc == 2)
+  if (argc == optind + 1)
     {
       /* No command.  Run an interactive shell.  */
       char *shell = getenv ("SHELL");
@@ -95,11 +99,12 @@ main (int argc, char **argv)
 	shell = "/bin/sh";
       argv[0] = shell;
       argv[1] = "-i";
+      argv[2] = NULL;
     }
   else
     {
       /* The following arguments give the command.  */
-      argv += 2;
+      argv += optind + 1;
     }
 
   /* Execute the given command.  */

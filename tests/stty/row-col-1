@@ -11,6 +11,13 @@ fi
 COLUMNS=80
 export COLUMNS
 
+# Make sure we get English-language behavior.
+# See the report about a possibly-related Solaris problem by Alexandre Peshansky
+# <http://lists.gnu.org/archive/html/bug-coreutils/2004-10/msg00035.html>.
+# Currently stty isn't localized, but it might be in the future.
+LC_ALL=C
+export LC_ALL
+
 # Make sure there's a tty on stdin.
 . $srcdir/../input-tty
 
@@ -19,17 +26,17 @@ export COLUMNS
 
 tests='
 1 rows_40_columns_80 40_80
-2 rows_0_columns_0 0_0
+2 rows_1_columns_1 1_1
 3 rows_40_columns_80 40_80
-4 rows_0 0_80
-5 columns_0 0_0
-6 rows_40 40_0
-7 rows_0 0_0
-8 columns_80 0_80
+4 rows_1 1_80
+5 columns_1 1_1
+6 rows_40 40_1
+7 rows_1 1_1
+8 columns_80 1_80
 9 rows_30 30_80
 NA LAST NA
 '
-set - $tests
+set $tests
 
 saved_size=.saved-size
 

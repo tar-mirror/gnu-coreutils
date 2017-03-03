@@ -16,7 +16,7 @@ trap '(exit $?); exit' 1 2 13 15
 . $srcdir/../lang-default
 
 if test -z "$other_partition_tmpdir"; then
-  (exit 77); exit
+  (exit 77); exit 77
 fi
 
 null=mv-null
@@ -27,6 +27,7 @@ mkdir $tmp || framework_failure=1
 cd $tmp || framework_failure=1
 rm -f $null || framework_failure=1
 mknod $null p || framework_failure=1
+test -p $null || framework_failure=1
 mkdir -p $dir/a/b/c $dir/d/e/f || framework_failure=1
 touch $dir/a/b/c/file1 $dir/d/e/f/file2 || framework_failure=1
 
@@ -37,24 +38,27 @@ if test $framework_failure = 1; then
   # exit 77 here to indicate that we couldn't run the test.
   # At least running on SunOS 4.1.4, using a directory NFS mounted
   # from an OpenBSD system, the above mknod fails.
-  (exit 77); exit
+  (exit 77); exit 77
 fi
 
 fail=0
 mv --verbose $null $dir $other_partition_tmpdir > out || fail=1
 # Make sure the files are gone.
-test -f $null && fail=1
+test -p $null && fail=1
 test -d $dir && fail=1
 # Make sure they were moved.
-# Since `test -e' is not portable, use `ls'.
-ls $other_partition_tmpdir/$null > /dev/null || fail=1
+test -p $other_partition_tmpdir/$null || fail=1
 test -d $other_partition_tmpdir/$dir/a/b/c || fail=1
 
-sed "s,$other_partition_tmpdir,XXX," out | sort > out2
+# POSIX says rename (A, B) can succeed if A and B are on different file systems,
+# so ignore chatter about when files are removed and copied rather than renamed.
+sed "
+  /^removed /d
+  s,$other_partition_tmpdir,XXX,
+" out | sort > out2
 
 cat <<EOF | sort > exp
 \`$null' -> \`XXX/$null'
-removed \`$null'
 \`$dir' -> \`XXX/$dir'
 \`$dir/a' -> \`XXX/$dir/a'
 \`$dir/a/b' -> \`XXX/$dir/a/b'
@@ -64,15 +68,6 @@ removed \`$null'
 \`$dir/d/e' -> \`XXX/$dir/d/e'
 \`$dir/d/e/f' -> \`XXX/$dir/d/e/f'
 \`$dir/d/e/f/file2' -> \`XXX/$dir/d/e/f/file2'
-removed directory: \`$dir'
-removed \`$dir/a/b/c/file1'
-removed \`$dir/d/e/f/file2'
-removed directory: \`$dir/a'
-removed directory: \`$dir/a/b'
-removed directory: \`$dir/a/b/c'
-removed directory: \`$dir/d'
-removed directory: \`$dir/d/e'
-removed directory: \`$dir/d/e/f'
 EOF
 
 cmp out2 exp || fail=1
@@ -80,4 +75,4 @@ cmp out2 exp || fail=1
 # cd $other_partition_tmpdir
 # ls -l -A -R $other_partition_tmpdir
 
-(exit $fail); exit
+(exit $fail); exit $fail

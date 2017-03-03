@@ -1,5 +1,7 @@
 /* getusershell.c -- Return names of valid user shells.
-   Copyright (C) 1991, 1997, 2000, 2001, 2003 Free Software Foundation, Inc.
+
+   Copyright (C) 1991, 1997, 2000, 2001, 2003, 2004, 2005 Free Software
+   Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -13,7 +15,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* Written by David MacKenzie <djm@gnu.ai.mit.edu> */
 
@@ -31,11 +33,15 @@
 # endif
 #endif
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include "unlocked-io.h"
+
+#include "stdio--.h"
 #include "xalloc.h"
+
+#if USE_UNLOCKED_IO
+# include "unlocked-io.h"
+#endif
 
 #if defined (STDC_HEADERS) || (!defined (isascii) && !defined (HAVE_ISASCII))
 # define IN_CTYPE_DOMAIN(c) 1
@@ -145,29 +151,17 @@ readname (char **name, size_t *size, FILE *stream)
   int c;
   size_t name_index = 0;
 
-  if (*name == NULL)
-    {
-      /* The initial size must be a power of two, so that the overflow
-	 check works.  */
-      *size = 16;
-
-      *name = xmalloc (*size);
-    }
-
   /* Skip blank space.  */
   while ((c = getc (stream)) != EOF && ISSPACE (c))
     /* Do nothing. */ ;
 
-  while (c != EOF && !ISSPACE (c))
+  for (;;)
     {
+      if (*size <= name_index)
+	*name = x2nrealloc (*name, size, sizeof **name);
+      if (c == EOF || ISSPACE (c))
+	break;
       (*name)[name_index++] = c;
-      if (*size < name_index)
-	{
-	  *size *= 2;
-	  if (! *size)
-	    xalloc_die ();
-	  *name = xrealloc (*name, *size);
-	}
       c = getc (stream);
     }
   (*name)[name_index] = '\0';

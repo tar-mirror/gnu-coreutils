@@ -1,5 +1,5 @@
 /* setuidgid - run a command with the UID and GID of a specified user
-   Copyright (C) 2003, 2004 Free Software Foundation, Inc.
+   Copyright (C) 2003, 2004, 2005 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -13,11 +13,12 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* Written by Jim Meyering  */
 
 #include <config.h>
+#include <getopt.h>
 #include <stdio.h>
 #include <sys/types.h>
 #include <pwd.h>
@@ -56,9 +57,9 @@ Usage: %s USERNAME COMMAND [ARGUMENT]...\n\
       fputs (_("\
 Drop any supplemental groups, assume the user-ID and group-ID of\n\
 the specified USERNAME, and run COMMAND with any specified ARGUMENTs.\n\
-Exit with status 111 if unable to assume the required UID and GID.\n\
+Exit with status 111 if unable to assume the required user and group ID.\n\
 Otherwise, exit with the exit status of COMMAND.\n\
-This program is useful only when run by root (UID=0).\n\
+This program is useful only when run by root (user ID zero).\n\
 \n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
@@ -85,22 +86,19 @@ main (int argc, char **argv)
 
   parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
 		      usage, AUTHORS, (char const *) NULL);
+  if (getopt_long (argc, argv, "+", NULL, NULL) != -1)
+    usage (SETUIDGID_FAILURE);
 
-  /* The above handles --help and --version.
-     Since there is no other invocation of getopt, handle `--' here.  */
-  if (argc > 1 && STREQ (argv[1], "--"))
+  if (argc <= optind + 1)
     {
-      --argc;
-      ++argv;
-    }
-
-  if (argc <= 2)
-    {
-      error (0, 0, _("too few arguments"));
+      if (argc < optind + 1)
+	error (0, 0, _("missing operand"));
+      else
+	error (0, 0, _("missing operand after %s"), quote (argv[optind]));
       usage (SETUIDGID_FAILURE);
     }
 
-  user_id = argv[1];
+  user_id = argv[optind];
   pwd = getpwnam (user_id);
   if (pwd == NULL)
     error (SETUIDGID_FAILURE, errno,
@@ -111,14 +109,14 @@ main (int argc, char **argv)
 
   if (setgid (pwd->pw_gid))
     error (SETUIDGID_FAILURE, errno,
-	   _("cannot set group-ID to %ld"), (long int) pwd->pw_gid);
+	   _("cannot set group-ID to %lu"), (unsigned long int) pwd->pw_gid);
 
   if (setuid (pwd->pw_uid))
     error (SETUIDGID_FAILURE, errno,
-	   _("cannot set user-ID to %ld"), (long int) pwd->pw_uid);
+	   _("cannot set user-ID to %lu"), (unsigned long int) pwd->pw_uid);
 
   {
-    char **cmd = argv + 2;
+    char **cmd = argv + optind + 1;
     int exit_status;
     execvp (*cmd, cmd);
     exit_status = (errno == ENOENT ? EXIT_ENOENT : EXIT_CANNOT_INVOKE);

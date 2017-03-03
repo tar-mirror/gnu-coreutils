@@ -127,12 +127,13 @@ mapped_name = `echo $*|sed 's/install/ginstall/; s/test/[/'`
 .x.1:
 	@rm -f $@
 	@echo "Updating man page $@";		\
+	rm -rf $t;				\
 	mkdir $t;				\
-	(cd $t && $(LN_S) ../../src/$(mapped_name)$(EXEEXT) $*$(EXEEXT)); \
+	(cd $t && $(LN_S) ../../src/$(mapped_name) $*); \
 	$(PERL) -- $(srcdir)/help2man		\
-	    --info-page='$(PACKAGE) $*'		\
 	    --include=$(srcdir)/$*.x		\
-	    --output=$@ $t/$*$(EXEEXT)
+	    --output=$t/$@ $t/$*
+	@sed 's|$*\.td/||g' $t/$@ > $@
 	@chmod a-w $@
 	@rm -rf $t
 
@@ -154,15 +155,14 @@ check-x-vs-1:
 	  | $(ASSORT) | diff - $$t || { rm $$t; exit 1; };		\
 	rm $$t
 
-programs =								\
-  echo 'spy:;@echo $$(all_programs)'					\
-    | MAKEFLAGS= $(MAKE) -s -C ../src -f Makefile -f - spy	\
-    | ../src/tr -s ' ' '\n' | $(ASSORT) -u | grep -v '\['
+all_programs =								\
+      (cd ../src && MAKEFLAGS= $(MAKE) -s all_programs.list)		\
+       | grep -v '\['
 
 .PHONY: check-programs-vs-x
 check-programs-vs-x:
 	status=0;					\
-	for p in dummy `$(programs)`; do		\
+	for p in dummy `$(all_programs)`; do		\
 	  test $$p = dummy && continue;			\
 	  test $$p = ginstall && p=install || : ;	\
 	  test -f $(srcdir)/$$p.x			\

@@ -1,5 +1,5 @@
 /* cut - remove parts of lines of files
-   Copyright (C) 1997-2004 Free Software Foundation, Inc.
+   Copyright (C) 1997-2005 Free Software Foundation, Inc.
    Copyright (C) 1984 David M. Ihnat
 
    This program is free software; you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* Written by David Ihnat.  */
 
@@ -54,17 +54,17 @@
    space if necessary.  Update local variable N_RP.  When allocating,
    update global variable N_RP_ALLOCATED.  */
 
-#define ADD_RANGE_PAIR(rp, low, high)					\
-  do									\
-    {									\
-      if (n_rp >= n_rp_allocated)					\
-	{								\
-	  (rp) = x2nrealloc (rp, &n_rp_allocated, sizeof *(rp));	\
-	}								\
-      rp[n_rp].lo = (low);						\
-      rp[n_rp].hi = (high);						\
-      ++n_rp;								\
-    }									\
+#define ADD_RANGE_PAIR(rp, low, high)			\
+  do							\
+    {							\
+      if (n_rp >= n_rp_allocated)			\
+	{						\
+	  (rp) = X2NREALLOC (rp, &n_rp_allocated);	\
+	}						\
+      rp[n_rp].lo = (low);				\
+      rp[n_rp].hi = (high);				\
+      ++n_rp;						\
+    }							\
   while (0)
 
 struct range_pair
@@ -126,6 +126,10 @@ static enum operating_mode operating_mode;
    with field mode.  */
 static bool suppress_non_delimited;
 
+/* If nonzero, print all bytes, characters, or fields _except_
+   those that were specified.  */
+static bool complement;
+
 /* The delimeter character for field mode. */
 static unsigned char delim;
 
@@ -155,20 +159,22 @@ static Hash_table *range_start_ht;
    non-character as a pseudo short option, starting with CHAR_MAX + 1.  */
 enum
 {
-  OUTPUT_DELIMITER_OPTION = CHAR_MAX + 1
+  OUTPUT_DELIMITER_OPTION = CHAR_MAX + 1,
+  COMPLEMENT_OPTION
 };
 
 static struct option const longopts[] =
 {
-  {"bytes", required_argument, 0, 'b'},
-  {"characters", required_argument, 0, 'c'},
-  {"fields", required_argument, 0, 'f'},
-  {"delimiter", required_argument, 0, 'd'},
-  {"only-delimited", no_argument, 0, 's'},
-  {"output-delimiter", required_argument, 0, OUTPUT_DELIMITER_OPTION},
+  {"bytes", required_argument, NULL, 'b'},
+  {"characters", required_argument, NULL, 'c'},
+  {"fields", required_argument, NULL, 'f'},
+  {"delimiter", required_argument, NULL, 'd'},
+  {"only-delimited", no_argument, NULL, 's'},
+  {"output-delimiter", required_argument, NULL, OUTPUT_DELIMITER_OPTION},
+  {"complement", no_argument, NULL, COMPLEMENT_OPTION},
   {GETOPT_HELP_OPTION_DECL},
   {GETOPT_VERSION_OPTION_DECL},
-  {0, 0, 0, 0}
+  {NULL, 0, NULL, 0}
 };
 
 void
@@ -191,15 +197,19 @@ Print selected parts of lines from each FILE to standard output.\n\
 Mandatory arguments to long options are mandatory for short options too.\n\
 "), stdout);
       fputs (_("\
-  -b, --bytes=LIST        output only these bytes\n\
-  -c, --characters=LIST   output only these characters\n\
+  -b, --bytes=LIST        select only these bytes\n\
+  -c, --characters=LIST   select only these characters\n\
   -d, --delimiter=DELIM   use DELIM instead of TAB for field delimiter\n\
 "), stdout);
       fputs (_("\
-  -f, --fields=LIST       output only these fields;  also print any line\n\
+  -f, --fields=LIST       select only these fields;  also print any line\n\
                             that contains no delimiter character, unless\n\
                             the -s option is specified\n\
   -n                      (ignored)\n\
+"), stdout);
+      fputs (_("\
+      --complement        complement the set of selected bytes, characters\n\
+                            or fields.\n\
 "), stdout);
       fputs (_("\
   -s, --only-delimited    do not print lines not containing delimiters\n\
@@ -211,7 +221,9 @@ Mandatory arguments to long options are mandatory for short options too.\n\
       fputs (_("\
 \n\
 Use one, and only one of -b, -c or -f.  Each LIST is made up of one\n\
-range, or many ranges separated by commas.  Each range is one of:\n\
+range, or many ranges separated by commas.  Selected input is written\n\
+in the same order that it is read, and is written exactly once.\n\
+Each range is one of:\n\
 \n\
   N     N'th byte, character or field, counted from 1\n\
   N-    from N'th byte, character or field, to end of line\n\
@@ -223,6 +235,19 @@ With no FILE, or when FILE is -, read standard input.\n\
       printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
     }
   exit (status);
+}
+
+static inline void
+mark_range_start (size_t i)
+{
+  /* Record the fact that `i' is a range-start index.  */
+  void *ent_from_table = hash_insert (range_start_ht, (void*) i);
+  if (ent_from_table == NULL)
+    {
+      /* Insertion failed due to lack of memory.  */
+      xalloc_die ();
+    }
+  assert ((size_t) ent_from_table == i);
 }
 
 static inline void
@@ -242,7 +267,11 @@ is_printable_field (size_t i)
 static size_t
 hash_int (const void *x, size_t tablesize)
 {
+#ifdef UINTPTR_MAX
   uintptr_t y = (uintptr_t) x;
+#else
+  size_t y = (size_t) x;
+#endif
   return y % tablesize;
 }
 
@@ -266,21 +295,25 @@ is_range_start_index (size_t i)
 static bool
 print_kth (size_t k, bool *range_start)
 {
-  if (0 < eol_range_start && eol_range_start <= k)
-    {
-      if (range_start)
-	*range_start = (k == eol_range_start);
-      return true;
-    }
+  bool k_selected
+    = ((0 < eol_range_start && eol_range_start <= k)
+       || (k <= max_range_endpoint && is_printable_field (k)));
 
-  if (k <= max_range_endpoint && is_printable_field (k))
-    {
-      if (range_start)
-	*range_start = is_range_start_index (k);
-      return true;
-    }
+  bool is_selected = k_selected ^ complement;
+  if (range_start && is_selected)
+    *range_start = is_range_start_index (k);
 
-  return false;
+  return is_selected;
+}
+
+/* Comparison function for qsort to order the list of
+   struct range_pairs.  */
+static int
+compare_ranges (const void *a, const void *b)
+{
+  int a_start = ((const struct range_pair *) a)->lo;
+  int b_start = ((const struct range_pair *) b)->lo;
+  return a_start < b_start ? -1 : a_start > b_start;
 }
 
 /* Given the list of field or byte range specifications FIELDSTR, set
@@ -414,7 +447,6 @@ set_fields (const char *fieldstr)
 	}
       else if (ISDIGIT (*fieldstr))
 	{
-	  size_t new_v;
 	  /* Record beginning of digit string, in case we have to
 	     complain about it.  */
 	  static char const *num_start;
@@ -423,10 +455,9 @@ set_fields (const char *fieldstr)
 	  in_digits = true;
 
 	  /* Detect overflow.  */
-	  new_v = 10 * value + *fieldstr - '0';
-	  if (SIZE_MAX / 10 < value || new_v < value * 10)
+	  if (!DECIMAL_DIGIT_ACCUMULATE (value, *fieldstr - '0', size_t))
 	    {
-	      /* In case the user specified -c4294967296-22,
+	      /* In case the user specified -c4294967296,22,
 		 complain only about the first number.  */
 	      /* Determine the length of the offending number.  */
 	      size_t len = strspn (num_start, "0123456789");
@@ -440,7 +471,6 @@ set_fields (const char *fieldstr)
 	      free (bad_num);
 	      exit (EXIT_FAILURE);
 	    }
-	  value = new_v;
 
 	  fieldstr++;
 	}
@@ -461,40 +491,29 @@ set_fields (const char *fieldstr)
 
   printable_field = xzalloc (max_range_endpoint / CHAR_BIT + 1);
 
+  qsort (rp, n_rp, sizeof (rp[0]), compare_ranges);
+
   /* Set the array entries corresponding to integers in the ranges of RP.  */
   for (i = 0; i < n_rp; i++)
     {
       size_t j;
+      size_t rsi_candidate;
+
+      /* Record the range-start indices, i.e., record each start
+	 index that is not part of any other (lo..hi] range.  */
+      rsi_candidate = complement ? rp[i].hi + 1 : rp[i].lo;
+      if (output_delimiter_specified
+	  && !is_printable_field (rsi_candidate))
+	mark_range_start (rsi_candidate);
+
       for (j = rp[i].lo; j <= rp[i].hi; j++)
-	{
-	  mark_printable_field (j);
-	}
+	mark_printable_field (j);
     }
 
-  if (output_delimiter_specified)
-    {
-      /* Record the range-start indices.  */
-      for (i = 0; i < n_rp; i++)
-	{
-	  size_t j;
-	  for (j = rp[i].lo; j <= rp[i].hi; j++)
-	    {
-	      if (0 < j && is_printable_field (j)
-		  && !is_printable_field (j - 1))
-		{
-		  /* Record the fact that `j' is a range-start index.  */
-		  void *ent_from_table = hash_insert (range_start_ht,
-						      (void*) j);
-		  if (ent_from_table == NULL)
-		    {
-		      /* Insertion failed due to lack of memory.  */
-		      xalloc_die ();
-		    }
-		  assert ((size_t) ent_from_table == j);
-		}
-	    }
-	}
-    }
+  if (output_delimiter_specified
+      && !complement
+      && eol_range_start && !is_printable_field (eol_range_start))
+    mark_range_start (eol_range_start);
 
   free (rp);
 
@@ -515,7 +534,7 @@ cut_bytes (FILE *stream)
   print_delimiter = false;
   while (1)
     {
-      register int c;		/* Each character from the file. */
+      int c;		/* Each character from the file. */
 
       c = getc (stream);
 
@@ -580,10 +599,11 @@ cut_fields (FILE *stream)
 	  ssize_t len;
 	  size_t n_bytes;
 
-	  len = getndelim2 (&field_1_buffer, &field_1_bufsize, SIZE_MAX,
-			    stream, delim, '\n', 0);
+	  len = getndelim2 (&field_1_buffer, &field_1_bufsize, 0,
+			    GETNLINE_NO_LIMIT, delim, '\n', stream);
 	  if (len < 0)
 	    {
+	      free (field_1_buffer);
 	      if (ferror (stream) || feof (stream))
 		break;
 	      xalloc_die ();
@@ -595,7 +615,7 @@ cut_fields (FILE *stream)
 	  /* If the first field extends to the end of line (it is not
 	     delimited) and we are printing all non-delimited lines,
 	     print this one.  */
-	  if ((unsigned char) field_1_buffer[n_bytes - 1] != delim)
+	  if (to_uchar (field_1_buffer[n_bytes - 1]) != delim)
 	    {
 	      if (suppress_non_delimited)
 		{
@@ -679,9 +699,9 @@ cut_stream (FILE *stream)
 }
 
 /* Process file FILE to standard output.
-   Return 0 if successful, 1 if not. */
+   Return true if successful.  */
 
-static int
+static bool
 cut_file (char *file)
 {
   FILE *stream;
@@ -697,7 +717,7 @@ cut_file (char *file)
       if (stream == NULL)
 	{
 	  error (0, errno, "%s", file);
-	  return 1;
+	  return false;
 	}
     }
 
@@ -706,22 +726,23 @@ cut_file (char *file)
   if (ferror (stream))
     {
       error (0, errno, "%s", file);
-      return 1;
+      return false;
     }
   if (STREQ (file, "-"))
     clearerr (stream);		/* Also clear EOF. */
   else if (fclose (stream) == EOF)
     {
       error (0, errno, "%s", file);
-      return 1;
+      return false;
     }
-  return 0;
+  return true;
 }
 
 int
 main (int argc, char **argv)
 {
-  int optc, exit_status = 0;
+  int optc;
+  bool ok;
   bool delim_specified = false;
   char *spec_list_string IF_LINT(= NULL);
 
@@ -745,9 +766,6 @@ main (int argc, char **argv)
     {
       switch (optc)
 	{
-	case 0:
-	  break;
-
 	case 'b':
 	case 'c':
 	  /* Build the byte list. */
@@ -788,6 +806,10 @@ main (int argc, char **argv)
 
 	case 's':
 	  suppress_non_delimited = true;
+	  break;
+
+	case COMPLEMENT_OPTION:
+	  complement = true;
 	  break;
 
 	case_GETOPT_HELP_CHAR;
@@ -841,10 +863,10 @@ main (int argc, char **argv)
     }
 
   if (optind == argc)
-    exit_status |= cut_file ("-");
+    ok = cut_file ("-");
   else
-    for (; optind < argc; optind++)
-      exit_status |= cut_file (argv[optind]);
+    for (ok = true; optind < argc; optind++)
+      ok &= cut_file (argv[optind]);
 
   if (range_start_ht)
     hash_free (range_start_ht);
@@ -852,8 +874,8 @@ main (int argc, char **argv)
   if (have_read_stdin && fclose (stdin) == EOF)
     {
       error (0, errno, "-");
-      exit_status = 1;
+      ok = false;
     }
 
-  exit (exit_status == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
+  exit (ok ? EXIT_SUCCESS : EXIT_FAILURE);
 }

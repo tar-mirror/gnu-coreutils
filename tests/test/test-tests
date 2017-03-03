@@ -108,6 +108,24 @@ else
   esac
 fi
 test -s ne-5.E || rm -f ne-5.E
+$xx 340282366920938463463374607431768211456 -ne 0  > ne-6.O 2> ne-6.E
+code=$?
+if test $code != 0; then
+  $echo "Test ne-6 failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp ne-6.O $srcdir/ne-6.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed ne-6"; fi;;
+    1) $echo "Test ne-6 failed: files ne-6.O and $srcdir/ne-6.X differ" 1>&2
+       (diff -c ne-6.O $srcdir/ne-6.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test ne-6 may have failed." 1>&2
+       $echo The command "cmp ne-6.O $srcdir/ne-6.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s ne-6.E || rm -f ne-6.E
 $xx 5 -le 5  > le-1.O 2> le-1.E
 code=$?
 if test $code != 0; then
@@ -180,6 +198,24 @@ else
   esac
 fi
 test -s le-4.E || rm -f le-4.E
+$xx 18446744073709551616 -le -18446744073709551616  > le-5.O 2> le-5.E
+code=$?
+if test $code != 1; then
+  $echo "Test le-5 failed: $xx return code $code differs from expected value 1" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp le-5.O $srcdir/le-5.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed le-5"; fi;;
+    1) $echo "Test le-5 failed: files le-5.O and $srcdir/le-5.X differ" 1>&2
+       (diff -c le-5.O $srcdir/le-5.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test le-5 may have failed." 1>&2
+       $echo The command "cmp le-5.O $srcdir/le-5.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s le-5.E || rm -f le-5.E
 $xx 5 -ge 5  > ge-1.O 2> ge-1.E
 code=$?
 if test $code != 0; then
@@ -252,6 +288,24 @@ else
   esac
 fi
 test -s ge-4.E || rm -f ge-4.E
+$xx -18446744073709551616 -ge 18446744073709551616  > ge-5.O 2> ge-5.E
+code=$?
+if test $code != 1; then
+  $echo "Test ge-5 failed: $xx return code $code differs from expected value 1" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp ge-5.O $srcdir/ge-5.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed ge-5"; fi;;
+    1) $echo "Test ge-5 failed: files ge-5.O and $srcdir/ge-5.X differ" 1>&2
+       (diff -c ge-5.O $srcdir/ge-5.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test ge-5 may have failed." 1>&2
+       $echo The command "cmp ge-5.O $srcdir/ge-5.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s ge-5.E || rm -f ge-5.E
 $xx ! -z ''  > N-1b.O 2> N-1b.E
 code=$?
 if test $code != 1; then
@@ -2664,6 +2718,78 @@ else
   esac
 fi
 test -s NNP-eq-5.E || rm -f NNP-eq-5.E
+$xx ! 340282366920938463463374607431768211456 -eq 0  > N-eq-6.O 2> N-eq-6.E
+code=$?
+if test $code != 0; then
+  $echo "Test N-eq-6 failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp N-eq-6.O $srcdir/N-eq-6.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed N-eq-6"; fi;;
+    1) $echo "Test N-eq-6 failed: files N-eq-6.O and $srcdir/N-eq-6.X differ" 1>&2
+       (diff -c N-eq-6.O $srcdir/N-eq-6.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test N-eq-6 may have failed." 1>&2
+       $echo The command "cmp N-eq-6.O $srcdir/N-eq-6.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s N-eq-6.E || rm -f N-eq-6.E
+$xx '(' 340282366920938463463374607431768211456 -eq 0 ')'  > P-eq-6.O 2> P-eq-6.E
+code=$?
+if test $code != 1; then
+  $echo "Test P-eq-6 failed: $xx return code $code differs from expected value 1" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp P-eq-6.O $srcdir/P-eq-6.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed P-eq-6"; fi;;
+    1) $echo "Test P-eq-6 failed: files P-eq-6.O and $srcdir/P-eq-6.X differ" 1>&2
+       (diff -c P-eq-6.O $srcdir/P-eq-6.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test P-eq-6 may have failed." 1>&2
+       $echo The command "cmp P-eq-6.O $srcdir/P-eq-6.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s P-eq-6.E || rm -f P-eq-6.E
+$xx ! '(' 340282366920938463463374607431768211456 -eq 0 ')'  > NP-eq-6.O 2> NP-eq-6.E
+code=$?
+if test $code != 0; then
+  $echo "Test NP-eq-6 failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp NP-eq-6.O $srcdir/NP-eq-6.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed NP-eq-6"; fi;;
+    1) $echo "Test NP-eq-6 failed: files NP-eq-6.O and $srcdir/NP-eq-6.X differ" 1>&2
+       (diff -c NP-eq-6.O $srcdir/NP-eq-6.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test NP-eq-6 may have failed." 1>&2
+       $echo The command "cmp NP-eq-6.O $srcdir/NP-eq-6.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s NP-eq-6.E || rm -f NP-eq-6.E
+$xx ! ! '(' 340282366920938463463374607431768211456 -eq 0 ')'  > NNP-eq-6.O 2> NNP-eq-6.E
+code=$?
+if test $code != 1; then
+  $echo "Test NNP-eq-6 failed: $xx return code $code differs from expected value 1" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp NNP-eq-6.O $srcdir/NNP-eq-6.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed NNP-eq-6"; fi;;
+    1) $echo "Test NNP-eq-6 failed: files NNP-eq-6.O and $srcdir/NNP-eq-6.X differ" 1>&2
+       (diff -c NNP-eq-6.O $srcdir/NNP-eq-6.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test NNP-eq-6 may have failed." 1>&2
+       $echo The command "cmp NNP-eq-6.O $srcdir/NNP-eq-6.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s NNP-eq-6.E || rm -f NNP-eq-6.E
 $xx ! 5 -gt 5  > N-gt-1.O 2> N-gt-1.E
 code=$?
 if test $code != 0; then
@@ -2952,6 +3078,78 @@ else
   esac
 fi
 test -s NNP-gt-4.E || rm -f NNP-gt-4.E
+$xx ! 18446744073709551616 -gt -18446744073709551616  > N-gt-5.O 2> N-gt-5.E
+code=$?
+if test $code != 1; then
+  $echo "Test N-gt-5 failed: $xx return code $code differs from expected value 1" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp N-gt-5.O $srcdir/N-gt-5.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed N-gt-5"; fi;;
+    1) $echo "Test N-gt-5 failed: files N-gt-5.O and $srcdir/N-gt-5.X differ" 1>&2
+       (diff -c N-gt-5.O $srcdir/N-gt-5.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test N-gt-5 may have failed." 1>&2
+       $echo The command "cmp N-gt-5.O $srcdir/N-gt-5.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s N-gt-5.E || rm -f N-gt-5.E
+$xx '(' 18446744073709551616 -gt -18446744073709551616 ')'  > P-gt-5.O 2> P-gt-5.E
+code=$?
+if test $code != 0; then
+  $echo "Test P-gt-5 failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp P-gt-5.O $srcdir/P-gt-5.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed P-gt-5"; fi;;
+    1) $echo "Test P-gt-5 failed: files P-gt-5.O and $srcdir/P-gt-5.X differ" 1>&2
+       (diff -c P-gt-5.O $srcdir/P-gt-5.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test P-gt-5 may have failed." 1>&2
+       $echo The command "cmp P-gt-5.O $srcdir/P-gt-5.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s P-gt-5.E || rm -f P-gt-5.E
+$xx ! '(' 18446744073709551616 -gt -18446744073709551616 ')'  > NP-gt-5.O 2> NP-gt-5.E
+code=$?
+if test $code != 1; then
+  $echo "Test NP-gt-5 failed: $xx return code $code differs from expected value 1" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp NP-gt-5.O $srcdir/NP-gt-5.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed NP-gt-5"; fi;;
+    1) $echo "Test NP-gt-5 failed: files NP-gt-5.O and $srcdir/NP-gt-5.X differ" 1>&2
+       (diff -c NP-gt-5.O $srcdir/NP-gt-5.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test NP-gt-5 may have failed." 1>&2
+       $echo The command "cmp NP-gt-5.O $srcdir/NP-gt-5.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s NP-gt-5.E || rm -f NP-gt-5.E
+$xx ! ! '(' 18446744073709551616 -gt -18446744073709551616 ')'  > NNP-gt-5.O 2> NNP-gt-5.E
+code=$?
+if test $code != 0; then
+  $echo "Test NNP-gt-5 failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp NNP-gt-5.O $srcdir/NNP-gt-5.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed NNP-gt-5"; fi;;
+    1) $echo "Test NNP-gt-5 failed: files NNP-gt-5.O and $srcdir/NNP-gt-5.X differ" 1>&2
+       (diff -c NNP-gt-5.O $srcdir/NNP-gt-5.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test NNP-gt-5 may have failed." 1>&2
+       $echo The command "cmp NNP-gt-5.O $srcdir/NNP-gt-5.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s NNP-gt-5.E || rm -f NNP-gt-5.E
 $xx ! 5 -lt 5  > N-lt-1.O 2> N-lt-1.E
 code=$?
 if test $code != 0; then
@@ -3240,6 +3438,78 @@ else
   esac
 fi
 test -s NNP-lt-4.E || rm -f NNP-lt-4.E
+$xx ! -18446744073709551616 -lt 18446744073709551616  > N-lt-5.O 2> N-lt-5.E
+code=$?
+if test $code != 1; then
+  $echo "Test N-lt-5 failed: $xx return code $code differs from expected value 1" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp N-lt-5.O $srcdir/N-lt-5.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed N-lt-5"; fi;;
+    1) $echo "Test N-lt-5 failed: files N-lt-5.O and $srcdir/N-lt-5.X differ" 1>&2
+       (diff -c N-lt-5.O $srcdir/N-lt-5.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test N-lt-5 may have failed." 1>&2
+       $echo The command "cmp N-lt-5.O $srcdir/N-lt-5.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s N-lt-5.E || rm -f N-lt-5.E
+$xx '(' -18446744073709551616 -lt 18446744073709551616 ')'  > P-lt-5.O 2> P-lt-5.E
+code=$?
+if test $code != 0; then
+  $echo "Test P-lt-5 failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp P-lt-5.O $srcdir/P-lt-5.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed P-lt-5"; fi;;
+    1) $echo "Test P-lt-5 failed: files P-lt-5.O and $srcdir/P-lt-5.X differ" 1>&2
+       (diff -c P-lt-5.O $srcdir/P-lt-5.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test P-lt-5 may have failed." 1>&2
+       $echo The command "cmp P-lt-5.O $srcdir/P-lt-5.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s P-lt-5.E || rm -f P-lt-5.E
+$xx ! '(' -18446744073709551616 -lt 18446744073709551616 ')'  > NP-lt-5.O 2> NP-lt-5.E
+code=$?
+if test $code != 1; then
+  $echo "Test NP-lt-5 failed: $xx return code $code differs from expected value 1" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp NP-lt-5.O $srcdir/NP-lt-5.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed NP-lt-5"; fi;;
+    1) $echo "Test NP-lt-5 failed: files NP-lt-5.O and $srcdir/NP-lt-5.X differ" 1>&2
+       (diff -c NP-lt-5.O $srcdir/NP-lt-5.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test NP-lt-5 may have failed." 1>&2
+       $echo The command "cmp NP-lt-5.O $srcdir/NP-lt-5.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s NP-lt-5.E || rm -f NP-lt-5.E
+$xx ! ! '(' -18446744073709551616 -lt 18446744073709551616 ')'  > NNP-lt-5.O 2> NNP-lt-5.E
+code=$?
+if test $code != 0; then
+  $echo "Test NNP-lt-5 failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp NNP-lt-5.O $srcdir/NNP-lt-5.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed NNP-lt-5"; fi;;
+    1) $echo "Test NNP-lt-5 failed: files NNP-lt-5.O and $srcdir/NNP-lt-5.X differ" 1>&2
+       (diff -c NNP-lt-5.O $srcdir/NNP-lt-5.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test NNP-lt-5 may have failed." 1>&2
+       $echo The command "cmp NNP-lt-5.O $srcdir/NNP-lt-5.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s NNP-lt-5.E || rm -f NNP-lt-5.E
 $xx ! -t  > N-t1.O 2> N-t1.E
 code=$?
 if test $code != 1; then
@@ -4122,6 +4392,24 @@ else
   esac
 fi
 test -s eq-5.E || rm -f eq-5.E
+$xx 340282366920938463463374607431768211456 -eq 0  > eq-6.O 2> eq-6.E
+code=$?
+if test $code != 1; then
+  $echo "Test eq-6 failed: $xx return code $code differs from expected value 1" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp eq-6.O $srcdir/eq-6.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed eq-6"; fi;;
+    1) $echo "Test eq-6 failed: files eq-6.O and $srcdir/eq-6.X differ" 1>&2
+       (diff -c eq-6.O $srcdir/eq-6.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test eq-6 may have failed." 1>&2
+       $echo The command "cmp eq-6.O $srcdir/eq-6.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s eq-6.E || rm -f eq-6.E
 $xx 5 -gt 5  > gt-1.O 2> gt-1.E
 code=$?
 if test $code != 1; then
@@ -4194,6 +4482,24 @@ else
   esac
 fi
 test -s gt-4.E || rm -f gt-4.E
+$xx 18446744073709551616 -gt -18446744073709551616  > gt-5.O 2> gt-5.E
+code=$?
+if test $code != 0; then
+  $echo "Test gt-5 failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp gt-5.O $srcdir/gt-5.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed gt-5"; fi;;
+    1) $echo "Test gt-5 failed: files gt-5.O and $srcdir/gt-5.X differ" 1>&2
+       (diff -c gt-5.O $srcdir/gt-5.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test gt-5 may have failed." 1>&2
+       $echo The command "cmp gt-5.O $srcdir/gt-5.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s gt-5.E || rm -f gt-5.E
 $xx 5 -lt 5  > lt-1.O 2> lt-1.E
 code=$?
 if test $code != 1; then
@@ -4266,6 +4572,24 @@ else
   esac
 fi
 test -s lt-4.E || rm -f lt-4.E
+$xx -18446744073709551616 -lt 18446744073709551616  > lt-5.O 2> lt-5.E
+code=$?
+if test $code != 0; then
+  $echo "Test lt-5 failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp lt-5.O $srcdir/lt-5.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed lt-5"; fi;;
+    1) $echo "Test lt-5 failed: files lt-5.O and $srcdir/lt-5.X differ" 1>&2
+       (diff -c lt-5.O $srcdir/lt-5.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test lt-5 may have failed." 1>&2
+       $echo The command "cmp lt-5.O $srcdir/lt-5.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s lt-5.E || rm -f lt-5.E
 $xx 0x0 -eq 00  > inv-1.O 2> inv-1.E
 code=$?
 if test $code != 2; then
@@ -4411,7 +4735,7 @@ else
 fi
 test -s paren-5.E || rm -f paren-5.E
 if test $errors = 0; then
-  $echo Passed all 244 tests. 1>&2
+  $echo Passed all 262 tests. 1>&2
 else
   $echo Failed $errors tests. 1>&2
 fi

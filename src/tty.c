@@ -1,5 +1,5 @@
-/* tty -- print the path of the terminal connected to standard input
-   Copyright (C) 1990-2004 Free Software Foundation, Inc.
+/* tty -- print the name of the terminal connected to standard input
+   Copyright (C) 1990-2005 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* Displays "not a tty" if stdin is not a terminal.
    Displays nothing if -s option is given.
@@ -29,6 +29,7 @@
 
 #include "system.h"
 #include "error.h"
+#include "quote.h"
 
 /* Exit statuses.  */
 enum
@@ -45,8 +46,8 @@ enum
 /* The name under which this program was run. */
 char *program_name;
 
-/* If nonzero, return an exit status but produce no output. */
-static int silent;
+/* If true, return an exit status but produce no output. */
+static bool silent;
 
 static struct option const longopts[] =
 {
@@ -93,17 +94,14 @@ main (int argc, char **argv)
   initialize_exit_failure (TTY_WRITE_ERROR);
   atexit (close_stdout);
 
-  silent = 0;
+  silent = false;
 
   while ((optc = getopt_long (argc, argv, "s", longopts, NULL)) != -1)
     {
       switch (optc)
 	{
-	case 0:
-	  break;
-
 	case 's':
-	  silent = 1;
+	  silent = true;
 	  break;
 
 	case_GETOPT_HELP_CHAR;
@@ -116,9 +114,9 @@ main (int argc, char **argv)
     }
 
   if (optind < argc)
-    error (0, 0, _("ignoring all arguments"));
+    error (0, 0, _("extra operand %s"), quote (argv[optind]));
 
-  tty = ttyname (0);
+  tty = ttyname (STDIN_FILENO);
   if (!silent)
     {
       if (tty)
@@ -127,5 +125,5 @@ main (int argc, char **argv)
 	puts (_("not a tty"));
     }
 
-  exit (isatty (0) ? EXIT_SUCCESS : EXIT_FAIL);
+  exit (isatty (STDIN_FILENO) ? EXIT_SUCCESS : EXIT_FAIL);
 }

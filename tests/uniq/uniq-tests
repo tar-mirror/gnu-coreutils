@@ -1,7 +1,7 @@
 #! /bin/sh
 # This script was generated automatically by mk-script.
 case $# in
-  0) xx='../../src/uniq';;
+  0) xx='uniq';;
   *) xx="$1";;
 esac
 test "$VERBOSE" && echo=echo || echo=:
@@ -630,37 +630,37 @@ else
   esac
 fi
 test -s 23.E || rm -f 23.E
-cat $srcdir/obs30.I | _POSIX2_VERSION=199209 $xx -1 > obs30.O 2> obs30.E
+cat $srcdir/obs30.I | $xx -1 > obs30.O 2> obs30.E
 code=$?
 if test $code != 0; then
-  $echo "Test obs30(_POSIX2_VERSION=199209:|) failed: $xx return code $code differs from expected value 0" 1>&2
+  $echo "Test obs30(|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp obs30.O $srcdir/obs30.X > /dev/null 2>&1
   case $? in
-    0) if test "$VERBOSE"; then $echo "passed obs30(_POSIX2_VERSION=199209:|)"; fi;;
-    1) $echo "Test obs30(_POSIX2_VERSION=199209:|) failed: files obs30.O and $srcdir/obs30.X differ" 1>&2
+    0) if test "$VERBOSE"; then $echo "passed obs30(|)"; fi;;
+    1) $echo "Test obs30(|) failed: files obs30.O and $srcdir/obs30.X differ" 1>&2
        (diff -c obs30.O $srcdir/obs30.X) 2> /dev/null
        errors=`expr $errors + 1`;;
-    2) $echo "Test obs30(_POSIX2_VERSION=199209:|) may have failed." 1>&2
+    2) $echo "Test obs30(|) may have failed." 1>&2
        $echo The command "cmp obs30.O $srcdir/obs30.X" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
 test -s obs30.E || rm -f obs30.E
-_POSIX2_VERSION=199209 $xx -1 < $srcdir/obs30.I > obs30.O 2> obs30.E
+$xx -1 < $srcdir/obs30.I > obs30.O 2> obs30.E
 code=$?
 if test $code != 0; then
-  $echo "Test obs30(_POSIX2_VERSION=199209:<) failed: $xx return code $code differs from expected value 0" 1>&2
+  $echo "Test obs30(<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
   cmp obs30.O $srcdir/obs30.X > /dev/null 2>&1
   case $? in
-    0) if test "$VERBOSE"; then $echo "passed obs30(_POSIX2_VERSION=199209:<)"; fi;;
-    1) $echo "Test obs30(_POSIX2_VERSION=199209:<) failed: files obs30.O and $srcdir/obs30.X differ" 1>&2
+    0) if test "$VERBOSE"; then $echo "passed obs30(<)"; fi;;
+    1) $echo "Test obs30(<) failed: files obs30.O and $srcdir/obs30.X differ" 1>&2
        (diff -c obs30.O $srcdir/obs30.X) 2> /dev/null
        errors=`expr $errors + 1`;;
-    2) $echo "Test obs30(_POSIX2_VERSION=199209:<) may have failed." 1>&2
+    2) $echo "Test obs30(<) may have failed." 1>&2
        $echo The command "cmp obs30.O $srcdir/obs30.X" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
@@ -846,78 +846,78 @@ else
   esac
 fi
 test -s 35.E || rm -f 35.E
-cat $srcdir/obs40.I | _POSIX2_VERSION=199209 $xx +1 > obs40.O 2> obs40.E
+cat $srcdir/obs-plus40.I | _POSIX2_VERSION=199209 $xx +1 > obs-plus40.O 2> obs-plus40.E
 code=$?
 if test $code != 0; then
-  $echo "Test obs40(_POSIX2_VERSION=199209:|) failed: $xx return code $code differs from expected value 0" 1>&2
+  $echo "Test obs-plus40(_POSIX2_VERSION=199209:|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp obs40.O $srcdir/obs40.X > /dev/null 2>&1
+  cmp obs-plus40.O $srcdir/obs-plus40.X > /dev/null 2>&1
   case $? in
-    0) if test "$VERBOSE"; then $echo "passed obs40(_POSIX2_VERSION=199209:|)"; fi;;
-    1) $echo "Test obs40(_POSIX2_VERSION=199209:|) failed: files obs40.O and $srcdir/obs40.X differ" 1>&2
-       (diff -c obs40.O $srcdir/obs40.X) 2> /dev/null
+    0) if test "$VERBOSE"; then $echo "passed obs-plus40(_POSIX2_VERSION=199209:|)"; fi;;
+    1) $echo "Test obs-plus40(_POSIX2_VERSION=199209:|) failed: files obs-plus40.O and $srcdir/obs-plus40.X differ" 1>&2
+       (diff -c obs-plus40.O $srcdir/obs-plus40.X) 2> /dev/null
        errors=`expr $errors + 1`;;
-    2) $echo "Test obs40(_POSIX2_VERSION=199209:|) may have failed." 1>&2
-       $echo The command "cmp obs40.O $srcdir/obs40.X" failed. 1>&2
+    2) $echo "Test obs-plus40(_POSIX2_VERSION=199209:|) may have failed." 1>&2
+       $echo The command "cmp obs-plus40.O $srcdir/obs-plus40.X" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
-test -s obs40.E || rm -f obs40.E
-_POSIX2_VERSION=199209 $xx +1 < $srcdir/obs40.I > obs40.O 2> obs40.E
+test -s obs-plus40.E || rm -f obs-plus40.E
+_POSIX2_VERSION=199209 $xx +1 < $srcdir/obs-plus40.I > obs-plus40.O 2> obs-plus40.E
 code=$?
 if test $code != 0; then
-  $echo "Test obs40(_POSIX2_VERSION=199209:<) failed: $xx return code $code differs from expected value 0" 1>&2
+  $echo "Test obs-plus40(_POSIX2_VERSION=199209:<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp obs40.O $srcdir/obs40.X > /dev/null 2>&1
+  cmp obs-plus40.O $srcdir/obs-plus40.X > /dev/null 2>&1
   case $? in
-    0) if test "$VERBOSE"; then $echo "passed obs40(_POSIX2_VERSION=199209:<)"; fi;;
-    1) $echo "Test obs40(_POSIX2_VERSION=199209:<) failed: files obs40.O and $srcdir/obs40.X differ" 1>&2
-       (diff -c obs40.O $srcdir/obs40.X) 2> /dev/null
+    0) if test "$VERBOSE"; then $echo "passed obs-plus40(_POSIX2_VERSION=199209:<)"; fi;;
+    1) $echo "Test obs-plus40(_POSIX2_VERSION=199209:<) failed: files obs-plus40.O and $srcdir/obs-plus40.X differ" 1>&2
+       (diff -c obs-plus40.O $srcdir/obs-plus40.X) 2> /dev/null
        errors=`expr $errors + 1`;;
-    2) $echo "Test obs40(_POSIX2_VERSION=199209:<) may have failed." 1>&2
-       $echo The command "cmp obs40.O $srcdir/obs40.X" failed. 1>&2
+    2) $echo "Test obs-plus40(_POSIX2_VERSION=199209:<) may have failed." 1>&2
+       $echo The command "cmp obs-plus40.O $srcdir/obs-plus40.X" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
-test -s obs40.E || rm -f obs40.E
-cat $srcdir/obs41.I | _POSIX2_VERSION=199209 $xx +1 > obs41.O 2> obs41.E
+test -s obs-plus40.E || rm -f obs-plus40.E
+cat $srcdir/obs-plus41.I | _POSIX2_VERSION=199209 $xx +1 > obs-plus41.O 2> obs-plus41.E
 code=$?
 if test $code != 0; then
-  $echo "Test obs41(_POSIX2_VERSION=199209:|) failed: $xx return code $code differs from expected value 0" 1>&2
+  $echo "Test obs-plus41(_POSIX2_VERSION=199209:|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp obs41.O $srcdir/obs41.X > /dev/null 2>&1
+  cmp obs-plus41.O $srcdir/obs-plus41.X > /dev/null 2>&1
   case $? in
-    0) if test "$VERBOSE"; then $echo "passed obs41(_POSIX2_VERSION=199209:|)"; fi;;
-    1) $echo "Test obs41(_POSIX2_VERSION=199209:|) failed: files obs41.O and $srcdir/obs41.X differ" 1>&2
-       (diff -c obs41.O $srcdir/obs41.X) 2> /dev/null
+    0) if test "$VERBOSE"; then $echo "passed obs-plus41(_POSIX2_VERSION=199209:|)"; fi;;
+    1) $echo "Test obs-plus41(_POSIX2_VERSION=199209:|) failed: files obs-plus41.O and $srcdir/obs-plus41.X differ" 1>&2
+       (diff -c obs-plus41.O $srcdir/obs-plus41.X) 2> /dev/null
        errors=`expr $errors + 1`;;
-    2) $echo "Test obs41(_POSIX2_VERSION=199209:|) may have failed." 1>&2
-       $echo The command "cmp obs41.O $srcdir/obs41.X" failed. 1>&2
+    2) $echo "Test obs-plus41(_POSIX2_VERSION=199209:|) may have failed." 1>&2
+       $echo The command "cmp obs-plus41.O $srcdir/obs-plus41.X" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
-test -s obs41.E || rm -f obs41.E
-_POSIX2_VERSION=199209 $xx +1 < $srcdir/obs41.I > obs41.O 2> obs41.E
+test -s obs-plus41.E || rm -f obs-plus41.E
+_POSIX2_VERSION=199209 $xx +1 < $srcdir/obs-plus41.I > obs-plus41.O 2> obs-plus41.E
 code=$?
 if test $code != 0; then
-  $echo "Test obs41(_POSIX2_VERSION=199209:<) failed: $xx return code $code differs from expected value 0" 1>&2
+  $echo "Test obs-plus41(_POSIX2_VERSION=199209:<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp obs41.O $srcdir/obs41.X > /dev/null 2>&1
+  cmp obs-plus41.O $srcdir/obs-plus41.X > /dev/null 2>&1
   case $? in
-    0) if test "$VERBOSE"; then $echo "passed obs41(_POSIX2_VERSION=199209:<)"; fi;;
-    1) $echo "Test obs41(_POSIX2_VERSION=199209:<) failed: files obs41.O and $srcdir/obs41.X differ" 1>&2
-       (diff -c obs41.O $srcdir/obs41.X) 2> /dev/null
+    0) if test "$VERBOSE"; then $echo "passed obs-plus41(_POSIX2_VERSION=199209:<)"; fi;;
+    1) $echo "Test obs-plus41(_POSIX2_VERSION=199209:<) failed: files obs-plus41.O and $srcdir/obs-plus41.X differ" 1>&2
+       (diff -c obs-plus41.O $srcdir/obs-plus41.X) 2> /dev/null
        errors=`expr $errors + 1`;;
-    2) $echo "Test obs41(_POSIX2_VERSION=199209:<) may have failed." 1>&2
-       $echo The command "cmp obs41.O $srcdir/obs41.X" failed. 1>&2
+    2) $echo "Test obs-plus41(_POSIX2_VERSION=199209:<) may have failed." 1>&2
+       $echo The command "cmp obs-plus41.O $srcdir/obs-plus41.X" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
-test -s obs41.E || rm -f obs41.E
+test -s obs-plus41.E || rm -f obs-plus41.E
 cat $srcdir/42.I | $xx -s 1 > 42.O 2> 42.E
 code=$?
 if test $code != 0; then
@@ -990,78 +990,78 @@ else
   esac
 fi
 test -s 43.E || rm -f 43.E
-cat $srcdir/obs44.I | _POSIX2_VERSION=199209 $xx +1 -- > obs44.O 2> obs44.E
+cat $srcdir/obs-plus44.I | _POSIX2_VERSION=199209 $xx +1 -- > obs-plus44.O 2> obs-plus44.E
 code=$?
 if test $code != 0; then
-  $echo "Test obs44(_POSIX2_VERSION=199209:|) failed: $xx return code $code differs from expected value 0" 1>&2
+  $echo "Test obs-plus44(_POSIX2_VERSION=199209:|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp obs44.O $srcdir/obs44.X > /dev/null 2>&1
+  cmp obs-plus44.O $srcdir/obs-plus44.X > /dev/null 2>&1
   case $? in
-    0) if test "$VERBOSE"; then $echo "passed obs44(_POSIX2_VERSION=199209:|)"; fi;;
-    1) $echo "Test obs44(_POSIX2_VERSION=199209:|) failed: files obs44.O and $srcdir/obs44.X differ" 1>&2
-       (diff -c obs44.O $srcdir/obs44.X) 2> /dev/null
+    0) if test "$VERBOSE"; then $echo "passed obs-plus44(_POSIX2_VERSION=199209:|)"; fi;;
+    1) $echo "Test obs-plus44(_POSIX2_VERSION=199209:|) failed: files obs-plus44.O and $srcdir/obs-plus44.X differ" 1>&2
+       (diff -c obs-plus44.O $srcdir/obs-plus44.X) 2> /dev/null
        errors=`expr $errors + 1`;;
-    2) $echo "Test obs44(_POSIX2_VERSION=199209:|) may have failed." 1>&2
-       $echo The command "cmp obs44.O $srcdir/obs44.X" failed. 1>&2
+    2) $echo "Test obs-plus44(_POSIX2_VERSION=199209:|) may have failed." 1>&2
+       $echo The command "cmp obs-plus44.O $srcdir/obs-plus44.X" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
-test -s obs44.E || rm -f obs44.E
-_POSIX2_VERSION=199209 $xx +1 -- < $srcdir/obs44.I > obs44.O 2> obs44.E
+test -s obs-plus44.E || rm -f obs-plus44.E
+_POSIX2_VERSION=199209 $xx +1 -- < $srcdir/obs-plus44.I > obs-plus44.O 2> obs-plus44.E
 code=$?
 if test $code != 0; then
-  $echo "Test obs44(_POSIX2_VERSION=199209:<) failed: $xx return code $code differs from expected value 0" 1>&2
+  $echo "Test obs-plus44(_POSIX2_VERSION=199209:<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp obs44.O $srcdir/obs44.X > /dev/null 2>&1
+  cmp obs-plus44.O $srcdir/obs-plus44.X > /dev/null 2>&1
   case $? in
-    0) if test "$VERBOSE"; then $echo "passed obs44(_POSIX2_VERSION=199209:<)"; fi;;
-    1) $echo "Test obs44(_POSIX2_VERSION=199209:<) failed: files obs44.O and $srcdir/obs44.X differ" 1>&2
-       (diff -c obs44.O $srcdir/obs44.X) 2> /dev/null
+    0) if test "$VERBOSE"; then $echo "passed obs-plus44(_POSIX2_VERSION=199209:<)"; fi;;
+    1) $echo "Test obs-plus44(_POSIX2_VERSION=199209:<) failed: files obs-plus44.O and $srcdir/obs-plus44.X differ" 1>&2
+       (diff -c obs-plus44.O $srcdir/obs-plus44.X) 2> /dev/null
        errors=`expr $errors + 1`;;
-    2) $echo "Test obs44(_POSIX2_VERSION=199209:<) may have failed." 1>&2
-       $echo The command "cmp obs44.O $srcdir/obs44.X" failed. 1>&2
+    2) $echo "Test obs-plus44(_POSIX2_VERSION=199209:<) may have failed." 1>&2
+       $echo The command "cmp obs-plus44.O $srcdir/obs-plus44.X" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
-test -s obs44.E || rm -f obs44.E
-cat $srcdir/obs45.I | _POSIX2_VERSION=199209 $xx +1 -- > obs45.O 2> obs45.E
+test -s obs-plus44.E || rm -f obs-plus44.E
+cat $srcdir/obs-plus45.I | _POSIX2_VERSION=199209 $xx +1 -- > obs-plus45.O 2> obs-plus45.E
 code=$?
 if test $code != 0; then
-  $echo "Test obs45(_POSIX2_VERSION=199209:|) failed: $xx return code $code differs from expected value 0" 1>&2
+  $echo "Test obs-plus45(_POSIX2_VERSION=199209:|) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp obs45.O $srcdir/obs45.X > /dev/null 2>&1
+  cmp obs-plus45.O $srcdir/obs-plus45.X > /dev/null 2>&1
   case $? in
-    0) if test "$VERBOSE"; then $echo "passed obs45(_POSIX2_VERSION=199209:|)"; fi;;
-    1) $echo "Test obs45(_POSIX2_VERSION=199209:|) failed: files obs45.O and $srcdir/obs45.X differ" 1>&2
-       (diff -c obs45.O $srcdir/obs45.X) 2> /dev/null
+    0) if test "$VERBOSE"; then $echo "passed obs-plus45(_POSIX2_VERSION=199209:|)"; fi;;
+    1) $echo "Test obs-plus45(_POSIX2_VERSION=199209:|) failed: files obs-plus45.O and $srcdir/obs-plus45.X differ" 1>&2
+       (diff -c obs-plus45.O $srcdir/obs-plus45.X) 2> /dev/null
        errors=`expr $errors + 1`;;
-    2) $echo "Test obs45(_POSIX2_VERSION=199209:|) may have failed." 1>&2
-       $echo The command "cmp obs45.O $srcdir/obs45.X" failed. 1>&2
+    2) $echo "Test obs-plus45(_POSIX2_VERSION=199209:|) may have failed." 1>&2
+       $echo The command "cmp obs-plus45.O $srcdir/obs-plus45.X" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
-test -s obs45.E || rm -f obs45.E
-_POSIX2_VERSION=199209 $xx +1 -- < $srcdir/obs45.I > obs45.O 2> obs45.E
+test -s obs-plus45.E || rm -f obs-plus45.E
+_POSIX2_VERSION=199209 $xx +1 -- < $srcdir/obs-plus45.I > obs-plus45.O 2> obs-plus45.E
 code=$?
 if test $code != 0; then
-  $echo "Test obs45(_POSIX2_VERSION=199209:<) failed: $xx return code $code differs from expected value 0" 1>&2
+  $echo "Test obs-plus45(_POSIX2_VERSION=199209:<) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp obs45.O $srcdir/obs45.X > /dev/null 2>&1
+  cmp obs-plus45.O $srcdir/obs-plus45.X > /dev/null 2>&1
   case $? in
-    0) if test "$VERBOSE"; then $echo "passed obs45(_POSIX2_VERSION=199209:<)"; fi;;
-    1) $echo "Test obs45(_POSIX2_VERSION=199209:<) failed: files obs45.O and $srcdir/obs45.X differ" 1>&2
-       (diff -c obs45.O $srcdir/obs45.X) 2> /dev/null
+    0) if test "$VERBOSE"; then $echo "passed obs-plus45(_POSIX2_VERSION=199209:<)"; fi;;
+    1) $echo "Test obs-plus45(_POSIX2_VERSION=199209:<) failed: files obs-plus45.O and $srcdir/obs-plus45.X differ" 1>&2
+       (diff -c obs-plus45.O $srcdir/obs-plus45.X) 2> /dev/null
        errors=`expr $errors + 1`;;
-    2) $echo "Test obs45(_POSIX2_VERSION=199209:<) may have failed." 1>&2
-       $echo The command "cmp obs45.O $srcdir/obs45.X" failed. 1>&2
+    2) $echo "Test obs-plus45(_POSIX2_VERSION=199209:<) may have failed." 1>&2
+       $echo The command "cmp obs-plus45.O $srcdir/obs-plus45.X" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
-test -s obs45.E || rm -f obs45.E
+test -s obs-plus45.E || rm -f obs-plus45.E
 cat $srcdir/50.I | $xx -f 1 -s 1 > 50.O 2> 50.E
 code=$?
 if test $code != 0; then

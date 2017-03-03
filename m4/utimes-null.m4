@@ -1,9 +1,14 @@
-#serial 4
+#serial 6
+
+# Copyright (C) 1998, 1999, 2001, 2003, 2004 Free Software Foundation, Inc.
+# This file is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
 
 dnl Shamelessly cloned from acspecific.m4's AC_FUNC_UTIME_NULL,
 dnl then do case-insensitive s/utime/utimes/.
 
-AC_DEFUN([jm_FUNC_UTIMES_NULL],
+AC_DEFUN([gl_FUNC_UTIMES_NULL],
 [AC_CACHE_CHECK(whether utimes accepts a null argument, ac_cv_func_utimes_null,
 [rm -f conftest.data; > conftest.data
 AC_TRY_RUN([

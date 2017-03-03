@@ -1,20 +1,18 @@
-#serial 19
+#serial 22
 
 dnl This is just a wrapper function to encapsulate this kludge.
 dnl Putting it in a separate file like this helps share it between
 dnl different packages.
-AC_DEFUN([jm_CHECK_DECLS],
+AC_DEFUN([gl_CHECK_DECLS],
 [
-  AC_REQUIRE([_jm_DECL_HEADERS])
+  AC_REQUIRE([_gl_DECL_HEADERS])
   AC_REQUIRE([AC_HEADER_TIME])
   headers='
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
-#if HAVE_UNISTD_H
-# include <unistd.h>
-#endif
+#include <unistd.h>
 
 #include <sys/types.h>
 #if TIME_WITH_SYS_TIME
@@ -67,9 +65,7 @@ AC_DEFUN([jm_CHECK_DECLS],
 
 dnl FIXME: when autoconf has support for it.
 dnl This is a little helper so we can require these header checks.
-AC_DEFUN([_jm_DECL_HEADERS],
+AC_DEFUN([_gl_DECL_HEADERS],
 [
-  AC_REQUIRE([AC_HEADER_STDC])
-  AC_CHECK_HEADERS(grp.h memory.h pwd.h string.h strings.h stdlib.h \
-                   unistd.h sys/time.h utmp.h utmpx.h)
+  AC_CHECK_HEADERS_ONCE(grp.h pwd.h sys/time.h utmp.h)
 ])

@@ -13,7 +13,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* David MacKenzie <djm@gnu.ai.mit.edu> */
 
@@ -71,21 +71,21 @@ main (int argc, char **argv)
 
   atexit (close_stdout);
 
-  /* Don't recognize --help or --version if POSIXLY_CORRECT is set.  */
-  if (getenv ("POSIXLY_CORRECT") == NULL)
-    parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
-			usage, AUTHORS, (char const *) NULL);
+  parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
+		      usage, AUTHORS, (char const *) NULL);
+  if (getopt_long (argc, argv, "+", NULL, NULL) != -1)
+    usage (EXIT_FAILURE);
 
-  if (argc == 1)
+  if (argc <= optind)
     {
-      argv[1] = "y";
-      argc = 2;
+      optind = argc;
+      argv[argc++] = "y";
     }
 
   for (;;)
     {
       int i;
-      for (i = 1; i < argc; i++)
+      for (i = optind; i < argc; i++)
 	if (fputs (argv[i], stdout) == EOF
 	    || putchar (i == argc - 1 ? '\n' : ' ') == EOF)
 	  {

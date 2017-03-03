@@ -1,21 +1,41 @@
 dnl Process this file with autoconf to produce a configure script. -*-m4-*-
-AC_INIT([GNU coreutils],[5.2.1],[bug-coreutils@gnu.org])
+
+dnl Copyright (C) 1991, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2005,
+dnl 2001, 2002, 2003, 2004, 2005 Free Software Foundation, Inc.
+
+dnl This program is free software; you can redistribute it and/or modify
+dnl it under the terms of the GNU General Public License as published by
+dnl the Free Software Foundation; either version 2, or (at your option)
+dnl any later version.
+
+dnl This program is distributed in the hope that it will be useful,
+dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl GNU General Public License for more details.
+
+dnl You should have received a copy of the GNU General Public License
+dnl along with this program; if not, write to the Free Software Foundation,
+dnl Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+
+dnl Written by Jim Meyering.
+
+AC_INIT([GNU coreutils],[5.92],[bug-coreutils@gnu.org])
 AC_CONFIG_SRCDIR(src/ls.c)
 
-AC_CONFIG_AUX_DIR(config)
+AC_CONFIG_AUX_DIR(build-aux)
 AC_CONFIG_HEADERS([config.h:config.hin])
 
-AM_INIT_AUTOMAKE([1.8 gnits dist-bzip2])
+AB_INIT()
+AM_INIT_AUTOMAKE([1.8.3 gnits dist-bzip2])
 
 gl_DEFAULT_POSIX2_VERSION
 gl_USE_SYSTEM_EXTENSIONS
-jm_PERL
+gl_PERL
 AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_GCC_TRADITIONAL
 AC_PROG_RANLIB
 AC_PROG_LN_S
-AC_CANONICAL_HOST
 
 
 AC_CHECK_FUNCS(uname,
@@ -28,10 +48,9 @@ AC_CHECK_FUNCS(gethostid,
 	OPTIONAL_BIN_PROGS="$OPTIONAL_BIN_PROGS hostid\$(EXEEXT)"
 	MAN="$MAN hostid.1")
 
-jm_MACROS
+gl_MACROS
 
-AC_HEADER_TIOCGWINSZ()
-jm_WINSIZE_IN_PTEM
+gl_WINSIZE_IN_PTEM
 
 AC_MSG_CHECKING(whether localtime caches TZ)
 AC_CACHE_VAL(utils_cv_localtime_cache,
@@ -95,31 +114,26 @@ if test $ac_cv_func_syslog = no; then
   done
 fi
 
-AC_MSG_CHECKING(for 3-argument setpriority function)
-AC_CACHE_VAL(utils_cv_func_setpriority,
-[AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <sys/time.h>
-  #include <sys/resource.h>]], [[setpriority(0, 0, 0);]])],
-  [utils_cv_func_setpriority=yes],
-  [utils_cv_func_setpriority=no])])
-AC_MSG_RESULT($utils_cv_func_setpriority)
-if test $utils_cv_func_setpriority = yes; then
-  OPTIONAL_BIN_PROGS="$OPTIONAL_BIN_PROGS nice\$(EXEEXT)"
-  MAN="$MAN nice.1"
-else
-  AC_MSG_CHECKING(for nice function)
-  AC_CACHE_VAL(utils_cv_func_nice,
-    [AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[nice();]])],
-		    [utils_cv_func_nice=yes],
-		    [utils_cv_func_nice=no])])
-  AC_MSG_RESULT($utils_cv_func_nice)
-  if test $utils_cv_func_nice = yes; then
-    AC_DEFINE(NICE_PRIORITY, 1, [FIXME])
-    OPTIONAL_BIN_PROGS="$OPTIONAL_BIN_PROGS nice\$(EXEEXT)"
-    MAN="$MAN nice.1"
-  fi
+AC_CACHE_CHECK([for 3-argument setpriority function],
+  [utils_cv_func_setpriority],
+  [AC_LINK_IFELSE(
+    [AC_LANG_PROGRAM(
+       [[#include <sys/time.h>
+	 #include <sys/resource.h>
+       ]],
+       [[setpriority (0, 0, 0);]])],
+    [utils_cv_func_setpriority=yes],
+    [utils_cv_func_setpriority=no])])
+if test $utils_cv_func_setpriority = no; then
+  AC_CHECK_FUNCS([nice])
 fi
+case $utils_cv_func_setpriority,$ac_cv_func_nice in
+*yes*)
+  OPTIONAL_BIN_PROGS="$OPTIONAL_BIN_PROGS nice\$(EXEEXT)"
+  MAN="$MAN nice.1";;
+esac
 
-AC_DEFUN([jm_DUMMY_1],
+AC_DEFUN([coreutils_DUMMY_1],
 [
   AC_REQUIRE([gl_READUTMP])
   if test $ac_cv_header_utmp_h = yes || test $ac_cv_header_utmpx_h = yes; then
@@ -129,7 +143,7 @@ AC_DEFUN([jm_DUMMY_1],
     MAN="$MAN pinky.1 users.1 who.1"
   fi
 ])
-jm_DUMMY_1
+coreutils_DUMMY_1
 
 AC_MSG_CHECKING(ut_host in struct utmp)
 AC_CACHE_VAL(su_cv_func_ut_host_in_utmp,
@@ -162,7 +176,7 @@ GNULIB_BOOT_TIME(
   MAN="$MAN uptime.1"])
 
 AC_SYS_POSIX_TERMIOS()
-jm_HEADER_TIOCGWINSZ_NEEDS_SYS_IOCTL
+gl_HEADER_TIOCGWINSZ_NEEDS_SYS_IOCTL
 
 if test $ac_cv_sys_posix_termios = yes; then
   OPTIONAL_BIN_PROGS="$OPTIONAL_BIN_PROGS stty\$(EXEEXT)" MAN="$MAN stty.1"
@@ -199,9 +213,9 @@ fi
 
 # FIXME: note that this macro appears above, too.
 # I'm leaving it here for now.  This whole thing needs to be modernized...
-jm_WINSIZE_IN_PTEM
+gl_WINSIZE_IN_PTEM
 
-jm_HEADER_TIOCGWINSZ_IN_TERMIOS_H
+gl_HEADER_TIOCGWINSZ_IN_TERMIOS_H
 
 if test $jm_cv_sys_tiocgwinsz_needs_termios_h = no && \
    test $jm_cv_sys_tiocgwinsz_needs_sys_ioctl_h = no; then
@@ -225,12 +239,14 @@ if test $jm_cv_sys_tiocgwinsz_needs_termios_h = no && \
 fi
 
 # For src/kill.c.
-AC_CHECK_DECLS([strtoimax])
 AC_CHECK_DECLS([strsignal, sys_siglist, _sys_siglist, __sys_siglist], , ,
   [AC_INCLUDES_DEFAULT
 #include <signal.h>])
 
-jm_LIB_CHECK
+# For src/kill.c and src/printf.c.
+AC_CHECK_DECLS([strtoimax, strtoumax])
+
+cu_LIB_CHECK
 
 AM_GNU_GETTEXT([external], [need-ngettext])
 AM_GNU_GETTEXT_VERSION(0.13.1)
@@ -240,7 +256,6 @@ AC_CONFIG_FILES(
   doc/Makefile
   lib/Makefile
   man/Makefile
-  m4/Makefile
   po/Makefile.in
   src/Makefile
   tests/Makefile
@@ -250,7 +265,6 @@ AC_CONFIG_FILES(
   tests/chown/Makefile
   tests/cp/Makefile
   tests/cut/Makefile
-  tests/date/Makefile
   tests/dd/Makefile
   tests/dircolors/Makefile
   tests/du/Makefile
@@ -269,6 +283,7 @@ AC_CONFIG_FILES(
   tests/mv/Makefile
   tests/od/Makefile
   tests/pr/Makefile
+  tests/readlink/Makefile
   tests/rm/Makefile
   tests/rmdir/Makefile
   tests/seq/Makefile
@@ -280,6 +295,7 @@ AC_CONFIG_FILES(
   tests/tac/Makefile
   tests/tail-2/Makefile
   tests/tail/Makefile
+  tests/tee/Makefile
   tests/test/Makefile
   tests/touch/Makefile
   tests/tr/Makefile

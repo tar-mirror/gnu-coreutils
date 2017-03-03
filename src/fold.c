@@ -1,5 +1,5 @@
 /* fold -- wrap each input line to fit in specified width.
-   Copyright (C) 91, 1995-2004 Free Software Foundation, Inc.
+   Copyright (C) 91, 1995-2005 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* Written by David MacKenzie, djm@gnu.ai.mit.edu. */
 
@@ -25,8 +25,10 @@
 
 #include "system.h"
 #include "error.h"
-#include "posixver.h"
+#include "quote.h"
 #include "xstrtol.h"
+
+#define TAB_WIDTH 8
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "fold"
@@ -44,6 +46,8 @@ static bool count_bytes;
 
 /* If nonzero, at least one of the files we read was standard input. */
 static bool have_read_stdin;
+
+static char const shortopts[] = "bsw:0::1::2::3::4::5::6::7::8::9::";
 
 static struct option const longopts[] =
 {
@@ -104,7 +108,7 @@ adjust_column (size_t column, char c)
       else if (c == '\r')
 	column = 0;
       else if (c == '\t')
-	column = column + 8 - column % 8;
+	column += TAB_WIDTH - column % TAB_WIDTH;
       else /* if (isprint (c)) */
 	column++;
     }
@@ -115,13 +119,13 @@ adjust_column (size_t column, char c)
 
 /* Fold file FILENAME, or standard input if FILENAME is "-",
    to stdout, with maximum line length WIDTH.
-   Return 0 if successful, 1 if an error occurs. */
+   Return true if successful.  */
 
-static int
-fold_file (char *filename, int width)
+static bool
+fold_file (char *filename, size_t width)
 {
   FILE *istream;
-  register int c;
+  int c;
   size_t column = 0;		/* Screen column where next char will go. */
   size_t offset_out = 0;	/* Index in `line_out' for next char. */
   static char *line_out = NULL;
@@ -139,13 +143,13 @@ fold_file (char *filename, int width)
   if (istream == NULL)
     {
       error (0, errno, "%s", filename);
-      return 1;
+      return false;
     }
 
   while ((c = getc (istream)) != EOF)
     {
       if (offset_out + 1 >= allocated_out)
-	line_out = x2nrealloc (line_out, &allocated_out, sizeof *line_out);
+	line_out = X2REALLOC (line_out, &allocated_out);
 
       if (c == '\n')
 	{
@@ -224,24 +228,24 @@ fold_file (char *filename, int width)
       error (0, saved_errno, "%s", filename);
       if (!STREQ (filename, "-"))
 	fclose (istream);
-      return 1;
+      return false;
     }
   if (!STREQ (filename, "-") && fclose (istream) == EOF)
     {
       error (0, errno, "%s", filename);
-      return 1;
+      return false;
     }
 
-  return 0;
+  return true;
 }
 
 int
 main (int argc, char **argv)
 {
-  int width = 80;
+  size_t width = 80;
   int i;
   int optc;
-  int errs = 0;
+  bool ok;
 
   initialize_main (&argc, &argv);
   program_name = argv[0];
@@ -253,38 +257,12 @@ main (int argc, char **argv)
 
   break_spaces = count_bytes = have_read_stdin = false;
 
-  /* Turn any numeric options into -w options.  */
-  for (i = 1; i < argc; i++)
+  while ((optc = getopt_long (argc, argv, shortopts, longopts, NULL)) != -1)
     {
-      char const *a = argv[i];
-      if (a[0] == '-')
-	{
-	  if (a[1] == '-' && ! a[2])
-	    break;
-	  if (ISDIGIT (a[1]))
-	    {
-	      size_t len_a = strlen (a);
-	      char *s = xmalloc (len_a + 2);
-	      s[0] = '-';
-	      s[1] = 'w';
-	      memcpy (s + 2, a + 1, len_a);
-	      argv[i] = s;
-	      if (200112 <= posix2_version ())
-		{
-		  error (0, 0, _("`%s' option is obsolete; use `%s'"), a, s);
-		  usage (EXIT_FAILURE);
-		}
-	    }
-	}
-    }
+      char optargbuf[2];
 
-  while ((optc = getopt_long (argc, argv, "bsw:", longopts, NULL)) != -1)
-    {
       switch (optc)
 	{
-	case 0:
-	  break;
-
 	case 'b':		/* Count bytes rather than columns. */
 	  count_bytes = true;
 	  break;
@@ -293,14 +271,25 @@ main (int argc, char **argv)
 	  break_spaces = true;
 	  break;
 
+	case '0': case '1': case '2': case '3': case '4':
+	case '5': case '6': case '7': case '8': case '9':
+	  if (optarg)
+	    optarg--;
+	  else
+	    {
+	      optargbuf[0] = optc;
+	      optargbuf[1] = '\0';
+	      optarg = optargbuf;
+	    }
+	  /* Fall through.  */
 	case 'w':		/* Line width. */
 	  {
-	    long int tmp_long;
-	    if (xstrtol (optarg, NULL, 10, &tmp_long, "") != LONGINT_OK
-		|| tmp_long <= 0 || tmp_long > INT_MAX)
+	    unsigned long int tmp_ulong;
+	    if (! (xstrtoul (optarg, NULL, 10, &tmp_ulong, "") == LONGINT_OK
+		   && 0 < tmp_ulong && tmp_ulong < SIZE_MAX - TAB_WIDTH))
 	      error (EXIT_FAILURE, 0,
-		     _("invalid number of columns: `%s'"), optarg);
-	    width = (int) tmp_long;
+		     _("invalid number of columns: %s"), quote (optarg));
+	    width = tmp_ulong;
 	  }
 	  break;
 
@@ -314,13 +303,16 @@ main (int argc, char **argv)
     }
 
   if (argc == optind)
-    errs |= fold_file ("-", width);
+    ok = fold_file ("-", width);
   else
-    for (i = optind; i < argc; i++)
-      errs |= fold_file (argv[i], width);
+    {
+      ok = true;
+      for (i = optind; i < argc; i++)
+	ok &= fold_file (argv[i], width);
+    }
 
   if (have_read_stdin && fclose (stdin) == EOF)
     error (EXIT_FAILURE, errno, "-");
 
-  exit (errs == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
+  exit (ok ? EXIT_SUCCESS : EXIT_FAILURE);
 }

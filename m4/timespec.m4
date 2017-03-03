@@ -1,14 +1,21 @@
-#serial 7
+#serial 11
+
+# Copyright (C) 2000, 2001, 2003, 2004, 2005 Free Software Foundation, Inc.
+# This file is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
 
 dnl From Jim Meyering
 
 AC_DEFUN([gl_TIMESPEC],
 [
+  AC_LIBSOURCES([timespec.h])
+
   dnl Prerequisites of lib/timespec.h.
+  AC_REQUIRE([AC_C_INLINE])
   AC_REQUIRE([AC_HEADER_TIME])
   AC_CHECK_HEADERS_ONCE(sys/time.h)
-  jm_CHECK_TYPE_STRUCT_TIMESPEC
-  AC_STRUCT_ST_MTIM_NSEC
+  gl_CHECK_TYPE_STRUCT_TIMESPEC
 
   dnl Persuade glibc <time.h> to declare nanosleep().
   AC_REQUIRE([AC_GNU_SOURCE])
@@ -19,7 +26,7 @@ AC_DEFUN([gl_TIMESPEC],
 dnl Define HAVE_STRUCT_TIMESPEC if `struct timespec' is declared
 dnl in time.h or sys/time.h.
 
-AC_DEFUN([jm_CHECK_TYPE_STRUCT_TIMESPEC],
+AC_DEFUN([gl_CHECK_TYPE_STRUCT_TIMESPEC],
 [
   dnl Persuade pedantic Solaris to declare struct timespec.
   AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])

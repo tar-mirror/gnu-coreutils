@@ -1,5 +1,5 @@
 /* printenv -- print all or part of environment
-   Copyright (C) 1989-1997, 1999-2004 Free Software Foundation, Inc.
+   Copyright (C) 1989-1997, 1999-2005 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* Usage: printenv [variable...]
 
@@ -48,11 +48,6 @@ enum { PRINTENV_FAILURE = 2 };
 /* The name this program was run with. */
 char *program_name;
 
-static struct option const long_options[] =
-{
-  {0, 0, 0, 0}
-};
-
 extern char **environ;
 
 void
@@ -72,6 +67,7 @@ If no environment VARIABLE specified, print them all.\n\
 	      program_name, program_name);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
+      printf (USAGE_BUILTIN_WARNING, PROGRAM_NAME);
       printf (_("\nReport bugs to <%s>.\n"), PACKAGE_BUGREPORT);
     }
   exit (status);
@@ -83,9 +79,7 @@ main (int argc, char **argv)
   char **env;
   char *ep, *ap;
   int i;
-  int matches = 0;
-  int c;
-  int exit_status;
+  bool ok;
 
   initialize_main (&argc, &argv);
   program_name = argv[0];
@@ -98,29 +92,23 @@ main (int argc, char **argv)
 
   parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
 		      usage, AUTHORS, (char const *) NULL);
-
-  while ((c = getopt_long (argc, argv, "", long_options, NULL)) != -1)
-    {
-      switch (c)
-	{
-	case 0:
-	  break;
-
-	default:
-	  usage (PRINTENV_FAILURE);
-	}
-    }
+  if (getopt_long (argc, argv, "+", NULL, NULL) != -1)
+    usage (PRINTENV_FAILURE);
 
   if (optind >= argc)
     {
       for (env = environ; *env != NULL; ++env)
 	puts (*env);
-      exit_status = EXIT_SUCCESS;
+      ok = true;
     }
   else
     {
+      int matches = 0;
+
       for (i = optind; i < argc; ++i)
 	{
+	  bool matched = false;
+
 	  for (env = environ; *env; ++env)
 	    {
 	      ep = *env;
@@ -130,14 +118,17 @@ main (int argc, char **argv)
 		  if (*ep == '=' && *ap == '\0')
 		    {
 		      puts (ep + 1);
-		      ++matches;
+		      matched = true;
 		      break;
 		    }
 		}
 	    }
+
+	  matches += matched;
 	}
-      exit_status = (matches != argc - optind);
+
+      ok = (matches == argc - optind);
     }
 
-  exit (exit_status);
+  exit (ok ? EXIT_SUCCESS : EXIT_FAILURE);
 }

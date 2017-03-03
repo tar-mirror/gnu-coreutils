@@ -22,6 +22,7 @@ abs_srcdir=`pwd`
 cd $pwd || framework_failure=1
 
 . $srcdir/../envvar-check
+. $srcdir/../umask-check
 
 mkdir -p $tmp || framework_failure=1
 cd $tmp || framework_failure=1
@@ -54,4 +55,4 @@ p=`ls -ld e/d|sed 's/ .*//'`; case $p in drwxr-xr-x);; *) fail=1;; esac
 p=`ls -ld e/d/a|sed 's/ .*//'`; case $p in drwx-w--w-);; *) fail=1;; esac
 p=`ls -ld e/d/a/b/c|sed 's/ .*//'`; case $p in drwxr-xr-x);; *) fail=1;; esac
 
-(exit $fail); exit
+(exit $fail); exit $fail

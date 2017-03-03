@@ -15,7 +15,7 @@ my @tv = (
 ['6',  '',    "b\na\na\n",       "b\na\n",          0],
 ['7',  '',    "a\nb\nc\n",       "a\nb\nc\n",       0],
 # Make sure that eight bit characters work
-['8',  '',    "ö\nv\n",          "ö\nv\n",          0],
+['8',  '',    "Ã¶\nv\n",          "Ã¶\nv\n",          0],
 # Test output of -u option; only unique lines
 ['9',  '-u',  "a\na\n",          "",                0],
 ['10', '-u',  "a\nb\n",          "a\nb\n",          0],
@@ -37,12 +37,12 @@ my @tv = (
 ['34', '-f 1',"b a\na a\n",      "b a\n",           0],
 ['35', '-f 2',"a a c\nb a c\n",  "a a c\n",         0],
 # Skip over characters.
-['obs40', '+1',  "aaa\naaa\n",      "aaa\n",           0],
-['obs41', '+1',  "baa\naaa\n",      "baa\n",           0],
+['obs-plus40', '+1',  "aaa\naaa\n",      "aaa\n",           0],
+['obs-plus41', '+1',  "baa\naaa\n",      "baa\n",           0],
 ['42', '-s 1',"aaa\naaa\n",      "aaa\n",           0],
 ['43', '-s 2',"baa\naaa\n",      "baa\n",           0],
-['obs44', '+1 --',  "aaa\naaa\n",   "aaa\n",           0],
-['obs45', '+1 --',  "baa\naaa\n",   "baa\n",           0],
+['obs-plus44', '+1 --',  "aaa\naaa\n",   "aaa\n",           0],
+['obs-plus45', '+1 --',  "baa\naaa\n",   "baa\n",           0],
 # Skip over fields and characters
 ['50', '-f 1 -s 1',"a aaa\nb ab\n",      "a aaa\nb ab\n",       0],
 ['51', '-f 1 -s 1',"a aaa\nb aaa\n",     "a aaa\n",             0],
@@ -95,7 +95,7 @@ sub test_vector
       my ($test_name, $flags, $in, $exp, $ret) = @$t;
       $Test::input_via{$test_name} = {REDIR => 0, PIPE => 0};
 
-      $test_name =~ /^obs/
+      $test_name =~ /^obs-plus/
 	and $Test::env{$test_name} = ['_POSIX2_VERSION=199209'];
     }
 

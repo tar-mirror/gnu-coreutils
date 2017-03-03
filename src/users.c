@@ -1,5 +1,5 @@
 /* GNU's users.
-   Copyright (C) 1992-2004 Free Software Foundation, Inc.
+   Copyright (C) 1992-2005 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* Written by jla; revised by djm */
 
@@ -26,6 +26,7 @@
 
 #include "error.h"
 #include "long-options.h"
+#include "quote.h"
 #include "readutmp.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
@@ -36,11 +37,6 @@
 /* The name this program was run with. */
 char *program_name;
 
-static struct option const longopts[] =
-{
-  {NULL, 0, NULL, 0}
-};
-
 static int
 userid_compare (const void *v_a, const void *v_b)
 {
@@ -50,21 +46,15 @@ userid_compare (const void *v_a, const void *v_b)
 }
 
 static void
-list_entries_users (int n, const STRUCT_UTMP *this)
+list_entries_users (size_t n, const STRUCT_UTMP *this)
 {
-  char **u;
-  int i;
-  int n_entries;
+  char **u = xnmalloc (n, sizeof *u);
+  size_t i;
+  size_t n_entries = 0;
 
-  n_entries = 0;
-  u = xmalloc (n * sizeof (u[0]));
-  for (i = 0; i < n; i++)
+  while (n--)
     {
-      if (UT_USER (this) [0]
-#ifdef USER_PROCESS
-	  && this->ut_type == USER_PROCESS
-#endif
-	  )
+      if (IS_USER_PROCESS (this))
 	{
 	  char *trimmed_name;
 
@@ -80,9 +70,8 @@ list_entries_users (int n, const STRUCT_UTMP *this)
 
   for (i = 0; i < n_entries; i++)
     {
-      int c;
+      char c = (i < n_entries - 1 ? ' ' : '\n');
       fputs (u[i], stdout);
-      c = (i < n_entries - 1 ? ' ' : '\n');
       putchar (c);
     }
 
@@ -91,16 +80,16 @@ list_entries_users (int n, const STRUCT_UTMP *this)
   free (u);
 }
 
-/* Display a list of users on the system, according to utmp file FILENAME. */
+/* Display a list of users on the system, according to utmp file FILENAME.
+   Use read_utmp OPTIONS to read FILENAME.  */
 
 static void
-users (const char *filename)
+users (const char *filename, int options)
 {
-  int n_users;
+  size_t n_users;
   STRUCT_UTMP *utmp_buf;
-  int fail = read_utmp (filename, &n_users, &utmp_buf);
 
-  if (fail)
+  if (read_utmp (filename, &n_users, &utmp_buf, options) != 0)
     error (EXIT_FAILURE, errno, "%s", filename);
 
   list_entries_users (n_users, utmp_buf);
@@ -133,7 +122,6 @@ If FILE is not specified, use %s.  %s as FILE is common.\n\
 int
 main (int argc, char **argv)
 {
-  int optc, longind;
   initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
@@ -144,31 +132,21 @@ main (int argc, char **argv)
 
   parse_long_options (argc, argv, PROGRAM_NAME, GNU_PACKAGE, VERSION,
 		      usage, AUTHORS, (char const *) NULL);
-
-  while ((optc = getopt_long (argc, argv, "", longopts, &longind)) != -1)
-    {
-      switch (optc)
-	{
-	case 0:
-	  break;
-
-	default:
-	  usage (EXIT_FAILURE);
-	}
-    }
+  if (getopt_long (argc, argv, "", NULL, NULL) != -1)
+    usage (EXIT_FAILURE);
 
   switch (argc - optind)
     {
     case 0:			/* users */
-      users (UTMP_FILE);
+      users (UTMP_FILE, READ_UTMP_CHECK_PIDS);
       break;
 
     case 1:			/* users <utmp file> */
-      users (argv[optind]);
+      users (argv[optind], 0);
       break;
 
     default:			/* lose */
-      error (0, 0, _("too many arguments"));
+      error (0, 0, _("extra operand %s"), quote (argv[optind + 1]));
       usage (EXIT_FAILURE);
     }
 

@@ -5,10 +5,7 @@
 # current locale considers to be equal.
 ASSORT = LC_ALL=C sort
 
-all_programs =								\
-  echo 'spy:;@echo $$(all_programs)'					\
-    | MAKEFLAGS= $(MAKE) -s -C ../src -f Makefile -f - spy		\
-    | ../src/tr -s ' ' '\n' | $(ASSORT) -u
+all_programs = (cd ../src && MAKEFLAGS= $(MAKE) -s all_programs.list)
 
 TESTS = help-version
 TESTS_ENVIRONMENT = \
@@ -17,20 +14,21 @@ TESTS_ENVIRONMENT = \
   PATH="`pwd`/../src$(PATH_SEPARATOR)$$PATH"
 
 EXTRA_DIST = \
-  $(TESTS) .env-warn Fetish.pm Makefile.am.in README envvar-check \
+  $(TESTS) .env-warn Coreutils.pm Makefile.am.in README envvar-check \
   expensive group-names input-tty lang-default mk-script priv-check \
-  rwx-to-mode sample-test setgid-check
+  rwx-to-mode sample-test setgid-check umask-check
 
 SUBDIRS = \
-  basename chgrp chmod chown cp cut date dd dircolors du expr factor \
-  fmt head install join ln ls ls-2 md5sum misc mkdir mv od pr rm rmdir \
-  seq sha1sum shred sort stty sum tac tail tail-2 test touch tr tsort \
-  unexpand uniq wc
+  basename chgrp chmod chown cp cut dd dircolors du expr factor \
+  fmt head install join ln ls ls-2 md5sum misc mkdir mv od pr readlink \
+  rm rmdir seq sha1sum shred sort stty sum tac tail tail-2 tee test \
+  touch tr tsort unexpand uniq wc
 
+.PHONY: check-root
 check-root:
 	cd chown && $(MAKE) check TESTS=basic
 	cd cp    && $(MAKE) check TESTS=special-bits
-	cd mv    && $(MAKE) check TESTS=mv-special-1
+	cd rm    && $(MAKE) check TESTS=no-give-up
 	cd rm    && $(MAKE) check TESTS=fail-2eperm
 
 check-recursive: evar-check root-hint
@@ -44,6 +42,7 @@ evar-check:
 	  && sed s/%%/CDPATH/ $(srcdir)/.env-warn || :
 
 # Advertise `check-root' target.
+.PHONY: root-hint
 root-hint:
 	@echo '***********************************************************'
 	@echo "NOTICE: Some tests may be run only as root."

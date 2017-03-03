@@ -3,9 +3,6 @@ package Test;
 require 5.002;
 use strict;
 
-# Tell head to accept old-style options like `-1'.
-$Test::env_default = ['_POSIX2_VERSION=199209'];
-
 my @tv = (
 
 # -b option is no longer an official option. But it's still working to
@@ -346,6 +343,19 @@ my @tv = (
 # This test would fail with textutils-2.1 and earlier.
 ['col-last', '-W3 -t2', "a\nb\nc\n", "a c\nb\n", 0],
 
+# Make sure that -02 is treated just like -2.
+['col-02', '-W3 -t -02',                "a\nb\nc\n", "a c\nb\n", 0],
+# The -2 must override preceding column-count-specifying options.
+['col-2', '-W3 -t -4 --columns=1 -2', "a\nb\nc\n", "a c\nb\n", 0],
+# The --columns=2 must override preceding column-count-specifying options.
+['col-long', '-W3 -t -1 --columns=2',     "a\nb\nc\n", "a c\nb\n", 0],
+# Make sure these fail.
+['col-0', '-0', '', '', 1],
+['col-inval', '-'.'9'x100, '', '', 1],
+
+# Before coreutils-5.3.1, --pages=1:-1 would be treated like
+# --pages=1:18446744073709551615.
+['neg-page', '--pages=1:-1', '', '', 1],
 );
 #']]);
 
@@ -363,6 +373,11 @@ sub test_vector
       my $sep = ($flags ? ' ' : '');
       $flags = "$common_option_prefix$sep$flags";
       push (@new_tv, [$test_name, $flags, $in, $exp, $ret]);
+
+      # For any use of -N, create an identical test with --columns=N.
+      (my $new_flags = $flags) =~ s/(^| )-(\d+)( |$)/$1--columns=$2$3/g;
+      $new_flags ne $flags
+	and push (@new_tv, ["$test_name.C", $new_flags, $in, $exp, $ret]);
     }
 
   return @new_tv;

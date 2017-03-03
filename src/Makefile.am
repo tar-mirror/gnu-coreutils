@@ -1,5 +1,22 @@
 ## Process this file with automake to produce Makefile.in -*-Makefile-*-
 
+## Copyright (C) 1990, 1991, 1993, 1994, 1995, 1996, 1997, 1998, 1999,
+## 2000, 2001, 2002, 2003, 2004, 2005 Free Software Foundation, Inc.
+
+## This program is free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2, or (at your option)
+## any later version.
+
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+
+## You should have received a copy of the GNU General Public License
+## along with this program; if not, write to the Free Software Foundation,
+## Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+
 EXTRA_PROGRAMS = chroot df hostid nice pinky stty su uname uptime users who
 
 bin_SCRIPTS = groups
@@ -26,25 +43,36 @@ CLEANFILES = $(SCRIPTS) su
 AM_CPPFLAGS = -I.. -I$(srcdir) -I$(top_srcdir)/lib -I../lib
 
 # Sometimes, the expansion of $(LIBINTL) includes -lc which may
-# include modules defining variables like `optind', so libfetish.a
+# include modules defining variables like `optind', so libcoreutils.a
 # must precede $(LIBINTL) in order to ensure we use GNU getopt.
-# But libfetish.a must also follow $(LIBINTL), since libintl uses
-# replacement functions defined in libfetish.a.
-LDADD = ../lib/libfetish.a $(LIBINTL) ../lib/libfetish.a
+# But libcoreutils.a must also follow $(LIBINTL), since libintl uses
+# replacement functions defined in libcoreutils.a.
+LDADD = ../lib/libcoreutils.a $(LIBINTL) ../lib/libcoreutils.a
 
+# for eaccess in lib/euidaccess.c.
+cp_LDADD = $(LDADD) $(LIB_EACCESS)
+ginstall_LDADD = $(LDADD) $(LIB_EACCESS)
+mv_LDADD = $(LDADD) $(LIB_EACCESS)
+pathchk_LDADD = $(LDADD) $(LIB_EACCESS)
+rm_LDADD = $(LDADD) $(LIB_EACCESS)
+test_LDADD = $(LDADD) $(LIB_EACCESS)
+# This is for the '[' program.  Automake transliterates '[' to '_'.
+__LDADD = $(LDADD) $(LIB_EACCESS)
+
+# for clock_gettime and fdatasync
+dd_LDADD = $(LDADD) $(LIB_GETHRXTIME) $(LIB_FDATASYNC)
 dir_LDADD = $(LDADD) $(LIB_CLOCK_GETTIME)
 ls_LDADD = $(LDADD) $(LIB_CLOCK_GETTIME)
-shred_LDADD = $(LDADD) $(LIB_CLOCK_GETTIME)
+pr_LDADD = $(LDADD) $(LIB_CLOCK_GETTIME)
+shred_LDADD = $(LDADD) $(LIB_GETHRXTIME) $(LIB_FDATASYNC)
 vdir_LDADD = $(LDADD) $(LIB_CLOCK_GETTIME)
 
 ## If necessary, add -lm to resolve use of pow in lib/strtod.c.
 sort_LDADD = $(LDADD) $(POW_LIB)
 
-# for clock_gettime
+# for get_date and gettime
 date_LDADD = $(LDADD) $(LIB_CLOCK_GETTIME)
-
-# For sqrt
-factor_LDADD = $(LDADD) $(SQRT_LIBM)
+touch_LDADD = $(LDADD) $(LIB_CLOCK_GETTIME)
 
 # If necessary, add -lm to resolve use of pow in lib/strtod.c.
 # If necessary, add -liconv to resolve use of iconv in lib/unicodeio.c.
@@ -53,10 +81,9 @@ printf_LDADD = $(LDADD) $(POW_LIB) $(LIBICONV)
 # If necessary, add -lm to resolve use of floor, rint, modf.
 seq_LDADD = $(LDADD) $(SEQ_LIBM)
 
-# If necessary, add -lm to resolve the `pow' reference in lib/strtod.c
-# or for the fesetround reference in programs using nanosec.c.
-nanosec_libs = \
-  $(LDADD) $(FESETROUND_LIBM) $(POW_LIB) $(LIB_CLOCK_GETTIME) $(LIB_NANOSLEEP)
+# If necessary, add libraries to resolve the `pow' reference in lib/strtod.c
+# and the `nanosleep' reference in lib/xnanosleep.c.
+nanosec_libs = $(LDADD) $(POW_LIB) $(LIB_NANOSLEEP)
 
 sleep_LDADD = $(nanosec_libs)
 tail_LDADD = $(nanosec_libs)
@@ -65,9 +92,7 @@ uptime_LDADD = $(LDADD) $(GETLOADAVG_LIBS)
 
 su_LDADD = $(LDADD) $(LIB_CRYPT)
 
-$(PROGRAMS): ../lib/libfetish.a
-
-$(SCRIPTS): Makefile
+$(PROGRAMS): ../lib/libcoreutils.a
 
 SUFFIXES = .sh
 
@@ -152,11 +177,11 @@ editpl = sed -e 's,@''PERL''@,$(PERL),g'
 localedir = $(datadir)/locale
 BUILT_SOURCES = localedir.h
 DISTCLEANFILES = localedir.h
-localedir.h: Makefile
-	@rm -f $@-t
+localedir.h:
+	@rm -f $@ $@-t
 	echo '#define LOCALEDIR "$(localedir)"' >$@-t
 	@chmod a-w $@-t
-	cmp $@-t $@ > /dev/null 2>&1 && rm -f $@-t || { rm -f $@; mv $@-t $@; }
+	mv $@-t $@
 
 BUILT_SOURCES += dircolors.h
 dircolors.h: dcgen dircolors.hin
@@ -186,17 +211,6 @@ wheel.h: wheel-gen.pl Makefile.am
 # Tell automake to exempt then from that installcheck test.
 AM_INSTALLCHECK_STD_OPTIONS_EXEMPT = false test
 
-BUILT_SOURCES += false.c
-false.c: true.c
-	@rm -f $@ $@-t
-	sed \
-	  -e s/true/false/g \
-	  -e s/success/failure/g \
-	  -e 's/(EXIT_SUCCESS)/(EXIT_FAILURE)/g' \
-	  $(srcdir)/true.c > $@-t
-	@chmod a-w $@-t
-	mv $@-t $@
-
 BUILT_SOURCES += fs.h
 fs.h: stat.c extract-magic
 	rm -f $@
@@ -206,29 +220,55 @@ fs.h: stat.c extract-magic
 
 MAINTAINERCLEANFILES = $(BUILT_SOURCES)
 
-all_programs = \
-    $(bin_PROGRAMS) \
-    $(bin_SCRIPTS) \
-  $(EXTRA_PROGRAMS)
-
 # Sort in traditional ASCII order, regardless of the current locale;
 # otherwise we may get into trouble with distinct strings that the
 # current locale considers to be equal.
 ASSORT = LC_ALL=C sort
 
+all_programs = \
+    $(bin_PROGRAMS) \
+    $(bin_SCRIPTS) \
+  $(EXTRA_PROGRAMS)
+
+all_programs.list:
+	@echo $(all_programs) | tr ' ' '\n' | sed -e 's,$(EXEEXT)$$,,' \
+	  | $(ASSORT) -u
+
 pm = progs-makefile
 pr = progs-readme
 # Ensure that the list of programs in README matches the list
 # of programs we can build.
-check: check-README check-misc
+check: check-README check-misc check-AUTHORS
 .PHONY: check-README
 check-README:
 	rm -rf $(pr) $(pm)
 	echo $(all_programs) \
-	  | tr -s ' ' '\n' | $(ASSORT) -u > $(pm) && \
+	 | tr -s ' ' '\n' | sed -e 's,$(EXEEXT)$$,,' \
+	 | $(ASSORT) -u > $(pm) && \
 	sed -n '/^The programs .* are:/,/^[a-zA-Z]/p' $(top_srcdir)/README \
 	  | sed -n '/^   */s///p' | tr -s ' ' '\n' > $(pr)
 	diff $(pm) $(pr) && rm -rf $(pr) $(pm)
+
+# Ensure that the list of programs and author names is accurate.
+au_dotdot = authors-dotdot
+au_actual = authors-actual
+.PHONY: check-AUTHORS
+check-AUTHORS: $(all_programs)
+	rm -f $(au_actual) $(au_dotdot)
+	for i in `ls $(all_programs) | sed -e 's,$(EXEEXT)$$,,' \
+	    | $(ASSORT) -u`; do				\
+	  test "$$i" = '[' && continue;			\
+	  exe=$$i;					\
+	  if test "$$i" = install; then			\
+	    exe=ginstall;				\
+	  elif test "$$i" = test; then			\
+	    exe='[';					\
+	  fi;						\
+	  ./$$exe --version				\
+	    |sed -n '/Written by /{ s//'"$$i"': /; s/,* and /, /; s/\.$$//; p; }'; \
+	done > $(au_actual)
+	sed -n '/:/p' $(top_srcdir)/AUTHORS > $(au_dotdot)
+	diff $(au_actual) $(au_dotdot) && rm -f $(au_actual) $(au_dotdot)
 
 # Make sure we don't define any S_IS* macros in src/*.c files.
 # Not a big deal, but they're already defined via system.h.
@@ -267,3 +307,32 @@ s2 = '/^\#define AUTHORS \\\\/{;n;$(sed_filter);p;q;}'
 	  done | $(ASSORT) -u ) > $@-t
 	chmod a-w $@-t
 	mv $@-t $@
+
+# The following rule is not designed to be portable,
+# and relies on tools that not everyone has.
+
+# Most functions in src/*.c should have static scope.
+# Any that don't must be marked with `extern', but `main'
+# and `usage' are exceptions.  They're always extern, but
+# don't need to be marked.
+#
+# The second nm|grep checks for file-scope variables with `extern' scope.
+sc_tight_scope: $(all_programs)
+	@t=exceptions-$$$$;						\
+	trap "s=$$?; rm -f $$t; exit $$s" 0 1 2 13 15;			\
+	( printf '^main$$\n^usage$$\n';					\
+	  grep -h -A1 '^extern .*[^;]$$' $(SOURCES)			\
+	    | grep -vE '^(extern |--)' |sed 's/^/^/;s/ .*/$$/' ) > $$t;	\
+	nm -e *.$(OBJEXT)						\
+	    | sed -n 's/.* T //p'					\
+	    | grep -Ev -f $$t &&					\
+	  { echo 'the above functions should have static scope' 1>&2;	\
+	    exit 1; } || : ;						\
+	( printf '^program_name$$\n';					\
+	  sed -n 's/^extern int \([^ ][^ ]*\);$$/^\1$$/p'		\
+	    $(noinst_HEADERS) ) > $$t;					\
+	nm -e *.$(OBJEXT)						\
+	    | sed -n 's/.* [BD] //p'					\
+	    | grep -Ev -f $$t &&					\
+	  { echo 'the above variables should have static scope' 1>&2;	\
+	    exit 1; } || :

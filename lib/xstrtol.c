@@ -1,7 +1,7 @@
 /* A more useful interface to strtol.
 
-   Copyright (C) 1995, 1996, 1998, 1999, 2000, 2001, 2003 Free
-   Software Foundation, Inc.
+   Copyright (C) 1995, 1996, 1998, 1999, 2000, 2001, 2003, 2004, 2005
+   Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,13 +15,15 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* Written by Jim Meyering. */
 
-#if HAVE_CONFIG_H
+#ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
+
+#include "xstrtol.h"
 
 #ifndef __strtol
 # define __strtol strtol
@@ -37,22 +39,12 @@
 
 #include <assert.h>
 #include <ctype.h>
+#include <errno.h>
+#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include <errno.h>
-#ifndef errno
-extern int errno;
-#endif
-
-#include <limits.h>
-
-/* The extra casts work around common compiler bugs.  */
-#define TYPE_SIGNED(t) (! ((t) 0 < (t) -1))
-#define TYPE_MINIMUM(t) ((t) (TYPE_SIGNED (t) \
-			      ? ~ (t) 0 << (sizeof (t) * CHAR_BIT - 1) \
-			      : (t) 0))
-#define TYPE_MAXIMUM(t) ((t) (~ (t) 0 - TYPE_MINIMUM (t)))
+#include "intprops.h"
 
 #ifndef STRTOL_T_MINIMUM
 # define STRTOL_T_MINIMUM TYPE_MINIMUM (__strtol_t)
@@ -66,8 +58,6 @@ extern int errno;
 #endif
 
 #define ISSPACE(c) (IN_CTYPE_DOMAIN (c) && isspace (c))
-
-#include "xstrtol.h"
 
 #if !HAVE_DECL_STRTOIMAX && !defined strtoimax
 intmax_t strtoimax ();
@@ -121,9 +111,10 @@ __xstrtol (const char *s, char **ptr, int strtol_base,
   if (! TYPE_SIGNED (__strtol_t))
     {
       const char *q = s;
-      while (ISSPACE ((unsigned char) *q))
-	++q;
-      if (*q == '-')
+      unsigned char ch = *q;
+      while (ISSPACE (ch))
+	ch = *++q;
+      if (ch == '-')
 	return LONGINT_INVALID;
     }
 

@@ -68,7 +68,7 @@ my @tv = (
 ['y', '-d ' . q|'a-z'|, 'abc $code', ' $', 0],
 ['z', '-ds ' . q|'a-z' '$.'|, 'a.b.c $$$$code\\', '. $\\', 0],
 
-# Make sure that a-a is accepted, even though POSIX 1001.2 says it is illegal.
+# Make sure that a-a is accepted.
 ['range-a-a', q|'a-a' 'z'|,         'abc',    'zbc',               0],
 #
 ['null', q|'a' ''''|,          '',       '',                  1],
@@ -84,6 +84,8 @@ my @tv = (
 ['o-rep-2',   q|'[b*010]cd' '[a*7]BC[x*]'|, 'bcd', 'BCx', 0],
 
 ['esc',     q|'a\-z' 'A-Z'|,		'abc-z', 'AbcBC', 0],
+['bs-055', q|'a\055b' def|,		"a\055b", 'def', 0],
+['bs-at-end', q|'\' x|,		        "\\", 'x', 0],
 
 #
 # From Ross
@@ -102,6 +104,16 @@ my @tv = (
 # Prior to 2.0.20, each would evoke a failed assertion.
 ['empty-eq', q|'[==]' x|,		'', '', 1],
 ['empty-cc', q|'[::]' x|,		'', '', 1],
+
+# Weird repeat counts.
+['repeat-bs-9',          q|abc '[b*\9]'|, 'abcd', '[b*d', 0],
+['repeat-0',             q|abc '[b*0]'|, 'abcd', 'bbbd', 0],
+['repeat-zeros',         q|abc '[b*00000000000000000000]'|, 'abcd', 'bbbd', 0],
+['repeat-compl', '-c ' . q|'[a*65536]\n' '[b*]'|, 'abcd', 'abbb', 0],
+['repeat-xC',    '-C ' . q|'[a*65536]\n' '[b*]'|, 'abcd', 'abbb', 0],
+
+# From Glenn Fowler.
+['fowler-1', q|ah -H|, 'aha', '-H-', 0],
 
 );
 

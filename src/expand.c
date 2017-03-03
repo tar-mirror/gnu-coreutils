@@ -1,5 +1,5 @@
 /* expand - convert tabs to spaces
-   Copyright (C) 89, 91, 1995-2004 Free Software Foundation, Inc.
+   Copyright (C) 89, 91, 1995-2005 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* By default, convert all tabs to spaces.
    Preserves backspace characters in the output; they decrement the
@@ -24,9 +24,9 @@
    --tabs=tab1[,tab2[,...]]
    -t tab1[,tab2[,...]]
    -tab1[,tab2[,...]]	If only one tab stop is given, set the tabs tab1
-			spaces apart instead of the default 8.  Otherwise,
+			columns apart instead of the default 8.  Otherwise,
 			set the tabs at columns tab1, tab2, etc. (numbered from
-			0); replace any tabs beyond the tabstops given with
+			0); replace any tabs beyond the tab stops given with
 			single spaces.
    --initial
    -i			Only convert initial tabs on each line to spaces.
@@ -40,7 +40,6 @@
 #include <sys/types.h>
 #include "system.h"
 #include "error.h"
-#include "posixver.h"
 #include "quote.h"
 #include "xstrndup.h"
 
@@ -50,43 +49,47 @@
 #define AUTHORS "David MacKenzie"
 
 /* The number of bytes added at a time to the amount of memory
-   allocated for the output line. */
+   allocated for the output line.  */
 #define OUTPUT_BLOCK 256
 
-/* The name this program was run with. */
+/* The name this program was run with.  */
 char *program_name;
 
-/* If nonzero, convert blanks even after nonblank characters have been
-   read on the line. */
-static int convert_entire_line;
+/* If true, convert blanks even after nonblank characters have been
+   read on the line.  */
+static bool convert_entire_line;
 
-/* If nonzero, the size of all tab stops.  If zero, use `tab_list' instead. */
-static int tab_size;
+/* If nonzero, the size of all tab stops.  If zero, use `tab_list' instead.  */
+static uintmax_t tab_size;
 
 /* Array of the explicit column numbers of the tab stops;
    after `tab_list' is exhausted, each additional tab is replaced
-   by a space.  The first column is column 0. */
-static int *tab_list;
+   by a space.  The first column is column 0.  */
+static uintmax_t *tab_list;
 
-/* The index of the first invalid element of `tab_list',
-   where the next element can be added. */
-static size_t first_free_tab;
+/* The number of allocated entries in `tab_list'.  */
 static size_t n_tabs_allocated;
 
-/* Null-terminated array of input filenames. */
+/* The index of the first invalid element of `tab_list',
+   where the next element can be added.  */
+static size_t first_free_tab;
+
+/* Null-terminated array of input filenames.  */
 static char **file_list;
 
-/* Default for `file_list' if no files are given on the command line. */
+/* Default for `file_list' if no files are given on the command line.  */
 static char *stdin_argv[] =
 {
   "-", NULL
 };
 
-/* Nonzero if we have ever read standard input. */
-static int have_read_stdin;
+/* True if we have ever read standard input.  */
+static bool have_read_stdin;
 
-/* Nonzero if errors have occurred.  */
+/* The desired exit status.  */
 static int exit_status;
+
+static char const shortopts[] = "it:0::1::2::3::4::5::6::7::8::9::";
 
 static struct option const longopts[] =
 {
@@ -118,7 +121,7 @@ With no FILE, or when FILE is -, read standard input.\n\
 Mandatory arguments to long options are mandatory for short options too.\n\
 "), stdout);
       fputs (_("\
-  -i, --initial       do not convert TABs after non whitespace\n\
+  -i, --initial       do not convert tabs after non blanks\n\
   -t, --tabs=NUMBER   have tabs NUMBER characters apart, not 8\n\
 "), stdout);
       fputs (_("\
@@ -131,82 +134,78 @@ Mandatory arguments to long options are mandatory for short options too.\n\
   exit (status);
 }
 
-/* Add tab stop TABVAL to the end of `tab_list', except
-   if TABVAL is -1, do nothing. */
+/* Add tab stop TABVAL to the end of `tab_list'.  */
 
 static void
-add_tabstop (int tabval)
+add_tab_stop (uintmax_t tabval)
 {
-  if (tabval == -1)
-    return;
   if (first_free_tab == n_tabs_allocated)
-    tab_list = x2nrealloc (tab_list, &n_tabs_allocated, sizeof *tab_list);
+    tab_list = X2NREALLOC (tab_list, &n_tabs_allocated);
   tab_list[first_free_tab++] = tabval;
 }
 
-/* Add the comma or blank separated list of tabstops STOPS
-   to the list of tabstops. */
+/* Add the comma or blank separated list of tab stops STOPS
+   to the list of tab stops.  */
 
 static void
-parse_tabstops (char const *stops)
+parse_tab_stops (char const *stops)
 {
-  int tabval = -1;
+  bool have_tabval = false;
+  uintmax_t tabval IF_LINT (= 0);
   char const *num_start IF_LINT (= NULL);
-  int fail = 0;
+  bool ok = true;
 
   for (; *stops; stops++)
     {
-      if (*stops == ',' || ISBLANK (*stops))
+      if (*stops == ',' || ISBLANK (to_uchar (*stops)))
 	{
-	  add_tabstop (tabval);
-	  tabval = -1;
+	  if (have_tabval)
+	    add_tab_stop (tabval);
+	  have_tabval = false;
 	}
       else if (ISDIGIT (*stops))
 	{
-	  if (tabval == -1)
+	  if (!have_tabval)
 	    {
 	      tabval = 0;
+	      have_tabval = true;
 	      num_start = stops;
 	    }
-	  {
-	    int new_t;
 
-	    /* Detect overflow.  */
-	    new_t = 10 * tabval + *stops - '0';
-	    if (INT_MAX / 10 < tabval || new_t < tabval * 10)
-	      {
-		size_t len = strspn (num_start, "0123456789");
-		char *bad_num = xstrndup (num_start, len);
-		error (0, 0, _("tab stop is too large %s"), quote (bad_num));
-		fail = 1;
-		stops = num_start + len - 1;
-	      }
-	    tabval = new_t;
-	  }
+	  if (!DECIMAL_DIGIT_ACCUMULATE (tabval, *stops - '0', uintmax_t))
+	    {
+	      size_t len = strspn (num_start, "0123456789");
+	      char *bad_num = xstrndup (num_start, len);
+	      error (0, 0, _("tab stop is too large %s"), quote (bad_num));
+	      free (bad_num);
+	      ok = false;
+	      stops = num_start + len - 1;
+	    }
 	}
       else
 	{
 	  error (0, 0, _("tab size contains invalid character(s): %s"),
 		 quote (stops));
-	  fail = 1;
+	  ok = false;
 	  break;
 	}
     }
 
-  if (fail)
+  if (!ok)
     exit (EXIT_FAILURE);
 
-  add_tabstop (tabval);
+  if (have_tabval)
+    add_tab_stop (tabval);
 }
 
-/* Check that the list of tabstops TABS, with ENTRIES entries,
-   contains only nonzero, ascending values. */
+/* Check that the list of tab stops TABS, with ENTRIES entries,
+   contains only nonzero, ascending values.  */
 
 static void
-validate_tabstops (int *tabs, int entries)
+validate_tab_stops (uintmax_t const *tabs, size_t entries)
 {
-  int prev_tab = 0;
-  int i;
+  uintmax_t prev_tab = 0;
+  size_t i;
 
   for (i = 0; i < entries; i++)
     {
@@ -234,14 +233,14 @@ next_file (FILE *fp)
       if (ferror (fp))
 	{
 	  error (0, errno, "%s", prev_file);
-	  exit_status = 1;
+	  exit_status = EXIT_FAILURE;
 	}
       if (fp == stdin)
-	clearerr (fp);		/* Also clear EOF. */
-      else if (fclose (fp) == EOF)
+	clearerr (fp);		/* Also clear EOF.  */
+      else if (fclose (fp) != 0)
 	{
 	  error (0, errno, "%s", prev_file);
-	  exit_status = 1;
+	  exit_status = EXIT_FAILURE;
 	}
     }
 
@@ -249,7 +248,7 @@ next_file (FILE *fp)
     {
       if (file[0] == '-' && file[1] == '\0')
 	{
-	  have_read_stdin = 1;
+	  have_read_stdin = true;
 	  prev_file = file;
 	  return stdin;
 	}
@@ -260,112 +259,116 @@ next_file (FILE *fp)
 	  return fp;
 	}
       error (0, errno, "%s", file);
-      exit_status = 1;
+      exit_status = EXIT_FAILURE;
     }
   return NULL;
 }
 
 /* Change tabs to spaces, writing to stdout.
-   Read each file in `file_list', in order. */
+   Read each file in `file_list', in order.  */
 
 static void
 expand (void)
 {
-  FILE *fp;			/* Input stream. */
-  int c;			/* Each input character. */
-  int tab_index = 0;		/* Index in `tab_list' of next tabstop. */
-  int column = 0;		/* Column on screen of the next char. */
-  int next_tab_column;		/* Column the next tab stop is on. */
-  int convert = 1;		/* If nonzero, perform translations. */
+  /* Input stream.  */
+  FILE *fp = next_file (NULL);
 
-  fp = next_file ((FILE *) NULL);
-  if (fp == NULL)
+  if (!fp)
     return;
-
-  /* Binary I/O will preserve the original EOL style (DOS/Unix) of files.  */
-  SET_BINARY2 (fileno (fp), STDOUT_FILENO);
 
   for (;;)
     {
-      c = getc (fp);
-      if (c == EOF)
-	{
-	  fp = next_file (fp);
-	  if (fp == NULL)
-	    break;		/* No more files. */
-	  else
-	    {
-	      SET_BINARY2 (fileno (fp), STDOUT_FILENO);
-	      continue;
-	    }
-	}
+      /* Input character, or EOF.  */
+      int c;
 
-      if (c == '\n')
+      /* If true, perform translations.  */
+      bool convert = true;
+
+
+      /* The following variables have valid values only when CONVERT
+	 is true:  */
+
+      /* Column of next input character.  */
+      uintmax_t column = 0;
+
+      /* Index in TAB_LIST of next tab stop to examine.  */
+      size_t tab_index = 0;
+
+
+      /* Convert a line of text.  */
+
+      do
 	{
-	  putchar (c);
-	  tab_index = 0;
-	  column = 0;
-	  convert = 1;
-	}
-      else if (c == '\t' && convert)
-	{
-	  if (tab_size == 0)
-	    {
-	      /* Do not let tab_index == first_free_tab;
-		 stop when it is 1 less. */
-	      while (tab_index < first_free_tab - 1
-		     && column >= tab_list[tab_index])
-		tab_index++;
-	      next_tab_column = tab_list[tab_index];
-	      if (tab_index < first_free_tab - 1)
-		tab_index++;
-	      if (column >= next_tab_column)
-		next_tab_column = column + 1; /* Ran out of tab stops. */
-	    }
-	  else
-	    {
-	      next_tab_column = column + tab_size - column % tab_size;
-	    }
-	  while (column < next_tab_column)
-	    {
-	      putchar (' ');
-	      ++column;
-	    }
-	}
-      else
-	{
+	  while ((c = getc (fp)) < 0 && (fp = next_file (fp)))
+	    continue;
+
 	  if (convert)
 	    {
-	      if (c == '\b')
+	      if (c == '\t')
 		{
-		  if (column > 0)
-		    --column;
+		  /* Column the next input tab stop is on.  */
+		  uintmax_t next_tab_column;
+
+		  if (tab_size)
+		    next_tab_column = column + (tab_size - column % tab_size);
+		  else
+		    for (;;)
+		      if (tab_index == first_free_tab)
+			{
+			  next_tab_column = column + 1;
+			  break;
+			}
+		      else
+			{
+			  uintmax_t tab = tab_list[tab_index++];
+			  if (column < tab)
+			    {
+			      next_tab_column = tab;
+			      break;
+			    }
+			}
+
+		  if (next_tab_column < column)
+		    error (EXIT_FAILURE, 0, _("input line is too long"));
+
+		  while (++column < next_tab_column)
+		    if (putchar (' ') < 0)
+		      error (EXIT_FAILURE, errno, _("write error"));
+
+		  c = ' ';
+		}
+	      else if (c == '\b')
+		{
+		  /* Go back one column, and force recalculation of the
+		     next tab stop.  */
+		  column -= !!column;
+		  tab_index -= !!tab_index;
 		}
 	      else
 		{
-		  ++column;
-		  if (convert_entire_line == 0)
-		    convert = 0;
+		  column++;
+		  if (!column)
+		    error (EXIT_FAILURE, 0, _("input line is too long"));
 		}
+
+	      convert &= convert_entire_line | ISBLANK (c);
 	    }
-	  putchar (c);
+
+	  if (c < 0)
+	    return;
+
+	  if (putchar (c) < 0)
+	    error (EXIT_FAILURE, errno, _("write error"));
 	}
+      while (c != '\n');
     }
 }
 
 int
 main (int argc, char **argv)
 {
-  int tabval = -1;		/* Value of tabstop being read, or -1. */
-  int c;			/* Option character. */
+  int c;
 
-  bool obsolete_tablist = false;
-
-  have_read_stdin = 0;
-  exit_status = 0;
-  convert_entire_line = 1;
-  tab_list = NULL;
-  first_free_tab = 0;
   initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
@@ -374,46 +377,47 @@ main (int argc, char **argv)
 
   atexit (close_stdout);
 
-  while ((c = getopt_long (argc, argv, "it:,0123456789", longopts, NULL)) != -1)
+  have_read_stdin = false;
+  exit_status = EXIT_SUCCESS;
+  convert_entire_line = true;
+  tab_list = NULL;
+  first_free_tab = 0;
+
+  while ((c = getopt_long (argc, argv, shortopts, longopts, NULL)) != -1)
     {
       switch (c)
 	{
-	case 0:
+	case 'i':
+	  convert_entire_line = false;
 	  break;
 
-	case '?':
-	  usage (EXIT_FAILURE);
-	case 'i':
-	  convert_entire_line = 0;
-	  break;
 	case 't':
-	  parse_tabstops (optarg);
+	  parse_tab_stops (optarg);
 	  break;
-	case ',':
-	  add_tabstop (tabval);
-	  tabval = -1;
-	  obsolete_tablist = true;
+
+	case '0': case '1': case '2': case '3': case '4':
+	case '5': case '6': case '7': case '8': case '9':
+	  if (optarg)
+	    parse_tab_stops (optarg - 1);
+	  else
+	    {
+	      char tab_stop[2];
+	      tab_stop[0] = c;
+	      tab_stop[1] = '\0';
+	      parse_tab_stops (tab_stop);
+	    }
 	  break;
+
 	case_GETOPT_HELP_CHAR;
+
 	case_GETOPT_VERSION_CHAR (PROGRAM_NAME, AUTHORS);
+
 	default:
-	  if (tabval == -1)
-	    tabval = 0;
-	  tabval = tabval * 10 + c - '0';
-	  obsolete_tablist = true;
-	  break;
+	  usage (EXIT_FAILURE);
 	}
     }
 
-  if (obsolete_tablist && 200112 <= posix2_version ())
-    {
-      error (0, 0, _("`-LIST' option is obsolete; use `-t LIST'"));
-      usage (EXIT_FAILURE);
-    }
-
-  add_tabstop (tabval);
-
-  validate_tabstops (tab_list, first_free_tab);
+  validate_tab_stops (tab_list, first_free_tab);
 
   if (first_free_tab == 0)
     tab_size = 8;
@@ -426,8 +430,8 @@ main (int argc, char **argv)
 
   expand ();
 
-  if (have_read_stdin && fclose (stdin) == EOF)
+  if (have_read_stdin && fclose (stdin) != 0)
     error (EXIT_FAILURE, errno, "-");
 
-  exit (exit_status == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
+  exit (exit_status);
 }

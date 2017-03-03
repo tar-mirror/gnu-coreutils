@@ -1,7 +1,7 @@
 /* Declarations for GNU's read utmp module.
 
    Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000,
-   2001, 2002, 2003 Free Software Foundation, Inc.
+   2001, 2002, 2003, 2004, 2005 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 /* Written by jla; revised by djm */
 
@@ -116,11 +116,11 @@
 # else
 
 #  if HAVE_STRUCT_UTMP_UT_USER
-#   define UT_USER(Utmp) Utmp->ut_user
+#   define UT_USER(Utmp) ((Utmp)->ut_user)
 #  endif
 #  if HAVE_STRUCT_UTMP_UT_NAME
 #   undef UT_USER
-#   define UT_USER(Utmp) Utmp->ut_name
+#   define UT_USER(Utmp) ((Utmp)->ut_name)
 #  endif
 
 # endif
@@ -137,21 +137,9 @@
     (HAVE_STRUCT_UTMP_UT_PID \
      || HAVE_STRUCT_UTMPX_UT_PID)
 
-# define HAVE_STRUCT_XTMP_UT_TYPE \
-    (HAVE_STRUCT_UTMP_UT_TYPE \
-     || HAVE_STRUCT_UTMPX_UT_TYPE)
-
 typedef struct UTMP_STRUCT_NAME STRUCT_UTMP;
 
-# include <time.h>
-# ifdef HAVE_SYS_PARAM_H
-#  include <sys/param.h>
-# endif
-
-# include <errno.h>
-# ifndef errno
-extern int errno;
-# endif
+enum { UT_USER_SIZE = sizeof UT_USER ((STRUCT_UTMP *) 0) };
 
 # if !defined (UTMP_FILE) && defined (_PATH_UTMP)
 #  define UTMP_FILE _PATH_UTMP
@@ -179,7 +167,45 @@ extern int errno;
 #  define WTMP_FILE "/etc/wtmp"
 # endif
 
+# if HAVE_STRUCT_XTMP_UT_PID
+#  define UT_PID(U) ((U)->ut_pid)
+# else
+#  define UT_PID(U) 0
+# endif
+
+# if HAVE_STRUCT_UTMP_UT_TYPE || HAVE_STRUCT_UTMPX_UT_TYPE
+#  define UT_TYPE_EQ(U, V) ((U)->ut_type == (V))
+#  define UT_TYPE_NOT_DEFINED 0
+# else
+#  define UT_TYPE_EQ(U, V) 0
+#  define UT_TYPE_NOT_DEFINED 1
+# endif
+
+# ifdef BOOT_TIME
+#  define UT_TYPE_BOOT_TIME(U) UT_TYPE_EQ (U, BOOT_TIME)
+# else
+#  define UT_TYPE_BOOT_TIME(U) 0
+# endif
+
+# ifdef USER_PROCESS
+#  define UT_TYPE_USER_PROCESS(U) UT_TYPE_EQ (U, USER_PROCESS)
+# else
+#  define UT_TYPE_USER_PROCESS(U) 0
+# endif
+
+# define IS_USER_PROCESS(U)					\
+   (UT_USER (U)[0]						\
+    && (UT_TYPE_USER_PROCESS (U)				\
+        || (UT_TYPE_NOT_DEFINED && UT_TIME_MEMBER (U) != 0)))
+
+/* Options for read_utmp.  */
+enum
+  {
+    READ_UTMP_CHECK_PIDS = 1
+  };
+
 char *extract_trimmed_name (const STRUCT_UTMP *ut);
-int read_utmp (const char *filename, int *n_entries, STRUCT_UTMP **utmp_buf);
+int read_utmp (char const *file, size_t *n_entries, STRUCT_UTMP **utmp_buf,
+	       int options);
 
 #endif /* __READUTMP_H__ */

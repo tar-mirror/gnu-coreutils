@@ -1,5 +1,5 @@
 /* Return the canonical absolute name of a given file.
-   Copyright (C) 1996-2001, 2002, 2003 Free Software Foundation, Inc.
+   Copyright (C) 1996-2005 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -14,23 +14,16 @@
    You should have received a copy of the GNU General Public License
    along with this program; see the file COPYING.
    If not, write to the Free Software Foundation,
-   59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
-#ifdef STDC_HEADERS
-# include <stdlib.h>
-#else
-void free ();
-#endif
+#include "canonicalize.h"
 
-#if defined STDC_HEADERS || defined HAVE_STRING_H
-# include <string.h>
-#else
-# include <strings.h>
-#endif
+#include <stdlib.h>
+#include <string.h>
 
 #if HAVE_SYS_PARAM_H
 # include <sys/param.h>
@@ -38,76 +31,38 @@ void free ();
 
 #include <sys/stat.h>
 
-#include <errno.h>
+#include <unistd.h>
 
-#include "path-concat.h"
+#include <errno.h>
+#include <stddef.h>
+
+#include "cycle-check.h"
+#include "filenamecat.h"
+#include "stat-macros.h"
 #include "xalloc.h"
 #include "xgetcwd.h"
-
-#ifndef errno
-extern int errno;
-#endif
 
 #ifndef __set_errno
 # define __set_errno(Val) errno = (Val)
 #endif
 
-#if !HAVE_RESOLVEPATH
+#include "pathmax.h"
+#include "xreadlink.h"
 
-/* If __PTRDIFF_TYPE__ is
-   defined, as with GNU C, use that; that way we don't pollute the
-   namespace with <stddef.h>'s symbols.  Otherwise, if <stddef.h> is
-   available, include it and use ptrdiff_t.  In traditional C, long is
-   the best that we can do.  */
-
-# ifdef __PTRDIFF_TYPE__
-#  define PTR_INT_TYPE __PTRDIFF_TYPE__
-# else
-#  ifdef HAVE_STDDEF_H
-#   include <stddef.h>
-#   define PTR_INT_TYPE ptrdiff_t
-#  else
-#   define PTR_INT_TYPE long
-#  endif
-# endif
-
-# include "pathmax.h"
-# include "xreadlink.h"
-
-# ifdef STAT_MACROS_BROKEN
-#  undef S_ISLNK
-# endif
-
-# ifndef S_ISLNK
-#  ifdef S_IFLNK
-#   define S_ISLNK(m) (((m) & S_IFMT) == S_IFLNK)
-#  endif
-# endif
-
-#endif /* !HAVE_RESOLVEPATH */
-
+#if !HAVE_CANONICALIZE_FILE_NAME
 /* Return the canonical absolute name of file NAME.  A canonical name
-   does not contain any `.', `..' components nor any repeated path
-   separators ('/') or symlinks.  All path components must exist.
+   does not contain any `.', `..' components nor any repeated file name
+   separators ('/') or symlinks.  All components must exist.
    The result is malloc'd.  */
 
 char *
 canonicalize_file_name (const char *name)
 {
-#if HAVE_RESOLVEPATH
+# if HAVE_RESOLVEPATH
 
   char *resolved, *extra_buf = NULL;
   size_t resolved_size;
   ssize_t resolved_len;
-
-#else /* !HAVE_RESOLVEPATH */
-
-  char *rpath, *dest, *extra_buf = NULL;
-  const char *start, *end, *rpath_limit;
-  size_t extra_len = 0;
-  int num_links = 0;
-
-#endif /* !HAVE_RESOLVEPATH */
 
   if (name == NULL)
     {
@@ -121,11 +76,9 @@ canonicalize_file_name (const char *name)
       return NULL;
     }
 
-#if HAVE_RESOLVEPATH
-
   /* All known hosts with resolvepath (e.g. Solaris 7) don't turn
      relative names into absolute ones, so prepend the working
-     directory if the path is not absolute.  */
+     directory if the file name is not absolute.  */
   if (name[0] != '/')
     {
       char *wd;
@@ -133,10 +86,7 @@ canonicalize_file_name (const char *name)
       if (!(wd = xgetcwd ()))
 	return NULL;
 
-      extra_buf = path_concat (wd, name, NULL);
-      if (!extra_buf)
-	xalloc_die ();
-
+      extra_buf = file_name_concat (wd, name, NULL);
       name = extra_buf;
       free (wd);
     }
@@ -165,41 +115,75 @@ canonicalize_file_name (const char *name)
 
   return resolved;
 
-#else /* !HAVE_RESOLVEPATH */
+# else
+
+  return canonicalize_filename_mode (name, CAN_EXISTING);
+
+# endif /* !HAVE_RESOLVEPATH */
+}
+#endif /* !HAVE_CANONICALIZE_FILE_NAME */
+
+/* Return the canonical absolute name of file NAME.  A canonical name
+   does not contain any `.', `..' components nor any repeated file name
+   separators ('/') or symlinks.  Whether components must exist
+   or not depends on canonicalize mode.  The result is malloc'd.  */
+
+char *
+canonicalize_filename_mode (const char *name, canonicalize_mode_t can_mode)
+{
+  char *rname, *dest, *extra_buf = NULL;
+  char const *start;
+  char const *end;
+  char const *rname_limit;
+  size_t extra_len = 0;
+  struct cycle_check_state cycle_state;
+
+  if (name == NULL)
+    {
+      __set_errno (EINVAL);
+      return NULL;
+    }
+
+  if (name[0] == '\0')
+    {
+      __set_errno (ENOENT);
+      return NULL;
+    }
 
   if (name[0] != '/')
     {
-      rpath = xgetcwd ();
-      if (!rpath)
+      rname = xgetcwd ();
+      if (!rname)
 	return NULL;
-      dest = strchr (rpath, '\0');
-      if (dest - rpath < PATH_MAX)
+      dest = strchr (rname, '\0');
+      if (dest - rname < PATH_MAX)
 	{
-	  char *p = xrealloc (rpath, PATH_MAX);
-	  dest = p + (dest - rpath);
-	  rpath = p;
-	  rpath_limit = rpath + PATH_MAX;
+	  char *p = xrealloc (rname, PATH_MAX);
+	  dest = p + (dest - rname);
+	  rname = p;
+	  rname_limit = rname + PATH_MAX;
 	}
       else
 	{
-	  rpath_limit = dest;
+	  rname_limit = dest;
 	}
     }
   else
     {
-      rpath = xmalloc (PATH_MAX);
-      rpath_limit = rpath + PATH_MAX;
-      rpath[0] = '/';
-      dest = rpath + 1;
+      rname = xmalloc (PATH_MAX);
+      rname_limit = rname + PATH_MAX;
+      rname[0] = '/';
+      dest = rname + 1;
     }
 
+  cycle_check_init (&cycle_state);
   for (start = end = name; *start; start = end)
     {
-      /* Skip sequence of multiple path-separators.  */
+      /* Skip sequence of multiple file name separators.  */
       while (*start == '/')
 	++start;
 
-      /* Find end of path component.  */
+      /* Find end of component.  */
       for (end = start; *end && *end != '/'; ++end)
 	/* Nothing.  */;
 
@@ -210,7 +194,7 @@ canonicalize_file_name (const char *name)
       else if (end - start == 2 && start[0] == '.' && start[1] == '.')
 	{
 	  /* Back up to previous component, ignore if at root already.  */
-	  if (dest > rpath + 1)
+	  if (dest > rname + 1)
 	    while ((--dest)[-1] != '/');
 	}
       else
@@ -220,45 +204,56 @@ canonicalize_file_name (const char *name)
 	  if (dest[-1] != '/')
 	    *dest++ = '/';
 
-	  if (dest + (end - start) >= rpath_limit)
+	  if (dest + (end - start) >= rname_limit)
 	    {
-	      PTR_INT_TYPE dest_offset = dest - rpath;
-	      size_t new_size = rpath_limit - rpath;
+	      ptrdiff_t dest_offset = dest - rname;
+	      size_t new_size = rname_limit - rname;
 
 	      if (end - start + 1 > PATH_MAX)
 		new_size += end - start + 1;
 	      else
 		new_size += PATH_MAX;
-	      rpath = xrealloc (rpath, new_size);
-	      rpath_limit = rpath + new_size;
+	      rname = xrealloc (rname, new_size);
+	      rname_limit = rname + new_size;
 
-	      dest = rpath + dest_offset;
+	      dest = rname + dest_offset;
 	    }
 
 	  dest = memcpy (dest, start, end - start);
 	  dest += end - start;
 	  *dest = '\0';
 
-	  if (lstat (rpath, &st) < 0)
-	    goto error;
+	  if (lstat (rname, &st) != 0)
+	    {
+	      if (can_mode == CAN_EXISTING)
+		goto error;
+	      if (can_mode == CAN_ALL_BUT_LAST && *end)
+		goto error;
+	      st.st_mode = 0;
+	    }
 
-# ifdef S_ISLNK
 	  if (S_ISLNK (st.st_mode))
 	    {
 	      char *buf;
 	      size_t n, len;
 
-#  ifdef MAXSYMLINKS
-	      if (++num_links > MAXSYMLINKS)
+	      if (cycle_check (&cycle_state, &st))
 		{
 		  __set_errno (ELOOP);
-		  goto error;
+		  if (can_mode == CAN_MISSING)
+		    continue;
+		  else
+		    goto error;
 		}
-#  endif /* MAXSYMLINKS */
 
-	      buf = xreadlink (rpath);
+	      buf = xreadlink (rname, st.st_size);
 	      if (!buf)
-		goto error;
+		{
+		  if (can_mode == CAN_MISSING)
+		    continue;
+		  else
+		    goto error;
+		}
 
 	      n = strlen (buf);
 	      len = strlen (end);
@@ -280,27 +275,33 @@ canonicalize_file_name (const char *name)
 	      name = end = memcpy (extra_buf, buf, n);
 
 	      if (buf[0] == '/')
-		dest = rpath + 1;	/* It's an absolute symlink */
+		dest = rname + 1;	/* It's an absolute symlink */
 	      else
 		/* Back up to previous component, ignore if at root already: */
-		if (dest > rpath + 1)
+		if (dest > rname + 1)
 		  while ((--dest)[-1] != '/');
 
 	      free (buf);
 	    }
-# endif /* S_ISLNK */
+	  else
+	    {
+	      if (!S_ISDIR (st.st_mode) && *end && (can_mode != CAN_MISSING))
+		{
+		  errno = ENOTDIR;
+		  goto error;
+		}
+	    }
 	}
     }
-  if (dest > rpath + 1 && dest[-1] == '/')
+  if (dest > rname + 1 && dest[-1] == '/')
     --dest;
   *dest = '\0';
 
   free (extra_buf);
-  return rpath;
+  return rname;
 
 error:
   free (extra_buf);
-  free (rpath);
+  free (rname);
   return NULL;
-#endif /* !HAVE_RESOLVEPATH */
 }

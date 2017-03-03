@@ -13,7 +13,7 @@
 
    You should have received a copy of the GNU General Public License along
    with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
@@ -21,6 +21,8 @@
 
 /* Specification.  */
 #include "vasprintf.h"
+
+#include <stdlib.h>
 
 #include "vasnprintf.h"
 
@@ -31,7 +33,10 @@ vasprintf (char **resultp, const char *format, va_list args)
   char *result = vasnprintf (NULL, &length, format, args);
   if (result == NULL)
     return -1;
+
   *resultp = result;
-  /* Return the number of resulting bytes, excluding the trailing NUL.  */
+  /* Return the number of resulting bytes, excluding the trailing NUL.
+     If it wouldn't fit in an 'int', vasnprintf() would have returned NULL
+     and set errno to EOVERFLOW.  */
   return length;
 }
