@@ -1,4 +1,106 @@
+2010-01-13  Jim Meyering  <meyering@redhat.com>
+
+	version 8.4
+	* NEWS: Record release date.
+
+2010-01-13  Pádraig Brady  <P@draigBrady.com>
+
+	tests: avoid spurious failures on older shells
+	* tests/tail-2/inotify-hash-abuse: Use kill rather than wait
+	to determine if the tail process is still running.
+	* tests/tail-2/inotify-hash-abuse2: Ditto.
+
+2010-01-13  Jim Meyering  <meyering@redhat.com>
+
+	tests: work around spurious test failure with OpenBSD4.5's /bin/sh
+	* tests/ls/infloop: OpenBSD4.5's /bin/sh would mistakenly include
+	"set -x"-output in an application's stderr stream when stderr is
+	redirected before stdout.  This was causing one spurious test failure.
+	The work-around: redirect stdout first.
+	Reported by Nelson Beebe.
+
+	tests: don't silently skip the sort-version tests
+	* tests/misc/sort-version: Don't use <<- and indented here-doc contents.
+	s/<<-/<</ and unindent the here-document contents.  Otherwise,
+	bash would ignore the indented delimiter and use EOF, thus silently
+	skipping this test.  OpenBSD5.4's shell reported the failure:
+	  $ printf 'cat<<-x\n foo\n x\n'|sh
+	  sh: <stdin>[4]: here document `x' unclosed
+	  [Exit 1]
+	by contrast, bash warns but still exits successfully:
+	  $ printf 'cat<<-x\n foo\n x\n'|bash && echo you lose
+	  bash: line 3: warning: here-document at line 1 delimited by \
+	    end-of-file (wanted `x')
+	   foo
+	   x
+	  you lose
+
+2010-01-12  Eric Blake  <ebb9@byu.net>
+
+	tests: avoid spurious failure on old kernel
+	* tests/touch/no-dereference: Skip test if utimensat doesn't
+	support symlinks.
+	Reported by Bernhard Voelker.
+
+2010-01-12  Pádraig Brady  <P@draigBrady.com>
+
+	maint: update info about getting the prerequisite automake
+	* README-prereq: Now that we require automake-1.11.1
+	update the instructions from getting it from the git repo
+
+	maint: remove an already handled item from TODO
+	* TODO: The question regarding printf octal escapes is answered in
+	commit 4bcefa62, 2003-04-21, "Fix printf POSIX compatibility bug ..."
+
+	maint: fix tests on solaris by using /usr/xpg4/bin
+	* tests/check.mk: Prepend /usr/xpg4/bin to the $PATH if present.
+	Using the more standard utilities allows tests such as misc/printenv,
+	which uses the -E option to grep, to complete.
+
+2010-01-12  Jim Meyering  <meyering@redhat.com>
+
+	build: update gnulib, to get fixed getlogin-related tests
+
+	build: fix build failure due to missing libxattr
+	Configure is supposed to detect insufficient XATTR support.
+	However, if a system has the required headers, but no library,
+	the configure script would mistakenly enable USE_XATTR.
+	* m4/xattr.m4 (gl_FUNC_XATTR): If the attr_copy_file function
+	is not found, don't set USE_XATTR.
+	Nelson Beebe reported a link failure on RHEL 5.3.
+	Also, do not let the combination of --disable-xattr and
+	a stray LIB_XATTR environment setting perturb the build.
+	* NEWS (Build-related): Mention it.
+
+	doc: mention the wchar.h vs. glibc build problem
+	* NEWS (Build-related): Mention the wchar.h issue.
+
+2010-01-12  Pádraig Brady  <P@draigBrady.com>
+
+	nproc: return a possibly more accurate total CPU count
+	* gnulib: Update, for num_processors() improvement.
+	* NEWS: Mention the fix.
+
+2010-01-12  Kamil Dudka  <kdudka@redhat.com>
+
+	ls: reorder includes to work around broken <sys/capability.h>
+	* src/ls.c: Include <sys/capability.h> later, to avoid build
+	failure with a header from libcap-2.16-1 or earlier.
+	See http://bugzilla.redhat.com/483548 for details.
+
+2010-01-08  Eric Blake  <ebb9@byu.net>
+
+	maint: move coreutils specific rule into cfg.mk
+	* gnulib: Update, for maint.mk improvement.
+	* cfg.mk (_makefile_at_at_check_excpetions): New rule, needed
+	for latest change to maint.mk.
+
 2010-01-07  Jim Meyering  <meyering@redhat.com>
+
+	post-release administrivia
+	* NEWS: Add header line for next release.
+	* .prev-version: Record previous version.
+	* cfg.mk (old_NEWS_hash): Auto-update.
 
 	version 8.3
 	* NEWS: Record release date.

@@ -1,5 +1,29 @@
 GNU coreutils NEWS                                    -*- outline -*-
 
+* Noteworthy changes in release 8.4 (2010-01-13) [stable]
+
+** Bug fixes
+
+  nproc --all is now guaranteed to be as large as the count
+  of available processors, which may not have been the case
+  on GNU/Linux systems with neither /proc nor /sys available.
+  [bug introduced in coreutils-8.1]
+
+** Build-related
+
+  Work around a build failure when using buggy <sys/capability.h>.
+  Alternatively, configure with --disable-libcap.
+
+  Compilation would fail on systems using glibc-2.7..2.9 due to changes in
+  gnulib's wchar.h that tickled a bug in at least those versions of glibc's
+  own <wchar.h> header.  Now, gnulib works around the bug in those older
+  glibc <wchar.h> headers.
+
+  Building would fail with a link error (cp/copy.o) when XATTR headers
+  were installed without the corresponding library.  Now, configure
+  detects that and disables xattr support, as one would expect.
+
+
 * Noteworthy changes in release 8.3 (2010-01-07) [stable]
 
 ** Bug fixes

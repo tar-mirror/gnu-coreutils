@@ -282,6 +282,7 @@ AC_DEFUN([gl_INIT],
   gl_STRING_MODULE_INDICATOR([mbscasecmp])
   gl_FUNC_MBSINIT
   gl_WCHAR_MODULE_INDICATOR([mbsinit])
+  gl_MBSLEN
   gl_STRING_MODULE_INDICATOR([mbslen])
   gl_FUNC_MBSRTOWCS
   gl_WCHAR_MODULE_INDICATOR([mbsrtowcs])
@@ -801,6 +802,7 @@ AC_DEFUN([gl_FILE_LIST], [
   build-aux/update-copyright
   build-aux/useless-if-before-free
   build-aux/vc-list-files
+  build-aux/warn-on-use.h
   doc/fdl.texi
   doc/gendocs_template
   doc/getdate.texi
@@ -1526,6 +1528,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/mbrlen.m4
   m4/mbrtowc.m4
   m4/mbsinit.m4
+  m4/mbslen.m4
   m4/mbsrtowcs.m4
   m4/mbstate_t.m4
   m4/mbswidth.m4
@@ -1687,6 +1690,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/vfprintf-posix.m4
   m4/visibility.m4
   m4/vprintf-posix.m4
+  m4/warn-on-use.m4
   m4/warnings.m4
   m4/wchar.m4
   m4/wchar_t.m4
@@ -1982,6 +1986,7 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-xvasprintf.c
   tests/test-yesno.c
   tests/test-yesno.sh
+  tests/unistr/test-u8-uctomb.c
   tests/uniwidth/test-uc_width.c
   tests/uniwidth/test-uc_width2.c
   tests/uniwidth/test-uc_width2.sh

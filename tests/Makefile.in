@@ -145,21 +145,22 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/00gnulib.m4 \
 	$(top_srcdir)/m4/manywarnings.m4 $(top_srcdir)/m4/math_h.m4 \
 	$(top_srcdir)/m4/mbchar.m4 $(top_srcdir)/m4/mbiter.m4 \
 	$(top_srcdir)/m4/mbrlen.m4 $(top_srcdir)/m4/mbrtowc.m4 \
-	$(top_srcdir)/m4/mbsinit.m4 $(top_srcdir)/m4/mbsrtowcs.m4 \
-	$(top_srcdir)/m4/mbstate_t.m4 $(top_srcdir)/m4/mbswidth.m4 \
-	$(top_srcdir)/m4/md5.m4 $(top_srcdir)/m4/memcasecmp.m4 \
-	$(top_srcdir)/m4/memchr.m4 $(top_srcdir)/m4/memcmp.m4 \
-	$(top_srcdir)/m4/memcoll.m4 $(top_srcdir)/m4/memcpy.m4 \
-	$(top_srcdir)/m4/memmove.m4 $(top_srcdir)/m4/mempcpy.m4 \
-	$(top_srcdir)/m4/memrchr.m4 $(top_srcdir)/m4/memset.m4 \
-	$(top_srcdir)/m4/memxfrm.m4 $(top_srcdir)/m4/mgetgroups.m4 \
-	$(top_srcdir)/m4/mkancesdirs.m4 $(top_srcdir)/m4/mkdir-p.m4 \
-	$(top_srcdir)/m4/mkdir.m4 $(top_srcdir)/m4/mkstemp.m4 \
-	$(top_srcdir)/m4/mktime.m4 $(top_srcdir)/m4/mmap-anon.m4 \
-	$(top_srcdir)/m4/mode_t.m4 $(top_srcdir)/m4/modechange.m4 \
-	$(top_srcdir)/m4/mountlist.m4 $(top_srcdir)/m4/mpsort.m4 \
-	$(top_srcdir)/m4/multiarch.m4 $(top_srcdir)/m4/nanosleep.m4 \
-	$(top_srcdir)/m4/netdb_h.m4 $(top_srcdir)/m4/netinet_in_h.m4 \
+	$(top_srcdir)/m4/mbsinit.m4 $(top_srcdir)/m4/mbslen.m4 \
+	$(top_srcdir)/m4/mbsrtowcs.m4 $(top_srcdir)/m4/mbstate_t.m4 \
+	$(top_srcdir)/m4/mbswidth.m4 $(top_srcdir)/m4/md5.m4 \
+	$(top_srcdir)/m4/memcasecmp.m4 $(top_srcdir)/m4/memchr.m4 \
+	$(top_srcdir)/m4/memcmp.m4 $(top_srcdir)/m4/memcoll.m4 \
+	$(top_srcdir)/m4/memcpy.m4 $(top_srcdir)/m4/memmove.m4 \
+	$(top_srcdir)/m4/mempcpy.m4 $(top_srcdir)/m4/memrchr.m4 \
+	$(top_srcdir)/m4/memset.m4 $(top_srcdir)/m4/memxfrm.m4 \
+	$(top_srcdir)/m4/mgetgroups.m4 $(top_srcdir)/m4/mkancesdirs.m4 \
+	$(top_srcdir)/m4/mkdir-p.m4 $(top_srcdir)/m4/mkdir.m4 \
+	$(top_srcdir)/m4/mkstemp.m4 $(top_srcdir)/m4/mktime.m4 \
+	$(top_srcdir)/m4/mmap-anon.m4 $(top_srcdir)/m4/mode_t.m4 \
+	$(top_srcdir)/m4/modechange.m4 $(top_srcdir)/m4/mountlist.m4 \
+	$(top_srcdir)/m4/mpsort.m4 $(top_srcdir)/m4/multiarch.m4 \
+	$(top_srcdir)/m4/nanosleep.m4 $(top_srcdir)/m4/netdb_h.m4 \
+	$(top_srcdir)/m4/netinet_in_h.m4 \
 	$(top_srcdir)/m4/nl_langinfo.m4 $(top_srcdir)/m4/nls.m4 \
 	$(top_srcdir)/m4/nocrash.m4 $(top_srcdir)/m4/nproc.m4 \
 	$(top_srcdir)/m4/open.m4 $(top_srcdir)/m4/openat.m4 \
@@ -231,7 +232,8 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/00gnulib.m4 \
 	$(top_srcdir)/m4/vasprintf-posix.m4 \
 	$(top_srcdir)/m4/vasprintf.m4 $(top_srcdir)/m4/version-etc.m4 \
 	$(top_srcdir)/m4/vfprintf-posix.m4 \
-	$(top_srcdir)/m4/vprintf-posix.m4 $(top_srcdir)/m4/warnings.m4 \
+	$(top_srcdir)/m4/vprintf-posix.m4 \
+	$(top_srcdir)/m4/warn-on-use.m4 $(top_srcdir)/m4/warnings.m4 \
 	$(top_srcdir)/m4/wchar.m4 $(top_srcdir)/m4/wchar_t.m4 \
 	$(top_srcdir)/m4/wcrtomb.m4 $(top_srcdir)/m4/wctob.m4 \
 	$(top_srcdir)/m4/wctype.m4 $(top_srcdir)/m4/wcwidth.m4 \
@@ -447,6 +449,7 @@ GNULIB_GETGROUPS = @GNULIB_GETGROUPS@
 GNULIB_GETHOSTNAME = @GNULIB_GETHOSTNAME@
 GNULIB_GETLINE = @GNULIB_GETLINE@
 GNULIB_GETLOADAVG = @GNULIB_GETLOADAVG@
+GNULIB_GETLOGIN = @GNULIB_GETLOGIN@
 GNULIB_GETLOGIN_R = @GNULIB_GETLOGIN_R@
 GNULIB_GETPAGESIZE = @GNULIB_GETPAGESIZE@
 GNULIB_GETPEERNAME = @GNULIB_GETPEERNAME@
@@ -673,6 +676,7 @@ HAVE_GETDOMAINNAME = @HAVE_GETDOMAINNAME@
 HAVE_GETDTABLESIZE = @HAVE_GETDTABLESIZE@
 HAVE_GETGROUPS = @HAVE_GETGROUPS@
 HAVE_GETHOSTNAME = @HAVE_GETHOSTNAME@
+HAVE_GETLOGIN = @HAVE_GETLOGIN@
 HAVE_GETOPT_H = @HAVE_GETOPT_H@
 HAVE_GETPAGESIZE = @HAVE_GETPAGESIZE@
 HAVE_GETSUBOPT = @HAVE_GETSUBOPT@
@@ -696,6 +700,7 @@ HAVE_MALLOC_POSIX = @HAVE_MALLOC_POSIX@
 HAVE_MBRLEN = @HAVE_MBRLEN@
 HAVE_MBRTOWC = @HAVE_MBRTOWC@
 HAVE_MBSINIT = @HAVE_MBSINIT@
+HAVE_MBSLEN = @HAVE_MBSLEN@
 HAVE_MBSNRTOWCS = @HAVE_MBSNRTOWCS@
 HAVE_MBSRTOWCS = @HAVE_MBSRTOWCS@
 HAVE_MEMPCPY = @HAVE_MEMPCPY@
@@ -1818,6 +1823,7 @@ TESTS_ENVIRONMENT = \
   PERL='$(PERL)'				\
   PREFERABLY_POSIX_SHELL='$(PREFERABLY_POSIX_SHELL)' \
   REPLACE_GETCWD=$(REPLACE_GETCWD)		\
+  ; test -d /usr/xpg4/bin && PATH='/usr/xpg4/bin$(PATH_SEPARATOR)'"$$PATH"; \
   PATH='$(abs_top_builddir)/src$(PATH_SEPARATOR)'"$$PATH" \
   ; shell_or_perl_
 

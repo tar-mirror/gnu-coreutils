@@ -524,14 +524,20 @@ sc_prohibit_S_IS_definition:
 	msg='do not define S_IS* macros; include <sys/stat.h>'		\
 	  $(_prohibit_regexp)
 
-# Each program that uses proper_name_utf8 must link with
-# one of the ICONV libraries.
+# Each program that uses proper_name_utf8 must link with one of the
+# ICONV libraries.  Otherwise, some ICONV library must appear in LDADD.
+# The perl -0777 invocation below extracts the possibly-multi-line
+# definition of LDADD from the appropriate Makefile.am and exits 0
+# when it contains "ICONV".
 sc_proper_name_utf8_requires_ICONV:
 	@progs=$$(grep -l 'proper_name_utf8 ''("' $$($(VC_LIST_EXCEPT)));\
 	if test "x$$progs" != x; then					\
 	  fail=0;							\
 	  for p in $$progs; do						\
 	    dir=$$(dirname "$$p");					\
+	    perl -0777							\
+	      -ne 'exit !(/^LDADD =(.+?[^\\]\n)/ms && $$1 =~ /ICONV/)'	\
+	      $$dir/Makefile.am && continue;				\
 	    base=$$(basename "$$p" .c);					\
 	    grep "$${base}_LDADD.*ICONV)" $$dir/Makefile.am > /dev/null	\
 	      || { fail=1; echo 1>&2 "$(ME): $$p uses proper_name_utf8"; }; \
@@ -580,8 +586,12 @@ update-NEWS-hash: NEWS
 # to emit a definition for each substituted variable.
 # We use perl rather than "grep -nE ..." to exempt a single
 # use of an @...@-delimited variable name in src/Makefile.am.
-sc_makefile_check:
-	@perl -ne '/\@[A-Z_0-9]+\@/ && !/^cu_install_program =/'	\
+# Allow the package to add exceptions via a hook in cfg.mk;
+# for example, @PRAGMA_SYSTEM_HEADER@ can be permitted by
+# setting this to ' && !/PRAGMA_SYSTEM_HEADER/'.
+_makefile_at_at_check_exceptions ?=
+sc_makefile_at_at_check:
+	@perl -ne '/\@[A-Z_0-9]+\@/'$(_makefile_at_at_check_exceptions)	\
 	  -e 'and (print "$$ARGV:$$.: $$_"), $$m=1; END {exit !$$m}'	\
 	    $$($(VC_LIST_EXCEPT) | grep -E '(^|/)Makefile\.am$$')	\
 	  && { echo '$(ME): use $$(...), not @...@' 1>&2; exit 1; } || :

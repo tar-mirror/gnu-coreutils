@@ -1546,6 +1546,15 @@ EXTRA_DIST += test-unistd.c
 
 ## end   gnulib module unistd-tests
 
+## begin gnulib module unistr/u8-uctomb-tests
+
+TESTS += test-u8-uctomb
+check_PROGRAMS += test-u8-uctomb
+test_u8_uctomb_SOURCES = unistr/test-u8-uctomb.c
+EXTRA_DIST += unistr/test-u8-uctomb.c macros.h
+
+## end   gnulib module unistr/u8-uctomb-tests
+
 ## begin gnulib module uniwidth/width-tests
 
 TESTS += test-uc_width uniwidth/test-uc_width2.sh
@@ -1705,6 +1714,25 @@ check_PROGRAMS += test-vprintf-posix
 EXTRA_DIST += test-vprintf-posix.sh test-vprintf-posix.c test-printf-posix.h test-printf-posix.output signature.h macros.h
 
 ## end   gnulib module vprintf-posix-tests
+
+## begin gnulib module warn-on-use
+
+BUILT_SOURCES += warn-on-use.h
+# The warn-on-use.h that gets inserted into generated .h files is the same as
+# build-aux/warn-on-use.h, except that it has the copyright header cut off.
+warn-on-use.h: $(top_srcdir)/build-aux/warn-on-use.h
+	$(AM_V_GEN)rm -f $@-t $@ && \
+	sed -n -e '/^.ifndef/,$$p' \
+	  < $(top_srcdir)/build-aux/warn-on-use.h \
+	  > $@-t && \
+	mv $@-t $@
+MOSTLYCLEANFILES += warn-on-use.h warn-on-use.h-t
+
+WARN_ON_USE_H=warn-on-use.h
+
+EXTRA_DIST += $(top_srcdir)/build-aux/warn-on-use.h
+
+## end   gnulib module warn-on-use
 
 ## begin gnulib module wchar-tests
 

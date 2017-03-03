@@ -148,21 +148,22 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/00gnulib.m4 \
 	$(top_srcdir)/m4/manywarnings.m4 $(top_srcdir)/m4/math_h.m4 \
 	$(top_srcdir)/m4/mbchar.m4 $(top_srcdir)/m4/mbiter.m4 \
 	$(top_srcdir)/m4/mbrlen.m4 $(top_srcdir)/m4/mbrtowc.m4 \
-	$(top_srcdir)/m4/mbsinit.m4 $(top_srcdir)/m4/mbsrtowcs.m4 \
-	$(top_srcdir)/m4/mbstate_t.m4 $(top_srcdir)/m4/mbswidth.m4 \
-	$(top_srcdir)/m4/md5.m4 $(top_srcdir)/m4/memcasecmp.m4 \
-	$(top_srcdir)/m4/memchr.m4 $(top_srcdir)/m4/memcmp.m4 \
-	$(top_srcdir)/m4/memcoll.m4 $(top_srcdir)/m4/memcpy.m4 \
-	$(top_srcdir)/m4/memmove.m4 $(top_srcdir)/m4/mempcpy.m4 \
-	$(top_srcdir)/m4/memrchr.m4 $(top_srcdir)/m4/memset.m4 \
-	$(top_srcdir)/m4/memxfrm.m4 $(top_srcdir)/m4/mgetgroups.m4 \
-	$(top_srcdir)/m4/mkancesdirs.m4 $(top_srcdir)/m4/mkdir-p.m4 \
-	$(top_srcdir)/m4/mkdir.m4 $(top_srcdir)/m4/mkstemp.m4 \
-	$(top_srcdir)/m4/mktime.m4 $(top_srcdir)/m4/mmap-anon.m4 \
-	$(top_srcdir)/m4/mode_t.m4 $(top_srcdir)/m4/modechange.m4 \
-	$(top_srcdir)/m4/mountlist.m4 $(top_srcdir)/m4/mpsort.m4 \
-	$(top_srcdir)/m4/multiarch.m4 $(top_srcdir)/m4/nanosleep.m4 \
-	$(top_srcdir)/m4/netdb_h.m4 $(top_srcdir)/m4/netinet_in_h.m4 \
+	$(top_srcdir)/m4/mbsinit.m4 $(top_srcdir)/m4/mbslen.m4 \
+	$(top_srcdir)/m4/mbsrtowcs.m4 $(top_srcdir)/m4/mbstate_t.m4 \
+	$(top_srcdir)/m4/mbswidth.m4 $(top_srcdir)/m4/md5.m4 \
+	$(top_srcdir)/m4/memcasecmp.m4 $(top_srcdir)/m4/memchr.m4 \
+	$(top_srcdir)/m4/memcmp.m4 $(top_srcdir)/m4/memcoll.m4 \
+	$(top_srcdir)/m4/memcpy.m4 $(top_srcdir)/m4/memmove.m4 \
+	$(top_srcdir)/m4/mempcpy.m4 $(top_srcdir)/m4/memrchr.m4 \
+	$(top_srcdir)/m4/memset.m4 $(top_srcdir)/m4/memxfrm.m4 \
+	$(top_srcdir)/m4/mgetgroups.m4 $(top_srcdir)/m4/mkancesdirs.m4 \
+	$(top_srcdir)/m4/mkdir-p.m4 $(top_srcdir)/m4/mkdir.m4 \
+	$(top_srcdir)/m4/mkstemp.m4 $(top_srcdir)/m4/mktime.m4 \
+	$(top_srcdir)/m4/mmap-anon.m4 $(top_srcdir)/m4/mode_t.m4 \
+	$(top_srcdir)/m4/modechange.m4 $(top_srcdir)/m4/mountlist.m4 \
+	$(top_srcdir)/m4/mpsort.m4 $(top_srcdir)/m4/multiarch.m4 \
+	$(top_srcdir)/m4/nanosleep.m4 $(top_srcdir)/m4/netdb_h.m4 \
+	$(top_srcdir)/m4/netinet_in_h.m4 \
 	$(top_srcdir)/m4/nl_langinfo.m4 $(top_srcdir)/m4/nls.m4 \
 	$(top_srcdir)/m4/nocrash.m4 $(top_srcdir)/m4/nproc.m4 \
 	$(top_srcdir)/m4/open.m4 $(top_srcdir)/m4/openat.m4 \
@@ -234,7 +235,8 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/00gnulib.m4 \
 	$(top_srcdir)/m4/vasprintf-posix.m4 \
 	$(top_srcdir)/m4/vasprintf.m4 $(top_srcdir)/m4/version-etc.m4 \
 	$(top_srcdir)/m4/vfprintf-posix.m4 \
-	$(top_srcdir)/m4/vprintf-posix.m4 $(top_srcdir)/m4/warnings.m4 \
+	$(top_srcdir)/m4/vprintf-posix.m4 \
+	$(top_srcdir)/m4/warn-on-use.m4 $(top_srcdir)/m4/warnings.m4 \
 	$(top_srcdir)/m4/wchar.m4 $(top_srcdir)/m4/wchar_t.m4 \
 	$(top_srcdir)/m4/wcrtomb.m4 $(top_srcdir)/m4/wctob.m4 \
 	$(top_srcdir)/m4/wctype.m4 $(top_srcdir)/m4/wcwidth.m4 \
@@ -467,6 +469,7 @@ GNULIB_GETGROUPS = @GNULIB_GETGROUPS@
 GNULIB_GETHOSTNAME = @GNULIB_GETHOSTNAME@
 GNULIB_GETLINE = @GNULIB_GETLINE@
 GNULIB_GETLOADAVG = @GNULIB_GETLOADAVG@
+GNULIB_GETLOGIN = @GNULIB_GETLOGIN@
 GNULIB_GETLOGIN_R = @GNULIB_GETLOGIN_R@
 GNULIB_GETPAGESIZE = @GNULIB_GETPAGESIZE@
 GNULIB_GETPEERNAME = @GNULIB_GETPEERNAME@
@@ -693,6 +696,7 @@ HAVE_GETDOMAINNAME = @HAVE_GETDOMAINNAME@
 HAVE_GETDTABLESIZE = @HAVE_GETDTABLESIZE@
 HAVE_GETGROUPS = @HAVE_GETGROUPS@
 HAVE_GETHOSTNAME = @HAVE_GETHOSTNAME@
+HAVE_GETLOGIN = @HAVE_GETLOGIN@
 HAVE_GETOPT_H = @HAVE_GETOPT_H@
 HAVE_GETPAGESIZE = @HAVE_GETPAGESIZE@
 HAVE_GETSUBOPT = @HAVE_GETSUBOPT@
@@ -716,6 +720,7 @@ HAVE_MALLOC_POSIX = @HAVE_MALLOC_POSIX@
 HAVE_MBRLEN = @HAVE_MBRLEN@
 HAVE_MBRTOWC = @HAVE_MBRTOWC@
 HAVE_MBSINIT = @HAVE_MBSINIT@
+HAVE_MBSLEN = @HAVE_MBSLEN@
 HAVE_MBSNRTOWCS = @HAVE_MBSNRTOWCS@
 HAVE_MBSRTOWCS = @HAVE_MBSRTOWCS@
 HAVE_MEMPCPY = @HAVE_MEMPCPY@
@@ -1309,12 +1314,12 @@ EXTRA_DIST = acl-internal.h acl.h acl_entries.c alignof.h alloca.c \
 	utimens.h asnprintf.c float+.h printf-args.c printf-args.h \
 	printf-parse.c printf-parse.h vasnprintf.c vasnprintf.h \
 	asprintf.c vasprintf.c $(top_srcdir)/build-aux/vc-list-files \
-	vfprintf.c vprintf.c wchar.in.h wcrtomb.c wctype.in.h \
-	wcwidth.c write.c write-any-file.c write-any-file.h xalloc.h \
-	xmalloc.c xgetcwd.c xgetcwd.h xnanosleep.c xnanosleep.h \
-	xreadlink.h xstrtod.c xstrtod.h xstrtol-error.c xstrtol.c \
-	xstrtol.h xstrtoul.c xstrtod.c xstrtod.h xstrtold.c xalloc.h \
-	yesno.c yesno.h
+	vfprintf.c vprintf.c $(top_srcdir)/build-aux/warn-on-use.h \
+	wchar.in.h wcrtomb.c wctype.in.h wcwidth.c write.c \
+	write-any-file.c write-any-file.h xalloc.h xmalloc.c xgetcwd.c \
+	xgetcwd.h xnanosleep.c xnanosleep.h xreadlink.h xstrtod.c \
+	xstrtod.h xstrtol-error.c xstrtol.c xstrtol.h xstrtoul.c \
+	xstrtod.c xstrtod.h xstrtold.c xalloc.h yesno.c yesno.h
 
 # The BUILT_SOURCES created by this Makefile snippet are not used via #include
 # statements but through direct file reference. Therefore this snippet must be
@@ -1339,7 +1344,7 @@ BUILT_SOURCES = $(ALLOCA_H) arg-nonnull.h arpa/inet.h configmake.h \
 	$(SELINUX_CONTEXT_H) signal.h $(STDARG_H) $(STDBOOL_H) \
 	$(STDDEF_H) $(STDINT_H) stdio.h stdlib.h string.h sys/select.h \
 	sys/socket.h sys/stat.h $(SYS_TIME_H) sys/utsname.h time.h \
-	unistd.h unused-parameter.h wchar.h $(WCTYPE_H)
+	unistd.h unused-parameter.h warn-on-use.h wchar.h $(WCTYPE_H)
 SUFFIXES = .sed .sin
 MOSTLYCLEANFILES = core *.stackdump alloca.h alloca.h-t arg-nonnull.h \
 	arg-nonnull.h-t arpa/inet.h arpa/inet.h-t ctype.h ctype.h-t \
@@ -1357,8 +1362,8 @@ MOSTLYCLEANFILES = core *.stackdump alloca.h alloca.h-t arg-nonnull.h \
 	sys/select.h-t sys/socket.h sys/socket.h-t sys/stat.h \
 	sys/stat.h-t sys/time.h sys/time.h-t sys/utsname.h \
 	sys/utsname.h-t time.h time.h-t unistd.h unistd.h-t \
-	unused-parameter.h unused-parameter.h-t wchar.h wchar.h-t \
-	wctype.h wctype.h-t
+	unused-parameter.h unused-parameter.h-t warn-on-use.h \
+	warn-on-use.h-t wchar.h wchar.h-t wctype.h wctype.h-t
 MOSTLYCLEANDIRS = arpa netinet selinux sys sys sys sys
 CLEANFILES = configmake.h configmake.h-t charset.alias ref-add.sed \
 	ref-del.sed
@@ -1452,6 +1457,7 @@ LINK_WARNING_H = link-warning.h
 charset_alias = $(DESTDIR)$(libdir)/charset.alias
 charset_tmp = $(DESTDIR)$(libdir)/charset.tmp
 UNUSED_PARAMETER_H = unused-parameter.h
+WARN_ON_USE_H = warn-on-use.h
 all: $(BUILT_SOURCES) config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -2641,7 +2647,7 @@ locale.h: locale.in.h $(LINK_WARNING_H) $(ARG_NONNULL_H)
 
 # We need the following in order to create <math.h> when the system
 # doesn't have one that works with the given compiler.
-math.h: math.in.h $(LINK_WARNING_H) $(ARG_NONNULL_H)
+math.h: math.in.h $(LINK_WARNING_H) $(WARN_ON_USE_H) $(ARG_NONNULL_H)
 	$(AM_V_GEN)rm -f $@-t $@ && \
 	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */' && \
 	  sed -e 's|@''INCLUDE_NEXT_AS_FIRST_DIRECTIVE''@|$(INCLUDE_NEXT_AS_FIRST_DIRECTIVE)|g' \
@@ -2704,6 +2710,7 @@ math.h: math.in.h $(LINK_WARNING_H) $(ARG_NONNULL_H)
 	      -e 's|@''REPLACE_TRUNCL''@|$(REPLACE_TRUNCL)|g' \
 	      -e '/definition of GL_LINK_WARNING/r $(LINK_WARNING_H)' \
 	      -e '/definition of _GL_ARG_NONNULL/r $(ARG_NONNULL_H)' \
+	      -e '/definition of _GL_WARN_ON_USE/r $(WARN_ON_USE_H)' \
 	      < $(srcdir)/math.in.h; \
 	} > $@-t && \
 	mv $@-t $@
@@ -2856,7 +2863,7 @@ stdint.h: stdint.in.h
 
 # We need the following in order to create <stdio.h> when the system
 # doesn't have one that works with the given compiler.
-stdio.h: stdio.in.h $(LINK_WARNING_H) $(ARG_NONNULL_H)
+stdio.h: stdio.in.h $(LINK_WARNING_H) $(WARN_ON_USE_H) $(ARG_NONNULL_H)
 	$(AM_V_GEN)rm -f $@-t $@ && \
 	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */' && \
 	  sed -e 's|@''INCLUDE_NEXT''@|$(INCLUDE_NEXT)|g' \
@@ -2942,6 +2949,7 @@ stdio.h: stdio.in.h $(LINK_WARNING_H) $(ARG_NONNULL_H)
 	      -e 's|@''REPLACE_VSPRINTF''@|$(REPLACE_VSPRINTF)|g' \
 	      -e '/definition of GL_LINK_WARNING/r $(LINK_WARNING_H)' \
 	      -e '/definition of _GL_ARG_NONNULL/r $(ARG_NONNULL_H)' \
+	      -e '/definition of _GL_WARN_ON_USE/r $(WARN_ON_USE_H)' \
 	      < $(srcdir)/stdio.in.h; \
 	} > $@-t && \
 	mv $@-t $@
@@ -3051,6 +3059,7 @@ string.h: string.in.h $(LINK_WARNING_H) $(ARG_NONNULL_H)
 	      -e 's|@''GNULIB_STRERROR''@|$(GNULIB_STRERROR)|g' \
 	      -e 's|@''GNULIB_STRSIGNAL''@|$(GNULIB_STRSIGNAL)|g' \
 	      -e 's|@''GNULIB_STRVERSCMP''@|$(GNULIB_STRVERSCMP)|g' \
+	      -e 's|@''HAVE_MBSLEN''@|$(HAVE_MBSLEN)|g' \
 	      -e 's|@''HAVE_DECL_MEMMEM''@|$(HAVE_DECL_MEMMEM)|g' \
 	      -e 's|@''HAVE_MEMPCPY''@|$(HAVE_MEMPCPY)|g' \
 	      -e 's|@''HAVE_DECL_MEMRCHR''@|$(HAVE_DECL_MEMRCHR)|g' \
@@ -3244,7 +3253,7 @@ time.h: time.in.h $(ARG_NONNULL_H)
 
 # We need the following in order to create an empty placeholder for
 # <unistd.h> when the system doesn't have one.
-unistd.h: unistd.in.h $(LINK_WARNING_H) $(ARG_NONNULL_H)
+unistd.h: unistd.in.h $(LINK_WARNING_H) $(WARN_ON_USE_H) $(ARG_NONNULL_H)
 	$(AM_V_GEN)rm -f $@-t $@ && \
 	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
 	  sed -e 's|@''HAVE_UNISTD_H''@|$(HAVE_UNISTD_H)|g' \
@@ -3267,6 +3276,7 @@ unistd.h: unistd.in.h $(LINK_WARNING_H) $(ARG_NONNULL_H)
 	      -e 's|@''GNULIB_GETDTABLESIZE''@|$(GNULIB_GETDTABLESIZE)|g' \
 	      -e 's|@''GNULIB_GETGROUPS''@|$(GNULIB_GETGROUPS)|g' \
 	      -e 's|@''GNULIB_GETHOSTNAME''@|$(GNULIB_GETHOSTNAME)|g' \
+	      -e 's|@''GNULIB_GETLOGIN''@|$(GNULIB_GETLOGIN)|g' \
 	      -e 's|@''GNULIB_GETLOGIN_R''@|$(GNULIB_GETLOGIN_R)|g' \
 	      -e 's|@''GNULIB_GETPAGESIZE''@|$(GNULIB_GETPAGESIZE)|g' \
 	      -e 's|@''GNULIB_GETUSERSHELL''@|$(GNULIB_GETUSERSHELL)|g' \
@@ -3300,6 +3310,7 @@ unistd.h: unistd.in.h $(LINK_WARNING_H) $(ARG_NONNULL_H)
 	      -e 's|@''HAVE_GETDTABLESIZE''@|$(HAVE_GETDTABLESIZE)|g' \
 	      -e 's|@''HAVE_GETGROUPS''@|$(HAVE_GETGROUPS)|g' \
 	      -e 's|@''HAVE_GETHOSTNAME''@|$(HAVE_GETHOSTNAME)|g' \
+	      -e 's|@''HAVE_GETLOGIN''@|$(HAVE_GETLOGIN)|g' \
 	      -e 's|@''HAVE_GETPAGESIZE''@|$(HAVE_GETPAGESIZE)|g' \
 	      -e 's|@''HAVE_GETUSERSHELL''@|$(HAVE_GETUSERSHELL)|g' \
 	      -e 's|@''HAVE_LCHOWN''@|$(HAVE_LCHOWN)|g' \
@@ -3344,6 +3355,7 @@ unistd.h: unistd.in.h $(LINK_WARNING_H) $(ARG_NONNULL_H)
 	      -e 's|@''UNISTD_H_HAVE_WINSOCK2_H_AND_USE_SOCKETS''@|$(UNISTD_H_HAVE_WINSOCK2_H_AND_USE_SOCKETS)|g' \
 	      -e '/definition of GL_LINK_WARNING/r $(LINK_WARNING_H)' \
 	      -e '/definition of _GL_ARG_NONNULL/r $(ARG_NONNULL_H)' \
+	      -e '/definition of _GL_WARN_ON_USE/r $(WARN_ON_USE_H)' \
 	      < $(srcdir)/unistd.in.h; \
 	} > $@-t && \
 	mv $@-t $@
@@ -3354,6 +3366,14 @@ unused-parameter.h: $(top_srcdir)/build-aux/unused-parameter.h
 	$(AM_V_GEN)rm -f $@-t $@ && \
 	sed -n -e '/GL_UNUSED_PARAMETER/,$$p' \
 	  < $(top_srcdir)/build-aux/unused-parameter.h \
+	  > $@-t && \
+	mv $@-t $@
+# The warn-on-use.h that gets inserted into generated .h files is the same as
+# build-aux/warn-on-use.h, except that it has the copyright header cut off.
+warn-on-use.h: $(top_srcdir)/build-aux/warn-on-use.h
+	$(AM_V_GEN)rm -f $@-t $@ && \
+	sed -n -e '/^.ifndef/,$$p' \
+	  < $(top_srcdir)/build-aux/warn-on-use.h \
 	  > $@-t && \
 	mv $@-t $@
 
