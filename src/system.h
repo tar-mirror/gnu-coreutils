@@ -188,7 +188,7 @@ select_plural (uintmax_t n)
 #define STREQ_LEN(a, b, n) (strncmp (a, b, n) == 0)
 #define STRPREFIX(a, b) (strncmp(a, b, strlen (b)) == 0)
 
-/* Just like strncmp, but the first argument must be a literal string
+/* Just like strncmp, but the second argument must be a literal string
    and you don't specify the length.  */
 #define STRNCMP_LIT(s, literal) \
   strncmp (s, "" literal "", sizeof (literal) - 1)
@@ -211,6 +211,24 @@ struct passwd *getpwuid ();
 
 #if !HAVE_DECL_GETGRGID
 struct group *getgrgid ();
+#endif
+
+/* Interix has replacements for getgr{gid,nam,ent}, that don't
+   query the domain controller for group members when not required.
+   This speeds up the calls tremendously (<1 ms vs. >3 s). */
+/* To protect any system that could provide _nomembers functions
+   other than interix, check for HAVE_SETGROUPS, as interix is
+   one of the very few (the only?) platform that lacks it */
+#if ! HAVE_SETGROUPS
+# if HAVE_GETGRGID_NOMEMBERS
+#  define getgrgid(gid) getgrgid_nomembers(gid)
+# endif
+# if HAVE_GETGRNAM_NOMEMBERS
+#  define getgrnam(nam) getgrnam_nomembers(nam)
+# endif
+# if HAVE_GETGRENT_NOMEMBERS
+#  define getgrent() getgrent_nomembers()
+# endif
 #endif
 
 #if !HAVE_DECL_GETUID

@@ -386,15 +386,13 @@ AC_DEFUN([_AM_OUTPUT_DEPENDENCY_COMMANDS],
     am__include=`sed -n 's/^am__include = //p' < "$mf"`
     test -z "am__include" && continue
     am__quote=`sed -n 's/^am__quote = //p' < "$mf"`
-    # When using ansi2knr, U may be empty or an underscore; expand it
-    U=`sed -n 's/^U = //p' < "$mf"`
     # Find all dependency output files, they are included files with
     # $(DEPDIR) in their names.  We invoke sed twice because it is the
     # simplest approach to changing $(DEPDIR) to its actual value in the
     # expansion.
     for file in `sed -n "
       s/^$am__include $am__quote\(.*(DEPDIR).*\)$am__quote"'$/\1/p' <"$mf" | \
-	 sed -e 's/\$(DEPDIR)/'"$DEPDIR"'/g' -e 's/\$U/'"$U"'/g'`; do
+	 sed -e 's/\$(DEPDIR)/'"$DEPDIR"'/g'`; do
       # Make sure the directory exists.
       test -f "$dirpart/$file" && continue
       fdir=`AS_DIRNAME(["$file"])`
@@ -799,34 +797,6 @@ AC_DEFUN([_AM_SET_OPTIONS],
 AC_DEFUN([_AM_IF_OPTION],
 [m4_ifset(_AM_MANGLE_OPTION([$1]), [$2], [$3])])
 
-# Copyright (C) 1996, 1997, 1998, 2000, 2001, 2002, 2003, 2005, 2006
-# Free Software Foundation, Inc.
-#
-# This file is free software; the Free Software Foundation
-# gives unlimited permission to copy and/or distribute it,
-# with or without modifications, as long as this notice is preserved.
-
-# serial 5
-
-AC_DEFUN([AM_C_PROTOTYPES],
-[AC_REQUIRE([AC_C_PROTOTYPES])
-AC_DIAGNOSE([obsolete],
-            [$0: automatic de-ANSI-fication support is deprecated])
-if test "$ac_cv_prog_cc_stdc" != no; then
-  U= ANSI2KNR=
-else
-  U=_ ANSI2KNR=./ansi2knr
-fi
-# Ensure some checks needed by ansi2knr itself.
-AC_REQUIRE([AC_HEADER_STDC])
-AC_CHECK_HEADERS([string.h])
-AC_SUBST([U])dnl
-AC_SUBST([ANSI2KNR])dnl
-_AM_SUBST_NOTMAKE([ANSI2KNR])dnl
-])
-
-AU_DEFUN([fp_C_PROTOTYPES], [AM_C_PROTOTYPES])
-
 # Check to make sure that the build environment is sane.    -*- Autoconf -*-
 
 # Copyright (C) 1996, 1997, 2000, 2001, 2003, 2005, 2008, 2009, 2010,
@@ -1111,6 +1081,7 @@ m4_include([m4/chown.m4])
 m4_include([m4/clock_time.m4])
 m4_include([m4/close-stream.m4])
 m4_include([m4/close.m4])
+m4_include([m4/closedir.m4])
 m4_include([m4/closein.m4])
 m4_include([m4/closeout.m4])
 m4_include([m4/codeset.m4])
@@ -1125,12 +1096,12 @@ m4_include([m4/dirent_h.m4])
 m4_include([m4/dirfd.m4])
 m4_include([m4/dirname.m4])
 m4_include([m4/double-slash-root.m4])
+m4_include([m4/dup.m4])
 m4_include([m4/dup2.m4])
 m4_include([m4/eealloc.m4])
 m4_include([m4/environ.m4])
 m4_include([m4/errno_h.m4])
 m4_include([m4/error.m4])
-m4_include([m4/euidaccess-stat.m4])
 m4_include([m4/euidaccess.m4])
 m4_include([m4/exponentd.m4])
 m4_include([m4/exponentf.m4])
@@ -1144,6 +1115,7 @@ m4_include([m4/fcntl-safer.m4])
 m4_include([m4/fcntl.m4])
 m4_include([m4/fcntl_h.m4])
 m4_include([m4/fd-reopen.m4])
+m4_include([m4/fdopen.m4])
 m4_include([m4/fdopendir.m4])
 m4_include([m4/fflush.m4])
 m4_include([m4/fileblocks.m4])
@@ -1162,11 +1134,13 @@ m4_include([m4/frexp.m4])
 m4_include([m4/frexpl.m4])
 m4_include([m4/fseek.m4])
 m4_include([m4/fseeko.m4])
+m4_include([m4/fstat.m4])
 m4_include([m4/fstypename.m4])
 m4_include([m4/fsusage.m4])
 m4_include([m4/fsync.m4])
 m4_include([m4/ftell.m4])
 m4_include([m4/ftello.m4])
+m4_include([m4/ftruncate.m4])
 m4_include([m4/fts.m4])
 m4_include([m4/futimens.m4])
 m4_include([m4/getaddrinfo.m4])
@@ -1284,6 +1258,8 @@ m4_include([m4/mode_t.m4])
 m4_include([m4/modechange.m4])
 m4_include([m4/mountlist.m4])
 m4_include([m4/mpsort.m4])
+m4_include([m4/msvc-inval.m4])
+m4_include([m4/msvc-nothrow.m4])
 m4_include([m4/multiarch.m4])
 m4_include([m4/nanosleep.m4])
 m4_include([m4/netdb_h.m4])
@@ -1294,6 +1270,7 @@ m4_include([m4/nocrash.m4])
 m4_include([m4/nproc.m4])
 m4_include([m4/open.m4])
 m4_include([m4/openat.m4])
+m4_include([m4/opendir.m4])
 m4_include([m4/parse-datetime.m4])
 m4_include([m4/pathmax.m4])
 m4_include([m4/perl.m4])
@@ -1314,8 +1291,10 @@ m4_include([m4/pthread.m4])
 m4_include([m4/putenv.m4])
 m4_include([m4/quote.m4])
 m4_include([m4/quotearg.m4])
+m4_include([m4/raise.m4])
 m4_include([m4/read-file.m4])
 m4_include([m4/read.m4])
+m4_include([m4/readdir.m4])
 m4_include([m4/readlink.m4])
 m4_include([m4/readlinkat.m4])
 m4_include([m4/readtokens.m4])
@@ -1371,11 +1350,13 @@ m4_include([m4/stdio_h.m4])
 m4_include([m4/stdlib_h.m4])
 m4_include([m4/stpcpy.m4])
 m4_include([m4/stpncpy.m4])
+m4_include([m4/strcase.m4])
 m4_include([m4/strdup.m4])
 m4_include([m4/strerror.m4])
 m4_include([m4/strerror_r.m4])
 m4_include([m4/strftime.m4])
 m4_include([m4/string_h.m4])
+m4_include([m4/strings_h.m4])
 m4_include([m4/strndup.m4])
 m4_include([m4/strnlen.m4])
 m4_include([m4/strnumcmp.m4])
@@ -1393,6 +1374,7 @@ m4_include([m4/sys_select_h.m4])
 m4_include([m4/sys_socket_h.m4])
 m4_include([m4/sys_stat_h.m4])
 m4_include([m4/sys_time_h.m4])
+m4_include([m4/sys_types_h.m4])
 m4_include([m4/sys_uio_h.m4])
 m4_include([m4/sys_utsname_h.m4])
 m4_include([m4/sys_wait_h.m4])

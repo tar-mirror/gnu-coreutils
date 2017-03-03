@@ -217,7 +217,7 @@ acl_ace_nontrivial (int count, ace_t *entries)
             index2 = 0;
           else if (ace->a_flags == (NEW_ACE_GROUP | NEW_ACE_IDENTIFIER_GROUP))
             index2 = 2;
-          else if (ace->a_flags == ACE_EVERYONE)
+          else if (ace->a_flags == NEW_ACE_EVERYONE)
             index2 = 4;
           else
             return 1;
@@ -439,7 +439,8 @@ acl_nontrivial (int count, struct acl *entries)
 
 /* Return 1 if NAME has a nontrivial access control list, 0 if NAME
    only has no or a base access control list, and -1 (setting errno)
-   on error.  SB must be set to the stat buffer of FILE.  */
+   on error.  SB must be set to the stat buffer of NAME, obtained
+   through stat() or lstat().  */
 
 int
 file_has_acl (char const *name, struct stat const *sb)
@@ -453,20 +454,12 @@ file_has_acl (char const *name, struct stat const *sb)
       /* Linux, FreeBSD, MacOS X, IRIX, Tru64 */
       int ret;
 
-      if (HAVE_ACL_EXTENDED_FILE || HAVE_ACL_EXTENDED_FILE_NOFOLLOW) /* Linux */
+      if (HAVE_ACL_EXTENDED_FILE) /* Linux */
         {
-#  if HAVE_ACL_EXTENDED_FILE_NOFOLLOW
-          /* acl_extended_file_nofollow() uses lgetxattr() in order to prevent
-             unnecessary mounts, but it returns the same result as we already
-             know that NAME is not a symbolic link at this point (modulo the
-             TOCTTOU race condition).  */
-          ret = acl_extended_file_nofollow (name);
-#  else
           /* On Linux, acl_extended_file is an optimized function: It only
              makes two calls to getxattr(), one for ACL_TYPE_ACCESS, one for
              ACL_TYPE_DEFAULT.  */
           ret = acl_extended_file (name);
-#  endif
         }
       else /* FreeBSD, MacOS X, IRIX, Tru64 */
         {

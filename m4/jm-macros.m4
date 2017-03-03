@@ -71,23 +71,33 @@ AC_DEFUN([coreutils_MACROS],
     [AC_DEFINE([HAVE_INOTIFY], [1],
      [Define to 1 if you have usable inotify support.])])
 
-  AC_CHECK_FUNCS_ONCE( \
-    endgrent \
-    endpwent \
-    fchown \
-    fchmod \
-    ftruncate \
-    iswspace \
-    mkfifo \
-    mbrlen \
-    setgroups \
-    sethostname \
-    siginterrupt \
-    sync \
-    sysctl \
-    sysinfo \
-    tcgetpgrp \
-  )
+  AC_CHECK_FUNCS_ONCE([
+    endgrent
+    endpwent
+    fchown
+    fchmod
+    ftruncate
+    iswspace
+    mkfifo
+    mbrlen
+    setgroups
+    sethostname
+    siginterrupt
+    sync
+    sysctl
+    sysinfo
+    tcgetpgrp
+  ])
+
+  # These checks are for Interix, to avoid its getgr* functions, in favor
+  # of these replacements.  The replacement functions are much more efficient
+  # because they do not query the domain controller for user information
+  # when it is not needed.
+  AC_CHECK_FUNCS_ONCE([
+    getgrgid_nomembers
+    getgrnam_nomembers
+    getgrent_nomembers
+  ])
 
   dnl This can't use AC_REQUIRE; I'm not quite sure why.
   cu_PREREQ_STAT_PROG
@@ -173,16 +183,16 @@ AC_DEFUN([coreutils_MACROS],
 
 AC_DEFUN([gl_CHECK_ALL_HEADERS],
 [
-  AC_CHECK_HEADERS_ONCE( \
-    hurd.h \
-    paths.h \
-    priv.h \
-    stropts.h \
-    sys/param.h \
-    sys/resource.h \
-    sys/systeminfo.h \
-    syslog.h \
-  )
+  AC_CHECK_HEADERS_ONCE([
+    hurd.h
+    paths.h
+    priv.h
+    stropts.h
+    sys/param.h
+    sys/resource.h
+    sys/systeminfo.h
+    syslog.h
+  ])
   AC_CHECK_HEADERS([sys/sysctl.h], [], [],
     [AC_INCLUDES_DEFAULT
      [#if HAVE_SYS_PARAM_H
@@ -193,11 +203,6 @@ AC_DEFUN([gl_CHECK_ALL_HEADERS],
 # This macro must be invoked before any tests that run the compiler.
 AC_DEFUN([gl_CHECK_ALL_TYPES],
 [
-  dnl This test must precede tests of compiler characteristics like
-  dnl that for the inline keyword, since it may change the degree to
-  dnl which the compiler supports such features.
-  AC_REQUIRE([AM_C_PROTOTYPES])
-
   dnl Checks for typedefs, structures, and compiler characteristics.
   AC_REQUIRE([gl_BIGENDIAN])
   AC_REQUIRE([AC_C_VOLATILE])

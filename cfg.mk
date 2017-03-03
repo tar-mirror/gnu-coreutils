@@ -27,7 +27,7 @@ bootstrap-tools = autoconf,automake,gnulib,bison
 # Now that we have better tests, make this the default.
 export VERBOSE = yes
 
-old_NEWS_hash = d491296a7e0e2269b2b96dc4bd5f77a8
+old_NEWS_hash = 0869235d8e62fd7ed8d8dfacfad2e4d9
 
 # Add an exemption for sc_makefile_at_at_check.
 _makefile_at_at_check_exceptions = ' && !/^cu_install_program =/'
@@ -375,7 +375,8 @@ exclude_file_name_regexp--sc_require_config_h = \
   $(exclude_file_name_regexp--sc_require_config_h_first)
 
 exclude_file_name_regexp--sc_po_check = ^gl/
-exclude_file_name_regexp--sc_prohibit_always-defined_macros = ^src/seq\.c$$
+exclude_file_name_regexp--sc_prohibit_always-defined_macros = \
+  ^src/(seq|remove)\.c$$
 exclude_file_name_regexp--sc_prohibit_empty_lines_at_EOF = ^tests/pr/
 exclude_file_name_regexp--sc_program_name = ^(gl/.*|lib/euidaccess-stat)\.c$$
 exclude_file_name_regexp--sc_file_system = \

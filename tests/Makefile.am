@@ -198,6 +198,7 @@ TESTS =						\
   misc/id-context				\
   misc/id-groups				\
   misc/md5sum					\
+  misc/md5sum-bsd				\
   misc/md5sum-newline				\
   misc/md5sum-parallel				\
   misc/mknod					\
@@ -249,6 +250,7 @@ TESTS =						\
   misc/sort-unique				\
   misc/sort-unique-segv				\
   misc/sort-version				\
+  misc/sort-NaN-infloop				\
   split/filter					\
   split/suffix-length				\
   split/b-chunk					\
@@ -429,6 +431,7 @@ TESTS =						\
   ls/readdir-mountpoint-inode			\
   ls/recursive					\
   ls/rt-1					\
+  ls/slink-acl					\
   ls/stat-dtype					\
   ls/stat-failed				\
   ls/stat-free-color				\

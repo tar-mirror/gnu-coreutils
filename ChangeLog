@@ -1,4 +1,299 @@
+2011-10-12  Jim Meyering  <meyering@redhat.com>
+
+	version 8.14
+	* NEWS: Record release date.
+
+2011-10-12  Pádraig Brady  <P@draigBrady.com>
+
+	tests: avoid a false failure on systems without inotify
+	* tests/tail-2/follow-name: Exclude the inotify warning
+	from the comparison.
+	Reported by Bruno Haible.
+
+2011-10-09  Jim Meyering  <meyering@redhat.com>
+
+	build: update gnulib to latest to fix MacOS X 10.5 test link failure
+	Details here:
+	http://thread.gmane.org/gmane.comp.gnu.coreutils.general/1726/focus=1743
+
+	rm: do not resort to stat'ing very long names even on deficient systems
+	This change affects only systems that have neither *at function support
+	nor the /proc/self/fd support required to emulate those *at functions.
+	* src/remove.c (write_protected_non_symlink): Call faccessat
+	unconditionally.  Thus we no longer need euidaccess_stat, which was
+	the sole function used here to operate on a full relative file name.
+	Remove full_name parameter and update caller.
+	* lib/euidaccess-stat.h: Remove file.
+	* lib/euidaccess-stat.c: Likewise.
+	* m4/euidaccess-stat.m4: Likewise.
+	* po/POTFILES.in: Remove lib/euidaccess-stat.c.
+	* m4/prereq.m4 (gl_PREREQ): Don't require gl_EUIDACCESS_STAT.
+	Prompted by a report from Bruno Haible that the rm/deep-2
+	test was failing on HP-UX 11.31.
+	See http://thread.gmane.org/gmane.comp.gnu.coreutils.general/1748
+
+	tests: skip rather than failing when perl is not available
+	* tests/df/total-verify: Use require_perl_, so that this test is
+	skipped when perl is not available.
+	* tests/rm/deep-2: Likewise, and fix wording in a comment.
+	Reported by Bruno Haible.
+
+2011-10-08  Jim Meyering  <meyering@redhat.com>
+
+	tests: avoid tail-2/F-vs-missing failure on NFS
+	* tests/tail-2/F-vs-missing: This test would fail about 80% of the
+	time on linux/powerpc when run in an NFS-mounted directory.
+	Reported by Bruno Haible in
+	http://thread.gmane.org/gmane.comp.gnu.coreutils.general/1726/focus=1727
+
+	tests: avoid ls/slink-acl test failure on Solaris 10
+	* tests/ls/slink-acl: Use setfacl's "-m user::r" option rather than
+	less-portable "-m m::r".  The latter did not work with Solaris 10's
+	version of setfacl.  Reported by Bruno Haible in
+	http://thread.gmane.org/gmane.comp.gnu.coreutils.general/1726/focus=1737
+
+	tests: avoid false-positive failures on linux/sparc64
+	* tests/init.cfg (require_strace_): Detect a version of strace
+	that fails on linux/sparc64 for 64-bit executables.  Report and
+	most of the suggested fix from Bruno Haible:
+	http://thread.gmane.org/gmane.comp.gnu.coreutils.general/1726/focus=1728
+
+2011-10-06  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	build: let bootstrap resort to wget for downloading .po files
+	* bootstrap (download_po_files): Fallback to wget when downloading
+	the .po files via rsync failed.  This is necessary to bootstrap behind
+	a strict firewall.
+
+2011-10-05  Jim Meyering  <meyering@redhat.com>
+
+	doc: clean up NEWS
+	* NEWS: Mention when the sort -g infloop bug was introduced and
+	alphabetize entries.  Clarify a sentence in the pwd-improvement entry.
+
+	tests: add a test to exercise today's ls-lL-vs-ACL bug
+	* tests/ls/slink-acl: New file.
+	* tests/Makefile.am (TESTS): Add it.
+	* tests/init.cfg (require_setfacl_): New function.
+	* gnulib: Update to latest, for file-has-acl changes.
+	* NEWS (Bug fixes): Mention it.
+	See http://thread.gmane.org/gmane.comp.lib.gnulib.bugs/28538.  This
+	":>k; setfacl -m m::r k; ln -s k s; ls -Log s" should print e.g.,
+	    -rw-r-----+ 1 0 Oct  5 19:22 s
+	With the ls from coreutils-8.13, it would print this (with "." or
+	nothing in place of the "+"):
+	    -rw-r-----. 1 0 Oct  5 19:22 s
+
+2011-10-03  Jim Meyering  <meyering@redhat.com>
+
+	build: don't use automake's obsolete AM_C_PROTOTYPES macro
+	* m4/jm-macros.m4 (gl_CHECK_ALL_TYPES): Remove use of AM_C_PROTOTYPES,
+	now that automake rejects it.
+
+2011-10-01  Jim Meyering  <meyering@redhat.com>
+
+	maint: clean up m4 syntax
+	* m4/jm-macros.m4 (coreutils_MACROS, gl_CHECK_ALL_HEADERS):
+	Remove unnecessary backslashes and add quotes around multi-line
+	argument lists.
+
+2011-10-01  Markus Duft  <mduft@gentoo.org>
+
+	build: use getgr*_nomembers functions on Interix
+	Interix provides faster replacements for getgr{gid,nam,ent} where
+	group member information is not fetched from domain controllers.
+	This makes 'id' usable on domain controlled interix boxes.
+	* m4/jm-macros.m4: Check for _nomembers functions.
+	* src/system.h: Redefine function to _nomembers when available.
+
+	build: accommodate missing setgroups on Interix
+	Add a dummy, non-functional, always-successful replacement setgroups
+	function, to keep the original code untouched and simple.
+	 * src/chroot.c (setgroups) [! HAVE_SETGROUPS]: Define.
+
+2011-10-01  Jim Meyering  <meyering@redhat.com>
+
+	build: stop distributing gzip'd releases;  xz is enough
+	* configure.ac (AM_INIT_AUTOMAKE): Add no-dist-gzip.
+	* NEWS (Build-related): Mention that we're dropping .tar.gz.
+
+	build: update gnulib submodule to latest
+
+2011-10-01  Pádraig Brady  <P@draigBrady.com>
+
+	doc: mention the recent ls -L "argetm" fix in NEWS
+	* NEWS: Mention the bug fix
+
+	ls: fix output of dangling symlinks colored as target
+	This is related to commit b7f2b51c, 2010-01-01,
+	"ls: fix color of broken symlinks colored as target"
+	which didn't handle the --dereference case.
+	The simplest way to reproduce the resultant
+	erroneous "argetm" is as follows:
+
+	 $ ln -s /no-such dangle
+	 $ env LS_COLORS=ln=target ls --dereference --color
+	 ls: cannot access dangle: No such file or directory
+	 argetmdangle
+
+	This is also an issue with the `tree` utility,
+	reported here: http://bugs.debian.org/586765
+
+	* src/ls.c (print_color_indicator): Move the handling
+	of 'ln=target' in $LS_COLORS (color_symlink_as_referent == true)
+	to a higher scope, to handle all cases where type == C_LINK.
+	* tests/misc/ls-misc: Add a test case for the specific issue,
+	and 2 further test cases to verify other code paths in this area.
+
+	Reported by Jason Glassey.
+
+2011-09-30  Jim Meyering  <meyering@redhat.com>
+
+	ls: avoid reading beyond end of color indicator
+	At first this looked like a buffer overrun, since there was no test
+	to ensure that the buffer length was 6.  However, since the LS_COLORS
+	string is NUL-terminated and since settings within it are separated by
+	":" there was neither the risk of reading beyond end of buffer nor risk
+	of a false-positive match.
+	* src/ls.c (print_color_indicator): Use color_symlink_as_referent
+	rather than manually comparing against "target" again.
+	* src/system.h (STRNCMP_LIT): Correct description in comment.
+
+2011-09-28  Jim Meyering  <meyering@redhat.com>
+
+	tests: update gnulib to latest, to fix test link failure
+
+2011-09-27  Jim Meyering  <meyering@redhat.com>
+
+	sort: avoid a NaN-induced infloop
+	These commands would fail to terminate:
+	    yes -- -nan | head -156903 | sort -g > /dev/null
+	    echo nan > F; sort -m -g F F
+	That can happen with any strtold implementation that includes
+	uninitialized data in its return value.  The problem arises in the
+	mergefps function when bubble-sorting the two or more lines, each
+	from one of the input streams being merged: compare(a,b) returns 64,
+	yet compare(b,a) also returns a positive value.  With a broken
+	comparison function like that, the bubble sort never terminates.
+	Why do the long-double bit strings corresponding to two identical
+	"nan" strings not compare equal?  Because some parts of the result
+	are uninitialized and thus depend on the state of the stack.
+	For more details, see http://bugs.gnu.org/9612.
+	* src/sort.c (nan_compare): New function.
+	(general_numcompare): Use it rather than bare memcmp.
+	Reported by Aaron Denney in http://bugs.debian.org/642557.
+	* NEWS (Bug fixes): Mention it.
+	* tests/misc/sort-NaN-infloop: New file.
+	* tests/Makefile.am (TESTS): Add it.
+
+2011-09-24  Jim Meyering  <meyering@redhat.com>
+
+	build: update gnulib submodule to latest
+
+	maint: avoid new syntax-check failure
+	Pulling in the latest gnulib triggered a new false-positive
+	syntax-check failure.
+	* cfg.mk (exclude_file_name_regexp--sc_prohibit_always-defined_macros):
+	Exempt remove.c; its definitions of DT_UNKNOWN, DT_DIR and DT_LNK are
+	harmless.
+
+2011-09-24  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	tests: mention new check-expensive/check-very-expensive in test logs
+	* tests/init.cfg: (very_expensive_): Mention toplevel make target,
+	check-very-expensive.
+	(expensive_): Likewise for check-expensive.
+
+	tests: introduce make targets check-expensive and check-very-expensive
+	* Makefile.am: add shortcuts to run (very) expensive tests.
+	Use "make check-expensive" to run tests with RUN_EXPENSIVE_TESTS=yes,
+	use "make check-very-expensive" to run tests with both
+	RUN_EXPENSIVE_TESTS=yes and RUN_VERY_EXPENSIVE_TESTS=yes.
+	Non-expensive tests are included in all cases.
+
+2011-09-22  Pádraig Brady  <P@draigBrady.com>
+
+	timeout: handle implicitly created threads
+	On some systems like glibc on GNU/kFreeBSD, a thread is
+	implicitly created when timer_settime() is used.
+	This breaks our scheme to ignore signals we've
+	sent ourselves.
+
+	* src/timeout.c (send_sig): Change the scheme used to
+	ignore signals we've sent ourselves, to a more robust
+	but perhaps limited scheme of ignoring all signals of
+	a certain type after we've sent that signal to the job.
+	* NEWS: Mention the change in behavior.
+
+2011-09-19  Bruno Haible  <bruno@clisp.org>
+
+	tests: init.sh: support any non-GNU diff
+	* tests/init.sh (compare): If "diff -c" is supported but "diff -u" is
+	not, use "diff -c".  Useful on AIX 6.1, HP-UX 11.31, OSF/1 5.1,
+	Solaris 8.
+
+2011-09-19  Jim Meyering  <meyering@redhat.com>
+
+	gnulib: update for getcwd fix on systems without openat
+	This fixes a bug in pwd and all getcwd-using applications (for some
+	uses: df, readlink, stat) when run from a directory whose absolute name
+	contains more than PATH_MAX / 3 components.  For more details, see
+	http://git.sv.gnu.org/cgit/gnulib.git/commit/?id=f6fe351fc534ae1
+	* gnulib: Update.
+	* NEWS (Improvements): Mention it.
+
+2011-09-19  Reuben Thomas  <rrt@sc3d.org>
+
+	md5sum: clarify what is meant by binary/text flag.
+	        src/md5sum.c: Clarify that we are talking about input mode.
+	        doc/coreutils.texi: Ditto.
+
+2011-09-19  Jim Meyering  <meyering@redhat.com>
+
+	tests: cp-parents: don't let a failing chmod go unnoticed
+	* tests/cp/cp-parents: If somehow a chmod set-up command failed,
+	subsequent tests would fail in a harder-to-diagnose manner.
+
+2011-09-17  Paul Eggert  <eggert@cs.ucla.edu>
+
+	randread: add FIXME comment for RDRAND
+	* gl/lib/randread.c: Add a FIXME comment suggesting how to improve
+	performance by using the RDRAND hardware instruction.
+
+2011-09-16  Pádraig Brady  <P@draigBrady.com>
+
+	md5sum: handle BSD reversed format checksums
+	* src/md5sum.c (split_3): Detect and handle BSD reversed
+	format checksums.
+	* tests/misc/md5sum-bsd: Add a new test.
+	* tests/Makefile.am: Reference new test.
+	* NEWS: Mention the improvement
+	Suggested by Rimas Kudelis.
+
+2011-09-14  Eric Blake  <eblake@redhat.com>
+
+	doc: improve description of join's -a option
+	* src/join.c (usage): Mention that -a adds to the overall output,
+	rather than replacing the default output.
+	* THANKS: Update.
+	Reported by Tomas Volka.
+
+2011-09-12  Jim Meyering  <meyering@redhat.com>
+
+	build: avoid unwarranted failure w/gcc-4.6.1 and --enable-gcc-warnings
+	* configure.ac (gl_GCC_VERSION_IFELSE): Define new macro.
+	(WERROR_CFLAGS): With --enable-gcc-warnings, use it to
+	add -Wsuggest-attribute=pure only with gcc 4.7 or newer.
+
 2011-09-08  Jim Meyering  <meyering@redhat.com>
+
+	doc: fix typo in test script comment
+	* tests/d_type-check: Fix typo in comment.
+
+	maint: post-release administrivia
+	* NEWS: Add header line for next release.
+	* .prev-version: Record previous version.
+	* cfg.mk (old_NEWS_hash): Auto-update.
 
 	version 8.13
 	* NEWS: Record release date.

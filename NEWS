@@ -1,5 +1,42 @@
 GNU coreutils NEWS                                    -*- outline -*-
 
+* Noteworthy changes in release 8.14 (2011-10-12) [stable]
+
+** Bug fixes
+
+  ls --dereference no longer outputs erroneous "argetm" strings for
+  dangling symlinks when an 'ln=target' entry is in $LS_COLORS.
+  [bug introduced in fileutils-4.0]
+
+  ls -lL symlink once again properly prints "+" when the referent has an ACL.
+  [bug introduced in coreutils-8.13]
+
+  sort -g no longer infloops for certain inputs containing NaNs
+  [bug introduced in coreutils-8.5]
+
+** Improvements
+
+  md5sum --check now supports the -r format from the corresponding BSD tool.
+  This also affects sha1sum, sha224sum, sha384sum and sha512sum.
+
+  pwd now works also on systems without openat.  On such systems, pwd
+  would fail when run from a directory whose absolute name contained
+  more than PATH_MAX / 3 components.  The df, stat and readlink programs
+  are also affected due to their use of the canonicalize_* functions.
+
+** Changes in behavior
+
+  timeout now only processes the first signal received from the set
+  it is handling (SIGTERM, SIGINT, ...).  This is to support systems that
+  implicitly create threads for some timer functions (like GNU/kFreeBSD).
+
+** Build-related
+
+  "make dist" no longer builds .tar.gz files.
+  xz is portable enough and in wide-enough use that distributing
+  only .tar.xz files is enough.
+
+
 * Noteworthy changes in release 8.13 (2011-09-08) [stable]
 
 ** Bug fixes

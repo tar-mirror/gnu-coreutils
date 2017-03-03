@@ -29,6 +29,7 @@ SIGNATURE_CHECK (frexp, double, (double, int *));
 
 #include "isnand-nolibm.h"
 #include "minus-zero.h"
+#include "infinity.h"
 #include "nan.h"
 #include "macros.h"
 
@@ -69,7 +70,7 @@ main ()
   { /* Positive infinity.  */
     int exp = -9999;
     double mantissa;
-    x = 1.0 / 0.0;
+    x = Infinityd ();
     mantissa = frexp (x, &exp);
     ASSERT (mantissa == x);
   }
@@ -77,7 +78,7 @@ main ()
   { /* Negative infinity.  */
     int exp = -9999;
     double mantissa;
-    x = -1.0 / 0.0;
+    x = - Infinityd ();
     mantissa = frexp (x, &exp);
     ASSERT (mantissa == x);
   }
