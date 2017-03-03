@@ -257,7 +257,7 @@ As a special case, cp makes a backup of SOURCE when the force and backup\n\
 options are given and SOURCE and DEST are the same name for an existing,\n\
 regular file.\n\
 "), stdout);
-      emit_bug_reporting_address ();
+      emit_ancillary_info ();
     }
   exit (status);
 }
@@ -1089,7 +1089,7 @@ main (int argc, char **argv)
         }
     }
 
-  if (x.hard_link & x.symbolic_link)
+  if (x.hard_link && x.symbolic_link)
     {
       error (0, 0, _("cannot make both hard and symbolic links"));
       usage (EXIT_FAILURE);
@@ -1130,7 +1130,7 @@ main (int argc, char **argv)
 
   /* If --force (-f) was specified and we're in link-creation mode,
      first remove any existing destination file.  */
-  if (x.unlink_dest_after_failed_open & (x.hard_link | x.symbolic_link))
+  if (x.unlink_dest_after_failed_open && (x.hard_link || x.symbolic_link))
     x.unlink_dest_before_opening = true;
 
   if (x.preserve_security_context)

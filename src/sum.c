@@ -72,7 +72,7 @@ Print checksum and block counts for each FILE.\n\
 \n\
 With no FILE, or when FILE is -, read standard input.\n\
 "), stdout);
-      emit_bug_reporting_address ();
+      emit_ancillary_info ();
     }
   exit (status);
 }
@@ -232,6 +232,10 @@ main (int argc, char **argv)
   textdomain (PACKAGE);
 
   atexit (close_stdout);
+
+  /* Line buffer stdout to ensure lines are written atomically and immediately
+     so that processes running in parallel do not intersperse their output.  */
+  setvbuf (stdout, NULL, _IOLBF, 0);
 
   have_read_stdin = false;
 

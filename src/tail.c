@@ -260,8 +260,8 @@ With no FILE, or when FILE is -, read standard input.\n\
 Mandatory arguments to long options are mandatory for short options too.\n\
 "), stdout);
      fputs (_("\
-  -c, --bytes=K            output the last K bytes; alternatively, use +K to\n\
-                           output bytes starting with the Kth of each file\n\
+  -c, --bytes=K            output the last K bytes; alternatively, use -c +K\n\
+                           to output bytes starting with the Kth of each file\n\
 "), stdout);
      fputs (_("\
   -f, --follow[={name|descriptor}]\n\
@@ -272,7 +272,7 @@ Mandatory arguments to long options are mandatory for short options too.\n\
 "), stdout);
      printf (_("\
   -n, --lines=K            output the last K lines, instead of the last %d;\n\
-                           or use +K to output lines starting with the Kth\n\
+                           or use -n +K to output lines starting with the Kth\n\
       --max-unchanged-stats=N\n\
                            with --follow=name, reopen a FILE which has not\n\
                            changed size after N (default %d) iterations\n\
@@ -317,7 +317,7 @@ rotation).  Use --follow=name in that case.  That causes tail to track the\n\
 named file by reopening it periodically to see if it has been removed and\n\
 recreated by some other program.\n\
 "), stdout);
-      emit_bug_reporting_address ();
+      emit_ancillary_info ();
     }
   exit (status);
 }
@@ -1126,7 +1126,7 @@ tail_forever (struct File_spec *f, size_t n_files, double sleep_interval)
           break;
         }
 
-      if ((!any_input | blocking) && fflush (stdout) != 0)
+      if ((!any_input || blocking) && fflush (stdout) != 0)
         error (EXIT_FAILURE, errno, _("write error"));
 
       /* If nothing was read, sleep and/or check for dead writers.  */
@@ -1134,9 +1134,6 @@ tail_forever (struct File_spec *f, size_t n_files, double sleep_interval)
         {
           if (writer_is_dead)
             break;
-
-          if (xnanosleep (sleep_interval))
-            error (EXIT_FAILURE, errno, _("cannot read realtime clock"));
 
           /* Once the writer is dead, read the files once more to
              avoid a race condition.  */
@@ -1146,6 +1143,10 @@ tail_forever (struct File_spec *f, size_t n_files, double sleep_interval)
                                signal to the writer, so kill fails and sets
                                errno to EPERM.  */
                             && errno != EPERM);
+
+          if (!writer_is_dead && xnanosleep (sleep_interval))
+            error (EXIT_FAILURE, errno, _("cannot read realtime clock"));
+
         }
     }
 }
@@ -1167,6 +1168,47 @@ wd_comparator (const void *e1, const void *e2)
   return spec1->wd == spec2->wd;
 }
 
+/* Helper function used by `tail_forever_inotify'.  */
+
+static void
+check_fspec (struct File_spec *fspec, int wd, int *prev_wd)
+{
+  struct stat stats;
+  char const *name = pretty_name (fspec);
+
+  if (fstat (fspec->fd, &stats) != 0)
+    {
+      close_fd (fspec->fd, name);
+      fspec->fd = -1;
+      fspec->errnum = errno;
+      return;
+    }
+
+  if (S_ISREG (fspec->mode) && stats.st_size < fspec->size)
+    {
+      error (0, 0, _("%s: file truncated"), name);
+      *prev_wd = wd;
+      xlseek (fspec->fd, stats.st_size, SEEK_SET, name);
+      fspec->size = stats.st_size;
+    }
+  else if (S_ISREG (fspec->mode) && stats.st_size == fspec->size
+           && timespec_cmp (fspec->mtime, get_stat_mtime (&stats)) == 0)
+    return;
+
+  if (wd != *prev_wd)
+    {
+      if (print_headers)
+        write_header (name);
+      *prev_wd = wd;
+    }
+
+  uintmax_t bytes_read = dump_remainder (name, fspec->fd, COPY_TO_EOF);
+  fspec->size += bytes_read;
+
+  if (fflush (stdout) != 0)
+    error (EXIT_FAILURE, errno, _("write error"));
+}
+
 /* Tail N_FILES files forever, or until killed.
    Check modifications using the inotify events system.  */
 
@@ -1179,6 +1221,7 @@ tail_forever_inotify (int wd, struct File_spec *f, size_t n_files,
   Hash_table *wd_table;
 
   bool found_watchable = false;
+  bool writer_is_dead = false;
   int prev_wd;
   size_t evlen = 0;
   char *evbuf;
@@ -1247,6 +1290,14 @@ tail_forever_inotify (int wd, struct File_spec *f, size_t n_files,
 
   prev_wd = f[n_files - 1].wd;
 
+  /* Check files again.  New data can be available since last time we checked
+     and before they are watched by inotify.  */
+  for (i = 0; i < n_files; i++)
+    {
+      if (!f[i].ignore)
+        check_fspec (&f[i], f[i].wd, &prev_wd);
+    }
+
   evlen += sizeof (struct inotify_event) + 1;
   evbuf = xmalloc (evlen);
 
@@ -1255,41 +1306,37 @@ tail_forever_inotify (int wd, struct File_spec *f, size_t n_files,
      This loop sleeps on the `safe_read' call until a new event is notified.  */
   while (1)
     {
-      char const *name;
       struct File_spec *fspec;
-      uintmax_t bytes_read;
-      struct stat stats;
-
       struct inotify_event *ev;
 
       /* When watching a PID, ensure that a read from WD will not block
          indefinetely.  */
       if (pid)
         {
-          fd_set rfd;
-          struct timeval select_timeout;
-          int n_descriptors;
+          if (writer_is_dead)
+            exit (EXIT_SUCCESS);
 
-          FD_ZERO (&rfd);
-          FD_SET (wd, &rfd);
+          writer_is_dead = (kill (pid, 0) != 0 && errno != EPERM);
 
-          select_timeout.tv_sec = (time_t) sleep_interval;
-          select_timeout.tv_usec = 1000000 * (sleep_interval
-                                              - select_timeout.tv_sec);
-
-          n_descriptors = select (wd + 1, &rfd, NULL, NULL, &select_timeout);
-
-          if (n_descriptors == -1)
-            error (EXIT_FAILURE, errno, _("error monitoring inotify event"));
-
-          if (n_descriptors == 0)
+          struct timeval delay; /* how long to wait for file changes.  */
+          if (writer_is_dead)
+            delay.tv_sec = delay.tv_usec = 0;
+          else
             {
-              /* See if the process we are monitoring is still alive.  */
-              if (kill (pid, 0) != 0 && errno != EPERM)
-                exit (EXIT_SUCCESS);
-
-              continue;
+              delay.tv_sec = (time_t) sleep_interval;
+              delay.tv_usec = 1000000 * (sleep_interval - delay.tv_sec);
             }
+
+           fd_set rfd;
+           FD_ZERO (&rfd);
+           FD_SET (wd, &rfd);
+
+           int file_change = select (wd + 1, &rfd, NULL, NULL, &delay);
+
+           if (file_change == 0)
+             continue;
+           else if (file_change == -1)
+             error (EXIT_FAILURE, errno, _("error monitoring inotify event"));
         }
 
       if (len <= evbuf_off)
@@ -1357,7 +1404,13 @@ tail_forever_inotify (int wd, struct File_spec *f, size_t n_files,
 
       if (ev->mask & (IN_ATTRIB | IN_DELETE_SELF | IN_MOVE_SELF))
         {
-          if (ev->mask & (IN_DELETE_SELF | IN_MOVE_SELF))
+          /* For IN_DELETE_SELF, we always want to remove the watch.
+             However, for IN_MOVE_SELF (the file we're watching has
+             been clobbered via a rename), when tailing by NAME, we
+             must continue to watch the file.  It's only when following
+             by file descriptor that we must remove the watch.  */
+          if ((ev->mask & IN_DELETE_SELF)
+              || ((ev->mask & IN_MOVE_SELF) && follow_mode == Follow_descriptor))
             {
               inotify_rm_watch (wd, f[i].wd);
               hash_delete (wd_table, &(f[i]));
@@ -1367,37 +1420,7 @@ tail_forever_inotify (int wd, struct File_spec *f, size_t n_files,
 
           continue;
         }
-
-      name = pretty_name (fspec);
-
-      if (fstat (fspec->fd, &stats) != 0)
-        {
-          close_fd (fspec->fd, name);
-          fspec->fd = -1;
-          fspec->errnum = errno;
-          continue;
-        }
-
-      if (S_ISREG (fspec->mode) && stats.st_size < fspec->size)
-        {
-          error (0, 0, _("%s: file truncated"), name);
-          prev_wd = ev->wd;
-          xlseek (fspec->fd, stats.st_size, SEEK_SET, name);
-          fspec->size = stats.st_size;
-        }
-
-      if (ev->wd != prev_wd)
-        {
-          if (print_headers)
-            write_header (name);
-          prev_wd = ev->wd;
-        }
-
-      bytes_read = dump_remainder (name, fspec->fd, COPY_TO_EOF);
-      fspec->size += bytes_read;
-
-      if (fflush (stdout) != 0)
-        error (EXIT_FAILURE, errno, _("write error"));
+      check_fspec (fspec, ev->wd, &prev_wd);
     }
 }
 #endif

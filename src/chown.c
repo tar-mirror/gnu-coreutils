@@ -153,7 +153,7 @@ Examples:\n\
   %s -hR root /u    Change the owner of /u and subfiles to \"root\".\n\
 "),
               program_name, program_name, program_name);
-      emit_bug_reporting_address ();
+      emit_ancillary_info ();
     }
   exit (status);
 }
@@ -317,7 +317,7 @@ main (int argc, char **argv)
       optind++;
     }
 
-  if (chopt.recurse & preserve_root)
+  if (chopt.recurse && preserve_root)
     {
       static struct dev_ino dev_ino_buf;
       chopt.root_dev_ino = get_root_dev_ino (&dev_ino_buf);

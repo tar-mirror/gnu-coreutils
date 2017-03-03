@@ -111,7 +111,11 @@ print_uptime (size_t n, const STRUCT_UTMP *this)
         boot_time = UT_TIME_MEMBER (this);
       ++this;
     }
+#else
+  (void) n;
+  (void) this;
 #endif
+
   time_now = time (NULL);
 #if defined HAVE_PROC_UPTIME
   if (uptime == 0)
@@ -216,7 +220,7 @@ If FILE is not specified, use %s.  %s as FILE is common.\n\
               UTMP_FILE, WTMP_FILE);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
-      emit_bug_reporting_address ();
+      emit_ancillary_info ();
     }
   exit (status);
 }

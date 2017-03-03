@@ -1,15 +1,10 @@
-/* Work around the bug in some systems whereby stat/lstat succeeds when
-   given the zero-length file name argument.  The stat/lstat from SunOS 4.1.4
-   has this bug.  Also work around a deficiency in Solaris systems (up to at
-   least Solaris 9) regarding the semantics of `lstat ("symlink/", sbuf).'
+/* Work around platform bugs in stat.
+   Copyright (C) 2009 Free Software Foundation, Inc.
 
-   Copyright (C) 1997, 1998, 1999, 2000, 2001, 2002, 2003 Free
-   Software Foundation, Inc.
-
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation; either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -17,109 +12,93 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-/* written by Jim Meyering */
+/* written by Eric Blake */
 
 #include <config.h>
 
+/* Get the original definition of stat.  It might be defined as a macro.  */
+#define __need_system_sys_stat_h
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <errno.h>
-#ifndef errno
-extern int errno;
-#endif
-#if defined LSTAT && ! LSTAT_FOLLOWS_SLASHED_SYMLINK
-# include <stdlib.h>
-# include <string.h>
+#undef __need_system_sys_stat_h
 
-# ifdef STAT_MACROS_BROKEN
-#  undef S_ISLNK
-# endif
-
-# ifndef S_ISLNK
-#  ifdef S_IFLNK
-#   define S_ISLNK(m) (((m) & S_IFMT) == S_IFLNK)
-#  else
-#   define S_ISLNK(m) 0
-#  endif
-# endif
-
-# include "xalloc.h"
-
-/* lstat works differently on Linux and Solaris systems.  POSIX (see
-   `pathname resolution' in the glossary) requires that programs like `ls'
-   take into consideration the fact that FILE has a trailing slash when
-   FILE is a symbolic link.  On Linux systems, the lstat function already
-   has the desired semantics (in treating `lstat("symlink/",sbuf)' just like
-   `lstat("symlink/.",sbuf)', but on Solaris it does not.
-
-   If FILE has a trailing slash and specifies a symbolic link,
-   then append a `.' to FILE and call lstat a second time.  */
-
-static int
-slash_aware_lstat (const char *file, struct stat *sbuf)
+static inline int
+orig_stat (const char *filename, struct stat *buf)
 {
-  size_t len;
-  char *new_file;
-
-  int lstat_result = lstat (file, sbuf);
-
-  if (lstat_result != 0 || !S_ISLNK (sbuf->st_mode))
-    return lstat_result;
-
-  len = strlen (file);
-  if (file[len - 1] != '/')
-    return lstat_result;
-
-  /* FILE refers to a symbolic link and the name ends with a slash.
-     Append a `.' to FILE and repeat the lstat call.  */
-
-  /* Add one for the `.' we'll append, and one more for the trailing NUL.  */
-  new_file = xmalloc (len + 1 + 1);
-  memcpy (new_file, file, len);
-  new_file[len] = '.';
-  new_file[len + 1] = 0;
-
-  lstat_result = lstat (new_file, sbuf);
-  free (new_file);
-
-  return lstat_result;
+  return stat (filename, buf);
 }
-#endif /* LSTAT && ! LSTAT_FOLLOWS_SLASHED_SYMLINK */
 
-/* This is a wrapper for stat/lstat.
-   If FILE is the empty string, fail with errno == ENOENT.
-   Otherwise, return the result of calling the real stat/lstat.
+/* Specification.  */
+#include <sys/stat.h>
 
-   This works around the bug in some systems whereby stat/lstat succeeds when
-   given the zero-length file name argument.  The stat/lstat from SunOS 4.1.4
-   has this bug.  */
+#include <errno.h>
+#include <limits.h>
+#include <stdbool.h>
+#include <string.h>
 
-/* This function also provides a version of lstat with consistent semantics
-   when FILE specifies a symbolic link and has a trailing slash.  */
-
-#ifdef LSTAT
-# define rpl_xstat rpl_lstat
-# if ! LSTAT_FOLLOWS_SLASHED_SYMLINK
-#  define xstat_return_val(F, S) slash_aware_lstat (F, S)
-# else
-#  define xstat_return_val(F, S) lstat (F, S)
-# endif
-#else
-# define rpl_xstat rpl_stat
-# define xstat_return_val(F, S) stat (F, S)
-#endif
+/* Store information about NAME into ST.  Work around bugs with
+   trailing slashes.  Mingw has other bugs (such as st_ino always
+   being 0 on success) which this wrapper does not work around.  But
+   at least this implementation provides the ability to emulate fchdir
+   correctly.  */
 
 int
-rpl_xstat (const char *file, struct stat *sbuf)
+rpl_stat (char const *name, struct stat *st)
 {
-  if (file && *file == 0)
+  int result = orig_stat (name, st);
+#if REPLACE_FUNC_STAT_FILE
+  /* Solaris 9 mistakenly succeeds when given a non-directory with a
+     trailing slash.  */
+  if (result == 0 && !S_ISDIR (st->st_mode))
     {
-      errno = ENOENT;
-      return -1;
+      size_t len = strlen (name);
+      if (ISSLASH (name[len - 1]))
+	{
+	  errno = ENOTDIR;
+	  return -1;
+	}
     }
-
-  return xstat_return_val (file, sbuf);
+#endif /* REPLACE_FUNC_STAT_FILE */
+#if REPLACE_FUNC_STAT_DIR
+  if (result == -1 && errno == ENOENT)
+    {
+      /* Due to mingw's oddities, there are some directories (like
+         c:\) where stat() only succeeds with a trailing slash, and
+         other directories (like c:\windows) where stat() only
+         succeeds without a trailing slash.  But we want the two to be
+         synonymous, since chdir() manages either style.  Likewise, Mingw also
+         reports ENOENT for names longer than PATH_MAX, when we want
+         ENAMETOOLONG, and for stat("file/"), when we want ENOTDIR.
+         Fortunately, mingw PATH_MAX is small enough for stack
+         allocation.  */
+      char fixed_name[PATH_MAX + 1] = {0};
+      size_t len = strlen (name);
+      bool check_dir = false;
+      if (PATH_MAX <= len)
+        errno = ENAMETOOLONG;
+      else if (len)
+        {
+          strcpy (fixed_name, name);
+          if (ISSLASH (fixed_name[len - 1]))
+            {
+              check_dir = true;
+              while (len && ISSLASH (fixed_name[len - 1]))
+                fixed_name[--len] = '\0';
+              if (!len)
+                fixed_name[0] = '/';
+            }
+          else
+            fixed_name[len++] = '/';
+          result = orig_stat (fixed_name, st);
+          if (result == 0 && check_dir && !S_ISDIR (st->st_mode))
+            {
+              result = -1;
+              errno = ENOTDIR;
+            }
+        }
+    }
+#endif /* REPLACE_FUNC_STAT_DIR */
+  return result;
 }

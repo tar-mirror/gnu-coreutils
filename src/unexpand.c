@@ -130,7 +130,7 @@ Mandatory arguments to long options are mandatory for short options too.\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
-      emit_bug_reporting_address ();
+      emit_ancillary_info ();
     }
   exit (status);
 }
@@ -429,7 +429,7 @@ unexpand (void)
                 }
 
               prev_blank = blank;
-              convert &= convert_entire_line | blank;
+              convert &= convert_entire_line || blank;
             }
 
           if (c < 0)

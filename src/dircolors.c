@@ -19,7 +19,6 @@
 
 #include <sys/types.h>
 #include <getopt.h>
-#include <stdio.h>
 
 #include "system.h"
 #include "dircolors.h"
@@ -27,6 +26,7 @@
 #include "error.h"
 #include "obstack.h"
 #include "quote.h"
+#include "stdio--.h"
 #include "xstrndup.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
@@ -112,7 +112,7 @@ If FILE is specified, read it to determine which colors to use for which\n\
 file types and extensions.  Otherwise, a precompiled database is used.\n\
 For details on the format of these files, run `dircolors --print-database'.\n\
 "), stdout);
-      emit_bug_reporting_address ();
+      emit_ancillary_info ();
     }
 
   exit (status);

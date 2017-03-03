@@ -173,16 +173,6 @@ enum Fts_stat
 # define __set_errno(Val) errno = (Val)
 #endif
 
-#ifndef __attribute__
-# if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 8)
-#  define __attribute__(x) /* empty */
-# endif
-#endif
-
-#ifndef ATTRIBUTE_UNUSED
-# define ATTRIBUTE_UNUSED __attribute__ ((__unused__))
-#endif
-
 /* If this host provides the openat function, then we can avoid
    attempting to open "." in some initialization code below.  */
 #ifdef HAVE_OPENAT
@@ -726,8 +716,10 @@ leaf_optimization_applies (int dir_fd)
 }
 
 #else
-static bool dirent_inode_sort_may_be_useful (int dir_fd) { return true; }
-static bool leaf_optimization_applies (int dir_fd) { return false; }
+static bool
+dirent_inode_sort_may_be_useful (int dir_fd _UNUSED_PARAMETER_) { return true; }
+static bool
+leaf_optimization_applies (int dir_fd _UNUSED_PARAMETER_) { return false; }
 #endif
 
 #if GNULIB_FTS
@@ -1077,7 +1069,7 @@ check_for_dir:
  */
 /* ARGSUSED */
 int
-fts_set(FTS *sp ATTRIBUTE_UNUSED, FTSENT *p, int instr)
+fts_set(FTS *sp _UNUSED_PARAMETER_, FTSENT *p, int instr)
 {
 	if (instr != 0 && instr != FTS_AGAIN && instr != FTS_FOLLOW &&
 	    instr != FTS_NOINSTR && instr != FTS_SKIP) {
@@ -1276,6 +1268,20 @@ fts_build (register FTS *sp, int type)
 	  opening it.  */
        if (cur->fts_info == FTS_NSOK)
 	 cur->fts_info = fts_stat(sp, cur, false);
+       else if (sp->fts_options & FTS_TIGHT_CYCLE_CHECK) {
+		/* Now read the stat info again after opening a directory to
+		 * reveal eventual changes caused by a submount triggered by
+		 * the traversal.  But do it only for utilities which use
+		 * FTS_TIGHT_CYCLE_CHECK.  Therefore, only find and du
+		 * benefit/suffer from this feature for now.
+		 */
+		LEAVE_DIR (sp, cur, "4");
+		fts_stat (sp, cur, false);
+		if (! enter_dir (sp, cur)) {
+			 __set_errno (ENOMEM);
+			 return NULL;
+		}
+	}
 
 	/*
 	 * Nlinks is the number of possible entries of type directory in the

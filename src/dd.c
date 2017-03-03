@@ -575,7 +575,7 @@ Options are:\n\
 
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
-      emit_bug_reporting_address ();
+      emit_ancillary_info ();
     }
   exit (status);
 }
@@ -769,7 +769,7 @@ install_signal_handlers (void)
 static void
 process_signals (void)
 {
-  while (interrupt_signal | info_signal_count)
+  while (interrupt_signal || info_signal_count)
     {
       int interrupt;
       int infos;

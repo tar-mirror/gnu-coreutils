@@ -1,7 +1,9 @@
-#!/usr/bin/perl -w
+eval '(exit $?0)' && eval 'exec perl -wS "$0" ${1+"$@"}'
+  & eval 'exec perl -wS "$0" $argv:q'
+    if 0;
 # Generate a release announcement message.
 
-my $VERSION = '2009-09-01 06:47'; # UTC
+my $VERSION = '2009-10-30 15:59'; # UTC
 # The definition above must lie within the first 8 lines in order
 # for the Emacs time-stamp write hook (at end) to update it.
 # If you change this file with Emacs, please let the write hook
@@ -33,7 +35,7 @@ use POSIX qw(strftime);
 
 (my $ME = $0) =~ s|.*/||;
 
-my %valid_release_types = map {$_ => 1} qw (alpha beta major);
+my %valid_release_types = map {$_ => 1} qw (alpha beta stable);
 my @archive_suffixes = ('tar.gz', 'tar.bz2', 'tar.lzma', 'tar.xz');
 
 sub usage ($)
@@ -424,7 +426,7 @@ sub get_tool_versions ($$)
   # mail (or part of a diff), Gnus is not triggered.
   print <<EOF;
 
-Subject: $my_distdir released
+Subject: $my_distdir released [$release_type]
 
 <\#secure method=pgpmime mode=sign>
 
@@ -468,7 +470,7 @@ EOF
   print_news_deltas ($_, $prev_version, $curr_version)
     foreach @news_file;
 
-  $release_type eq 'major'
+  $release_type eq 'stable'
     or print_changelog_deltas ($package_name, $prev_version);
 
   exit 0;
@@ -476,19 +478,15 @@ EOF
 
 ### Setup "GNU" style for perl-mode and cperl-mode.
 ## Local Variables:
+## mode: perl
 ## perl-indent-level: 2
 ## perl-continued-statement-offset: 2
 ## perl-continued-brace-offset: 0
 ## perl-brace-offset: 0
 ## perl-brace-imaginary-offset: 0
 ## perl-label-offset: -2
-## cperl-indent-level: 2
-## cperl-brace-offset: 0
-## cperl-continued-brace-offset: 0
-## cperl-label-offset: -2
-## cperl-extra-newline-before-brace: t
-## cperl-merge-trailing-else: nil
-## cperl-continued-statement-offset: 2
+## perl-extra-newline-before-brace: t
+## perl-merge-trailing-else: nil
 ## eval: (add-hook 'write-file-hooks 'time-stamp)
 ## time-stamp-start: "my $VERSION = '"
 ## time-stamp-format: "%:y-%02m-%02d %02H:%02M"

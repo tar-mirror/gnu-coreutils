@@ -6,10 +6,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: coreutils 7.4\n"
+"Project-Id-Version: coreutils 8.0\n"
 "Report-Msgid-Bugs-To: bug-coreutils@gnu.org\n"
-"POT-Creation-Date: 2009-09-11 08:06+0200\n"
-"PO-Revision-Date: 2009-05-12 23:10+0930\n"
+"POT-Creation-Date: 2009-11-18 19:42+0100\n"
+"PO-Revision-Date: 2009-10-07 23:03+0930\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <vi-VN@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
@@ -40,15 +40,15 @@ msgstr "lỗi đóng tập tin"
 #: lib/closeout.c:112 src/base64.c:110 src/base64.c:122 src/base64.c:128
 #: src/base64.c:169 src/base64.c:225 src/cat.c:187 src/cat.c:203 src/cat.c:287
 #: src/cksum.c:248 src/expand.c:329 src/expand.c:354 src/head.c:301
-#: src/head.c:351 src/head.c:759 src/head.c:800 src/od.c:919 src/paste.c:159
-#: src/shuf.c:405 src/tail.c:342 src/tail.c:1130 src/tail.c:1400
-#: src/tail.c:2005 src/tr.c:1549 src/tr.c:1772 src/tr.c:1886
+#: src/head.c:351 src/head.c:759 src/head.c:800 src/mktemp.c:348 src/od.c:919
+#: src/paste.c:159 src/shuf.c:405 src/tail.c:342 src/tail.c:1130
+#: src/tail.c:1209 src/tail.c:2028 src/tr.c:1549 src/tr.c:1772 src/tr.c:1886
 #: src/unexpand.c:426 src/unexpand.c:442
 #, c-format
 msgid "write error"
 msgstr "lỗi ghi nhớ"
 
-#: lib/copy-acl.c:547 src/copy.c:875 src/copy.c:2216
+#: lib/copy-acl.c:547 src/copy.c:883 src/copy.c:2217
 #, c-format
 msgid "preserving permissions for %s"
 msgstr "đang bảo tồn quyền hạn cho %s"
@@ -57,8 +57,8 @@ msgstr "đang bảo tồn quyền hạn cho %s"
 msgid "Unknown system error"
 msgstr "Lỗi hệ thống không rõ"
 
-#: lib/euidaccess-stat.c:136 src/copy.c:1259 src/copy.c:1311 src/copy.c:1890
-#: src/copy.c:2203 src/df.c:575 src/install.c:737 src/stat.c:862
+#: lib/euidaccess-stat.c:129 src/copy.c:1267 src/copy.c:1319 src/copy.c:1901
+#: src/copy.c:2204 src/df.c:574 src/install.c:737 src/stat.c:915
 #: src/truncate.c:367
 #, c-format
 msgid "cannot stat %s"
@@ -192,57 +192,57 @@ msgstr "Chuỗi tham số sai mã hoá"
 msgid "Unknown error"
 msgstr "Lỗi không rõ"
 
-#: lib/getopt.c:526 lib/getopt.c:542
+#: lib/getopt.c:527 lib/getopt.c:543
 #, c-format
 msgid "%s: option `%s' is ambiguous\n"
 msgstr "%s: tùy chọn « %s » vẫn mơ hồ\n"
 
-#: lib/getopt.c:575 lib/getopt.c:579
+#: lib/getopt.c:576 lib/getopt.c:580
 #, c-format
 msgid "%s: option `--%s' doesn't allow an argument\n"
 msgstr "%s: tùy chọn « --%s » không cho phép đối số\n"
 
-#: lib/getopt.c:588 lib/getopt.c:593
+#: lib/getopt.c:589 lib/getopt.c:594
 #, c-format
 msgid "%s: option `%c%s' doesn't allow an argument\n"
 msgstr "%s: tùy chọn « %c%s » không cho phép đối số\n"
 
-#: lib/getopt.c:636 lib/getopt.c:655 lib/getopt.c:971 lib/getopt.c:990
+#: lib/getopt.c:637 lib/getopt.c:656 lib/getopt.c:972 lib/getopt.c:991
 #, c-format
 msgid "%s: option `%s' requires an argument\n"
 msgstr "%s: tùy chọn « %s » yêu cầu một đối số\n"
 
-#: lib/getopt.c:693 lib/getopt.c:696
+#: lib/getopt.c:694 lib/getopt.c:697
 #, c-format
 msgid "%s: unrecognized option `--%s'\n"
 msgstr "%s: tùy chọn không nhận ra « --%s »\n"
 
-#: lib/getopt.c:704 lib/getopt.c:707
+#: lib/getopt.c:705 lib/getopt.c:708
 #, c-format
 msgid "%s: unrecognized option `%c%s'\n"
 msgstr "%s: tùy chọn không nhận ra « %c%s »\n"
 
-#: lib/getopt.c:759 lib/getopt.c:762
+#: lib/getopt.c:760 lib/getopt.c:763
 #, c-format
 msgid "%s: illegal option -- %c\n"
 msgstr "%s: không cho phép tùy chọn -- %c\n"
 
-#: lib/getopt.c:768 lib/getopt.c:771
+#: lib/getopt.c:769 lib/getopt.c:772
 #, c-format
 msgid "%s: invalid option -- %c\n"
 msgstr "%s: tùy chọn không hợp lệ -- %c\n"
 
-#: lib/getopt.c:823 lib/getopt.c:839 lib/getopt.c:1043 lib/getopt.c:1061
+#: lib/getopt.c:824 lib/getopt.c:840 lib/getopt.c:1044 lib/getopt.c:1062
 #, c-format
 msgid "%s: option requires an argument -- %c\n"
 msgstr "%s: tùy chọn yêu cầu một đối số -- %c\n"
 
-#: lib/getopt.c:892 lib/getopt.c:908
+#: lib/getopt.c:893 lib/getopt.c:909
 #, c-format
 msgid "%s: option `-W %s' is ambiguous\n"
 msgstr "%s: tùy chọn « -W %s » vẫn mơ hồ\n"
 
-#: lib/getopt.c:932 lib/getopt.c:950
+#: lib/getopt.c:933 lib/getopt.c:951
 #, c-format
 msgid "%s: option `-W %s' doesn't allow an argument\n"
 msgstr "%s: tùy chọn « -W %s » không cho phép đối số\n"
@@ -252,7 +252,7 @@ msgstr "%s: tùy chọn « -W %s » không cho phép đối số\n"
 msgid "cannot change permissions of %s"
 msgstr "không thay đổi được quyền hạn của %s"
 
-#: lib/mkdir-p.c:206 src/copy.c:1879 src/install.c:705 src/install.c:718
+#: lib/mkdir-p.c:206 src/copy.c:1890 src/install.c:705 src/install.c:718
 #, c-format
 msgid "cannot create directory %s"
 msgstr "không tạo được thư mục %s"
@@ -266,7 +266,7 @@ msgstr "cạn bộ nhớ"
 msgid "unable to record current working directory"
 msgstr "không ghi nhớ được thư mục làm việc hiện thời"
 
-#: lib/openat-die.c:47 src/df.c:598
+#: lib/openat-die.c:52 src/df.c:597
 #, c-format
 msgid "failed to return to initial working directory"
 msgstr "lỗi trở về thư mục làm việc khởi đầu"
@@ -303,75 +303,75 @@ msgstr " »"
 msgid "%s: end of file"
 msgstr "%s: gặp kết thúc tập tin"
 
-#: lib/regcomp.c:135
+#: lib/regcomp.c:137
 msgid "Success"
 msgstr "Thành công"
 
-#: lib/regcomp.c:138
+#: lib/regcomp.c:140
 msgid "No match"
 msgstr "Không tìm thấy"
 
-#: lib/regcomp.c:141
+#: lib/regcomp.c:143
 msgid "Invalid regular expression"
 msgstr "Biểu thức chính quy không hợp lệ"
 
-#: lib/regcomp.c:144
+#: lib/regcomp.c:146
 msgid "Invalid collation character"
 msgstr "Ký tự đối chiếu không hợp lệ"
 
-#: lib/regcomp.c:147
+#: lib/regcomp.c:149
 msgid "Invalid character class name"
 msgstr "Sai tên hạng ký tự"
 
-#: lib/regcomp.c:150
+#: lib/regcomp.c:152
 msgid "Trailing backslash"
 msgstr "Có dấu chéo ngược theo sau"
 
-#: lib/regcomp.c:153
+#: lib/regcomp.c:155
 msgid "Invalid back reference"
 msgstr "Sai tham chiếu ngược"
 
-#: lib/regcomp.c:156
+#: lib/regcomp.c:158
 msgid "Unmatched [ or [^"
 msgstr "Có một ký tự « [ » hay « [^ » riêng lẻ"
 
-#: lib/regcomp.c:159
+#: lib/regcomp.c:161
 msgid "Unmatched ( or \\("
 msgstr "Có một ký tự « ( » hay « \\( » riêng lẻ"
 
-#: lib/regcomp.c:162
+#: lib/regcomp.c:164
 msgid "Unmatched \\{"
 msgstr "Có một ký tự « \\{ » riêng lẻ"
 
-#: lib/regcomp.c:165
+#: lib/regcomp.c:167
 msgid "Invalid content of \\{\\}"
 msgstr "Nội dụng « \\{\\} » không hợp lệ"
 
-#: lib/regcomp.c:168
+#: lib/regcomp.c:170
 msgid "Invalid range end"
 msgstr "Sai kết thúc phạm vi"
 
-#: lib/regcomp.c:171
+#: lib/regcomp.c:173
 msgid "Memory exhausted"
 msgstr "Cạn bộ nhớ"
 
-#: lib/regcomp.c:174
+#: lib/regcomp.c:176
 msgid "Invalid preceding regular expression"
 msgstr "Sai biểu thức chính quy đi trước"
 
-#: lib/regcomp.c:177
+#: lib/regcomp.c:179
 msgid "Premature end of regular expression"
 msgstr "Kết thúc sớm biểu thức chính quy"
 
-#: lib/regcomp.c:180
+#: lib/regcomp.c:182
 msgid "Regular expression too big"
 msgstr "Biểu thức chính quy quá lớn"
 
-#: lib/regcomp.c:183
+#: lib/regcomp.c:185
 msgid "Unmatched ) or \\)"
 msgstr "Có một ký tự « ) » hay « \\) » riêng lẻ"
 
-#: lib/regcomp.c:704
+#: lib/regcomp.c:706
 msgid "No previous regular expression"
 msgstr "Không có biểu thức chính quy đi trước"
 
@@ -410,29 +410,175 @@ msgstr "^[cCyY]"
 msgid "^[nN]"
 msgstr "^[kKnN]"
 
-#: lib/set-mode-acl.c:488 src/copy.c:1902 src/cp.c:512
+#: lib/set-mode-acl.c:591 src/copy.c:1913 src/cp.c:512
 #, c-format
 msgid "setting permissions for %s"
 msgstr "đang thiết lập quyền hạn cho %s"
 
-#: lib/unicodeio.c:102
+#: lib/siglist.h:28
+msgid "Hangup"
+msgstr "Ngừng nói"
+
+#: lib/siglist.h:31
+msgid "Interrupt"
+msgstr "Ngắt"
+
+#: lib/siglist.h:34
+msgid "Quit"
+msgstr "Thoát"
+
+#: lib/siglist.h:37
+msgid "Illegal instruction"
+msgstr "Câu lệnh cấm"
+
+#: lib/siglist.h:40
+msgid "Trace/breakpoint trap"
+msgstr "Bẫy tìm đường / điểm ngắt"
+
+#: lib/siglist.h:43
+msgid "Aborted"
+msgstr "Bị hủy bỏ"
+
+#: lib/siglist.h:46
+msgid "Floating point exception"
+msgstr "Ngoại lệ điểm phù động"
+
+#: lib/siglist.h:49
+msgid "Killed"
+msgstr "Bị giết"
+
+#: lib/siglist.h:52
+msgid "Bus error"
+msgstr "Lỗi mạch nối"
+
+#: lib/siglist.h:55
+msgid "Segmentation fault"
+msgstr "Lỗi chia ra từng đoạn"
+
+#: lib/siglist.h:58
+msgid "Broken pipe"
+msgstr "Ống dẫn bị ngắt"
+
+#: lib/siglist.h:61
+msgid "Alarm clock"
+msgstr "Đồng hồ báo thức"
+
+#: lib/siglist.h:64
+msgid "Terminated"
+msgstr "Bị chấm dứt"
+
+#: lib/siglist.h:67
+msgid "Urgent I/O condition"
+msgstr "Điều kiện V/R khẩn"
+
+#: lib/siglist.h:70
+msgid "Stopped (signal)"
+msgstr "Bị dừng (tín hiệu)"
+
+#: lib/siglist.h:73
+msgid "Stopped"
+msgstr "Bị dừng"
+
+#: lib/siglist.h:76
+msgid "Continued"
+msgstr "Đã tiếp tục"
+
+#: lib/siglist.h:79
+msgid "Child exited"
+msgstr "Tiến trình con đã kết thúc"
+
+#: lib/siglist.h:82
+msgid "Stopped (tty input)"
+msgstr "Bị dừng (đầu vào TTY)"
+
+#: lib/siglist.h:85
+msgid "Stopped (tty output)"
+msgstr "Bị dừng (kết xuất TTY)"
+
+#: lib/siglist.h:88
+msgid "I/O possible"
+msgstr "V/R có thể làm"
+
+#: lib/siglist.h:91
+msgid "CPU time limit exceeded"
+msgstr "Vượt quá giới hạn thời gian CPU"
+
+#: lib/siglist.h:94
+msgid "File size limit exceeded"
+msgstr "Vượt quá giới hạn kích cỡ tập tin"
+
+#: lib/siglist.h:97
+msgid "Virtual timer expired"
+msgstr "Quá hạn bộ đếm thời gian ảo"
+
+#: lib/siglist.h:100
+msgid "Profiling timer expired"
+msgstr "Quá hạn bộ đếm thời gian theo dõi cách sử dụng tiềm năng hệ thống"
+
+#: lib/siglist.h:103
+msgid "Window changed"
+msgstr "Cửa sổ bị thay đổi"
+
+#: lib/siglist.h:106
+msgid "User defined signal 1"
+msgstr "Tín hiệu tự định nghĩa 1"
+
+#: lib/siglist.h:109
+msgid "User defined signal 2"
+msgstr "Tín hiệu tự định nghĩa 2"
+
+#: lib/siglist.h:114
+msgid "EMT trap"
+msgstr "Bẫy EMT"
+
+#: lib/siglist.h:117
+msgid "Bad system call"
+msgstr "Sai gọi hệ thống"
+
+#: lib/siglist.h:120
+msgid "Stack fault"
+msgstr "Lỗi đống"
+
+#: lib/siglist.h:123
+msgid "Information request"
+msgstr "Yêu cầu thông tin"
+
+#: lib/siglist.h:125
+msgid "Power failure"
+msgstr "Gián đoạn trong việc cấp năng lượng"
+
+#: lib/siglist.h:128
+msgid "Resource lost"
+msgstr "Mất tài nguyên"
+
+#: lib/strsignal.c:109
+#, c-format
+msgid "Real-time signal %d"
+msgstr "Tín hiệu thời gian thực %d"
+
+#: lib/strsignal.c:113
+#, c-format
+msgid "Unknown signal %d"
+msgstr "Không nhận ra tín hiệu %d"
+
+#: lib/unicodeio.c:103
 msgid "iconv function not usable"
 msgstr "hàm iconv không thể sử dụng được"
 
-#: lib/unicodeio.c:104
+#: lib/unicodeio.c:105
 msgid "iconv function not available"
 msgstr "hàm iconv không sẵn sàng"
 
-#: lib/unicodeio.c:111
+#: lib/unicodeio.c:112
 msgid "character out of range"
 msgstr "ký tự ở ngoại phạm vi"
 
-#: lib/unicodeio.c:175
+#: lib/unicodeio.c:180
 #, c-format
 msgid "cannot convert U+%04X to local character set"
 msgstr "không chuyển đổi được U+%04X thành bảng mã ký tự nội bộ"
 
-#: lib/unicodeio.c:177
+#: lib/unicodeio.c:182
 #, c-format
 msgid "cannot convert U+%04X to local character set: %s"
 msgstr "không chuyển đổi được U+%04X thành bảng mã ký tự nội bộ : %s"
@@ -457,12 +603,12 @@ msgstr "không thể hiển thị thông điệp lỗi"
 #: lib/version-etc.c:68
 #, c-format
 msgid "Packaged by %s (%s)\n"
-msgstr ""
+msgstr "Gói đóng bởi %s (%s)\n"
 
 #: lib/version-etc.c:71
 #, c-format
 msgid "Packaged by %s\n"
-msgstr ""
+msgstr "Gói đóng bởi %s\n"
 
 #. TRANSLATORS: Translate "(C)" to the copyright symbol
 #. (C-in-a-circle), if this symbol is available in the user's
@@ -600,48 +746,53 @@ msgstr ""
 #. "Report translation bugs to <...>\n" with the address for translation
 #. bugs (typically your translation team's web or email address).
 #: lib/version-etc.c:239
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "\n"
-"Report bugs to <%s>.\n"
+"Report bugs to: %s\n"
 msgstr ""
 "\n"
 "Gửi báo cáo lỗi tới <%s>.\n"
 
 #: lib/version-etc.c:241
 #, fuzzy, c-format
-msgid "Report %s bugs to <%s>.\n"
+msgid "Report %s bugs to: %s\n"
 msgstr ""
 "\n"
-"Gửi báo cáo lỗi tới <%s>.\n"
+"Thông báo lỗi %s tới %s\n"
 
-#: lib/version-etc.c:244
+#: lib/version-etc.c:245
+#, fuzzy, c-format
+msgid "%s home page: <%s>\n"
+msgstr "Sử dụng: %s\n"
+
+#: lib/version-etc.c:247 src/system.h:591
 #, c-format
-msgid "%s home page: <http://www.gnu.org/software/%s/>.\n"
-msgstr "Trang chủ %s: <http://www.gnu.org/software/%s/>.\n"
+msgid "%s home page: <http://www.gnu.org/software/%s/>\n"
+msgstr "Trang chủ %s: <http://www.gnu.org/software/%s/>\n"
 
-#: lib/version-etc.c:246
-msgid "General help using GNU software: <http://www.gnu.org/gethelp/>.\n"
+#: lib/version-etc.c:250 src/system.h:593
+msgid "General help using GNU software: <http://www.gnu.org/gethelp/>\n"
 msgstr ""
-"Trợ giúp chung về sử dụng phần mềm GNU: <http://www.gnu.org/gethelp/>.\n"
+"Trợ giúp chung về sử dụng phần mềm GNU: <http://www.gnu.org/gethelp/>\n"
 
-#: lib/xfreopen.c:34
+#: lib/xfreopen.c:35
 msgid "stdin"
 msgstr "đầu vào tiêu chuẩn"
 
-#: lib/xfreopen.c:35
+#: lib/xfreopen.c:36
 msgid "stdout"
 msgstr "đầu ra tiêu chuẩn"
 
-#: lib/xfreopen.c:36
+#: lib/xfreopen.c:37
 msgid "stderr"
 msgstr "đầu lỗi tiêu chuẩn"
 
-#: lib/xfreopen.c:37
+#: lib/xfreopen.c:38
 msgid "unknown stream"
 msgstr "không rõ luồng"
 
-#: lib/xfreopen.c:38
+#: lib/xfreopen.c:39
 #, c-format
 msgid "failed to reopen %s with mode %s"
 msgstr "không mở lại được %s với chế độ %s"
@@ -651,7 +802,7 @@ msgstr "không mở lại được %s với chế độ %s"
 msgid "invalid argument: %s"
 msgstr "đối số sai: %s"
 
-#: lib/xmemcoll.c:48 src/expr.c:883
+#: lib/xmemcoll.c:48 src/expr.c:885
 #, c-format
 msgid "string comparison failed"
 msgstr "lỗi so sánh các chuỗi"
@@ -671,7 +822,7 @@ msgstr "Đã so sánh hai chuỗi %s và %s."
 msgid "string transformation failed"
 msgstr "lỗi chuyển dạng chuỗi"
 
-#: lib/xmemxfrm.c:55 src/expr.c:884
+#: lib/xmemxfrm.c:55 src/expr.c:886
 #, c-format
 msgid "set LC_ALL='C' to work around the problem"
 msgstr "hãy đặt « LC_ALL='C' » để giải quyết vấn đề"
@@ -706,27 +857,28 @@ msgstr "đối số %s%s « %s » quá lớn"
 msgid "Simon Josefsson"
 msgstr "Simon Josefsson"
 
-#: src/base64.c:55 src/basename.c:46 src/cat.c:85 src/chcon.c:340
-#: src/chgrp.c:106 src/chmod.c:351 src/chown.c:87 src/chroot.c:120
-#: src/cksum.c:257 src/comm.c:98 src/cp.c:151 src/csplit.c:1442 src/cut.c:185
-#: src/date.c:120 src/dd.c:464 src/df.c:800 src/dircolors.c:94
-#: src/dirname.c:41 src/du.c:264 src/echo.c:39 src/env.c:109 src/expand.c:99
-#: src/expr.c:198 src/factor.c:489 src/fmt.c:265 src/fold.c:62
+#: src/base64.c:55 src/basename.c:46 src/cat.c:85 src/chcon.c:348
+#: src/chgrp.c:106 src/chmod.c:360 src/chown.c:87 src/chroot.c:120
+#: src/cksum.c:257 src/comm.c:99 src/cp.c:151 src/csplit.c:1442 src/cut.c:185
+#: src/date.c:120 src/dd.c:464 src/df.c:799 src/dircolors.c:94
+#: src/dirname.c:41 src/du.c:262 src/echo.c:39 src/env.c:49 src/expand.c:99
+#: src/expr.c:200 src/factor.c:489 src/fmt.c:265 src/fold.c:62
 #: src/getlimits.c:62 src/groups.c:50 src/head.c:104 src/hostid.c:40
-#: src/hostname.c:53 src/id.c:78 src/install.c:936 src/join.c:163
-#: src/kill.c:83 src/link.c:42 src/ln.c:340 src/logname.c:36 src/ls.c:4526
+#: src/hostname.c:53 src/id.c:78 src/install.c:936 src/join.c:164
+#: src/kill.c:83 src/link.c:42 src/ln.c:332 src/logname.c:36 src/ls.c:4548
 #: src/md5sum.c:149 src/mkdir.c:53 src/mkfifo.c:48 src/mknod.c:49
-#: src/mktemp.c:60 src/mv.c:277 src/nice.c:68 src/nl.c:178 src/nohup.c:50
-#: src/od.c:304 src/paste.c:429 src/pathchk.c:93 src/pinky.c:502 src/pr.c:2763
-#: src/printenv.c:54 src/printf.c:84 src/ptx.c:1880 src/pwd.c:53
-#: src/readlink.c:59 src/rm.c:155 src/rmdir.c:161 src/runcon.c:80 src/seq.c:66
-#: src/setuidgid.c:46 src/shred.c:154 src/shuf.c:43 src/sleep.c:42
-#: src/sort.c:312 src/split.c:99 src/stat.c:905 src/stdbuf.c:91 src/stty.c:510
-#: src/su.c:377 src/sum.c:55 src/sync.c:37 src/tac.c:129 src/tail.c:245
-#: src/tee.c:58 src/test.c:681 src/timeout.c:129 src/touch.c:229 src/tr.c:282
-#: src/truncate.c:98 src/tsort.c:78 src/tty.c:61 src/uname.c:118
-#: src/unexpand.c:109 src/uniq.c:129 src/unlink.c:42 src/uptime.c:193
-#: src/users.c:102 src/wc.c:108 src/who.c:626 src/whoami.c:42 src/yes.c:38
+#: src/mktemp.c:65 src/mv.c:280 src/nice.c:68 src/nl.c:178 src/nohup.c:50
+#: src/nproc.c:53 src/od.c:304 src/paste.c:429 src/pathchk.c:93
+#: src/pinky.c:503 src/pr.c:2764 src/printenv.c:59 src/printf.c:85
+#: src/ptx.c:1880 src/pwd.c:53 src/readlink.c:59 src/rm.c:132 src/rmdir.c:161
+#: src/runcon.c:80 src/seq.c:66 src/setuidgid.c:46 src/shred.c:154
+#: src/shuf.c:43 src/sleep.c:42 src/sort.c:313 src/split.c:99 src/stat.c:958
+#: src/stdbuf.c:88 src/stty.c:510 src/su.c:365 src/sum.c:55 src/sync.c:37
+#: src/tac.c:129 src/tail.c:245 src/tee.c:58 src/test.c:681 src/timeout.c:123
+#: src/touch.c:211 src/tr.c:282 src/truncate.c:98 src/tsort.c:78 src/tty.c:61
+#: src/uname.c:118 src/unexpand.c:109 src/uniq.c:130 src/unlink.c:42
+#: src/uptime.c:197 src/users.c:102 src/wc.c:108 src/who.c:627 src/whoami.c:42
+#: src/yes.c:38
 #, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Hãy thử chạy câu lệnh trợ giúp « %s --help » để biết thêm thông tin.\n"
@@ -792,7 +944,7 @@ msgstr ""
 "cái.\n"
 
 #: src/base64.c:172 src/base64.c:209 src/csplit.c:263 src/csplit.c:1431
-#: src/join.c:414 src/shuf.c:397 src/tac-pipe.c:74 src/tee.c:204 src/tr.c:1573
+#: src/join.c:415 src/shuf.c:397 src/tac-pipe.c:74 src/tee.c:204 src/tr.c:1573
 #, c-format
 msgid "read error"
 msgstr "lỗi đọc"
@@ -807,14 +959,14 @@ msgstr "sai nhập vào"
 msgid "invalid wrap size: %s"
 msgstr "sai kích cỡ ngắt dòng: %s"
 
-#: src/base64.c:284 src/basename.c:119 src/comm.c:432 src/cp.c:601
-#: src/date.c:426 src/dircolors.c:448 src/dirname.c:97 src/du.c:925
+#: src/base64.c:284 src/basename.c:119 src/comm.c:433 src/cp.c:601
+#: src/date.c:426 src/dircolors.c:448 src/dirname.c:97 src/du.c:928
 #: src/hostid.c:76 src/hostname.c:112 src/id.c:169 src/install.c:612
-#: src/join.c:896 src/link.c:86 src/ln.c:515 src/logname.c:72 src/mknod.c:158
-#: src/mv.c:443 src/od.c:1802 src/ptx.c:2148 src/readlink.c:152 src/seq.c:410
-#: src/shuf.c:377 src/sort.c:3533 src/split.c:531 src/tr.c:1726
-#: src/tsort.c:548 src/tty.c:113 src/uname.c:253 src/uniq.c:452 src/uniq.c:469
-#: src/unlink.c:82 src/uptime.c:251 src/users.c:147 src/wc.c:654 src/who.c:817
+#: src/join.c:897 src/link.c:86 src/ln.c:520 src/logname.c:72 src/mknod.c:158
+#: src/mv.c:446 src/od.c:1802 src/ptx.c:2148 src/readlink.c:152 src/seq.c:410
+#: src/shuf.c:377 src/sort.c:3534 src/split.c:531 src/tr.c:1726
+#: src/tsort.c:548 src/tty.c:113 src/uname.c:253 src/uniq.c:453 src/uniq.c:470
+#: src/unlink.c:82 src/uptime.c:255 src/users.c:147 src/wc.c:654 src/who.c:818
 #: src/whoami.c:80
 #, c-format
 msgid "extra operand %s"
@@ -827,16 +979,16 @@ msgstr "đang đóng đầu vào tiêu chuẩn"
 
 #. This is a proper name. See the gettext manual, section Names.
 #: src/basename.c:40 src/chgrp.c:38 src/chmod.c:39 src/chown.c:47
-#: src/comm.c:36 src/cp.c:57 src/csplit.c:42 src/cut.c:44 src/date.c:39
-#: src/dd.c:47 src/df.c:41 src/dirname.c:34 src/du.c:53 src/env.c:92
+#: src/comm.c:37 src/cp.c:57 src/csplit.c:42 src/cut.c:44 src/date.c:39
+#: src/dd.c:47 src/df.c:40 src/dirname.c:34 src/du.c:53 src/env.c:33
 #: src/expand.c:48 src/fold.c:35 src/groups.c:35 src/head.c:47 src/id.c:39
-#: src/install.c:49 src/ln.c:40 src/ls.c:120 src/mkdir.c:36 src/mkfifo.c:33
+#: src/install.c:49 src/ln.c:40 src/ls.c:121 src/mkdir.c:36 src/mkfifo.c:33
 #: src/mknod.c:34 src/mv.c:42 src/nice.c:40 src/nl.c:40 src/paste.c:52
-#: src/pathchk.c:40 src/pinky.c:36 src/printenv.c:45 src/printf.c:62
-#: src/rm.c:65 src/rmdir.c:38 src/stty.c:69 src/su.c:95 src/sum.c:38
-#: src/tac.c:58 src/tail.c:62 src/tee.c:35 src/touch.c:44 src/tty.c:43
-#: src/uname.c:61 src/unexpand.c:49 src/uniq.c:40 src/uptime.c:46
-#: src/users.c:36 src/wc.c:50 src/who.c:44 src/yes.c:32
+#: src/pathchk.c:40 src/pinky.c:37 src/printenv.c:44 src/printf.c:63
+#: src/rm.c:42 src/rmdir.c:38 src/stty.c:69 src/su.c:88 src/sum.c:38
+#: src/tac.c:58 src/tail.c:62 src/tee.c:35 src/touch.c:45 src/tty.c:43
+#: src/uname.c:61 src/unexpand.c:49 src/uniq.c:41 src/uptime.c:46
+#: src/users.c:36 src/wc.c:50 src/who.c:45 src/yes.c:32
 msgid "David MacKenzie"
 msgstr "David MacKenzie"
 
@@ -872,30 +1024,30 @@ msgstr ""
 "  %s /usr/bin/sort       Xuất « sort ».\n"
 "  %s include/stdio.h .h  Xuất « stdio ».\n"
 
-#: src/basename.c:113 src/chcon.c:516 src/chgrp.c:273 src/chmod.c:502
-#: src/chown.c:286 src/chroot.c:186 src/comm.c:424 src/csplit.c:1369
-#: src/dirname.c:91 src/expr.c:323 src/join.c:1074 src/link.c:78
-#: src/mkdir.c:184 src/mkfifo.c:109 src/mknod.c:147 src/nohup.c:105
-#: src/pathchk.c:156 src/printf.c:672 src/readlink.c:144 src/rm.c:346
+#: src/basename.c:113 src/chcon.c:524 src/chgrp.c:273 src/chmod.c:511
+#: src/chown.c:286 src/chroot.c:186 src/comm.c:425 src/csplit.c:1369
+#: src/dirname.c:91 src/expr.c:325 src/join.c:1075 src/link.c:78
+#: src/mkdir.c:184 src/mkfifo.c:109 src/mknod.c:147 src/nohup.c:112
+#: src/pathchk.c:156 src/printf.c:675 src/readlink.c:144 src/rm.c:323
 #: src/rmdir.c:223 src/seq.c:404 src/setuidgid.c:137 src/sleep.c:121
-#: src/stat.c:1057 src/stdbuf.c:357 src/tr.c:1711 src/unlink.c:76
+#: src/stat.c:1110 src/stdbuf.c:346 src/tr.c:1711 src/unlink.c:76
 #, c-format
 msgid "missing operand"
 msgstr "thiếu toán hạng"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/cat.c:48 src/cp.c:56 src/df.c:40 src/du.c:52 src/split.c:44
+#: src/cat.c:48 src/cp.c:56 src/df.c:39 src/du.c:52 src/split.c:44
 msgid "Torbjorn Granlund"
 msgstr "Torbjorn Granlund"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/cat.c:49 src/comm.c:35 src/ls.c:119 src/rm.c:66 src/split.c:45
-#: src/tee.c:34 src/uniq.c:39
+#: src/cat.c:49 src/comm.c:36 src/ls.c:120 src/rm.c:43 src/split.c:45
+#: src/tee.c:34 src/uniq.c:40
 msgid "Richard M. Stallman"
 msgstr "Richard M. Stallman"
 
-#: src/cat.c:89 src/df.c:804 src/expand.c:103 src/fold.c:66 src/head.c:108
-#: src/ls.c:4530 src/nl.c:182 src/paste.c:433 src/pr.c:2767 src/sum.c:59
+#: src/cat.c:89 src/df.c:803 src/expand.c:103 src/fold.c:66 src/head.c:108
+#: src/ls.c:4552 src/nl.c:182 src/paste.c:433 src/pr.c:2768 src/sum.c:59
 #: src/tac.c:133 src/tail.c:249 src/tee.c:62 src/unexpand.c:113
 #, c-format
 msgid "Usage: %s [OPTION]... [FILE]...\n"
@@ -952,7 +1104,7 @@ msgstr ""
 msgid "cannot do ioctl on %s"
 msgstr "không thực hiện được ioctl trên %s"
 
-#: src/cat.c:637 src/dd.c:1883 src/sort.c:304 src/tee.c:163 src/yes.c:88
+#: src/cat.c:637 src/dd.c:1883 src/sort.c:305 src/tee.c:163 src/yes.c:88
 #, c-format
 msgid "standard output"
 msgstr "đầu ra tiêu chuẩn"
@@ -970,8 +1122,8 @@ msgstr "Russell Coker"
 #. This is a proper name. See the gettext manual, section Names.
 #: src/chcon.c:37 src/chgrp.c:39 src/chmod.c:40 src/chown.c:48 src/cp.c:58
 #: src/cut.c:45 src/dirname.c:35 src/du.c:55 src/head.c:48 src/hostid.c:34
-#: src/hostname.c:33 src/mktemp.c:34 src/mv.c:43 src/nohup.c:37 src/od.c:35
-#: src/pathchk.c:41 src/pwd.c:31 src/rm.c:67 src/setuidgid.c:38 src/sleep.c:35
+#: src/hostname.c:33 src/mktemp.c:36 src/mv.c:43 src/nohup.c:37 src/od.c:35
+#: src/pathchk.c:41 src/pwd.c:31 src/rm.c:44 src/setuidgid.c:38 src/sleep.c:35
 #: src/sync.c:31 src/tail.c:64 src/tr.c:36 src/true.c:33
 msgid "Jim Meyering"
 msgstr "Jim Meyering"
@@ -986,8 +1138,8 @@ msgstr "lỗi tạo ngữ cảnh bảo mật: %s"
 msgid "failed to set %s security context component to %s"
 msgstr "lỗi đặt thành phần ngữ cảnh bảo mật %s thanh %s"
 
-#: src/chcon.c:156 src/chcon.c:525 src/copy.c:1840 src/runcon.c:218
-#: src/stat.c:461
+#: src/chcon.c:156 src/chcon.c:533 src/copy.c:1851 src/runcon.c:218
+#: src/stat.c:491
 #, c-format
 msgid "failed to get security context of %s"
 msgstr "lỗi lấy ngữ cảnh bảo mật của %s"
@@ -1002,38 +1154,40 @@ msgstr "không thể áp dụng ngữ cảnh bộ phận cho tập tin không c�
 msgid "failed to change context of %s to %s"
 msgstr "lỗi thay đổi ngữ cảnh của %s thành %s"
 
-#: src/chcon.c:255 src/chmod.c:208 src/chown-core.c:301 src/copy.c:300
-#: src/du.c:483 src/ls.c:2782
+#: src/chcon.c:255 src/chmod.c:208 src/chown-core.c:301 src/copy.c:295
+#: src/du.c:481 src/ls.c:2820
 #, c-format
 msgid "cannot access %s"
 msgstr "không thể truy cập đến %s"
 
-#: src/chcon.c:260 src/chmod.c:215 src/chown-core.c:308 src/du.c:488
+#: src/chcon.c:260 src/chmod.c:215 src/chown-core.c:308 src/du.c:486
 #, c-format
 msgid "%s"
 msgstr "%s"
 
-#: src/chcon.c:265 src/chmod.c:221 src/chown-core.c:314 src/du.c:494
+#: src/chcon.c:265 src/chmod.c:221 src/chown-core.c:314 src/du.c:492
 #, c-format
 msgid "cannot read directory %s"
 msgstr "không đọc được thư mục %s"
 
-#: src/chcon.c:284
+#: src/chcon.c:292
 #, c-format
 msgid "changing security context of %s\n"
 msgstr "đang thay đổi ngữ cảnh bảo mật của %s\n"
 
-#: src/chcon.c:318 src/chmod.c:329 src/chown-core.c:502 src/du.c:633
+#: src/chcon.c:326 src/chmod.c:338 src/chown-core.c:510 src/du.c:640
+#: src/remove.c:616
 #, c-format
 msgid "fts_read failed"
 msgstr "fts_read bị lỗi"
 
-#: src/chcon.c:329 src/chmod.c:340 src/chown-core.c:514 src/du.c:645
-#, fuzzy, c-format
+#: src/chcon.c:337 src/chmod.c:349 src/chown-core.c:522 src/du.c:652
+#: src/remove.c:630
+#, c-format
 msgid "fts_close failed"
-msgstr "lỗi đóng"
+msgstr "fts_close bị lỗi"
 
-#: src/chcon.c:344
+#: src/chcon.c:352
 #, c-format
 msgid ""
 "Usage: %s [OPTION]... CONTEXT FILE...\n"
@@ -1045,7 +1199,7 @@ msgstr ""
 "KIỂU] TẬP_TIN...\n"
 "  hoặc:  %s [TÙY_CHỌN]... --reference=TẬP_TIN_R TẬP_TIN...\n"
 
-#: src/chcon.c:350
+#: src/chcon.c:358
 msgid ""
 "Change the security context of each FILE to CONTEXT.\n"
 "With --reference, change the security context of each FILE to that of "
@@ -1061,7 +1215,7 @@ msgstr ""
 "  -h, --no-dereference\t\tảnh hưởng đến liên kết mềm thay cho\n"
 "\t\t\t\t\t\ttập tin nào đã tham chiếu\n"
 
-#: src/chcon.c:356
+#: src/chcon.c:364
 msgid ""
 "      --reference=RFILE  use RFILE's security context rather than "
 "specifying\n"
@@ -1076,7 +1230,7 @@ msgstr ""
 "lý\n"
 "\n"
 
-#: src/chcon.c:362
+#: src/chcon.c:370
 msgid ""
 "  -u, --user=USER        set user USER in the target security context\n"
 "  -r, --role=ROLE        set role ROLE in the target security context\n"
@@ -1090,7 +1244,7 @@ msgstr ""
 "  -l, --range=PHẠM_VI      \tđặt phạm vi này trong ngữ cảnh bảo mật đích\n"
 "\n"
 
-#: src/chcon.c:369 src/chgrp.c:140 src/chown.c:128
+#: src/chcon.c:377 src/chgrp.c:140 src/chown.c:128
 msgid ""
 "The following options modify how a hierarchy is traversed when the -R\n"
 "option is also specified.  If more than one is specified, only the final\n"
@@ -1112,36 +1266,36 @@ msgstr ""
 "  -P                     không đi qua bất kỳ liên kết mềm nào (mặc định)\n"
 "\n"
 
-#: src/chcon.c:497 src/chgrp.c:260 src/chown.c:273
+#: src/chcon.c:505 src/chgrp.c:260 src/chown.c:273
 #, c-format
 msgid "-R --dereference requires either -H or -L"
 msgstr "-R --dereference yêu cầu hoặc  « -H » hoặc « -L »"
 
-#: src/chcon.c:503
+#: src/chcon.c:511
 #, c-format
 msgid "-R -h requires -P"
 msgstr "-R -h yêu cầu -P"
 
-#: src/chcon.c:518 src/chgrp.c:275 src/chmod.c:504 src/chown.c:288
-#: src/comm.c:426 src/csplit.c:1371 src/join.c:1076 src/link.c:80
+#: src/chcon.c:526 src/chgrp.c:275 src/chmod.c:513 src/chown.c:288
+#: src/comm.c:427 src/csplit.c:1371 src/join.c:1077 src/link.c:80
 #: src/mknod.c:149 src/setuidgid.c:139 src/tr.c:1714
 #, c-format
 msgid "missing operand after %s"
 msgstr "thiếu toán hạng đằng sau %s"
 
-#: src/chcon.c:541 src/runcon.c:248
+#: src/chcon.c:549 src/runcon.c:248
 #, c-format
 msgid "invalid context: %s"
 msgstr "ngữ cảnh không hợp lệ: %s"
 
-#: src/chcon.c:548
+#: src/chcon.c:556
 #, c-format
 msgid "conflicting security context specifiers given"
 msgstr "chỉ ra các toán tử ngữ cảnh bảo mật xung đột với nhau"
 
-#: src/chcon.c:557 src/chgrp.c:283 src/chgrp.c:301 src/chmod.c:512
-#: src/chmod.c:531 src/chown.c:296 src/chown.c:325 src/cp.c:427 src/cp.c:487
-#: src/mv.c:96 src/pwd.c:274 src/rm.c:356 src/touch.c:159 src/touch.c:361
+#: src/chcon.c:565 src/chgrp.c:283 src/chgrp.c:301 src/chmod.c:521
+#: src/chmod.c:540 src/chown.c:296 src/chown.c:325 src/cp.c:427 src/cp.c:487
+#: src/mv.c:96 src/pwd.c:274 src/rm.c:333 src/touch.c:356
 #, c-format
 msgid "failed to get attributes of %s"
 msgstr "lấy thuộc tính của %s không thành công"
@@ -1258,17 +1412,17 @@ msgstr "chế độ của %s vẫn là %04lo (%s)\n"
 msgid "cannot operate on dangling symlink %s"
 msgstr "không thể thực hiện trên liên kết mềm theo sát %s"
 
-#: src/chmod.c:259
+#: src/chmod.c:268
 #, c-format
 msgid "changing permissions of %s"
 msgstr "đang thay đổi quyền hạn của %s"
 
-#: src/chmod.c:294
+#: src/chmod.c:303
 #, c-format
 msgid "%s: new permissions are %s, not %s"
 msgstr "%s: quyền hạn mới là %s, không phải %s"
 
-#: src/chmod.c:355
+#: src/chmod.c:364
 #, c-format
 msgid ""
 "Usage: %s [OPTION]... MODE[,MODE]... FILE...\n"
@@ -1279,7 +1433,7 @@ msgstr ""
 "  hoặc:  %s [TÙY_CHỌN]... CHẾ_ĐỘ_BÁT_PHÂN TẬP_TIN...\n"
 "  hoặc:  %s [TÙY_CHỌN]... --reference=TẬP_TIN_R TẬP_TIN...\n"
 
-#: src/chmod.c:361
+#: src/chmod.c:370
 msgid ""
 "Change the mode of each FILE to MODE.\n"
 "\n"
@@ -1290,7 +1444,7 @@ msgstr ""
 "\n"
 "  -c, --changes           giống verbose nhưng chỉ báo cáo khi có thay đổi\n"
 
-#: src/chmod.c:366
+#: src/chmod.c:375
 msgid ""
 "      --no-preserve-root  do not treat `/' specially (the default)\n"
 "      --preserve-root     fail to operate recursively on `/'\n"
@@ -1298,7 +1452,7 @@ msgstr ""
 "      --no-preserve-root  không coi `/' là đặc biệt (mặc định)\n"
 "      --preserve-root     không thao tác đệ quy trên `/'\n"
 
-#: src/chmod.c:370
+#: src/chmod.c:379
 msgid ""
 "  -f, --silent, --quiet   suppress most error messages\n"
 "  -v, --verbose           output a diagnostic for every file processed\n"
@@ -1311,7 +1465,7 @@ msgstr ""
 "      --reference=TẬP_TIN_R   dùng chế độ của TẬP_TIN_R thay cho CHẾ_ĐỘ\n"
 "  -R, --recursive         thực hiện đệ quy trên tập tin và thư mục\n"
 
-#: src/chmod.c:378
+#: src/chmod.c:387
 msgid ""
 "\n"
 "Each MODE is of the form `[ugoa]*([-+=]([rwxXst]*|[ugo]))+'.\n"
@@ -1319,12 +1473,12 @@ msgstr ""
 "\n"
 "Mỗi CHẾ_ĐỘ có dạng « [ugoa]*([-+=]([rwxXst]*|[ugo]))+ ».\n"
 
-#: src/chmod.c:489
+#: src/chmod.c:498
 #, c-format
 msgid "cannot combine mode and --reference options"
 msgstr "không thể kết hợp chế độ và tùy chọn « --reference »"
 
-#: src/chmod.c:520
+#: src/chmod.c:529
 #, c-format
 msgid "invalid mode: %s"
 msgstr "chế độ sai: %s"
@@ -1374,17 +1528,17 @@ msgstr "nhóm của %s vẫn là %s\n"
 msgid "ownership of %s retained\n"
 msgstr "quyền sở hữu của %s được giữ nguyên\n"
 
-#: src/chown-core.c:347
+#: src/chown-core.c:355
 #, c-format
 msgid "cannot dereference %s"
 msgstr "không truy cập được giá trị của %s"
 
-#: src/chown-core.c:435
+#: src/chown-core.c:443
 #, c-format
 msgid "changing ownership of %s"
 msgstr "đang thay đổi quyền sở hữu của %s"
 
-#: src/chown-core.c:436
+#: src/chown-core.c:444
 #, c-format
 msgid "changing group of %s"
 msgstr "đang thay đổi nhóm của %s"
@@ -1492,35 +1646,37 @@ msgid "invalid group %s"
 msgstr "nhóm không hợp lệ %s"
 
 #: src/chroot.c:100
-#, fuzzy, c-format
+#, c-format
 msgid "invalid group list %s"
-msgstr "nhóm không hợp lệ %s"
+msgstr "danh sách nhóm không hợp lệ %s"
 
 #: src/chroot.c:108
-#, fuzzy, c-format
+#, c-format
 msgid "failed to set additional groups"
-msgstr "lỗi đặt (các) nhóm phụ"
+msgstr "lỗi đặt nhóm phụ"
 
 #: src/chroot.c:124
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Usage: %s [OPTION] NEWROOT [COMMAND [ARG]...]\n"
 "  or:  %s OPTION\n"
 msgstr ""
-"Sử dụng: %s GỐC_MỚI [LỆNH [ĐÔI_SỐ]...]\n"
+"Sử dụng: %s [TÙY_CHỌN] GỐC_MỚI [LỆNH [ĐỐI_SỐ]...]\n"
 "  or:  %s TÙY_CHỌN\n"
 
 #: src/chroot.c:129
 msgid ""
 "Run COMMAND with root directory set to NEWROOT.\n"
 "\n"
-msgstr "Chạy LỆNH với thư mục gốc (root) đặt là GỐC_MỚI.\n"
+msgstr "Chạy câu LỆNH với thư mục gốc (root) đặt là GỐC_MỚI.\n"
 
 #: src/chroot.c:134
 msgid ""
 "  --userspec=USER:GROUP  specify user and group (ID or name) to use\n"
 "  --groups=G_LIST        specify supplementary groups as g1,g2,..,gN\n"
 msgstr ""
+"  --userspec=NGƯỜI_DÙNG:NHÓM  chỉ ra người dùng và nhóm (theo mã số hay tên) "
+"cần dùng\\n  --groups=G_LIST        chỉ ra các nhóm phụ kiểu g1,g2,..,gN\n"
 
 #: src/chroot.c:141
 msgid ""
@@ -1542,20 +1698,20 @@ msgid "cannot chdir to root directory"
 msgstr "không chuyển được sang thư mục gốc"
 
 #: src/chroot.c:236
-#, fuzzy, c-format
+#, c-format
 msgid "failed to set group-ID"
-msgstr "lỗi đặt vai trò mới %s"
+msgstr "lỗi đặt mã số nhóm (GID)"
 
 #: src/chroot.c:242
-#, fuzzy, c-format
+#, c-format
 msgid "failed to set user-ID"
-msgstr "lỗi đặt người dùng mới %s"
+msgstr "lỗi đặt mã số người dùng (UID)"
 
-#: src/chroot.c:264 src/nohup.c:216 src/setuidgid.c:213 src/stdbuf.c:377
-#: src/timeout.c:303
-#, fuzzy, c-format
+#: src/chroot.c:264 src/nohup.c:233 src/setuidgid.c:213 src/stdbuf.c:366
+#: src/timeout.c:297
+#, c-format
 msgid "failed to run command %s"
-msgstr "không chạy được câu lệnh %s"
+msgstr "lỗi chạy câu lệnh %s"
 
 #. This is a proper name. See the gettext manual, section Names.
 #: src/cksum.c:40
@@ -1584,16 +1740,16 @@ msgstr ""
 "In ra tổng kiểm tra CRC và số đếm byte của mỗi TẬP_TIN.\n"
 "\n"
 
-#: src/comm.c:102 src/join.c:167
+#: src/comm.c:103 src/join.c:168
 #, c-format
 msgid "Usage: %s [OPTION]... FILE1 FILE2\n"
 msgstr "Sử dụng: %s [TÙY_CHỌN]... TẬP_TIN1 TẬP_TIN2\n"
 
-#: src/comm.c:106
+#: src/comm.c:107
 msgid "Compare sorted files FILE1 and FILE2 line by line.\n"
 msgstr "So sánh các tập tin đã sắp xếp TẬP_TIN1 và TẬP_TIN2 theo từng dòng.\n"
 
-#: src/comm.c:109
+#: src/comm.c:110
 msgid ""
 "\n"
 "With no options, produce three-column output.  Column one contains\n"
@@ -1605,8 +1761,7 @@ msgstr ""
 "những dòng chỉ có trong TẬP_TIN1, cột thứ hai chứa những dòng chỉ\n"
 "có trong TẬP_TIN2, và cột thứ ba chứa những dòng có chung trong chúng.\n"
 
-#: src/comm.c:115
-#, fuzzy
+#: src/comm.c:116
 msgid ""
 "\n"
 "  -1              suppress column 1 (lines unique to FILE1)\n"
@@ -1614,11 +1769,11 @@ msgid ""
 "  -3              suppress column 3 (lines that appear in both files)\n"
 msgstr ""
 "\n"
-"  -1              bỏ đi những dòng chỉ có trong TẬP_TIN1\n"
-"  -2              bỏ đi những dòng chỉ có trong TẬP_TIN2\n"
-"  -3              bỏ đi những dòng có trong cả hai tập tin\n"
+"  -1              bỏ đi cột 1 (những dòng chỉ có trong TẬP_TIN1)\n"
+"  -2              bỏ đi cột 2 (những dòng chỉ có trong TẬP_TIN2)\n"
+"  -3              bỏ đi cột 3 (những dòng có trong cả hai tập tin)\n"
 
-#: src/comm.c:121
+#: src/comm.c:122
 msgid ""
 "\n"
 "  --check-order     check that the input is correctly sorted, even\n"
@@ -1630,11 +1785,11 @@ msgstr ""
 "\t\t\tthậm chí nếu mọi dòng nhập vào đều có thể kết đôi được\n"
 "  --nocheck-order   do not check that the input is correctly sorted\n"
 
-#: src/comm.c:127
+#: src/comm.c:128
 msgid "  --output-delimiter=STR  separate columns with STR\n"
 msgstr "  --output-delimiter=CHUỖI  phân cách các cột bằng chuỗi này\n"
 
-#: src/comm.c:132
+#: src/comm.c:133
 msgid ""
 "\n"
 "Note, comparisons honor the rules specified by `LC_COLLATE'.\n"
@@ -1642,7 +1797,7 @@ msgstr ""
 "\n"
 "Ghi chú : sự so sánh thì tùy theo quy tắc của « LC_COLLATE ».\n"
 
-#: src/comm.c:136
+#: src/comm.c:137
 #, c-format
 msgid ""
 "\n"
@@ -1650,292 +1805,296 @@ msgid ""
 "  %s -12 file1 file2  Print only lines present in both file1 and file2.\n"
 "  %s -3  file1 file2  Print lines in file1 not in file2, and vice versa.\n"
 msgstr ""
+"\n"
+"Ví dụ :\n"
+"  %s -12 tập_tin1 tập_tin2  In ra chỉ những dòng nằm trong cả hai tập tin "
+"này.\n"
+"  %s -3  tập_tin1 tập_tin2  In ra những dòng chỉ nằm trong một của hai tập "
+"tin này.\n"
 
-#: src/comm.c:221 src/join.c:367
+#: src/comm.c:222 src/join.c:368
 #, c-format
 msgid "file %d is not in sorted order"
 msgstr "tập tin %d không phải theo thứ tự sắp xếp"
 
-#: src/comm.c:404
+#: src/comm.c:405
 #, c-format
 msgid "multiple delimiters specified"
 msgstr "đã chỉ ra nhiều dấu tách"
 
-#: src/comm.c:408
+#: src/comm.c:409
 #, c-format
 msgid "empty %s not allowed"
 msgstr "không cho phép %s trống"
 
-#: src/copy.c:376
+#: src/copy.c:371
 #, c-format
 msgid "clearing permissions for %s"
 msgstr "đang gột quyền hạn cho %s"
 
-#: src/copy.c:410 src/copy.c:2086 src/cp.c:325
+#: src/copy.c:405 src/copy.c:2087 src/cp.c:325
 #, c-format
 msgid "failed to preserve ownership for %s"
 msgstr "lỗi bảo tồn quyền sở hữu của %sl"
 
-#: src/copy.c:436
+#: src/copy.c:431
 #, c-format
 msgid "failed to lookup file %s"
 msgstr "lỗi tra tìm tập tin %s"
 
-#: src/copy.c:441
+#: src/copy.c:436
 #, c-format
 msgid "failed to preserve authorship for %s"
 msgstr "lỗi bảo tồn nguồn tác giả của %s"
 
-#: src/copy.c:500 src/csplit.c:630 src/du.c:932 src/fmt.c:427 src/head.c:850
-#: src/sort.c:3545 src/split.c:538 src/tac.c:544 src/tail.c:1580 src/wc.c:666
+#: src/copy.c:495 src/csplit.c:630 src/du.c:935 src/fmt.c:427 src/head.c:850
+#: src/sort.c:3546 src/split.c:538 src/tac.c:544 src/tail.c:1603 src/wc.c:666
 #, c-format
 msgid "cannot open %s for reading"
 msgstr "không mở được %s để đọc"
 
-#: src/copy.c:506 src/copy.c:634 src/dd.c:1298 src/dd.c:1926 src/tail.c:1416
-#: src/tail.c:1482 src/truncate.c:150 src/truncate.c:234
+#: src/copy.c:501 src/copy.c:629 src/dd.c:1298 src/dd.c:1926 src/tail.c:1439
+#: src/tail.c:1505 src/truncate.c:150 src/truncate.c:234
 #, c-format
 msgid "cannot fstat %s"
 msgstr "không fstat được %s"
 
-#: src/copy.c:516
+#: src/copy.c:511
 #, c-format
 msgid "skipping file %s, as it was replaced while being copied"
 msgstr "bỏ qua tập tin %s, vì nó bị thay thế trong khi sao chép"
 
-#: src/copy.c:540
+#: src/copy.c:535
 #, c-format
 msgid "failed to get file system create context"
 msgstr "lỗi lấy ngữ cảnh tạo hệ thống tập tin"
 
-#: src/copy.c:554
+#: src/copy.c:549
 #, c-format
 msgid "failed to set the security context of %s to %s"
 msgstr "lỗi đặt ngữ cảnh bảo mật của %s thành %s"
 
-#: src/copy.c:571 src/copy.c:1380 src/copy.c:1534 src/copy.c:1682 src/ln.c:287
-#: src/remove.c:935 src/remove.c:956 src/remove.c:1105 src/remove.c:1146
-#: src/remove.c:1165 src/remove.c:1181 src/remove.c:1188 src/remove.c:1542
-#: src/remove.c:1629 src/remove.c:1787
+#: src/copy.c:566 src/copy.c:1388 src/copy.c:1542 src/copy.c:1692 src/ln.c:277
+#: src/remove.c:292 src/remove.c:318 src/remove.c:461 src/remove.c:482
 #, c-format
 msgid "cannot remove %s"
 msgstr "không gỡ bỏ được %s"
 
-#: src/copy.c:576 src/copy.c:1375 src/copy.c:1539 src/copy.c:1686
-#: src/remove.c:1013
+#: src/copy.c:571 src/copy.c:1383 src/copy.c:1547 src/copy.c:1696
+#: src/remove.c:435
 #, c-format
 msgid "removed %s\n"
 msgstr "đã gỡ bỏ %s\n"
 
-#: src/copy.c:613
+#: src/copy.c:608
 #, c-format
 msgid "not writing through dangling symlink %s"
 msgstr "không phải ghi qua liên kết mềm theo sát %s"
 
-#: src/copy.c:626
+#: src/copy.c:621
 #, c-format
 msgid "cannot create regular file %s"
 msgstr "không tạo được tập tin thông thường %s"
 
-#: src/copy.c:646
-#, fuzzy, c-format
+#: src/copy.c:641
+#, c-format
 msgid "failed to clone %s"
-msgstr "lỗi mở %s"
+msgstr "lỗi nhái theo %s"
 
-#: src/copy.c:725 src/dd.c:1358 src/dd.c:1683
+#: src/copy.c:720 src/dd.c:1358 src/dd.c:1683
 #, c-format
 msgid "reading %s"
 msgstr "đang đọc %s"
 
-#: src/copy.c:771 src/head.c:429
+#: src/copy.c:766 src/head.c:429
 #, c-format
 msgid "cannot lseek %s"
 msgstr "không lseek được %s"
 
-#: src/copy.c:784 src/copy.c:813 src/dd.c:1740 src/dd.c:1803
+#: src/copy.c:779 src/copy.c:808 src/dd.c:1740 src/dd.c:1803
 #, c-format
 msgid "writing %s"
 msgstr "đang ghi %s"
 
-#: src/copy.c:828 src/copy.c:2145
+#: src/copy.c:823 src/copy.c:2146
 #, c-format
 msgid "preserving times for %s"
 msgstr "đang bảo tồn các thời gian cho %s"
 
-#: src/copy.c:885 src/copy.c:891 src/head.c:858 src/touch.c:191
+#: src/copy.c:893 src/copy.c:899 src/head.c:858 src/touch.c:174
 #: src/truncate.c:408
 #, c-format
 msgid "closing %s"
 msgstr "đang đóng %s"
 
-#: src/copy.c:1125
+#: src/copy.c:1133
 #, c-format
 msgid "%s: try to overwrite %s, overriding mode %04lo (%s)? "
 msgstr "%s: thử ghi đề lên %s, cũng có quyền cao hơn chế độ %04lo (%s)? "
 
-#: src/copy.c:1132
+#: src/copy.c:1140
 #, c-format
 msgid "%s: overwrite %s? "
 msgstr "%s: ghi đề lên %s? "
 
-#: src/copy.c:1201
+#: src/copy.c:1209
 #, c-format
 msgid " (backup: %s)"
 msgstr " (sao lưu : %s)"
 
-#: src/copy.c:1211
+#: src/copy.c:1219
 #, c-format
 msgid "failed to restore the default file creation context"
 msgstr "lỗi phục hồi ngữ cảnh tạo tập tin mặc định"
 
-#: src/copy.c:1267
+#: src/copy.c:1275
 #, c-format
 msgid "omitting directory %s"
 msgstr "bỏ quên thư mục %s"
 
-#: src/copy.c:1281
+#: src/copy.c:1289
 #, c-format
 msgid "warning: source file %s specified more than once"
 msgstr "cảnh báo : tập tin nguồn %s được ghi rõ nhiều lần"
 
-#: src/copy.c:1329 src/ln.c:224
+#: src/copy.c:1337 src/ln.c:212
 #, c-format
 msgid "%s and %s are the same file"
 msgstr "%s và %s là cùng một tập tin"
 
-#: src/copy.c:1409
+#: src/copy.c:1417
 #, c-format
 msgid "cannot overwrite non-directory %s with directory %s"
 msgstr "không ghi chèn được cái không phải thư mục %s bằng thư mục %s"
 
-#: src/copy.c:1427 src/ln.c:192
+#: src/copy.c:1435 src/ln.c:180
 #, c-format
 msgid "will not overwrite just-created %s with %s"
 msgstr "sẽ không ghi chèn %s vừa mới tạo bằng %s"
 
-#: src/copy.c:1445
+#: src/copy.c:1453
 #, c-format
 msgid "cannot overwrite directory %s with non-directory"
 msgstr "không ghi chèn được thư mục %s bằng cái không phải thư mục"
 
-#: src/copy.c:1459
+#: src/copy.c:1467
 #, c-format
 msgid "cannot move directory onto non-directory: %s -> %s"
 msgstr "không di chuyển được thư mục vào cái không phải thư mục: %s -> %s"
 
-#: src/copy.c:1489
+#: src/copy.c:1497
 #, c-format
 msgid "backing up %s would destroy source;  %s not moved"
 msgstr "sao lưu %s sẽ phá hủy nguồn nên không di chuyển %s"
 
-#: src/copy.c:1490
+#: src/copy.c:1498
 #, c-format
 msgid "backing up %s would destroy source;  %s not copied"
 msgstr "sao lưu %s sẽ phá hủy nguồn nên không sao chép %s"
 
-#: src/copy.c:1509 src/ln.c:254
+#: src/copy.c:1517 src/ln.c:242
 #, c-format
 msgid "cannot backup %s"
 msgstr "không sao lưu được %s"
 
-#: src/copy.c:1573
+#: src/copy.c:1581
 #, c-format
 msgid "will not copy %s through just-created symlink %s"
 msgstr "sẽ không sao chép %s qua liên kết mềm vừa mới tạo %s"
 
-#: src/copy.c:1650
+#: src/copy.c:1658
 #, c-format
 msgid "cannot copy a directory, %s, into itself, %s"
 msgstr "không sao chép được một thư mục (%s) vào chính nó (%s)"
 
-#: src/copy.c:1667
+#: src/copy.c:1675
 #, c-format
 msgid "will not create hard link %s to directory %s"
 msgstr "sẽ không tạo liên kết cứng %s tới thư mục %s"
 
-#: src/copy.c:1692
+#: src/copy.c:1703
 #, c-format
 msgid "cannot create hard link %s to %s"
 msgstr "không tạo được liên kết cứng %s tới %s"
 
-#: src/copy.c:1737
+#: src/copy.c:1748
 #, c-format
 msgid "cannot move %s to a subdirectory of itself, %s"
 msgstr "không di chuyển được %s vào một thư mục con của chính nó (%s)"
 
-#: src/copy.c:1780
+#: src/copy.c:1791
 #, c-format
 msgid "cannot move %s to %s"
 msgstr "không di chuyển được %s vào %s"
 
-#: src/copy.c:1792
+#: src/copy.c:1803
 #, c-format
 msgid "inter-device move failed: %s to %s; unable to remove target"
 msgstr ""
 "di chuyển không thành công giữa các thiết bị: %s tới %s; không xóa được đích"
 
-#: src/copy.c:1824 src/install.c:588 src/mkdir.c:190 src/mkfifo.c:115
+#: src/copy.c:1835 src/install.c:588 src/mkdir.c:190 src/mkfifo.c:115
 #: src/mknod.c:168
 #, c-format
 msgid "failed to set default file creation context to %s"
 msgstr "lỗi đặt ngữ cảnh tạo tập tin mặc định thành %s"
 
-#: src/copy.c:1859
+#: src/copy.c:1870
 #, c-format
 msgid "cannot copy cyclic symbolic link %s"
 msgstr "không sao chép được liên kết mềm vòng tròn %s"
 
-#: src/copy.c:1964
+#: src/copy.c:1975
 #, c-format
 msgid "%s: can make relative symbolic links only in current directory"
 msgstr "%s: chỉ tạo được liên kết mềm tương đối trong thư mục hiện thời"
 
-#: src/copy.c:1971
+#: src/copy.c:1982
 #, c-format
 msgid "cannot create symbolic link %s to %s"
 msgstr "không tạo được liên kết mềm %s tới %s"
 
-#: src/copy.c:1997
+#: src/copy.c:1998
 #, c-format
 msgid "cannot create link %s"
 msgstr "không tạo được liên kết %s"
 
-#: src/copy.c:2022 src/mkfifo.c:134
+#: src/copy.c:2023 src/mkfifo.c:134
 #, c-format
 msgid "cannot create fifo %s"
 msgstr "không tạo được fifo (vào trước, ra trước) %s"
 
-#: src/copy.c:2031
+#: src/copy.c:2032
 #, c-format
 msgid "cannot create special file %s"
 msgstr "không tạo được tập tin đặc biệt %s"
 
-#: src/copy.c:2042 src/ls.c:3000 src/stat.c:579
+#: src/copy.c:2043 src/ls.c:3032 src/stat.c:609
 #, c-format
 msgid "cannot read symbolic link %s"
 msgstr "không đọc được liên kết mềm %s"
 
-#: src/copy.c:2069
+#: src/copy.c:2070
 #, c-format
 msgid "cannot create symbolic link %s"
 msgstr "không tạo được liên kết mềm %s"
 
-#: src/copy.c:2101
+#: src/copy.c:2102
 #, c-format
 msgid "%s has unknown file type"
 msgstr "%s có kiểu tập tin không rõ"
 
-#: src/copy.c:2243 src/ln.c:328
+#: src/copy.c:2244 src/ln.c:320
 #, c-format
 msgid "cannot un-backup %s"
 msgstr "không thể hủy sao lưu %s"
 
-#: src/copy.c:2247
+#: src/copy.c:2248
 #, c-format
 msgid "%s -> %s (unbackup)\n"
 msgstr "%s -> %s (hủy sao lưu)\n"
 
-#: src/cp.c:155 src/mv.c:281
+#: src/cp.c:155 src/mv.c:284
 #, c-format
 msgid ""
 "Usage: %s [OPTION]... [-T] SOURCE DEST\n"
@@ -1954,14 +2113,14 @@ msgstr ""
 "Sao chép NGUỒN tới ĐÍCH hoặc nhiều NGUỒN tới THƯ_MỤC.\n"
 "\n"
 
-#: src/cp.c:165 src/csplit.c:1455 src/cut.c:197 src/df.c:810 src/du.c:276
+#: src/cp.c:165 src/csplit.c:1455 src/cut.c:197 src/df.c:809 src/du.c:274
 #: src/expand.c:112 src/fmt.c:275 src/fold.c:75 src/head.c:118
-#: src/install.c:959 src/kill.c:97 src/ln.c:361 src/ls.c:4536 src/mkdir.c:62
-#: src/mkfifo.c:57 src/mknod.c:59 src/mv.c:291 src/nl.c:191 src/paste.c:443
-#: src/pr.c:2776 src/ptx.c:1892 src/shred.c:164 src/shuf.c:57 src/sort.c:325
-#: src/split.c:113 src/stdbuf.c:100 src/tac.c:142 src/tail.c:259
-#: src/timeout.c:144 src/touch.c:243 src/truncate.c:113 src/unexpand.c:122
-#: src/uniq.c:144
+#: src/install.c:959 src/kill.c:97 src/ln.c:353 src/ls.c:4558 src/mkdir.c:62
+#: src/mkfifo.c:57 src/mknod.c:59 src/mv.c:294 src/nl.c:191 src/paste.c:443
+#: src/pr.c:2777 src/ptx.c:1892 src/shred.c:164 src/shuf.c:57 src/sort.c:326
+#: src/split.c:113 src/stdbuf.c:97 src/tac.c:142 src/tail.c:259
+#: src/timeout.c:138 src/touch.c:226 src/truncate.c:113 src/unexpand.c:122
+#: src/uniq.c:145
 msgid ""
 "Mandatory arguments to long options are mandatory for short options too.\n"
 msgstr ""
@@ -2058,7 +2217,6 @@ msgstr ""
 "      --parents                dùng tên tập tin nguồn đầy đủ dưới THƯ_MỤC\n"
 
 #: src/cp.c:203
-#, fuzzy
 msgid ""
 "  -R, -r, --recursive          copy directories recursively\n"
 "      --reflink[=WHEN]         control clone/CoW copies. See below.\n"
@@ -2067,20 +2225,20 @@ msgid ""
 "force)\n"
 msgstr ""
 "  -R, -r, --recursive          sao chép đệ quy các thư mục\n"
+"     --reflink[=KHI_NÀO]\tđiều khiển việc sao chép clone/CoW. Xem dưới.\n"
 "      --remove-destination     xóa mỗi tập tin đích đến nếu có\n"
 "                                 trước khi thử mở nó (khác với « --force »)\n"
 
 #: src/cp.c:209
-#, fuzzy
 msgid ""
 "      --sparse=WHEN            control creation of sparse files. See below.\n"
 "      --strip-trailing-slashes  remove any trailing slashes from each "
 "SOURCE\n"
 "                                 argument\n"
 msgstr ""
-"      --sparse=KHI             điều khiển việc tạo tập tin sparse\n"
-"      --strip-trailing-slashes xóa bỏ mọi dấu xuyệc đi theo khỏi\n"
-"                                 mỗi đối số NGUỒN\n"
+"      --sparse=KHI_NÀO             điều khiển việc tạo tập tin sparse. Xem "
+"dưới.\n"
+"      --strip-trailing-slashes \t\txóa mọi dấu xuyệc đi theo khỏi mỗi NGUỒN\n"
 
 #: src/cp.c:214
 msgid ""
@@ -2110,7 +2268,6 @@ msgstr ""
 "  -x, --one-file-system        chỉ thực hiện trên hệ thống tập tin này\n"
 
 #: src/cp.c:229
-#, fuzzy
 msgid ""
 "\n"
 "By default, sparse SOURCE files are detected by a crude heuristic and the\n"
@@ -2128,12 +2285,18 @@ msgstr ""
 "\n"
 "Mặc định là tập tin NGUỒN sparse nhận ra thô sơ và tập tin ĐÍCH tương ứng\n"
 "cũng được sparse. Tính năng này lựa chọn bởi « --sparse=auto ».  Hãy chỉ ra\n"
-"« --sparse=always » để tạo một ĐÍCH sparse kể cả khi tập tin NGUỒN chứa một\n"
-"chuỗi byte không đủ dài.\n"
+"« --sparse=always » để tạo một tập tin ĐÍCH sparse kể cả khi tập tin NGUỒN\n"
+"chứa một chuỗi byte số không đủ dài.\n"
 "Hãy dùng « --sparse=never » để ngăn chặn việc tạo các tập tin sparse.\n"
 "\n"
+"Khi « --reflink[=always] » được chỉ ra, hãy chạy một thao tác sao chép nhẹ "
+"nhàng,\n"
+"trong đó mỗi khối dữ liệu được sao chép chỉ nếu bị sửa đổi. Không thể làm "
+"như thế,\n"
+"không sao chép được hay « --reflink=auto » được chỉ ra thì phục hồi việc sao "
+"chép tiêu chuẩn.\n"
 
-#: src/cp.c:241 src/install.c:995 src/ln.c:387 src/mv.c:317
+#: src/cp.c:241 src/install.c:995 src/ln.c:381 src/mv.c:320
 msgid ""
 "\n"
 "The backup suffix is `~', unless set with --suffix or SIMPLE_BACKUP_SUFFIX.\n"
@@ -2149,7 +2312,7 @@ msgstr ""
 "hoặc qua biến môi trường VERSION_CONTROL.  Có những giá trị:\n"
 "\n"
 
-#: src/cp.c:248 src/install.c:1002 src/ln.c:394 src/mv.c:324
+#: src/cp.c:248 src/install.c:1002 src/ln.c:393 src/mv.c:327
 msgid ""
 "  none, off       never make backups (even if --backup is given)\n"
 "  numbered, t     make numbered backups\n"
@@ -2194,24 +2357,24 @@ msgstr "không tạo được thư mục %s"
 msgid "%s exists but is not a directory"
 msgstr "%s tồn tại nhưng không phải là một thư mục"
 
-#: src/cp.c:566 src/cp.c:1054 src/install.c:406 src/install.c:523 src/ln.c:126
-#: src/ln.c:159 src/ln.c:180 src/ln.c:468 src/mv.c:151 src/mv.c:395
+#: src/cp.c:566 src/cp.c:1054 src/install.c:406 src/install.c:523 src/ln.c:117
+#: src/ln.c:147 src/ln.c:168 src/ln.c:473 src/mv.c:151 src/mv.c:398
 #, c-format
 msgid "accessing %s"
 msgstr "đang truy cập %s"
 
-#: src/cp.c:586 src/install.c:597 src/ln.c:498 src/mv.c:428 src/shred.c:1189
-#: src/touch.c:440 src/truncate.c:359
+#: src/cp.c:586 src/install.c:597 src/ln.c:503 src/mv.c:431 src/shred.c:1189
+#: src/touch.c:432 src/truncate.c:359
 #, c-format
 msgid "missing file operand"
 msgstr "thiếu toán hạng tập tin"
 
-#: src/cp.c:588 src/install.c:599 src/ln.c:512 src/mv.c:430
+#: src/cp.c:588 src/install.c:599 src/ln.c:517 src/mv.c:433
 #, c-format
 msgid "missing destination file operand after %s"
 msgstr "thiếu toán hạng tập tin đích đến ở sau %s"
 
-#: src/cp.c:597 src/install.c:608 src/mv.c:439
+#: src/cp.c:597 src/install.c:608 src/mv.c:442
 #, c-format
 msgid "cannot combine --target-directory (-t) and --no-target-directory (-T)"
 msgstr ""
@@ -2219,8 +2382,8 @@ msgstr ""
 "directory » (-T) [loại từ lẫn nhau !]"
 
 #: src/cp.c:611 src/cp.c:1056 src/install.c:408 src/install.c:525
-#: src/install.c:621 src/ln.c:128 src/ln.c:470 src/ln.c:526 src/mv.c:397
-#: src/mv.c:453
+#: src/install.c:621 src/ln.c:119 src/ln.c:475 src/ln.c:531 src/mv.c:400
+#: src/mv.c:456
 #, c-format
 msgid "target %s is not a directory"
 msgstr "đích %s không phải là một thư mục"
@@ -2230,7 +2393,7 @@ msgstr "đích %s không phải là một thư mục"
 msgid "with --parents, the destination must be a directory"
 msgstr "đặt tùy chọn « --parents » thì đích đến phải là một thư mục"
 
-#: src/cp.c:1049 src/install.c:518 src/ln.c:463 src/mv.c:390
+#: src/cp.c:1049 src/install.c:518 src/ln.c:468 src/mv.c:393
 #, c-format
 msgid "multiple target directories specified"
 msgstr "đã chỉ ra nhiều thư mục đích đến"
@@ -2240,7 +2403,7 @@ msgstr "đã chỉ ra nhiều thư mục đích đến"
 msgid "cannot make both hard and symbolic links"
 msgstr "không tạo được đồng thời liên kết mềm và cứng"
 
-#: src/cp.c:1101 src/mv.c:460
+#: src/cp.c:1101 src/mv.c:463
 #, c-format
 msgid "options --backup and --no-clobber are mutually exclusive"
 msgstr "hai tùy chọn « -backup » và « -no-clobber » loại từ lẫn nhau"
@@ -2248,9 +2411,9 @@ msgstr "hai tùy chọn « -backup » và « -no-clobber » loại từ lẫn nh
 #: src/cp.c:1107
 #, c-format
 msgid "--reflink can be used only with --sparse=auto"
-msgstr ""
+msgstr "« --reflink » chỉ dùng được với « --sparse=auto »"
 
-#: src/cp.c:1115 src/install.c:582 src/ln.c:534 src/mv.c:468
+#: src/cp.c:1115 src/install.c:582 src/ln.c:539 src/mv.c:471
 msgid "backup type"
 msgstr "kiểu sao lưu"
 
@@ -2862,9 +3025,9 @@ msgstr ""
 "hoặc\n"
 "O    để dùng các ký hiệu thuộc số xen kẽ của miền địa phương (néu có)\n"
 
-#: src/date.c:260 src/dd.c:1867 src/head.c:841 src/md5sum.c:444
-#: src/md5sum.c:746 src/od.c:863 src/od.c:1914 src/pr.c:1175 src/pr.c:1371
-#: src/pr.c:1493 src/stty.c:847 src/tac.c:535 src/tail.c:335 src/tee.c:126
+#: src/date.c:260 src/dd.c:1867 src/head.c:841 src/md5sum.c:445
+#: src/md5sum.c:749 src/od.c:863 src/od.c:1914 src/pr.c:1176 src/pr.c:1372
+#: src/pr.c:1494 src/stty.c:847 src/tac.c:535 src/tail.c:335 src/tee.c:126
 #: src/tr.c:1892 src/tsort.c:523 src/wc.c:193
 #, c-format
 msgid "standard input"
@@ -2906,13 +3069,13 @@ msgstr ""
 msgid "cannot set date"
 msgstr "không đặt được ngày"
 
-#: src/date.c:539 src/du.c:413
+#: src/date.c:539 src/du.c:411
 #, c-format
 msgid "time %s is out of range"
 msgstr "thời gian %s vượt ra ngoài giới hạn"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/dd.c:46 src/factor.c:43 src/rm.c:64 src/tail.c:61 src/touch.c:41
+#: src/dd.c:46 src/factor.c:43 src/rm.c:41 src/tail.c:61 src/touch.c:42
 #: src/wc.c:49
 msgid "Paul Rubin"
 msgstr "Paul Rubin"
@@ -3182,9 +3345,9 @@ msgid "closing output file %s"
 msgstr "đang đóng tập tin ra %s"
 
 #: src/dd.c:850
-#, fuzzy, c-format
+#, c-format
 msgid "failed to turn off O_DIRECT: %s"
-msgstr "không chạy được câu lệnh %s"
+msgstr "không tắt được O_DIRECT: %s"
 
 #: src/dd.c:904 src/dd.c:1653
 #, c-format
@@ -3306,70 +3469,70 @@ msgstr ""
 "byte) khối"
 
 #: src/dd.c:1932
-#, fuzzy, c-format
+#, c-format
 msgid "failed to truncate to %<PRIuMAX> bytes in output file %s"
-msgstr "đang cắt ngắn ở %<PRIuMAX> byte trong tập tin kết quả %s"
+msgstr "lỗi cắt ngắn ở %<PRIuMAX> byte trong tập tin kết quả %s"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/df.c:42 src/du.c:54 src/expr.c:151 src/kill.c:43 src/pathchk.c:39
-#: src/shuf.c:37 src/sleep.c:36 src/sort.c:61
+#: src/df.c:41 src/du.c:54 src/expr.c:153 src/kill.c:43 src/pathchk.c:39
+#: src/shuf.c:37 src/sleep.c:36 src/sort.c:62
 msgid "Paul Eggert"
 msgstr "Paul Eggert"
 
-#: src/df.c:152
+#: src/df.c:151
 msgid "Filesystem    Type"
 msgstr "Hệ thống tập tin  Kiểu"
 
-#: src/df.c:154
+#: src/df.c:153
 msgid "Filesystem        "
 msgstr "Hệ thống tập tin        "
 
-#: src/df.c:157
+#: src/df.c:156
 #, c-format
 msgid "    Inodes   IUsed   IFree IUse%%"
 msgstr "    Inode   Idùng  ITrống %%IDùng"
 
-#: src/df.c:161
+#: src/df.c:160
 #, c-format
 msgid "    Size  Used Avail Use%%"
 msgstr "    Cỡ   Dùng  Còn  %%Dùng"
 
-#: src/df.c:163
+#: src/df.c:162
 #, c-format
 msgid "     Size   Used  Avail Use%%"
 msgstr "     Cỡ    Dùng   Còn  %%Dùng"
 
-#: src/df.c:166
+#: src/df.c:165
 #, c-format
 msgid " %s-blocks      Used Available Capacity"
 msgstr " Khối-%s      Dùng       Còn Khả năng"
 
-#: src/df.c:197
+#: src/df.c:196
 #, c-format
 msgid " %4s-blocks      Used Available Use%%"
 msgstr " Khối-%4s       Dùng       Còn %%Dùng"
 
-#: src/df.c:201
+#: src/df.c:200
 #, c-format
 msgid " Mounted on\n"
 msgstr " Đã gắn vào\n"
 
-#: src/df.c:531
+#: src/df.c:530
 #, c-format
 msgid "cannot get current directory"
 msgstr "không lấy được thư mục hiện thời"
 
-#: src/df.c:541 src/df.c:555 src/df.c:583
+#: src/df.c:540 src/df.c:554 src/df.c:582
 #, c-format
 msgid "cannot change to directory %s"
 msgstr "không chuyển đổi được sang thư mục %s"
 
-#: src/df.c:561
+#: src/df.c:560
 #, c-format
 msgid "cannot stat current directory (now %s)"
 msgstr "không lấy được trạng thái về thư mục hiện thời (bây giờ %s)"
 
-#: src/df.c:805
+#: src/df.c:804
 msgid ""
 "Show information about the file system on which each FILE resides,\n"
 "or all file systems by default.\n"
@@ -3379,7 +3542,7 @@ msgstr ""
 "hoặc tất cả các tập tin theo mặc định.\n"
 "\n"
 
-#: src/df.c:813
+#: src/df.c:812
 msgid ""
 "  -a, --all             include dummy file systems\n"
 "  -B, --block-size=SIZE  use SIZE-byte blocks\n"
@@ -3394,7 +3557,7 @@ msgstr ""
 "  -h, --human-readable  hiện kích cỡ ở dạng dễ đọc (v.d. 1K 234M 9G)\n"
 "  -H, --si              như trên nhưng dùng 1000 lũy thừa thay cho 1024\n"
 
-#: src/df.c:820
+#: src/df.c:819
 msgid ""
 "  -i, --inodes          list inode information instead of block usage\n"
 "  -k                    like --block-size=1K\n"
@@ -3408,7 +3571,7 @@ msgstr ""
 "      --no-sync         không gọi sync trước khi lấy thông tin sử dụng (mặc "
 "định)\n"
 
-#: src/df.c:826
+#: src/df.c:825
 msgid ""
 "  -P, --portability     use the POSIX output format\n"
 "      --sync            invoke sync before getting usage info\n"
@@ -3424,20 +3587,20 @@ msgstr ""
 "  -x, --exclude-type=KIỂU  chỉ liệt kê các hệ thông tập tin không phải KIỂU\n"
 "  -v                    (bị lờ đi)\n"
 
-#: src/df.c:974
+#: src/df.c:973
 #, c-format
 msgid "file system type %s both selected and excluded"
 msgstr "dạng hệ thống tập tin %s đã được cả chọn và loại bỏ"
 
-#: src/df.c:1022
+#: src/df.c:1021
 msgid "Warning: "
 msgstr "Cảnh báo : "
 
-#: src/df.c:1024
+#: src/df.c:1023
 msgid "cannot read table of mounted file systems"
 msgstr "không đọc được bảng các hệ thông tập tin đã gắn"
 
-#: src/df.c:1052
+#: src/df.c:1051
 #, c-format
 msgid "no file systems processed"
 msgstr "không có hệ thống tập tin được xử lý"
@@ -3447,7 +3610,7 @@ msgstr "không có hệ thống tập tin được xử lý"
 msgid "H. Peter Anvin"
 msgstr "H. Peter Anvin"
 
-#: src/dircolors.c:98 src/uptime.c:197 src/users.c:106
+#: src/dircolors.c:98 src/uptime.c:201 src/users.c:106
 #, c-format
 msgid "Usage: %s [OPTION]... [FILE]\n"
 msgstr "Sử dụng: %s [TÙY_CHỌN]... [TẬP_TIN]\n"
@@ -3547,7 +3710,7 @@ msgstr ""
 "  %s /usr/bin/sort  Xuất « /usr/bin ».\n"
 "  %s stdio.h        Xuất « . ».\n"
 
-#: src/du.c:268 src/sort.c:316 src/wc.c:112
+#: src/du.c:266 src/sort.c:317 src/wc.c:112
 #, c-format
 msgid ""
 "Usage: %s [OPTION]... [FILE]...\n"
@@ -3556,7 +3719,7 @@ msgstr ""
 "Sử dụng: %s [TÙY_CHỌN]... [TẬP_TIN]...\n"
 "  hoặc:  %s [TÙY_CHỌN]... --files0-from=F\n"
 
-#: src/du.c:272
+#: src/du.c:270
 msgid ""
 "Summarize disk usage of each FILE, recursively for directories.\n"
 "\n"
@@ -3564,7 +3727,7 @@ msgstr ""
 "Tính tổng không gian đĩa mỗi TẬP_TIN sử dụng, đệ quy cho mỗi thư mục.\n"
 "\n"
 
-#: src/du.c:279
+#: src/du.c:277
 msgid ""
 "  -a, --all             write counts for all files, not just directories\n"
 "      --apparent-size   print apparent sizes, rather than disk usage; "
@@ -3580,7 +3743,7 @@ msgstr ""
 "                          lớn hơn do các lỗ hổng trong tập tin (« sparse »),\n"
 "                          sự phân mảnh, khối gián tiếp, và tương tự\n"
 
-#: src/du.c:286
+#: src/du.c:284
 msgid ""
 "  -B, --block-size=SIZE  use SIZE-byte blocks\n"
 "  -b, --bytes           equivalent to `--apparent-size --block-size=1'\n"
@@ -3594,7 +3757,7 @@ msgstr ""
 "  -D, --dereference-args  không theo liên kết mềm được liệt kê trên dòng "
 "lệnh\n"
 
-#: src/du.c:293
+#: src/du.c:291
 msgid ""
 "      --files0-from=F   summarize disk usage of the NUL-terminated file\n"
 "                          names specified in file F;\n"
@@ -3611,7 +3774,7 @@ msgstr ""
 "  -h, --human-readable  in kích cỡ với định dạng dễ đọc (v.d. 1K 234M 2G)\n"
 "      --si              giống « -h », nhưng dùng 1000 lũy thừa thay cho 1024\n"
 
-#: src/du.c:301
+#: src/du.c:299
 msgid ""
 "  -k                    like --block-size=1K\n"
 "  -l, --count-links     count sizes many times if hard linked\n"
@@ -3621,7 +3784,7 @@ msgstr ""
 "  -l, --count-links     tính kích cỡ rất nhiều lần nếu có liên kết cứng\n"
 "  -m                    giống « --block-size=1M »\n"
 
-#: src/du.c:306
+#: src/du.c:304
 msgid ""
 "  -L, --dereference     dereference all symbolic links\n"
 "  -P, --no-dereference  don't follow any symbolic links (this is the "
@@ -3638,7 +3801,7 @@ msgstr ""
 "  -S, --separate-dirs   không thêm kích cơ của thư mục con\n"
 "  -s, --summarize       chỉ hiển thị tổng số cho mỗi đối số\n"
 
-#: src/du.c:313
+#: src/du.c:311
 msgid ""
 "  -x, --one-file-system    skip directories on different file systems\n"
 "  -X, --exclude-from=FILE  exclude files that match any pattern in FILE\n"
@@ -3658,7 +3821,7 @@ msgstr ""
 "                           chỉ nếu nó nằm ≤ N bậc dưới đối số dòng lệnh;\n"
 "                           « --max-depth=0 » là tương tự như « --summarize »\n"
 
-#: src/du.c:322
+#: src/du.c:320
 msgid ""
 "      --time            show time of the last modification of any file in "
 "the\n"
@@ -3686,60 +3849,55 @@ msgstr ""
 "                                • +ĐỊNH_DẠNG\n"
 "                              ĐỊNH_DẠNG được giải thích như « date »\n"
 
-#: src/du.c:751
+#: src/du.c:758
 #, c-format
 msgid "invalid maximum depth %s"
 msgstr "sai độ sâu tối đa %s"
 
-#: src/du.c:760
-#, c-format
-msgid "the --megabytes option is deprecated; use -m instead"
-msgstr "tùy chọn « --megabytes » bị phản đối: dùng « -m » để thay thế"
-
-#: src/du.c:848
+#: src/du.c:851
 #, c-format
 msgid "cannot both summarize and show all entries"
 msgstr "không thể đồng thời tóm tắt, và hiển thị mọi mục"
 
-#: src/du.c:855
+#: src/du.c:858
 #, c-format
 msgid "warning: summarizing is the same as using --max-depth=0"
 msgstr "cảnh báo : tóm tắt là giống với sử dụng « --max-depth=0 »"
 
-#: src/du.c:861
+#: src/du.c:864
 #, c-format
 msgid "warning: summarizing conflicts with --max-depth=%lu"
 msgstr "cảnh báo : tóm tắt xung đột với « --max-depth=%lu »"
 
-#: src/du.c:927 src/sort.c:3535 src/wc.c:656
+#: src/du.c:930 src/sort.c:3536 src/wc.c:656
 msgid "file operands cannot be combined with --files0-from"
 msgstr "toán hạng tập tin không thể kết hợp với « --file0-from »"
 
-#: src/du.c:964 src/md5sum.c:552 src/od.c:903 src/tac.c:239 src/tac.c:350
+#: src/du.c:967 src/md5sum.c:551 src/od.c:903 src/tac.c:239 src/tac.c:350
 #: src/tac.c:481 src/tac.c:557 src/wc.c:718
 #, c-format
 msgid "%s: read error"
 msgstr "%s: lỗi đọc"
 
-#: src/du.c:978 src/sort.c:3564 src/wc.c:731
+#: src/du.c:981 src/sort.c:3565 src/wc.c:731
 #, c-format
 msgid "when reading file names from stdin, no file name of %s allowed"
 msgstr ""
 "đọc các tên tập tin từ đầu vào tiêu chuẩn thì không cho phép tên tập tin %s"
 
-#: src/du.c:995 src/du.c:1003 src/wc.c:744 src/wc.c:752
+#: src/du.c:998 src/du.c:1006 src/wc.c:744 src/wc.c:752
 msgid "invalid zero-length file name"
 msgstr "sai tên tập tin chiều dài bằng không"
 
-#: src/du.c:1020 src/head.c:152 src/head.c:265 src/head.c:337 src/head.c:541
+#: src/du.c:1023 src/head.c:152 src/head.c:265 src/head.c:337 src/head.c:541
 #: src/head.c:623 src/head.c:695 src/head.c:753 src/head.c:777 src/tail.c:404
 #: src/tail.c:492 src/tail.c:541 src/tail.c:634 src/tail.c:762 src/tail.c:810
-#: src/tail.c:849 src/tail.c:1606 src/tail.c:1635 src/uniq.c:393
+#: src/tail.c:849 src/tail.c:1629 src/tail.c:1658 src/uniq.c:394
 #, c-format
 msgid "error reading %s"
 msgstr "lỗi đọc %s"
 
-#: src/du.c:1023 src/ls.c:2575 src/wc.c:774
+#: src/du.c:1026 src/ls.c:2577 src/wc.c:774
 msgid "total"
 msgstr "tổng"
 
@@ -3794,27 +3952,21 @@ msgid ""
 "\n"
 "If -e is in effect, the following sequences are recognized:\n"
 "\n"
-"  \\0NNN   the character whose ASCII code is NNN (octal)\n"
-"  \\\\     backslash\n"
-"  \\a     alert (BEL)\n"
-"  \\b     backspace\n"
 msgstr ""
-"\n"
-"Nếu « -e » hoạt động, thì nhận ra những chuỗi sau :\n"
-"\n"
-"  \\0NNN   ký tự có mã ASCII là NNN (bát phân)\n"
-"  \\\\     xuyệc ngược\n"
-"  \\a     cảnh giác (BEL)\n"
-"  \\b     xoá lùi\n"
 
-#: src/echo.c:71
+#: src/echo.c:67 src/printf.c:106
+#, fuzzy
 msgid ""
-"  \\c     produce no further output\n"
-"  \\f     form feed\n"
-"  \\n     new line\n"
-"  \\r     carriage return\n"
-"  \\t     horizontal tab\n"
-"  \\v     vertical tab\n"
+"  \\\\      backslash\n"
+"  \\a      alert (BEL)\n"
+"  \\b      backspace\n"
+"  \\c      produce no further output\n"
+"  \\e      escape\n"
+"  \\f      form feed\n"
+"  \\n      new line\n"
+"  \\r      carriage return\n"
+"  \\t      horizontal tab\n"
+"  \\v      vertical tab\n"
 msgstr ""
 "  \\c     không xuất gì nữa\n"
 "  \\f     thụt dòng\n"
@@ -3823,29 +3975,37 @@ msgstr ""
 "  \\t     tab ngang\n"
 "  \\v     tab dọc\n"
 
+#: src/echo.c:79
+msgid ""
+"  \\0NNN   byte with octal value NNN (1 to 3 digits)\n"
+"  \\xHH    byte with hexadecimal value HH (1 to 2 digits)\n"
+msgstr ""
+
 #. This is a proper name. See the gettext manual, section Names.
-#: src/env.c:91 src/printenv.c:46 src/whoami.c:36
+#: src/env.c:32 src/printenv.c:45 src/whoami.c:36
 msgid "Richard Mlynarik"
 msgstr "Richard Mlynarik"
 
-#: src/env.c:113
+#: src/env.c:53
 #, c-format
 msgid "Usage: %s [OPTION]... [-] [NAME=VALUE]... [COMMAND [ARG]...]\n"
 msgstr "Sử dụng: %s [TÙY_CHỌN]... [-] [TÊN=GIÁ_TRỊ]... [LỆNH [ĐỐI_SỐ]...]\n"
 
-#: src/env.c:116
+#: src/env.c:56
+#, fuzzy
 msgid ""
 "Set each NAME to VALUE in the environment and run COMMAND.\n"
 "\n"
-"  -i, --ignore-environment   start with an empty environment\n"
-"  -u, --unset=NAME           remove variable from the environment\n"
+"  -i, --ignore-environment  start with an empty environment\n"
+"  -0, --null           end each output line with 0 byte rather than newline\n"
+"  -u, --unset=NAME     remove variable from the environment\n"
 msgstr ""
 "Đặt mỗi GIÁ_TRỊ cho TÊN trong môi trường và chạy câu LỆNH.\n"
 "\n"
 "  -i, --ignore-environment   bắt đầu với một môi trường rỗng\n"
 "  -u, --unset=TÊN            xóa biến TÊN khỏi môi trường\n"
 
-#: src/env.c:124
+#: src/env.c:65
 msgid ""
 "\n"
 "A mere - implies -i.  If no COMMAND, print the resulting environment.\n"
@@ -3853,6 +4013,21 @@ msgstr ""
 "\n"
 "Một « - » nghĩa là « -i ».  Nếu không có câu LỆNH, thì in ra môi trường kết "
 "quả.\n"
+
+#: src/env.c:121
+#, fuzzy, c-format
+msgid "cannot unset %s"
+msgstr "không chạy được %s"
+
+#: src/env.c:131
+#, fuzzy, c-format
+msgid "cannot set %s"
+msgstr "không thể lấy trạng thái (stat) về %s"
+
+#: src/env.c:145
+#, c-format
+msgid "cannot specify --null (-0) with command"
+msgstr ""
 
 #: src/expand.c:107
 msgid ""
@@ -3906,16 +4081,16 @@ msgid "input line is too long"
 msgstr "dòng nhập vào quá dài"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/expr.c:149 src/ln.c:39 src/mv.c:41 src/tee.c:33
+#: src/expr.c:151 src/ln.c:39 src/mv.c:41 src/tee.c:33
 msgid "Mike Parker"
 msgstr "Mike Parker"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/expr.c:150 src/groups.c:36
+#: src/expr.c:152 src/groups.c:36
 msgid "James Youngman"
 msgstr "James Youngman"
 
-#: src/expr.c:202
+#: src/expr.c:204
 #, c-format
 msgid ""
 "Usage: %s EXPRESSION\n"
@@ -3924,7 +4099,7 @@ msgstr ""
 "Sử dụng: %s BIỂU_THỨC\n"
 "  hoặc:  %s TÙY_CHỌN\n"
 
-#: src/expr.c:210
+#: src/expr.c:212
 msgid ""
 "\n"
 "Print the value of EXPRESSION to standard output.  A blank line below\n"
@@ -3944,7 +4119,7 @@ msgstr ""
 "  ĐỐI_SỐ1 & ĐỐI_SỐ2   ĐỐI_SỐ1 nếu mỗi đối số không phải rỗng hay 0, ngược "
 "lại thì 0\n"
 
-#: src/expr.c:219
+#: src/expr.c:221
 msgid ""
 "\n"
 "  ARG1 < ARG2       ARG1 is less than ARG2\n"
@@ -3962,7 +4137,7 @@ msgstr ""
 "  ĐỐI_SỐ1 >= ĐỐI_SỐ2      ĐỐI_SỐ1 lớn hơn hoặc bằng ĐỐI_SỐ2\n"
 "  ĐỐI_SỐ1 > ĐỐI_SỐ2       ĐỐI_SỐ1 lớn hơn ĐỐI_SỐ2\n"
 
-#: src/expr.c:228
+#: src/expr.c:230
 msgid ""
 "\n"
 "  ARG1 + ARG2       arithmetic sum of ARG1 and ARG2\n"
@@ -3972,7 +4147,7 @@ msgstr ""
 "  ĐỐI_SỐ1 + ĐỐI_SỐ2       tổng số học của ĐỐI_SỐ1 và ĐỐI_SỐ2\n"
 "  ĐỐI_SỐ1 - ĐỐI_SỐ2       hiệu số học của ĐỐI_SỐ1 và ĐỐI_SỐ2\n"
 
-#: src/expr.c:235
+#: src/expr.c:237
 #, no-c-format
 msgid ""
 "\n"
@@ -3985,7 +4160,7 @@ msgstr ""
 "  ĐỐI_SỐ1 / ĐỐI_SỐ2       thương số học của ĐỐI_SỐ1 chia cho ĐỐI_SỐ2\n"
 "  ĐỐI_SỐ1 % ĐỐI_SỐ2       phần dư khi ĐỐI_SỐ1 chia cho ĐỐI_SỐ2\n"
 
-#: src/expr.c:241
+#: src/expr.c:243
 msgid ""
 "\n"
 "  STRING : REGEXP   anchored pattern match of REGEXP in STRING\n"
@@ -4003,7 +4178,7 @@ msgstr ""
 "  index CHUỖI KÝ_TỰ        chỉ mục trong CHUỖI ở đó tìm thấy KÝ_TỰ, hoặc 0\n"
 "  length CHUỖI             chiều dài CHUỖI\n"
 
-#: src/expr.c:250
+#: src/expr.c:252
 msgid ""
 "  + TOKEN                    interpret TOKEN as a string, even if it is a\n"
 "                               keyword like `match' or an operator like `/'\n"
@@ -4016,7 +4191,7 @@ msgstr ""
 "\n"
 "  ( BIỂU_THỨC )            giá trị của BIỂU_THỨC\n"
 
-#: src/expr.c:256
+#: src/expr.c:258
 msgid ""
 "\n"
 "Beware that many operators need to be escaped or quoted for shells.\n"
@@ -4035,7 +4210,7 @@ msgstr ""
 "Nếu không dùng « \\( » và « \\) », chúng sẽ trả lại số ký tự tương ứng hoặc "
 "0.\n"
 
-#: src/expr.c:263
+#: src/expr.c:265
 msgid ""
 "\n"
 "Exit status is 0 if EXPRESSION is neither null nor 0, 1 if EXPRESSION is "
@@ -4049,27 +4224,27 @@ msgstr ""
 " • 2 nếu BIỂU_THỨC sai cú pháp\n"
 " • 3 nếu gặp lỗi.\n"
 
-#: src/expr.c:277
+#: src/expr.c:279
 #, c-format
 msgid "syntax error"
 msgstr "lỗi cú pháp"
 
-#: src/expr.c:596 src/ptx.c:285
+#: src/expr.c:598 src/ptx.c:285
 #, c-format
 msgid "error in regular expression matcher"
 msgstr "lỗi trong hàm khớp biểu thức chính quy"
 
-#: src/expr.c:788 src/expr.c:825
+#: src/expr.c:790 src/expr.c:827
 #, c-format
 msgid "non-numeric argument"
 msgstr "đối số không phải thuộc số"
 
-#: src/expr.c:790 src/truncate.c:326
+#: src/expr.c:792 src/truncate.c:326
 #, c-format
 msgid "division by zero"
 msgstr "chia cho không"
 
-#: src/expr.c:886
+#: src/expr.c:888
 #, c-format
 msgid "the strings compared were %s and %s"
 msgstr "đã so sánh hai chuỗi %s và %s"
@@ -4187,13 +4362,13 @@ msgstr ""
 "  -s, --spaces        ngắt dòng ở khoảng trắng\n"
 "  -w, --width=RỘNG    dùng RỘNG cột thay cho 80\n"
 
-#: src/fold.c:287 src/pr.c:835
+#: src/fold.c:287 src/pr.c:836
 #, c-format
 msgid "invalid number of columns: %s"
 msgstr "sai số cột: %s"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/getlimits.c:29 src/stdbuf.c:36 src/timeout.c:74 src/truncate.c:42
+#: src/getlimits.c:29 src/stdbuf.c:38 src/timeout.c:74 src/truncate.c:42
 msgid "Padraig Brady"
 msgstr "Padraig Brady"
 
@@ -4211,17 +4386,17 @@ msgstr ""
 "văn lệnh trình bao.\n"
 "\n"
 
-#: src/group-list.c:68 src/id.c:306 src/setuidgid.c:184
+#: src/group-list.c:67 src/id.c:305 src/setuidgid.c:184
 #, c-format
 msgid "failed to get groups for user %s"
 msgstr "lỗi lấy các nhóm cho người dùng %s"
 
-#: src/group-list.c:73 src/id.c:311
+#: src/group-list.c:72 src/id.c:310
 #, c-format
 msgid "failed to get groups for the current process"
 msgstr "lỗi lấy các nhóm cho tiến trình hiện thời"
 
-#: src/group-list.c:104
+#: src/group-list.c:102
 #, c-format
 msgid "cannot find name for group ID %lu"
 msgstr "không tìm thấy tên cho nhóm ID %lu"
@@ -4260,7 +4435,6 @@ msgstr ""
 "\n"
 
 #: src/head.c:121
-#, fuzzy
 msgid ""
 "  -c, --bytes=[-]K         print the first K bytes of each file;\n"
 "                             with the leading `-', print all but the last\n"
@@ -4269,11 +4443,11 @@ msgid ""
 "                             with the leading `-', print all but the last\n"
 "                             K lines of each file\n"
 msgstr ""
-"  -c, --bytes=[-]N         in ra N byte đầu tiên của mỗi tập tin;\n"
-"                             khi có « - » ở đầu, in ra tất cả trừ N byte\n"
+"  -c, --bytes=[-]K         in ra N byte đầu tiên của mỗi tập tin;\n"
+"                             khi có « - » ở đầu, in ra tất cả trừ K byte\n"
 "                             cuối cùng của mỗi tập tin\n"
-"  -n, --lines=[-]N         in ra N dòng đầu tiên thay cho 10;\n"
-"                             khi có « - » ở đầu, in ra tất cả trừ N dòng\n"
+"  -n, --lines=[-]K         in ra K dòng đầu tiên thay cho 10;\n"
+"                             khi có « - » ở đầu, in ra tất cả trừ K dòng\n"
 "                             cuối cùng của mỗi tập tin\n"
 
 #: src/head.c:129
@@ -4285,7 +4459,6 @@ msgstr ""
 "  -v, --verbose            luôn luôn in ra phần đầu cho biết tên tập tin\n"
 
 #: src/head.c:135
-#, fuzzy
 msgid ""
 "\n"
 "K may have a multiplier suffix:\n"
@@ -4293,7 +4466,7 @@ msgid ""
 "GB 1000*1000*1000, G 1024*1024*1024, and so on for T, P, E, Z, Y.\n"
 msgstr ""
 "\n"
-"N có thể đặt các hậu tố nhân sau :\n"
+"K có thể đặt các hậu tố nhân sau :\n"
 "b 512, kB 1000, K 1024, MB 1000*1000, M 1024*1024,\n"
 "GB 1000*1000*1000, G 1024*1024*1024, và tương tự với T, P, E, Z, Y.\n"
 
@@ -4340,11 +4513,11 @@ msgstr "số các dòng"
 msgid "number of bytes"
 msgstr "số các byte"
 
-#: src/head.c:889 src/tail.c:1770
+#: src/head.c:889 src/tail.c:1793
 msgid "invalid number of lines"
 msgstr "sai số các dòng"
 
-#: src/head.c:890 src/tail.c:1771
+#: src/head.c:890 src/tail.c:1794
 msgid "invalid number of bytes"
 msgstr "sai số các byte"
 
@@ -4393,7 +4566,7 @@ msgid "cannot determine hostname"
 msgstr "không thể quyết định tên máy"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/id.c:38 src/touch.c:42
+#: src/id.c:38 src/touch.c:43
 msgid "Arnold Robbins"
 msgstr "Arnold Robbins"
 
@@ -4484,11 +4657,11 @@ msgstr " euid=%lu"
 msgid " egid=%lu"
 msgstr " egid=%lu"
 
-#: src/id.c:318
+#: src/id.c:317
 msgid " groups="
 msgstr " nhóm="
 
-#: src/id.c:332
+#: src/id.c:333
 #, c-format
 msgid " context=%s"
 msgstr "ngữ cảnh=%s"
@@ -4534,7 +4707,7 @@ msgstr "không cho phép dùng thư mục đích khi cài đặt một thư mụ
 msgid "cannot force target context to %s and preserve it"
 msgstr "không thể ép buộc ngữ cảnh đích thành %s rồi bảo tồn nó"
 
-#: src/install.c:629 src/mkdir.c:203 src/stdbuf.c:338
+#: src/install.c:629 src/mkdir.c:203 src/stdbuf.c:327
 #, c-format
 msgid "invalid mode %s"
 msgstr "chế độ sai %s"
@@ -4574,7 +4747,7 @@ msgstr "không thay đổi được quyền sở hữu của %s"
 msgid "cannot set time stamps for %s"
 msgstr "không đặt được nhãn thời gian cho %s"
 
-#: src/install.c:851 src/timeout.c:288
+#: src/install.c:851 src/timeout.c:282
 #, c-format
 msgid "fork system call failed"
 msgstr "cuộc gọi hệ thống fork (tạo tiến trình con) bị lỗi"
@@ -4717,11 +4890,11 @@ msgstr ""
 "\t\t\t\t\t\t\tcủa các tập tin và thư mục\n"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/join.c:38 src/sort.c:60
+#: src/join.c:39 src/sort.c:61
 msgid "Mike Haertel"
 msgstr "Mike Haertel"
 
-#: src/join.c:171
+#: src/join.c:172
 msgid ""
 "For each pair of input lines with identical join fields, write a line to\n"
 "standard output.  The default join field is the first, delimited\n"
@@ -4742,7 +4915,7 @@ msgstr ""
 "TẬP_TIN2\n"
 "  -e RỖNG           thay thế các trường nhập thiếu bằng RỖNG\n"
 
-#: src/join.c:180
+#: src/join.c:181
 msgid ""
 "  -i, --ignore-case  ignore differences in case when comparing fields\n"
 "  -j FIELD          equivalent to `-1 FIELD -2 FIELD'\n"
@@ -4755,7 +4928,7 @@ msgstr ""
 "  -t KÝ_TỰ          dùng KÝ_TỰ làm ký tự phân chia trường đưa vào và kết quả "
 "ra\n"
 
-#: src/join.c:186
+#: src/join.c:187
 msgid ""
 "  -v FILENUM        like -a FILENUM, but suppress joined output lines\n"
 "  -1 FIELD          join on this FIELD of file 1\n"
@@ -4773,7 +4946,7 @@ msgstr ""
 "\t\t\t\tcó khả năng ghép cặp\n"
 "  --nocheck-order   đừng kiểm tra dữ liệu nhập vào được sắp xếp đúng không\n"
 
-#: src/join.c:196
+#: src/join.c:197
 msgid ""
 "\n"
 "Unless -t CHAR is given, leading blanks separate fields and are ignored,\n"
@@ -4805,47 +4978,47 @@ msgstr ""
 "Nếu dữ kiện nhập vào không phải được sắp xếp và một số dòng\n"
 "không nối lại được, một thông điệp cảnh báo sẽ được hiển thị.\n"
 
-#: src/join.c:775 src/join.c:974
+#: src/join.c:776 src/join.c:975
 #, c-format
 msgid "invalid field number: %s"
 msgstr "số thứ tự vùng sai: %s"
 
-#: src/join.c:796 src/join.c:805
+#: src/join.c:797 src/join.c:806
 #, c-format
 msgid "invalid field specifier: %s"
 msgstr "sự xác định vùng sai: %s"
 
-#: src/join.c:812
+#: src/join.c:813
 #, c-format
 msgid "invalid file number in field spec: %s"
 msgstr "sai số thứ tự tập tin trong sự xác định trường: %s"
 
-#: src/join.c:855
+#: src/join.c:856
 #, c-format
 msgid "incompatible join fields %lu, %lu"
 msgstr "không tương thích nối lại hai trường %lu, %lu"
 
-#: src/join.c:985
+#: src/join.c:986
 #, c-format
 msgid "conflicting empty-field replacement strings"
 msgstr "xung đột các chuỗi thay thế trường rỗng"
 
-#: src/join.c:1026 src/sort.c:3463
+#: src/join.c:1027 src/sort.c:3464
 #, c-format
 msgid "empty tab"
 msgstr "khoảng tab trống"
 
-#: src/join.c:1032 src/sort.c:3474
+#: src/join.c:1033 src/sort.c:3475
 #, c-format
 msgid "multi-character tab %s"
 msgstr "khoảng tab đa ký tự %s"
 
-#: src/join.c:1036 src/sort.c:3479
+#: src/join.c:1037 src/sort.c:3480
 #, c-format
 msgid "incompatible tabs"
 msgstr "các khoảng tab không tương thích với nhau"
 
-#: src/join.c:1101
+#: src/join.c:1102
 #, c-format
 msgid "both files cannot be standard input"
 msgstr "cả hai tập tin không thể là đầu vào tiêu chuẩn"
@@ -4929,20 +5102,20 @@ msgstr "chưa ghi rõ ID tiến trình"
 #: src/libstdbuf.c:109
 #, c-format
 msgid "failed to allocate a %<PRIuMAX> byte stdio buffer\n"
-msgstr ""
+msgstr "lỗi cấp phát một vùng đệm V/R tiêu chuẩn %<PRIuMAX> byte\n"
 
 #: src/libstdbuf.c:116
-#, fuzzy, c-format
+#, c-format
 msgid "invalid buffering mode %s for %s\n"
-msgstr "sai đặt đối số %s cho %s"
+msgstr "sai đặt chế độ chuyển hoán đệm %s cho %s\n"
 
 #: src/libstdbuf.c:124
 #, c-format
 msgid "could not set buffering of %s to mode %s\n"
-msgstr ""
+msgstr "không đặt được việc chuyển hoán đệm %s thành chế độ %s\n"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/link.c:36 src/unlink.c:36 src/who.c:45
+#: src/link.c:36 src/unlink.c:36 src/who.c:46
 msgid "Michael Stone"
 msgstr "Michael Stone"
 
@@ -4968,47 +5141,47 @@ msgstr ""
 msgid "cannot create link %s to %s"
 msgstr "không tạo được liên kết %s tới %s"
 
-#: src/ln.c:168
+#: src/ln.c:156
 #, c-format
 msgid "%s: hard link not allowed for directory"
 msgstr "%s: không cho phép liên kết cứng tới thư mục"
 
-#: src/ln.c:233
+#: src/ln.c:221
 #, c-format
 msgid "%s: cannot overwrite directory"
 msgstr "%s: không ghi chèn được thư mục"
 
-#: src/ln.c:238
+#: src/ln.c:226
 #, c-format
 msgid "%s: replace %s? "
 msgstr "%s: thay thế %s không? "
 
-#: src/ln.c:315
+#: src/ln.c:307
 #, c-format
 msgid "creating symbolic link %s"
 msgstr "đang tạo liên kết mềm %s"
 
-#: src/ln.c:316
+#: src/ln.c:308
 #, c-format
 msgid "creating symbolic link %s -> %s"
 msgstr "đang tạo liên kết mềm %s -> %s"
 
-#: src/ln.c:318
+#: src/ln.c:310
 #, c-format
 msgid "creating hard link to %.0s%s"
 msgstr "đang tạo liên kết cứng tới %.0s%s"
 
-#: src/ln.c:321
+#: src/ln.c:313
 #, c-format
 msgid "creating hard link %s"
 msgstr "đang tạo liên kết cứng %s"
 
-#: src/ln.c:322
+#: src/ln.c:314
 #, c-format
 msgid "creating hard link %s => %s"
 msgstr "đang tạo liên kết cứng %s => %s"
 
-#: src/ln.c:344
+#: src/ln.c:336
 #, c-format
 msgid ""
 "Usage: %s [OPTION]... [-T] TARGET LINK_NAME   (1st form)\n"
@@ -5021,7 +5194,7 @@ msgstr ""
 "  hoặc:  %s [TÙY_CHỌN]... ĐÍCH... THƯ_MỤC         (dạng thứ 3)\n"
 "  hoặc:  %s [TÙY_CHỌN]... -t THƯ_MỤC ĐÍCH...      (dạng thứ 4)\n"
 
-#: src/ln.c:351
+#: src/ln.c:343
 msgid ""
 "In the 1st form, create a link to TARGET with the name LINK_NAME.\n"
 "In the 2nd form, create a link to TARGET in the current directory.\n"
@@ -5041,7 +5214,7 @@ msgstr ""
 "một liên kết tương đối được giải thích tương ứng với thư mục cấp trên.\n"
 "\n"
 
-#: src/ln.c:364
+#: src/ln.c:356
 msgid ""
 "      --backup[=CONTROL]      make a backup of each existing destination "
 "file\n"
@@ -5065,19 +5238,27 @@ msgstr ""
 "siêu người dùng)\n"
 "  -f, --force                 xóa các tập tin tồn tại ở nơi đến\n"
 
-#: src/ln.c:372
+#: src/ln.c:364
 msgid ""
+"  -i, --interactive           prompt whether to remove destinations\n"
+"  -L, --logical               make hard links to symbolic link references\n"
 "  -n, --no-dereference        treat destination that is a symlink to a\n"
 "                                directory as if it were a normal file\n"
-"  -i, --interactive           prompt whether to remove destinations\n"
+"  -P, --physical              make hard links directly to symbolic links\n"
 "  -s, --symbolic              make symbolic links instead of hard links\n"
 msgstr ""
-"  -n, --no-dereference        coi nơi đến là liên kết mềm tới thư mục\n"
-"                                như khi nó là một tập tin thông thường\n"
-"  -i, --interactive           hỏi có nên xóa tập tin ở nơi đến hay không\n"
-"  -s, --symbolic              tạo liên kết mềm thay vì liên kết cứng\n"
+"  -i, --interactive           nhắc có nên gỡ bỏ đích hay không\n"
+"  -L, --logical               tạo liên kết cứng đến tham chiếu liên kết "
+"tượng trưng\n"
+"  -n, --no-dereference        xử lý đích là liên kết tượng trưng đến một thư "
+"mục\n"
+"\t\t\tnhư là nó vẫn còn một tập tin tiêu chuẩn\n"
+"  -P, --physical              tạo liên kết cứng trực tiếp đến liên kết tượng "
+"trưng\n"
+"  -s, --symbolic              tạo liên kết tượng trưng thay cho liên kết "
+"cứng\n"
 
-#: src/ln.c:378
+#: src/ln.c:372
 msgid ""
 "  -S, --suffix=SUFFIX         override the usual backup suffix\n"
 "  -t, --target-directory=DIRECTORY  specify the DIRECTORY in which to "
@@ -5091,7 +5272,19 @@ msgstr ""
 "  -T, --no-target-directory   coi TÊN_LIÊN_KẾT là một tập tin thông thường\n"
 "  -v, --verbose               in ra tên của mỗi tập tin đã liên kết\n"
 
-#: src/ln.c:506
+#: src/ln.c:388
+#, c-format
+msgid ""
+"Using -s ignores -L and -P.  Otherwise, the last option specified controls\n"
+"behavior when the source is a symbolic link, defaulting to %s.\n"
+"\n"
+msgstr ""
+"Sử dụng tuỳ chọn « -s » thì lờ cả hai « -L » và « -P ».\n"
+"Không thì tuỳ chọn đưa ra cuối cùng sẽ điều khiển ứng xử\n"
+"khi nguồn là một liên kết tượng trưng; mặc định là %s.\n"
+"\n"
+
+#: src/ln.c:511
 #, c-format
 msgid "cannot combine --target-directory and --no-target-directory"
 msgstr ""
@@ -5126,7 +5319,7 @@ msgstr "không có tên đăng nhập"
 #. Note %b is handled specially by ls and aligned correctly.
 #. Note also that specifying a width as in %5b is erroneous as strftime
 #. will count bytes rather than characters in multibyte locales.
-#: src/ls.c:728
+#: src/ls.c:729
 msgid "%b %e  %Y"
 msgstr "%b %e  %Y"
 
@@ -5135,88 +5328,88 @@ msgstr "%b %e  %Y"
 #. Note %b is handled specially by ls and aligned correctly.
 #. Note also that specifying a width as in %5b is erroneous as strftime
 #. will count bytes rather than characters in multibyte locales.
-#: src/ls.c:741
+#: src/ls.c:742
 msgid "%b %e %H:%M"
 msgstr "%b %e %H:%M"
 
-#: src/ls.c:1556
+#: src/ls.c:1557
 #, c-format
 msgid "ignoring invalid value of environment variable QUOTING_STYLE: %s"
 msgstr ""
 "đang lờ đi giá trị sai của biến môi trường kiểu dáng trích dẫn "
 "QUOTING_STYLE: %s"
 
-#: src/ls.c:1583
+#: src/ls.c:1584
 #, c-format
 msgid "ignoring invalid width in environment variable COLUMNS: %s"
 msgstr "đang lờ đi bề rộng sai trong biến môi trường cột COLUMNS: %s"
 
-#: src/ls.c:1613
+#: src/ls.c:1614
 #, c-format
 msgid "ignoring invalid tab size in environment variable TABSIZE: %s"
 msgstr "đang lờ đi kích cỡ tab sai trong biến môi trường TABSIZE: %s"
 
-#: src/ls.c:1734 src/ptx.c:2043
+#: src/ls.c:1735 src/ptx.c:2043
 #, c-format
 msgid "invalid line width: %s"
 msgstr "sai bề rộng dòng: %s"
 
-#: src/ls.c:1808
+#: src/ls.c:1809
 #, c-format
 msgid "invalid tab size: %s"
 msgstr "sai kích cỡ tab: %s"
 
-#: src/ls.c:1998
+#: src/ls.c:1999
 #, c-format
 msgid "invalid time style format %s"
 msgstr "sai định dạng kiểu thời gian %s"
 
-#: src/ls.c:2044
+#: src/ls.c:2045
 #, c-format
 msgid "error initializing month strings"
 msgstr "lỗi sơ khởi các chuỗi tháng"
 
-#: src/ls.c:2346
+#: src/ls.c:2347
 #, c-format
 msgid "unrecognized prefix: %s"
 msgstr "tiền tố không nhận ra: %s"
 
-#: src/ls.c:2369
+#: src/ls.c:2370
 #, c-format
 msgid "unparsable value for LS_COLORS environment variable"
 msgstr "giá trị không thể phân tích cho biến môi trường màu sắc LS_COLORS"
 
-#: src/ls.c:2446 src/pwd.c:162
+#: src/ls.c:2447 src/pwd.c:162
 #, c-format
 msgid "cannot open directory %s"
 msgstr "không mở được thư mục %s"
 
-#: src/ls.c:2461
+#: src/ls.c:2462
 #, c-format
 msgid "cannot determine device and inode of %s"
 msgstr "không nhận ra thiết bị và inode của %s"
 
-#: src/ls.c:2470
+#: src/ls.c:2471
 #, c-format
 msgid "%s: not listing already-listed directory"
 msgstr "%s: không liệt kê thư mục đã liệt kê"
 
-#: src/ls.c:2546 src/pwd.c:230
+#: src/ls.c:2548 src/pwd.c:230
 #, c-format
 msgid "reading directory %s"
 msgstr "đang đọc thư mục %s"
 
-#: src/ls.c:2556
+#: src/ls.c:2558
 #, c-format
 msgid "closing directory %s"
 msgstr "đang đóng thư mục %s"
 
-#: src/ls.c:3115
+#: src/ls.c:3147
 #, c-format
 msgid "cannot compare file names %s and %s"
 msgstr "không so sánh được tên tập tin %s và %s"
 
-#: src/ls.c:4531
+#: src/ls.c:4553
 msgid ""
 "List information about the FILEs (the current directory by default).\n"
 "Sort entries alphabetically if none of -cftuvSUX nor --sort.\n"
@@ -5226,7 +5419,7 @@ msgstr ""
 "Sắp xếp các mục theo bảng chữ cái nếu không có « -cftuvSUX » hoặc « --sort ».\n"
 "\n"
 
-#: src/ls.c:4539
+#: src/ls.c:4561
 msgid ""
 "  -a, --all                  do not ignore entries starting with .\n"
 "  -A, --almost-all           do not list implied . and ..\n"
@@ -5239,8 +5432,7 @@ msgstr ""
 "  -b, --escape               in ra  giá trị thoát bát phân cho các ký tự "
 "không phải đồ họa\n"
 
-#: src/ls.c:4545
-#, fuzzy
+#: src/ls.c:4567
 msgid ""
 "      --block-size=SIZE      use SIZE-byte blocks.  See SIZE format below\n"
 "  -B, --ignore-backups       do not list implied entries ending with ~\n"
@@ -5250,38 +5442,39 @@ msgid ""
 "                               with -l: show ctime and sort by name\n"
 "                               otherwise: sort by ctime\n"
 msgstr ""
-"      --block-size=CỠ        sử dụng khối kích cỡ CỠ byte\n"
+"      --block-size=CỠ        sử dụng khối kích cỡ CỠ byte. Xem định dạng "
+"kích CỠ ở dưới.\n"
 "  -B, --ignore-backups       không liệt kê các mục kết thúc « ~ » đã ngụ ý\n"
 "  -c                         với « -lt »: sắp xếp theo, và hiển thị ctime\n"
-"                             (thời gian thay đổi cuối cùng của inode)\n"
+"                             (thời gian sửa đổi cuối cùng của thông tin "
+"trạng thái tập tin)\n"
 "                               với « -l »: hiển thị ctime và sắp xếp theo "
 "tên\n"
 "                               nếu không: sắp xếp theo ctime\n"
 
-#: src/ls.c:4553
+#: src/ls.c:4575
 msgid ""
 "  -C                         list entries by columns\n"
-"      --color[=WHEN]         control whether color is used to distinguish "
-"file\n"
-"                               types.  WHEN may be `never', `always', or "
-"`auto'\n"
+"      --color[=WHEN]         colorize the output.  WHEN defaults to "
+"`always'\n"
+"                               or can be `never' or `auto'.  More info "
+"below\n"
 "  -d, --directory            list directory entries instead of contents,\n"
 "                               and do not dereference symbolic links\n"
 "  -D, --dired                generate output designed for Emacs' dired mode\n"
 msgstr ""
 "  -C                         liệt kê các mục theo cột\n"
-"      --color[=KHI]          điều khiển việc dùng màu để phân biệt dạng tập "
-"tin.\n"
+"      --color[=KHI]          phân biệt kết xuất theo màu sắc.\n"
 "                               KHI có thể là:\n"
 "                               • never   không bao giờ\n"
 "                               • always  luôn luôn\n"
-"                               • auto    tự động\n"
+"                               • auto    tự động (mặc định)\n"
 "  -d, --directory            liệt kê mục nhập thư mục thay vì nội dung,\n"
 "                               và không chỉ tới đích của liên kết mềm\n"
-"  -D, --dired                tạo kết quả thích hợp với chế độ dired của "
+"  -D, --dired                tạo kết xuất thích hợp với chế độ dired của "
 "Emacs\n"
 
-#: src/ls.c:4561
+#: src/ls.c:4583
 msgid ""
 "  -f                         do not sort, enable -aU, disable -ls --color\n"
 "  -F, --classify             append indicator (one of */=>@|) to entries\n"
@@ -5304,12 +5497,12 @@ msgstr ""
 "                               • vertical -C       thẳng đứng\n"
 "      --full-time            giống « -l --time-style=full-iso »\n"
 
-#: src/ls.c:4569
+#: src/ls.c:4591
 msgid "  -g                         like -l, but do not list owner\n"
 msgstr ""
 "  -g                         giống « -l », nhưng không liệt kê người sở hữu\n"
 
-#: src/ls.c:4572
+#: src/ls.c:4594
 msgid ""
 "      --group-directories-first\n"
 "                             group directories before files.\n"
@@ -5322,7 +5515,7 @@ msgstr ""
 "\t\t\t\tnhưng bất cứ lần nào dùng « --sort=none » (-U)\n"
 "\t\t\t\tsẽ tắt chức năng nhóm lại.\n"
 
-#: src/ls.c:4578
+#: src/ls.c:4600
 msgid ""
 "  -G, --no-group             in a long listing, don't print group names\n"
 "  -h, --human-readable       with -l, print sizes in human readable format\n"
@@ -5335,7 +5528,7 @@ msgstr ""
 "      --si                   giống trên, nhưng dùng 1000 lũy thừa, không "
 "phải 1024\n"
 
-#: src/ls.c:4584
+#: src/ls.c:4606
 msgid ""
 "  -H, --dereference-command-line\n"
 "                             follow symbolic links listed on the command "
@@ -5356,7 +5549,7 @@ msgstr ""
 "trình bao\n"
 "                               (ghi chèn bởi « -a » hoặc « -A »)\n"
 
-#: src/ls.c:4593
+#: src/ls.c:4615
 msgid ""
 "      --indicator-style=WORD  append indicator with style WORD to entry "
 "names:\n"
@@ -5378,7 +5571,7 @@ msgstr ""
 "trình bao\n"
 "  -k                         giống « --block-size=1K »\n"
 
-#: src/ls.c:4601
+#: src/ls.c:4623
 msgid ""
 "  -l                         use a long listing format\n"
 "  -L, --dereference          when showing file information for a symbolic\n"
@@ -5395,7 +5588,7 @@ msgstr ""
 "  -m                         liệt kê liền nhau các mục, cách nhau bởi dấu "
 "phẩy\n"
 
-#: src/ls.c:4608
+#: src/ls.c:4630
 msgid ""
 "  -n, --numeric-uid-gid      like -l, but list numeric user and group IDs\n"
 "  -N, --literal              print raw entry names (don't treat e.g. "
@@ -5413,7 +5606,7 @@ msgstr ""
 "  -p, --indicator-style=slash\n"
 "                             phụ thêm vào thư mục chỉ thị « / »\n"
 
-#: src/ls.c:4616
+#: src/ls.c:4638
 msgid ""
 "  -q, --hide-control-chars   print ? instead of non graphic characters\n"
 "      --show-control-chars   show non graphic characters as-is (default\n"
@@ -5440,7 +5633,7 @@ msgstr ""
 "                               • c\n"
 "                               • escape        thoát\n"
 
-#: src/ls.c:4624
+#: src/ls.c:4646
 msgid ""
 "  -r, --reverse              reverse order while sorting\n"
 "  -R, --recursive            list subdirectories recursively\n"
@@ -5452,7 +5645,7 @@ msgstr ""
 "  -s, --size                 in kích cỡ đã cấp phát của mỗi tập tin, theo "
 "khối\n"
 
-#: src/ls.c:4629
+#: src/ls.c:4651
 msgid ""
 "  -S                         sort by file size\n"
 "      --sort=WORD            sort by WORD instead of name: none -U,\n"
@@ -5481,7 +5674,7 @@ msgstr ""
 "                               dùng thời gian chỉ ra làm tiêu\n"
 "                               chuẩn sắp xếp nếu « --sort=time »\n"
 
-#: src/ls.c:4638
+#: src/ls.c:4660
 msgid ""
 "      --time-style=STYLE     with -l, show times using style STYLE:\n"
 "                             full-iso, long-iso, iso, locale, +FORMAT.\n"
@@ -5510,7 +5703,7 @@ msgstr ""
 "                               KIỂU_DÁNG chỉ có tác động bên ngoài miền địa "
 "phương POSIX.\n"
 
-#: src/ls.c:4647
+#: src/ls.c:4669
 msgid ""
 "  -t                         sort by modification time\n"
 "  -T, --tabsize=COLS         assume tab stops at each COLS instead of 8\n"
@@ -5518,7 +5711,7 @@ msgstr ""
 "  -t                         sắp xếp theo thời gian sửa đổi\n"
 "  -T, --tabsize=CỘT          giả sử chiều dài tab là CỘT thay cho 8\n"
 
-#: src/ls.c:4651
+#: src/ls.c:4673
 msgid ""
 "  -u                         with -lt: sort by, and show, access time\n"
 "                               with -l: show access time and sort by name\n"
@@ -5536,7 +5729,7 @@ msgstr ""
 "  -v                         sắp xếp các số thứ tự (phiên bản) một cách tự "
 "nhiên bên trong văn bản\n"
 
-#: src/ls.c:4658
+#: src/ls.c:4680
 msgid ""
 "  -w, --width=COLS           assume screen width instead of current value\n"
 "  -x                         list entries by lines instead of by columns\n"
@@ -5553,25 +5746,24 @@ msgstr ""
 "tin\n"
 "  -1                         liệt kê một tập tin trên mỗi dòng\n"
 
-#: src/ls.c:4668
+#: src/ls.c:4690
 msgid ""
 "\n"
-"By default, color is not used to distinguish types of files.  That is\n"
-"equivalent to using --color=none.  Using the --color option without the\n"
-"optional WHEN argument is equivalent to using --color=always.  With\n"
-"--color=auto, color codes are output only if standard output is connected\n"
-"to a terminal (tty).  The environment variable LS_COLORS can influence the\n"
-"colors, and can be set easily by the dircolors command.\n"
+"Using color to distinguish file types is disabled both by default and\n"
+"with --color=never.  With --color=auto, ls emits color codes only when\n"
+"standard output is connected to a terminal.  The LS_COLORS environment\n"
+"variable can change the settings.  Use the dircolors command to set it.\n"
 msgstr ""
 "\n"
-"Theo mặc định, không dùng màu để phân biệt dạng của tập tin,\n"
-"tương đương với dùng « --color=none ». Dùng tùy chọn « --color »\n"
-"và không có tham số KHI tương đương với sử dụng « --color=always ».\n"
-"Với « --color=auto », chỉ xuất các mã màu khi đầu ra tiêu chuẩn\n"
-"kết nối tới một thiết bị cuối (tty). Biến môi trường LS_COLORS có thể\n"
-"ảnh hưởng đến màu sắc, cũng đặt dễ dàng bằng lệnh « dircolors ».\n"
+"Chức năng sử dụng màu sắc để phân biệt các kiểu tập tin khác nhau\n"
+"cũng bị tắt theo mặc định và khi dùng tuỳ chọn « --color=never »\n"
+"(màu = không bao giờ). Khi dùng « --color=auto » (màu = tự động),\n"
+"lệnh liệt kê « ls » chỉ xuất mã màu khi đầu ra tiêu chuẩn được kết nối\n"
+"đến một thiết bị cuối. Biến môi trường « LS_COLORS » (màu sắc của ls)\n"
+"cũng có khả năng sửa đổi thiết lập này. Hãy sử dụng lệnh « dircolors » để đặt "
+"nó.\n"
 
-#: src/ls.c:4677
+#: src/ls.c:4697
 msgid ""
 "\n"
 "Exit status:\n"
@@ -5674,17 +5866,17 @@ msgstr ""
 "một dòng ghi tổng kiểm tra, một ký tự chỉ dạng (« * » cho nhị phân,\n"
 "« » cho văn bản), và tên cho mỗi TẬP_TIN.\n"
 
-#: src/md5sum.c:469
+#: src/md5sum.c:470
 #, c-format
 msgid "%s: too many checksum lines"
 msgstr "%s: quá nhiều dòng tổng kiểm tra"
 
-#: src/md5sum.c:491
+#: src/md5sum.c:492
 #, c-format
 msgid "%s: %<PRIuMAX>: improperly formatted %s checksum line"
 msgstr "%s: %<PRIuMAX>: dòng tổng kiểm tra %s có định dạng không đúng"
 
-#: src/md5sum.c:514
+#: src/md5sum.c:515
 #, c-format
 msgid "%s: FAILED open or read\n"
 msgstr "%s: mở hoặc đọc BỊ LỖI\n"
@@ -5697,43 +5889,43 @@ msgstr "BỊ LỖI"
 msgid "OK"
 msgstr "OK"
 
-#: src/md5sum.c:565
+#: src/md5sum.c:564
 #, c-format
 msgid "%s: no properly formatted %s checksum lines found"
 msgstr "%s: không tìm thấy dòng tổng kiểm tra %s với định dạng đúng"
 
-#: src/md5sum.c:574
+#: src/md5sum.c:573
 #, c-format
 msgid "WARNING: %<PRIuMAX> of %<PRIuMAX> listed file could not be read"
 msgid_plural "WARNING: %<PRIuMAX> of %<PRIuMAX> listed files could not be read"
 msgstr[0] ""
 "CẢNH BÁO : không đọc được %<PRIuMAX> trên %<PRIuMAX> tập tin đã liệt kê"
 
-#: src/md5sum.c:586
+#: src/md5sum.c:585
 #, c-format
 msgid "WARNING: %<PRIuMAX> of %<PRIuMAX> computed checksum did NOT match"
 msgid_plural ""
 "WARNING: %<PRIuMAX> of %<PRIuMAX> computed checksums did NOT match"
 msgstr[0] "CẢNH BÁO : %<PRIuMAX> trên %<PRIuMAX> tổng kiểm tra KHÔNG tương ứng"
 
-#: src/md5sum.c:659
+#: src/md5sum.c:662
 #, c-format
 msgid ""
 "the --binary and --text options are meaningless when verifying checksums"
 msgstr ""
 "các tùy chọn « --binary » và « --text » mất ý nghĩa khi tính tổng kiểm tra"
 
-#: src/md5sum.c:667
+#: src/md5sum.c:670
 #, c-format
 msgid "the --status option is meaningful only when verifying checksums"
 msgstr "tùy chọn « --status » chỉ có ý nghĩa khi tính tổng kiểm tra"
 
-#: src/md5sum.c:674
+#: src/md5sum.c:677
 #, c-format
 msgid "the --warn option is meaningful only when verifying checksums"
 msgstr "tùy chọn « --warn » chỉ có ý nghĩa khi tính tổng kiểm tra"
 
-#: src/md5sum.c:681
+#: src/md5sum.c:684
 #, c-format
 msgid "the --quiet option is meaningful only when verifying checksums"
 msgstr "tùy chọn « --quiet » chỉ có ý nghĩa khi tính tổng kiểm tra"
@@ -5895,43 +6087,49 @@ msgstr "sai thiết bị %s %s"
 msgid "invalid device type %s"
 msgstr "sai kiểu thiết bị %s"
 
-#: src/mktemp.c:64
+#. This is a proper name. See the gettext manual, section Names.
+#: src/mktemp.c:37
+msgid "Eric Blake"
+msgstr ""
+
+#: src/mktemp.c:69
 #, c-format
 msgid "Usage: %s [OPTION]... [TEMPLATE]\n"
 msgstr "Sử dụng: %s [TÙY_CHỌN]... [MẪU]\n"
 
-#: src/mktemp.c:65
+#: src/mktemp.c:70
+#, fuzzy
 msgid ""
 "Create a temporary file or directory, safely, and print its name.\n"
-"If TEMPLATE is not specified, use tmp.XXXXXXXXXX.\n"
+"TEMPLATE must contain at least 3 consecutive `X's in last component.\n"
+"If TEMPLATE is not specified, use tmp.XXXXXXXXXX, and --tmpdir is implied.\n"
 msgstr ""
 "Tạo tạm thời một tập tin hay thư mục một cách an toàn, rồi in tên của nó.\n"
 "Không ghi rõ MẪU thì dùng « tmp.XXXXXXXXXX ».\n"
 
-#: src/mktemp.c:70
-msgid "  -d, --directory  create a directory, not a file\n"
-msgstr "  -d, --directory  \ttạo một thư mục, không phải tập tin\n"
-
-#: src/mktemp.c:73
-msgid ""
-"  -q, --quiet      suppress diagnostics about file/dir-creation failure\n"
-msgstr ""
-"  -q, --quiet      thu hồi thông tin chẩn đoán khi gặp lỗi tạo tập tin/thư "
-"mục\n"
-
 #: src/mktemp.c:76
 msgid ""
-"  -u, --dry-run    do not create anything; merely print a name (unsafe)\n"
-msgstr "  -u, --dry-run    không tạo gì, chỉ in ra một tên (không an toàn)\n"
+"  -d, --directory     create a directory, not a file\n"
+"  -u, --dry-run       do not create anything; merely print a name (unsafe)\n"
+"  -q, --quiet         suppress diagnostics about file/dir-creation failure\n"
+msgstr ""
 
-#: src/mktemp.c:79
+#: src/mktemp.c:81
 msgid ""
-"  --tmpdir[=DIR]   interpret TEMPLATE relative to DIR.  If DIR is\n"
-"                     not specified, use $TMPDIR if set, else /tmp.\n"
-"                     With this option, TEMPLATE must not be an absolute "
-"name.\n"
-"                     Unlike with -t, TEMPLATE may contain slashes, but even\n"
-"                     here, mktemp still creates only the final component.\n"
+"      --suffix=SUFF   append SUFF to TEMPLATE.  SUFF must not contain "
+"slash.\n"
+"                        This option is implied if TEMPLATE does not end in "
+"X.\n"
+msgstr ""
+
+#: src/mktemp.c:85
+#, fuzzy
+msgid ""
+"      --tmpdir[=DIR]  interpret TEMPLATE relative to DIR.  If DIR is not\n"
+"                        specified, use $TMPDIR if set, else /tmp.  With\n"
+"                        this option, TEMPLATE must not be an absolute name.\n"
+"                        Unlike with -t, TEMPLATE may contain slashes, but\n"
+"                        mktemp creates only the final component.\n"
 msgstr ""
 "  --tmpdir[=THƯ_MỤC]   giải thích MẪU tương đối so với THƯ_MỤC.\n"
 "\t\t\tKhông ghi rõ THƯ_MỤC thì dùng $TMPDIR (nếu đặt),\n"
@@ -5940,57 +6138,65 @@ msgstr ""
 "\t\t\tKhông giống như « -t », MẪU có thể chứa dấu xuyệc,\n"
 "\t\t\tnhưng ngay cả ở đây, mktemp vẫn còn chỉ tạo thành phần cuối cùng.\n"
 
-#: src/mktemp.c:87
-msgid "  -p DIR           use DIR as a prefix; implies -t [deprecated]\n"
-msgstr "  -p THƯ_MỤC     đặt THƯ_MỤC là tiền tố; ngụ ý « -t » [bị phản đối]\n"
-
-#: src/mktemp.c:90
+#: src/mktemp.c:93
+#, fuzzy
 msgid ""
-"  -t               interpret TEMPLATE as a single file name component,\n"
-"                     relative to a directory: $TMPDIR, if set; else the\n"
-"                     directory specified via -p; else /tmp [deprecated]\n"
+"  -p DIR              use DIR as a prefix; implies -t [deprecated]\n"
+"  -t                  interpret TEMPLATE as a single file name component,\n"
+"                        relative to a directory: $TMPDIR, if set; else the\n"
+"                        directory specified via -p; else /tmp [deprecated]\n"
 msgstr ""
 "  -t               giải thích MẪU là một thành phần tên tập tin đơn,\n"
 "\t\t\ttương đối so với một thư mục: $TMPDIR, nếu đặt;\n"
 "\t\t\tkhông thì thư mục được ghi rõ với « -p »;\n"
 "\t\t\tkhông thì « /tmp » [bị phản đối]\n"
 
-#: src/mktemp.c:193
+#: src/mktemp.c:220
 #, c-format
 msgid "failed to redirect stderr to /dev/null"
 msgstr "không chuyển hướng được đầu lỗi tiêu chuẩn tới /dev/null"
 
-#: src/mktemp.c:199
+#: src/mktemp.c:226
 #, c-format
 msgid "too many templates"
 msgstr "quá nhiều mẫu"
 
-#: src/mktemp.c:215
+#: src/mktemp.c:246
+#, c-format
+msgid "with --suffix, template %s must end in X"
+msgstr ""
+
+#: src/mktemp.c:271
+#, fuzzy, c-format
+msgid "invalid suffix %s, contains directory separator"
+msgstr "mẫu không hợp lệ, %s, chứa dấu phân cách thư mục"
+
+#: src/mktemp.c:276
 #, c-format
 msgid "too few X's in template %s"
 msgstr "quá ít X trong mẫu %s"
 
-#: src/mktemp.c:228
+#: src/mktemp.c:289
 #, c-format
 msgid "invalid template, %s, contains directory separator"
 msgstr "mẫu không hợp lệ, %s, chứa dấu phân cách thư mục"
 
-#: src/mktemp.c:242
+#: src/mktemp.c:303
 #, c-format
 msgid "invalid template, %s; with --tmpdir, it may not be absolute"
 msgstr "mẫu không hợp lệ, %s; với « --tmpdir » thì không thể là tuyệt đối"
 
-#: src/mktemp.c:263
+#: src/mktemp.c:323
 #, c-format
 msgid "failed to create directory via template %s"
 msgstr "lỗi tạo thư mục thông qua mẫu %s"
 
-#: src/mktemp.c:273
+#: src/mktemp.c:333
 #, c-format
 msgid "failed to create file via template %s"
 msgstr "lỗi tạo tập tin thông qua mẫu %s"
 
-#: src/mv.c:287
+#: src/mv.c:290
 msgid ""
 "Rename SOURCE to DEST, or move SOURCE(s) to DIRECTORY.\n"
 "\n"
@@ -5998,7 +6204,7 @@ msgstr ""
 "Đổi tên NGUỒN thành ĐÍCH, hoặc di chuyển (các) NGUỒN vào THƯ_MỤC.\n"
 "\n"
 
-#: src/mv.c:294
+#: src/mv.c:297
 msgid ""
 "      --backup[=CONTROL]       make a backup of each existing destination "
 "file\n"
@@ -6020,7 +6226,7 @@ msgstr ""
 "Nếu bạn ghi rõ hơn một của những tuỳ chọn « -i », « -f » và « -n »\n"
 "thì chỉ tuỳ chọn cuối cùng có tác động.\n"
 
-#: src/mv.c:302
+#: src/mv.c:305
 msgid ""
 "      --strip-trailing-slashes  remove any trailing slashes from each "
 "SOURCE\n"
@@ -6032,7 +6238,7 @@ msgstr ""
 "  -S, --suffix=HẬU_TỐ          dùng HẬU_TỐ thay cho đuôi để sao lưu thông "
 "thường\n"
 
-#: src/mv.c:307
+#: src/mv.c:310
 msgid ""
 "  -t, --target-directory=DIRECTORY  move all SOURCE arguments into "
 "DIRECTORY\n"
@@ -6072,22 +6278,22 @@ msgstr ""
 "\n"
 "  -n, --adjustment=N   cộng thêm N vào giá trị nice (mặc định 10)\n"
 
-#: src/nice.c:151
+#: src/nice.c:157
 #, c-format
 msgid "invalid adjustment %s"
 msgstr "điều chỉnh sai %s"
 
-#: src/nice.c:160
+#: src/nice.c:166
 #, c-format
 msgid "a command must be given with an adjustment"
 msgstr "phải đưa ra một câu lệnh với một điều chỉnh"
 
-#: src/nice.c:167 src/nice.c:178
+#: src/nice.c:173 src/nice.c:184
 #, c-format
 msgid "cannot get niceness"
 msgstr "không lấy được giá trị ưu tiên"
 
-#: src/nice.c:182
+#: src/nice.c:190
 #, c-format
 msgid "cannot set niceness"
 msgstr "không đặt được giá trị ưu tiên"
@@ -6120,7 +6326,6 @@ msgstr ""
 "chân\n"
 
 #: src/nl.c:199
-#, fuzzy
 msgid ""
 "  -h, --header-numbering=STYLE    use STYLE for numbering header lines\n"
 "  -i, --line-increment=NUMBER     line number increment at each line\n"
@@ -6134,7 +6339,7 @@ msgstr ""
 "  -h, --header-numbering=KIỂU_DÁNG  dùng KIỂU_DÁNG để đánh số các dòng phần "
 "đầu\n"
 "  -i, --page-increment=SỐ         độ tăng số thứ tự dòng\n"
-"  -l, --join-blank-lines=SỐ       coi và đếm SỐ dòng rỗng như một dòng\n"
+"  -l, --join-blank-lines=SỐ       đếm SỐ dòng rỗng như một dòng\n"
 "  -n, --number-format=ĐỊNH_DẠNG   chèn số thứ tự dòng theo ĐỊNH_DẠNG\n"
 "  -p, --no-renumber               không đặt lại số thứ tự dòng tại trang "
 "lôgíc\n"
@@ -6220,11 +6425,11 @@ msgid "invalid starting line number: %s"
 msgstr "sai số của dòng bắt đầu: %s"
 
 #: src/nl.c:515
-#, fuzzy, c-format
+#, c-format
 msgid "WARNING: --page-increment is deprecated; use --line-increment instead"
 msgstr ""
-"CẢNH BÁO : « --preserve_context » bị phản đối, nên thay thế bằng « --preserve-"
-"context »"
+"CẢNH BÁO : « --page-increment » bị phản đối, nên thay thế bằng « --line-"
+"increment »"
 
 #: src/nl.c:522
 #, c-format
@@ -6281,47 +6486,75 @@ msgstr ""
 "chuẩn.\n"
 "Để lưu kết xuất vào tập tin, dùng « %s LỆNH > TẬP_TIN ».\n"
 
-#: src/nohup.c:121
+#: src/nohup.c:128
 #, c-format
 msgid "ignoring input"
 msgstr "đang lờ đi dữ liệu vào"
 
-#: src/nohup.c:153 src/nohup.c:155
+#: src/nohup.c:160 src/nohup.c:162
 #, c-format
 msgid "failed to open %s"
 msgstr "lỗi mở %s"
 
-#: src/nohup.c:165
+#: src/nohup.c:172
 #, c-format
 msgid "ignoring input and appending output to %s"
 msgstr "đang lờ đi dữ liệu vào và phụ thêm vào %s kết xuất"
 
-#: src/nohup.c:166
+#: src/nohup.c:173
 #, c-format
 msgid "appending output to %s"
 msgstr "đang phụ thêm kết xuất vào %s"
 
-#: src/nohup.c:183
+#: src/nohup.c:190
 #, c-format
 msgid "failed to set the copy of stderr to close on exec"
 msgstr "lỗi khi đặt bản sao của lỗi tiêu chuẩn để đóng khi thực hiện"
 
-#: src/nohup.c:188
+#: src/nohup.c:195
 #, c-format
 msgid "ignoring input and redirecting stderr to stdout"
 msgstr ""
 "đang lờ đi dữ liệu vào và chuyển hướng lỗi tiêu chuẩn tới đầu vào tiêu chuẩn"
 
-#: src/nohup.c:189
+#: src/nohup.c:196
 #, c-format
 msgid "redirecting stderr to stdout"
 msgstr ""
 "đang chuyển hướng đầu lỗi tiêu chuẩn (stderr) tới đầu ra tiêu chuẩn (stdout)"
 
-#: src/nohup.c:192
+#: src/nohup.c:200
 #, c-format
 msgid "failed to redirect standard error"
 msgstr "chuyển hướng đầu lỗi tiêu chuẩn không thành công"
+
+#. This is a proper name. See the gettext manual, section Names.
+#: src/nproc.c:32
+msgid "Giuseppe Scrivano"
+msgstr ""
+
+#: src/nproc.c:57 src/pwd.c:57 src/tty.c:65 src/uname.c:122 src/whoami.c:46
+#, c-format
+msgid "Usage: %s [OPTION]...\n"
+msgstr "Sử dụng: %s [TÙY_CHỌN]...\n"
+
+#: src/nproc.c:58
+msgid ""
+"Print the number of processing units available to the current process,\n"
+"which may be less than the number of online processors\n"
+"\n"
+msgstr ""
+
+#: src/nproc.c:63
+msgid ""
+"     --all       print the number of installed processors\n"
+"     --ignore=N  if possible, exclude N processing units\n"
+msgstr ""
+
+#: src/nproc.c:107
+#, fuzzy, c-format
+msgid "%s: invalid number to ignore"
+msgstr "%s: số dòng sai"
 
 #: src/od.c:308
 #, c-format
@@ -6668,90 +6901,90 @@ msgstr ""
 "giới hạn %lu bị vượt quá theo chiều dài %lu của thành phần tên tập tin %s"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/pinky.c:35 src/uptime.c:45 src/users.c:35 src/who.c:43
+#: src/pinky.c:36 src/uptime.c:45 src/users.c:35 src/who.c:44
 msgid "Joseph Arceneaux"
 msgstr "Joseph Arceneaux"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/pinky.c:37 src/uptime.c:47
+#: src/pinky.c:38 src/uptime.c:47
 msgid "Kaveh Ghazi"
 msgstr "Kaveh Ghazi"
 
 #. TRANSLATORS: Real name is unknown; at most 19 characters.
-#: src/pinky.c:253
+#: src/pinky.c:254
 msgid "        ???"
 msgstr "        ???"
 
 #. TRANSLATORS: Idle time is unknown; at most 5 characters.
-#: src/pinky.c:277
+#: src/pinky.c:278
 msgid "?????"
 msgstr "?????"
 
-#: src/pinky.c:326
+#: src/pinky.c:327
 #, c-format
 msgid "Login name: "
 msgstr "Tên đăng nhập: "
 
-#: src/pinky.c:329
+#: src/pinky.c:330
 #, c-format
 msgid "In real life: "
 msgstr "Tên thật: "
 
 #. TRANSLATORS: Real name is unknown; no hard limit.
-#: src/pinky.c:333
+#: src/pinky.c:334
 msgid "???\n"
 msgstr "???\n"
 
-#: src/pinky.c:353
+#: src/pinky.c:354
 #, c-format
 msgid "Directory: "
 msgstr "Thư mục: "
 
-#: src/pinky.c:355
+#: src/pinky.c:356
 #, c-format
 msgid "Shell: "
 msgstr "Trình bao : "
 
-#: src/pinky.c:374
+#: src/pinky.c:375
 #, c-format
 msgid "Project: "
 msgstr "Dự án: "
 
-#: src/pinky.c:398
+#: src/pinky.c:399
 #, c-format
 msgid "Plan:\n"
 msgstr "Kế hoạch:\n"
 
-#: src/pinky.c:417
+#: src/pinky.c:418
 msgid "Login"
 msgstr "Đăng nhập"
 
-#: src/pinky.c:419
+#: src/pinky.c:420
 msgid "Name"
 msgstr "Tên"
 
-#: src/pinky.c:420
+#: src/pinky.c:421
 msgid " TTY"
 msgstr " TTY"
 
-#: src/pinky.c:422
+#: src/pinky.c:423
 msgid "Idle"
 msgstr "Nghỉ"
 
-#: src/pinky.c:423
+#: src/pinky.c:424
 msgid "When"
 msgstr "Lúc"
 
-#: src/pinky.c:426
+#: src/pinky.c:427
 msgid "Where"
 msgstr "Tại"
 
-#: src/pinky.c:506
+#: src/pinky.c:507
 #, c-format
 msgid "Usage: %s [OPTION]... [USER]...\n"
 msgstr "Sử dụng: %s [TÙY_CHỌN]... [NGƯỜI_DÙNG]...\n"
 
-#: src/pinky.c:507
+#: src/pinky.c:508
 msgid ""
 "\n"
 "  -l              produce long format output for the specified USERs\n"
@@ -6768,7 +7001,7 @@ msgstr ""
 "  -p              bỏ đi tập tin kế hoạch của người dùng trong dạng dài\n"
 "  -s              xuất dạng ngắn, đây là mặc định\n"
 
-#: src/pinky.c:515
+#: src/pinky.c:516
 msgid ""
 "  -f              omit the line of column headings in short format\n"
 "  -w              omit the user's full name in short format\n"
@@ -6784,7 +7017,7 @@ msgstr ""
 "nghỉ\n"
 "                  trong dạng ngắn\n"
 
-#: src/pinky.c:524
+#: src/pinky.c:525
 #, c-format
 msgid ""
 "\n"
@@ -6795,7 +7028,7 @@ msgstr ""
 "Một chương trình « finger » nhẹ;  in ra thông tin về người dùng.\n"
 "Tập tin « utmp » sẽ là %s.\n"
 
-#: src/pinky.c:608
+#: src/pinky.c:609
 #, c-format
 msgid "no username specified; at least one must be specified when using -l"
 msgstr ""
@@ -6803,86 +7036,86 @@ msgstr ""
 "l »"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/pr.c:328
+#: src/pr.c:329
 msgid "Pete TerMaat"
 msgstr "Pete TerMaat"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/pr.c:329
+#: src/pr.c:330
 msgid "Roland Huebner"
 msgstr "Roland Huebner"
 
-#: src/pr.c:911
+#: src/pr.c:912
 #, c-format
 msgid "`--pages=FIRST_PAGE[:LAST_PAGE]' missing argument"
 msgstr "thiếu tham số « --pages=TRANG_ĐẦU[:TRANG_CUỐI] »"
 
-#: src/pr.c:913
+#: src/pr.c:914
 #, c-format
 msgid "invalid page range %s"
 msgstr "sai phạm vi trang %s"
 
-#: src/pr.c:978
+#: src/pr.c:979
 #, c-format
 msgid "`-l PAGE_LENGTH' invalid number of lines: %s"
 msgstr "« -l CHIỀU_DÀI_TRANG » sai số của dòng: %s"
 
-#: src/pr.c:1002
+#: src/pr.c:1003
 #, c-format
 msgid "`-N NUMBER' invalid starting line number: %s"
 msgstr "« -N SỐ » sai số dòng bắt đầu: %s"
 
-#: src/pr.c:1014
+#: src/pr.c:1015
 #, c-format
 msgid "`-o MARGIN' invalid line offset: %s"
 msgstr "« -o LỀ » sai hiệu dòng: %s"
 
-#: src/pr.c:1055
+#: src/pr.c:1056
 #, c-format
 msgid "`-w PAGE_WIDTH' invalid number of characters: %s"
 msgstr "« -w CHIỀU_RỘNG_TRANG » sai số ký tự: %s"
 
-#: src/pr.c:1069
+#: src/pr.c:1070
 #, c-format
 msgid "`-W PAGE_WIDTH' invalid number of characters: %s"
 msgstr "« -W CHIỀU_RỘNG_TRANG » sai số ký tự: %s"
 
-#: src/pr.c:1099
+#: src/pr.c:1100
 #, c-format
 msgid "cannot specify number of columns when printing in parallel"
 msgstr "không chỉ ra được số các cột khi in ra song song"
 
-#: src/pr.c:1103
+#: src/pr.c:1104
 #, c-format
 msgid "cannot specify both printing across and printing in parallel"
 msgstr "không thể đồng thời in ra chéo nhau và in ra song song."
 
-#: src/pr.c:1199
+#: src/pr.c:1200
 #, c-format
 msgid "`-%c' extra characters or invalid number in the argument: %s"
 msgstr "« -%c » ký tự mở rộng hoặc số sai trong đối số: %s"
 
-#: src/pr.c:1303
+#: src/pr.c:1304
 #, c-format
 msgid "page width too narrow"
 msgstr "chiều rộng trang quá hẹp"
 
-#: src/pr.c:2367
+#: src/pr.c:2368
 #, c-format
 msgid "starting page number %<PRIuMAX> exceeds page count %<PRIuMAX>"
 msgstr "số trang bắt đầu %<PRIuMAX> vượt quá số đếm trang %<PRIuMAX>"
 
-#: src/pr.c:2394
+#: src/pr.c:2395
 #, c-format
 msgid "page number overflow"
 msgstr "tràn số thứ tự trang"
 
-#: src/pr.c:2399
+#: src/pr.c:2400
 #, c-format
 msgid "Page %<PRIuMAX>"
 msgstr "Trang %<PRIuMAX>"
 
-#: src/pr.c:2772
+#: src/pr.c:2773
 msgid ""
 "Paginate or columnate FILE(s) for printing.\n"
 "\n"
@@ -6890,7 +7123,7 @@ msgstr ""
 "Dàn trang hoặc dàn cột (các) TẬP_TIN để in.\n"
 "\n"
 
-#: src/pr.c:2779
+#: src/pr.c:2780
 msgid ""
 "  +FIRST_PAGE[:LAST_PAGE], --pages=FIRST_PAGE[:LAST_PAGE]\n"
 "                    begin [stop] printing with page FIRST_[LAST_]PAGE\n"
@@ -6906,7 +7139,7 @@ msgstr ""
 "                    có dùng « -a ». Cân bằng số dòng trong các cột\n"
 "                    trên mỗi trang.\n"
 
-#: src/pr.c:2787
+#: src/pr.c:2788
 msgid ""
 "  -a, --across      print columns across rather than down, used together\n"
 "                    with -COLUMN\n"
@@ -6922,7 +7155,7 @@ msgstr ""
 "  -d, --double-space\n"
 "                    nhân đôi khoảng trắng trong kết quả\n"
 
-#: src/pr.c:2795
+#: src/pr.c:2796
 msgid ""
 "  -D, --date-format=FORMAT\n"
 "                    use FORMAT for the header date\n"
@@ -6943,7 +7176,7 @@ msgstr ""
 "                    (3 dòng phần đầu của trang với « -F »,\n"
 "                    hoặc 5 dòng phần đầu và gạch dài khi không có « -F »)\n"
 
-#: src/pr.c:2805
+#: src/pr.c:2806
 msgid ""
 "  -h, --header=HEADER\n"
 "                    use a centered HEADER instead of filename in page "
@@ -6966,7 +7199,7 @@ msgstr ""
 "                    không sắp hàng các cột,\n"
 "  --sep-string[=CHUỖI] đặt ký tự phân chia\n"
 
-#: src/pr.c:2814
+#: src/pr.c:2815
 msgid ""
 "  -l, --length=PAGE_LENGTH\n"
 "                    set the page length to PAGE_LENGTH (66) lines\n"
@@ -6982,7 +7215,7 @@ msgstr ""
 "                    cắt ngắn các dòng, có « -J » thì cũng nhập các dòng\n"
 "                    có chiều dài đầy đủ.\n"
 
-#: src/pr.c:2821
+#: src/pr.c:2822
 msgid ""
 "  -n[SEP[DIGITS]], --number-lines[=SEP[DIGITS]]\n"
 "                    number lines, use DIGITS (5) digits, then SEP (TAB),\n"
@@ -7000,7 +7233,7 @@ msgstr ""
 "                    bắt đầu đếm với SỐ tại dòng thứ nhất của\n"
 "                    trang in đầu tiên (xem « +TRANG_ĐẦU »)\n"
 
-#: src/pr.c:2829
+#: src/pr.c:2830
 msgid ""
 "  -o, --indent=MARGIN\n"
 "                    offset each line with MARGIN (zero) spaces, do not\n"
@@ -7015,7 +7248,7 @@ msgstr ""
 "  -r, --no-file-warnings\n"
 "                    bỏ đi cảnh báo khi không mở được một tập tin\n"
 
-#: src/pr.c:2836
+#: src/pr.c:2837
 msgid ""
 "  -s[CHAR],--separator[=CHAR]\n"
 "                    separate columns by a single character, default for "
@@ -7032,7 +7265,7 @@ msgstr ""
 "cột\n"
 "                    (-CỘT|-a -CỘT|-m) trừ khi đặt « -w »\n"
 
-#: src/pr.c:2843
+#: src/pr.c:2844
 msgid ""
 "  -SSTRING, --sep-string[=STRING]\n"
 "                    separate columns by STRING,\n"
@@ -7049,7 +7282,7 @@ msgstr ""
 "                    không ảnh hưởng đến các tùy chọn cột\n"
 "  -t, --omit-header  bỏ đi phần đầu và phần đi theo của các trang\n"
 
-#: src/pr.c:2850
+#: src/pr.c:2851
 msgid ""
 "  -T, --omit-pagination\n"
 "                    omit page headers and trailers, eliminate any "
@@ -7072,7 +7305,7 @@ msgstr ""
 "                    chỉ cho kết quả đa cột văn bản, « -s[ký_tự] » tắt đi "
 "(72)\n"
 
-#: src/pr.c:2860
+#: src/pr.c:2861
 msgid ""
 "  -W, --page-width=PAGE_WIDTH\n"
 "                    set page width to PAGE_WIDTH (72) characters always,\n"
@@ -7086,7 +7319,7 @@ msgstr ""
 "                    cắt ngắn các dòng, trừ khi đặt tùy chọn « -J »,\n"
 "                    không can thiệp với « -S » hoặc « -s »\n"
 
-#: src/pr.c:2868
+#: src/pr.c:2869
 msgid ""
 "\n"
 "-t is implied if PAGE_LENGTH <= 10.  With no FILE, or when\n"
@@ -7096,11 +7329,10 @@ msgstr ""
 "« -t » ngụ ý nếu « CHIỀU_DÀI_TRANG ≤ 10 ».\n"
 "Không có TẬP_TIN, hoặc TẬP_TIN là - thì đọc đầu vào tiêu chuẩn.\n"
 
-#: src/printenv.c:58
-#, c-format
+#: src/printenv.c:63
+#, fuzzy, c-format
 msgid ""
-"Usage: %s [VARIABLE]...\n"
-"  or:  %s OPTION\n"
+"Usage: %s [OPTION]... [VARIABLE]...\n"
 "Print the values of the specified environment VARIABLE(s).\n"
 "If no VARIABLE is specified, print name and value pairs for them all.\n"
 "\n"
@@ -7111,13 +7343,19 @@ msgstr ""
 "trường thì in tên và cặp giá trị cho tất cả chúng.\n"
 "\n"
 
-#: src/printf.c:78
+#: src/printenv.c:70
+#, fuzzy
+msgid "  -0, --null     end each output line with 0 byte rather than newline\n"
+msgstr ""
+"  -z, --zero-terminated   kết thúc dòng với 0 byte, thay cho ký tự dòng mới\n"
+
+#: src/printf.c:79
 #, c-format
 msgid ""
 "warning: %s: character(s) following character constant have been ignored"
 msgstr "cảnh báo : %s: lờ đi các ký tự theo sau hằng ký tự"
 
-#: src/printf.c:88
+#: src/printf.c:89
 #, c-format
 msgid ""
 "Usage: %s FORMAT [ARGUMENT]...\n"
@@ -7126,7 +7364,7 @@ msgstr ""
 "Sử dụng: %s ĐỊNH_DẠNG [ĐỐI_SỐ]...\n"
 "  hoặc:  %s TÙY_CHỌN\n"
 
-#: src/printf.c:93
+#: src/printf.c:94
 msgid ""
 "Print ARGUMENT(s) according to FORMAT, or execute according to OPTION:\n"
 "\n"
@@ -7134,14 +7372,13 @@ msgstr ""
 "In (các) ĐỐI_SỐ theo ĐỊNH_DẠNG, hoặc thực hiện tùy theo TÙY_CHỌN:\n"
 "\n"
 
-#: src/printf.c:99
+#: src/printf.c:100
+#, fuzzy
 msgid ""
 "\n"
 "FORMAT controls the output as in C printf.  Interpreted sequences are:\n"
 "\n"
 "  \\\"      double quote\n"
-"  \\NNN    character with octal value NNN (1 to 3 digits)\n"
-"  \\\\      backslash\n"
 msgstr ""
 "\n"
 "ĐỊNH_DẠNG điều khiển kết quả giống như trong printf kiểu C.\n"
@@ -7151,32 +7388,10 @@ msgstr ""
 "  \\NNN    ký tự với giá trị bát phân NNN (1 đến 3 chữ số)\n"
 "  \\\\      xuyệc ngược\n"
 
-#: src/printf.c:107
+#: src/printf.c:118
+#, fuzzy
 msgid ""
-"  \\a      alert (BEL)\n"
-"  \\b      backspace\n"
-"  \\c      produce no further output\n"
-"  \\f      form feed\n"
-msgstr ""
-"  \\a      chuông báo (BEL)\n"
-"  \\b     xoá lùi\n"
-"  \\c      không có kết quả ở sau\n"
-"  \\f      thụt dòng\n"
-
-#: src/printf.c:113
-msgid ""
-"  \\n      new line\n"
-"  \\r      carriage return\n"
-"  \\t      horizontal tab\n"
-"  \\v      vertical tab\n"
-msgstr ""
-"  \\n     dòng mới\n"
-"  \\r     dấu enter\n"
-"  \\t     tab ngang\n"
-"  \\v     tab dọc\n"
-
-#: src/printf.c:119
-msgid ""
+"  \\NNN    byte with octal value NNN (1 to 3 digits)\n"
 "  \\xHH    byte with hexadecimal value HH (1 to 2 digits)\n"
 "  \\uHHHH  Unicode (ISO/IEC 10646) character with hex value HHHH (4 digits)\n"
 "  \\UHHHHHHHH  Unicode character with hex value HHHHHHHH (8 digits)\n"
@@ -7213,32 +7428,32 @@ msgstr "%s: đã mong đợi một giá trị số"
 msgid "%s: value not completely converted"
 msgstr "%s: giá trị chưa được chuyển đổi hoàn toàn"
 
-#: src/printf.c:245 src/printf.c:272
+#: src/printf.c:248 src/printf.c:275
 #, c-format
 msgid "missing hexadecimal number in escape"
 msgstr "thiếu số thập lục trong dãy thoát"
 
-#: src/printf.c:284
+#: src/printf.c:287
 #, c-format
 msgid "invalid universal character name \\%c%0*x"
 msgstr "sai tên ký tự chung « \\%c%0*x »"
 
-#: src/printf.c:545
+#: src/printf.c:548
 #, c-format
 msgid "invalid field width: %s"
 msgstr "sai chiều rộng trường: %s"
 
-#: src/printf.c:580
+#: src/printf.c:583
 #, c-format
 msgid "invalid precision: %s"
 msgstr "sai độ chính xác: %s"
 
-#: src/printf.c:607
+#: src/printf.c:610
 #, c-format
 msgid "%.*s: invalid conversion specification"
 msgstr "%.*s: sai sự xác định chuyển đổi"
 
-#: src/printf.c:690
+#: src/printf.c:693
 #, c-format
 msgid "warning: ignoring excess arguments, starting with %s"
 msgstr "cảnh báo : lờ đi các đối số thừa nên bắt đầu từ %s"
@@ -7346,11 +7561,6 @@ msgstr ""
 msgid "invalid gap width: %s"
 msgstr "chiều rộng chỗ trống sai: %s"
 
-#: src/pwd.c:57 src/tty.c:65 src/uname.c:122 src/whoami.c:46
-#, c-format
-msgid "Usage: %s [OPTION]...\n"
-msgstr "Sử dụng: %s [TÙY_CHỌN]...\n"
-
 #: src/pwd.c:58
 msgid ""
 "Print the full filename of the current working directory.\n"
@@ -7399,12 +7609,11 @@ msgid "Usage: %s [OPTION]... FILE\n"
 msgstr "Sử dụng: %s [TÙY_CHỌN]... TẬP_TIN\n"
 
 #: src/readlink.c:64
-#, fuzzy
 msgid ""
 "Print value of a symbolic link or canonical file name\n"
 "\n"
 msgstr ""
-"Hiển thị giá trị của một liên kết mềm trên đầu ra tiêu chuẩn.\n"
+"Hiển thị giá trị của một liên kết mềm hoặc tên tập tin chuẩn tắc.\n"
 "\n"
 
 #: src/readlink.c:66
@@ -7446,57 +7655,12 @@ msgstr ""
 "  -s, --silent                  bỏ đi hầu hết các thông báo lỗi\n"
 "  -v, --verbose                 báo cáo các thông báo lỗi\n"
 
-#: src/remove.c:572 src/remove.c:616
-#, c-format
-msgid "FATAL: failed to close directory %s"
-msgstr "NGHIÊM TRỌNG: lỗi đóng thư mục %s"
-
-#: src/remove.c:585
-#, c-format
-msgid "FATAL: cannot open .. from %s"
-msgstr "NGHIÊM TRỌNG: không thể mở « .. » từ %s"
-
-#: src/remove.c:593
-#, c-format
-msgid "FATAL: cannot ensure %s (returned to via ..) is safe"
-msgstr "NGHIÊM TRỌNG: không thể đảm bảo %s (trả về qua « .. ») là an toàn"
-
-#: src/remove.c:601
-#, c-format
-msgid "FATAL: directory %s changed dev/ino"
-msgstr "NGHIÊM TRỌNG: thư mục %s đã thay đổi dev/ino"
-
-#: src/remove.c:722
-#, c-format
-msgid "FATAL: cannot enter directory %s"
-msgstr "NGHIÊM TRỌNG: không thể vào thư mục %s"
-
-#: src/remove.c:730
-#, c-format
-msgid "FATAL: just-changed-to directory %s changed dev/ino"
-msgstr "NGHIÊM TRỌNG: thư mục mới tới %s đã thay đổi dev/ino"
-
-#: src/remove.c:738
-#, c-format
-msgid ""
-"WARNING: Circular directory structure.\n"
-"This almost certainly means that you have a corrupted file system.\n"
-"NOTIFY YOUR SYSTEM MANAGER.\n"
-"The following directory is part of the cycle:\n"
-"  %s\n"
-msgstr ""
-"CẢNH BÁO : cấu trúc thư mục vòng quanh.\n"
-"Gần chắc chắn là hệ thống tập tin đã bị hỏng.\n"
-"HÃY THÔNG BÁO CHO NHÀ QUẢN LÝ HỆ THỐNG.\n"
-"Thư mục sau nằm trong vòng quay:\n"
-"  %s\n"
-
-#: src/remove.c:949
+#: src/remove.c:311
 #, c-format
 msgid "%s: descend into write-protected directory %s? "
 msgstr "%s: đi vào thư mục đã bảo vệ khỏi ghi %s không? "
 
-#: src/remove.c:950
+#: src/remove.c:312
 #, c-format
 msgid "%s: descend into directory %s? "
 msgstr "%s: đi vào thư mục %s không? "
@@ -7505,72 +7669,56 @@ msgstr "%s: đi vào thư mục %s không? "
 #. translate "%s: remove %s (write-protected) %s? "
 #. instead.  It should avoid grammatical problems
 #. with the output of file_type.
-#: src/remove.c:966
+#: src/remove.c:328
 #, c-format
 msgid "%s: remove write-protected %s %s? "
 msgstr "%s: xóa %s đã bảo vệ khỏi ghi %s không? "
 
-#: src/remove.c:967
+#: src/remove.c:329
 #, c-format
 msgid "%s: remove %s %s? "
 msgstr "%s: xoá %s %s không? "
 
-#: src/remove.c:1028 src/remove.c:1717
+#: src/remove.c:434
 #, c-format
 msgid "removed directory: %s\n"
 msgstr "đã xóa thư mục: %s\n"
 
-#: src/remove.c:1553 src/remove.c:1753
+#: src/remove.c:498
 #, c-format
-msgid "failed to close directory %s"
-msgstr "lỗi đóng thư mục %s"
+msgid "cannot remove directory: %s"
+msgstr "không xoá được thư mục: %s"
 
-#: src/remove.c:1675
+#: src/remove.c:554
 #, c-format
 msgid "skipping %s, since it's on a different device"
 msgstr "đang nhảy qua %s, vì nó nằm trên thiết bị khác"
 
-#: src/remove.c:1722 src/remove.c:1772
-#, fuzzy, c-format
-msgid "cannot remove directory %s"
-msgstr "không xóa được thư mục %s"
-
-#: src/remove.c:1738
+#: src/remove.c:574
 #, c-format
-msgid "FATAL: cannot return to .. from %s"
-msgstr "NGHIÊM TRỌNG: không thể trở về « .. » từ %s"
+msgid "traversal failed: %s"
+msgstr "lỗi theo cây: %s"
 
-#: src/remove.c:1773
+#: src/remove.c:580
 #, c-format
-msgid "cannot remove %s directory %s"
-msgstr "không gỡ bỏ được thư mục %s %s"
+msgid ""
+"unexpected failure: fts_info=%d: %s\n"
+"please report to %s"
+msgstr ""
+"gặp lỗi bất thường: fts_info=%d: %s\n"
+"xin hãy thông báo cho %s"
 
-#: src/remove.c:1792
-#, c-format
-msgid "cannot remove root directory %s"
-msgstr "không xóa được thư mục gốc %s"
-
-#: src/remove.c:1842
-#, c-format
-msgid "cannot remove relative-named %s"
-msgstr "không xóa được %s có tên tương đối"
-
-#: src/remove.c:1856
-#, c-format
-msgid "cannot restore current working directory"
-msgstr "không thể phục hồi thư mục làm việc hiện thời"
-
-#: src/rm.c:142
+#: src/rm.c:119
 #, c-format
 msgid "Try `%s ./%s' to remove the file %s.\n"
 msgstr "Thử lệnh « %s ./%s » để xoá tập tin %s.\n"
 
-#: src/rm.c:159 src/shred.c:158 src/stat.c:909 src/touch.c:233
+#: src/rm.c:136 src/shred.c:158 src/stat.c:962 src/touch.c:215
 #, c-format
 msgid "Usage: %s [OPTION]... FILE...\n"
 msgstr "Sử dụng: %s [TÙY_CHỌN]... TẬP_TIN...\n"
 
-#: src/rm.c:160
+#: src/rm.c:137
 msgid ""
 "Remove (unlink) the FILE(s).\n"
 "\n"
@@ -7583,7 +7731,7 @@ msgstr ""
 "trước\n"
 "  -i                    hỏi trước mỗi lần xoá\n"
 
-#: src/rm.c:166
+#: src/rm.c:143
 msgid ""
 "  -I                    prompt once before removing more than three files, "
 "or\n"
@@ -7603,7 +7751,7 @@ msgstr ""
 "                             • always (-i)  luôn luôn\n"
 "                           không có KHI thì luôn luôn hỏi trước\n"
 
-#: src/rm.c:173
+#: src/rm.c:150
 msgid ""
 "      --one-file-system  when removing a hierarchy recursively, skip any\n"
 "                          directory that is on a file system different from\n"
@@ -7614,7 +7762,7 @@ msgstr ""
 "khác\n"
 "                             với hệ thống có đối số dòng lệnh tượng ứng.\n"
 
-#: src/rm.c:178
+#: src/rm.c:155
 msgid ""
 "      --no-preserve-root  do not treat `/' specially\n"
 "      --preserve-root   do not remove `/' (default)\n"
@@ -7626,7 +7774,7 @@ msgstr ""
 "  -r, -R, --recursive   xóa đệ quy các thư mục và nội dung\n"
 "  -v, --verbose         cho biết những gì đang thực hiện\n"
 
-#: src/rm.c:186
+#: src/rm.c:163
 msgid ""
 "\n"
 "By default, rm does not remove directories.  Use the --recursive (-r or -R)\n"
@@ -7639,7 +7787,7 @@ msgstr ""
 "kê,\n"
 "cùng với nội dung hoàn toàn.\n"
 
-#: src/rm.c:191
+#: src/rm.c:168
 #, c-format
 msgid ""
 "\n"
@@ -7656,7 +7804,7 @@ msgstr ""
 "\n"
 "  %s ./-foo\n"
 
-#: src/rm.c:200
+#: src/rm.c:177
 msgid ""
 "\n"
 "Note that if you use rm to remove a file, it is usually possible to recover\n"
@@ -7669,12 +7817,12 @@ msgstr ""
 "thì thông thường vẫn có khả năng phục hồi nội dung của tập tin đó.\n"
 "Nếu muốn chắc chắn không thể phục hồi, hãy dùng « shred ».\n"
 
-#: src/rm.c:367
+#: src/rm.c:344
 #, c-format
 msgid "%s: remove all arguments recursively? "
 msgstr "%s: xoá đệ quy mọi đối số không? "
 
-#: src/rm.c:368
+#: src/rm.c:345
 #, c-format
 msgid "%s: remove all arguments? "
 msgstr "%s: xóa mọi đối số không? "
@@ -7789,8 +7937,8 @@ msgstr "chưa ghi rõ lệnh"
 
 #: src/runcon.c:198
 #, c-format
-msgid "runcon may be used only on a SELinux kernel"
-msgstr "runcon dùng được chỉ với hạt nhân SELinux"
+msgid "%s may be used only on a SELinux kernel"
+msgstr "%s dùng được chỉ với hạt nhân SELinux"
 
 #: src/runcon.c:224
 #, c-format
@@ -8228,7 +8376,7 @@ msgstr "%s: lỗi mở để ghi"
 msgid "%s: invalid number of passes"
 msgstr "%s: sai số lần thực hiện"
 
-#: src/shred.c:1142 src/shuf.c:329 src/sort.c:3447
+#: src/shred.c:1142 src/shuf.c:329 src/sort.c:3448
 #, c-format
 msgid "multiple random sources specified"
 msgstr "đã chỉ ra nhiều nguồn ngẫu nhiên"
@@ -8293,7 +8441,7 @@ msgstr "sai phạm vi nhập vào %s"
 msgid "invalid line count %s"
 msgstr "sai đếm dòng %s"
 
-#: src/shuf.c:323 src/sort.c:3441
+#: src/shuf.c:323 src/sort.c:3442
 #, c-format
 msgid "multiple output files specified"
 msgstr "đã chỉ ra nhiều tập tin kết quả"
@@ -8335,17 +8483,17 @@ msgstr ""
 "đó.\n"
 "\n"
 
-#: src/sleep.c:137 src/timeout.c:266
+#: src/sleep.c:137 src/timeout.c:260
 #, c-format
 msgid "invalid time interval %s"
 msgstr "sai khoảng thời gian %s"
 
-#: src/sleep.c:148 src/tail.c:1139
+#: src/sleep.c:148 src/tail.c:1148
 #, c-format
 msgid "cannot read realtime clock"
 msgstr "không đọc được đồng hồ thời gian thực"
 
-#: src/sort.c:321
+#: src/sort.c:322
 msgid ""
 "Write sorted concatenation of all FILE(s) to standard output.\n"
 "\n"
@@ -8353,7 +8501,7 @@ msgstr ""
 "Ghi ra đầu ra tiêu chuẩn bản ghép nối đã sắp xếp của tất cả TẬP_TIN.\n"
 "\n"
 
-#: src/sort.c:328
+#: src/sort.c:329
 msgid ""
 "Ordering options:\n"
 "\n"
@@ -8361,7 +8509,7 @@ msgstr ""
 "Tùy chọn sắp xếp:\n"
 "\n"
 
-#: src/sort.c:332
+#: src/sort.c:333
 msgid ""
 "  -b, --ignore-leading-blanks  ignore leading blanks\n"
 "  -d, --dictionary-order      consider only blanks and alphanumeric "
@@ -8372,7 +8520,7 @@ msgstr ""
 "  -d, --dictionary-order      tính chỉ các dấu cách và các ký tự chữ cái/số\n"
 "  -f, --ignore-case           tính chữ thường là chữ hoa\n"
 
-#: src/sort.c:337
+#: src/sort.c:338
 msgid ""
 "  -g, --general-numeric-sort  compare according to general numerical value\n"
 "  -i, --ignore-nonprinting    consider only printable characters\n"
@@ -8382,12 +8530,13 @@ msgstr ""
 "  -i, --ignore-nonprinting    tính chỉ các ký tự có thể in được\n"
 "  -M, --month-sort            so sánh (không rõ) < « Th1 » < ... < « Th12 »\n"
 
-#: src/sort.c:342
+#: src/sort.c:343
 msgid ""
 "  -h, --human-numeric-sort    compare human readable numbers (e.g., 2K 1G)\n"
 msgstr ""
+"  -h, --human-numeric-sort    so sánh các số mà người đọc được (v.d. 2K 1G)\n"
 
-#: src/sort.c:345
+#: src/sort.c:346
 msgid ""
 "  -n, --numeric-sort          compare according to string numerical value\n"
 "  -R, --random-sort           sort by random hash of keys\n"
@@ -8399,8 +8548,7 @@ msgstr ""
 "      --random-source=TẬP_TIN    lấy các byte ngẫu nhiên từ tập tin này\n"
 "  -r, --reverse               đảo ngược kết quả so sánh\n"
 
-#: src/sort.c:351
-#, fuzzy
+#: src/sort.c:352
 msgid ""
 "      --sort=WORD             sort according to WORD:\n"
 "                                general-numeric -g, human-numeric -h, month -"
@@ -8411,6 +8559,7 @@ msgid ""
 msgstr ""
 "      --sort=TỪ             sắp xếp theo TỪ :\n"
 " • general-numeric -g\t\tthuộc số kiểu chung\n"
+" • human-numeric -h\t\tthuộc số kiểu người\n"
 " • month -M\t\t\t\ttháng\n"
 " • numeric -n\t\t\tthuộc số\n"
 " • random -R\t\t\tngẫu nhiên\n"
@@ -8419,7 +8568,7 @@ msgstr ""
 "nhiên bên trong văn bản\n"
 "\n"
 
-#: src/sort.c:358
+#: src/sort.c:359
 msgid ""
 "Other options:\n"
 "\n"
@@ -8427,7 +8576,7 @@ msgstr ""
 "Tùy chọn khác:\n"
 "\n"
 
-#: src/sort.c:362
+#: src/sort.c:363
 msgid ""
 "      --batch-size=NMERGE   merge at most NMERGE inputs at once;\n"
 "                            for more use temp files\n"
@@ -8435,7 +8584,7 @@ msgstr ""
 "      --batch-size=SỐ   gộp lại đồng thời nhiều nhất SỐ đầu vào ;\n"
 "\t\t\tcho một số lớn hơn, hãy sử dụng các tập tin tạm thời\n"
 
-#: src/sort.c:366
+#: src/sort.c:367
 msgid ""
 "  -c, --check, --check=diagnose-first  check for sorted input; do not sort\n"
 "  -C, --check=quiet, --check=silent  like -c, but do not report first bad "
@@ -8458,7 +8607,7 @@ msgstr ""
 "\t\t\t\t\tcác tập tin kết thúc rỗng trong tập tin F\n"
 "\t\t\t\t\tNếu F là « - » thì đọc các tên từ đầu vào tiêu chuẩn\n"
 
-#: src/sort.c:375
+#: src/sort.c:376
 msgid ""
 "  -k, --key=POS1[,POS2]     start a key at POS1 (origin 1), end it at POS2\n"
 "                            (default end of line)\n"
@@ -8468,7 +8617,7 @@ msgstr ""
 "\t\tkết thúc ở VỊ_TRÍ12 (kết thúc dòng mặc định)\n"
 "  -m, --merge             gộp lại các tập tin đã sắp xếp; không sắp xếp\n"
 
-#: src/sort.c:380
+#: src/sort.c:381
 msgid ""
 "  -o, --output=FILE         write result to FILE instead of standard output\n"
 "  -s, --stable              stabilize sort by disabling last-resort "
@@ -8481,8 +8630,8 @@ msgstr ""
 "cuối cùng\n"
 "  -S, --buffer-size=CỠ    dùng CỠ cho bộ nhớ đệm chính\n"
 
-#: src/sort.c:385
-#, fuzzy, c-format
+#: src/sort.c:386
+#, c-format
 msgid ""
 "  -t, --field-separator=SEP  use SEP instead of non-blank to blank "
 "transition\n"
@@ -8503,12 +8652,12 @@ msgstr ""
 "                          khi không có « -c », chỉ đưa ra cái đầu tiên khi "
 "trùng nhau\n"
 
-#: src/sort.c:392
+#: src/sort.c:393
 msgid "  -z, --zero-terminated     end lines with 0 byte, not newline\n"
 msgstr ""
 "  -z, --zero-terminated   kết thúc dòng với 0 byte, thay cho ký tự dòng mới\n"
 
-#: src/sort.c:397
+#: src/sort.c:398
 msgid ""
 "\n"
 "POS is F[.C][OPTS], where F is the field number and C the character "
@@ -8533,7 +8682,7 @@ msgstr ""
 "\n"
 "CỠ có thể có các đuôi bội số sau :\n"
 
-#: src/sort.c:407
+#: src/sort.c:408
 msgid ""
 "% 1% of memory, b 1, K 1024 (default), and so on for M, G, T, P, E, Z, Y.\n"
 "\n"
@@ -8553,173 +8702,173 @@ msgstr ""
 "Biến môi trường địa phương ảnh hưởng đến thứ tự sắp xếp.\n"
 "Đặt « LC_ALL=C » để dùng thứ tự sắp xếp truyền thống theo giá trị byte gốc.\n"
 
-#: src/sort.c:609
+#: src/sort.c:610
 #, c-format
 msgid "waiting for %s [-d]"
 msgstr "đang đợi %s [-d]"
 
-#: src/sort.c:614
+#: src/sort.c:615
 #, c-format
 msgid "%s [-d] terminated abnormally"
 msgstr "%s [-d] đã chấm dứt bất thường"
 
-#: src/sort.c:785 src/tac.c:458
+#: src/sort.c:786 src/tac.c:458
 #, c-format
 msgid "cannot create temporary file in %s"
 msgstr "không tạo được tập tin tạm thời trong %s"
 
-#: src/sort.c:822 src/sort.c:2546 src/sort.c:2826 src/sort.c:2829
-#: src/sort.c:3638
+#: src/sort.c:823 src/sort.c:2547 src/sort.c:2827 src/sort.c:2830
+#: src/sort.c:3639
 msgid "open failed"
 msgstr "lỗi mở"
 
-#: src/sort.c:842
+#: src/sort.c:843
 msgid "fflush failed"
 msgstr "fflush bị lỗi"
 
-#: src/sort.c:847 src/sort.c:3693
+#: src/sort.c:848 src/sort.c:3694
 msgid "close failed"
 msgstr "lỗi đóng"
 
-#: src/sort.c:856
+#: src/sort.c:857
 #, c-format
 msgid "dup2 failed"
 msgstr "dup2 bị lỗi"
 
-#: src/sort.c:965
+#: src/sort.c:966
 #, c-format
 msgid "couldn't execute %s"
 msgstr "không thể thực hiện %s"
 
-#: src/sort.c:974
+#: src/sort.c:975
 msgid "couldn't create temporary file"
 msgstr "không tạo được tập tin tạm thời"
 
-#: src/sort.c:1014
+#: src/sort.c:1015
 #, c-format
 msgid "couldn't create process for %s -d"
 msgstr "không tạo được tiến trình cho %s -d"
 
-#: src/sort.c:1028
+#: src/sort.c:1029
 #, c-format
 msgid "couldn't execute %s -d"
 msgstr "không thể thực hiện %s -d"
 
-#: src/sort.c:1052
+#: src/sort.c:1053
 msgid "write failed"
 msgstr "lỗi ghi"
 
-#: src/sort.c:1089
+#: src/sort.c:1090
 #, c-format
 msgid "warning: cannot remove: %s"
 msgstr "cảnh báo : không xoá được: %s"
 
-#: src/sort.c:1175
+#: src/sort.c:1176
 #, c-format
 msgid "invalid --%s argument %s"
 msgstr "sai đối số « --%s » %s"
 
-#: src/sort.c:1178
+#: src/sort.c:1179
 #, c-format
 msgid "minimum --%s argument is %s"
 msgstr "đối số « --%s » tối thiểu là %s"
 
-#: src/sort.c:1193
+#: src/sort.c:1194
 #, c-format
 msgid "--%s argument %s too large"
 msgstr "đối số « --%s » %s vẫn quá lớn"
 
-#: src/sort.c:1196
+#: src/sort.c:1197
 #, c-format
 msgid "maximum --%s argument with current rlimit is %s"
 msgstr "đối số « --%s » tối đa theo giới hạn rlimit hiện thời là %s"
 
-#: src/sort.c:1341
+#: src/sort.c:1342
 msgid "stat failed"
 msgstr "lỗi lấy trạng thái về tập tin"
 
-#: src/sort.c:1602
+#: src/sort.c:1603
 msgid "read failed"
 msgstr "lỗi đọc"
 
-#: src/sort.c:1692
+#: src/sort.c:1693
 #, c-format
 msgid "both SI and IEC prefixes present on units"
-msgstr ""
+msgstr "đơn vị có cả hai tiền tố SI và IEC"
 
-#: src/sort.c:2255
+#: src/sort.c:2256
 #, c-format
 msgid "%s: %s:%s: disorder: "
 msgstr "%s: %s:%s: sai thứ tự : "
 
-#: src/sort.c:2259
+#: src/sort.c:2260
 msgid "standard error"
 msgstr "lỗi tiêu chuẩn"
 
-#: src/sort.c:2981
+#: src/sort.c:2982
 #, c-format
 msgid "%s: invalid field specification %s"
 msgstr "%s: sai xác định trường %s"
 
-#: src/sort.c:2992
+#: src/sort.c:2993
 #, c-format
 msgid "options `-%s' are incompatible"
 msgstr "các tùy chọn « -%s » không tương thích với nhau"
 
-#: src/sort.c:3061
+#: src/sort.c:3062
 #, c-format
 msgid "%s: invalid count at start of %s"
 msgstr "%s: sai số đếm tại đầu của %s"
 
-#: src/sort.c:3320
+#: src/sort.c:3321
 msgid "invalid number after `-'"
 msgstr "số sai ở sau « - »"
 
-#: src/sort.c:3323 src/sort.c:3394 src/sort.c:3422
+#: src/sort.c:3324 src/sort.c:3395 src/sort.c:3423
 msgid "invalid number after `.'"
 msgstr "số sai ở sau « . »"
 
-#: src/sort.c:3326 src/sort.c:3427
+#: src/sort.c:3327 src/sort.c:3428
 msgid "stray character in field spec"
 msgstr "ký tự rác trong lời xác định trường"
 
-#: src/sort.c:3372
+#: src/sort.c:3373
 #, c-format
 msgid "multiple compress programs specified"
 msgstr "đã chỉ ra nhiều chương trình nén"
 
-#: src/sort.c:3385
+#: src/sort.c:3386
 msgid "invalid number at field start"
 msgstr "số sai tại đầu trường"
 
-#: src/sort.c:3389 src/sort.c:3417
+#: src/sort.c:3390 src/sort.c:3418
 msgid "field number is zero"
 msgstr "số của trường là không"
 
-#: src/sort.c:3398
+#: src/sort.c:3399
 msgid "character offset is zero"
 msgstr "hiệu ký tự là không"
 
-#: src/sort.c:3413
+#: src/sort.c:3414
 msgid "invalid number after `,'"
 msgstr "số sai ở sau « , »"
 
-#: src/sort.c:3552 src/wc.c:680
+#: src/sort.c:3553 src/wc.c:680
 #, c-format
 msgid "cannot read file names from %s"
 msgstr "không đọc được tên tập tin từ %s"
 
-#: src/sort.c:3574
+#: src/sort.c:3575
 #, c-format
 msgid "%s:%lu: invalid zero-length file name"
 msgstr "%s:%lu: sai tên tập tin chiều dài không"
 
-#: src/sort.c:3580
+#: src/sort.c:3581
 #, c-format
 msgid "no input from %s"
 msgstr "không có dữ liệu nhập vào từ %s"
 
-#: src/sort.c:3663
+#: src/sort.c:3664
 #, c-format
 msgid "extra operand %s not allowed with -%c"
 msgstr "không cho phép toán hạng thêm %s với « -%c »"
@@ -8812,27 +8961,39 @@ msgstr "sai số dòng: 0"
 msgid "Michael Meskes"
 msgstr "Michael Meskes"
 
-#: src/stat.c:715
+#: src/stat.c:748
 #, c-format
 msgid "warning: unrecognized escape `\\%c'"
 msgstr "cảnh báo : không nhận ra dãy thoát « \\%c »"
 
-#: src/stat.c:759
+#: src/stat.c:792
 #, c-format
 msgid "%s: invalid directive"
 msgstr "%s: sai chỉ thị"
 
-#: src/stat.c:805
+#: src/stat.c:838
 #, c-format
 msgid "warning: backslash at end of format"
 msgstr "cảnh báo : định dạng kết thúc bằng xuyệc ngược"
 
-#: src/stat.c:834
+#: src/stat.c:867
+#, c-format
+msgid "using %s to denote standard input does not work in file system mode"
+msgstr ""
+"sử dụng %s để đại diện đầu vào tiêu chuẩn cũng không hoạt động trong chế độ "
+"hệ thống tập tin"
+
+#: src/stat.c:874
 #, c-format
 msgid "cannot read file system information for %s"
 msgstr "không đọc được thông tin hệ thống tập tin cho %s"
 
-#: src/stat.c:910
+#: src/stat.c:904
+#, c-format
+msgid "cannot stat standard input"
+msgstr "không thể lấy trạng thái về đầu vào tiêu chuẩn"
+
+#: src/stat.c:963
 msgid ""
 "Display file or file system status.\n"
 "\n"
@@ -8845,7 +9006,7 @@ msgstr ""
 "  -f, --file-system        hiển thị trạng thái của hệ thống tập tin\n"
 "                             thay cho trạng thái của tập tin\n"
 
-#: src/stat.c:916
+#: src/stat.c:969
 msgid ""
 "  -c  --format=FORMAT   use the specified FORMAT instead of the default;\n"
 "                          output a newline after each use of FORMAT\n"
@@ -8864,7 +9025,7 @@ msgstr ""
 "ĐỊNH_DẠNG.\n"
 "  -t, --terse           in ra thông tin theo dạng ngắn\n"
 
-#: src/stat.c:927
+#: src/stat.c:980
 msgid ""
 "\n"
 "The valid format sequences for files (without --file-system):\n"
@@ -8884,7 +9045,7 @@ msgstr ""
 "  %B   Kích cỡ theo byte của mỗi khối được %b thông báo\n"
 "  %C   Chuỗi ngữ cảnh bảo mật SELinux\n"
 
-#: src/stat.c:936
+#: src/stat.c:989
 msgid ""
 "  %d   Device number in decimal\n"
 "  %D   Device number in hex\n"
@@ -8900,7 +9061,7 @@ msgstr ""
 "  %g   ID nhóm của người sở hữu\n"
 "  %G   Tên nhóm của người sở hữu\n"
 
-#: src/stat.c:944
+#: src/stat.c:997
 msgid ""
 "  %h   Number of hard links\n"
 "  %i   Inode number\n"
@@ -8920,7 +9081,7 @@ msgstr ""
 "  %t   Kiểu thiết bị lớn theo dạng thập lục\n"
 "  %T   Kiểu thiết bị nhỏ theo dạng thập lục\n"
 
-#: src/stat.c:954
+#: src/stat.c:1007
 msgid ""
 "  %u   User ID of owner\n"
 "  %U   User name of owner\n"
@@ -8942,7 +9103,7 @@ msgstr ""
 "  %Z   Thời gian thay đổi cuối cùng, theo giây kể từ Epoch\n"
 "\n"
 
-#: src/stat.c:966
+#: src/stat.c:1019
 msgid ""
 "Valid format sequences for file systems:\n"
 "\n"
@@ -8962,7 +9123,7 @@ msgstr ""
 "  %f   Số khối còn trống trong hệ thống tập tin\n"
 "  %C   Chuỗi ngữ cảnh bảo mật SELinux\n"
 
-#: src/stat.c:976
+#: src/stat.c:1029
 msgid ""
 "  %i   File System ID in hex\n"
 "  %l   Maximum length of filenames\n"
@@ -8980,7 +9141,7 @@ msgstr ""
 "  %t   Kiểu theo dạng thập lục\n"
 "  %T   Kiểu theo dạng dễ đọc\n"
 
-#: src/stat.c:1042
+#: src/stat.c:1095
 #, c-format
 msgid ""
 "the --context (-Z) option is obsolete and will be removed\n"
@@ -8989,39 +9150,51 @@ msgstr ""
 "tùy chọn « --context » (-Z) quá cũ\n"
 "và sẽ bị gỡ bỏ trong một phiên bản sau"
 
-#: src/stdbuf.c:95
-#, fuzzy, c-format
+#: src/stdbuf.c:92
+#, c-format
 msgid "Usage: %s OPTION... COMMAND\n"
-msgstr "Sử dụng: %s [TÙY_CHỌN]...\n"
+msgstr "Sử dụng: %s TÙY_CHỌN... LỆNH\n"
 
-#: src/stdbuf.c:96
+#: src/stdbuf.c:93
 msgid ""
 "Run COMMAND, with modified buffering operations for its standard streams.\n"
 "\n"
 msgstr ""
+"Chạy câu LỆNH, với thao tác bị sửa đổi để chuyển hoán đệm cho các luồng tiêu "
+"chuẩn.\n"
+"\n"
 
-#: src/stdbuf.c:103
+#: src/stdbuf.c:100
 msgid ""
 "  -i, --input=MODE   Adjust standard input stream buffering\n"
 "  -o, --output=MODE  Adjust standard output stream buffering\n"
 "  -e, --error=MODE   Adjust standard error stream buffering\n"
 msgstr ""
+"  -i, --input=CHẾ_ĐỘ   Điều chỉnh việc chuyển hoán đệm luồng đầu vào tiêu "
+"chuẩn\n"
+"  -o, --output=CHẾ_ĐỘ  Điều chỉnh việc chuyển hoán đệm luồng đầu ra tiêu "
+"chuẩn\n"
+"  -e, --error=CHẾ_ĐỘ   Điều chỉnh việc chuyển hoán đệm luồng lỗi tiêu chuẩn\n"
 
-#: src/stdbuf.c:110
+#: src/stdbuf.c:107
 msgid ""
 "\n"
 "If MODE is `L' the corresponding stream will be line buffered.\n"
 "This option is invalid with standard input.\n"
 msgstr ""
+"\n"
+"Nếu CHẾ_ĐỘ là « L » thì luồng tương ứng được chuyển hoán đệm theo dòng.\n"
+"Tuỳ chọn này không hợp lệ với đầu vào tiêu chuẩn.\n"
 
-#: src/stdbuf.c:113
+#: src/stdbuf.c:110
 msgid ""
 "\n"
 "If MODE is `0' the corresponding stream will be unbuffered.\n"
 msgstr ""
+"\n"
+"Nếu CHẾ_ĐỘ là « 0 » thì luồng tương ứng không được chuyển hoán đệm.\n"
 
-#: src/stdbuf.c:116
-#, fuzzy
+#: src/stdbuf.c:113
 msgid ""
 "\n"
 "Otherwise MODE is a number which may be followed by one of the following:\n"
@@ -9031,11 +9204,13 @@ msgid ""
 "size set to MODE bytes.\n"
 msgstr ""
 "\n"
-"Kích CỠ là một con số có thể đi trước một của những hậu tố này:\n"
+"Không thì CHẾ_ĐỘ là một con số có thể đi trước một của những hậu tố này:\n"
 "KB 1000, K 1024, MB 1000*1000, M 1024*1024, và tương tự với G, T, P, E, Z, "
 "Y.\n"
+"Trong trường hợp này, luồng tương ứng được chuyển hoán đệm một cách đầy đủ,\n"
+"với kích cỡ vùng đệm được đặt thành CHẾ_ĐỘ byte.\n"
 
-#: src/stdbuf.c:122
+#: src/stdbuf.c:119
 msgid ""
 "\n"
 "NOTE: If COMMAND adjusts the buffering of its standard streams (`tee' does\n"
@@ -9044,21 +9219,23 @@ msgid ""
 "Also some filters (like `dd' and `cat' etc.) don't use streams for I/O,\n"
 "and are thus unaffected by `stdbuf' settings.\n"
 msgstr ""
+"\n"
+"GHI CHÚ : nếu câu LỆNH điều chỉnh việc chuyển hoán đệm các luồng tiêu chuẩn\n"
+"(v.d. « tee ») thì cũng ghi đè lên các thiết lập tương ứng bị « stdbuf » sửa "
+"đổi.\n"
+"Ngoài ra còn có một số bộ lọc (v.d. « dd » và « cat ») mà không dùng luồng với "
+"đầu V/R,\n"
+"thì không bị tác động bởi thiết lập « stdbuf ».\n"
 
-#: src/stdbuf.c:165
+#: src/stdbuf.c:247 src/stdbuf.c:279
 #, c-format
-msgid "path truncated when looking for %s"
-msgstr ""
-
-#: src/stdbuf.c:258 src/stdbuf.c:290
-#, fuzzy, c-format
 msgid "failed to update the environment with %s"
-msgstr "lỗi đặt ngữ cảnh bảo mật của %s thành %s"
+msgstr "lỗi cập nhật môi trường dùng %s"
 
-#: src/stdbuf.c:332
+#: src/stdbuf.c:321
 #, c-format
 msgid "line buffering stdin is meaningless"
-msgstr ""
+msgstr "vô ích khi chuyển hoán đệm theo dòng đầu vào tiêu chuẩn"
 
 #: src/stty.c:514
 #, c-format
@@ -9553,36 +9730,36 @@ msgstr "%s: không có thông tin kích cỡ cho thiết bị này"
 msgid "invalid integer argument %s"
 msgstr "sai đối số kiểu số nguyên %s"
 
-#: src/su.c:238
+#: src/su.c:226
 msgid "Password:"
 msgstr "Mật khẩu :"
 
-#: src/su.c:241
+#: src/su.c:229
 #, c-format
 msgid "getpass: cannot open /dev/tty"
 msgstr "getpass: không mở được « /dev/tty »"
 
-#: src/su.c:299
+#: src/su.c:287
 #, c-format
 msgid "cannot set groups"
 msgstr "không đặt được các nhóm"
 
-#: src/su.c:303
+#: src/su.c:291
 #, c-format
 msgid "cannot set group id"
 msgstr "không đặt được ID nhóm"
 
-#: src/su.c:305
+#: src/su.c:293
 #, c-format
 msgid "cannot set user id"
 msgstr "không đặt được ID người dùng"
 
-#: src/su.c:381
+#: src/su.c:369
 #, c-format
 msgid "Usage: %s [OPTION]... [-] [USER [ARG]...]\n"
 msgstr "Sử dụng: %s [TÙY_CHỌN]... [-] [NGƯỜI_DÙNG [ĐỐI_SỐ]...]\n"
 
-#: src/su.c:382
+#: src/su.c:370
 msgid ""
 "Change the effective user id and group id to that of USER.\n"
 "\n"
@@ -9602,7 +9779,7 @@ msgstr ""
 "  -p                           giống như « -m »\n"
 "  -s, --shell=TRÌNH_BAO        chạy TRÌNH_BAO nếu « /etc/shells » cho phép\n"
 
-#: src/su.c:394
+#: src/su.c:382
 msgid ""
 "\n"
 "A mere - implies -l.   If USER not given, assume root.\n"
@@ -9611,22 +9788,22 @@ msgstr ""
 "Một « - » ý nói « -l ».   Nếu không đưa ra NGƯỜI_DÙNG, thì coi như người chủ "
 "(root).\n"
 
-#: src/su.c:471
+#: src/su.c:459
 #, c-format
 msgid "user %s does not exist"
 msgstr "người dùng %s không tồn tại"
 
-#: src/su.c:494
+#: src/su.c:482
 #, c-format
 msgid "incorrect password"
 msgstr "sai mật khẩu"
 
-#: src/su.c:511
+#: src/su.c:499
 #, c-format
 msgid "using restricted shell %s"
 msgstr "sử dụng trình bao bị giới hạn %s"
 
-#: src/su.c:519
+#: src/su.c:507
 #, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "cảnh báo : không thể chuyển đổi thư mục sang %s"
@@ -9661,7 +9838,7 @@ msgstr ""
 msgid "ignoring all arguments"
 msgstr "đang lờ đi mọi đối số"
 
-#: src/system.h:433
+#: src/system.h:384
 #, c-format
 msgid ""
 "\n"
@@ -9675,16 +9852,15 @@ msgstr ""
 "Hãy tham chiếu đến tài liệu hướng dẫn của trình bao\n"
 "để tìm chi tiết về các tùy chọn được hỗ trợ.\n"
 
-#: src/system.h:439
+#: src/system.h:390
 msgid "      --help     display this help and exit\n"
 msgstr "      --help        hiển thị trợ giúp này rồi thoát\n"
 
-#: src/system.h:441
+#: src/system.h:392
 msgid "      --version  output version information and exit\n"
 msgstr "      --version     đưa ra thông tin phiên bản rồi thoát\n"
 
-#: src/system.h:622
-#, fuzzy
+#: src/system.h:569
 msgid ""
 "\n"
 "SIZE may be (or may be an integer optionally followed by) one of following:\n"
@@ -9692,10 +9868,10 @@ msgid ""
 msgstr ""
 "\n"
 "CỠ có thể là (hoặc có thể là số nguyên đi trước) một trong:\n"
-"kB 1000, K 1024, MB 1000*1000, M 1024*1024, và tương tự với G, T, P, E, Z, "
+"KB 1000, K 1024, MB 1000*1000, M 1024*1024, và tương tự với G, T, P, E, Z, "
 "Y.\n"
 
-#: src/system.h:631
+#: src/system.h:578
 #, c-format
 msgid ""
 "\n"
@@ -9703,8 +9879,12 @@ msgid ""
 "and the %s_BLOCK_SIZE, BLOCK_SIZE and BLOCKSIZE environment variables.\n"
 "Otherwise, units default to 1024 bytes (or 512 if POSIXLY_CORRECT is set).\n"
 msgstr ""
+"\n"
+"Giá trị hiển thị theo đơn vị kích CỠ sẵn có đầu tiên từ « --block-size »,\n"
+"và các biến đổi môi trường %s_BLOCK_SIZE, BLOCK_SIZE và BLOCKSIZE.\n"
+"Không thì đơn vị mặc định là 1024 byte (hoặc 512 nếu đặt POSIXLY_CORRECT).\n"
 
-#: src/system.h:642
+#: src/system.h:588
 #, c-format
 msgid ""
 "\n"
@@ -9713,24 +9893,36 @@ msgstr ""
 "\n"
 "Thông báo lỗi %s tới %s\n"
 
-#: src/system.h:645
-#, c-format
-msgid "%s home page: <http://www.gnu.org/software/%s/>\n"
-msgstr "Trang chủ %s: <http://www.gnu.org/software/%s/>\n"
-
-#: src/system.h:647
-msgid "General help using GNU software: <http://www.gnu.org/gethelp/>\n"
-msgstr ""
-"Trợ giúp chung về sử dụng phần mềm GNU: <http://www.gnu.org/gethelp/>\n"
-
 #. TRANSLATORS: Replace LANG_CODE in this URL with your language code
 #. <http://translationproject.org/team/LANG_CODE.html> to form one of
 #. the URLs at http://translationproject.org/team/.  Otherwise, replace
 #. the entire URL with your translation team's email address.
-#: src/system.h:656
+#: src/system.h:604
 #, c-format
 msgid "Report %s translation bugs to <http://translationproject.org/team/>\n"
 msgstr "Hãy thông báo lỗi dịch %s cho <http://translationproject.org/team/>\n"
+
+#: src/system.h:608
+#, c-format
+msgid "For complete documentation, run: info coreutils '%s invocation'\n"
+msgstr ""
+"Để thấy tài liệu hướng dẫn hoàn toàn, hãy chạy câu lệnh: info coreutils '%s "
+"invocation'\n"
+
+#: src/system.h:678
+#, c-format
+msgid ""
+"WARNING: Circular directory structure.\n"
+"This almost certainly means that you have a corrupted file system.\n"
+"NOTIFY YOUR SYSTEM MANAGER.\n"
+"The following directory is part of the cycle:\n"
+"  %s\n"
+msgstr ""
+"CẢNH BÁO : cấu trúc thư mục vòng quanh.\n"
+"Gần chắc chắn là hệ thống tập tin đã bị hỏng.\n"
+"HÃY THÔNG BÁO CHO NHÀ QUẢN LÝ HỆ THỐNG.\n"
+"Thư mục sau nằm trong vòng quay:\n"
+"  %s\n"
 
 #. This is a proper name. See the gettext manual, section Names.
 #: src/tac.c:57
@@ -9804,12 +9996,13 @@ msgstr ""
 #: src/tail.c:262
 #, fuzzy
 msgid ""
-"  -c, --bytes=K            output the last K bytes; alternatively, use +K "
-"to\n"
-"                           output bytes starting with the Kth of each file\n"
+"  -c, --bytes=K            output the last K bytes; alternatively, use -c "
+"+K\n"
+"                           to output bytes starting with the Kth of each "
+"file\n"
 msgstr ""
-"  -c, --bytes=SỐ            xuất SỐ byte cuối cùng;\n"
-"\thoặc dùng +SỐ để xuất các byte bắt đầu ở byte thứ SỐ của mỗi tập tin\n"
+"  -c, --bytes=K            xuất K byte cuối cùng;\n"
+"\thoặc dùng +K để xuất các byte bắt đầu ở byte thứ K của mỗi tập tin\n"
 
 #: src/tail.c:266
 msgid ""
@@ -9829,16 +10022,17 @@ msgstr ""
 #, fuzzy, c-format
 msgid ""
 "  -n, --lines=K            output the last K lines, instead of the last %d;\n"
-"                           or use +K to output lines starting with the Kth\n"
+"                           or use -n +K to output lines starting with the "
+"Kth\n"
 "      --max-unchanged-stats=N\n"
 "                           with --follow=name, reopen a FILE which has not\n"
 "                           changed size after N (default %d) iterations\n"
 "                           to see if it has been unlinked or renamed\n"
 "                           (this is the usual case of rotated log files)\n"
 msgstr ""
-"  -n, --lines=N      đưa ra N dòng cuối cùng, thay vì %d cuối cùng\n"
-"                       hoặc dùng « +N » để xuất các dòng bắt đầu với dòng thứ "
-"N\n"
+"  -n, --lines=K      đưa ra K dòng cuối cùng, thay vì %d cuối cùng\n"
+"                       hoặc dùng « +K » để xuất các dòng bắt đầu với dòng thứ "
+"K\n"
 "      --max-unchanged-stats=N\n"
 "                     với « --follow=tên », mở lại một TẬP_TIN không có\n"
 "                       kích cỡ thay đổi sau N (mặc định %d) lần lặp lại\n"
@@ -9861,17 +10055,16 @@ msgstr ""
 "\t\t\t\tcó ích khi đi theo tên, tức là dùng « --follow=name »\n"
 
 #: src/tail.c:292
-#, fuzzy
 msgid ""
 "  -s, --sleep-interval=N   with -f, sleep for approximately N seconds\n"
 "                             (default 1.0) between iterations\n"
 "  -v, --verbose            always output headers giving file names\n"
 msgstr ""
-"  -s, --sleep-interval=SỐ   với « -f » thì ngủ trong khoảng SỐ giây\n"
+"  -s, --sleep-interval=N   với « -f » thì ngủ trong khoảng N giây\n"
+"\t\t\t(mặc định 1.0) giữa hai lần lặp lại\n"
 "  -v, --verbose            lúc nào cũng xuất phần đầu chỉ ra tên tập tin\n"
 
 #: src/tail.c:299
-#, fuzzy
 msgid ""
 "\n"
 "If the first character of K (the number of bytes or lines) is a `+',\n"
@@ -9882,10 +10075,10 @@ msgid ""
 "\n"
 msgstr ""
 "\n"
-"Nếu ký tự đầu tiên của N (số byte hoặc số dòng) là một « + »,\n"
-"thì in ra đầu tiên với mục thứ N từ đầu mỗi tập tin,\n"
-"không thì in N mục cuối cùng trong tập tin.\n"
-"N có thể có các đuôi bội số:\n"
+"Nếu ký tự đầu tiên của K (số byte hoặc số dòng) là một « + »,\n"
+"thì in ra đầu tiên với mục thứ K từ đầu mỗi tập tin,\n"
+"không thì in K mục cuối cùng trong tập tin.\n"
+"K có thể có các đuôi bội số:\n"
 "b 512, kB 1000, K 1024, MB 1000*1000, M 1024*1024,\n"
 "GB 1000*1000*1000, G 1024*1024*1024, và tương tự với T, P, E, Z, Y.\n"
 "\n"
@@ -9960,7 +10153,7 @@ msgstr "%s bị thay thế; đi theo cuối của tập tin mới"
 msgid "%s: cannot change nonblocking mode"
 msgstr "%s: không thay đổi được chế độ không chặn"
 
-#: src/tail.c:1101 src/tail.c:1383
+#: src/tail.c:1101 src/tail.c:1189
 #, c-format
 msgid "%s: file truncated"
 msgstr "%s: tập tin đã bị cắt ngắn"
@@ -9970,87 +10163,87 @@ msgstr "%s: tập tin đã bị cắt ngắn"
 msgid "no files remaining"
 msgstr "không còn tập tin nào"
 
-#: src/tail.c:1223
-#, fuzzy, c-format
+#: src/tail.c:1266
+#, c-format
 msgid "cannot watch parent directory of %s"
-msgstr "không lấy được trạng thái về thư mục hiện thời (bây giờ %s)"
+msgstr "không thể theo dõi thư mục mẹ của %s"
 
-#: src/tail.c:1234 src/tail.c:1337
-#, fuzzy, c-format
+#: src/tail.c:1277 src/tail.c:1384
+#, c-format
 msgid "cannot watch %s"
-msgstr "không sờ (touch) được %s"
+msgstr "không thể theo dõi %s"
 
-#: src/tail.c:1283
-#, fuzzy, c-format
+#: src/tail.c:1339
+#, c-format
 msgid "error monitoring inotify event"
-msgstr "lỗi đọc %s"
+msgstr "gặp lỗi khi theo dõi sự kiện inotify"
 
-#: src/tail.c:1312
-#, fuzzy, c-format
+#: src/tail.c:1359
+#, c-format
 msgid "error reading inotify event"
-msgstr "lỗi đọc %s"
+msgstr "gặp lỗi khi đọc sự kiện inotify"
 
-#: src/tail.c:1610
+#: src/tail.c:1633
 #, c-format
 msgid "%s: cannot follow end of this type of file; giving up on this name"
 msgstr "%s: không thể đi theo cuối của kiểu tập tin này; đầu hàng với tên này"
 
-#: src/tail.c:1726
+#: src/tail.c:1749
 #, c-format
 msgid "number in %s is too large"
 msgstr "%s chứa một con số quá lớn"
 
-#: src/tail.c:1798
+#: src/tail.c:1821
 #, c-format
 msgid "%s: invalid maximum number of unchanged stats between opens"
 msgstr "%s: sai số trạng thái không thay đổi tối đa giữa các lần mở"
 
-#: src/tail.c:1814
+#: src/tail.c:1837
 #, c-format
 msgid "%s: invalid PID"
 msgstr "%s: sai PID"
 
-#: src/tail.c:1833
+#: src/tail.c:1856
 #, c-format
 msgid "%s: invalid number of seconds"
 msgstr "%s: sai số giây"
 
-#: src/tail.c:1849
+#: src/tail.c:1872
 #, c-format
 msgid "option used in invalid context -- %c"
 msgstr "tùy chọn dùng theo ngữ cảnh sai -- %c"
 
-#: src/tail.c:1857
+#: src/tail.c:1880
 #, c-format
 msgid "warning: --retry is useful mainly when following by name"
 msgstr "cảnh báo : « --retry » thường có ích khi theo sau theo tên"
 
-#: src/tail.c:1861
+#: src/tail.c:1884
 #, c-format
 msgid "warning: PID ignored; --pid=PID is useful only when following"
 msgstr "cảnh báo : PID bị bỏ qua; « --pid=PID » chỉ có ích khi theo sau"
 
-#: src/tail.c:1864
+#: src/tail.c:1887
 #, c-format
 msgid "warning: --pid=PID is not supported on this system"
 msgstr "cảnh báo : không hỗ trợ « --pid=PID » trên hệ thống này"
 
-#: src/tail.c:1936
+#: src/tail.c:1959
 #, c-format
 msgid "cannot follow %s by name"
 msgstr "không thể theo sau %s theo tên"
 
-#: src/tail.c:1942
+#: src/tail.c:1965
 #, c-format
 msgid "warning: following standard input indefinitely is ineffective"
 msgstr ""
 "cảnh báo : không hiệu quả khi theo sau đầu vào tiêu chuẩn một cách không "
 "giới hạn"
 
-#: src/tail.c:1998
+#: src/tail.c:2021
 #, c-format
 msgid "inotify cannot be used, reverting to polling"
-msgstr ""
+msgstr "inotify không dùng được thì phục hồi việc trưng cầu"
 
 #: src/tee.c:63
 msgid ""
@@ -10318,7 +10511,7 @@ msgstr "thiếu « ] »"
 msgid "extra argument %s"
 msgstr "tham số thêm %s"
 
-#: src/timeout.c:133
+#: src/timeout.c:127
 #, c-format
 msgid ""
 "Usage: %s [OPTION] NUMBER[SUFFIX] COMMAND [ARG]...\n"
@@ -10327,7 +10520,7 @@ msgstr ""
 "Sử dụng: %s [TÙY_CHỌN] SỐ[ĐUÔI] LỆNH [ĐỐI_SỐ]...\n"
 "  hoặc:  %s [TÙY_CHỌN]\n"
 
-#: src/timeout.c:137
+#: src/timeout.c:131
 msgid ""
 "Start COMMAND, and kill it if still running after NUMBER seconds.\n"
 "SUFFIX may be `s' for seconds (the default), `m' for minutes,\n"
@@ -10343,7 +10536,7 @@ msgstr ""
 " • d\t\tngày.\n"
 "\n"
 
-#: src/timeout.c:147
+#: src/timeout.c:141
 msgid ""
 "  -s, --signal=SIGNAL\n"
 "                   specify the signal to be sent on timeout.\n"
@@ -10356,69 +10549,65 @@ msgstr ""
 "\t\thoặc một con số.\n"
 "\t\tXem « kill -l » để thấy một danh sách các tín hiệu.\n"
 
-#: src/timeout.c:155
+#: src/timeout.c:149
 msgid ""
 "\n"
-"If the command times out, then we exit with status 124,\n"
-"otherwise the normal exit status of the command is returned.\n"
-"If no signal is specified, the TERM signal is sent. The TERM signal\n"
-"will kill processes which do not catch this signal. For other processes,\n"
-"it may be necessary to use the KILL (9) signal, since this signal cannot\n"
-"be caught.\n"
+"If the command times out, then exit with status 124.  Otherwise, exit\n"
+"with the status of COMMAND.  If no signal is specified, send the TERM\n"
+"signal upon timeout.  The TERM signal kills any process that does not\n"
+"block or catch that signal.  For other processes, it may be necessary to\n"
+"use the KILL (9) signal, since this signal cannot be caught.\n"
 msgstr ""
 "\n"
-"Nếu câu lệnh quá hạn thì chúng ta thoát với trạng thái 124,\n"
-"không thì trả lại trạng thái thoát bình thường của câu lệnh đó.\n"
-"Không đưa ra một tín hiệu riêng thì gửi tín hiệu TERM.\n"
-"Tín hiệu TERM sẽ ép buộc kết thúc mỗi tiến trình không bắt tín hiệu này.\n"
-"Đối với các tiến trình khác, có thể cần phải sử dụng tín hiệu KILL (9),\n"
-"vì tín hiệu này không thể được bắt.\n"
+"Nếu câu lệnh quá hạn thì thoát với trạng thái 124,\n"
+"không thì thoát với trạng thái của câu lệnh đó.\n"
+"Không đưa ra tín hiệu thì gửi tín hiệu TERM khi quá hạn.\n"
+"Tín hiệu TERM ép buộc kết thúc bất cứ tiến trình nào\n"
+"không chặn hay bắt tín hiệu đó. Đối với tiến trình khác,\n"
+"có thể cần sử dụng tín hiệu KILL (9) vì không thể bắt tín hiệu đó.\n"
 
-#: src/timeout.c:322
-#, fuzzy, c-format
+#: src/timeout.c:316
+#, c-format
 msgid "error waiting for command"
-msgstr "lỗi ghi %s"
+msgstr "gặp lỗi khi đợi câu lệnh"
 
-#: src/timeout.c:334
+#: src/timeout.c:328
 #, c-format
 msgid "unknown status from command (0x%X)"
-msgstr ""
+msgstr "nhận được trạng thái không rõ từ câu lệnh (0x%X)"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/touch.c:43
+#: src/touch.c:44
 msgid "Jim Kingdon"
 msgstr "Jim Kingdon"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/touch.c:45
+#: src/touch.c:46
 msgid "Randy Smith"
 msgstr "Randy Smith"
 
-#: src/touch.c:112 src/touch.c:326
+#: src/touch.c:117 src/touch.c:318
 #, c-format
 msgid "invalid date format %s"
 msgstr "sai định dạng ngày tháng %s"
 
-#: src/touch.c:154
-#, c-format
-msgid "creating %s"
-msgstr "đang tạo %s"
-
-#: src/touch.c:211
+#: src/touch.c:193
 #, c-format
 msgid "cannot touch %s"
 msgstr "không sờ (touch) được %s"
 
-#: src/touch.c:217
+#: src/touch.c:199
 #, c-format
 msgid "setting times of %s"
 msgstr "đang đặt thời gian của %s"
 
-#: src/touch.c:234
+#: src/touch.c:216
+#, fuzzy
 msgid ""
 "Update the access and modification times of each FILE to the current time.\n"
 "\n"
-"A FILE argument that does not exist is created empty.\n"
+"A FILE argument that does not exist is created empty, unless -c or -h\n"
+"is supplied.\n"
 "\n"
 "A FILE argument string of - is handled specially and causes touch to\n"
 "change the times of the file associated with standard output.\n"
@@ -10433,13 +10622,13 @@ msgstr ""
 "touch thay đổi các thời gian của tập tin gắn với đầu ra tiêu chuẩn.\n"
 "\n"
 
-#: src/touch.c:246
+#: src/touch.c:229
+#, fuzzy
 msgid ""
 "  -a                     change only the access time\n"
 "  -c, --no-create        do not create any files\n"
 "  -d, --date=STRING      parse STRING and use it instead of current time\n"
 "  -f                     (ignored)\n"
-"  -m                     change only the modification time\n"
 msgstr ""
 "  -a                     chỉ thay đổi thời gian truy cập\n"
 "  -c, --no-create        không tạo tập tin\n"
@@ -10448,7 +10637,22 @@ msgstr ""
 "  -f                     (bị lờ đi)\n"
 "  -m                     chỉ thay đổi thời gian sửa đổi\n"
 
-#: src/touch.c:253
+#: src/touch.c:235
+#, fuzzy
+msgid ""
+"  -h, --no-dereference   affect each symbolic link instead of any "
+"referenced\n"
+"                         file (useful only on systems that can change the\n"
+"                         timestamps of a symlink)\n"
+"  -m                     change only the modification time\n"
+msgstr ""
+"  -h, --no-dereference   ảnh hưởng mỗi liên kết mềm chứ không ảnh hưởng tập "
+"tin\n"
+"                         đích (chỉ có tác dụng trên hệ thống có thể thay "
+"đổi\n"
+"                         quyền sở hữu của một liên kết mềm)\n"
+
+#: src/touch.c:241
 msgid ""
 "  -r, --reference=FILE   use this file's times instead of current time\n"
 "  -t STAMP               use [[CC]YY]MMDDhhmm[.ss] instead of current time\n"
@@ -10465,7 +10669,7 @@ msgstr ""
 "a »\n"
 "                           TỪ là modify hoặc mtime: tương đương với « -m »\n"
 
-#: src/touch.c:262
+#: src/touch.c:250
 msgid ""
 "\n"
 "Note that the -d and -t options accept different time-date formats.\n"
@@ -10475,17 +10679,17 @@ msgstr ""
 "định dạng ngày/giờ khác nhau.\n"
 "\n"
 
-#: src/touch.c:317
+#: src/touch.c:309
 #, c-format
 msgid "warning: the --%s option is obsolete; use --reference"
 msgstr "cảnh báo : tuỳ chọn « --%s » quá cũ, hãy dùng « --reference »"
 
-#: src/touch.c:352
+#: src/touch.c:344
 #, c-format
 msgid "cannot specify times from more than one source"
 msgstr "không chỉ ra được thời gian từ vài nguồn"
 
-#: src/touch.c:417
+#: src/touch.c:412
 #, c-format
 msgid ""
 "warning: `touch %s' is obsolete; use `touch -t %04ld%02d%02d%02d%02d.%02d'"
@@ -10499,7 +10703,6 @@ msgid "Usage: %s [OPTION]... SET1 [SET2]\n"
 msgstr "Sử dụng: %s [TÙY_CHỌN]... TẬP_HỢP1 [TẬP_HỢP2]\n"
 
 #: src/tr.c:290
-#, fuzzy
 msgid ""
 "Translate, squeeze, and/or delete characters from standard input,\n"
 "writing to standard output.\n"
@@ -10515,7 +10718,7 @@ msgstr ""
 "Chuyển đổi, vắt, và/hoặc xóa các ký tự từ đầu vào tiêu chuẩn,\n"
 "ghi ra đầu ra tiêu chuẩn.\n"
 "\n"
-"  -c, -C, --complement    phần bù đầu tiên TẬP_HỢP1\n"
+"  -c, -C, --complement    dùng phần bù của TẬP_HỢP1\n"
 "  -d, --delete            xóa các ký tự trong TẬP_HỢP1, không chuyển đổi\n"
 "  -s, --squeeze-repeats   thay thế mỗi dãy đưa vào của một ký tự lặp\n"
 "                            liệt kê trong TẬP_HỢP1 bằng lần xuất hiện đơn\n"
@@ -10982,12 +11185,12 @@ msgstr "tab phân cách nhau quá xa"
 msgid "tab stop value is too large"
 msgstr "chiều dài tab là quá lớn"
 
-#: src/uniq.c:133
+#: src/uniq.c:134
 #, c-format
 msgid "Usage: %s [OPTION]... [INPUT [OUTPUT]]\n"
 msgstr "Sử dụng: %s [TÙY_CHỌN]... [VÀO [RA]]\n"
 
-#: src/uniq.c:137
+#: src/uniq.c:138
 msgid ""
 "Filter adjacent matching lines from INPUT (or standard input),\n"
 "writing to OUTPUT (or standard output).\n"
@@ -11002,7 +11205,7 @@ msgstr ""
 "nhất.\n"
 "\n"
 
-#: src/uniq.c:147
+#: src/uniq.c:148
 msgid ""
 "  -c, --count           prefix lines by the number of occurrences\n"
 "  -d, --repeated        only print duplicate lines\n"
@@ -11010,7 +11213,7 @@ msgstr ""
 "  -c, --count           thêm vào trước các dòng số lần lặp lại của chúng\n"
 "  -d, --repeated        chỉ in những dòng lặp lại\n"
 
-#: src/uniq.c:151
+#: src/uniq.c:152
 msgid ""
 "  -D, --all-repeated[=delimit-method]  print all duplicate lines\n"
 "                        delimit-method={none(default),prepend,separate}\n"
@@ -11035,11 +11238,11 @@ msgstr ""
 "  -z, --zero-terminated\t\tkết thúc dòng với 0 byte,\n"
 "\t\t\t\t\t\tkhông phải ký tự dòng mới\n"
 
-#: src/uniq.c:161
+#: src/uniq.c:162
 msgid "  -w, --check-chars=N   compare no more than N characters in lines\n"
 msgstr "  -w, --check-chars=N   so sánh nhiều nhất N ký tự trên dòng\n"
 
-#: src/uniq.c:166
+#: src/uniq.c:167
 msgid ""
 "\n"
 "A field is a run of blanks (usually spaces and/or TABs), then non-blank\n"
@@ -11050,7 +11253,7 @@ msgstr ""
 "và/hay khoảng TAB), rồi các ký tự không trắng.\n"
 "Bỏ qua các trường trước khi các ký tự.\n"
 
-#: src/uniq.c:171
+#: src/uniq.c:172
 msgid ""
 "\n"
 "Note: 'uniq' does not detect repeated lines unless they are adjacent.\n"
@@ -11063,24 +11266,24 @@ msgstr ""
 "uniq ».\n"
 "Hơn nữa, sự so sánh tùy theo quy tắc của « LC_COLLATE ».\n"
 
-#: src/uniq.c:357
+#: src/uniq.c:358
 #, c-format
 msgid "too many repeated lines"
 msgstr "quá nhiều dòng lặp lại"
 
-#: src/uniq.c:520
+#: src/uniq.c:521
 msgid "invalid number of fields to skip"
 msgstr "sai số trường cần bỏ qua"
 
-#: src/uniq.c:529
+#: src/uniq.c:530
 msgid "invalid number of bytes to skip"
 msgstr "sai số byte cần bỏ qua"
 
-#: src/uniq.c:538
+#: src/uniq.c:539
 msgid "invalid number of bytes to compare"
 msgstr "sai số byte cần so sánh"
 
-#: src/uniq.c:557
+#: src/uniq.c:558
 #, c-format
 msgid "printing all duplicated lines and repeat counts is meaningless"
 msgstr "in ra mọi dòng trùng và số đếm lặp lại là không có ý nghĩa"
@@ -11107,44 +11310,44 @@ msgstr ""
 msgid "cannot unlink %s"
 msgstr "không thể hủy liên kết %s"
 
-#: src/uptime.c:121
+#: src/uptime.c:125
 #, c-format
 msgid "couldn't get boot time"
 msgstr "không lấy được thời gian khởi động"
 
 #. TRANSLATORS: This prints the current clock time.
-#: src/uptime.c:132
+#: src/uptime.c:136
 msgid " %H:%M%P  "
 msgstr " %H:%M%P  "
 
-#: src/uptime.c:134
+#: src/uptime.c:138
 #, c-format
 msgid " ??:????  "
 msgstr " ??:????  "
 
-#: src/uptime.c:136
+#: src/uptime.c:140
 #, c-format
 msgid "up ???? days ??:??,  "
 msgstr "lên ???? ngày ??:??,  "
 
-#: src/uptime.c:140
+#: src/uptime.c:144
 #, c-format
 msgid "up %ld day %2d:%02d,  "
 msgid_plural "up %ld days %2d:%02d,  "
 msgstr[0] "lên %ld ngày %2d:%02d,  "
 
-#: src/uptime.c:147
+#: src/uptime.c:151
 #, c-format
 msgid "%lu user"
 msgid_plural "%lu users"
 msgstr[0] "%lu người dùng"
 
-#: src/uptime.c:161
+#: src/uptime.c:165
 #, c-format
 msgid ",  load average: %.2f"
 msgstr ",  trọng tải trung bình: %.2f"
 
-#: src/uptime.c:198
+#: src/uptime.c:202
 #, c-format
 msgid ""
 "Print the current time, the length of time the system has been up,\n"
@@ -11155,7 +11358,7 @@ msgstr ""
 "số các người dùng trên hệ thống, và số trung bình các công việc\n"
 "trong hàng đợi chạy trong 1, 5 và 15 phút cuối cùng."
 
-#: src/uptime.c:207
+#: src/uptime.c:211
 #, c-format
 msgid ""
 "  Processes in\n"
@@ -11164,12 +11367,12 @@ msgstr ""
 "Các tiến trình đang ngủ một cách không gián đoạn được\n"
 " thì cũng được tính trong trọng tải trung bình.\n"
 
-#: src/uptime.c:211
+#: src/uptime.c:215
 #, c-format
 msgid "\n"
 msgstr "\n"
 
-#: src/uptime.c:213
+#: src/uptime.c:217
 #, c-format
 msgid ""
 "If FILE is not specified, use %s.  %s as FILE is common.\n"
@@ -11222,43 +11425,43 @@ msgstr ""
 "  -L, --max-line-length  in chiều dài của dòng dài nhất\n"
 "  -w, --words            in các số đếm từ\n"
 
-#: src/who.c:209
+#: src/who.c:210
 msgid " old "
 msgstr " cũ "
 
-#: src/who.c:429
+#: src/who.c:430
 msgid "system boot"
 msgstr "hệ thống khởi động"
 
-#: src/who.c:436 src/who.c:438
+#: src/who.c:437 src/who.c:439
 msgid "id="
 msgstr "id="
 
-#: src/who.c:451 src/who.c:456
+#: src/who.c:452 src/who.c:457
 msgid "term="
 msgstr "term="
 
-#: src/who.c:453 src/who.c:457
+#: src/who.c:454 src/who.c:458
 msgid "exit="
 msgstr "thoát="
 
-#: src/who.c:474
+#: src/who.c:475
 msgid "LOGIN"
 msgstr "ĐĂNG_NHẬP"
 
-#: src/who.c:494
+#: src/who.c:495
 msgid "clock change"
 msgstr "thay đổi giờ"
 
-#: src/who.c:506 src/who.c:507
+#: src/who.c:507 src/who.c:508
 msgid "run-level"
 msgstr "bậc chạy"
 
-#: src/who.c:510 src/who.c:511
+#: src/who.c:511 src/who.c:512
 msgid "last="
 msgstr "cuối="
 
-#: src/who.c:542
+#: src/who.c:543
 #, c-format
 msgid ""
 "\n"
@@ -11267,44 +11470,44 @@ msgstr ""
 "\n"
 "# người dùng=%lu\n"
 
-#: src/who.c:548
+#: src/who.c:549
 msgid "NAME"
 msgstr "TÊN"
 
-#: src/who.c:548
+#: src/who.c:549
 msgid "LINE"
 msgstr "ĐƯỜNG"
 
-#: src/who.c:548
+#: src/who.c:549
 msgid "TIME"
 msgstr "GIỜ"
 
-#: src/who.c:548
+#: src/who.c:549
 msgid "IDLE"
 msgstr "NGHỈ"
 
-#: src/who.c:549
+#: src/who.c:550
 msgid "PID"
 msgstr "PID"
 
-#: src/who.c:549
+#: src/who.c:550
 msgid "COMMENT"
 msgstr "CHÚ_THÍCH"
 
-#: src/who.c:549
+#: src/who.c:550
 msgid "EXIT"
 msgstr "THOÁT"
 
-#: src/who.c:630
+#: src/who.c:631
 #, c-format
 msgid "Usage: %s [OPTION]... [ FILE | ARG1 ARG2 ]\n"
 msgstr "Sử dụng: %s [TÙY_CHỌN]... [ TẬP_TIN | ĐỐI_SỐ1 ĐỐI_SỐ2 ]\n"
 
-#: src/who.c:631
+#: src/who.c:632
 msgid "Print information about users who are currently logged in.\n"
 msgstr "In ra thông tin về những người dùng chưa đăng xuất.\n"
 
-#: src/who.c:634
+#: src/who.c:635
 msgid ""
 "\n"
 "  -a, --all         same as -b -d --login -p -r -t -T -u\n"
@@ -11318,11 +11521,11 @@ msgstr ""
 "  -d, --dead        in ra các tiến trình chết\n"
 "  -H, --heading     in dòng chứa các tiêu đề của cột\n"
 
-#: src/who.c:641
+#: src/who.c:642
 msgid "  -l, --login       print system login processes\n"
 msgstr "  -l, --login       in ra các tiến trình đăng nhập của hệ thống\n"
 
-#: src/who.c:644
+#: src/who.c:645
 msgid ""
 "      --lookup      attempt to canonicalize hostnames via DNS\n"
 "  -m                only hostname and user associated with stdin\n"
@@ -11333,7 +11536,7 @@ msgstr ""
 "chuẩn\n"
 "  -p, --process     in các tiến trình hoạt động sinh ra bởi init\n"
 
-#: src/who.c:649
+#: src/who.c:650
 msgid ""
 "  -q, --count       all login names and number of users logged on\n"
 "  -r, --runlevel    print current runlevel\n"
@@ -11345,7 +11548,7 @@ msgstr ""
 "  -s, --short       chỉ in tên, dòng và thời gian (mặc định)\n"
 "  -t, --time        in sự thay đổi đồng hồ hệ thống cuối cùng\n"
 
-#: src/who.c:655
+#: src/who.c:656
 msgid ""
 "  -T, -w, --mesg    add user's message status as +, - or ?\n"
 "  -u, --users       list users logged in\n"
@@ -11358,7 +11561,7 @@ msgstr ""
 "      --message     giống như « -T »\n"
 "      --writable    giống như « -T »\n"
 
-#: src/who.c:663
+#: src/who.c:664
 #, c-format
 msgid ""
 "\n"
@@ -11403,37 +11606,78 @@ msgstr ""
 "In lặp lại một dòng với tất cả CHUỖI chỉ ra, hoặc « y ».\n"
 "\n"
 
-#, fuzzy
-#~ msgid "traversal failed: %s"
-#~ msgstr "lỗi đọc"
+#~ msgid "Report %s bugs to <%s>.\n"
+#~ msgstr "Gửi báo cáo lỗi %s tới <%s>.\n"
+
+#~ msgid "%s home page: <http://www.gnu.org/software/%s/>.\n"
+#~ msgstr "Trang chủ %s: <http://www.gnu.org/software/%s/>.\n"
+
+#~ msgid "General help using GNU software: <http://www.gnu.org/gethelp/>.\n"
+#~ msgstr ""
+#~ "Trợ giúp chung về sử dụng phần mềm GNU: <http://www.gnu.org/gethelp/>.\n"
+
+#~ msgid "  -d, --directory  create a directory, not a file\n"
+#~ msgstr "  -d, --directory  \ttạo một thư mục, không phải tập tin\n"
+
+#~ msgid ""
+#~ "  -q, --quiet      suppress diagnostics about file/dir-creation failure\n"
+#~ msgstr ""
+#~ "  -q, --quiet      thu hồi thông tin chẩn đoán khi gặp lỗi tạo tập tin/"
+#~ "thư mục\n"
+
+#~ msgid ""
+#~ "  -u, --dry-run    do not create anything; merely print a name (unsafe)\n"
+#~ msgstr ""
+#~ "  -u, --dry-run    không tạo gì, chỉ in ra một tên (không an toàn)\n"
+
+#~ msgid "  -p DIR           use DIR as a prefix; implies -t [deprecated]\n"
+#~ msgstr ""
+#~ "  -p THƯ_MỤC     đặt THƯ_MỤC là tiền tố; ngụ ý « -t » [bị phản đối]\n"
+
+#~ msgid "the --megabytes option is deprecated; use -m instead"
+#~ msgstr "tùy chọn « --megabytes » bị phản đối: dùng « -m » để thay thế"
 
 #~ msgid ""
 #~ "\n"
-#~ "SIZE may have a multiplier suffix:\n"
-#~ "b 512, kB 1000, K 1024, MB 1000*1000, M 1024*1024,\n"
-#~ "GB 1000*1000*1000, G 1024*1024*1024, and so on for T, P, E, Z, Y.\n"
+#~ "If -e is in effect, the following sequences are recognized:\n"
+#~ "\n"
+#~ "  \\0NNN   the character whose ASCII code is NNN (octal)\n"
+#~ "  \\\\     backslash\n"
+#~ "  \\a     alert (BEL)\n"
+#~ "  \\b     backspace\n"
 #~ msgstr ""
 #~ "\n"
-#~ "Kich CỠ có thể đặt các hậu tố nhân sau :\n"
-#~ "b 512, kB 1000, K 1024, MB 1000*1000, M 1024*1024,\n"
-#~ "GB 1000*1000*1000, G 1024*1024*1024, và tương tự với T, P, E, Z, Y.\n"
+#~ "Nếu « -e » hoạt động, thì nhận ra những chuỗi sau :\n"
+#~ "\n"
+#~ "  \\0NNN   ký tự có mã ASCII là NNN (bát phân)\n"
+#~ "  \\\\     xuyệc ngược\n"
+#~ "  \\a     cảnh giác (BEL)\n"
+#~ "  \\b     xoá lùi\n"
 
 #~ msgid ""
-#~ "\n"
-#~ "SIZE is a number which may be followed by one of the following suffixes:\n"
-#~ "KB 1000, K 1024, MB 1000*1000, M 1024*1024, and so on for G, T, P, E, Z, "
-#~ "Y.\n"
+#~ "  \\a      alert (BEL)\n"
+#~ "  \\b      backspace\n"
+#~ "  \\c      produce no further output\n"
+#~ "  \\f      form feed\n"
 #~ msgstr ""
-#~ "\n"
-#~ "Kích CỠ là một con số có thể đi trước một của những hậu tố này:\n"
-#~ "KB 1000, K 1024, MB 1000*1000, M 1024*1024, và tương tự với G, T, P, E, "
-#~ "Z, Y.\n"
+#~ "  \\a      chuông báo (BEL)\n"
+#~ "  \\b     xoá lùi\n"
+#~ "  \\c      không có kết quả ở sau\n"
+#~ "  \\f      thụt dòng\n"
 
-#~ msgid "%s: warning: making a hard link to a symbolic link is not portable"
+#~ msgid ""
+#~ "  \\n      new line\n"
+#~ "  \\r      carriage return\n"
+#~ "  \\t      horizontal tab\n"
+#~ "  \\v      vertical tab\n"
 #~ msgstr ""
-#~ "%s: cảnh báo : tiến trình chuyển đổi liên kết cứng sang một liên kết mềm "
-#~ "không mang được"
+#~ "  \\n     dòng mới\n"
+#~ "  \\r     dấu enter\n"
+#~ "  \\t     tab ngang\n"
+#~ "  \\v     tab dọc\n"
 
-#, fuzzy
-#~ msgid "cannot find group %s"
-#~ msgstr "không đặt được các nhóm"
+#~ msgid "path truncated when looking for %s"
+#~ msgstr "đường dẫn bị cắt ngắn khi tìm %s"
+
+#~ msgid "creating %s"
+#~ msgstr "đang tạo %s"

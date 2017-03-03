@@ -55,7 +55,7 @@ static void integer_overflow (char) ATTRIBUTE_NORETURN;
 #else
 /* Approximate gmp.h well enough for expr.c's purposes.  */
 typedef intmax_t mpz_t[1];
-static void mpz_clear (mpz_t z) {}
+static void mpz_clear (mpz_t z) { (void) z; }
 static void mpz_init_set_ui (mpz_t z, unsigned long int i) { z[0] = i; }
 static int
 mpz_init_set_str (mpz_t z, char *s, int base)
@@ -116,6 +116,7 @@ mpz_tdiv_r (mpz_t r, mpz_t a0, mpz_t b0)
 static char *
 mpz_get_str (char const *str, int base, mpz_t z)
 {
+  (void) str; (void) base;
   char buf[INT_BUFSIZE_BOUND (intmax_t)];
   return xstrdup (imaxtostr (z[0], buf));
 }
@@ -137,6 +138,7 @@ mpz_get_ui (mpz_t z)
 static int
 mpz_out_str (FILE *stream, int base, mpz_t z)
 {
+  (void) base;
   char buf[INT_BUFSIZE_BOUND (intmax_t)];
   return fputs (imaxtostr (z[0], buf), stream) != EOF;
 }
@@ -265,7 +267,7 @@ Pattern matches return the string matched between \\( and \\) or null; if\n\
 Exit status is 0 if EXPRESSION is neither null nor 0, 1 if EXPRESSION is null\n\
 or 0, 2 if EXPRESSION is syntactically invalid, and 3 if an error occurred.\n\
 "), stdout);
-      emit_bug_reporting_address ();
+      emit_ancillary_info ();
     }
   exit (status);
 }
@@ -923,7 +925,7 @@ eval1 (bool evaluate)
     {
       if (nextarg ("&"))
         {
-          r = eval2 (evaluate & ~ null (l));
+          r = eval2 (evaluate && !null (l));
           if (null (l) || null (r))
             {
               freev (l);
@@ -954,7 +956,7 @@ eval (bool evaluate)
     {
       if (nextarg ("|"))
         {
-          r = eval1 (evaluate & null (l));
+          r = eval1 (evaluate && null (l));
           if (null (l))
             {
               freev (l);

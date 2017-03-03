@@ -318,7 +318,7 @@ binary_operator (bool l_is_l)
               struct timespec lt, rt;
               bool le, re;
               pos += 3;
-              if (l_is_l | r_is_l)
+              if (l_is_l || r_is_l)
                 test_syntax_error (_("-nt does not accept -l"), NULL);
               le = get_mtime (argv[op - 1], &lt);
               re = get_mtime (argv[op + 1], &rt);
@@ -331,7 +331,7 @@ binary_operator (bool l_is_l)
             {
               /* ef - hard link? */
               pos += 3;
-              if (l_is_l | r_is_l)
+              if (l_is_l || r_is_l)
                 test_syntax_error (_("-ef does not accept -l"), NULL);
               return (stat (argv[op - 1], &stat_buf) == 0
                       && stat (argv[op + 1], &stat_spare) == 0
@@ -347,7 +347,7 @@ binary_operator (bool l_is_l)
               struct timespec lt, rt;
               bool le, re;
               pos += 3;
-              if (l_is_l | r_is_l)
+              if (l_is_l || r_is_l)
                 test_syntax_error (_("-ot does not accept -l"), NULL);
               le = get_mtime (argv[op - 1], &lt);
               re = get_mtime (argv[op + 1], &rt);
@@ -770,7 +770,7 @@ NOTE: [ honors the --help and --version options, but test does not.\n\
 test treats each of those as it treats any other nonempty STRING.\n\
 "), stdout);
       printf (USAGE_BUILTIN_WARNING, _("test and/or ["));
-      emit_bug_reporting_address ();
+      emit_ancillary_info ();
     }
   exit (status);
 }

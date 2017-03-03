@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Tests for file descriptor exhaustion.
 
 # Copyright (C) 2009 Free Software Foundation, Inc.
@@ -31,7 +31,6 @@ for i in $(seq 31); do
   echo $i | tee -a in > __test.$i || framework_failure
 done
 
-fail=0
 
 (
  ulimit -n 6

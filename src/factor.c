@@ -26,7 +26,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 #if HAVE_GMP
-#include <gmp.h>
+# include <gmp.h>
 #endif
 
 #include <assert.h>
@@ -67,7 +67,7 @@ static void
 emit_factor (mpz_t n)
 {
   if (nfactors_found == nfactors_allocated)
-    factor = x2nrealloc (factor, &nfactors_allocated, sizeof *factor);
+    factor = X2NREALLOC (factor, &nfactors_allocated);
   mpz_init (factor[nfactors_found]);
   mpz_set (factor[nfactors_found], n);
   ++nfactors_found;
@@ -502,7 +502,7 @@ are specified on the command line, read them from standard input.\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
-      emit_bug_reporting_address ();
+      emit_ancillary_info ();
     }
   exit (status);
 }

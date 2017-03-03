@@ -25,13 +25,6 @@
 
 #include <unistd.h>
 
-#ifndef F_OK
-# define F_OK 0
-# define X_OK 1
-# define W_OK 2
-# define R_OK 4
-#endif
-
 #include "group-member.h"
 #include "stat-macros.h"
 
@@ -137,6 +130,6 @@ main (int argc, char **argv)
 
   ok = euidaccess_stat (&st, mode);
   printf ("%s: %s\n", file, ok ? "y" : "n");
-  exit (0);
+  return 0;
 }
 #endif

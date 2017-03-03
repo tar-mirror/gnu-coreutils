@@ -22,7 +22,6 @@
 
 #include <config.h>
 
-#include <stdio.h>
 #include <assert.h>
 #include <getopt.h>
 #include <sys/types.h>
@@ -32,6 +31,7 @@
 #include "error.h"
 #include "quote.h"
 #include "readtokens.h"
+#include "stdio--.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "tsort"
@@ -87,7 +87,7 @@ With no FILE, or when FILE is -, read standard input.\n\
 "), program_name);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
-      emit_bug_reporting_address ();
+      emit_ancillary_info ();
     }
 
   exit (status);

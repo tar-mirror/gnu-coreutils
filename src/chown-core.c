@@ -316,6 +316,14 @@ change_file_owner (FTS *fts, FTSENT *ent,
       ok = false;
       break;
 
+    case FTS_DC:		/* directory that causes cycles */
+      if (cycle_warning_required (fts, ent))
+        {
+          emit_cycle_warning (file_full_name);
+          return false;
+        }
+      break;
+
     default:
       break;
     }
@@ -440,7 +448,7 @@ change_file_owner (FTS *fts, FTSENT *ent,
   if (chopt->verbosity != V_off)
     {
       bool changed =
-        ((do_chown & ok & symlink_changed)
+        ((do_chown && ok && symlink_changed)
          && ! ((uid == (uid_t) -1 || uid == file_stats->st_uid)
                && (gid == (gid_t) -1 || gid == file_stats->st_gid)));
 
