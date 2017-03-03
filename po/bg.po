@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coreutils 6.5\n"
 "Report-Msgid-Bugs-To: bug-coreutils@gnu.org\n"
-"POT-Creation-Date: 2012-08-12 09:46+0200\n"
+"POT-Creation-Date: 2012-08-20 08:22+0200\n"
 "PO-Revision-Date: 2006-11-23 22:41+0200\n"
 "Last-Translator: Anton Zinoviev <zinoviev@debian.org>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
@@ -568,7 +568,7 @@ msgstr ""
 #: lib/spawn-pipe.c:265
 #, fuzzy, c-format
 msgid "cannot create pipe"
-msgstr "не може да се създаде именуван канал %s"
+msgstr "не може да се създаде връзка %s"
 
 #: lib/spawn-pipe.c:232 lib/spawn-pipe.c:346 lib/wait-process.c:282
 #: lib/wait-process.c:356
@@ -866,7 +866,7 @@ msgstr "неправилен аргумент „%s“"
 #: lib/xstrtol-error.c:68
 #, fuzzy, c-format
 msgid "invalid suffix in %s%s argument '%s'"
-msgstr "неправилен аргумент „%s“"
+msgstr "неправилно число с плаваща запетая като аргумент: %s"
 
 #: lib/xstrtol-error.c:72
 #, fuzzy, c-format
@@ -944,9 +944,9 @@ msgstr "неправилен размер за пренасяне: %s"
 #: src/base64.c:283 src/basename.c:173 src/comm.c:435 src/cp.c:607
 #: src/date.c:441 src/dircolors.c:447 src/du.c:894 src/hostid.c:74
 #: src/hostname.c:111 src/id.c:169 src/install.c:929 src/join.c:961
-#: src/link.c:85 src/ln.c:563 src/logname.c:71 src/mknod.c:157 src/mv.c:447
+#: src/link.c:85 src/ln.c:563 src/logname.c:71 src/mknod.c:157 src/mv.c:448
 #: src/od.c:1802 src/ptx.c:2081 src/readlink.c:154 src/seq.c:408
-#: src/shuf.c:320 src/shuf.c:339 src/sort.c:4530 src/split.c:1327
+#: src/shuf.c:320 src/shuf.c:339 src/sort.c:4532 src/split.c:1327
 #: src/tr.c:1797 src/tsort.c:555 src/tty.c:112 src/uname.c:251 src/uniq.c:454
 #: src/uniq.c:471 src/unlink.c:81 src/uptime.c:250 src/users.c:146
 #: src/wc.c:666 src/who.c:827 src/whoami.c:79
@@ -1017,7 +1017,7 @@ msgstr ""
 #: src/dirname.c:116 src/expr.c:326 src/join.c:1147 src/link.c:77
 #: src/mkdir.c:183 src/mkfifo.c:108 src/mknod.c:146 src/nohup.c:111
 #: src/pathchk.c:148 src/printf.c:674 src/readlink.c:146 src/realpath.c:236
-#: src/rm.c:314 src/rmdir.c:223 src/seq.c:402 src/setuidgid.c:137
+#: src/rm.c:321 src/rmdir.c:223 src/seq.c:402 src/setuidgid.c:137
 #: src/sleep.c:119 src/stat.c:1487 src/stdbuf.c:346 src/tr.c:1782
 #: src/unlink.c:75
 #, c-format
@@ -1097,7 +1097,7 @@ msgstr ""
 msgid "cannot do ioctl on %s"
 msgstr "не може да се изпълни ioctl за „%s“"
 
-#: src/cat.c:637 src/dd.c:2209 src/sort.c:380 src/tee.c:165 src/yes.c:86
+#: src/cat.c:637 src/dd.c:2209 src/sort.c:383 src/tee.c:165 src/yes.c:86
 #, c-format
 msgid "standard output"
 msgstr "стандартният изход"
@@ -1164,13 +1164,13 @@ msgstr "каталогът %s не може да се чете"
 msgid "changing security context of %s\n"
 msgstr "променят се правата за достъп до %s"
 
-#: src/chcon.c:326 src/chmod.c:346 src/chown-core.c:539 src/remove.c:555
+#: src/chcon.c:326 src/chmod.c:346 src/chown-core.c:539 src/remove.c:559
 #, c-format
 msgid "fts_read failed"
 msgstr "неуспешен fts_read"
 
 #: src/chcon.c:337 src/chmod.c:357 src/chown-core.c:551 src/du.c:618
-#: src/remove.c:569
+#: src/remove.c:573
 #, fuzzy, c-format
 msgid "fts_close failed"
 msgstr "неуспешно затваряне на файл"
@@ -1211,17 +1211,11 @@ msgid ""
 msgstr ""
 
 #: src/chcon.c:373
-#, fuzzy
 msgid ""
 "      --reference=RFILE  use RFILE's security context rather than "
 "specifying\n"
 "                         a CONTEXT value\n"
 msgstr ""
-"  -f, --silent, --quiet  потиска повечето съобщения за грешки\n"
-"      --reference=ЕТФАЙЛ ползва групата на ЕТФАЙЛ вместо посочена ГРУПА\n"
-"  -R, --recursive        действа рекурсивно върху файловете и каталозите\n"
-"  -v, --verbose          извежда диагностично съобщение за всеки обработен "
-"файл\n"
 
 #: src/chcon.c:377 src/chgrp.c:140 src/chown.c:118
 msgid "  -R, --recursive        operate on files and directories recursively\n"
@@ -1288,7 +1282,7 @@ msgstr ""
 
 #: src/chcon.c:572 src/chgrp.c:287 src/chgrp.c:305 src/chmod.c:536
 #: src/chmod.c:555 src/chown.c:290 src/chown.c:319 src/cp.c:433 src/cp.c:493
-#: src/mv.c:96 src/pwd.c:273 src/rm.c:324 src/touch.c:348
+#: src/mv.c:97 src/pwd.c:273 src/rm.c:331 src/touch.c:348
 #, c-format
 msgid "failed to get attributes of %s"
 msgstr "не могат да се получат атрибутите на %s"
@@ -1823,7 +1817,7 @@ msgid "failed to preserve authorship for %s"
 msgstr "не можа да се запази авторството на %s"
 
 #: src/copy.c:804 src/csplit.c:640 src/du.c:901 src/fmt.c:452 src/head.c:855
-#: src/sort.c:4542 src/split.c:1343 src/tail.c:1757 src/wc.c:678
+#: src/sort.c:4544 src/split.c:1343 src/tail.c:1757 src/wc.c:678
 #, c-format
 msgid "cannot open %s for reading"
 msgstr "не може да се отвори %s за четене"
@@ -1850,7 +1844,7 @@ msgid "failed to set the security context of %s to %s"
 msgstr "групата на %s не можа да се промени на %s\n"
 
 #: src/copy.c:881 src/copy.c:1574 src/copy.c:1777 src/copy.c:1935 src/ln.c:314
-#: src/remove.c:253 src/remove.c:279 src/remove.c:400 src/remove.c:421
+#: src/remove.c:253 src/remove.c:279 src/remove.c:400 src/remove.c:425
 #, c-format
 msgid "cannot remove %s"
 msgstr "не може да се изтрие %s"
@@ -1874,7 +1868,7 @@ msgstr "не може да се създаде обикновен файл %s"
 #: src/copy.c:985
 #, fuzzy, c-format
 msgid "failed to clone %s from %s"
-msgstr "не може да се отвори %s"
+msgstr "каталогът %s не може да се затвори"
 
 #: src/copy.c:1098 src/copy.c:2531
 #, c-format
@@ -2059,7 +2053,7 @@ msgstr "не може да се възстанови от резервно ко�
 msgid "%s -> %s (unbackup)\n"
 msgstr "%s -> %s (от резервно копие)\n"
 
-#: src/cp.c:156 src/mv.c:284
+#: src/cp.c:156 src/mv.c:285
 #, c-format
 msgid ""
 "Usage: %s [OPTION]... [-T] SOURCE DEST\n"
@@ -2081,8 +2075,8 @@ msgstr ""
 #: src/cp.c:166 src/csplit.c:1460 src/cut.c:197 src/df.c:876 src/du.c:268
 #: src/expand.c:112 src/fmt.c:276 src/fold.c:75 src/head.c:115
 #: src/install.c:612 src/kill.c:86 src/ln.c:392 src/ls.c:4733 src/mkdir.c:61
-#: src/mkfifo.c:56 src/mknod.c:58 src/mv.c:294 src/nl.c:191 src/paste.c:445
-#: src/pr.c:2777 src/ptx.c:1825 src/shred.c:153 src/shuf.c:58 src/sort.c:400
+#: src/mkfifo.c:56 src/mknod.c:58 src/mv.c:295 src/nl.c:191 src/paste.c:445
+#: src/pr.c:2777 src/ptx.c:1825 src/shred.c:153 src/shuf.c:58 src/sort.c:403
 #: src/split.c:214 src/stdbuf.c:95 src/tac.c:142 src/tail.c:268
 #: src/touch.c:223 src/truncate.c:107 src/unexpand.c:122 src/uniq.c:145
 msgid ""
@@ -2258,7 +2252,7 @@ msgstr ""
 "Ползвайте --sparse=never, за да забраните създаването на разредени файлове.\n"
 "\n"
 
-#: src/cp.c:247 src/install.c:649 src/ln.c:421 src/mv.c:321
+#: src/cp.c:247 src/install.c:649 src/ln.c:421 src/mv.c:322
 #, fuzzy
 msgid ""
 "\n"
@@ -2276,7 +2270,7 @@ msgstr ""
 "се посочва с --backup или с променливата VERSION_CONTROL. Ето стойностите:\n"
 "\n"
 
-#: src/cp.c:254 src/install.c:656 src/mv.c:328
+#: src/cp.c:254 src/install.c:656 src/mv.c:329
 msgid ""
 "  none, off       never make backups (even if --backup is given)\n"
 "  numbered, t     make numbered backups\n"
@@ -2324,31 +2318,31 @@ msgid "%s exists but is not a directory"
 msgstr "%s съществува, но не е каталог"
 
 #: src/cp.c:572 src/cp.c:1068 src/install.c:401 src/install.c:844 src/ln.c:123
-#: src/ln.c:181 src/ln.c:202 src/ln.c:516 src/mv.c:152 src/mv.c:399
+#: src/ln.c:181 src/ln.c:202 src/ln.c:516 src/mv.c:153 src/mv.c:400
 #, c-format
 msgid "accessing %s"
 msgstr "достъп до %s"
 
-#: src/cp.c:592 src/install.c:914 src/ln.c:546 src/mv.c:432 src/shred.c:1182
+#: src/cp.c:592 src/install.c:914 src/ln.c:546 src/mv.c:433 src/shred.c:1182
 #: src/touch.c:430 src/truncate.c:355
 #, c-format
 msgid "missing file operand"
 msgstr "липсващ файлов операнд"
 
-#: src/cp.c:594 src/install.c:916 src/ln.c:560 src/mv.c:434
+#: src/cp.c:594 src/install.c:916 src/ln.c:560 src/mv.c:435
 #, c-format
 msgid "missing destination file operand after %s"
 msgstr "липсващ операнд за целеви файл след %s"
 
-#: src/cp.c:603 src/install.c:925 src/mv.c:443
+#: src/cp.c:603 src/install.c:925 src/mv.c:444
 #, fuzzy, c-format
 msgid "cannot combine --target-directory (-t) and --no-target-directory (-T)"
 msgstr ""
 "Не може да се комбинират --target-directory (-t) и --no-target-directory (-T)"
 
 #: src/cp.c:619 src/cp.c:1070 src/install.c:403 src/install.c:846
-#: src/install.c:938 src/ln.c:125 src/ln.c:518 src/ln.c:574 src/mv.c:401
-#: src/mv.c:457
+#: src/install.c:938 src/ln.c:125 src/ln.c:518 src/ln.c:574 src/mv.c:402
+#: src/mv.c:458
 #, c-format
 msgid "target %s is not a directory"
 msgstr "целта %s не е каталог"
@@ -2358,7 +2352,7 @@ msgstr "целта %s не е каталог"
 msgid "with --parents, the destination must be a directory"
 msgstr "с --parents целта трябва да бъде каталог"
 
-#: src/cp.c:1063 src/install.c:839 src/ln.c:511 src/mv.c:394
+#: src/cp.c:1063 src/install.c:839 src/ln.c:511 src/mv.c:395
 #, c-format
 msgid "multiple target directories specified"
 msgstr "посочени са много целеви каталози"
@@ -2368,7 +2362,7 @@ msgstr "посочени са много целеви каталози"
 msgid "cannot make both hard and symbolic links"
 msgstr "не може едновременно да се правят твърди и символни връзки"
 
-#: src/cp.c:1115 src/mv.c:464
+#: src/cp.c:1115 src/mv.c:465
 #, fuzzy, c-format
 msgid "options --backup and --no-clobber are mutually exclusive"
 msgstr "опциите --string и --check не може да се използват едновременно"
@@ -2378,7 +2372,7 @@ msgstr "опциите --string и --check не може да се използ�
 msgid "--reflink can be used only with --sparse=auto"
 msgstr ""
 
-#: src/cp.c:1129 src/install.c:899 src/ln.c:582 src/mv.c:472
+#: src/cp.c:1129 src/install.c:899 src/ln.c:582 src/mv.c:473
 msgid "backup type"
 msgstr "тип резервни копия"
 
@@ -3640,16 +3634,16 @@ msgstr ""
 msgid "file system type %s both selected and excluded"
 msgstr "файловите системи от тип %s са едновременно избрани и изключени"
 
-#: src/df.c:1106
+#: src/df.c:1115
 msgid "Warning: "
 msgstr "Внимание: "
 
-#: src/df.c:1108 src/stat.c:806
+#: src/df.c:1117 src/stat.c:806
 #, fuzzy
 msgid "cannot read table of mounted file systems"
 msgstr "%sне може да се прочете таблицата на монтирани файлови системи"
 
-#: src/df.c:1140
+#: src/df.c:1149
 #, c-format
 msgid "no file systems processed"
 msgstr "нито една файлова система не бе обработена"
@@ -3753,7 +3747,7 @@ msgstr ""
 "  -z, --zero-terminated     завършва редовете с байт 0 вместо с нов ред\n"
 
 #: src/dirname.c:64
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Examples:\n"
@@ -3761,12 +3755,8 @@ msgid ""
 "  %s dir1/str dir2/str  -> \"dir1\" followed by \"dir2\"\n"
 "  %s stdio.h            -> \".\"\n"
 msgstr ""
-"\n"
-"Примери:\n"
-"  %s /usr/bin/sort  извежда „/usr/bin“.\n"
-"  %s stdio.h        извежда „.“.\n"
 
-#: src/du.c:260 src/sort.c:391 src/wc.c:112
+#: src/du.c:260 src/sort.c:394 src/wc.c:112
 #, c-format
 msgid ""
 "Usage: %s [OPTION]... [FILE]...\n"
@@ -3809,7 +3799,6 @@ msgstr ""
 "връзка\n"
 
 #: src/du.c:279
-#, fuzzy
 msgid ""
 "  -B, --block-size=SIZE  scale sizes by SIZE before printing them.  E.g.,\n"
 "                           '-BM' prints sizes in units of 1,048,576 bytes.\n"
@@ -3819,10 +3808,6 @@ msgid ""
 "  -D, --dereference-args  dereference only symlinks that are listed on the\n"
 "                          command line\n"
 msgstr ""
-"  -a, --all             включително празните файлови системи (с 0 блокове)\n"
-"  -B, --block-size=РАЗМ да се ползват блокове с размер РАЗМ байта\n"
-"  -h, --human-readable  извежда размерите като за хора (напр. 1K, 234M, 2G)\n"
-"  -H, --si              подобно, но с множител 1000 вместо 1024\n"
 
 #: src/du.c:288
 #, fuzzy
@@ -3951,7 +3936,7 @@ msgstr "внимание: резюмирането е еквивалентно �
 msgid "warning: summarizing conflicts with --max-depth=%lu"
 msgstr "внимание: резюмирането влиза в конфликт с --max-depth=%lu"
 
-#: src/du.c:896 src/sort.c:4532 src/wc.c:668
+#: src/du.c:896 src/sort.c:4534 src/wc.c:668
 #, fuzzy
 msgid "file operands cannot be combined with --files0-from"
 msgstr "Не може да се комбинират файлови операнди с --files0-from."
@@ -3962,7 +3947,7 @@ msgstr "Не може да се комбинират файлови операн
 msgid "%s: read error"
 msgstr "%s: грешка при четене"
 
-#: src/du.c:963 src/sort.c:4561 src/wc.c:747
+#: src/du.c:963 src/sort.c:4563 src/wc.c:747
 #, c-format
 msgid "when reading file names from stdin, no file name of %s allowed"
 msgstr ""
@@ -4329,7 +4314,7 @@ msgstr "нечислов аргумент"
 msgid "division by zero"
 msgstr "делене на нула"
 
-#: src/expr.c:887 src/sort.c:2042
+#: src/expr.c:887 src/sort.c:2045
 #, fuzzy, c-format
 msgid "set LC_ALL='C' to work around the problem"
 msgstr "Използвайте LC_ALL='C', за да заобиколите този проблем."
@@ -4532,7 +4517,7 @@ msgstr "не може да се зададе потребителят"
 #: src/groups.c:110 src/id.c:241
 #, fuzzy, c-format
 msgid "cannot get effective GID"
-msgstr "символната връзка %s не може да бъде последвана"
+msgstr "не може да се получи времето от деня"
 
 #: src/groups.c:115 src/id.c:246
 #, fuzzy, c-format
@@ -4769,7 +4754,7 @@ msgstr ""
 #: src/id.c:224
 #, fuzzy, c-format
 msgid "cannot get effective UID"
-msgstr "символната връзка %s не може да бъде последвана"
+msgstr "не може да се получи времето от деня"
 
 #: src/id.c:311
 #, fuzzy, c-format
@@ -5129,12 +5114,12 @@ msgstr "неправилни свързващи полета %lu, %lu"
 msgid "conflicting empty-field replacement strings"
 msgstr "несъвместими заменящи низове за празно поле"
 
-#: src/join.c:1101 src/sort.c:4467
+#: src/join.c:1101 src/sort.c:4469
 #, c-format
 msgid "multi-character tab %s"
 msgstr "многосимволна табулация %s"
 
-#: src/join.c:1105 src/sort.c:4472
+#: src/join.c:1105 src/sort.c:4474
 #, c-format
 msgid "incompatible tabs"
 msgstr "несъвместими табулации"
@@ -5360,7 +5345,6 @@ msgstr ""
 "  -f, --force                 изтрива съществуващи целеви файлове\n"
 
 #: src/ln.c:403
-#, fuzzy
 msgid ""
 "  -i, --interactive           prompt whether to remove destinations\n"
 "  -L, --logical               dereference TARGETs that are symbolic links\n"
@@ -5371,13 +5355,6 @@ msgid ""
 "location\n"
 "  -s, --symbolic              make symbolic links instead of hard links\n"
 msgstr ""
-"  -n, --no-dereference        приема цел, която е символна връзка към "
-"каталог,\n"
-"                                все едно че е нормален файл\n"
-"  -i, --interactive           да се пита при заместване на съществуващи "
-"файлове\n"
-"  -s, --symbolic              да се правят символни връзки вместо твърди "
-"връзки\n"
 
 #: src/ln.c:412
 #, fuzzy
@@ -6329,7 +6306,7 @@ msgstr "каталогът %s не може да се затвори"
 msgid "failed to create file via template %s"
 msgstr "времената на %s не можаха да се запазят"
 
-#: src/mv.c:290
+#: src/mv.c:291
 msgid ""
 "Rename SOURCE to DEST, or move SOURCE(s) to DIRECTORY.\n"
 "\n"
@@ -6337,7 +6314,7 @@ msgstr ""
 "Преименува ИЗТОЧНИК на ЦЕЛ или премества ИЗТОЧНИК(ци) в КАТАЛОГ.\n"
 "\n"
 
-#: src/mv.c:297
+#: src/mv.c:298
 #, fuzzy
 msgid ""
 "      --backup[=CONTROL]       make a backup of each existing destination "
@@ -6356,7 +6333,7 @@ msgstr ""
 "  -f, --force                  да не се пита преди заместване на файлове\n"
 "  -i, --interactive            да се пита преди заместване на файлове\n"
 
-#: src/mv.c:306
+#: src/mv.c:307
 msgid ""
 "      --strip-trailing-slashes  remove any trailing slashes from each "
 "SOURCE\n"
@@ -6367,7 +6344,7 @@ msgstr ""
 "                                 аргумент ЦЕЛ\n"
 "  -S, --suffix=СУФИКС          вместо обичайния суфикс за резервни копия\n"
 
-#: src/mv.c:311
+#: src/mv.c:312
 msgid ""
 "  -t, --target-directory=DIRECTORY  move all SOURCE arguments into "
 "DIRECTORY\n"
@@ -7804,7 +7781,7 @@ msgstr ""
 "  -s, --silent            потиска повечето съобщения за грешка\n"
 "  -v, --verbose           съобщава при наличие на грешка\n"
 
-#: src/realpath.c:71 src/rm.c:134 src/shred.c:147 src/stat.c:1341
+#: src/realpath.c:71 src/rm.c:135 src/shred.c:147 src/stat.c:1341
 #: src/touch.c:212
 #, c-format
 msgid "Usage: %s [OPTION]... FILE...\n"
@@ -7864,34 +7841,34 @@ msgstr "%s: да се изтрие ли %s %s? "
 msgid "removed directory: %s\n"
 msgstr "каталогът %s е изтрит\n"
 
-#: src/remove.c:437
+#: src/remove.c:441
 #, fuzzy, c-format
 msgid "cannot remove directory: %s"
 msgstr "не може да се изтрие каталогът %s"
 
-#: src/remove.c:493
+#: src/remove.c:497
 #, c-format
 msgid "skipping %s, since it's on a different device"
 msgstr "пропуска се %s тъй като е на друго устройство"
 
-#: src/remove.c:513
+#: src/remove.c:517
 #, fuzzy, c-format
 msgid "traversal failed: %s"
 msgstr "не може да се чете"
 
-#: src/remove.c:519
+#: src/remove.c:523
 #, c-format
 msgid ""
 "unexpected failure: fts_info=%d: %s\n"
 "please report to %s"
 msgstr ""
 
-#: src/rm.c:118
+#: src/rm.c:119
 #, fuzzy, c-format
 msgid "Try '%s ./%s' to remove the file %s.\n"
 msgstr "Опитайте „%s ./%s“, за да изтриете файла %s.\n"
 
-#: src/rm.c:135
+#: src/rm.c:136
 #, fuzzy
 msgid ""
 "Remove (unlink) the FILE(s).\n"
@@ -7905,7 +7882,7 @@ msgstr ""
 "  -f, --force           пренебрегва несъществуващи файлове, не пита\n"
 "  -i                    пита преди всяко триене\n"
 
-#: src/rm.c:141
+#: src/rm.c:142
 msgid ""
 "  -I                    prompt once before removing more than three files, "
 "or\n"
@@ -7925,7 +7902,7 @@ msgstr ""
 "i).\n"
 "                          Без КОГА пита винаги\n"
 
-#: src/rm.c:148
+#: src/rm.c:149
 msgid ""
 "      --one-file-system  when removing a hierarchy recursively, skip any\n"
 "                          directory that is on a file system different from\n"
@@ -7936,12 +7913,13 @@ msgstr ""
 "от\n"
 "                          тази на съответния аргумент на командния ред\n"
 
-#: src/rm.c:153
+#: src/rm.c:154
 #, fuzzy
 msgid ""
 "      --no-preserve-root  do not treat '/' specially\n"
 "      --preserve-root   do not remove '/' (default)\n"
 "  -r, -R, --recursive   remove directories and their contents recursively\n"
+"  -d, --dir             remove empty directories\n"
 "  -v, --verbose         explain what is being done\n"
 msgstr ""
 "      --no-preserve-root да не се обработва „/“ по-особено\n"
@@ -7950,7 +7928,7 @@ msgstr ""
 "  -r, -R, --recursive   изтрива рекурсивно каталозите и съдържанието им\n"
 "  -v, --verbose         съобщава какво се прави\n"
 
-#: src/rm.c:161
+#: src/rm.c:163
 msgid ""
 "\n"
 "By default, rm does not remove directories.  Use the --recursive (-r or -R)\n"
@@ -7963,7 +7941,7 @@ msgstr ""
 "(-r или -R), която ще изтрие всеки изброен каталог, заедно със съдържанието "
 "му.\n"
 
-#: src/rm.c:166
+#: src/rm.c:168
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -7980,7 +7958,7 @@ msgstr ""
 "\n"
 "  %s ./-трънки\n"
 
-#: src/rm.c:175
+#: src/rm.c:177
 #, fuzzy
 msgid ""
 "\n"
@@ -7995,12 +7973,12 @@ msgstr ""
 "съдържанието му е напълно невъзстановимо, помислете дали да не използвате "
 "shred.\n"
 
-#: src/rm.c:335
+#: src/rm.c:342
 #, c-format
 msgid "%s: remove all arguments recursively? "
 msgstr "%s: да се изтрият ли рекурсивно всички аргументи? "
 
-#: src/rm.c:336
+#: src/rm.c:343
 #, c-format
 msgid "%s: remove all arguments? "
 msgstr "%s: да се изтрият ли всички аргументи"
@@ -8528,7 +8506,7 @@ msgstr "%s: недопустим тип на файла"
 msgid "%s: file has negative size"
 msgstr "%s: файлът има отрицателен размер"
 
-#: src/shred.c:865 src/sort.c:930 src/split.c:379
+#: src/shred.c:865 src/sort.c:933 src/split.c:379
 #, c-format
 msgid "%s: error truncating"
 msgstr "%s: грешка при съкращаване"
@@ -8578,7 +8556,7 @@ msgstr "%s: не може да се отвори в режим за писане
 msgid "%s: invalid number of passes"
 msgstr "%s: неправилен брой итерации"
 
-#: src/shred.c:1135 src/shuf.c:291 src/sort.c:4440
+#: src/shred.c:1135 src/shuf.c:291 src/sort.c:4442
 #, c-format
 msgid "multiple random sources specified"
 msgstr "посочени са много случайни източници"
@@ -8643,7 +8621,7 @@ msgstr "неправилен входен диапазон: %s"
 msgid "invalid line count %s"
 msgstr "неправилен брой редове: %s"
 
-#: src/shuf.c:285 src/sort.c:4434
+#: src/shuf.c:285 src/sort.c:4436
 #, c-format
 msgid "multiple output files specified"
 msgstr "посочени са твърде много изходни файлове"
@@ -8687,7 +8665,7 @@ msgstr "неправилен интервал за време %s"
 msgid "cannot read realtime clock"
 msgstr "не може да се чете часовникът в реално време"
 
-#: src/sort.c:396
+#: src/sort.c:399
 msgid ""
 "Write sorted concatenation of all FILE(s) to standard output.\n"
 "\n"
@@ -8695,7 +8673,7 @@ msgstr ""
 "Извежда на стандартния изход сортирана конкатенация на всички ФАЙЛ(ове).\n"
 "\n"
 
-#: src/sort.c:403
+#: src/sort.c:406
 msgid ""
 "Ordering options:\n"
 "\n"
@@ -8703,7 +8681,7 @@ msgstr ""
 "Опции, определящи наредбата:\n"
 "\n"
 
-#: src/sort.c:407
+#: src/sort.c:410
 msgid ""
 "  -b, --ignore-leading-blanks  ignore leading blanks\n"
 "  -d, --dictionary-order      consider only blanks and alphanumeric "
@@ -8715,30 +8693,19 @@ msgstr ""
 "знаци\n"
 "  -f, --ignore-case           приравнява малките с главните букви\n"
 
-#: src/sort.c:413
-#, fuzzy
+#: src/sort.c:416
 msgid ""
 "  -g, --general-numeric-sort  compare according to general numerical value\n"
 "  -i, --ignore-nonprinting    consider only printable characters\n"
 "  -M, --month-sort            compare (unknown) < 'JAN' < ... < 'DEC'\n"
 msgstr ""
-"  -g, --general-numeric-sort  сравнява според общата числова стойност\n"
-"  -i, --ignore-nonprinting    отчита само печатните знаци\n"
-"  -M, --month-sort            сравнява (неизвестно) < `ЯНУ' < ... < `ДЕК'\n"
-"  -n, --numeric-sort          сравнява според числовата стойност на "
-"низовете\n"
-"  -R, --random-sort           сортира според случаен хеш\n"
-"      --random-source=FILE   чете случайни байтове от ФАЙЛ (вместо /dev/"
-"urandom)\n"
-"  -r, --reverse               сортира в обратен ред\n"
-"\n"
 
-#: src/sort.c:418
+#: src/sort.c:421
 msgid ""
 "  -h, --human-numeric-sort    compare human readable numbers (e.g., 2K 1G)\n"
 msgstr ""
 
-#: src/sort.c:421
+#: src/sort.c:424
 #, fuzzy
 msgid ""
 "  -n, --numeric-sort          compare according to string numerical value\n"
@@ -8757,7 +8724,7 @@ msgstr ""
 "  -r, --reverse               сортира в обратен ред\n"
 "\n"
 
-#: src/sort.c:427
+#: src/sort.c:430
 msgid ""
 "      --sort=WORD             sort according to WORD:\n"
 "                                general-numeric -g, human-numeric -h, month -"
@@ -8767,7 +8734,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/sort.c:435
+#: src/sort.c:438
 #, fuzzy
 msgid ""
 "Other options:\n"
@@ -8776,13 +8743,13 @@ msgstr ""
 "Опции, определящи наредбата:\n"
 "\n"
 
-#: src/sort.c:439
+#: src/sort.c:442
 msgid ""
 "      --batch-size=NMERGE   merge at most NMERGE inputs at once;\n"
 "                            for more use temp files\n"
 msgstr ""
 
-#: src/sort.c:443
+#: src/sort.c:446
 msgid ""
 "  -c, --check, --check=diagnose-first  check for sorted input; do not sort\n"
 "  -C, --check=quiet, --check=silent  like -c, but do not report first bad "
@@ -8791,7 +8758,7 @@ msgid ""
 "                              decompress them with PROG -d\n"
 msgstr ""
 
-#: src/sort.c:450
+#: src/sort.c:453
 msgid ""
 "      --debug               annotate the part of the line used to sort,\n"
 "                              and warn about questionable usage to stderr\n"
@@ -8800,13 +8767,13 @@ msgid ""
 "                            If F is - then read names from standard input\n"
 msgstr ""
 
-#: src/sort.c:457
+#: src/sort.c:460
 msgid ""
 "  -k, --key=KEYDEF          sort via a key; KEYDEF gives location and type\n"
 "  -m, --merge               merge already sorted files; do not sort\n"
 msgstr ""
 
-#: src/sort.c:461
+#: src/sort.c:464
 #, fuzzy
 msgid ""
 "  -o, --output=FILE         write result to FILE instead of standard output\n"
@@ -8825,7 +8792,7 @@ msgstr ""
 "comparison\n"
 "  -S, --buffer-size=РАЗМ    използва буфер в паметта с размер РАЗМ\n"
 
-#: src/sort.c:467
+#: src/sort.c:470
 #, fuzzy, c-format
 msgid ""
 "  -t, --field-separator=SEP  use SEP instead of non-blank to blank "
@@ -8848,12 +8815,12 @@ msgstr ""
 "                              извежда само първия от група еквивалентни "
 "редове\n"
 
-#: src/sort.c:476
+#: src/sort.c:479
 msgid "  -z, --zero-terminated     end lines with 0 byte, not newline\n"
 msgstr ""
 "  -z, --zero-terminated     завършва редовете с байт 0 вместо с нов ред\n"
 
-#: src/sort.c:481
+#: src/sort.c:484
 #, fuzzy
 msgid ""
 "\n"
@@ -8882,7 +8849,7 @@ msgstr ""
 "\n"
 "РАЗМ може да бъде следван от някой от следните множители:\n"
 
-#: src/sort.c:494
+#: src/sort.c:497
 msgid ""
 "% 1% of memory, b 1, K 1024 (default), and so on for M, G, T, P, E, Z, Y.\n"
 "\n"
@@ -8902,244 +8869,244 @@ msgstr ""
 "Използвайте LC_ALL=C, за да получите традиционната наредба,\n"
 "която сравнява според кодовете на знаците.\n"
 
-#: src/sort.c:695
+#: src/sort.c:698
 #, fuzzy, c-format
 msgid "waiting for %s [-d]"
 msgstr "запис в %s"
 
-#: src/sort.c:700
+#: src/sort.c:703
 #, c-format
 msgid "%s [-d] terminated abnormally"
 msgstr ""
 
-#: src/sort.c:854
+#: src/sort.c:857
 #, fuzzy, c-format
 msgid "cannot create temporary file in %s"
 msgstr "не може да се направи временен файл %s"
 
-#: src/sort.c:948 src/sort.c:2023 src/sort.c:3069 src/sort.c:3713
-#: src/sort.c:3804 src/sort.c:3807
+#: src/sort.c:951 src/sort.c:2026 src/sort.c:3072 src/sort.c:3714
+#: src/sort.c:3805 src/sort.c:3808
 msgid "open failed"
 msgstr "неуспешно отваряне на файл"
 
-#: src/sort.c:968
+#: src/sort.c:971
 msgid "fflush failed"
 msgstr "неуспешно извикване на fflush"
 
-#: src/sort.c:973 src/sort.c:2026 src/sort.c:4705
+#: src/sort.c:976 src/sort.c:2029 src/sort.c:4707
 msgid "close failed"
 msgstr "неуспешно затваряне на файл"
 
-#: src/sort.c:984
+#: src/sort.c:987
 #, fuzzy, c-format
 msgid "dup2 failed"
 msgstr "неуспешно отваряне на файл"
 
-#: src/sort.c:1101
+#: src/sort.c:1104
 #, c-format
 msgid "couldn't execute %s"
 msgstr ""
 
-#: src/sort.c:1108
+#: src/sort.c:1111
 #, fuzzy
 msgid "couldn't create temporary file"
 msgstr "не може да се направи временен файл"
 
-#: src/sort.c:1147
+#: src/sort.c:1150
 #, fuzzy, c-format
 msgid "couldn't create process for %s -d"
 msgstr "не може да се създаде каталог %s"
 
-#: src/sort.c:1159
+#: src/sort.c:1162
 #, c-format
 msgid "couldn't execute %s -d"
 msgstr ""
 
-#: src/sort.c:1218
+#: src/sort.c:1221
 #, c-format
 msgid "warning: cannot remove: %s"
 msgstr "внимание: не може да се изтрие: %s"
 
-#: src/sort.c:1304
+#: src/sort.c:1307
 #, fuzzy, c-format
 msgid "invalid --%s argument %s"
 msgstr "неправилен аргумент %s"
 
-#: src/sort.c:1307
+#: src/sort.c:1310
 #, fuzzy, c-format
 msgid "minimum --%s argument is %s"
 msgstr "двусмислен аргумент %s за %s"
 
-#: src/sort.c:1322
+#: src/sort.c:1325
 #, fuzzy, c-format
 msgid "--%s argument %s too large"
 msgstr "%s: броят „%.*s“ е твърде голям"
 
-#: src/sort.c:1325
+#: src/sort.c:1328
 #, c-format
 msgid "maximum --%s argument with current rlimit is %s"
 msgstr ""
 
-#: src/sort.c:1407
+#: src/sort.c:1410
 #, c-format
 msgid "number in parallel must be nonzero"
 msgstr ""
 
-#: src/sort.c:1492
+#: src/sort.c:1495
 msgid "stat failed"
 msgstr "файл не може да бъде открит"
 
-#: src/sort.c:1753
+#: src/sort.c:1756
 msgid "read failed"
 msgstr "не може да се чете"
 
-#: src/sort.c:2041
+#: src/sort.c:2044
 #, c-format
 msgid "string transformation failed"
 msgstr "неуспешно преобразуване на низ"
 
-#: src/sort.c:2044
+#: src/sort.c:2047
 #, fuzzy, c-format
 msgid "the untransformed string was %s"
 msgstr "Непреобразуваният низ беше %s."
 
-#: src/sort.c:2207
+#: src/sort.c:2210
 #, c-format
 msgid "^ no match for key\n"
 msgstr ""
 
-#: src/sort.c:2387
+#: src/sort.c:2390
 #, c-format
 msgid "obsolescent key %s used; consider %s instead"
 msgstr ""
 
-#: src/sort.c:2393
+#: src/sort.c:2396
 #, c-format
 msgid "key %lu has zero width and will be ignored"
 msgstr ""
 
-#: src/sort.c:2404
+#: src/sort.c:2407
 #, c-format
 msgid "leading blanks are significant in key %lu; consider also specifying 'b'"
 msgstr ""
 
-#: src/sort.c:2417
+#: src/sort.c:2420
 #, c-format
 msgid "key %lu is numeric and spans multiple fields"
 msgstr ""
 
-#: src/sort.c:2449
+#: src/sort.c:2452
 #, fuzzy, c-format
 msgid "option '-%s' is ignored"
 msgid_plural "options '-%s' are ignored"
-msgstr[0] "%s: опцията „%s“ е двусмислена\n"
-msgstr[1] "%s: опцията „%s“ е двусмислена\n"
+msgstr[0] "%s: опцията „-W %s“ е двусмислена\n"
+msgstr[1] "%s: опцията „-W %s“ е двусмислена\n"
 
-#: src/sort.c:2455
+#: src/sort.c:2458
 #, c-format
 msgid "option '-r' only applies to last-resort comparison"
 msgstr ""
 
-#: src/sort.c:2729 src/sort.c:2738
+#: src/sort.c:2732 src/sort.c:2741
 msgid "write failed"
 msgstr "неуспешен запис"
 
-#: src/sort.c:2781
+#: src/sort.c:2784
 #, c-format
 msgid "%s: %s:%s: disorder: "
 msgstr "%s: %s:%s: разбърканост: "
 
-#: src/sort.c:2784
+#: src/sort.c:2787
 msgid "standard error"
 msgstr "стандартната грешка"
 
-#: src/sort.c:3698
+#: src/sort.c:3699
 #, fuzzy
 msgid "cannot read"
 msgstr "%s: битовете не могат да се обръщат"
 
-#: src/sort.c:3975
+#: src/sort.c:3977
 #, c-format
 msgid "%s: invalid field specification %s"
 msgstr "%s: неправилна спецификация на поле %s"
 
-#: src/sort.c:3986
+#: src/sort.c:3988
 #, fuzzy, c-format
 msgid "options '-%s' are incompatible"
 msgstr "опциите „-%s“ са несъвместими"
 
-#: src/sort.c:4037
+#: src/sort.c:4039
 #, c-format
 msgid "%s: invalid count at start of %s"
 msgstr "%s: неправилен брой в началото на %s"
 
-#: src/sort.c:4294
+#: src/sort.c:4296
 #, fuzzy
 msgid "invalid number after '-'"
 msgstr "неправилно число след „-“"
 
-#: src/sort.c:4301 src/sort.c:4387 src/sort.c:4415
+#: src/sort.c:4303 src/sort.c:4389 src/sort.c:4417
 #, fuzzy
 msgid "invalid number after '.'"
 msgstr "неправилно число след „.“"
 
-#: src/sort.c:4314 src/sort.c:4420
+#: src/sort.c:4316 src/sort.c:4422
 msgid "stray character in field spec"
 msgstr "неочакван знак в спецификация на поле"
 
-#: src/sort.c:4361
+#: src/sort.c:4363
 #, fuzzy, c-format
 msgid "multiple compress programs specified"
 msgstr "посочени са много формати за изхода"
 
-#: src/sort.c:4378
+#: src/sort.c:4380
 msgid "invalid number at field start"
 msgstr "неправилно число в началото на поле"
 
-#: src/sort.c:4382 src/sort.c:4410
+#: src/sort.c:4384 src/sort.c:4412
 msgid "field number is zero"
 msgstr "номерът на поле е нула"
 
-#: src/sort.c:4391
+#: src/sort.c:4393
 msgid "character offset is zero"
 msgstr "отместването в знаци е нула"
 
-#: src/sort.c:4406
+#: src/sort.c:4408
 #, fuzzy
 msgid "invalid number after ','"
 msgstr "неправилно число след „,“"
 
-#: src/sort.c:4456
+#: src/sort.c:4458
 #, c-format
 msgid "empty tab"
 msgstr "празна табулация"
 
-#: src/sort.c:4549 src/wc.c:692
+#: src/sort.c:4551 src/wc.c:692
 #, c-format
 msgid "cannot read file names from %s"
 msgstr "не може да се четат файлови имена от %s"
 
-#: src/sort.c:4571
+#: src/sort.c:4573
 #, fuzzy, c-format
 msgid "%s:%lu: invalid zero-length file name"
 msgstr "неправилно файлово име с дължина нула"
 
-#: src/sort.c:4577
+#: src/sort.c:4579
 #, fuzzy, c-format
 msgid "no input from %s"
 msgstr "затваряне на входния файл %s"
 
-#: src/sort.c:4623
+#: src/sort.c:4625
 #, c-format
 msgid "using %s sorting rules"
 msgstr ""
 
-#: src/sort.c:4626
+#: src/sort.c:4628
 #, c-format
 msgid "using simple byte comparison"
 msgstr ""
 
-#: src/sort.c:4657
+#: src/sort.c:4659
 #, fuzzy, c-format
 msgid "extra operand %s not allowed with -%c"
 msgstr "допълнителният операнд %s не е позволен с -c"
@@ -9170,7 +9137,7 @@ msgstr ""
 "\n"
 
 #: src/split.c:217
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "  -a, --suffix-length=N   generate suffixes of length N (default %d)\n"
 "      --additional-suffix=SUFFIX  append an additional SUFFIX to file "
@@ -9187,11 +9154,6 @@ msgid ""
 "  -n, --number=CHUNKS     generate CHUNKS output files.  See below\n"
 "  -u, --unbuffered        immediately copy input to output with '-n r/...'\n"
 msgstr ""
-"  -a, --suffix-length=N   ползва суфикси с дължина N (по подразбиране %d)\n"
-"  -b, --bytes=РАЗМ        дели на парчета с размер РАЗМ байта\n"
-"  -C, --line-bytes=РАЗМ   разделя по редове до РАЗМ байта на изходен файл\n"
-"  -d, --numeric-suffixes  ползва числови суфикси вместо буквени\n"
-"  -l, --lines=ЧИСЛО       дели на по ЧИСЛО редове на изходен файл\n"
 
 #: src/split.c:230
 #, fuzzy
@@ -9232,7 +9194,7 @@ msgstr ""
 #: src/split.c:392
 #, fuzzy, c-format
 msgid "failed to set FILE environment variable"
-msgstr "не може да се изпълни stat за %s"
+msgstr "неразбираема стойност на променливата от обкръжението LS_COLORS"
 
 #: src/split.c:394
 #, c-format
@@ -9242,7 +9204,7 @@ msgstr ""
 #: src/split.c:396
 #, fuzzy, c-format
 msgid "failed to create pipe"
-msgstr "не може да се направи твърда връзка %s към %s"
+msgstr "не може да се изпълни stat за %s"
 
 #: src/split.c:410
 #, fuzzy, c-format
@@ -9272,12 +9234,12 @@ msgstr "неуспешно изпълнение на командата %s"
 #: src/split.c:429
 #, fuzzy, c-format
 msgid "failed to close input pipe"
-msgstr "не може да се отвори %s"
+msgstr "каталогът %s не може да се затвори"
 
 #: src/split.c:465
-#, fuzzy, c-format
+#, c-format
 msgid "waiting for child process"
-msgstr "запис в %s"
+msgstr ""
 
 #: src/split.c:475
 #, c-format
@@ -10444,7 +10406,6 @@ msgstr ""
 "  -v, --verbose            винаги извежда заглавия с файловите имена\n"
 
 #: src/tail.c:302
-#, fuzzy
 msgid ""
 "  -s, --sleep-interval=N   with -f, sleep for approximately N seconds\n"
 "                             (default 1.0) between iterations.\n"
@@ -10452,13 +10413,6 @@ msgid ""
 "                             least once every N seconds.\n"
 "  -v, --verbose            always output headers giving file names\n"
 msgstr ""
-"      --pid=PID            с -f завършва след като процесът с номер PID "
-"умре\n"
-"  -q, --quiet, --silent    не извежда заглавия с файловите имена\n"
-"  -s, --sleep-interval=S   с -f интервалът между итерациите е около S "
-"секунди\n"
-"                           (стандартно 1.0)\n"
-"  -v, --verbose            винаги извежда заглавия с файловите имена\n"
 
 #: src/tail.c:311
 #, fuzzy
@@ -12052,6 +12006,64 @@ msgstr ""
 #~ msgid "warning: cannot change directory to %s"
 #~ msgstr "внимание: каталогът не може да се смени на %s"
 
+#~ msgid "%s: illegal option -- %c\n"
+#~ msgstr "%s: неправилна опция -- %c\n"
+
+#~ msgid "block size"
+#~ msgstr "блоковият размер"
+
+#~ msgid ""
+#~ "\n"
+#~ "This is free software.  You may redistribute copies of it under the terms "
+#~ "of\n"
+#~ "the GNU General Public License <http://www.gnu.org/licenses/gpl.html>.\n"
+#~ "There is NO WARRANTY, to the extent permitted by law.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Това е свободен софтуер.  Можете да разпространявате негови копия "
+#~ "съгласно\n"
+#~ "условията на Основната общодостъпна лицензия на ГНУ\n"
+#~ "      <http://www.gnu.org/licenses/gpl.html>.\n"
+#~ "Не се дават НИКАКВИ ГАРАНЦИИ до степента, позволявана от закона.\n"
+
+#~ msgid "invalid argument: %s"
+#~ msgstr "неправилен аргумент: %s"
+
+#~ msgid "invalid %s `%s'"
+#~ msgstr "неправилен %s „%s“"
+
+#~ msgid "invalid character following %s in `%s'"
+#~ msgstr "неправилен писмен знак, следващ  %s в „%s“"
+
+#~ msgid "%s `%s' too large"
+#~ msgstr "%s „%s“ е твърде дълго"
+
+#~ msgid ""
+#~ "  -w, --wrap=COLS       Wrap encoded lines after COLS character (default "
+#~ "76).\n"
+#~ "                        Use 0 to disable line wrapping.\n"
+#~ "\n"
+#~ "  -d, --decode          Decode data.\n"
+#~ "  -i, --ignore-garbage  When decoding, ignore non-alphabet characters.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "  -w, --wrap=ШИРИНА     Пренася кодираните редове след ШИРИНА знаци "
+#~ "(подразбира\n"
+#~ "                        се 76).  Използвайте 0, за да забраните "
+#~ "пренасянето.\n"
+#~ "\n"
+#~ "  -d, --decode          Декодира данните.\n"
+#~ "  -i, --ignore-garbage  При декодиране пренебрегва небуквените знаци.\n"
+#~ "\n"
+
+#~ msgid ""
+#~ "      --help            Display this help and exit.\n"
+#~ "      --version         Output version information and exit.\n"
+#~ msgstr ""
+#~ "      --help            Извежда тази справка и завършва.\n"
+#~ "      --version         Извежда информация за версията и завършва.\n"
+
 #~ msgid ""
 #~ "\n"
 #~ "Examples:\n"
@@ -12062,6 +12074,9 @@ msgstr ""
 #~ "Примери:\n"
 #~ "  %s /usr/bin/sort       извежда „sort“.\n"
 #~ "  %s include/stdio.h .h  извежда „stdio“.\n"
+
+#~ msgid "Usage: %s [OPTION] [FILE]...\n"
+#~ msgstr "Използване: %s [ОПЦИЯ] [ФАЙЛ]...\n"
 
 #~ msgid ""
 #~ "Change the group of each FILE to GROUP.\n"
@@ -12098,6 +12113,9 @@ msgstr ""
 #~ "  -R, --recursive        действа рекурсивно върху файловете и каталозите\n"
 #~ "  -v, --verbose          извежда диагностично съобщение за всеки "
 #~ "обработен файл\n"
+
+#~ msgid "%s"
+#~ msgstr "%s"
 
 #~ msgid ""
 #~ "Change the mode of each FILE to MODE.\n"
@@ -12169,107 +12187,6 @@ msgstr ""
 #~ "  -v, --verbose          извежда диагностично съобщение за всеки "
 #~ "обработен файл\n"
 
-#~ msgid ""
-#~ "Display the current time in the given FORMAT, or set the system date.\n"
-#~ "\n"
-#~ "  -d, --date=STRING         display time described by STRING, not `now'\n"
-#~ "  -f, --file=DATEFILE       like --date once for each line of DATEFILE\n"
-#~ msgstr ""
-#~ "Извежда текущото време в посочения ФОРМАТ или установява датата на "
-#~ "системата.\n"
-#~ "\n"
-#~ "  -d, --date=НИЗ            извежда времето, посочено от НИЗ, вместо "
-#~ "„now“\n"
-#~ "  -f, --file=ФАЙЛДАТИ       като --date по веднъж за всеки ред от "
-#~ "ФАЙЛДАТИ\n"
-
-#~ msgid ""
-#~ "Usage: %s NAME\n"
-#~ "  or:  %s OPTION\n"
-#~ msgstr ""
-#~ "Използване: %s ИМЕ\n"
-#~ "    или:    %s ОПЦИЯ\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "\n"
-#~ "SIZE may be (or may be an integer optionally followed by) one of "
-#~ "following:\n"
-#~ "KB 1000, K 1024, MB 1000*1000, M 1024*1024, and so on for G, T, P, E, Z, "
-#~ "Y.\n"
-#~ msgstr ""
-#~ "\n"
-#~ "РАЗМ се състои от незадължително цяло число, следвано от едно от:\n"
-#~ "kB=1000, K=1024, MB=1000*1000, M=1024*1024 и аналогично за G, T, P, E, Z "
-#~ "и Y.\n"
-
-#~ msgid "cannot create link %s"
-#~ msgstr "не може да се създаде връзка %s"
-
-#~ msgid "%s: illegal option -- %c\n"
-#~ msgstr "%s: неправилна опция -- %c\n"
-
-#~ msgid "block size"
-#~ msgstr "блоковият размер"
-
-#~ msgid ""
-#~ "\n"
-#~ "This is free software.  You may redistribute copies of it under the terms "
-#~ "of\n"
-#~ "the GNU General Public License <http://www.gnu.org/licenses/gpl.html>.\n"
-#~ "There is NO WARRANTY, to the extent permitted by law.\n"
-#~ "\n"
-#~ msgstr ""
-#~ "\n"
-#~ "Това е свободен софтуер.  Можете да разпространявате негови копия "
-#~ "съгласно\n"
-#~ "условията на Основната общодостъпна лицензия на ГНУ\n"
-#~ "      <http://www.gnu.org/licenses/gpl.html>.\n"
-#~ "Не се дават НИКАКВИ ГАРАНЦИИ до степента, позволявана от закона.\n"
-
-#~ msgid "invalid argument: %s"
-#~ msgstr "неправилен аргумент: %s"
-
-#~ msgid "invalid %s `%s'"
-#~ msgstr "неправилен %s „%s“"
-
-#~ msgid "invalid character following %s in `%s'"
-#~ msgstr "неправилен писмен знак, следващ  %s в „%s“"
-
-#~ msgid "%s `%s' too large"
-#~ msgstr "%s „%s“ е твърде дълго"
-
-#~ msgid ""
-#~ "  -w, --wrap=COLS       Wrap encoded lines after COLS character (default "
-#~ "76).\n"
-#~ "                        Use 0 to disable line wrapping.\n"
-#~ "\n"
-#~ "  -d, --decode          Decode data.\n"
-#~ "  -i, --ignore-garbage  When decoding, ignore non-alphabet characters.\n"
-#~ "\n"
-#~ msgstr ""
-#~ "  -w, --wrap=ШИРИНА     Пренася кодираните редове след ШИРИНА знаци "
-#~ "(подразбира\n"
-#~ "                        се 76).  Използвайте 0, за да забраните "
-#~ "пренасянето.\n"
-#~ "\n"
-#~ "  -d, --decode          Декодира данните.\n"
-#~ "  -i, --ignore-garbage  При декодиране пренебрегва небуквените знаци.\n"
-#~ "\n"
-
-#~ msgid ""
-#~ "      --help            Display this help and exit.\n"
-#~ "      --version         Output version information and exit.\n"
-#~ msgstr ""
-#~ "      --help            Извежда тази справка и завършва.\n"
-#~ "      --version         Извежда информация за версията и завършва.\n"
-
-#~ msgid "Usage: %s [OPTION] [FILE]...\n"
-#~ msgstr "Използване: %s [ОПЦИЯ] [ФАЙЛ]...\n"
-
-#~ msgid "%s"
-#~ msgstr "%s"
-
 #~ msgid "  -P, --no-dereference         never follow symbolic links\n"
 #~ msgstr "  -P, --no-dereference         не проследява символните връзки\n"
 
@@ -12298,11 +12215,55 @@ msgstr ""
 #~ msgid "invalid format precision"
 #~ msgstr "неправилна точност на формат"
 
+#~ msgid ""
+#~ "Display the current time in the given FORMAT, or set the system date.\n"
+#~ "\n"
+#~ "  -d, --date=STRING         display time described by STRING, not `now'\n"
+#~ "  -f, --file=DATEFILE       like --date once for each line of DATEFILE\n"
+#~ msgstr ""
+#~ "Извежда текущото време в посочения ФОРМАТ или установява датата на "
+#~ "системата.\n"
+#~ "\n"
+#~ "  -d, --date=НИЗ            извежда времето, посочено от НИЗ, вместо "
+#~ "„now“\n"
+#~ "  -f, --file=ФАЙЛДАТИ       като --date по веднъж за всеки ред от "
+#~ "ФАЙЛДАТИ\n"
+
 #~ msgid "unrecognized operand %s=%s"
 #~ msgstr "непознат операнд %s=%s"
 
+#~ msgid ""
+#~ "\n"
+#~ "SIZE may be (or may be an integer optionally followed by) one of "
+#~ "following:\n"
+#~ "kB 1000, K 1024, MB 1000*1000, M 1024*1024, and so on for G, T, P, E, Z, "
+#~ "Y.\n"
+#~ msgstr ""
+#~ "\n"
+#~ "РАЗМ се състои от незадължително цяло число, следвано от едно от:\n"
+#~ "kB=1000, K=1024, MB=1000*1000, M=1024*1024 и аналогично за G, T, P, E, Z "
+#~ "и Y.\n"
+
 #~ msgid "the --kilobytes option is deprecated; use -k instead"
 #~ msgstr "опцията --kilobytes е остаряла; ползвайте -k вместо нея"
+
+#~ msgid ""
+#~ "Usage: %s NAME\n"
+#~ "  or:  %s OPTION\n"
+#~ msgstr ""
+#~ "Използване: %s ИМЕ\n"
+#~ "    или:    %s ОПЦИЯ\n"
+
+#~ msgid ""
+#~ "\n"
+#~ "Examples:\n"
+#~ "  %s /usr/bin/sort  Output \"/usr/bin\".\n"
+#~ "  %s stdio.h        Output \".\".\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Примери:\n"
+#~ "  %s /usr/bin/sort  извежда „/usr/bin“.\n"
+#~ "  %s stdio.h        извежда „.“.\n"
 
 #~ msgid ""
 #~ "WARNING: use --si, not -H; the meaning of the -H option will soon\n"
@@ -12388,6 +12349,20 @@ msgstr ""
 
 #~ msgid "creating hard link %s => %s"
 #~ msgstr "създава се твърда връзка %s => %s"
+
+#~ msgid ""
+#~ "  -n, --no-dereference        treat destination that is a symlink to a\n"
+#~ "                                directory as if it were a normal file\n"
+#~ "  -i, --interactive           prompt whether to remove destinations\n"
+#~ "  -s, --symbolic              make symbolic links instead of hard links\n"
+#~ msgstr ""
+#~ "  -n, --no-dereference        приема цел, която е символна връзка към "
+#~ "каталог,\n"
+#~ "                                все едно че е нормален файл\n"
+#~ "  -i, --interactive           да се пита при заместване на съществуващи "
+#~ "файлове\n"
+#~ "  -s, --symbolic              да се правят символни връзки вместо твърди "
+#~ "връзки\n"
 
 #~ msgid ""
 #~ "      --group-directories-first\n"
@@ -12531,6 +12506,22 @@ msgstr ""
 
 #~ msgid "sort size"
 #~ msgstr "сортировка размер"
+
+#~ msgid ""
+#~ "  -a, --suffix-length=N   use suffixes of length N (default %d)\n"
+#~ "  -b, --bytes=SIZE        put SIZE bytes per output file\n"
+#~ "  -C, --line-bytes=SIZE   put at most SIZE bytes of lines per output "
+#~ "file\n"
+#~ "  -d, --numeric-suffixes  use numeric suffixes instead of alphabetic\n"
+#~ "  -l, --lines=NUMBER      put NUMBER lines per output file\n"
+#~ msgstr ""
+#~ "  -a, --suffix-length=N   ползва суфикси с дължина N (по подразбиране "
+#~ "%d)\n"
+#~ "  -b, --bytes=РАЗМ        дели на парчета с размер РАЗМ байта\n"
+#~ "  -C, --line-bytes=РАЗМ   разделя по редове до РАЗМ байта на изходен "
+#~ "файл\n"
+#~ "  -d, --numeric-suffixes  ползва числови суфикси вместо буквени\n"
+#~ "  -l, --lines=ЧИСЛО       дели на по ЧИСЛО редове на изходен файл\n"
 
 #~ msgid ""
 #~ "\n"

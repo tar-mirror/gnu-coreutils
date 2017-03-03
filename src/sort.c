@@ -262,6 +262,9 @@ struct merge_node_queue
                                    when popping. */
 };
 
+/* Used to implement --unique (-u).  */
+static struct line saved_line;
+
 /* FIXME: None of these tables work with multibyte character sets.
    Also, there are many other bugs when handling multibyte characters.
    One way to fix this is to rewrite 'sort' to use wide characters
@@ -1813,7 +1816,7 @@ fillbuf (struct buffer *buf, FILE *fp, char const *file)
 
       {
         /* The current input line is too long to fit in the buffer.
-           Double the buffer size and try again, keeping it properly
+           Increase the buffer size and try again, keeping it properly
            aligned.  */
         size_t line_alloc = buf->alloc / sizeof (struct line);
         buf->buf = x2nrealloc (buf->buf, &line_alloc, sizeof (struct line));
@@ -3348,13 +3351,11 @@ queue_pop (struct merge_node_queue *queue)
 static void
 write_unique (struct line const *line, FILE *tfp, char const *temp_output)
 {
-  static struct line saved;
-
   if (unique)
     {
-      if (saved.text && ! compare (line, &saved))
+      if (saved_line.text && ! compare (line, &saved_line))
         return;
-      saved = *line;
+      saved_line = *line;
     }
 
   write_line (line, tfp, temp_output);
@@ -3892,6 +3893,7 @@ sort (char *const *files, size_t nfiles, char const *output_file,
               break;
             }
 
+          saved_line.text = NULL;
           line = buffer_linelim (&buf);
           if (buf.eof && !nfiles && !ntemps && !buf.left)
             {

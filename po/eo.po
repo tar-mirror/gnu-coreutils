@@ -10,10 +10,10 @@
 # Benno Schulenberg <benno@vertaalt.nl>, 2011, 2012.
 msgid ""
 msgstr ""
-"Project-Id-Version: coreutils-8.16\n"
+"Project-Id-Version: coreutils-8.18\n"
 "Report-Msgid-Bugs-To: bug-coreutils@gnu.org\n"
-"POT-Creation-Date: 2012-08-12 09:46+0200\n"
-"PO-Revision-Date: 2012-04-22 20:08+0200\n"
+"POT-Creation-Date: 2012-08-20 08:22+0200\n"
+"PO-Revision-Date: 2012-08-16 21:09+0200\n"
 "Last-Translator: Benno Schulenberg <benno@vertaalt.nl>\n"
 "Language-Team: Esperanto <translation-team-eo@lists.sourceforge.net>\n"
 "Language: eo\n"
@@ -108,7 +108,7 @@ msgstr "komuna memorobjekto"
 
 #: lib/file-type.c:68
 msgid "typed memory object"
-msgstr "tipita memorbjekto"
+msgstr "tipita memorobjekto"
 
 #: lib/file-type.c:70
 msgid "weird file"
@@ -783,13 +783,13 @@ msgid ""
 "Report bugs to: %s\n"
 msgstr ""
 "\n"
-"Raportu programcimojn al %s;\n"
+"Raportu programmisojn al %s;\n"
 "sciigu tradukerarojn al <translation-team-eo@lists.sourceforge.net>.\n"
 
 #: lib/version-etc.c:247
 #, c-format
 msgid "Report %s bugs to: %s\n"
-msgstr "Raportu programcimojn en «%s» al: %s\n"
+msgstr "Raportu programmisojn en «%s» al: %s\n"
 
 #: lib/version-etc.c:251 src/system.h:565
 #, c-format
@@ -821,9 +821,9 @@ msgid "%s subprocess"
 msgstr "subprocezo %s"
 
 #: lib/wait-process.c:274 lib/wait-process.c:346
-#, fuzzy, c-format
+#, c-format
 msgid "%s subprocess got fatal signal %d"
-msgstr "subprocezo %s ricevis ... signalon %d"
+msgstr "subprocezo %s ricevis pereigan signalon %d"
 
 #: lib/xfreopen.c:35
 msgid "stdin"
@@ -907,6 +907,10 @@ msgid ""
 "                          Use 0 to disable line wrapping\n"
 "\n"
 msgstr ""
+"  -d, --decode           malkodi la datenojn\n"
+"  -i, --ignore-garbage   ignori nealfabetajn signojn dum malkodado\n"
+"  -w, --wrap=NOMBRO      faldi koditajn liniojn post NOMBRO (defaŭlte 76)\n"
+"                           da signoj; uzu 0 por malŝalti linifaldadon\n"
 
 #: src/base64.c:73 src/cat.c:110 src/fmt.c:296 src/shuf.c:71 src/sum.c:70
 msgid ""
@@ -950,9 +954,9 @@ msgstr "nevalida faldiga grando: %s"
 #: src/base64.c:283 src/basename.c:173 src/comm.c:435 src/cp.c:607
 #: src/date.c:441 src/dircolors.c:447 src/du.c:894 src/hostid.c:74
 #: src/hostname.c:111 src/id.c:169 src/install.c:929 src/join.c:961
-#: src/link.c:85 src/ln.c:563 src/logname.c:71 src/mknod.c:157 src/mv.c:447
+#: src/link.c:85 src/ln.c:563 src/logname.c:71 src/mknod.c:157 src/mv.c:448
 #: src/od.c:1802 src/ptx.c:2081 src/readlink.c:154 src/seq.c:408
-#: src/shuf.c:320 src/shuf.c:339 src/sort.c:4530 src/split.c:1327
+#: src/shuf.c:320 src/shuf.c:339 src/sort.c:4532 src/split.c:1327
 #: src/tr.c:1797 src/tsort.c:555 src/tty.c:112 src/uname.c:251 src/uniq.c:454
 #: src/uniq.c:471 src/unlink.c:81 src/uptime.c:250 src/users.c:146
 #: src/wc.c:666 src/who.c:827 src/whoami.c:79
@@ -1032,7 +1036,7 @@ msgstr ""
 #: src/dirname.c:116 src/expr.c:326 src/join.c:1147 src/link.c:77
 #: src/mkdir.c:183 src/mkfifo.c:108 src/mknod.c:146 src/nohup.c:111
 #: src/pathchk.c:148 src/printf.c:674 src/readlink.c:146 src/realpath.c:236
-#: src/rm.c:314 src/rmdir.c:223 src/seq.c:402 src/setuidgid.c:137
+#: src/rm.c:321 src/rmdir.c:223 src/seq.c:402 src/setuidgid.c:137
 #: src/sleep.c:119 src/stat.c:1487 src/stdbuf.c:346 src/tr.c:1782
 #: src/unlink.c:75
 #, c-format
@@ -1042,7 +1046,7 @@ msgstr "mankas argumento"
 #. This is a proper name. See the gettext manual, section Names.
 #: src/cat.c:48 src/cp.c:56 src/df.c:42 src/du.c:52 src/split.c:49
 msgid "Torbjorn Granlund"
-msgstr "Torbjorn GRANLUND"
+msgstr "Torbjern GRANLUND (Torbjörn Granlund)"
 
 #. This is a proper name. See the gettext manual, section Names.
 #: src/cat.c:49 src/comm.c:37 src/ls.c:123 src/rm.c:43 src/split.c:50
@@ -1109,7 +1113,7 @@ msgstr ""
 msgid "cannot do ioctl on %s"
 msgstr "ne eblas fari 'ioctl' al %s"
 
-#: src/cat.c:637 src/dd.c:2209 src/sort.c:380 src/tee.c:165 src/yes.c:86
+#: src/cat.c:637 src/dd.c:2209 src/sort.c:383 src/tee.c:165 src/yes.c:86
 #, c-format
 msgid "standard output"
 msgstr "ĉefeligujo"
@@ -1175,13 +1179,13 @@ msgstr "ne eblas legi dosierujon %s"
 msgid "changing security context of %s\n"
 msgstr "ŝanĝiĝas sekureca kunteksto de %s\n"
 
-#: src/chcon.c:326 src/chmod.c:346 src/chown-core.c:539 src/remove.c:555
+#: src/chcon.c:326 src/chmod.c:346 src/chown-core.c:539 src/remove.c:559
 #, c-format
 msgid "fts_read failed"
 msgstr "malsukcesis 'fts_read()'"
 
 #: src/chcon.c:337 src/chmod.c:357 src/chown-core.c:551 src/du.c:618
-#: src/remove.c:569
+#: src/remove.c:573
 #, c-format
 msgid "fts_close failed"
 msgstr "malsukcesis 'fts_close()'"
@@ -1205,6 +1209,10 @@ msgid ""
 "RFILE.\n"
 "\n"
 msgstr ""
+"Ŝanĝas la sekurecan kuntekston de ĉiu DOSIERO al KUNTEKSTO.\n"
+"Kun «--reference», ŝanĝas la sekurecan kuntekston de ĉiu\n"
+"DOSIERO al tiu de REFERENCDOSIERO.\n"
+"\n"
 
 #: src/chcon.c:362 src/chgrp.c:123 src/chown.c:94
 msgid ""
@@ -1213,6 +1221,9 @@ msgid ""
 "  -h, --no-dereference   affect symbolic links instead of any referenced "
 "file\n"
 msgstr ""
+"      --dereference      (defaŭlte) efiki la referencatan de ĉiu simbola "
+"ligo\n"
+"  -h, --no-dereference   efiki simbolan ligon mem anstataŭ kion ĝi indikas\n"
 
 #: src/chcon.c:367
 msgid ""
@@ -1234,14 +1245,19 @@ msgid ""
 "specifying\n"
 "                         a CONTEXT value\n"
 msgstr ""
+"      --reference=REFERENCDOSIERO\n"
+"                         uzi sekurecan kuntekston de REFERENCDOSIERO\n"
+"                         anstataŭ la valoron KUNTEKSTO\n"
 
 #: src/chcon.c:377 src/chgrp.c:140 src/chown.c:118
 msgid "  -R, --recursive        operate on files and directories recursively\n"
 msgstr ""
+"  -R, --recursive        operacii rekursie pri dosieroj kaj dosierujoj\n"
 
 #: src/chcon.c:380
 msgid "  -v, --verbose          output a diagnostic for every file processed\n"
 msgstr ""
+"  -v, --verbose          eligi mesaĝon por ĉiu dosiero kiu proceziĝis\n"
 
 #: src/chcon.c:383 src/chgrp.c:143 src/chown.c:121
 msgid ""
@@ -1257,6 +1273,16 @@ msgid ""
 "  -P                     do not traverse any symbolic links (default)\n"
 "\n"
 msgstr ""
+"\n"
+"La sekvaj opcioj modifas la trapason de la hierarkio kiam la opcio «-R»\n"
+"indikatas.  Se pli ol unu el ili indikatas, nur la lasta efikas.\n"
+"\n"
+"  -H                     se komandlinia argumento estas simbola ligo al\n"
+"                         dosierujo, trapasi ĝin\n"
+"  -L                     trapasi ĉiun renkontatan simbolan ligon al "
+"dosierujo\n"
+"  -P                     ne trapasi iujn ajn simbolajn ligojn (defaŭlte)\n"
+"\n"
 
 #: src/chcon.c:512 src/chgrp.c:264 src/chown.c:267
 #, c-format
@@ -1287,7 +1313,7 @@ msgstr "konfliktas la indikoj de sekureca kunteksto"
 
 #: src/chcon.c:572 src/chgrp.c:287 src/chgrp.c:305 src/chmod.c:536
 #: src/chmod.c:555 src/chown.c:290 src/chown.c:319 src/cp.c:433 src/cp.c:493
-#: src/mv.c:96 src/pwd.c:273 src/rm.c:324 src/touch.c:348
+#: src/mv.c:97 src/pwd.c:273 src/rm.c:331 src/touch.c:348
 #, c-format
 msgid "failed to get attributes of %s"
 msgstr "malsukcesis eltrovi atributojn de %s"
@@ -1312,6 +1338,10 @@ msgid ""
 "With --reference, change the group of each FILE to that of RFILE.\n"
 "\n"
 msgstr ""
+"Ŝanĝas la grupon de ĉiu DOSIERO al GRUPO.\n"
+"Kun «--reference», ŝanĝas la grupon de ĉiu DOSIERO al tiu de "
+"REFERENCDOSIERO.\n"
+"\n"
 
 #: src/chgrp.c:118 src/chmod.c:382 src/chown.c:89
 msgid ""
@@ -1319,6 +1349,9 @@ msgid ""
 "  -f, --silent, --quiet  suppress most error messages\n"
 "  -v, --verbose          output a diagnostic for every file processed\n"
 msgstr ""
+"  -c, --changes          kiel '--verbose', sed nur kiam ŝanĝo okazis\n"
+"  -f, --silent, --quiet  forlasi la plejmulton de erarmesaĝoj\n"
+"  -v, --verbose          eligi mesaĝon por ĉiu dosiero kiu proceziĝis\n"
 
 #: src/chgrp.c:128 src/chown.c:99
 msgid ""
@@ -1333,12 +1366,16 @@ msgid ""
 "      --no-preserve-root  do not treat '/' specially (the default)\n"
 "      --preserve-root    fail to operate recursively on '/'\n"
 msgstr ""
+"      --no-preserve-root   ne trakti '/' aparte (la defaŭlto)\n"
+"      --preserve-root      rifuzi operacii rekursie sur '/'\n"
 
 #: src/chgrp.c:136
 msgid ""
 "      --reference=RFILE  use RFILE's group rather than specifying a\n"
 "                         GROUP value\n"
 msgstr ""
+"      --reference=REFERENCDOSIERO\n"
+"                         uzi la grupon de REFERENCDOSIERO anstataŭ valoron\n"
 
 #: src/chgrp.c:158
 #, c-format
@@ -1529,6 +1566,12 @@ msgid ""
 "RFILE.\n"
 "\n"
 msgstr ""
+"Ŝanĝas la posedanton kaj/aŭ grupon de ĉiu DOSIERO al POSEDANTO kaj/aŭ "
+"GRUPO.\n"
+"Kun «--reference», ŝanĝas la posedanton kaj grupon de ĉiu DOSIERO al tiuj "
+"de\n"
+"REFERENCDOSIERO.\n"
+"\n"
 
 #: src/chown.c:103
 msgid ""
@@ -1540,12 +1583,22 @@ msgid ""
 "match\n"
 "                         is not required for the omitted attribute\n"
 msgstr ""
+"      --from=NUNA_POSEDANTO:NUNA_GRUPO\n"
+"                         ŝanĝi la posedanton kaj/aŭ grupon de ĉiu dosiero "
+"nur\n"
+"                         se ĝia nuna posedanto kaj/aŭ grupo kongruas kun la "
+"ĉi\n"
+"                         tie indikataj; la unua aŭ la dua povas esti "
+"forlasata,\n"
+"                         en kiu kazo kongruo ne bezonas por tiu\n"
 
 #: src/chown.c:114
 msgid ""
 "      --reference=RFILE  use RFILE's owner and group rather than\n"
 "                         specifying OWNER:GROUP values\n"
 msgstr ""
+"      --reference=REFERENCDOSIERO\n"
+"                         uzi posedanton kaj grupon de REFERENCDOSIERO\n"
 
 #: src/chown.c:136
 msgid ""
@@ -1554,6 +1607,10 @@ msgid ""
 "to login group if implied by a ':' following a symbolic OWNER.\n"
 "OWNER and GROUP may be numeric as well as symbolic.\n"
 msgstr ""
+"\n"
+"Posedanto ne ŝanĝiĝas se mankas.  Ankaŭ grupo ne ŝanĝiĝas se mankas, sed\n"
+"ĝi ŝanĝiĝas al la ensaluta grupo se ':' sekvas simbolan POSEDANTOn.\n"
+"POSEDANTO kaj GRUPO povas esti numerecaj aŭ simbolaj.\n"
 
 #: src/chown.c:142
 #, c-format
@@ -1613,6 +1670,9 @@ msgid ""
 "  --userspec=USER:GROUP  specify user and group (ID or name) to use\n"
 "  --groups=G_LIST        specify supplementary groups as g1,g2,..,gN\n"
 msgstr ""
+"  --userspec=UZANTO:GRUPO  uzendaj uzanto kaj grupo (ID aŭ nomo)\n"
+"  --groups=GRUPLISTO       agordendaj aldonaj grupoj (indiki kiel «g1,g2,..,"
+"gN»)\n"
 
 #: src/chroot.c:149
 msgid ""
@@ -1703,6 +1763,11 @@ msgid ""
 "  -2              suppress column 2 (lines unique to FILE2)\n"
 "  -3              suppress column 3 (lines that appear in both files)\n"
 msgstr ""
+"\n"
+"  -1                forlasi kolumnon 1 (liniojn unikajn al DOSIERO1)\n"
+"  -2                forlasi kolumnon 2 (liniojn unikajn al DOSIERO2)\n"
+"  -3                forlasi kolumnon 3 (liniojn kiuj aperas en ambaŭ "
+"dosieroj)\n"
 
 #: src/comm.c:122
 msgid ""
@@ -1711,10 +1776,14 @@ msgid ""
 "                      if all input lines are pairable\n"
 "  --nocheck-order   do not check that the input is correctly sorted\n"
 msgstr ""
+"\n"
+"  --check-order     kontroli ke la enigo estas ĝuste ordigita, eĉ\n"
+"                      se ĉiuj enigaj linioj estas pareblaj\n"
+"  --nocheck-order   ne kontroli ke la enigo estas ĝuste ordigita\n"
 
 #: src/comm.c:128
 msgid "  --output-delimiter=STR  separate columns with STR\n"
-msgstr ""
+msgstr "  --output-delimiter=ĈENO    disigi kolumnojn kun ĈENO\n"
 
 #: src/comm.c:133
 msgid ""
@@ -1732,6 +1801,13 @@ msgid ""
 "  %s -12 file1 file2  Print only lines present in both file1 and file2.\n"
 "  %s -3 file1 file2  Print lines in file1 not in file2, and vice versa.\n"
 msgstr ""
+"\n"
+"Ekzemploj:\n"
+"  %s -12 dosiero1 dosiero2  Montras nur liniojn kiuj ĉeestas en ambaŭ "
+"dosieroj.\n"
+"  %s -3 dosiero1 dosiero2   Montras liniojn kiuj ĉeestas en unu dosiero sed "
+"ne\n"
+"                              en la alia.\n"
 
 #: src/comm.c:222
 #, c-format
@@ -1799,7 +1875,7 @@ msgid "failed to preserve authorship for %s"
 msgstr "malsukcesis konservi aŭtorecon pri %s"
 
 #: src/copy.c:804 src/csplit.c:640 src/du.c:901 src/fmt.c:452 src/head.c:855
-#: src/sort.c:4542 src/split.c:1343 src/tail.c:1757 src/wc.c:678
+#: src/sort.c:4544 src/split.c:1343 src/tail.c:1757 src/wc.c:678
 #, c-format
 msgid "cannot open %s for reading"
 msgstr "ne eblas malfermi %s por legi"
@@ -1826,7 +1902,7 @@ msgid "failed to set the security context of %s to %s"
 msgstr "malsukcesis agordi sekurecan kuntekston de %s al %s"
 
 #: src/copy.c:881 src/copy.c:1574 src/copy.c:1777 src/copy.c:1935 src/ln.c:314
-#: src/remove.c:253 src/remove.c:279 src/remove.c:400 src/remove.c:421
+#: src/remove.c:253 src/remove.c:279 src/remove.c:400 src/remove.c:425
 #, c-format
 msgid "cannot remove %s"
 msgstr "ne eblas forigi %s"
@@ -2031,7 +2107,7 @@ msgstr "ne eblas restaŭri savkopion %s"
 msgid "%s -> %s (unbackup)\n"
 msgstr "%s -> %s (restaŭro)\n"
 
-#: src/cp.c:156 src/mv.c:284
+#: src/cp.c:156 src/mv.c:285
 #, c-format
 msgid ""
 "Usage: %s [OPTION]... [-T] SOURCE DEST\n"
@@ -2053,8 +2129,8 @@ msgstr ""
 #: src/cp.c:166 src/csplit.c:1460 src/cut.c:197 src/df.c:876 src/du.c:268
 #: src/expand.c:112 src/fmt.c:276 src/fold.c:75 src/head.c:115
 #: src/install.c:612 src/kill.c:86 src/ln.c:392 src/ls.c:4733 src/mkdir.c:61
-#: src/mkfifo.c:56 src/mknod.c:58 src/mv.c:294 src/nl.c:191 src/paste.c:445
-#: src/pr.c:2777 src/ptx.c:1825 src/shred.c:153 src/shuf.c:58 src/sort.c:400
+#: src/mkfifo.c:56 src/mknod.c:58 src/mv.c:295 src/nl.c:191 src/paste.c:445
+#: src/pr.c:2777 src/ptx.c:1825 src/shred.c:153 src/shuf.c:58 src/sort.c:403
 #: src/split.c:214 src/stdbuf.c:95 src/tac.c:142 src/tail.c:268
 #: src/touch.c:223 src/truncate.c:107 src/unexpand.c:122 src/uniq.c:145
 msgid ""
@@ -2167,7 +2243,7 @@ msgid ""
 "fails, or if --reflink=auto is specified, fall back to a standard copy.\n"
 msgstr ""
 
-#: src/cp.c:247 src/install.c:649 src/ln.c:421 src/mv.c:321
+#: src/cp.c:247 src/install.c:649 src/ln.c:421 src/mv.c:322
 msgid ""
 "\n"
 "The backup suffix is '~', unless set with --suffix or SIMPLE_BACKUP_SUFFIX.\n"
@@ -2177,7 +2253,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/cp.c:254 src/install.c:656 src/mv.c:328
+#: src/cp.c:254 src/install.c:656 src/mv.c:329
 msgid ""
 "  none, off       never make backups (even if --backup is given)\n"
 "  numbered, t     make numbered backups\n"
@@ -2214,23 +2290,23 @@ msgid "%s exists but is not a directory"
 msgstr "%s ekzistas sed ne estas dosierujo"
 
 #: src/cp.c:572 src/cp.c:1068 src/install.c:401 src/install.c:844 src/ln.c:123
-#: src/ln.c:181 src/ln.c:202 src/ln.c:516 src/mv.c:152 src/mv.c:399
+#: src/ln.c:181 src/ln.c:202 src/ln.c:516 src/mv.c:153 src/mv.c:400
 #, c-format
 msgid "accessing %s"
 msgstr "atingiĝas %s"
 
-#: src/cp.c:592 src/install.c:914 src/ln.c:546 src/mv.c:432 src/shred.c:1182
+#: src/cp.c:592 src/install.c:914 src/ln.c:546 src/mv.c:433 src/shred.c:1182
 #: src/touch.c:430 src/truncate.c:355
 #, c-format
 msgid "missing file operand"
 msgstr "mankas dosiera argumento"
 
-#: src/cp.c:594 src/install.c:916 src/ln.c:560 src/mv.c:434
+#: src/cp.c:594 src/install.c:916 src/ln.c:560 src/mv.c:435
 #, c-format
 msgid "missing destination file operand after %s"
 msgstr "mankas celdosiera argumento post %s"
 
-#: src/cp.c:603 src/install.c:925 src/mv.c:443
+#: src/cp.c:603 src/install.c:925 src/mv.c:444
 #, c-format
 msgid "cannot combine --target-directory (-t) and --no-target-directory (-T)"
 msgstr ""
@@ -2238,8 +2314,8 @@ msgstr ""
 "directory' (-T)"
 
 #: src/cp.c:619 src/cp.c:1070 src/install.c:403 src/install.c:846
-#: src/install.c:938 src/ln.c:125 src/ln.c:518 src/ln.c:574 src/mv.c:401
-#: src/mv.c:457
+#: src/install.c:938 src/ln.c:125 src/ln.c:518 src/ln.c:574 src/mv.c:402
+#: src/mv.c:458
 #, c-format
 msgid "target %s is not a directory"
 msgstr "cela %s ne estas dosierujo"
@@ -2249,7 +2325,7 @@ msgstr "cela %s ne estas dosierujo"
 msgid "with --parents, the destination must be a directory"
 msgstr "kun opcio «--parents» la celo devas esti dosierujo"
 
-#: src/cp.c:1063 src/install.c:839 src/ln.c:511 src/mv.c:394
+#: src/cp.c:1063 src/install.c:839 src/ln.c:511 src/mv.c:395
 #, c-format
 msgid "multiple target directories specified"
 msgstr "pluraj celaj dosierujoj indikatas"
@@ -2259,7 +2335,7 @@ msgstr "pluraj celaj dosierujoj indikatas"
 msgid "cannot make both hard and symbolic links"
 msgstr "ne eblas krei samtempe senperan kaj simbolan ligon"
 
-#: src/cp.c:1115 src/mv.c:464
+#: src/cp.c:1115 src/mv.c:465
 #, c-format
 msgid "options --backup and --no-clobber are mutually exclusive"
 msgstr "nekombineblas opcioj '--backup' kaj '--no-clobber'"
@@ -2269,7 +2345,7 @@ msgstr "nekombineblas opcioj '--backup' kaj '--no-clobber'"
 msgid "--reflink can be used only with --sparse=auto"
 msgstr "eblas uzi opcion '--reflink' nur kune kun '--sparse=auto'"
 
-#: src/cp.c:1129 src/install.c:899 src/ln.c:582 src/mv.c:472
+#: src/cp.c:1129 src/install.c:899 src/ln.c:582 src/mv.c:473
 msgid "backup type"
 msgstr "tipo de savkopio"
 
@@ -3262,9 +3338,8 @@ msgid ""
 msgstr ""
 
 #: src/df.c:982
-#, fuzzy
 msgid "warning: "
-msgstr "Averto: "
+msgstr "averto: "
 
 #: src/df.c:983
 msgid "long option '--megabytes' is deprecated and will soon be removed"
@@ -3275,15 +3350,15 @@ msgstr ""
 msgid "file system type %s both selected and excluded"
 msgstr "dosiersistema tipo %s estas ambaŭ elektita kaj ekskluzivita"
 
-#: src/df.c:1106
+#: src/df.c:1115
 msgid "Warning: "
 msgstr "Averto: "
 
-#: src/df.c:1108 src/stat.c:806
+#: src/df.c:1117 src/stat.c:806
 msgid "cannot read table of mounted file systems"
 msgstr "ne eblas legi tabelon de surmetitaj dosiersistemoj"
 
-#: src/df.c:1140
+#: src/df.c:1149
 #, c-format
 msgid "no file systems processed"
 msgstr "neniu dosiersistemo pritraktatas"
@@ -3381,7 +3456,7 @@ msgstr ""
 "  %s ujo1/ĉeno ujo2/ĉeno    ->  «ujo1» kaj poste «ujo2»\n"
 "  %s stdio.h                ->  «.».\n"
 
-#: src/du.c:260 src/sort.c:391 src/wc.c:112
+#: src/du.c:260 src/sort.c:394 src/wc.c:112
 #, c-format
 msgid ""
 "Usage: %s [OPTION]... [FILE]...\n"
@@ -3473,7 +3548,6 @@ msgid ""
 msgstr ""
 
 #: src/du.c:375
-#, fuzzy
 msgid "Infinity"
 msgstr "senfino"
 
@@ -3502,7 +3576,7 @@ msgstr "averto: resumi egalas al opcio «--max-depth=0»"
 msgid "warning: summarizing conflicts with --max-depth=%lu"
 msgstr "averto: resumi konfliktas kun opcio «--max-depth=%lu»"
 
-#: src/du.c:896 src/sort.c:4532 src/wc.c:668
+#: src/du.c:896 src/sort.c:4534 src/wc.c:668
 msgid "file operands cannot be combined with --files0-from"
 msgstr "nekombineblas dosieraj argumentoj kun opcio «--files0-from»"
 
@@ -3512,7 +3586,7 @@ msgstr "nekombineblas dosieraj argumentoj kun opcio «--files0-from»"
 msgid "%s: read error"
 msgstr "%s: leg-eraro"
 
-#: src/du.c:963 src/sort.c:4561 src/wc.c:747
+#: src/du.c:963 src/sort.c:4563 src/wc.c:747
 #, c-format
 msgid "when reading file names from stdin, no file name of %s allowed"
 msgstr "kiam dosiernomoj legatas de ĉefenigujo, ne permesatas dosiernomo %s"
@@ -3805,7 +3879,7 @@ msgstr "argumento estas ne-entjera"
 msgid "division by zero"
 msgstr "divido per nulo"
 
-#: src/expr.c:887 src/sort.c:2042
+#: src/expr.c:887 src/sort.c:2045
 #, c-format
 msgid "set LC_ALL='C' to work around the problem"
 msgstr "Agordu LC_ALL='C' por eviti la problemon."
@@ -3942,7 +4016,7 @@ msgstr "nevalida nombro da kolumnoj: %s"
 #: src/getlimits.c:29 src/realpath.c:33 src/stdbuf.c:37 src/timeout.c:75
 #: src/truncate.c:37
 msgid "Padraig Brady"
-msgstr "Padrejg BREJDI (Padraig Brady)"
+msgstr "Padrejg BREJDI (Pádraig Brady)"
 
 #: src/getlimits.c:65
 #, c-format
@@ -4063,9 +4137,9 @@ msgid "%s: cannot seek to offset %s"
 msgstr "%s: ne eblas fari 'seek' al pozicio %s"
 
 #: src/head.c:674
-#, fuzzy, c-format
+#, c-format
 msgid "%s: failed to reset file pointer"
-msgstr "malsukcesis forigi %s"
+msgstr "%s: malsukcesis reagordi dosierpozician indikilon"
 
 #: src/head.c:799
 #, c-format
@@ -4200,29 +4274,29 @@ msgid "cannot get effective UID"
 msgstr "malsukcesis eltrovi efektivan UID-on"
 
 #: src/id.c:311
-#, fuzzy, c-format
+#, c-format
 msgid "cannot find name for user ID %s"
-msgstr "ne eblas eltrovi nomon por uzantnumero %lu"
+msgstr "ne eblas eltrovi nomon por uzantnumero %s"
 
 #: src/id.c:329
-#, fuzzy, c-format
+#, c-format
 msgid "uid=%s"
-msgstr "UID=%lu"
+msgstr "UID=%s"
 
 #: src/id.c:334
-#, fuzzy, c-format
+#, c-format
 msgid " gid=%s"
-msgstr " GID=%lu"
+msgstr " GID=%s"
 
 #: src/id.c:341
-#, fuzzy, c-format
+#, c-format
 msgid " euid=%s"
-msgstr " EUID=%lu"
+msgstr " EUID=%s"
 
 #: src/id.c:349
-#, fuzzy, c-format
+#, c-format
 msgid " egid=%s"
-msgstr " EGID=%lu"
+msgstr " EGID=%s"
 
 #: src/id.c:377
 msgid " groups="
@@ -4386,7 +4460,7 @@ msgstr "nevalida moduso %s"
 #: src/install.c:953
 #, c-format
 msgid "WARNING: ignoring --strip-program option as -s option was not specified"
-msgstr "AVERTO: ignoriĝas '--strip-program' ĉar opcio '-s' ne specifiĝis"
+msgstr "AVERTO: ignoriĝas '--strip-program' ĉar opcio '-s' ne indikatas"
 
 #: src/install.c:958
 #, c-format
@@ -4492,12 +4566,12 @@ msgstr "nekongruaj kunigkampoj %lu, %lu"
 msgid "conflicting empty-field replacement strings"
 msgstr "konfliktas la anstataŭigaj ĉenoj por vakaj kampoj"
 
-#: src/join.c:1101 src/sort.c:4467
+#: src/join.c:1101 src/sort.c:4469
 #, c-format
 msgid "multi-character tab %s"
 msgstr "plursigna tabo %s"
 
-#: src/join.c:1105 src/sort.c:4472
+#: src/join.c:1105 src/sort.c:4474
 #, c-format
 msgid "incompatible tabs"
 msgstr "nekongruaj taboj"
@@ -5470,7 +5544,7 @@ msgstr "malsukcesis krei dosierujon tra ŝablono %s"
 msgid "failed to create file via template %s"
 msgstr "malsukcesis krei dosieron tra ŝablono %s"
 
-#: src/mv.c:290
+#: src/mv.c:291
 msgid ""
 "Rename SOURCE to DEST, or move SOURCE(s) to DIRECTORY.\n"
 "\n"
@@ -5478,7 +5552,7 @@ msgstr ""
 "Renomas ORIGINOn al CELO, aŭ translokas ORIGINO(j)n al DOSIERUJO.\n"
 "\n"
 
-#: src/mv.c:297
+#: src/mv.c:298
 msgid ""
 "      --backup[=CONTROL]       make a backup of each existing destination "
 "file\n"
@@ -5491,7 +5565,7 @@ msgid ""
 "effect.\n"
 msgstr ""
 
-#: src/mv.c:306
+#: src/mv.c:307
 msgid ""
 "      --strip-trailing-slashes  remove any trailing slashes from each "
 "SOURCE\n"
@@ -5499,7 +5573,7 @@ msgid ""
 "  -S, --suffix=SUFFIX          override the usual backup suffix\n"
 msgstr ""
 
-#: src/mv.c:311
+#: src/mv.c:312
 msgid ""
 "  -t, --target-directory=DIRECTORY  move all SOURCE arguments into "
 "DIRECTORY\n"
@@ -6586,7 +6660,7 @@ msgid ""
 "  -v, --verbose                 report error messages\n"
 msgstr ""
 
-#: src/realpath.c:71 src/rm.c:134 src/shred.c:147 src/stat.c:1341
+#: src/realpath.c:71 src/rm.c:135 src/shred.c:147 src/stat.c:1341
 #: src/touch.c:212
 #, c-format
 msgid "Usage: %s [OPTION]... FILE...\n"
@@ -6646,22 +6720,22 @@ msgstr "%s: ĉu forigi %s %s? "
 msgid "removed directory: %s\n"
 msgstr "forigiĝis dosierujo %s\n"
 
-#: src/remove.c:437
+#: src/remove.c:441
 #, c-format
 msgid "cannot remove directory: %s"
 msgstr "ne eblas forigi dosierujon %s"
 
-#: src/remove.c:493
+#: src/remove.c:497
 #, c-format
 msgid "skipping %s, since it's on a different device"
 msgstr "transsaltatas %s, ĉar ĝi estas en alia aparato"
 
-#: src/remove.c:513
+#: src/remove.c:517
 #, c-format
 msgid "traversal failed: %s"
 msgstr "malsukcesis transiro: %s"
 
-#: src/remove.c:519
+#: src/remove.c:523
 #, c-format
 msgid ""
 "unexpected failure: fts_info=%d: %s\n"
@@ -6670,12 +6744,12 @@ msgstr ""
 "neatendita malsukceso: fts_info()=%d: %s\n"
 "bonvolu raporti ĉi tion al %s"
 
-#: src/rm.c:118
+#: src/rm.c:119
 #, c-format
 msgid "Try '%s ./%s' to remove the file %s.\n"
 msgstr "Tajpu '%s ./%s' por forigi dosieron %s.\n"
 
-#: src/rm.c:135
+#: src/rm.c:136
 msgid ""
 "Remove (unlink) the FILE(s).\n"
 "\n"
@@ -6684,7 +6758,7 @@ msgid ""
 "  -i                    prompt before every removal\n"
 msgstr ""
 
-#: src/rm.c:141
+#: src/rm.c:142
 msgid ""
 "  -I                    prompt once before removing more than three files, "
 "or\n"
@@ -6696,22 +6770,23 @@ msgid ""
 "                          always (-i).  Without WHEN, prompt always\n"
 msgstr ""
 
-#: src/rm.c:148
+#: src/rm.c:149
 msgid ""
 "      --one-file-system  when removing a hierarchy recursively, skip any\n"
 "                          directory that is on a file system different from\n"
 "                          that of the corresponding command line argument\n"
 msgstr ""
 
-#: src/rm.c:153
+#: src/rm.c:154
 msgid ""
 "      --no-preserve-root  do not treat '/' specially\n"
 "      --preserve-root   do not remove '/' (default)\n"
 "  -r, -R, --recursive   remove directories and their contents recursively\n"
+"  -d, --dir             remove empty directories\n"
 "  -v, --verbose         explain what is being done\n"
 msgstr ""
 
-#: src/rm.c:161
+#: src/rm.c:163
 msgid ""
 "\n"
 "By default, rm does not remove directories.  Use the --recursive (-r or -R)\n"
@@ -6722,7 +6797,7 @@ msgstr ""
 "Defaŭlte, 'rm' ne forigas dosierujojn.  Uzu opcion '--recursive' (-r aŭ -R)\n"
 "por ankaŭ forigi ĉiun indikatan dosierujon kaj ĝian tutan enhavon.\n"
 
-#: src/rm.c:166
+#: src/rm.c:168
 #, c-format
 msgid ""
 "\n"
@@ -6733,7 +6808,7 @@ msgid ""
 "  %s ./-foo\n"
 msgstr ""
 
-#: src/rm.c:175
+#: src/rm.c:177
 msgid ""
 "\n"
 "Note that if you use rm to remove a file, it might be possible to recover\n"
@@ -6741,12 +6816,12 @@ msgid ""
 "assurance that the contents are truly unrecoverable, consider using shred.\n"
 msgstr ""
 
-#: src/rm.c:335
+#: src/rm.c:342
 #, c-format
 msgid "%s: remove all arguments recursively? "
 msgstr "%s: ĉu forigi ĉiujn argumentojn rekursie? "
 
-#: src/rm.c:336
+#: src/rm.c:343
 #, c-format
 msgid "%s: remove all arguments? "
 msgstr "%s: ĉu forigi ĉiujn argumentojn? "
@@ -7146,7 +7221,7 @@ msgstr "%s: nevalida dosiertipo"
 msgid "%s: file has negative size"
 msgstr "%s: dosiero havas negativan grandon"
 
-#: src/shred.c:865 src/sort.c:930 src/split.c:379
+#: src/shred.c:865 src/sort.c:933 src/split.c:379
 #, c-format
 msgid "%s: error truncating"
 msgstr "%s: eraro dum trunkado"
@@ -7196,7 +7271,7 @@ msgstr "malsukcesis malfermi %s por skribado"
 msgid "%s: invalid number of passes"
 msgstr "nevalida nombro de paŝoj: %s"
 
-#: src/shred.c:1135 src/shuf.c:291 src/sort.c:4440
+#: src/shred.c:1135 src/shuf.c:291 src/sort.c:4442
 #, c-format
 msgid "multiple random sources specified"
 msgstr "pluraj aleatoraj fontoj indikatas"
@@ -7249,7 +7324,7 @@ msgstr "nevalida intervalo: %s"
 msgid "invalid line count %s"
 msgstr "nevalida nombro de linioj: %s"
 
-#: src/shuf.c:285 src/sort.c:4434
+#: src/shuf.c:285 src/sort.c:4436
 #, c-format
 msgid "multiple output files specified"
 msgstr "pluraj eligaj dosieroj indikatas"
@@ -7283,13 +7358,13 @@ msgstr "nevalida tempintervalo: %s"
 msgid "cannot read realtime clock"
 msgstr "malsukcesis legi realtempan horloĝon"
 
-#: src/sort.c:396
+#: src/sort.c:399
 msgid ""
 "Write sorted concatenation of all FILE(s) to standard output.\n"
 "\n"
 msgstr ""
 
-#: src/sort.c:403
+#: src/sort.c:406
 msgid ""
 "Ordering options:\n"
 "\n"
@@ -7297,7 +7372,7 @@ msgstr ""
 "Ordigantaj opcioj:\n"
 "\n"
 
-#: src/sort.c:407
+#: src/sort.c:410
 msgid ""
 "  -b, --ignore-leading-blanks  ignore leading blanks\n"
 "  -d, --dictionary-order      consider only blanks and alphanumeric "
@@ -7305,19 +7380,19 @@ msgid ""
 "  -f, --ignore-case           fold lower case to upper case characters\n"
 msgstr ""
 
-#: src/sort.c:413
+#: src/sort.c:416
 msgid ""
 "  -g, --general-numeric-sort  compare according to general numerical value\n"
 "  -i, --ignore-nonprinting    consider only printable characters\n"
 "  -M, --month-sort            compare (unknown) < 'JAN' < ... < 'DEC'\n"
 msgstr ""
 
-#: src/sort.c:418
+#: src/sort.c:421
 msgid ""
 "  -h, --human-numeric-sort    compare human readable numbers (e.g., 2K 1G)\n"
 msgstr ""
 
-#: src/sort.c:421
+#: src/sort.c:424
 msgid ""
 "  -n, --numeric-sort          compare according to string numerical value\n"
 "  -R, --random-sort           sort by random hash of keys\n"
@@ -7325,7 +7400,7 @@ msgid ""
 "  -r, --reverse               reverse the result of comparisons\n"
 msgstr ""
 
-#: src/sort.c:427
+#: src/sort.c:430
 msgid ""
 "      --sort=WORD             sort according to WORD:\n"
 "                                general-numeric -g, human-numeric -h, month -"
@@ -7335,7 +7410,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/sort.c:435
+#: src/sort.c:438
 msgid ""
 "Other options:\n"
 "\n"
@@ -7343,13 +7418,13 @@ msgstr ""
 "Aliaj opcioj:\n"
 "\n"
 
-#: src/sort.c:439
+#: src/sort.c:442
 msgid ""
 "      --batch-size=NMERGE   merge at most NMERGE inputs at once;\n"
 "                            for more use temp files\n"
 msgstr ""
 
-#: src/sort.c:443
+#: src/sort.c:446
 msgid ""
 "  -c, --check, --check=diagnose-first  check for sorted input; do not sort\n"
 "  -C, --check=quiet, --check=silent  like -c, but do not report first bad "
@@ -7358,7 +7433,7 @@ msgid ""
 "                              decompress them with PROG -d\n"
 msgstr ""
 
-#: src/sort.c:450
+#: src/sort.c:453
 msgid ""
 "      --debug               annotate the part of the line used to sort,\n"
 "                              and warn about questionable usage to stderr\n"
@@ -7367,13 +7442,13 @@ msgid ""
 "                            If F is - then read names from standard input\n"
 msgstr ""
 
-#: src/sort.c:457
+#: src/sort.c:460
 msgid ""
 "  -k, --key=KEYDEF          sort via a key; KEYDEF gives location and type\n"
 "  -m, --merge               merge already sorted files; do not sort\n"
 msgstr ""
 
-#: src/sort.c:461
+#: src/sort.c:464
 msgid ""
 "  -o, --output=FILE         write result to FILE instead of standard output\n"
 "  -s, --stable              stabilize sort by disabling last-resort "
@@ -7381,7 +7456,7 @@ msgid ""
 "  -S, --buffer-size=SIZE    use SIZE for main memory buffer\n"
 msgstr ""
 
-#: src/sort.c:467
+#: src/sort.c:470
 #, c-format
 msgid ""
 "  -t, --field-separator=SEP  use SEP instead of non-blank to blank "
@@ -7396,11 +7471,11 @@ msgid ""
 "run\n"
 msgstr ""
 
-#: src/sort.c:476
+#: src/sort.c:479
 msgid "  -z, --zero-terminated     end lines with 0 byte, not newline\n"
 msgstr ""
 
-#: src/sort.c:481
+#: src/sort.c:484
 msgid ""
 "\n"
 "KEYDEF is F[.C][OPTS][,F[.C][OPTS]] for start and stop position, where F is "
@@ -7419,7 +7494,7 @@ msgid ""
 "SIZE may be followed by the following multiplicative suffixes:\n"
 msgstr ""
 
-#: src/sort.c:494
+#: src/sort.c:497
 msgid ""
 "% 1% of memory, b 1, K 1024 (default), and so on for M, G, T, P, E, Z, Y.\n"
 "\n"
@@ -7431,241 +7506,240 @@ msgid ""
 "native byte values.\n"
 msgstr ""
 
-#: src/sort.c:695
+#: src/sort.c:698
 #, c-format
 msgid "waiting for %s [-d]"
 msgstr "atendado pri '%s [-d]'"
 
-#: src/sort.c:700
+#: src/sort.c:703
 #, c-format
 msgid "%s [-d] terminated abnormally"
 msgstr "'%s [-d]' finiĝis nenormale"
 
-#: src/sort.c:854
+#: src/sort.c:857
 #, c-format
 msgid "cannot create temporary file in %s"
 msgstr "malsukcesis krei provizoran dosieron en %s"
 
-#: src/sort.c:948 src/sort.c:2023 src/sort.c:3069 src/sort.c:3713
-#: src/sort.c:3804 src/sort.c:3807
+#: src/sort.c:951 src/sort.c:2026 src/sort.c:3072 src/sort.c:3714
+#: src/sort.c:3805 src/sort.c:3808
 msgid "open failed"
 msgstr "malsukcesis malfermo"
 
-#: src/sort.c:968
+#: src/sort.c:971
 msgid "fflush failed"
 msgstr "malsukcesis fflush()"
 
-#: src/sort.c:973 src/sort.c:2026 src/sort.c:4705
+#: src/sort.c:976 src/sort.c:2029 src/sort.c:4707
 msgid "close failed"
 msgstr "malsukcesis fermo"
 
-#: src/sort.c:984
+#: src/sort.c:987
 #, c-format
 msgid "dup2 failed"
 msgstr "malsukcesis dup2()"
 
-#: src/sort.c:1101
+#: src/sort.c:1104
 #, c-format
 msgid "couldn't execute %s"
 msgstr "malsukcesis ruli %s"
 
-#: src/sort.c:1108
+#: src/sort.c:1111
 msgid "couldn't create temporary file"
 msgstr "malsukcesis krei provizoran dosieron"
 
-#: src/sort.c:1147
+#: src/sort.c:1150
 #, c-format
 msgid "couldn't create process for %s -d"
 msgstr "malsukcesis krei novan procezon por '%s -d'"
 
-#: src/sort.c:1159
+#: src/sort.c:1162
 #, c-format
 msgid "couldn't execute %s -d"
 msgstr "malsukcesis ruli '%s -d'"
 
-#: src/sort.c:1218
+#: src/sort.c:1221
 #, c-format
 msgid "warning: cannot remove: %s"
 msgstr "averto: malsukcesis forigi %s"
 
-#: src/sort.c:1304
+#: src/sort.c:1307
 #, c-format
 msgid "invalid --%s argument %s"
 msgstr "nevalida argumento por opcio '--%s': %s"
 
-#: src/sort.c:1307
+#: src/sort.c:1310
 #, c-format
 msgid "minimum --%s argument is %s"
 msgstr "minimuma argumento por opcio '--%s' estas %s"
 
-#: src/sort.c:1322
+#: src/sort.c:1325
 #, c-format
 msgid "--%s argument %s too large"
 msgstr "argumento por opcio '--%s' tro grandas: %s"
 
-#: src/sort.c:1325
+#: src/sort.c:1328
 #, c-format
 msgid "maximum --%s argument with current rlimit is %s"
 msgstr "maksimuma argumento por opcio '--%s' je aktuala 'rlimit' estas %s"
 
-#: src/sort.c:1407
+#: src/sort.c:1410
 #, c-format
 msgid "number in parallel must be nonzero"
 msgstr "paralelnombro devas esti pli ol nulo"
 
-#: src/sort.c:1492
+#: src/sort.c:1495
 msgid "stat failed"
 msgstr "malsukcesis eltrovi statinformon"
 
-#: src/sort.c:1753
+#: src/sort.c:1756
 msgid "read failed"
 msgstr "malsukcesis lego"
 
-#: src/sort.c:2041
+#: src/sort.c:2044
 #, c-format
 msgid "string transformation failed"
 msgstr "malsukcesis transformi signoĉenon"
 
-#: src/sort.c:2044
+#: src/sort.c:2047
 #, c-format
 msgid "the untransformed string was %s"
 msgstr "la neŝanĝita ĉeno estas %s"
 
-#: src/sort.c:2207
+#: src/sort.c:2210
 #, c-format
 msgid "^ no match for key\n"
 msgstr "^ neniu kongruo por klavo\n"
 
-#: src/sort.c:2387
+#: src/sort.c:2390
 #, c-format
 msgid "obsolescent key %s used; consider %s instead"
 msgstr "uziĝis olda klavo %s; pripensu uzi %s anstataŭe"
 
-#: src/sort.c:2393
+#: src/sort.c:2396
 #, c-format
 msgid "key %lu has zero width and will be ignored"
 msgstr "klavo %lu havas nulan larĝon kaj ignoriĝos"
 
-#: src/sort.c:2404
+#: src/sort.c:2407
 #, c-format
 msgid "leading blanks are significant in key %lu; consider also specifying 'b'"
 msgstr ""
 "antaŭiraj spacetoj havas signifon en klavo %lu; pripensu indiki ankaŭ 'b'"
 
-#: src/sort.c:2417
+#: src/sort.c:2420
 #, c-format
 msgid "key %lu is numeric and spans multiple fields"
 msgstr "klavo %lu estas numera kaj ampleksas plurajn kampojn"
 
-#: src/sort.c:2449
+#: src/sort.c:2452
 #, c-format
 msgid "option '-%s' is ignored"
 msgid_plural "options '-%s' are ignored"
 msgstr[0] "opcio «-%s» ignoratas"
 msgstr[1] "opcioj «-%s» ignoratas"
 
-#: src/sort.c:2455
+#: src/sort.c:2458
 #, c-format
 msgid "option '-r' only applies to last-resort comparison"
 msgstr "opcio «-r» aplikas nur al lastebla komparo"
 
-#: src/sort.c:2729 src/sort.c:2738
+#: src/sort.c:2732 src/sort.c:2741
 msgid "write failed"
 msgstr "malsukcesis skribo"
 
-#: src/sort.c:2781
+#: src/sort.c:2784
 #, c-format
 msgid "%s: %s:%s: disorder: "
 msgstr "%s: %s:%s: malordo: "
 
-#: src/sort.c:2784
+#: src/sort.c:2787
 msgid "standard error"
 msgstr "ĉeferar-eligujo"
 
-#: src/sort.c:3698
-#, fuzzy
+#: src/sort.c:3699
 msgid "cannot read"
-msgstr "malsukcesis 'lseek' ĝis komenco sur %s"
+msgstr "ne eblas legi"
 
-#: src/sort.c:3975
+#: src/sort.c:3977
 #, c-format
 msgid "%s: invalid field specification %s"
 msgstr "%s: nevalida kampindiko %s"
 
-#: src/sort.c:3986
+#: src/sort.c:3988
 #, c-format
 msgid "options '-%s' are incompatible"
 msgstr "nekombineblas opcioj «-%s»"
 
-#: src/sort.c:4037
+#: src/sort.c:4039
 #, c-format
 msgid "%s: invalid count at start of %s"
 msgstr "%s: nevalida nombro je komenco de %s"
 
-#: src/sort.c:4294
+#: src/sort.c:4296
 msgid "invalid number after '-'"
 msgstr "nevalida numero post '-'"
 
-#: src/sort.c:4301 src/sort.c:4387 src/sort.c:4415
+#: src/sort.c:4303 src/sort.c:4389 src/sort.c:4417
 msgid "invalid number after '.'"
 msgstr "nevalida numero post '.'"
 
-#: src/sort.c:4314 src/sort.c:4420
+#: src/sort.c:4316 src/sort.c:4422
 msgid "stray character in field spec"
 msgstr "hazarda signo en kampindiko"
 
-#: src/sort.c:4361
+#: src/sort.c:4363
 #, c-format
 msgid "multiple compress programs specified"
 msgstr "pluraj kunpremaj programoj indikatas"
 
-#: src/sort.c:4378
+#: src/sort.c:4380
 msgid "invalid number at field start"
 msgstr "nevalida numero je kampkomenco"
 
-#: src/sort.c:4382 src/sort.c:4410
+#: src/sort.c:4384 src/sort.c:4412
 msgid "field number is zero"
 msgstr "kampnumero estas nulo"
 
-#: src/sort.c:4391
+#: src/sort.c:4393
 msgid "character offset is zero"
 msgstr "signopozicio estas nulo"
 
-#: src/sort.c:4406
+#: src/sort.c:4408
 msgid "invalid number after ','"
 msgstr "nevalida numero post ','"
 
-#: src/sort.c:4456
+#: src/sort.c:4458
 #, c-format
 msgid "empty tab"
 msgstr "vaka tabo"
 
-#: src/sort.c:4549 src/wc.c:692
+#: src/sort.c:4551 src/wc.c:692
 #, c-format
 msgid "cannot read file names from %s"
 msgstr "malsukcesis legi dosiernomojn el %s"
 
-#: src/sort.c:4571
+#: src/sort.c:4573
 #, c-format
 msgid "%s:%lu: invalid zero-length file name"
 msgstr "%s:%lu: nevalida dosiernomo (longo nulas)"
 
-#: src/sort.c:4577
+#: src/sort.c:4579
 #, c-format
 msgid "no input from %s"
 msgstr "neniu enigo el %s"
 
-#: src/sort.c:4623
+#: src/sort.c:4625
 #, c-format
 msgid "using %s sorting rules"
 msgstr "uzatas %s ordigaj reguloj"
 
-#: src/sort.c:4626
+#: src/sort.c:4628
 #, c-format
 msgid "using simple byte comparison"
 msgstr "uzatas simpla bajtkomparo"
 
-#: src/sort.c:4657
+#: src/sort.c:4659
 #, c-format
 msgid "extra operand %s not allowed with -%c"
 msgstr "aldona argumento %s ne permesatas por '-%c'"
@@ -8475,12 +8549,18 @@ msgid ""
 "  -r              use BSD sum algorithm, use 1K blocks\n"
 "  -s, --sysv      use System V sum algorithm, use 512 bytes blocks\n"
 msgstr ""
+"Eligas kontrolsumon kaj nombron de blokoj por ĉiu DOSIERO.\n"
+"\n"
+"  -r              uzi BSD-sumalgoritmon, uzi blokojn de 1K\n"
+"  -s, --sysv      uzi Sistemo V-sumalgoritmon, uzi blokojn de 512 bajtoj\n"
 
 #: src/sync.c:41
 msgid ""
 "Force changed blocks to disk, update the super block.\n"
 "\n"
 msgstr ""
+"Devigas skribon de ŝanĝitaj blokoj al disko, kaj ĝisdatigas la superblokon.\n"
+"\n"
 
 #: src/sync.c:69
 #, c-format
@@ -8528,7 +8608,7 @@ msgid ""
 "Report %s bugs to %s\n"
 msgstr ""
 "\n"
-"Raportu cimojn en «%s» al <%s>.\n"
+"Raportu programmisojn en «%s» al <%s>.\n"
 
 #. TRANSLATORS: Replace LANG_CODE in this URL with your language code
 #. <http://translationproject.org/team/LANG_CODE.html> to form one of
@@ -8603,14 +8683,14 @@ msgid "failed to open %s for writing"
 msgstr "malsukcesis malfermi %s por skribado"
 
 #: src/tac.c:476
-#, fuzzy, c-format
+#, c-format
 msgid "failed to rewind stream for %s"
-msgstr "malsukcesis ... fluon por %s"
+msgstr "malsukcesis revolvi fluon por %s"
 
 #: src/tac.c:512 src/tac.c:519
 #, c-format
 msgid "%s: write error"
-msgstr "%s: skrib-eraro"
+msgstr "`%s: skrib-eraro"
 
 #: src/tac.c:572
 #, c-format
@@ -9537,6 +9617,11 @@ msgid ""
 "With no FILE, or when FILE is -, read standard input.\n"
 "\n"
 msgstr ""
+"Uzmaniero:  %s [OPCIO] [DOSIERO]\n"
+"\n"
+"Eligas tute ordigitan liston kiu koheras kun la parta ordo en DOSIERO.\n"
+"\n"
+"Sen DOSIERO, aŭ kiam DOSIERO estas «-», ĉefenigujo legiĝas.\n"
 
 #: src/tsort.c:472
 #, c-format
@@ -9554,6 +9639,9 @@ msgid ""
 "\n"
 "  -s, --silent, --quiet   print nothing, only return an exit status\n"
 msgstr ""
+"Montras la dosiernomon de la terminalo kiu estas konektata al ĉefenigujo.\n"
+"\n"
+"  -s, --silent, --quiet   eligi nenion, nur produkti elirstaton\n"
 
 #: src/tty.c:120
 msgid "not a tty"
@@ -9624,6 +9712,11 @@ msgid ""
 "  -t, --tabs=N     have tabs N characters apart instead of 8 (enables -a)\n"
 "  -t, --tabs=LIST  use comma separated LIST of tab positions (enables -a)\n"
 msgstr ""
+"  -a, --all         konverti ĉiujn spacetojn, anstataŭ nur la komencajn\n"
+"      --first-only  konverti nur komencajn sinsekvojn de spacetoj (nuligas '-"
+"a')\n"
+"  -t, --tabs=N      meti tabojn N anstataŭ 8 pozicioj dise (ebligas '-a')\n"
+"  -t, --tabs=LISTO  uzi komadisigatan LISTOn de tabpozicioj (ebligas '-a')\n"
 
 #: src/unexpand.c:153
 #, c-format
@@ -9638,7 +9731,7 @@ msgstr "taba pozicio estas tro granda"
 #: src/uniq.c:134
 #, c-format
 msgid "Usage: %s [OPTION]... [INPUT [OUTPUT]]\n"
-msgstr "Uzmaniero:  %s [OPCIO...] [ENIGO [ELIGO]]\n"
+msgstr "Uzmaniero:  %s [OPCIO...] [ENIGDOSIERO [ELIGDOSIERO]]\n"
 
 #: src/uniq.c:138
 msgid ""
@@ -9648,12 +9741,19 @@ msgid ""
 "With no options, matching lines are merged to the first occurrence.\n"
 "\n"
 msgstr ""
+"Filtras apudajn kongruajn linioj elde ENIGDOSIERO (aŭ ĉefenigujo),\n"
+"kaj skribas la restaĵon al ELIGDOSIERO (aŭ ĉefeligujo).\n"
+"\n"
+"Sen opcioj, kongruaj linioj estas kunfandataj al la unua okazo.\n"
+"\n"
 
 #: src/uniq.c:148
 msgid ""
 "  -c, --count           prefix lines by the number of occurrences\n"
 "  -d, --repeated        only print duplicate lines\n"
 msgstr ""
+"  -c, --count           prefiksi liniojn per la nombro de okazoj\n"
+"  -d, --repeated        montri nur la ripetitajn liniojn\n"
 
 #: src/uniq.c:152
 msgid ""
@@ -9666,10 +9766,19 @@ msgid ""
 "  -u, --unique          only print unique lines\n"
 "  -z, --zero-terminated  end lines with 0 byte, not newline\n"
 msgstr ""
+"  -D, --all-repeated[=disigmetodo]  montri ĉiujn ripetitajn liniojn;\n"
+"                          disigmetodo povas esti 'none' (defaŭlte), "
+"'prepend',\n"
+"                          aŭ 'separate'; disigo fariĝas per vakaj linioj\n"
+"  -f, --skip-fields=N   eviti kompari la unuajn N kampojn\n"
+"  -i, --ignore-case     ignori malsamecojn usklecajn je komparo\n"
+"  -s, --skip-chars=N    eviti kompari la unuajn N signojn\n"
+"  -u, --unique          nur montri unikajn liniojn\n"
+"  -z, --zero-terminated   fini liniojn per NUL-bajto anstataŭ novlinio\n"
 
 #: src/uniq.c:162
 msgid "  -w, --check-chars=N   compare no more than N characters in lines\n"
-msgstr ""
+msgstr "  -w, --check-chars=N   kompari en ĉiu linio ne pli ol N signoj\n"
 
 #: src/uniq.c:167
 msgid ""
@@ -9677,6 +9786,9 @@ msgid ""
 "A field is a run of blanks (usually spaces and/or TABs), then non-blank\n"
 "characters.  Fields are skipped before chars.\n"
 msgstr ""
+"\n"
+"Kampo estas vico de blankspacoj (kutime spacetoj kaj/aŭ taboj) kaj poste\n"
+"neblankaj signoj.  Kampoj saltiĝas antaŭ signoj.\n"
 
 #: src/uniq.c:172
 msgid ""
@@ -9685,6 +9797,10 @@ msgid ""
 "You may want to sort the input first, or use 'sort -u' without 'uniq'.\n"
 "Also, comparisons honor the rules specified by 'LC_COLLATE'.\n"
 msgstr ""
+"\n"
+"Notu: 'uniq' nur rimarkas ripetitajn liniojn kiam ili estas apudaj.\n"
+"Vi eble volas unue ordigi la enigon, aŭ uzi 'sort -u' sen 'uniq'.\n"
+"Ankaŭ, komparoj honoras la regulojn indikatajn de 'LC_COLLATE'.\n"
 
 #: src/uniq.c:359
 #, c-format
@@ -9826,6 +9942,17 @@ msgid ""
 "  -m, --chars            print the character counts\n"
 "  -l, --lines            print the newline counts\n"
 msgstr ""
+"Montras la nombrojn de novlinioj, vortoj kaj bajtoj por ĉiu DOSIERO,\n"
+"kaj plue linion de totaloj se pli ol unu DOSIERO indikatas.\n"
+"Sen DOSIERO, aŭ kiam DOSIERO estas «-», ĉefenigujo legiĝas.\n"
+"Vorto estas nenullonga vico de signoj limigita de blankspaco.\n"
+"\n"
+"La subaj opcioj uzeblas por elekti kiuj nombroj montriĝos, sed ĉiam en la\n"
+"sekvanta ordo: novlinioj, vortoj, signoj, bajtoj, kaj maksimuma linilongo.\n"
+"\n"
+"  -c, --bytes            montri la nombron de bajtoj\n"
+"  -m, --chars            montri la nombron de signoj\n"
+"  -l, --lines            montri la nombron de novlinioj\n"
 
 #: src/wc.c:128
 msgid ""
@@ -9835,15 +9962,21 @@ msgid ""
 "  -L, --max-line-length  print the length of the longest line\n"
 "  -w, --words            print the word counts\n"
 msgstr ""
+"      --files0-from=DOS  legi la enigon el la dosieroj kiuj indikatas en la\n"
+"                           dosiero DOS per NUL-finitaj nomoj; se DOS estas "
+"«-»,\n"
+"                           la nomoj legiĝas el ĉefenigujo\n"
+"  -L, --max-line-length  montri la longon de la plej longa linio\n"
+"  -w, --words            montri la nombron de vortoj\n"
 
 # Kiam uzanto jam tre longe ne faras ion ajn.
 #: src/who.c:210
 msgid " old "
-msgstr " longe "
+msgstr "longe"
 
 #: src/who.c:440
 msgid "system boot"
-msgstr "starto"
+msgstr "(starto)"
 
 #: src/who.c:447 src/who.c:449
 msgid "id="
@@ -9888,7 +10021,7 @@ msgstr "Nomo"
 
 #: src/who.c:559
 msgid "LINE"
-msgstr "Lineo"
+msgstr "Terminalo"
 
 #: src/who.c:559
 msgid "TIME"
@@ -9927,10 +10060,15 @@ msgid ""
 "  -d, --dead        print dead processes\n"
 "  -H, --heading     print line of column headings\n"
 msgstr ""
+"\n"
+"  -a, --all         egalas al «-b -d --login -p -r -t -T -u»\n"
+"  -b, --boot        montri tempon de lasta sistemstarto\n"
+"  -d, --dead        montri ankaŭ mortajn procezojn\n"
+"  -H, --heading     montri linion de kolumno-kapoj\n"
 
 #: src/who.c:651
 msgid "  -l, --login       print system login processes\n"
-msgstr ""
+msgstr "  -l, --login       montri ensalutajn procezojn de la sistemo\n"
 
 #: src/who.c:654
 msgid ""
@@ -9938,6 +10076,9 @@ msgid ""
 "  -m                only hostname and user associated with stdin\n"
 "  -p, --process     print active processes spawned by init\n"
 msgstr ""
+"      --lookup      provi normaligi gastnomojn per DNS\n"
+"  -m                montri nur gastnomon kaj uzanton kiu uzas ĉefenigujon\n"
+"  -p, --process     montri aktivajn procezojn kiuj kreiĝis far 'init'\n"
 
 #: src/who.c:659
 msgid ""
@@ -9946,6 +10087,10 @@ msgid ""
 "  -s, --short       print only name, line, and time (default)\n"
 "  -t, --time        print last system clock change\n"
 msgstr ""
+"  -q, --count       montri nur nomojn kaj nombron de ensalutitaj uzantoj\n"
+"  -r, --runlevel    montri nunan rulnivelon\n"
+"  -s, --short       montri nur nomon, terminalon kaj tempon (defaŭlte)\n"
+"  -t, --time        montri la lastan sistemhorloĝan ŝanĝon\n"
 
 #: src/who.c:665
 msgid ""
@@ -9954,6 +10099,10 @@ msgid ""
 "      --message     same as -T\n"
 "      --writable    same as -T\n"
 msgstr ""
+"  -T, -w, --mesg    aldoni mesaĝan staton de la uzanto kiel «+», «-» aŭ «?»\n"
+"  -u, --users       montri ensalutitajn uzantojn\n"
+"      --message     egalas al «-T»\n"
+"      --writable    egalas al «-T»\n"
 
 #: src/who.c:673
 #, c-format
@@ -10015,6 +10164,28 @@ msgstr ""
 
 #~ msgid "Usage: %s [OPTION]... [-] [USER [ARG]...]\n"
 #~ msgstr "Uzmaniero:  %s [OPCIO...] [-] [UZANTO [ARGUMENTO...]]\n"
+
+#~ msgid ""
+#~ "Change the effective user id and group id to that of USER.\n"
+#~ "\n"
+#~ "  -, -l, --login               make the shell a login shell\n"
+#~ "  -c, --command=COMMAND        pass a single COMMAND to the shell with -"
+#~ "c\n"
+#~ "  -f, --fast                   pass -f to the shell (for csh or tcsh)\n"
+#~ "  -m, --preserve-environment   do not reset environment variables\n"
+#~ "  -p                           same as -m\n"
+#~ "  -s, --shell=SHELL            run SHELL if /etc/shells allows it\n"
+#~ msgstr ""
+#~ "Ŝanĝas la efektivan uzant-ID-on kaj grup-ID-on al tiu de UZANTO.\n"
+#~ "\n"
+#~ "  -, -l, --login               fari la ŝelon ensaluta ŝelo\n"
+#~ "  -c. --command=KOMANDO        pasi ununuran KOMANDOn al la ŝelo kun "
+#~ "opcio '-c'\n"
+#~ "  -f, --fast                   pasi opcion '-f' al la ŝelo (por 'csh' aŭ "
+#~ "'tcsh')\n"
+#~ "  -m, --preserve-environment   ne reagordi ĉirkaŭaĵajn variablojn\n"
+#~ "  -p                           egalas al '-m'\n"
+#~ "  -s, --shell=ŜELO             lanĉi ŜELOn (se /etc/shells permesas ĝin)\n"
 
 #~ msgid ""
 #~ "\n"

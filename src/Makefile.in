@@ -741,6 +741,22 @@ am__can_run_installinfo = \
   esac
 HEADERS = $(noinst_HEADERS)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
+# Read a list of newline-separated strings from the standard input,
+# and print each of them once, without duplicates.  Input order is
+# *not* preserved.
+am__uniquify_input = $(AWK) '\
+  BEGIN { nonempty = 0; } \
+  { items[$$0] = 1; nonempty = 1; } \
+  END { if (nonempty) { for (i in items) print i; }; } \
+'
+# Make sure the list of sources is unique.  This is necessary because,
+# e.g., the same source file might be shared among _SOURCES variables
+# for different programs/libraries.
+am__define_uniq_tagged_files = \
+  list='$(am__tagged_files)'; \
+  unique=`for i in $$list; do \
+    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
+  done | $(am__uniquify_input)`
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -3129,24 +3145,14 @@ sha512sum-md5sum.obj: md5sum.c
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sha512sum_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sha512sum-md5sum.obj `if test -f 'md5sum.c'; then $(CYGPATH_W) 'md5sum.c'; else $(CYGPATH_W) '$(srcdir)/md5sum.c'; fi`
 
 ID: $(am__tagged_files)
-	list='$(am__tagged_files)'; \
-	unique=`for i in $$list; do \
-	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
-	  done | \
-	  $(AWK) '{ files[$$0] = 1; nonempty = 1; } \
-	      END { if (nonempty) { for (i in files) print i; }; }'`; \
-	mkid -fID $$unique
-tags: TAGS
+	$(am__define_uniq_tagged_files); mkid -fID $$unique
+tags: tags-am
+TAGS: tags
 
-TAGS:  $(TAGS_DEPENDENCIES) $(am__tagged_files)
+tags-am: $(TAGS_DEPENDENCIES) $(am__tagged_files)
 	set x; \
 	here=`pwd`; \
-	list='$(am__tagged_files)'; \
-	unique=`for i in $$list; do \
-	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
-	  done | \
-	  $(AWK) '{ files[$$0] = 1; nonempty = 1; } \
-	      END { if (nonempty) { for (i in files) print i; }; }'`; \
+	$(am__define_uniq_tagged_files); \
 	shift; \
 	if test -z "$(ETAGS_ARGS)$$*$$unique"; then :; else \
 	  test -n "$$unique" || unique=$$empty_fix; \
@@ -3158,14 +3164,11 @@ TAGS:  $(TAGS_DEPENDENCIES) $(am__tagged_files)
 	      $$unique; \
 	  fi; \
 	fi
-ctags: CTAGS
-CTAGS:  $(TAGS_DEPENDENCIES) $(am__tagged_files)
-	list='$(am__tagged_files)'; \
-	unique=`for i in $$list; do \
-	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
-	  done | \
-	  $(AWK) '{ files[$$0] = 1; nonempty = 1; } \
-	      END { if (nonempty) { for (i in files) print i; }; }'`; \
+ctags: ctags-am
+
+CTAGS: ctags
+ctags-am: $(TAGS_DEPENDENCIES) $(am__tagged_files)
+	$(am__define_uniq_tagged_files); \
 	test -z "$(CTAGS_ARGS)$$unique" \
 	  || $(CTAGS) $(CTAGSFLAGS) $(AM_CTAGSFLAGS) $(CTAGS_ARGS) \
 	     $$unique
@@ -3174,8 +3177,9 @@ GTAGS:
 	here=`$(am__cd) $(top_builddir) && pwd` \
 	  && $(am__cd) $(top_srcdir) \
 	  && gtags -i $(GTAGS_ARGS) "$$here"
+cscopelist: cscopelist-am
 
-cscopelist:  $(am__tagged_files)
+cscopelist-am: $(am__tagged_files)
 	list='$(am__tagged_files)'; \
 	case "$(srcdir)" in \
 	  [\\/]* | ?:[\\/]*) sdir="$(srcdir)" ;; \
@@ -3340,21 +3344,21 @@ uninstall-am: uninstall-binPROGRAMS uninstall-pkglibexecPROGRAMS
 
 .MAKE: all check install install-am install-strip
 
-.PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
-	clean-generic clean-noinstLIBRARIES clean-noinstPROGRAMS \
-	clean-pkglibexecPROGRAMS cscopelist ctags dist-hook distclean \
-	distclean-compile distclean-generic distclean-tags distdir dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-binPROGRAMS install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-pkglibexecPROGRAMS \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-binPROGRAMS \
-	uninstall-pkglibexecPROGRAMS
+.PHONY: CTAGS GTAGS TAGS all all-am check check-am clean \
+	clean-binPROGRAMS clean-generic clean-noinstLIBRARIES \
+	clean-noinstPROGRAMS clean-pkglibexecPROGRAMS cscopelist-am \
+	ctags ctags-am dist-hook distclean distclean-compile \
+	distclean-generic distclean-tags distdir dvi dvi-am html \
+	html-am info info-am install install-am install-binPROGRAMS \
+	install-data install-data-am install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-pdf \
+	install-pdf-am install-pkglibexecPROGRAMS install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic pdf pdf-am \
+	ps ps-am tags tags-am uninstall uninstall-am \
+	uninstall-binPROGRAMS uninstall-pkglibexecPROGRAMS
 
 
 $(PROGRAMS): ../lib/libcoreutils.a

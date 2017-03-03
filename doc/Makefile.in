@@ -1916,11 +1916,9 @@ maintainer-clean-aminfo:
 	  echo " rm -f $$i $$i-[0-9] $$i-[0-9][0-9] $$i_i[0-9] $$i_i[0-9][0-9]"; \
 	  rm -f $$i $$i-[0-9] $$i-[0-9][0-9] $$i_i[0-9] $$i_i[0-9][0-9]; \
 	done
-tags: TAGS
-TAGS:
+tags TAGS:
 
-ctags: CTAGS
-CTAGS:
+ctags CTAGS:
 
 cscope cscopelist:
 
@@ -2158,18 +2156,19 @@ uninstall-am: uninstall-dvi-am uninstall-html-am uninstall-info-am \
 .MAKE: install-am install-strip
 
 .PHONY: all all-am check check-am clean clean-aminfo clean-generic \
-	dist-info distclean distclean-generic distdir dvi dvi-am html \
-	html-am info info-am install install-am install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-aminfo maintainer-clean-generic \
-	maintainer-clean-vti mostlyclean mostlyclean-aminfo \
-	mostlyclean-generic mostlyclean-vti pdf pdf-am ps ps-am \
-	uninstall uninstall-am uninstall-dvi-am uninstall-html-am \
-	uninstall-info-am uninstall-pdf-am uninstall-ps-am
+	cscopelist-am ctags-am dist-info distclean distclean-generic \
+	distdir dvi dvi-am html html-am info info-am install \
+	install-am install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-aminfo \
+	maintainer-clean-generic maintainer-clean-vti mostlyclean \
+	mostlyclean-aminfo mostlyclean-generic mostlyclean-vti pdf \
+	pdf-am ps ps-am tags-am uninstall uninstall-am \
+	uninstall-dvi-am uninstall-html-am uninstall-info-am \
+	uninstall-pdf-am uninstall-ps-am
 
 
 constants.texi: $(top_srcdir)/src/tail.c $(top_srcdir)/src/shred.c

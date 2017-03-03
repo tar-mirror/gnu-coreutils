@@ -1732,11 +1732,9 @@ uninstall-man1:
 	} | sed -e 's,.*/,,;h;s,.*\.,,;s,^[^1][0-9a-z]*$$,1,;x' \
 	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,'`; \
 	dir='$(DESTDIR)$(man1dir)'; $(am__uninstall_files_from_dir)
-tags: TAGS
-TAGS:
+tags TAGS:
 
-ctags: CTAGS
-CTAGS:
+ctags CTAGS:
 
 cscope cscopelist:
 
@@ -1879,16 +1877,17 @@ uninstall-man: uninstall-man1
 
 .MAKE: install-am install-strip
 
-.PHONY: all all-am check check-am clean clean-generic distclean \
-	distclean-generic distdir dvi dvi-am html html-am info info-am \
-	install install-am install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-man1 install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am uninstall \
-	uninstall-am uninstall-man uninstall-man1
+.PHONY: all all-am check check-am clean clean-generic cscopelist-am \
+	ctags-am distclean distclean-generic distdir dvi dvi-am html \
+	html-am info info-am install install-am install-data \
+	install-data-am install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-man install-man1 install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
+	pdf-am ps ps-am tags-am uninstall uninstall-am uninstall-man \
+	uninstall-man1
 
 
 # Note that arch depends on uname.c

@@ -488,7 +488,7 @@ $(AM_TESTS_ENVIRONMENT) $(TESTS_ENVIRONMENT)
 # '$bases'.  This honors runtime overriding of TESTS and TEST_LOGS.  Sadly,
 # we cannot use something simpler, involving e.g., "$(TEST_LOGS:.log=)",
 # since that might cause problem with VPATH rewrites for suffix-less tests.
-# See also 'test-harness-vpath-rewrite.test' and 'test-trs-basic.test'.
+# See also 'test-harness-vpath-rewrite.sh' and 'test-trs-basic.sh'.
 am__set_TESTS_bases = \
   bases='$(TEST_LOGS)'; \
   bases=`for i in $$bases; do echo $$i; done | sed 's/\.log$$//'`; \
@@ -1873,6 +1873,8 @@ TESTS = \
   chgrp/basic					\
   rm/dangling-symlink				\
   misc/ls-time					\
+  rm/d-1					\
+  rm/d-2					\
   rm/deep-1					\
   rm/deep-2					\
   rm/dir-no-w					\
@@ -2033,6 +2035,7 @@ TESTS = \
   misc/sort-unique-segv				\
   misc/sort-version				\
   misc/sort-NaN-infloop				\
+  misc/sort-u-FMR				\
   split/filter					\
   split/suffix-auto-length			\
   split/suffix-length				\
@@ -2151,6 +2154,7 @@ TESTS = \
   df/df-P					\
   df/unreadable					\
   df/total-unprocessed				\
+  df/no-mtab-status				\
   dd/direct					\
   dd/misc					\
   dd/nocache					\
@@ -2570,11 +2574,9 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
-tags: TAGS
-TAGS:
+tags TAGS:
 
-ctags: CTAGS
-CTAGS:
+ctags CTAGS:
 
 cscope cscopelist:
 
@@ -2828,6 +2830,20 @@ rm/dangling-symlink.log: rm/dangling-symlink
 misc/ls-time.log: misc/ls-time
 	@p='misc/ls-time'; \
 	b='misc/ls-time'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+rm/d-1.log: rm/d-1
+	@p='rm/d-1'; \
+	b='rm/d-1'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+rm/d-2.log: rm/d-2
+	@p='rm/d-2'; \
+	b='rm/d-2'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -3952,6 +3968,13 @@ misc/sort-NaN-infloop.log: misc/sort-NaN-infloop
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+misc/sort-u-FMR.log: misc/sort-u-FMR
+	@p='misc/sort-u-FMR'; \
+	b='misc/sort-u-FMR'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 split/filter.log: split/filter
 	@p='split/filter'; \
 	b='split/filter'; \
@@ -4774,6 +4797,13 @@ df/unreadable.log: df/unreadable
 df/total-unprocessed.log: df/total-unprocessed
 	@p='df/total-unprocessed'; \
 	b='df/total-unprocessed'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+df/no-mtab-status.log: df/no-mtab-status
+	@p='df/no-mtab-status'; \
+	b='df/no-mtab-status'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -6275,15 +6305,15 @@ uninstall-am:
 .MAKE: check-am install-am install-strip
 
 .PHONY: all all-am check check-TESTS check-am clean clean-generic \
-	distclean distclean-generic distdir dvi dvi-am html html-am \
-	info info-am install install-am install-data install-data-am \
-	install-dvi install-dvi-am install-exec install-exec-am \
-	install-html install-html-am install-info install-info-am \
-	install-man install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am recheck \
-	uninstall uninstall-am
+	cscopelist-am ctags-am distclean distclean-generic distdir dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-data install-data-am install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
+	pdf-am ps ps-am recheck tags-am uninstall uninstall-am
 
 
 .PHONY: check-root

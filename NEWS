@@ -1,5 +1,32 @@
 GNU coreutils NEWS                                    -*- outline -*-
 
+* Noteworthy changes in release 8.19 (2012-08-20) [stable]
+
+** Bug fixes
+
+  df now fails when the list of mounted file systems (/etc/mtab) cannot
+  be read, yet the file system type information is needed to process
+  certain options like -a, -l, -t and -x.
+  [This bug was present in "the beginning".]
+
+  sort -u could fail to output one or more result lines.
+  For example, this command would fail to print "1":
+  (yes 7 | head -11; echo 1) | sort --p=1 -S32b -u
+  [bug introduced in coreutils-8.6]
+
+  sort -u could read freed memory.
+  For example, this evokes a read from freed memory:
+  perl -le 'print "a\n"."0"x900'|valgrind sort --p=1 -S32b -u>/dev/null
+  [bug introduced in coreutils-8.6]
+
+** New features
+
+  rm now accepts the --dir (-d) option which makes it remove empty directories.
+  Since removing empty directories is relatively safe, this option can be
+  used as a part of the alias rm='rm --dir'.  This improves compatibility
+  with Mac OS X and BSD systems which also honor the -d option.
+
+
 * Noteworthy changes in release 8.18 (2012-08-12) [stable]
 
 ** Bug fixes

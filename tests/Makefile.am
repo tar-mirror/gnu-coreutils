@@ -98,6 +98,8 @@ TESTS =						\
   chgrp/basic					\
   rm/dangling-symlink				\
   misc/ls-time					\
+  rm/d-1					\
+  rm/d-2					\
   rm/deep-1					\
   rm/deep-2					\
   rm/dir-no-w					\
@@ -258,6 +260,7 @@ TESTS =						\
   misc/sort-unique-segv				\
   misc/sort-version				\
   misc/sort-NaN-infloop				\
+  misc/sort-u-FMR				\
   split/filter					\
   split/suffix-auto-length			\
   split/suffix-length				\
@@ -376,6 +379,7 @@ TESTS =						\
   df/df-P					\
   df/unreadable					\
   df/total-unprocessed				\
+  df/no-mtab-status				\
   dd/direct					\
   dd/misc					\
   dd/nocache					\

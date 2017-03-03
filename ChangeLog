@@ -1,4 +1,124 @@
+2012-08-20  Jim Meyering  <meyering@redhat.com>
+
+	version 8.19
+	* NEWS: Record release date.
+
+2012-08-19  Paul Eggert  <eggert@cs.ucla.edu>
+
+	tests: port df/no-mtab-status to Solaris
+	* tests/df/no-mtab-status: Include <mntent.h> in test program, so
+	that the getmntent hack compilation fails on Solaris, as it
+	should, since it's not compatible with Solaris.  Reported by
+	Stefano Lattarini in <http://bugs.gnu.org/12225>.
+
+2012-08-19  Jim Meyering  <meyering@redhat.com>
+
+	tests: avoid split/filter test failure on very low-mem system
+	* tests/split/filter: Use xz -1 when compressing, to minimize
+	memory usage.  Otherwise, xz could fail due to insufficient
+	virtual memory on a system with very little free memory.
+
+2012-08-18  Jim Meyering  <meyering@redhat.com>
+
+	tests: trigger the sort -u free-memory-read bug
+	* tests/misc/sort-u-FMR: New file.
+	* tests/Makefile.am (TESTS): Add it.
+	* tests/misc/sort: Add the test here, too.
+	* NEWS (Bug fixes): Mention it.
+
+	tests: wrap the valgrind-requiring assertion in a function
+	* tests/init.cfg (require_valgrind_): New function...
+	* tests/misc/sort-stale-thread-mem: ...extracted from here.
+
+2012-08-18  Paul Eggert  <eggert@cs.ucla.edu>
+
+	sort: simpler fix for sort -u data-loss bug, and for a FMR bug
+	This also fixes a free-memory-read (FMR) bug: when fillbuf's realloc
+	of buf->buf frees the buffer into which saved_line.text points,
+	the processing of that just-read longer line includes comparison
+	against the saved line in freed memory.
+	* src/sort.c (overlap): Remove.
+	(fillbuf): Do not try to copy saved lines, as that is too risky
+	in the presence of parallelism, reallocated buffers, etc.
+	(sort): Invalidate any saved line before sorting a new batch.
+
+2012-08-17  Jim Meyering  <meyering@redhat.com>
+
+	sort: sort --unique (-u) could cause data loss
+	sort -u could omit one or more lines of expected output.
+	This bug arose because sort recorded the most recently printed line via
+	reference, and if you were unlucky, the storage for that line would be
+	reused (overwritten) as additional input was read into memory.  If you
+	were doubly unlucky, the new value of the "saved" line would not only
+	match the very next line, but if that next line were also the first in
+	a series of identical, not-yet-printed lines, then the corrupted "saved"
+	line value would result in the omission of all matching lines.
+
+	* src/sort.c (saved_line): New static/global, renamed and moved from...
+	(write_unique): ...here.  Old name was "saved", which was too generic
+	for its new role as file-scoped global.
+	(fillbuf): With --unique, when we're about to read into a buffer that
+	overlaps the saved "preceding" line (saved_line), copy the line's .text
+	member to a realloc'd-as-needed temporary buffer and adjust the line's
+	key-defining members if they're set.
+	(overlap): New function.
+	* tests/misc/sort: New tests.
+	* NEWS (Bug fixes): Mention it.
+	* THANKS.in: Update.
+	Bug introduced via commit v8.5-89-g9face83.
+	Reported by Rasmus Borup Hansen in
+	http://thread.gmane.org/gmane.comp.gnu.coreutils.bugs/23173/focus=24647
+
+2012-08-16  Jim Meyering  <meyering@redhat.com>
+
+	tests: reverse args in Coreutils.pm-invoked diff, for consistency
+	* tests/Coreutils.pm (_compare_files): Reverse diff arguments so
+	that we invoke diff -c $expected $actual, which is consistent with
+	how init.sh-using tests invoke "compare exp out".
+
+	maint: correct a stale comment in sort.c
+	* src/sort.c (fillbuf): Fix comment typo.  x2nrealloc no longer
+	doubles the size of its input buffer.
+
+	maint: fix comment grammar to placate make syntax-check
+	* src/remove.c (rm_fts): s/can not/cannot/
+
+2012-08-14  Krzysztof Goj  <krzysztof.goj@gmail.com>
+
+	rm: new option --dir (-d) to remove empty directories
+	Add new option to rm (-d/--dir), which allows removal of
+	empty directories, while still safely disallowing removal
+	of non-empty ones.
+
+	This improves compatibility with Mac OS X and BSD systems,
+	which honor the -d option.
+
+	* src/remove.c (rm_fts): Remove empty directories when requested.
+	* src/remove.h (rm_options) [remove_empty_directories]: New member.
+	* src/rm.c (long_opts, usage, main): Update usage and option parsing.
+	(rm_option_init): Initialize the new member.
+	* src/mv.c (rm_option_init): Initialize the new member.
+	* tests/rm/d-1: New test case - successfully delete empty dir.
+	* tests/rm/d-2: New test case - refuse to delete nonempty dir.
+	* tests/Makefile.am (TESTS): Add them.
+
+2012-08-14  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	df: fail when the mount list is required but cannot be read
+	* src/df.c (main): Add conditions to fail when the mount list cannot
+	be read: this includes the cases when a file name argument is given
+	and any of -a, -l, -t or -x is used.
+	* doc/coreutils.texi: Document the additional error conditions.
+	* tests/df/no-mtab-status: Add a new test.
+	* tests/Makefile.am: Reference the new test.
+	* NEWS: Mention the fix.
+
 2012-08-12  Jim Meyering  <meyering@redhat.com>
+
+	maint: post-release administrivia
+	* NEWS: Add header line for next release.
+	* .prev-version: Record previous version.
+	* cfg.mk (old_NEWS_hash): Auto-update.
 
 	version 8.18
 	* NEWS: Record release date.
