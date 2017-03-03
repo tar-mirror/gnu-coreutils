@@ -456,11 +456,11 @@ EXTRA_libcoreutils_a_SOURCES = acl.c alloca.c argmatch.c atexit.c \
 	memcpy.c memmove.c mempcpy.c memrchr.c memset.c mkancesdirs.c \
 	mkdir.c dirchownmod.c mkdir-p.c mkstemp.c mktime.c \
 	modechange.c mountlist.c nanosleep.c obstack.c at-func.c \
-	fchmodat.c mkdirat.c openat-die.c openat-proc.c openat.c \
-	physmem.c posixtm.c posixver.c putenv.c quote.c quotearg.c \
-	raise.c readlink.c readtokens.c readutmp.c realloc.c regcomp.c \
-	regex.c regex_internal.c regexec.c rename.c \
-	rename-dest-slash.c rmdir.c root-dev-ino.c rpmatch.c \
+	fchmodat.c fstatat.c mkdirat.c openat-die.c openat-proc.c \
+	openat.c physmem.c posixtm.c posixver.c putenv.c quote.c \
+	quotearg.c raise.c readlink.c readtokens.c readutmp.c \
+	realloc.c regcomp.c regex.c regex_internal.c regexec.c \
+	rename.c rename-dest-slash.c rmdir.c root-dev-ino.c rpmatch.c \
 	safe-read.c safe-write.c same.c save-cwd.c savedir.c setenv.c \
 	unsetenv.c settime.c sha1.c sig2str.c snprintf.c \
 	mkstemp-safer.c stpcpy.c strcasecmp.c strncasecmp.c strcspn.c \
@@ -507,7 +507,7 @@ EXTRA_DIST = acl.c acl.h alloca.c alloca_.h allocsa.valgrind \
 	mkancesdirs.c mkancesdirs.h mkdir.c dirchownmod.c \
 	dirchownmod.h mkdir-p.c mkdir-p.h mkstemp.c mkstemp.h mktime.c \
 	modechange.c modechange.h mountlist.c mountlist.h nanosleep.c \
-	obstack.c obstack.h at-func.c fchmodat.c mkdirat.c \
+	obstack.c obstack.h at-func.c fchmodat.c fstatat.c mkdirat.c \
 	openat-die.c openat-priv.h openat-proc.c openat.c openat.h \
 	pathmax.h physmem.c physmem.h posixtm.c posixtm.h posixver.c \
 	posixver.h putenv.c quote.c quote.h quotearg.c quotearg.h \
@@ -687,6 +687,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fopen-safer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fprintftime.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/free.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fstatat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fsusage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ftruncate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fts-cycle.Po@am__quote@

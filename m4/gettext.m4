@@ -137,12 +137,12 @@ AC_DEFUN([AM_GNU_GETTEXT],
         dnl to fall back to GNU NLS library.
 
         if test $gt_api_version -ge 3; then
-          gt_revision_test_code='[[
+          gt_revision_test_code='[
 #ifndef __GNU_GETTEXT_SUPPORTED_REVISION
 #define __GNU_GETTEXT_SUPPORTED_REVISION(major) ((major) == 0 ? 0 : -1)
 #endif
 typedef int array [2 * (__GNU_GETTEXT_SUPPORTED_REVISION(0) >= 1) - 1];
-]]'
+]'
         else
           gt_revision_test_code=
         fi

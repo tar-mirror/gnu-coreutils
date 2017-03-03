@@ -1147,9 +1147,9 @@ EXTRA_libcoreutils_a_SOURCES += obstack.c
 ## begin gnulib module openat
 
 
-EXTRA_DIST += at-func.c fchmodat.c mkdirat.c openat-die.c openat-priv.h openat-proc.c openat.c openat.h
+EXTRA_DIST += at-func.c fchmodat.c fstatat.c mkdirat.c openat-die.c openat-priv.h openat-proc.c openat.c openat.h
 
-EXTRA_libcoreutils_a_SOURCES += at-func.c fchmodat.c mkdirat.c openat-die.c openat-proc.c openat.c
+EXTRA_libcoreutils_a_SOURCES += at-func.c fchmodat.c fstatat.c mkdirat.c openat-die.c openat-proc.c openat.c
 
 ## end   gnulib module openat
 

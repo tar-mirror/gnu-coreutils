@@ -7,13 +7,14 @@
 # fileutils: Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>, 2002.
 # Thanks for help and 246+ remarks to Jakub Bogusz, 2003.
 # 4 corrections: jurget@infocoig.pl via garski@poczta.onet.pl, 2004.
+# 3 corrections: Andrzej Krzysztofowicz <ankry@green.mif.pg.gda.pl>, 2006
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: coreutils 6.4\n"
+"Project-Id-Version: coreutils 6.5\n"
 "Report-Msgid-Bugs-To: bug-coreutils@gnu.org\n"
-"POT-Creation-Date: 2006-11-19 11:11+0100\n"
-"PO-Revision-Date: 2006-11-14 01:30+0100\n"
+"POT-Creation-Date: 2006-11-22 11:03+0100\n"
+"PO-Revision-Date: 2006-11-21 10:20+0100\n"
 "Last-Translator: Rafa³ Maszkowski <rzm@icm.edu.pl>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -319,10 +320,10 @@ msgstr "Brak dopasowania"
 msgid "Invalid regular expression"
 msgstr "B³êdne wyra¿enie regularne"
 
+# ? - rzm
 #: lib/regcomp.c:140
-#, fuzzy
 msgid "Invalid collation character"
-msgstr "b³êdna klasa znaków %s"
+msgstr "B³êdny znak sortowany"
 
 #: lib/regcomp.c:143
 msgid "Invalid character class name"
@@ -6571,7 +6572,7 @@ msgstr "nie uda³o siê zamkn±æ katalogu %s"
 #: src/remove.c:1376
 #, c-format
 msgid "skipping %s, since it's on a different device"
-msgstr ""
+msgstr "pominiêto %s, bo jest na innym urz±dzeniu"
 
 #: src/remove.c:1425 src/remove.c:1466
 #, c-format
@@ -6642,6 +6643,11 @@ msgid ""
 "                          directory that is on a file system different from\n"
 "                          that of the corresponding command line argument\n"
 msgstr ""
+"      --one-file-system  poddczas rekurencyjnego usuwania katalogu pomijane\n"
+"                          s± katalogi znajduj±ce siê na innym systemie "
+"plików\n"
+"                          ni¿ ten, na którym znajduje siê argument "
+"polecenia\n"
 
 #: src/rm.c:179
 msgid ""
@@ -9737,146 +9743,3 @@ msgid ""
 msgstr ""
 "Powtarzanie na wyj¶ciu linii ze wszystkimi podanymi £AÑCUCH(AMI) albo `y'\n"
 "\n"
-
-#~ msgid "cannot change owner and/or group of %s"
-#~ msgstr "nie mo¿na zmieniæ u¿ytkownika i/lub grupy %s"
-
-#~ msgid "cannot chdir to directory %s"
-#~ msgstr "nie mo¿na przej¶æ do katalogu %s"
-
-#~ msgid "cannot get the login group of a numeric UID"
-#~ msgstr "Nie mo¿na ustaliæ grupy identyfikatora numerycznego UID"
-
-#~ msgid ""
-#~ "      --no-preserve-root do not treat `/' specially (the default)\n"
-#~ "      --preserve-root    fail to operate recursively on `/'\n"
-#~ msgstr ""
-#~ "      --no-preserve-root bez traktowania katalogu '/' w specjalny sposób\n"
-#~ "                           (domy¶lnie)\n"
-#~ "      --preserve-root    odmowa rekusywnego dzia³ania na '/'\n"
-
-#~ msgid "symbolic links are not supported on this system"
-#~ msgstr "ten system nie rozumie dowi±zañ symbolicznych"
-
-#~ msgid ""
-#~ "  -e             enable interpretation of backslash escapes\n"
-#~ "  -E             disable interpretation of backslash escapes (default)\n"
-#~ msgstr ""
-#~ "  -e             w³±czenie interpretacji sekwencji z uko¶nikiem "
-#~ "odwrotnym\n"
-#~ "  -E             wy³±czenie interpretacji sekwencji z uko¶nikiem "
-#~ "odwrotnym\n"
-#~ "                   (domy¶lnie)\n"
-
-# trochê niezrêczne -pk
-#~ msgid ""
-#~ "warning: unportable BRE: %s: using `^' as the first character\n"
-#~ "of the basic regular expression is not portable; it is being ignored"
-#~ msgstr ""
-#~ "uwaga: nieprzeno¶ne PWR (Basic Regular Expression): `%s': u¿ycie `^' "
-#~ "jako\n"
-#~ "pierwszego znaku podstawowego wyra¿enia regularnego nie jest przeno¶ne;\n"
-#~ "zosta³o zignorowane"
-
-#~ msgid "unrecognized option `-%c'"
-#~ msgstr "nierozpoznana opcja `-%c'"
-
-#~ msgid "cannot return to working directory"
-#~ msgstr "nie uda³o siê wróciæ do pocz±tkowego katalogu roboczego"
-
-#~ msgid "cannot return to current directory"
-#~ msgstr "nie mo¿na wróciæ do bie¿±cego katalogu"
-
-#~ msgid "create symbolic link %s to %s"
-#~ msgstr "tworzenie dowi±zania symbolicznego %s do %s"
-
-#~ msgid "create hard link %s to %s"
-#~ msgstr "tworzenie dowi±zania zwyk³ego %s do %s"
-
-#~ msgid "cannot set permissions of directory %s"
-#~ msgstr "nie mo¿na ustawiæ uprawnieñ katalogu %s"
-
-#~ msgid "fifo files not supported"
-#~ msgstr "potoki nie s± obs³ugiwane przez ten system"
-
-#~ msgid "cannot set permissions of fifo %s"
-#~ msgstr "nie mo¿na ustawiæ uprawnieñ potoku %s"
-
-#~ msgid "cannot set permissions of %s"
-#~ msgstr "nie mo¿na ustawiæ uprawnieñ do %s"
-
-#~ msgid ""
-#~ "This program is free software; you can redistribute it and/or modify\n"
-#~ "it under the terms of the GNU General Public License as published by\n"
-#~ "the Free Software Foundation; either version 2, or (at your option)\n"
-#~ "any later version.\n"
-#~ "\n"
-#~ msgstr ""
-#~ "Ten program jest darmowy; mo¿na go rozprowadzaæ i/lub modyfikowaæ\n"
-#~ "przestrzegaj±c warunków Powszechnej Licencji Publicznej GNU (General "
-#~ "Public\n"
-#~ "Licence) opublikowanej przez Free Software Foundation, w wersji 2 lub, "
-#~ "do\n"
-#~ "wyboru, dowolnej po¼niejszej.\n"
-#~ "\n"
-
-#~ msgid ""
-#~ "This program is distributed in the hope that it will be useful,\n"
-#~ "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
-#~ "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
-#~ "GNU General Public License for more details.\n"
-#~ "\n"
-#~ msgstr ""
-#~ "Ten program ten jest rozprowadzany w nadziei, ¿e bêdzie przydatny,\n"
-#~ "ale BEZ ¯ADNEJ GWARANCJI, nawet bez domy¶lnej gwarancji JAKO¦CI\n"
-#~ "lub PRZYDATNO¦CI DO KONKRETNYCH ZASTOSOWAÑ. Szczegó³y znajduj± siê\n"
-#~ "w Powszechnej Licencji Publicznej GNU.\n"
-#~ "\n"
-
-#~ msgid ""
-#~ "You should have received a copy of the GNU General Public License\n"
-#~ "along with this program; if not, write to the Free Software Foundation,\n"
-#~ "Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.\n"
-#~ msgstr ""
-#~ "Kopia Powszechnej Licencji Publicznej GNU powinna byæ dostarczona wraz\n"
-#~ "z tym programem. Je¶li nie, mo¿na napisaæ do Free Software Foundation,\n"
-#~ "Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.\n"
-
-#~ msgid "cannot chdir from %s to .."
-#~ msgstr "nie mo¿na przej¶æ z %s do .."
-
-#~ msgid "cannot lstat `.' in %s"
-#~ msgstr "nie mo¿na wykonaæ lstat `.' w %s"
-
-#~ msgid "cannot lstat %s"
-#~ msgstr "nie mo¿na wykonaæ lstat na %s"
-
-#~ msgid "cannot chdir from %s to %s"
-#~ msgstr "nie mo¿na przej¶æ z %s do %s"
-
-#~ msgid "cannot remove `.' or `..'"
-#~ msgstr "nie mo¿na usun±æ `.' lub `..'"
-
-#~ msgid ""
-#~ "Remove (unlink) the FILE(s).\n"
-#~ "\n"
-#~ "  -d, --directory       unlink FILE, even if it is a non-empty directory\n"
-#~ "                          (super-user only; this works only if your "
-#~ "system\n"
-#~ "                           supports `unlink' for nonempty directories)\n"
-#~ "  -f, --force           ignore nonexistent files, never prompt\n"
-#~ "  -i, --interactive     prompt before any removal\n"
-#~ msgstr ""
-#~ "Usuwanie (unlink) PLIKU/ÓW.\n"
-#~ "\n"
-#~ "  -d, --directory       usuniêcie PLIKU, nawet je¿eli jest to niepusty "
-#~ "katalog\n"
-#~ "                          (tylko super-user; dzia³a tylko je¿li twój "
-#~ "system\n"
-#~ "                           umo¿liwia `unlink' dla niepustych katalogów)\n"
-#~ "  -f, --force           zignorowanie nieistniej±cych plików, wy³±czenie "
-#~ "pytañ\n"
-#~ "  -i, --interactive     pytanie przed ka¿dym usuniêciem pliku\n"
-
-#~ msgid "Exit with a status code indicating failure."
-#~ msgstr "Wyj¶cie z kodem oznaczaj±cym niepowodzenie."

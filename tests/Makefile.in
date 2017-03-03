@@ -390,7 +390,7 @@ SUBDIRS = \
   seq sha1sum shred sort stty sum tac tail tail-2 tee test touch tr \
   tsort unexpand uniq wc
 
-all_t = t1 t2 t3 t4 t5 t6
+all_t = t1 t2 t3 t4 t5 t6 t7
 all: all-recursive
 
 .SUFFIXES:
@@ -786,6 +786,8 @@ t5:
 	cd tail-2 && $(MAKE) check TESTS=append-only
 t6:
 	cd rm    && $(MAKE) check TESTS=one-file-system
+t7:
+	cd ls    && $(MAKE) check TESTS=nameless-uid
 
 check-recursive: root-hint
 

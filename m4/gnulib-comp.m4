@@ -369,6 +369,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/fprintftime.c
   lib/fprintftime.h
   lib/free.c
+  lib/fstatat.c
   lib/fsusage.c
   lib/fsusage.h
   lib/ftruncate.c

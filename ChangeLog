@@ -1,4 +1,48 @@
+2006-11-22  Jim Meyering  <jim@meyering.net>
+
+	Version 6.6.
+	* NEWS: Record release date.  Remove "-pre" suffix.
+	* configure.ac (AC_INIT): Remove "-pre" suffix from version string.
+
+	* announce-gen: Remove unused --release-archive-directory option.
+	(print_news_deltas): Accept new adjective, "Noteworthy", in addition
+	to the old "Major".
+	Match version numbers in NEWS using tighter regular expressions.
+	(main): Require the --gpg-key-id=ID option.
+	* Makefile.maint (announcement): Don't use now-removed
+	--release-archive-directory=... option.
+
+	* NEWS: Mention the three noteworthy changes, all fixed via gnulib.
+
+2006-11-21  Jim Meyering  <jim@meyering.net>
+
+	* tests/rm/one-file-system: Upon setup failure (e.g., mount failure),
+	skip the test rather than failing.  Reported by Michael Deutschmann.
+
+	* tests/rm/fail-eperm: Use the "(exit N); exit N" idiom,
+	rather than just "exit N".
+
+	Arrange for "make check-root" to run the new root-only test.
+	* tests/Makefile.am (t7): New target, to run tests/ls/nameless-uid.
+	(all_t): Add t7.
+
+2006-11-20  Jim Meyering  <jim@meyering.net>
+
+	Add a root-only test for today's lib/idcache.c fix.
+	* tests/ls/nameless-uid: New file.
+	* tests/ls/Makefile.am (TESTS): Add nameless-uid.
+	(TESTS_ENVIRONMENT): Add PERL to the list.
+
 2006-11-19  Jim Meyering  <jim@meyering.net>
+
+	* tests/tail-2/assert-2: Mark as a very-expensive test, because I
+	find the 7-second sleep annoyingly long.  Besides, this test is
+	probably far too specific and timing sensitive ever to trigger again.
+	* tests/tail-2/assert: Likewise.
+
+	Post-release version change.
+	* NEWS: Add a line for 6.6-pre.
+	* configure.ac (AC_INIT): Bump to 6.6 and add "-pre" suffix.
 
 	Version 6.5.
 	* NEWS: Record release date.  Remove "-cvs" suffix.
