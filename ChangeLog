@@ -1,4 +1,282 @@
+2009-12-11  Jim Meyering  <meyering@redhat.com>
+
+	version 8.2
+	* NEWS: Record release date.
+
+	tests: use a slightly better CU_TEST_NAME setting
+	* tests/check.mk (CU_TEST_NAME): Better test names.
+
+	tail: don't call fstat on an uninitialized FD
+	This bug showed up via valgrind as a "Conditional jump or move
+	depends on uninitialized value(s)" error.
+	* src/tail.c (ignore_fifo_and_pipe): New function.
+	(main): Use it only when tailing forever.
+	The code to compute n_viable and mark some F[i] as ignored would call
+	isapipe on an uninitialized file descriptor.  But n_viable and those
+	.ignored marks are useful/used only when tailing forever.  This bug
+	was introduced via commit f0ff8c73 (7.6), "tail: make the new
+	piped-stdin test as portable as the old one".
+	* NEWS (Bug fixes): Mention it.
+
+	doc: NEWS: mention that gnulib's mgetgroups fix affects id
+	* NEWS (Bug fixes): Mention the "id" bug fix inherited via this gnulib
+	change: "mgetgroups: do not write bytes beyond end of malloc'd buffer"
+	http://git.sv.gnu.org/cgit/gnulib.git/commit/?id=51d5e813e9ee6cf23
+
+2009-12-10  Jim Meyering  <meyering@redhat.com>
+
+	build: update gnulib submodule to latest
+
+	tests: avoid spurious failure when run via valgrind
+	* tests/misc/printenv: Ignore LD_PRELOAD differences.
+
+2009-12-09  Jim Meyering  <meyering@redhat.com>
+
+	doc: NEWS: the "make distcheck" vulnerability dates back to 5.0
+	* NEWS (Bug fixes): Correct the introduced-in version number.
+	This was introduced on 2003-04-02 by commit 722a49ea.
+
+	doc: NEWS: mention the "make distcheck" vulnerability
+	* NEWS (Bug fixes): Mention implications of the "make distcheck" change.
+	This was introduced on 2008-07-22 by commit 9bb0d576, "tests: ensure
+	"make check" w/tainted build dir no longer impacts $HOME".
+
+	tests: don't let "umask 077" cause root-only cp/preserve-gid failure
+	* tests/cp/preserve-gid: Use working_umask_or_skip_ to set umask to 022.
+
+2009-12-08  Jim Meyering  <meyering@redhat.com>
+
+	build: update gnulib submodule to latest
+
+2009-12-08  Pádraig Brady  <P@draigBrady.com>
+
+	maint: remove an erroneous comment
+	* tests/misc/timeout: Remove an erroneous comment
+	introduced through copy and paste.
+
+	sort: fix failure if sort's parent has ignored SIGCHLD
+	* src/sort.c (main): Reset the SIGCHLD handler to the default
+	as otherwise wait() could return an error.
+	* tests/misc/sort-compress: Set the CHLD handler in a subshell
+	to SIG_IGN to ensure the sort command resets it to SIG_DFL.
+	* NEWS: Mention the fix.
+
+	timeout: fix failure if timeout's parent has ignored SIGCHLD
+	* src/timeout.c (main): Reset the SIGCHLD handler to the default
+	as otherwise wait() could return -1 and set errno to ECHILD.
+	This condition was ignored until commit 0b1dcf33, on 31-08-2009,
+	"timeout: defensive handling of all wait() errors"
+	but subsequently timeout would run the command correctly
+	but then fail with an error message.
+	* tests/misc/timeout: In a subshell set the CHLD handler to
+	SIG_IGN to ensure the timeout command resets it to SIG_DFL.
+	* NEWS: Mention the fix.
+
+	tests: fix stty-row-col failure on small fixed terminals
+	* tests/misc/stty-row-col: Linux virtual consoles at least,
+	issue an error if you try to increase their size, so skip the
+	test if we can't increase the dimensions of the tty by 1 cell.
+	Reported by Matthew Burgess.
+
+	tests: fix stty failure with serial control settings
+	* tests/misc/stty: Don't check the serial control settings as
+	these are ignored by various Linux kernels.
+	Reported by Matthew Burgess.
+
+2009-12-07  Jim Meyering  <meyering@redhat.com>
+
+	build: update gnulib submodule to latest
+
+	build: distcheck: do not leave a $TMPDIR/coreutils directory behind
+	* dist-check.mk (tmpdir): Rename from TMPDIR.  Use ./tests/torture
+	unconditionally, rather than $TMPDIR-with-default-to-/tmp.
+	Otherwise, running "make distcheck" could leave an empty /tmp/coreutils
+	directory behind.
+	(tp): Simplify, now that it's always in the build-dir.
+	(taint-distcheck): Set HOME earlier, in case $(MAKE) misbehaves.
+	(my-instcheck, coreutils-path-check): Add diagnostics, so it's easier
+	to diagnose when each runs.
+	(coreutils-path-check): Run configure with --quiet, to reduce output.
+	Inspired by Ralf Wildenhues' report of /tmp/coreutils being left behind.
+
+2009-12-06  Jim Meyering  <meyering@redhat.com>
+
+	tests: readdir-mountpoint-inode avoid false-positive w/virtualbox
+	* tests/ls/readdir-mountpoint-inode: With some systems, stat can
+	succeed on a mount point and report that the inode number is 0.
+	Since ls displays "?" for those, that would otherwise show up as a
+	difference.  Skip such mount points.  Reported by Sergei Steshenko
+	in http://thread.gmane.org/gmane.comp.gnu.coreutils.bugs/19142
+
+2009-12-06  Pádraig Brady  <P@draigBrady.com>
+
+	tests: don't run tail-2/inotify-race by default
+	* tests/tail-2/inotify-race: Note the caveats of the test.
+	I.E. the intermittent skips and the gdb hang reported
+	by Alan Curry.  Add extra info to the log on why the test
+	is skipped as it may be due to multiple reasons.  Mark
+	the test as very expensive so that it's not normally run.
+
+2009-12-05  Eric Blake  <ebb9@byu.net>
+
+	id: handle systems without getgroups support
+	If getgroups failed with ENOSYS, mgetgroups would unnecessarily
+	fail, and that provoked id into freeing an uninitialized pointer.
+	Meanwhile, we were not using xalloc_die properly.  Both issues
+	are better solved in gnulib, by introducing xgetgroups; this
+	patch uses the new interface.
+
+	Regression introduced by commit 6a31fd8d7.
+
+	* gnulib: Update, for mgetgroups improvments.
+	* src/id.c (print_full_info): Adjust caller to die on allocation
+	failure, and no longer worry about ENOSYS.
+	* src/group-list.c (print_group_list): Likewise.
+	* src/setuidgid.c (main): Likewise.
+	* NEWS: Mention the fix.
+	* THANKS: Update.
+	Reported by Scott Harrison.
+
+2009-12-03  Jim Meyering  <meyering@redhat.com>
+
+	tests: fix a bug in sanitize_path_ that inhibited verbose output
+	* tests/test-lib.sh (sanitize_path_): Use "set -- ...", not "set - ...",
+	since the latter turns off the -x setting we rely on for VERBOSE=yes
+	output.
+
+2009-12-01  Eric Blake  <ebb9@byu.net>
+
+	sort: fix link failure on Solaris
+	Commit f9d0bb8481 made sort depend on xnanosleep.
+
+	* src/Makefile.am (sort_LDADD): Add LIB_NANOSLEEP.
+
+2009-12-01  Jim Meyering  <meyering@redhat.com>
+
+	rm: fix empty-name bug introduced with conversion to use fts
+	While "rm ''" would properly fail, "rm F1 '' F2" would fail
+	to remove F1 and F2, due to the empty string argument.
+	This bug was introduced on 2009-07-12, via commit 4f73ecaf,
+	"rm: rewrite to use fts".
+	* gnulib: Update to latest, for fixed fts.c.
+	* NEWS (Bug fixes): Describe it.
+	* tests/rm/empty-name: Adjust for changed diagnostic.
+	(mk_file): Define, copied from misc/ls-misc.
+	(empty-name-2): New test, for today's fix.
+	* lib/xfts.c (xfts_open): Reflect the change in fts_open, now that
+	it no longer fails immediately when one argument is the empty string.
+	Assert that the bit flags were not the cause of failure.
+	* po/POTFILES.in: Remove xfts.c.
+	* THANKS: Update.
+	Reported by Ladislav Hagara.
+
+2009-11-30  Pádraig Brady  <P@draigBrady.com>
+
+	bootstrap: fix handling of various perl --version formats
+	* bootstrap (get_version): Don't use perl's $] special
+	variable, as that requires updating all bootstrap.conf files to
+	use perl's x.yyyzzz version format.  Instead make the regular
+	expression more general to support version formats from older
+	perl-5.005_002 (5.5.2) and perl-5.11 which has other numbers
+	in the version line.
+
+2009-11-29  Jim Meyering  <meyering@redhat.com>
+
+	bootstrap: update from gnulib, for perl-5.11.x support
+	* bootstrap (get_version): Handle perl separately,
+	since perl-5.11's --version output is different.
+
+	build: update gnulib submodule to latest
+
+2009-11-28  Jim Meyering  <meyering@redhat.com>
+
+	maint: chown.c: remove a comment
+	* src/chown.c: Remove old spec-like comment.
+
+2009-11-24  Eric Blake  <ebb9@byu.net>
+
+	tests: fix link failure on cygwin
+	Counterpart to commit 8fe40b84bd8, since test-link.c uses rename,
+	and we override gnulib with a rename() replacement that can xalloc_die.
+
+	* gl/modules/link-tests.diff: New file.
+
+	build: fix link failure on cygwin
+	Cygwin 1.5 has a broken sleep, and the gnulib tests dragged in
+	rpl_sleep which then caused a link failure because it wasn't in
+	libcoreutils.a.  We could solve it by using the gnulib sleep module.
+	However, sleep and usleep may interact poorly with SIGALRM, and they
+	have less granularity; so it is better to adopt a policy that if we
+	must sleep, prefer xnanosleep.
+
+	* src/sort.c (pipe_fork): Use xnanosleep, to avoid the need for
+	rpl_sleep on cygwin, and to reduce granularity.
+	(MAX_FORK_TRIES_COMPRESS, MAX_FORK_TRIES_DECOMPRESS): Increase,
+	to account for reduction in granularity.
+	* src/tail.c (tail_file): Use xnanosleep in debug code.
+	* cfg.mk (sc_prohibit_sleep): New rule.
+
+2009-11-23  Jim Meyering  <meyering@redhat.com>
+
+	tests: avoid test failures when PATH contains an unsearchable directory
+	* tests/test-lib.sh (sanitize_path_): New function.
+	Always call it.
+
+2009-11-22  Dmitry V. Levin  <ldv@altlinux.org>
+
+	tests: do not fail on read-only root file system
+	* tests/touch/not-owner: Handle the case when the root file system is
+	mounted read-only.
+	Reported by Solar Designer.
+
+2009-11-20  Jim Meyering  <meyering@redhat.com>
+
+	maint: cfg.mk: remove factored-out ftp host/dir definitions
+	* cfg.mk (gnu_ftp_host-alpha, gnu_ftp_host-beta gnu_ftp_host-stable):
+	(gnu_rel_host, url_dir_list): Remove definitions.  The defaults,
+	now provided by maint.mk, are the same.
+	* gnulib: Update for latest, including those maint.mk additions.
+
+	maint: correct comments in test scripts
+	* tests/misc/pwd-long: Fix spelling of cygwin1.dll in comment.
+	* tests/rm/fail-eperm: Likewise.
+	Reported by Eric Blake.
+
+	maint: don't list "warnings" module explicitly
+	* bootstrap.conf (gnulib_modules): Remove "warnings", now that
+	it's pulled in automatically via "manywarnings".
+
+	maint: move xfreopen module to gnulib
+	* gl/lib/xfreopen.c: Remove file.
+	* gl/lib/xfreopen.h: Likewise.
+	* gl/modules/xfreopen: Likewise.
+
+	build: update gnulib submodule to latest
+
+2009-11-19  Jim Meyering  <meyering@redhat.com>
+
+	tests: avoid spurious failures due to insecure directory in PATH
+	These tests perform no PATH search, and used to simply delete PATH from
+	the environment.  However, that is not portable, as seen on Cygwin,
+	where cygwin.dll must be resolvable via PATH when starting a sub-shell.
+	With commit 0cc04241, we took the alternate approach of untainting the
+	incoming $ENV{PATH}, but that fails when it contains an other-writable
+	directory.  Instead, now we hard code it to '/bin:/usr/bin'.
+
+	* tests/misc/pwd-long: Hard code $ENV{PATH} to a safe value.
+	* tests/rm/fail-eperm: Likewise.
+	Reported by Gilles Espinasse, Andreas Schwab, and Bauke Jan Douma.
+
 2009-11-18  Jim Meyering  <meyering@redhat.com>
+
+	build: "make stable" emitted an invalid gnupload command
+	* cfg.mk (gnu_ftp_host-stable): Rename from gnu_ftp_host-major.
+	* README-release: Change another s/major/stable/.
+
+	post-release administrivia
+	* NEWS: Add header line for next release.
+	* .prev-version: Record previous version.
+	* cfg.mk (old_NEWS_hash): Auto-update.
 
 	version 8.1
 	* NEWS: Record release date.

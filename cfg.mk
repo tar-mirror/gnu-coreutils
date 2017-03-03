@@ -14,18 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Use alpha.gnu.org for alpha and beta releases.
-# Use ftp.gnu.org for major releases.
-gnu_ftp_host-alpha = alpha.gnu.org
-gnu_ftp_host-beta = alpha.gnu.org
-gnu_ftp_host-major = ftp.gnu.org
-gnu_rel_host = $(gnu_ftp_host-$(RELEASE_TYPE))
-
 # Used in maint.mk's web-manual rule
 manual_title = Core GNU utilities
-
-url_dir_list = \
-  ftp://$(gnu_rel_host)/gnu/$(PACKAGE)
 
 # The GnuPG ID of the key used to sign the tarballs.
 gpg_key_ID = B9AB9A16
@@ -39,7 +29,7 @@ bootstrap-tools = autoconf,automake,gnulib,bison
 # Now that we have better tests, make this the default.
 export VERBOSE = yes
 
-old_NEWS_hash = 785e51bc9af87e7eb004f9ba24a0ca27
+old_NEWS_hash = 2a36ca50a949f959645d9bfac8ec83ce
 
 # Ensure that the list of O_ symbols used to compute O_FULLBLOCK is complete.
 dd = $(srcdir)/src/dd.c
@@ -248,5 +238,11 @@ sc_require_stdio_safer:
 		1>&2; exit 1; } || :;					\
 	else :;								\
 	fi
+
+# Prefer xnanosleep over other less-precise sleep methods
+sc_prohibit_sleep:
+	@re='\<(nano|u)?sleep \('					\
+	msg='prefer xnanosleep over other sleep interfaces'		\
+	  $(_prohibit_regexp)
 
 include $(srcdir)/dist-check.mk

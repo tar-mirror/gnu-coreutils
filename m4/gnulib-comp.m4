@@ -85,6 +85,7 @@ AC_DEFUN([gl_INIT],
   gl_UNISTD_MODULE_INDICATOR([chown])
   gl_CLOCK_TIME
   gl_CLOEXEC
+  gl_MODULE_INDICATOR([cloexec])
   gl_FUNC_CLOSE
   gl_UNISTD_MODULE_INDICATOR([close])
   gl_CLOSE_STREAM
@@ -543,7 +544,7 @@ AC_DEFUN([gl_INIT],
     if test -n "$gl_LIBOBJS"; then
       # Remove the extension.
       sed_drop_objext='s/\.o$//;s/\.obj$//'
-      for i in `for i in $gl_LIBOBJS; do echo "$i"; done | sed "$sed_drop_objext" | sort | uniq`; do
+      for i in `for i in $gl_LIBOBJS; do echo "$i"; done | sed -e "$sed_drop_objext" | sort | uniq`; do
         gl_libobjs="$gl_libobjs $i.$ac_objext"
         gl_ltlibobjs="$gl_ltlibobjs $i.lo"
       done
@@ -627,6 +628,7 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_MMAP_ANON
   AC_CHECK_HEADERS_ONCE([sys/mman.h])
   AC_CHECK_FUNCS_ONCE([mprotect])
+  AC_CHECK_DECLS_ONCE([alarm])
   AC_CHECK_FUNCS_ONCE([getegid])
   gl_FUNC_PERROR
   gl_STRING_MODULE_INDICATOR([perror])
@@ -644,6 +646,7 @@ AC_DEFUN([gl_INIT],
   AC_REQUIRE([gl_LONG_DOUBLE_EXPONENT_LOCATION])
   gl_FUNC_SLEEP
   gl_UNISTD_MODULE_INDICATOR([sleep])
+  AC_CHECK_DECLS_ONCE([alarm])
   AC_REQUIRE([gl_HEADER_SYS_SOCKET])
   if test "$ac_cv_header_winsock2_h" = yes; then
     AC_LIBOBJ([socket])
@@ -700,7 +703,7 @@ AC_DEFUN([gl_INIT],
     if test -n "$gltests_LIBOBJS"; then
       # Remove the extension.
       sed_drop_objext='s/\.o$//;s/\.obj$//'
-      for i in `for i in $gltests_LIBOBJS; do echo "$i"; done | sed "$sed_drop_objext" | sort | uniq`; do
+      for i in `for i in $gltests_LIBOBJS; do echo "$i"; done | sed -e "$sed_drop_objext" | sort | uniq`; do
         gltests_libobjs="$gltests_libobjs $i.$ac_objext"
         gltests_ltlibobjs="$gltests_ltlibobjs $i.lo"
       done
@@ -1681,6 +1684,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/xvasprintf.m4
   m4/yesno.m4
   m4/yield.m4
+  tests/init.sh
   tests/locale/fr/LC_MESSAGES/test-quotearg.mo
   tests/locale/fr/LC_MESSAGES/test-quotearg.po
   tests/nan.h
@@ -1709,12 +1713,14 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-canonicalize.c
   tests/test-chown.c
   tests/test-chown.h
+  tests/test-cloexec.c
   tests/test-closein.c
   tests/test-closein.sh
   tests/test-copy-acl.c
   tests/test-copy-acl.sh
   tests/test-dirent-safer.c
   tests/test-dirname.c
+  tests/test-dup-safer.c
   tests/test-dup2.c
   tests/test-environ.c
   tests/test-errno.c
@@ -1834,6 +1840,7 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-mkdir.c
   tests/test-mkdir.h
   tests/test-mkdirat.c
+  tests/test-nanosleep.c
   tests/test-netdb.c
   tests/test-netinet_in.c
   tests/test-open.c

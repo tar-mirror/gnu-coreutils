@@ -50,8 +50,8 @@
    descriptor, since mingw refuses to rename any in-use file system
    object.  */
 
-/* Array of file descriptors opened.  If it points to a directory, it stores
-   info about this directory.  */
+/* Array of file descriptors opened.  If REPLACE_OPEN_DIRECTORY or if it points
+   to a directory, it stores info about this directory.  */
 typedef struct
 {
   char *name;       /* Absolute name of the directory, or NULL.  */
@@ -60,12 +60,15 @@ typedef struct
 static dir_info_t *dirs;
 static size_t dirs_allocated;
 
-/* Try to ensure dirs has enough room for a slot at index fd.  Return
-   false and set errno to ENOMEM on allocation failure.  */
+/* Try to ensure dirs has enough room for a slot at index fd; free any
+   contents already in that slot.  Return false and set errno to
+   ENOMEM on allocation failure.  */
 static bool
 ensure_dirs_slot (size_t fd)
 {
-  if (fd >= dirs_allocated)
+  if (fd < dirs_allocated)
+    free (dirs[fd].name);
+  else
     {
       size_t new_allocated;
       dir_info_t *new_dirs;
@@ -213,10 +216,10 @@ _gl_directory_name (int fd)
   return NULL;
 }
 
+#if REPLACE_OPEN_DIRECTORY
 /* Return stat information about FD in STATBUF.  Needed when
    rpl_open() used a dummy file to work around an open() that can't
    normally visit directories.  */
-#if REPLACE_OPEN_DIRECTORY
 # undef fstat
 int
 rpl_fstat (int fd, struct stat *statbuf)

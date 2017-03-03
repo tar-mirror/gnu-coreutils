@@ -114,6 +114,7 @@ test_getopt_long (void)
 
     argv[argc++] = "program";
     argv[argc++] = "--x";
+    argv[argc] = NULL;
     optind = 1;
     opterr = 0;
     c = do_getopt_long (argc, argv, "ab", long_options_required, &option_index);
@@ -128,6 +129,7 @@ test_getopt_long (void)
 
     argv[argc++] = "program";
     argv[argc++] = "--xt";
+    argv[argc] = NULL;
     optind = 1;
     opterr = 0;
     c = do_getopt_long (argc, argv, "ab", long_options_required, &option_index);
@@ -142,6 +144,7 @@ test_getopt_long (void)
 
     argv[argc++] = "program";
     argv[argc++] = "--xtr";
+    argv[argc] = NULL;
     optind = 1;
     opterr = 0;
     c = do_getopt_long (argc, argv, "ab", long_options_required, &option_index);
@@ -156,6 +159,7 @@ test_getopt_long (void)
 
     argv[argc++] = "program";
     argv[argc++] = "--xtra";
+    argv[argc] = NULL;
     optind = 1;
     opterr = 0;
     c = do_getopt_long (argc, argv, "ab", long_options_required, &option_index);
@@ -169,6 +173,7 @@ test_getopt_long (void)
 
     argv[argc++] = "program";
     argv[argc++] = "--xtre";
+    argv[argc] = NULL;
     optind = 1;
     opterr = 0;
     c = do_getopt_long (argc, argv, "ab", long_options_required, &option_index);
@@ -183,6 +188,7 @@ test_getopt_long (void)
 
     argv[argc++] = "program";
     argv[argc++] = "--xtrem";
+    argv[argc] = NULL;
     optind = 1;
     opterr = 0;
     c = do_getopt_long (argc, argv, "ab", long_options_required, &option_index);
@@ -197,6 +203,7 @@ test_getopt_long (void)
 
     argv[argc++] = "program";
     argv[argc++] = "--xtreme";
+    argv[argc] = NULL;
     optind = 1;
     opterr = 0;
     c = do_getopt_long (argc, argv, "ab", long_options_required, &option_index);
@@ -210,6 +217,7 @@ test_getopt_long (void)
 
     argv[argc++] = "program";
     argv[argc++] = "--xtremel";
+    argv[argc] = NULL;
     optind = 1;
     opterr = 0;
     c = do_getopt_long (argc, argv, "ab", long_options_required, &option_index);
@@ -223,6 +231,7 @@ test_getopt_long (void)
 
     argv[argc++] = "program";
     argv[argc++] = "--xtremely";
+    argv[argc] = NULL;
     optind = 1;
     opterr = 0;
     c = do_getopt_long (argc, argv, "ab", long_options_required, &option_index);
@@ -246,6 +255,7 @@ test_getopt_long (void)
       argv[argc++] = "-a";
       argv[argc++] = "foo";
       argv[argc++] = "bar";
+      argv[argc] = NULL;
       optind = start;
       getopt_long_loop (argc, argv, "ab", long_options_required,
 			&p_value, &q_value,
@@ -275,6 +285,7 @@ test_getopt_long (void)
       argv[argc++] = "-a";
       argv[argc++] = "foo";
       argv[argc++] = "bar";
+      argv[argc] = NULL;
       optind = start;
       getopt_long_loop (argc, argv, "ab", long_options_required,
 			&p_value, &q_value,
@@ -303,6 +314,7 @@ test_getopt_long (void)
       argv[argc++] = "-ba";
       argv[argc++] = "foo";
       argv[argc++] = "bar";
+      argv[argc] = NULL;
       optind = start;
       getopt_long_loop (argc, argv, "ab", long_options_required,
 			&p_value, &q_value,
@@ -332,6 +344,7 @@ test_getopt_long (void)
       argv[argc++] = "-a";
       argv[argc++] = "foo";
       argv[argc++] = "bar";
+      argv[argc] = NULL;
       optind = start;
       getopt_long_loop (argc, argv, "ab", long_options_required,
 			&p_value, &q_value,
@@ -361,6 +374,7 @@ test_getopt_long (void)
       argv[argc++] = "program";
       argv[argc++] = "-pfoo";
       argv[argc++] = "bar";
+      argv[argc] = NULL;
       optind = start;
       getopt_long_loop (argc, argv, "p:q:", long_options_required,
 			&p_value, &q_value,
@@ -389,6 +403,7 @@ test_getopt_long (void)
       argv[argc++] = "-p";
       argv[argc++] = "foo";
       argv[argc++] = "bar";
+      argv[argc] = NULL;
       optind = start;
       getopt_long_loop (argc, argv, "p:q:", long_options_required,
 			&p_value, &q_value,
@@ -419,6 +434,7 @@ test_getopt_long (void)
       argv[argc++] = "baz";
       argv[argc++] = "-pfoo";
       argv[argc++] = "bar";
+      argv[argc] = NULL;
       optind = start;
       getopt_long_loop (argc, argv, "abp:q:", long_options_required,
 			&p_value, &q_value,
@@ -448,6 +464,7 @@ test_getopt_long (void)
       argv[argc++] = "program";
       argv[argc++] = "-pfoo";
       argv[argc++] = "bar";
+      argv[argc] = NULL;
       optind = start;
       getopt_long_loop (argc, argv, "p::q::", long_options_optional,
 			&p_value, &q_value,
@@ -476,6 +493,7 @@ test_getopt_long (void)
       argv[argc++] = "-p";
       argv[argc++] = "foo";
       argv[argc++] = "bar";
+      argv[argc] = NULL;
       optind = start;
       getopt_long_loop (argc, argv, "p::q::", long_options_optional,
 			&p_value, &q_value,
@@ -504,6 +522,7 @@ test_getopt_long (void)
       argv[argc++] = "-p";
       argv[argc++] = "-a";
       argv[argc++] = "bar";
+      argv[argc] = NULL;
       optind = start;
       getopt_long_loop (argc, argv, "abp::q::", long_options_optional,
 			&p_value, &q_value,
@@ -536,6 +555,7 @@ test_getopt_long (void)
       argv[argc++] = "-x";
       argv[argc++] = "-a";
       argv[argc++] = "bar";
+      argv[argc] = NULL;
       optind = start;
       getopt_long_loop (argc, argv, "abp:q:", long_options_required,
 			&p_value, &q_value,
@@ -569,6 +589,7 @@ test_getopt_long (void)
       argv[argc++] = "duck";
       argv[argc++] = "-a";
       argv[argc++] = "bar";
+      argv[argc] = NULL;
       optind = start;
       getopt_long_loop (argc, argv, "abp:q:", long_options_required,
 			&p_value, &q_value,
@@ -580,6 +601,7 @@ test_getopt_long (void)
       ASSERT (strcmp (argv[4], "donald") == 0);
       ASSERT (strcmp (argv[5], "duck") == 0);
       ASSERT (strcmp (argv[6], "bar") == 0);
+      ASSERT (argv[7] == NULL);
       ASSERT (a_seen == 1);
       ASSERT (b_seen == 0);
       ASSERT (p_value != NULL && strcmp (p_value, "billy") == 0);
@@ -614,6 +636,7 @@ test_getopt_long (void)
       argv[argc++] = "-q";
       argv[argc++] = "johnny";
       argv[argc++] = "bar";
+      argv[argc] = NULL;
       optind = start;
       getopt_long_loop (argc, argv, "abp:q:", long_options_required,
 			&p_value, &q_value,
@@ -630,6 +653,7 @@ test_getopt_long (void)
       ASSERT (strcmp (argv[9], "-q") == 0);
       ASSERT (strcmp (argv[10], "johnny") == 0);
       ASSERT (strcmp (argv[11], "bar") == 0);
+      ASSERT (argv[12] == NULL);
       ASSERT (a_seen == 1);
       ASSERT (b_seen == 0);
       ASSERT (p_value != NULL && strcmp (p_value, "billy") == 0);
@@ -659,6 +683,7 @@ test_getopt_long (void)
       argv[argc++] = "duck";
       argv[argc++] = "-a";
       argv[argc++] = "bar";
+      argv[argc] = NULL;
       optind = start;
       getopt_long_loop (argc, argv, "-abp:q:", long_options_required,
 			&p_value, &q_value,
@@ -670,6 +695,7 @@ test_getopt_long (void)
       ASSERT (strcmp (argv[4], "duck") == 0);
       ASSERT (strcmp (argv[5], "-a") == 0);
       ASSERT (strcmp (argv[6], "bar") == 0);
+      ASSERT (argv[7] == NULL);
       ASSERT (a_seen == 1);
       ASSERT (b_seen == 0);
       ASSERT (p_value != NULL && strcmp (p_value, "billy") == 0);
@@ -707,6 +733,7 @@ test_getopt_long (void)
       argv[argc++] = "-q";
       argv[argc++] = "johnny";
       argv[argc++] = "bar";
+      argv[argc] = NULL;
       optind = start;
       getopt_long_loop (argc, argv, "-abp:q:", long_options_required,
 			&p_value, &q_value,
@@ -723,6 +750,7 @@ test_getopt_long (void)
       ASSERT (strcmp (argv[9], "-q") == 0);
       ASSERT (strcmp (argv[10], "johnny") == 0);
       ASSERT (strcmp (argv[11], "bar") == 0);
+      ASSERT (argv[12] == NULL);
       ASSERT (a_seen == 1);
       ASSERT (b_seen == 0);
       ASSERT (p_value != NULL && strcmp (p_value, "billy") == 0);
@@ -772,6 +800,7 @@ test_getopt_long (void)
       argv[argc++] = "duck";
       argv[argc++] = "-a";
       argv[argc++] = "bar";
+      argv[argc] = NULL;
       optind = start;
       getopt_long_loop (argc, argv, "abp:q:-", long_options_required,
 			&p_value, &q_value,
@@ -783,6 +812,7 @@ test_getopt_long (void)
       ASSERT (strcmp (argv[4], "donald") == 0);
       ASSERT (strcmp (argv[5], "duck") == 0);
       ASSERT (strcmp (argv[6], "bar") == 0);
+      ASSERT (argv[7] == NULL);
       ASSERT (a_seen == 1);
       ASSERT (b_seen == 0);
       ASSERT (p_value != NULL && strcmp (p_value, "billy") == 0);
@@ -813,6 +843,7 @@ test_getopt_long (void)
       argv[argc++] = "duck";
       argv[argc++] = "-a";
       argv[argc++] = "bar";
+      argv[argc] = NULL;
       optind = start;
       getopt_long_loop (argc, argv, "+abp:q:", long_options_required,
 			&p_value, &q_value,
@@ -824,6 +855,7 @@ test_getopt_long (void)
       ASSERT (strcmp (argv[4], "duck") == 0);
       ASSERT (strcmp (argv[5], "-a") == 0);
       ASSERT (strcmp (argv[6], "bar") == 0);
+      ASSERT (argv[7] == NULL);
       ASSERT (a_seen == 0);
       ASSERT (b_seen == 0);
       ASSERT (p_value == NULL);
@@ -846,6 +878,7 @@ test_getopt_long (void)
 
       argv[argc++] = "program";
       argv[argc++] = "-+";
+      argv[argc] = NULL;
       optind = start;
       getopt_long_loop (argc, argv, "+abp:q:", long_options_required,
 			&p_value, &q_value,
@@ -884,6 +917,7 @@ test_getopt_long (void)
       argv[argc++] = "-q";
       argv[argc++] = "johnny";
       argv[argc++] = "bar";
+      argv[argc] = NULL;
       optind = start;
       getopt_long_loop (argc, argv, "+abp:q:", long_options_required,
 			&p_value, &q_value,
@@ -900,6 +934,7 @@ test_getopt_long (void)
       ASSERT (strcmp (argv[9], "-q") == 0);
       ASSERT (strcmp (argv[10], "johnny") == 0);
       ASSERT (strcmp (argv[11], "bar") == 0);
+      ASSERT (argv[12] == NULL);
       ASSERT (a_seen == 0);
       ASSERT (b_seen == 0);
       ASSERT (p_value == NULL);
@@ -929,6 +964,7 @@ test_getopt_long (void)
       argv[argc++] = "duck";
       argv[argc++] = "-a";
       argv[argc++] = "bar";
+      argv[argc] = NULL;
       optind = start;
       getopt_long_loop (argc, argv, "abp:q:+", long_options_required,
 			&p_value, &q_value,
@@ -940,6 +976,7 @@ test_getopt_long (void)
       ASSERT (strcmp (argv[4], "donald") == 0);
       ASSERT (strcmp (argv[5], "duck") == 0);
       ASSERT (strcmp (argv[6], "bar") == 0);
+      ASSERT (argv[7] == NULL);
       ASSERT (a_seen == 1);
       ASSERT (b_seen == 0);
       ASSERT (p_value != NULL && strcmp (p_value, "billy") == 0);
@@ -957,16 +994,67 @@ test_getopt_long (void)
 static void
 test_getopt_long_posix (void)
 {
-  int c = 3;
-  const char *v[4] = {"test", "-r", "foo", NULL};
-  struct option l[] = {{NULL, 0, NULL, 0}};
   int start;
-  int result;
+
+  /* Check that POSIXLY_CORRECT doesn't change optional arguments.  */
   for (start = OPTIND_MIN; start <= 1; start++)
     {
+      const char *p_value = NULL;
+      const char *q_value = NULL;
+      int non_options_count = 0;
+      const char *non_options[10];
+      int unrecognized = 0;
+      int argc = 0;
+      const char *argv[10];
+      a_seen = 0;
+      b_seen = 0;
+
+      argv[argc++] = "program";
+      argv[argc++] = "-p";
+      argv[argc++] = "billy";
+      argv[argc] = NULL;
       optind = start;
-      result = do_getopt_long (c, v, "r::", l, NULL);
+      getopt_long_loop (argc, argv, "p::", long_options_required,
+			&p_value, &q_value,
+			&non_options_count, non_options, &unrecognized);
+      ASSERT (a_seen == 0);
+      ASSERT (b_seen == 0);
+      ASSERT (p_value == NULL);
+      ASSERT (q_value == NULL);
+      ASSERT (non_options_count == 0);
+      ASSERT (unrecognized == 0);
+      ASSERT (optind == 2);
     }
-  ASSERT (result == 'r');
-  ASSERT (optarg == NULL);
+
+  /* Check that leading - still sees options after non-options.  */
+  for (start = OPTIND_MIN; start <= 1; start++)
+    {
+      const char *p_value = NULL;
+      const char *q_value = NULL;
+      int non_options_count = 0;
+      const char *non_options[10];
+      int unrecognized = 0;
+      int argc = 0;
+      const char *argv[10];
+      a_seen = 0;
+      b_seen = 0;
+
+      argv[argc++] = "program";
+      argv[argc++] = "-a";
+      argv[argc++] = "billy";
+      argv[argc++] = "-b";
+      argv[argc] = NULL;
+      optind = start;
+      getopt_long_loop (argc, argv, "-ab", long_options_required,
+			&p_value, &q_value,
+			&non_options_count, non_options, &unrecognized);
+      ASSERT (a_seen == 1);
+      ASSERT (b_seen == 1);
+      ASSERT (p_value == NULL);
+      ASSERT (q_value == NULL);
+      ASSERT (non_options_count == 1);
+      ASSERT (strcmp (non_options[0], "billy") == 0);
+      ASSERT (unrecognized == 0);
+      ASSERT (optind == 4);
+    }
 }

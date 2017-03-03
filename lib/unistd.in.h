@@ -667,6 +667,26 @@ extern int pipe2 (int fd[2], int flags);
 #endif
 
 
+#if @GNULIB_PREAD@
+# if @REPLACE_PREAD@
+#  define pread rpl_pread
+# endif
+/* Read at most BUFSIZE bytes from FD into BUF, starting at OFFSET.
+   Return the number of bytes placed into BUF if successful, otherwise
+   set errno and return -1.  0 indicates EOF.  See the POSIX:2001
+   specification <http://www.opengroup.org/susv3xsh/pread.html>.  */
+# if !@HAVE_PREAD@ || @REPLACE_PREAD@
+  extern ssize_t pread (int fd, void *buf, size_t bufsize, off_t offset);
+# endif
+#elif defined GNULIB_POSIXCHECK
+# undef pread
+# define pread(f,b,s,o)			       \
+    (GL_LINK_WARNING ("pread is unportable - " \
+                      "use gnulib module pread for portability"), \
+     pread (f, b, s, o))
+#endif
+
+
 #if @GNULIB_READLINK@
 # if @REPLACE_READLINK@
 #  define readlink rpl_readlink
@@ -717,11 +737,15 @@ extern int rmdir (char const *name);
 
 
 #if @GNULIB_SLEEP@
+# if @REPLACE_SLEEP@
+#  undef sleep
+#  define sleep rpl_sleep
+# endif
 /* Pause the execution of the current thread for N seconds.
    Returns the number of seconds left to sleep.
    See the POSIX:2001 specification
    <http://www.opengroup.org/susv3xsh/sleep.html>.  */
-# if !@HAVE_SLEEP@
+# if !@HAVE_SLEEP@ || @REPLACE_SLEEP@
 extern unsigned int sleep (unsigned int n);
 # endif
 #elif defined GNULIB_POSIXCHECK

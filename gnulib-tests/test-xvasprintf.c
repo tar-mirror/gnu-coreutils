@@ -68,10 +68,14 @@ test_xvasprintf (void)
       free (result);
     }
 
-  result = my_xasprintf ("");
-  ASSERT (result != NULL);
-  ASSERT (strcmp (result, "") == 0);
-  free (result);
+  {
+    /* Silence gcc warning about zero-length format string.  */
+    char *empty = "";
+    result = my_xasprintf (empty);
+    ASSERT (result != NULL);
+    ASSERT (strcmp (result, "") == 0);
+    free (result);
+  }
 
   result = my_xasprintf ("%s", "foo");
   ASSERT (result != NULL);
@@ -103,10 +107,14 @@ test_xasprintf ()
       free (result);
     }
 
-  result = xasprintf ("");
-  ASSERT (result != NULL);
-  ASSERT (strcmp (result, "") == 0);
-  free (result);
+  {
+    /* Silence gcc warning about zero-length format string.  */
+    char *empty = "";
+    result = xasprintf (empty);
+    ASSERT (result != NULL);
+    ASSERT (strcmp (result, "") == 0);
+    free (result);
+  }
 
   result = xasprintf ("%s", "foo");
   ASSERT (result != NULL);

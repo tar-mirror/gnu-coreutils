@@ -231,6 +231,14 @@ EXTRA_DIST += test-chown.h test-chown.c
 
 ## end   gnulib module chown-tests
 
+## begin gnulib module cloexec-tests
+
+TESTS += test-cloexec
+check_PROGRAMS += test-cloexec
+EXTRA_DIST += test-cloexec.c
+
+## end   gnulib module cloexec-tests
+
 ## begin gnulib module closein-tests
 
 TESTS += test-closein.sh
@@ -749,13 +757,25 @@ EXTRA_DIST += test-lchown.h test-lchown.c
 
 TESTS += test-link
 check_PROGRAMS += test-link
+test_link_LDADD = $(LDADD) @LIBINTL@
 EXTRA_DIST += test-link.h test-link.c
 
 ## end   gnulib module link-tests
 
 ## begin gnulib module link-warning
 
-LINK_WARNING_H=$(top_srcdir)/build-aux/link-warning.h
+BUILT_SOURCES += link-warning.h
+# The link-warning.h that gets inserted into generated .h files is the same as
+# build-aux/link-warning.h, except that it has the copyright header cut off.
+link-warning.h: $(top_srcdir)/build-aux/link-warning.h
+	$(AM_V_GEN)rm -f $@-t $@ && \
+	sed -n -e '/GL_LINK_WARNING/,$$p' \
+	  < $(top_srcdir)/build-aux/link-warning.h \
+	  > $@-t && \
+	mv $@-t $@
+MOSTLYCLEANFILES += link-warning.h link-warning.h-t
+
+LINK_WARNING_H=link-warning.h
 
 EXTRA_DIST += $(top_srcdir)/build-aux/link-warning.h
 
@@ -922,6 +942,15 @@ check_PROGRAMS += test-mkdir
 EXTRA_DIST += test-mkdir.h test-mkdir.c
 
 ## end   gnulib module mkdir-tests
+
+## begin gnulib module nanosleep-tests
+
+TESTS += test-nanosleep
+check_PROGRAMS += test-nanosleep
+test_nanosleep_LDADD = $(LDADD) $(LIB_NANOSLEEP)
+EXTRA_DIST += test-nanosleep.c
+
+## end   gnulib module nanosleep-tests
 
 ## begin gnulib module netdb-tests
 
@@ -1155,7 +1184,6 @@ EXTRA_libtests_a_SOURCES += sleep.c
 
 TESTS += test-sleep
 check_PROGRAMS += test-sleep
-
 EXTRA_DIST += test-sleep.c
 
 ## end   gnulib module sleep-tests
@@ -1324,7 +1352,7 @@ BUILT_SOURCES += $(SYS_IOCTL_H)
 
 # We need the following in order to create <sys/ioctl.h> when the system
 # does not have a complete one.
-sys/ioctl.h: sys_ioctl.in.h
+sys/ioctl.h: sys_ioctl.in.h $(LINK_WARNING_H)
 	$(AM_V_at)$(MKDIR_P) sys
 	$(AM_V_GEN)rm -f $@-t $@ && \
 	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
@@ -1432,6 +1460,14 @@ test_uname_LDADD = $(LDADD) @GETHOSTNAME_LIB@
 EXTRA_DIST += test-uname.c
 
 ## end   gnulib module uname-tests
+
+## begin gnulib module unistd-safer-tests
+
+TESTS += test-dup-safer
+check_PROGRAMS += test-dup-safer
+EXTRA_DIST += test-dup-safer.c
+
+## end   gnulib module unistd-safer-tests
 
 ## begin gnulib module unistd-tests
 
@@ -1633,7 +1669,8 @@ EXTRA_DIST += test-wcwidth.c
 TESTS += test-xalloc-die.sh
 TESTS_ENVIRONMENT += EXEEXT='@EXEEXT@'
 check_PROGRAMS += test-xalloc-die
-EXTRA_DIST += test-xalloc-die.c test-xalloc-die.sh
+test_xalloc_die_LDADD = $(LDADD) @LIBINTL@
+EXTRA_DIST += test-xalloc-die.c test-xalloc-die.sh init.sh
 
 ## end   gnulib module xalloc-die-tests
 
