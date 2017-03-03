@@ -293,7 +293,7 @@ select_plural (uintmax_t n)
   return (n <= ULONG_MAX ? n : n % PLURAL_REDUCER + PLURAL_REDUCER);
 }
 
-#define STREQ(a, b) (strcmp ((a), (b)) == 0)
+#define STREQ(a, b) (strcmp (a, b) == 0)
 
 #if !HAVE_DECL_FREE
 void free ();
@@ -506,7 +506,7 @@ enum
       const char *s_ = (S);			\
       size_t len_ = strlen (s_) + 1;		\
       char *tmp_dest_ = alloca (len_);		\
-      DEST = memcpy (tmp_dest_, (s_), len_);	\
+      DEST = memcpy (tmp_dest_, s_, len_);	\
     }						\
   while (0)
 #endif
@@ -515,10 +515,19 @@ enum
 # define EOVERFLOW EINVAL
 #endif
 
-#if ! HAVE_FSEEKO && ! defined fseeko
-# define fseeko(s, o, w) ((o) == (long int) (o)		\
-			  ? fseek (s, o, w)		\
-			  : (errno = EOVERFLOW, -1))
+#if ! HAVE_FSEEKO
+# if ! defined fseeko
+#  define fseeko(s, o, w) ((o) == (long int) (o)	\
+			   ? fseek (s, o, w)		\
+			   : (errno = EOVERFLOW, -1))
+# endif
+# if ! defined ftello
+static inline off_t ftello (FILE *stream)
+{
+  verify (sizeof (long int) <= sizeof (off_t));
+  return ftell (stream);
+}
+# endif
 #endif
 
 #if ! HAVE_SYNC

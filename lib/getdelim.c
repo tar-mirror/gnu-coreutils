@@ -1,7 +1,5 @@
-/* -*- buffer-read-only: t -*- vi: set ro: */
-/* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 /* getdelim.c --- Implementation of replacement getdelim function.
-   Copyright (C) 1994, 1996, 1997, 1998, 2001, 2003, 2005 Free
+   Copyright (C) 1994, 1996, 1997, 1998, 2001, 2003, 2005, 2006 Free
    Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or
@@ -21,9 +19,7 @@
 
 /* Ported from glibc by Simon Josefsson. */
 
-#if 1
-# include <config.h>
-#endif
+#include <config.h>
 
 #include "getdelim.h"
 

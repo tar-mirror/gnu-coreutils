@@ -1,3 +1,5 @@
+/* -*- buffer-read-only: t -*- vi: set ro: */
+/* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 /* root-dev-ino.c -- get the device and inode numbers for `/'.
    Copyright (C) 2003, 2005, 2006 Free Software Foundation, Inc.
 

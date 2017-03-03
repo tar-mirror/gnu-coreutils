@@ -102,7 +102,8 @@ sc_cast_of_argument_to_free:
 	    exit 1; } || :
 
 sc_cast_of_x_alloc_return_value:
-	@grep -nE --exclude=$(srcdir)/lib/regex.c			\
+	@grep -nE --exclude=$(srcdir)/lib/xalloc.h			\
+		--exclude=$(srcdir)/lib/regex.c				\
 	    '\*\) *x(m|c|re)alloc\>'					\
 	    $(srcdir)/{lib,src}/*.[chy] &&				\
 	  { echo '$(ME): don'\''t cast x*alloc return value' 1>&2;	\
@@ -330,6 +331,8 @@ patch-check:
 	(cd src-c89; patch -V never --fuzz=0) < src/c99-to-c89.diff \
 	  > $@.1 2>&1
 	grep -v '^patching file ' $@.1 > $@.2 || :
+	if test "$${REGEN_PATCH+set}" = set; then \
+	  diff -upr src src-c89 > new-diff || : ; fi
 	fail=0; test -s $@.2 && fail=1 || : ; \
 	rm -rf src-c89 $@.1 $@.2; \
 	test $$fail = 0
@@ -591,4 +594,6 @@ alpha beta major: news-date-check changelog-check $(local-check)
 	chmod a-w $(rel-files)
 	$(MAKE) -s emit_upload_commands RELEASE_TYPE=$@
 	echo $(VERSION) > $(prev_version_file)
-	$(VC) commit -m. $(prev_version_file)
+	$(VC) commit -m \
+	  '$(prev_version_file): Record previous version: $(VERSION).' \
+	  $(prev_version_file)

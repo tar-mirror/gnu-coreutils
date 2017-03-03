@@ -81,11 +81,12 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/absolute-header.m4 \
 	$(top_srcdir)/m4/fcntl-safer.m4 $(top_srcdir)/m4/fcntl_h.m4 \
 	$(top_srcdir)/m4/fd-reopen.m4 $(top_srcdir)/m4/file-type.m4 \
 	$(top_srcdir)/m4/fileblocks.m4 $(top_srcdir)/m4/filemode.m4 \
-	$(top_srcdir)/m4/filenamecat.m4 $(top_srcdir)/m4/fnmatch.m4 \
-	$(top_srcdir)/m4/fpending.m4 $(top_srcdir)/m4/fprintftime.m4 \
-	$(top_srcdir)/m4/free.m4 $(top_srcdir)/m4/fstypename.m4 \
-	$(top_srcdir)/m4/fsusage.m4 $(top_srcdir)/m4/ftruncate.m4 \
-	$(top_srcdir)/m4/fts.m4 $(top_srcdir)/m4/getaddrinfo.m4 \
+	$(top_srcdir)/m4/filenamecat.m4 $(top_srcdir)/m4/flexmember.m4 \
+	$(top_srcdir)/m4/fnmatch.m4 $(top_srcdir)/m4/fpending.m4 \
+	$(top_srcdir)/m4/fprintftime.m4 $(top_srcdir)/m4/free.m4 \
+	$(top_srcdir)/m4/fstypename.m4 $(top_srcdir)/m4/fsusage.m4 \
+	$(top_srcdir)/m4/ftruncate.m4 $(top_srcdir)/m4/fts.m4 \
+	$(top_srcdir)/m4/getaddrinfo.m4 \
 	$(top_srcdir)/m4/getcwd-abort-bug.m4 \
 	$(top_srcdir)/m4/getcwd-path-max.m4 $(top_srcdir)/m4/getcwd.m4 \
 	$(top_srcdir)/m4/getdate.m4 $(top_srcdir)/m4/getdelim.m4 \
@@ -101,8 +102,9 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/absolute-header.m4 \
 	$(top_srcdir)/m4/group-member.m4 \
 	$(top_srcdir)/m4/hard-locale.m4 $(top_srcdir)/m4/hash.m4 \
 	$(top_srcdir)/m4/host-os.m4 $(top_srcdir)/m4/human.m4 \
-	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/idcache.m4 \
-	$(top_srcdir)/m4/inet_ntop.m4 $(top_srcdir)/m4/intmax_t.m4 \
+	$(top_srcdir)/m4/i-ring.m4 $(top_srcdir)/m4/iconv.m4 \
+	$(top_srcdir)/m4/idcache.m4 $(top_srcdir)/m4/inet_ntop.m4 \
+	$(top_srcdir)/m4/inline.m4 $(top_srcdir)/m4/intmax_t.m4 \
 	$(top_srcdir)/m4/inttostr.m4 $(top_srcdir)/m4/inttypes-pri.m4 \
 	$(top_srcdir)/m4/inttypes.m4 $(top_srcdir)/m4/inttypes_h.m4 \
 	$(top_srcdir)/m4/isapipe.m4 $(top_srcdir)/m4/jm-macros.m4 \
@@ -147,10 +149,9 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/absolute-header.m4 \
 	$(top_srcdir)/m4/savewd.m4 $(top_srcdir)/m4/setenv.m4 \
 	$(top_srcdir)/m4/settime.m4 $(top_srcdir)/m4/sha1.m4 \
 	$(top_srcdir)/m4/sha256.m4 $(top_srcdir)/m4/sha512.m4 \
-	$(top_srcdir)/m4/sig2str.m4 $(top_srcdir)/m4/signed.m4 \
-	$(top_srcdir)/m4/snprintf.m4 $(top_srcdir)/m4/socklen.m4 \
-	$(top_srcdir)/m4/sockpfaf.m4 $(top_srcdir)/m4/ssize_t.m4 \
-	$(top_srcdir)/m4/st_dm_mode.m4 $(top_srcdir)/m4/stat-macros.m4 \
+	$(top_srcdir)/m4/sig2str.m4 $(top_srcdir)/m4/snprintf.m4 \
+	$(top_srcdir)/m4/socklen.m4 $(top_srcdir)/m4/sockpfaf.m4 \
+	$(top_srcdir)/m4/ssize_t.m4 $(top_srcdir)/m4/st_dm_mode.m4 \
 	$(top_srcdir)/m4/stat-prog.m4 $(top_srcdir)/m4/stat-time.m4 \
 	$(top_srcdir)/m4/stdarg.m4 $(top_srcdir)/m4/stdbool.m4 \
 	$(top_srcdir)/m4/stdint.m4 $(top_srcdir)/m4/stdint_h.m4 \
@@ -165,23 +166,24 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/absolute-header.m4 \
 	$(top_srcdir)/m4/strtoul.m4 $(top_srcdir)/m4/strtoull.m4 \
 	$(top_srcdir)/m4/strtoumax.m4 $(top_srcdir)/m4/strverscmp.m4 \
 	$(top_srcdir)/m4/sys_socket_h.m4 \
-	$(top_srcdir)/m4/sys_stat_h.m4 $(top_srcdir)/m4/time_r.m4 \
-	$(top_srcdir)/m4/timespec.m4 $(top_srcdir)/m4/tm_gmtoff.m4 \
-	$(top_srcdir)/m4/tzset.m4 $(top_srcdir)/m4/unicodeio.m4 \
-	$(top_srcdir)/m4/unistd-safer.m4 $(top_srcdir)/m4/unistd_h.m4 \
-	$(top_srcdir)/m4/unlink-busy.m4 $(top_srcdir)/m4/unlinkdir.m4 \
-	$(top_srcdir)/m4/unlocked-io.m4 $(top_srcdir)/m4/uptime.m4 \
-	$(top_srcdir)/m4/userspec.m4 $(top_srcdir)/m4/utimbuf.m4 \
-	$(top_srcdir)/m4/utime.m4 $(top_srcdir)/m4/utimecmp.m4 \
-	$(top_srcdir)/m4/utimens.m4 $(top_srcdir)/m4/utimes-null.m4 \
-	$(top_srcdir)/m4/utimes.m4 $(top_srcdir)/m4/vasnprintf.m4 \
-	$(top_srcdir)/m4/vasprintf.m4 $(top_srcdir)/m4/wchar_t.m4 \
-	$(top_srcdir)/m4/wcwidth.m4 $(top_srcdir)/m4/wint_t.m4 \
-	$(top_srcdir)/m4/xalloc.m4 $(top_srcdir)/m4/xfts.m4 \
-	$(top_srcdir)/m4/xgetcwd.m4 $(top_srcdir)/m4/xnanosleep.m4 \
-	$(top_srcdir)/m4/xreadlink.m4 $(top_srcdir)/m4/xstrndup.m4 \
-	$(top_srcdir)/m4/xstrtod.m4 $(top_srcdir)/m4/xstrtol.m4 \
-	$(top_srcdir)/m4/yesno.m4 $(top_srcdir)/configure.ac
+	$(top_srcdir)/m4/sys_stat_h.m4 $(top_srcdir)/m4/tempname.m4 \
+	$(top_srcdir)/m4/time_r.m4 $(top_srcdir)/m4/timespec.m4 \
+	$(top_srcdir)/m4/tm_gmtoff.m4 $(top_srcdir)/m4/tzset.m4 \
+	$(top_srcdir)/m4/unicodeio.m4 $(top_srcdir)/m4/unistd-safer.m4 \
+	$(top_srcdir)/m4/unistd_h.m4 $(top_srcdir)/m4/unlink-busy.m4 \
+	$(top_srcdir)/m4/unlinkdir.m4 $(top_srcdir)/m4/unlocked-io.m4 \
+	$(top_srcdir)/m4/uptime.m4 $(top_srcdir)/m4/userspec.m4 \
+	$(top_srcdir)/m4/utimbuf.m4 $(top_srcdir)/m4/utime.m4 \
+	$(top_srcdir)/m4/utimecmp.m4 $(top_srcdir)/m4/utimens.m4 \
+	$(top_srcdir)/m4/utimes-null.m4 $(top_srcdir)/m4/utimes.m4 \
+	$(top_srcdir)/m4/vasnprintf.m4 $(top_srcdir)/m4/vasprintf.m4 \
+	$(top_srcdir)/m4/wchar_t.m4 $(top_srcdir)/m4/wcwidth.m4 \
+	$(top_srcdir)/m4/wint_t.m4 $(top_srcdir)/m4/xalloc.m4 \
+	$(top_srcdir)/m4/xfts.m4 $(top_srcdir)/m4/xgetcwd.m4 \
+	$(top_srcdir)/m4/xnanosleep.m4 $(top_srcdir)/m4/xreadlink.m4 \
+	$(top_srcdir)/m4/xstrndup.m4 $(top_srcdir)/m4/xstrtod.m4 \
+	$(top_srcdir)/m4/xstrtol.m4 $(top_srcdir)/m4/yesno.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -377,21 +379,24 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 dist_man_MANS = \
-  base64.1 basename.1 cat.1 chgrp.1 chmod.1 chown.1 chroot.1 cksum.1 comm.1 \
+  base64.1 basename.1 cat.1 chgrp.1 chmod.1 chown.1 cksum.1 comm.1 \
   cp.1 csplit.1 cut.1 date.1 dd.1 df.1 dir.1 dircolors.1 dirname.1 du.1 \
   echo.1 env.1 expand.1 expr.1 factor.1 false.1 fmt.1 fold.1 groups.1 \
-  head.1 hostid.1 hostname.1 id.1 install.1 join.1 kill.1 \
+  head.1 hostname.1 id.1 install.1 join.1 kill.1 \
   link.1 ln.1 logname.1 \
-  ls.1 md5sum.1 mkdir.1 mkfifo.1 mknod.1 mv.1 nice.1 nl.1 nohup.1 od.1 \
-  paste.1 pathchk.1 pinky.1 pr.1 printenv.1 printf.1 ptx.1 pwd.1 readlink.1 \
+  ls.1 md5sum.1 mkdir.1 mkfifo.1 mknod.1 mv.1 nl.1 nohup.1 od.1 \
+  paste.1 pathchk.1 pr.1 printenv.1 printf.1 ptx.1 pwd.1 readlink.1 \
   rm.1 rmdir.1 seq.1 sha1sum.1 sha224sum.1 sha256sum.1 sha384sum.1 sha512sum.1 \
-  shred.1 shuf.1 sleep.1 sort.1 split.1 stat.1 stty.1 \
+  shred.1 shuf.1 sleep.1 sort.1 split.1 stat.1 \
   su.1 sum.1 sync.1 tac.1 tail.1 tee.1 test.1 touch.1 tr.1 true.1 tsort.1 \
-  tty.1 uname.1 unexpand.1 uniq.1 unlink.1 uptime.1 users.1 vdir.1 wc.1 \
-  who.1 whoami.1 yes.1
+  tty.1 unexpand.1 uniq.1 unlink.1 vdir.1 wc.1 \
+  whoami.1 yes.1 $(MAN)
 
-man_aux = $(dist_man_MANS:.1=.x)
-EXTRA_DIST = $(man_aux) help2man
+optional_mans = \
+  chroot.1 hostid.1 nice.1 pinky.1 stty.1 uname.1 uptime.1 users.1 who.1
+
+man_aux = $(dist_man_MANS:.1=.x) $(optional_mans:.1=.x)
+EXTRA_DIST = $(man_aux) help2man $(optional_mans)
 MAINTAINERCLEANFILES = $(dist_man_MANS)
 
 # Depend on configure.ac to get version number changes.

@@ -11,8 +11,8 @@
 # even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 # PARTICULAR PURPOSE.
 
-m4_if(m4_PACKAGE_VERSION, [2.60b],,
-[m4_fatal([this file was generated for autoconf 2.60b.
+m4_if(m4_PACKAGE_VERSION, [2.61],,
+[m4_fatal([this file was generated for autoconf 2.61.
 You have another version of autoconf.  If you want to use that,
 you should regenerate the build system entirely.], [63])])
 
@@ -969,6 +969,7 @@ m4_include([m4/file-type.m4])
 m4_include([m4/fileblocks.m4])
 m4_include([m4/filemode.m4])
 m4_include([m4/filenamecat.m4])
+m4_include([m4/flexmember.m4])
 m4_include([m4/fnmatch.m4])
 m4_include([m4/fpending.m4])
 m4_include([m4/fprintftime.m4])
@@ -1004,9 +1005,11 @@ m4_include([m4/hard-locale.m4])
 m4_include([m4/hash.m4])
 m4_include([m4/host-os.m4])
 m4_include([m4/human.m4])
+m4_include([m4/i-ring.m4])
 m4_include([m4/iconv.m4])
 m4_include([m4/idcache.m4])
 m4_include([m4/inet_ntop.m4])
+m4_include([m4/inline.m4])
 m4_include([m4/intmax_t.m4])
 m4_include([m4/inttostr.m4])
 m4_include([m4/inttypes-pri.m4])
@@ -1093,13 +1096,11 @@ m4_include([m4/sha1.m4])
 m4_include([m4/sha256.m4])
 m4_include([m4/sha512.m4])
 m4_include([m4/sig2str.m4])
-m4_include([m4/signed.m4])
 m4_include([m4/snprintf.m4])
 m4_include([m4/socklen.m4])
 m4_include([m4/sockpfaf.m4])
 m4_include([m4/ssize_t.m4])
 m4_include([m4/st_dm_mode.m4])
-m4_include([m4/stat-macros.m4])
 m4_include([m4/stat-prog.m4])
 m4_include([m4/stat-time.m4])
 m4_include([m4/stdarg.m4])
@@ -1127,6 +1128,7 @@ m4_include([m4/strtoumax.m4])
 m4_include([m4/strverscmp.m4])
 m4_include([m4/sys_socket_h.m4])
 m4_include([m4/sys_stat_h.m4])
+m4_include([m4/tempname.m4])
 m4_include([m4/time_r.m4])
 m4_include([m4/timespec.m4])
 m4_include([m4/tm_gmtoff.m4])

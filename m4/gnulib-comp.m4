@@ -38,6 +38,7 @@ AC_DEFUN([gl_INIT],
 [
   m4_pushdef([AC_LIBOBJ], m4_defn([gl_LIBOBJ]))
   m4_pushdef([AC_REPLACE_FUNCS], m4_defn([gl_REPLACE_FUNCS]))
+  m4_pushdef([AC_LIBSOURCES], m4_defn([gl_LIBSOURCES]))
   AM_CONDITIONAL([GL_COND_LIBTOOL], [false])
   gl_cond_libtool=false
   gl_libdeps=
@@ -81,6 +82,7 @@ AC_DEFUN([gl_INIT],
   gl_FILEBLOCKS
   gl_FILEMODE
   gl_FILE_NAME_CONCAT
+  AC_C_FLEXIBLE_ARRAY_MEMBER
   # No macro. You should also use one of fnmatch-posix or fnmatch-gnu.
   gl_FUNC_FNMATCH_GNU
   gl_FOPEN_SAFER
@@ -114,9 +116,11 @@ AC_DEFUN([gl_INIT],
   gl_HASH
   gl_HOST_OS
   gl_HUMAN
+  gl_I_RING
   AM_ICONV
   gl_IDCACHE
   gl_INET_NTOP
+  gl_INLINE
   gl_INTTOSTR
   gl_INTTYPES_H
   gl_ISAPIPE
@@ -171,6 +175,7 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_RENAME_TRAILING_DEST_SLASH
   gl_FUNC_RMDIR
   gl_FUNC_RMDIR_NOTEMPTY
+  gl_ROOT_DEV_INO
   gl_FUNC_RPMATCH
   gl_SAFE_READ
   gl_SAFE_WRITE
@@ -185,7 +190,6 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_SNPRINTF
   gl_TYPE_SOCKLEN_T
   gt_TYPE_SSIZE_T
-  gl_STAT_MACROS
   gl_STAT_TIME
   gl_STDARG_H
   AM_STDBOOL_H
@@ -209,6 +213,7 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_STRVERSCMP
   gl_HEADER_SYS_SOCKET
   gl_HEADER_SYS_STAT_H
+  gl_FUNC_GEN_TEMPNAME
   gl_TIME_R
   gl_TIMESPEC
   gl_FUNC_TZSET_CLOBBER
@@ -242,6 +247,7 @@ AC_DEFUN([gl_INIT],
   AC_SUBST([LIBCOREUTILS_LIBDEPS])
   LIBCOREUTILS_LTLIBDEPS="$gl_ltlibdeps"
   AC_SUBST([LIBCOREUTILS_LTLIBDEPS])
+  m4_popdef([AC_LIBSOURCES])
   m4_popdef([AC_REPLACE_FUNCS])
   m4_popdef([AC_LIBOBJ])
   AC_CONFIG_COMMANDS_PRE([
@@ -269,6 +275,11 @@ AC_DEFUN([gl_LIBOBJ],
 # into gl_LIBOBJS instead of into LIBOBJS.
 AC_DEFUN([gl_REPLACE_FUNCS],
   [AC_CHECK_FUNCS([$1], , [gl_LIBOBJ($ac_func)])])
+
+# Like AC_LIBSOURCES, except that it does nothing.
+# We rely on EXTRA_lib..._SOURCES instead.
+AC_DEFUN([gl_LIBSOURCES],
+  [])
 
 # This macro records the list of files which have been installed by
 # gnulib-tool and may be removed by future gnulib-tool invocations.
@@ -408,6 +419,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/hash.h
   lib/human.c
   lib/human.h
+  lib/i-ring.c
+  lib/i-ring.h
   lib/idcache.c
   lib/imaxtostr.c
   lib/inet_ntop.c
@@ -511,6 +524,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/rename-dest-slash.c
   lib/rename.c
   lib/rmdir.c
+  lib/root-dev-ino.c
+  lib/root-dev-ino.h
   lib/rpmatch.c
   lib/safe-read.c
   lib/safe-read.h
@@ -573,9 +588,11 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/strverscmp.c
   lib/strverscmp.h
   lib/tempname.c
+  lib/tempname.h
   lib/time_r.c
   lib/time_r.h
   lib/timespec.h
+  lib/uinttostr.c
   lib/umaxtostr.c
   lib/unicodeio.c
   lib/unicodeio.h
@@ -671,6 +688,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/fileblocks.m4
   m4/filemode.m4
   m4/filenamecat.m4
+  m4/flexmember.m4
   m4/fnmatch.m4
   m4/fpending.m4
   m4/fprintftime.m4
@@ -706,14 +724,17 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/hash.m4
   m4/host-os.m4
   m4/human.m4
+  m4/i-ring.m4
   m4/iconv.m4
   m4/idcache.m4
   m4/inet_ntop.m4
+  m4/inline.m4
   m4/intdiv0.m4
+  m4/intl.m4
+  m4/intldir.m4
   m4/intmax.m4
   m4/intmax_t.m4
   m4/inttostr.m4
-  m4/inttypes-h.m4
   m4/inttypes-pri.m4
   m4/inttypes.m4
   m4/inttypes_h.m4
@@ -780,6 +801,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/rename.m4
   m4/rmdir-errno.m4
   m4/rmdir.m4
+  m4/root-dev-ino.m4
   m4/rpmatch.m4
   m4/safe-read.m4
   m4/safe-write.m4
@@ -791,14 +813,12 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/settime.m4
   m4/sha1.m4
   m4/sig2str.m4
-  m4/signed.m4
   m4/size_max.m4
   m4/snprintf.m4
   m4/socklen.m4
   m4/sockpfaf.m4
   m4/ssize_t.m4
   m4/st_dm_mode.m4
-  m4/stat-macros.m4
   m4/stat-time.m4
   m4/stdarg.m4
   m4/stdbool.m4
@@ -824,6 +844,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/strverscmp.m4
   m4/sys_socket_h.m4
   m4/sys_stat_h.m4
+  m4/tempname.m4
   m4/time_r.m4
   m4/timespec.m4
   m4/tm_gmtoff.m4

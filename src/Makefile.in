@@ -89,11 +89,12 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/absolute-header.m4 \
 	$(top_srcdir)/m4/fcntl-safer.m4 $(top_srcdir)/m4/fcntl_h.m4 \
 	$(top_srcdir)/m4/fd-reopen.m4 $(top_srcdir)/m4/file-type.m4 \
 	$(top_srcdir)/m4/fileblocks.m4 $(top_srcdir)/m4/filemode.m4 \
-	$(top_srcdir)/m4/filenamecat.m4 $(top_srcdir)/m4/fnmatch.m4 \
-	$(top_srcdir)/m4/fpending.m4 $(top_srcdir)/m4/fprintftime.m4 \
-	$(top_srcdir)/m4/free.m4 $(top_srcdir)/m4/fstypename.m4 \
-	$(top_srcdir)/m4/fsusage.m4 $(top_srcdir)/m4/ftruncate.m4 \
-	$(top_srcdir)/m4/fts.m4 $(top_srcdir)/m4/getaddrinfo.m4 \
+	$(top_srcdir)/m4/filenamecat.m4 $(top_srcdir)/m4/flexmember.m4 \
+	$(top_srcdir)/m4/fnmatch.m4 $(top_srcdir)/m4/fpending.m4 \
+	$(top_srcdir)/m4/fprintftime.m4 $(top_srcdir)/m4/free.m4 \
+	$(top_srcdir)/m4/fstypename.m4 $(top_srcdir)/m4/fsusage.m4 \
+	$(top_srcdir)/m4/ftruncate.m4 $(top_srcdir)/m4/fts.m4 \
+	$(top_srcdir)/m4/getaddrinfo.m4 \
 	$(top_srcdir)/m4/getcwd-abort-bug.m4 \
 	$(top_srcdir)/m4/getcwd-path-max.m4 $(top_srcdir)/m4/getcwd.m4 \
 	$(top_srcdir)/m4/getdate.m4 $(top_srcdir)/m4/getdelim.m4 \
@@ -109,8 +110,9 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/absolute-header.m4 \
 	$(top_srcdir)/m4/group-member.m4 \
 	$(top_srcdir)/m4/hard-locale.m4 $(top_srcdir)/m4/hash.m4 \
 	$(top_srcdir)/m4/host-os.m4 $(top_srcdir)/m4/human.m4 \
-	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/idcache.m4 \
-	$(top_srcdir)/m4/inet_ntop.m4 $(top_srcdir)/m4/intmax_t.m4 \
+	$(top_srcdir)/m4/i-ring.m4 $(top_srcdir)/m4/iconv.m4 \
+	$(top_srcdir)/m4/idcache.m4 $(top_srcdir)/m4/inet_ntop.m4 \
+	$(top_srcdir)/m4/inline.m4 $(top_srcdir)/m4/intmax_t.m4 \
 	$(top_srcdir)/m4/inttostr.m4 $(top_srcdir)/m4/inttypes-pri.m4 \
 	$(top_srcdir)/m4/inttypes.m4 $(top_srcdir)/m4/inttypes_h.m4 \
 	$(top_srcdir)/m4/isapipe.m4 $(top_srcdir)/m4/jm-macros.m4 \
@@ -155,10 +157,9 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/absolute-header.m4 \
 	$(top_srcdir)/m4/savewd.m4 $(top_srcdir)/m4/setenv.m4 \
 	$(top_srcdir)/m4/settime.m4 $(top_srcdir)/m4/sha1.m4 \
 	$(top_srcdir)/m4/sha256.m4 $(top_srcdir)/m4/sha512.m4 \
-	$(top_srcdir)/m4/sig2str.m4 $(top_srcdir)/m4/signed.m4 \
-	$(top_srcdir)/m4/snprintf.m4 $(top_srcdir)/m4/socklen.m4 \
-	$(top_srcdir)/m4/sockpfaf.m4 $(top_srcdir)/m4/ssize_t.m4 \
-	$(top_srcdir)/m4/st_dm_mode.m4 $(top_srcdir)/m4/stat-macros.m4 \
+	$(top_srcdir)/m4/sig2str.m4 $(top_srcdir)/m4/snprintf.m4 \
+	$(top_srcdir)/m4/socklen.m4 $(top_srcdir)/m4/sockpfaf.m4 \
+	$(top_srcdir)/m4/ssize_t.m4 $(top_srcdir)/m4/st_dm_mode.m4 \
 	$(top_srcdir)/m4/stat-prog.m4 $(top_srcdir)/m4/stat-time.m4 \
 	$(top_srcdir)/m4/stdarg.m4 $(top_srcdir)/m4/stdbool.m4 \
 	$(top_srcdir)/m4/stdint.m4 $(top_srcdir)/m4/stdint_h.m4 \
@@ -173,23 +174,24 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/absolute-header.m4 \
 	$(top_srcdir)/m4/strtoul.m4 $(top_srcdir)/m4/strtoull.m4 \
 	$(top_srcdir)/m4/strtoumax.m4 $(top_srcdir)/m4/strverscmp.m4 \
 	$(top_srcdir)/m4/sys_socket_h.m4 \
-	$(top_srcdir)/m4/sys_stat_h.m4 $(top_srcdir)/m4/time_r.m4 \
-	$(top_srcdir)/m4/timespec.m4 $(top_srcdir)/m4/tm_gmtoff.m4 \
-	$(top_srcdir)/m4/tzset.m4 $(top_srcdir)/m4/unicodeio.m4 \
-	$(top_srcdir)/m4/unistd-safer.m4 $(top_srcdir)/m4/unistd_h.m4 \
-	$(top_srcdir)/m4/unlink-busy.m4 $(top_srcdir)/m4/unlinkdir.m4 \
-	$(top_srcdir)/m4/unlocked-io.m4 $(top_srcdir)/m4/uptime.m4 \
-	$(top_srcdir)/m4/userspec.m4 $(top_srcdir)/m4/utimbuf.m4 \
-	$(top_srcdir)/m4/utime.m4 $(top_srcdir)/m4/utimecmp.m4 \
-	$(top_srcdir)/m4/utimens.m4 $(top_srcdir)/m4/utimes-null.m4 \
-	$(top_srcdir)/m4/utimes.m4 $(top_srcdir)/m4/vasnprintf.m4 \
-	$(top_srcdir)/m4/vasprintf.m4 $(top_srcdir)/m4/wchar_t.m4 \
-	$(top_srcdir)/m4/wcwidth.m4 $(top_srcdir)/m4/wint_t.m4 \
-	$(top_srcdir)/m4/xalloc.m4 $(top_srcdir)/m4/xfts.m4 \
-	$(top_srcdir)/m4/xgetcwd.m4 $(top_srcdir)/m4/xnanosleep.m4 \
-	$(top_srcdir)/m4/xreadlink.m4 $(top_srcdir)/m4/xstrndup.m4 \
-	$(top_srcdir)/m4/xstrtod.m4 $(top_srcdir)/m4/xstrtol.m4 \
-	$(top_srcdir)/m4/yesno.m4 $(top_srcdir)/configure.ac
+	$(top_srcdir)/m4/sys_stat_h.m4 $(top_srcdir)/m4/tempname.m4 \
+	$(top_srcdir)/m4/time_r.m4 $(top_srcdir)/m4/timespec.m4 \
+	$(top_srcdir)/m4/tm_gmtoff.m4 $(top_srcdir)/m4/tzset.m4 \
+	$(top_srcdir)/m4/unicodeio.m4 $(top_srcdir)/m4/unistd-safer.m4 \
+	$(top_srcdir)/m4/unistd_h.m4 $(top_srcdir)/m4/unlink-busy.m4 \
+	$(top_srcdir)/m4/unlinkdir.m4 $(top_srcdir)/m4/unlocked-io.m4 \
+	$(top_srcdir)/m4/uptime.m4 $(top_srcdir)/m4/userspec.m4 \
+	$(top_srcdir)/m4/utimbuf.m4 $(top_srcdir)/m4/utime.m4 \
+	$(top_srcdir)/m4/utimecmp.m4 $(top_srcdir)/m4/utimens.m4 \
+	$(top_srcdir)/m4/utimes-null.m4 $(top_srcdir)/m4/utimes.m4 \
+	$(top_srcdir)/m4/vasnprintf.m4 $(top_srcdir)/m4/vasprintf.m4 \
+	$(top_srcdir)/m4/wchar_t.m4 $(top_srcdir)/m4/wcwidth.m4 \
+	$(top_srcdir)/m4/wint_t.m4 $(top_srcdir)/m4/xalloc.m4 \
+	$(top_srcdir)/m4/xfts.m4 $(top_srcdir)/m4/xgetcwd.m4 \
+	$(top_srcdir)/m4/xnanosleep.m4 $(top_srcdir)/m4/xreadlink.m4 \
+	$(top_srcdir)/m4/xstrndup.m4 $(top_srcdir)/m4/xstrtod.m4 \
+	$(top_srcdir)/m4/xstrtol.m4 $(top_srcdir)/m4/yesno.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d

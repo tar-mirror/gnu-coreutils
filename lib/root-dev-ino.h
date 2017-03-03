@@ -1,3 +1,5 @@
+/* -*- buffer-read-only: t -*- vi: set ro: */
+/* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 /* Root device and inode number checking.
 
    Copyright (C) 2003, 2006 Free Software Foundation, Inc.

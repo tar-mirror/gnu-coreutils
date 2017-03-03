@@ -1,3 +1,237 @@
+2006-11-19  Jim Meyering  <jim@meyering.net>
+
+	Version 6.5.
+	* NEWS: Record release date.  Remove "-cvs" suffix.
+	* configure.ac (AC_INIT): Remove "-cvs" suffix from version string.
+
+2006-11-18  Jim Meyering  <jim@meyering.net>
+
+	"ln --backup f f" produces a misleading diagnostic:
+	ln: creating hard link `f' => `f': No such file or directory
+	* src/ln.c (do_link): Give a better diagnostic in this unusual case.
+	(do_link): Rename local: s/lstat_ok/dest_lstat_ok/.
+	* tests/ln/Makefile.am (TESTS): Add hard-backup.
+	* tests/ln/hard-backup: New test for the above.
+	* NEWS: Mention this fix.
+
+2006-11-16  Paul Eggert  <eggert@cs.ucla.edu>
+
+	* bootstrap.conf (gnulib_modules): Add sys_stat, since we use it
+	directly too.
+	* lib/.cvsignore, lib/.gitignore: Add root-dev-ino.c, root-dev-ino.h.
+	* m4/.cvsignore, m4/.gitignore: Add root-dev-ino.m4.
+	* src/ls.c (DIRED_FPUTS_LITERAL, PUSH_CURRENT_DIRED_POS):
+	Omit unnecessary parenthesization of args.
+	* src/od.c (EQUAL_BLOCKS): Likewise.
+	* src/system.h (STREQ, ASSIGN_STRDUPA): Likewise.
+
+2006-11-16  Jim Meyering  <jim@meyering.net>
+
+	* tests/tail-2/append-only: If chattr +a fails, exit 77 (to tell
+	automake we're skipping this test), and give a diagnostic to tell
+	the user the same thing.  Reported by Mike Grayson.
+
+2006-11-16  Ralf Wildenhues  <Ralf.Wildenhues@gmx.de>
+
+	* man/Makefile.am (dist_man_MANS): Replace all optional manpages
+	with `$(MAN)', computed at configure time; also, list them ...
+	(optional_mans): ... in this new variable.
+	(max_aux, EXTRA_DIST): Ensure that we distribute all manpages.
+
+2006-11-16  Jim Meyering  <jim@meyering.net>
+
+	Help valgrind see that there is no leak in dd.c.
+	* src/dd.c (dd_copy): Declare real_buf and real_obuf to be static,
+	so we need not free them at all.  This is easier than freeing
+	both buffers at each of the early "return"s.
+
+	* src/csplit.c (load_buffer): Plug an inconsequential leak.
+
+2006-11-15  Jim Meyering  <jim@meyering.net>
+
+	* .x-po-check: Exclude gl/ files.  Otherwise, po-check would
+	complain that some of gl/lib/*.[ch] are not listed in POTFILES.in.
+
+2006-11-14  Jim Meyering  <jim@meyering.net>
+
+	* gl/m4/root-dev-ino.m4: Now that this is part of a real "module",
+	remove the now-unnecessary use of AC_LIBSOURCES.
+
+	Adapt to new version of gnulib-tool.
+	* gl/modules/root-dev-ino: New file.
+	* lib/root-dev-ino.c, lib/root-dev-ino.h: Move these files ...
+	* gl/lib/root-dev-ino.c, gl/lib/root-dev-ino.h: ... to here.
+	* m4/root-dev-ino.m4: Move this file ...
+	* gl/m4/root-dev-ino.m4: ... to here.
+
+	* bootstrap.conf (gnulib_modules): Add root-dev-ino.
+
+2006-11-13  Jim Meyering  <jim@meyering.net>
+
+	* src/sort.c (insertkey): Use xmemdup, rather than xmalloc+assignment.
+	From Paul Eggert.
+
+	Plug another technically-unimportant leak in sort.
+	* src/sort.c (main): Don't allocate memory for each new key here.
+	(insertkey): Allocate memory for each key here, instead.
+	(key_init): Rename from new_key.  Don't allocate.
+
+	* src/sort.c (main): Plug a tiny memory leak.
+	Move declaration of local "minus" down to be nearer point of use.
+
+2006-11-12  Jim Meyering  <jim@meyering.net>
+
+	du would exit early, when encountering an inaccessible directory
+	Reported by Mike Frysinger, in
+	http://article.gmane.org/gmane.comp.gnu.core-utils.bugs/8831
+	* tests/du/inacc-dest: New test, based on an example from Mike Frysinger.
+	* tests/chgrp/no-x: Remove the "fts_read failed: ..."
+	diagnostic from the expected output when using native fdopendir.
+	* tests/chmod/no-x: Likewise.
+	* tests/du/no-x: Likewise.
+	* NEWS: Mention this bug fix.
+	* tests/du/Makefile.am (TESTS): Add inacc-dest.
+
+	* Makefile.maint (sc_cast_of_x_alloc_return_value): Add an exclusion
+	for xalloc.h itself.
+
+	Avoid false-positive when testing via valgrind.
+	* tests/mv/atomic: Grep strace output for a more specific pattern
+	than just "unlink", since that got a false positive when testing
+	under valgrind: unlink("/tmp/valgrind_proc_9657_cmdline_A51E9991") = 0
+	* tests/mv/Makefile.am (TESTS_ENVIRONMENT): Define EGREP.
+
+2006-10-28  Jim Meyering  <jim@meyering.net>
+
+	* Makefile.maint (patch-check): Make it easier to regenerate
+	the src/c99-to-c89.diff file.  E.g., I do this:
+	make patch-check REGEN_PATCH=1; ediff src/c99-to-c89.diff new-diff
+
+	* src/c99-to-c89.diff: Update to reflect new offsets in rm.c.
+
+2006-10-26  Jim Meyering  <jim@meyering.net>
+
+	* src/system.h (ftello): Add a compile-time check for the highly
+	unlikely condition of off_t narrower than long int, rather than
+	handling it at run time.  Based on a patch from Paul Eggert.
+
+2006-10-25  Paul Eggert  <eggert@cs.ucla.edu>
+
+	* tests/chmod/c-option: When double-quoting part of a word, prefer
+	to double-quote the whole word.  This is a bit easier to read (at
+	least for me), and in some cases it avoids a shell bug with Tru64
+	4.0 sh reported by Nelson H. F. Beebe.  For example, instead of
+	"$abs_srcdir"/../setgid-check we now write
+	"$abs_srcdir/../setgid-check".
+	* tests/cp/cp-parents: Likewise.
+	* tests/du/inaccessible-cwd: Likewise.
+	* tests/du/long-from-unreadable: Likewise.
+	* tests/install/basic-1: Likewise.
+	* tests/install/trap: Likewise.
+	* tests/misc/close-stdout: Likewise.
+	* tests/mkdir/concurrent-1: Likewise.
+	* tests/mkdir/p-1: Likewise.
+	* tests/mkdir/p-3: Likewise.
+	* tests/mkdir/parents: Likewise.
+	* tests/mkdir/perm: Likewise.
+	* tests/readlink/can-e: Likewise.
+	* tests/readlink/can-f: Likewise.
+	* tests/readlink/can-m: Likewise.
+	* tests/rm/inaccessible: Likewise.
+	* tests/rm/unread3: Likewise.
+	* tests/touch/no-create-missing: Likewise.
+
+	* lib/.cvsignore: Add uinttostr.c.
+
+2006-10-25  Jim Meyering  <jim@meyering.net>
+
+	Portability to Tru64 V4.0.
+	* src/system.h (ftello) [!HAVE_FSEEKO && !defined ftello]:
+	Define inline replacement function.
+	This (along with a yesterday's fix for autoconf's
+	_AC_SYS_LARGEFILE_MACRO_VALUE macro) makes it so coreutils
+	now builds once more on Tru64 V4.0.  Reported by Nelson Beebe.
+
+2006-10-25  Bruno Haible  <bruno@clisp.org>
+
+	* src/cat.c (infile): Add "const" to declaration.
+	* src/csplit.c (prefix): Likewise.
+	* src/printf.c (cfcc_msg): Likewise.
+	* src/tail.c (valid_file_spec): Likewise.
+	* src/cut.c (cut_file): Likewise, for a parameter.
+	* src/expr.c (str_value): Likewise.
+	* src/fold.c (fold_file): Likewise.
+	* src/pr.c (init_header): Likewise.
+	* src/dircolors.c (dc_parse_stream): Likewise, for a local.
+	* src/tr.c (make_printable_str): Likewise.
+	* src/nl.c (body_type, header_type, footer_type, current_type):
+	(separator_str, build_type_arg, nl_file): Likewise, for many.
+	* src/paste.c (main): Don't assign a read-only string to 'optarg'.
+	* src/tac.c (separator, tac_seekable, copy_to_temp): Likewise.
+
+2006-10-25  Jim Meyering  <jim@meyering.net>
+
+	* tests/sample-test: Update copyright year list to include only
+	the current year, since this is what I'll want in any new test.
+
+2006-10-24  Jim Meyering  <jim@meyering.net>
+
+	* src/c99-to-c89.diff: Update to reflect new offsets.
+
+	* NEWS: new feature: rm accepts new option: --one-file-system
+	Suggested by Steve McIntyre in <http://bugs.debian.org/392925>.
+	* src/remove.h (struct rm_options) [one_file_system]: New member.
+	* src/rm.c (rm_option_init): Initialize it.
+	(usage): Document the option.
+	* src/mv.c (rm_option_init): Likewise.
+	* src/remove.c (remove_dir): With --one-file-system and --recursive,
+	for each directory command line argument, do not affect a file system
+	different from that of the starting directory.  And give a diagnostic.
+	* src/rm.c (ONE_FILE_SYSTEM): New enum.
+	(main): Handle new option.
+	* tests/rm/one-file-system: Test the above.
+	* tests/rm/Makefile.am (TESTS): Add one-file-system.
+	* tests/Makefile.am (check-root): Add the rm/one-file-system
+	test to the list.
+	(EXTRA_DIST): Add other-fs-tmpdir.
+
+	* tests/mv/setup: Removed.  Renamed to...
+	* tests/other-fs-tmpdir: ...this new file.
+	* tests/mv/Makefile.am (EXTRA_DIST): Remove setup.
+	* tests/mv/acl: Reflect renaming: use ../other-fs-tmpdir.
+	* tests/mv/backup-is-src: Likewise.
+	* tests/mv/hard-link-1: Likewise.
+	* tests/mv/leak-fd: Likewise.
+	* tests/mv/mv-special-1: Likewise.
+	* tests/mv/part-fail: Likewise.
+	* tests/mv/part-hardlink: Likewise.
+	* tests/mv/part-rename: Likewise.
+	* tests/mv/part-symlink: Likewise.
+	* tests/mv/partition-perm: Likewise.
+	* tests/mv/to-symlink: Likewise.
+	* tests/mv/into-self-2: Likewise.
+
+	Don't let a failure in one test stop "make -k" from running the others.
+	* tests/Makefile.am (t1 t2 t3 t4 t5): New targets.
+	(check-root): Depend on them, rather than executing the five
+	commands in a single rule.  Reported by Greg Schafer.
+
+2006-10-23  Bob Proulx  <bob@proulx.com>  (tiny change)
+
+	* Makefile.maint (alpha beta major): Use a better log message for
+	the automatic commit of .prev-version.
+
+2006-10-23  Jim Meyering  <jim@meyering.net>
+
+	* tests/misc/pwd-long: Undo last change, since it made Perl invoke
+	pwd via a shell.  Instead, ensure that the absolute name of the
+	pwd binary consists solely of reasonable characters.
+	Whoops.  Don't exec the perl script.  Otherwise, the sh-trap-based
+	clean-up code isn't run.
+
+	* NEWS: Add a line for 6.5-cvs.
+	* configure.ac (AC_INIT): Bump to 6.5 and add "-cvs" suffix.
+
 2006-10-22  Jim Meyering  <jim@meyering.net>
 
 	Version 6.4.

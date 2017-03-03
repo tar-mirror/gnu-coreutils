@@ -103,7 +103,7 @@ START-INFO-DIR-ENTRY
 * yes: (coreutils)yes invocation.               Print a string indefinitely.
 END-INFO-DIR-ENTRY
 
-   This manual documents version 6.4 of the GNU core utilities,
+   This manual documents version 6.5 of the GNU core utilities,
 including the standard programs for text and file manipulation.
 
    Copyright (C) 1994, 1995, 1996, 2000, 2001, 2002, 2003, 2004, 2005,
@@ -122,7 +122,7 @@ File: coreutils.info,  Node: Top,  Next: Introduction,  Up: (dir)
 GNU Coreutils
 *************
 
-This manual documents version 6.4 of the GNU core utilities, including
+This manual documents version 6.5 of the GNU core utilities, including
 the standard programs for text and file manipulation.
 
    Copyright (C) 1994, 1995, 1996, 2000, 2001, 2002, 2003, 2004, 2005,
@@ -2358,13 +2358,13 @@ given or for a FILE of `-'.  Synopsis:
 given as an argument, it prints the file name following the counts.  If
 more than one FILE is given, `wc' prints a final line containing the
 cumulative counts, with the file name `total'.  The counts are printed
-in this order: newlines, words, characters, bytes.  Each count is
-printed right-justified in a field with at least one space between
-fields so that the numbers and file names normally line up nicely in
-columns.  The width of the count fields varies depending on the inputs,
-so you should not depend on a particular field width.  However, as a
-GNU extension, if only one count is printed, it is guaranteed to be
-printed without leading spaces.
+in this order: newlines, words, characters, bytes, maximum line length.
+Each count is printed right-justified in a field with at least one
+space between fields so that the numbers and file names normally line
+up nicely in columns.  The width of the count fields varies depending
+on the inputs, so you should not depend on a particular field width.
+However, as a GNU extension, if only one count is printed, it is
+guaranteed to be printed without leading spaces.
 
    By default, `wc' prints three counts: the newline, words, and byte
 counts.  Options can specify that only certain counts be printed.
@@ -6300,6 +6300,22 @@ options::.
           `-i'.
      Specifying `--interactive' and no WHEN is equivalent to
      `--interactive=always'.
+
+`--one-file-system'
+     When removing a hierarchy recursively, skip any directory that is
+     on a file system different from that of the corresponding command
+     line argument.
+
+     This option is useful when removing a build "chroot" hierarchy,
+     which normally contains no valuable data.  However, it is not
+     uncommon to bind-mount `/home' into such a hierarchy, to make it
+     easier to use one's start-up file.  The catch is that it's easy to
+     forget to unmount `/home'.  Then, when you use `rm -rf' to remove
+     your normally throw-away chroot, that command will remove
+     everything under `/home', too.  Use the `--one-file-system'
+     option, and it will warn about and skip directories on other file
+     systems.  Of course, this will not save your `/home' if it and your
+     chroot happen to be on the same file system.
 
 `--preserve-root'
      Fail upon any attempt to remove the root directory, `/', when used
@@ -13123,8 +13139,8 @@ Index
 * - <1>:                                 su invocation.       (line  53)
 * - <2>:                                 env invocation.      (line  45)
 * -:                                     Numeric expressions. (line  11)
-* - and Unix rm:                         rm invocation.       (line  94)
-* -, removing files beginning with:      rm invocation.       (line  82)
+* - and Unix rm:                         rm invocation.       (line 110)
+* -, removing files beginning with:      rm invocation.       (line  98)
 * --:                                    Common options.      (line  36)
 * --across:                              pr invocation.       (line  84)
 * --address-radix:                       od invocation.       (line  36)
@@ -13352,7 +13368,7 @@ Index
 * --no-preserve-root <1>:                chmod invocation.    (line  54)
 * --no-preserve-root <2>:                chgrp invocation.    (line  45)
 * --no-preserve-root <3>:                chown invocation.    (line 117)
-* --no-preserve-root:                    rm invocation.       (line  68)
+* --no-preserve-root:                    rm invocation.       (line  84)
 * --no-renumber:                         nl invocation.       (line 108)
 * --no-sync:                             df invocation.       (line  67)
 * --no-target-directory <1>:             ln invocation.       (line 109)
@@ -13375,6 +13391,7 @@ Index
 * --omit-header:                         pr invocation.       (line 235)
 * --omit-pagination:                     pr invocation.       (line 246)
 * --one-file-system <1>:                 du invocation.       (line 191)
+* --one-file-system <2>:                 rm invocation.       (line  63)
 * --one-file-system:                     cp invocation.       (line 286)
 * --only-delimited:                      cut invocation.      (line  59)
 * --operating-system:                    uname invocation.    (line  57)
@@ -13399,7 +13416,7 @@ Index
 * --preserve-root <1>:                   chmod invocation.    (line  49)
 * --preserve-root <2>:                   chgrp invocation.    (line  40)
 * --preserve-root <3>:                   chown invocation.    (line 112)
-* --preserve-root:                       rm invocation.       (line  63)
+* --preserve-root:                       rm invocation.       (line  79)
 * --preserve-timestamps:                 install invocation.  (line  78)
 * --print-database:                      dircolors invocation.
                                                               (line  38)
@@ -13427,7 +13444,7 @@ Index
 * --recursive <1>:                       chmod invocation.    (line  69)
 * --recursive <2>:                       chgrp invocation.    (line  63)
 * --recursive <3>:                       chown invocation.    (line 136)
-* --recursive <4>:                       rm invocation.       (line  75)
+* --recursive <4>:                       rm invocation.       (line  91)
 * --recursive <5>:                       cp invocation.       (line 195)
 * --recursive:                           Which files are listed.
                                                               (line  90)
@@ -13550,7 +13567,7 @@ Index
 * --verbose <6>:                         mkdir invocation.    (line  44)
 * --verbose <7>:                         ln invocation.       (line 114)
 * --verbose <8>:                         shred invocation.    (line 129)
-* --verbose <9>:                         rm invocation.       (line  79)
+* --verbose <9>:                         rm invocation.       (line  95)
 * --verbose <10>:                        mv invocation.       (line  86)
 * --verbose <11>:                        install invocation.  (line 106)
 * --verbose <12>:                        cp invocation.       (line 282)
@@ -13902,8 +13919,8 @@ Index
 * -R <1>:                                chmod invocation.    (line  69)
 * -R <2>:                                chgrp invocation.    (line  63)
 * -R <3>:                                chown invocation.    (line 136)
-* -R:                                    rm invocation.       (line  75)
-* -r <1>:                                rm invocation.       (line  75)
+* -R:                                    rm invocation.       (line  91)
+* -r <1>:                                rm invocation.       (line  91)
 * -r:                                    cp invocation.       (line 195)
 * -R:                                    cp invocation.       (line 195)
 * -r:                                    Sorting the output.  (line  27)
@@ -14005,7 +14022,7 @@ Index
 * -v <7>:                                mkdir invocation.    (line  44)
 * -v <8>:                                ln invocation.       (line 114)
 * -v <9>:                                shred invocation.    (line 129)
-* -v <10>:                               rm invocation.       (line  79)
+* -v <10>:                               rm invocation.       (line  95)
 * -v <11>:                               mv invocation.       (line  86)
 * -v <12>:                               install invocation.  (line 106)
 * -v <13>:                               cp invocation.       (line 282)
@@ -14386,7 +14403,7 @@ Index
 * directories, creating:                 mkdir invocation.    (line   6)
 * directories, creating with given attributes: install invocation.
                                                               (line  48)
-* directories, removing (recursively):   rm invocation.       (line  75)
+* directories, removing (recursively):   rm invocation.       (line  91)
 * directories, removing empty:           rmdir invocation.    (line   6)
 * directory:                             dd invocation.       (line 147)
 * directory check:                       File type tests.     (line  16)
@@ -14560,7 +14577,7 @@ Index
 * file types:                            Special file types.  (line   9)
 * file types, special:                   Special file types.  (line   6)
 * file utilities:                        Top.                 (line  19)
-* files beginning with -, removing:      rm invocation.       (line  82)
+* files beginning with -, removing:      rm invocation.       (line  98)
 * files, copying:                        cp invocation.       (line   6)
 * fingerprint, 128-bit:                  md5sum invocation.   (line   6)
 * fingerprint, 160-bit:                  sha1sum invocation.  (line   6)
@@ -14937,6 +14954,7 @@ Index
                                                               (line  19)
 * once interactive option:               rm invocation.       (line  54)
 * one file system, restricting du to:    du invocation.       (line 191)
+* one file system, restricting rm to:    rm invocation.       (line  63)
 * one-line output format:                df invocation.       (line  74)
 * onlcr:                                 Output.              (line  19)
 * onlret:                                Output.              (line  27)
@@ -15136,7 +15154,7 @@ Index
 * rmdir:                                 rmdir invocation.    (line   6)
 * rn format for nl:                      nl invocation.       (line 101)
 * root as default owner:                 install invocation.  (line  72)
-* root directory, allow recursive destruction: rm invocation. (line  68)
+* root directory, allow recursive destruction: rm invocation. (line  84)
 * root directory, allow recursive modification <1>: chmod invocation.
                                                               (line  54)
 * root directory, allow recursive modification <2>: chgrp invocation.
@@ -15144,7 +15162,7 @@ Index
 * root directory, allow recursive modification: chown invocation.
                                                               (line 117)
 * root directory, disallow recursive destruction: rm invocation.
-                                                              (line  63)
+                                                              (line  79)
 * root directory, disallow recursive modification <1>: chmod invocation.
                                                               (line  49)
 * root directory, disallow recursive modification <2>: chgrp invocation.
@@ -15543,178 +15561,178 @@ Node: split invocation86652
 Node: csplit invocation88738
 Node: Summarizing files92850
 Node: wc invocation93498
-Node: sum invocation96364
-Node: cksum invocation97769
-Node: md5sum invocation98909
-Node: sha1sum invocation103370
-Node: sha2 utilities104150
-Node: Operating on sorted files104774
-Node: sort invocation105430
-Ref: sort invocation-Footnote-1124539
-Node: shuf invocation125091
-Node: uniq invocation127655
-Node: comm invocation131735
-Node: tsort invocation133063
-Node: tsort background136097
-Node: ptx invocation137860
-Node: General options in ptx140664
-Node: Charset selection in ptx141245
-Node: Input processing in ptx142147
-Node: Output formatting in ptx147569
-Node: Compatibility in ptx154135
-Node: Operating on fields within a line157364
-Node: cut invocation157768
-Node: paste invocation161087
-Node: join invocation162415
-Node: Operating on characters166639
-Node: tr invocation167075
-Node: Character sets168793
-Node: Translating173224
-Node: Squeezing175315
-Node: expand invocation178382
-Node: unexpand invocation179864
-Node: Directory listing181682
-Node: ls invocation182168
-Ref: ls invocation-Footnote-1183982
-Node: Which files are listed184204
-Node: What information is listed187864
-Node: Sorting the output196842
-Node: More details about version sort199162
-Node: General output formatting200660
-Node: Formatting file timestamps204237
-Node: Formatting the file names209578
-Node: dir invocation212494
-Node: vdir invocation212905
-Node: dircolors invocation213283
-Node: Basic operations214763
-Node: cp invocation215383
-Node: dd invocation227103
-Node: install invocation235044
-Node: mv invocation239271
-Node: rm invocation243561
-Node: shred invocation247020
-Node: Special file types254505
-Node: link invocation256001
-Node: ln invocation257007
-Node: mkdir invocation262069
-Node: mkfifo invocation263920
-Node: mknod invocation264925
-Node: readlink invocation266684
-Node: rmdir invocation268427
-Node: unlink invocation269701
-Node: Changing file attributes270660
-Node: chown invocation271474
-Node: chgrp invocation277502
-Node: chmod invocation280411
-Node: touch invocation283166
-Node: Disk usage287768
-Node: df invocation288360
-Node: du invocation293702
-Node: stat invocation301692
-Node: sync invocation305539
-Node: Printing text306466
-Node: echo invocation306840
-Node: printf invocation309017
-Node: yes invocation313724
-Node: Conditions314336
-Node: false invocation314927
-Node: true invocation315962
-Node: test invocation317241
-Node: File type tests319201
-Node: Access permission tests320083
-Node: File characteristic tests320968
-Node: String tests321733
-Node: Numeric tests322398
-Node: Connectives for test323195
-Node: expr invocation323548
-Node: String expressions325809
-Node: Numeric expressions328392
-Node: Relations for expr329030
-Node: Examples of expr330230
-Node: Redirection330958
-Node: tee invocation331403
-Node: File name manipulation332468
-Node: basename invocation332916
-Node: dirname invocation334363
-Node: pathchk invocation335569
-Node: Working context337233
-Node: pwd invocation337877
-Node: stty invocation338551
-Node: Control341311
-Node: Input342071
-Node: Output343547
-Node: Local344803
-Node: Combination346385
-Node: Characters348547
-Node: Special350101
-Node: printenv invocation351467
-Node: tty invocation352230
-Node: User information352936
-Node: id invocation353571
-Node: logname invocation354787
-Node: whoami invocation355414
-Node: groups invocation355901
-Node: users invocation356637
-Node: who invocation357584
-Node: System context360353
-Node: date invocation360843
-Node: Time conversion specifiers362501
-Node: Date conversion specifiers364901
-Node: Literal conversion specifiers368025
-Node: Padding and other flags368383
-Node: Setting the time370577
-Node: Options for date371583
-Node: Examples of date374888
-Ref: %s-examples376331
-Node: uname invocation378516
-Node: hostname invocation381089
-Node: hostid invocation381702
-Node: Modified command invocation382389
-Node: chroot invocation383015
-Node: env invocation385134
-Node: nice invocation387213
-Node: nohup invocation390709
-Node: su invocation392700
-Node: Process control397173
-Node: kill invocation397396
-Node: Delaying401762
-Node: sleep invocation401959
-Node: Numeric operations402823
-Node: factor invocation403155
-Node: seq invocation404493
-Node: File permissions408239
-Node: Mode Structure408857
-Node: Symbolic Modes412552
-Node: Setting Permissions413650
-Node: Copying Permissions416263
-Node: Changing Special Mode Bits417082
-Node: Conditional Executability418904
-Node: Multiple Changes419448
-Node: Umask and Protection421115
-Node: Numeric Modes422220
-Node: Directory Setuid and Setgid424120
-Node: Date input formats426382
-Node: General date syntax428735
-Node: Calendar date items431694
-Node: Time of day items433699
-Node: Time zone items435823
-Node: Day of week items437065
-Node: Relative items in date strings438062
-Node: Pure numbers in date strings440872
-Node: Seconds since the Epoch441861
-Node: Specifying time zone rules443490
-Node: Authors of get_date445862
-Node: Opening the software toolbox446622
-Node: Toolbox introduction447283
-Node: I/O redirection450006
-Node: The who command452840
-Node: The cut command453737
-Node: The sort command454800
-Node: The uniq command455504
-Node: Putting the tools together456194
-Ref: Putting the tools together-Footnote-1468151
-Node: Copying This Manual468225
-Node: GNU Free Documentation License468480
-Node: Index490881
+Node: sum invocation96383
+Node: cksum invocation97788
+Node: md5sum invocation98928
+Node: sha1sum invocation103389
+Node: sha2 utilities104169
+Node: Operating on sorted files104793
+Node: sort invocation105449
+Ref: sort invocation-Footnote-1124558
+Node: shuf invocation125110
+Node: uniq invocation127674
+Node: comm invocation131754
+Node: tsort invocation133082
+Node: tsort background136116
+Node: ptx invocation137879
+Node: General options in ptx140683
+Node: Charset selection in ptx141264
+Node: Input processing in ptx142166
+Node: Output formatting in ptx147588
+Node: Compatibility in ptx154154
+Node: Operating on fields within a line157383
+Node: cut invocation157787
+Node: paste invocation161106
+Node: join invocation162434
+Node: Operating on characters166658
+Node: tr invocation167094
+Node: Character sets168812
+Node: Translating173243
+Node: Squeezing175334
+Node: expand invocation178401
+Node: unexpand invocation179883
+Node: Directory listing181701
+Node: ls invocation182187
+Ref: ls invocation-Footnote-1184001
+Node: Which files are listed184223
+Node: What information is listed187883
+Node: Sorting the output196861
+Node: More details about version sort199181
+Node: General output formatting200679
+Node: Formatting file timestamps204256
+Node: Formatting the file names209597
+Node: dir invocation212513
+Node: vdir invocation212924
+Node: dircolors invocation213302
+Node: Basic operations214782
+Node: cp invocation215402
+Node: dd invocation227122
+Node: install invocation235063
+Node: mv invocation239290
+Node: rm invocation243580
+Node: shred invocation247894
+Node: Special file types255379
+Node: link invocation256875
+Node: ln invocation257881
+Node: mkdir invocation262943
+Node: mkfifo invocation264794
+Node: mknod invocation265799
+Node: readlink invocation267558
+Node: rmdir invocation269301
+Node: unlink invocation270575
+Node: Changing file attributes271534
+Node: chown invocation272348
+Node: chgrp invocation278376
+Node: chmod invocation281285
+Node: touch invocation284040
+Node: Disk usage288642
+Node: df invocation289234
+Node: du invocation294576
+Node: stat invocation302566
+Node: sync invocation306413
+Node: Printing text307340
+Node: echo invocation307714
+Node: printf invocation309891
+Node: yes invocation314598
+Node: Conditions315210
+Node: false invocation315801
+Node: true invocation316836
+Node: test invocation318115
+Node: File type tests320075
+Node: Access permission tests320957
+Node: File characteristic tests321842
+Node: String tests322607
+Node: Numeric tests323272
+Node: Connectives for test324069
+Node: expr invocation324422
+Node: String expressions326683
+Node: Numeric expressions329266
+Node: Relations for expr329904
+Node: Examples of expr331104
+Node: Redirection331832
+Node: tee invocation332277
+Node: File name manipulation333342
+Node: basename invocation333790
+Node: dirname invocation335237
+Node: pathchk invocation336443
+Node: Working context338107
+Node: pwd invocation338751
+Node: stty invocation339425
+Node: Control342185
+Node: Input342945
+Node: Output344421
+Node: Local345677
+Node: Combination347259
+Node: Characters349421
+Node: Special350975
+Node: printenv invocation352341
+Node: tty invocation353104
+Node: User information353810
+Node: id invocation354445
+Node: logname invocation355661
+Node: whoami invocation356288
+Node: groups invocation356775
+Node: users invocation357511
+Node: who invocation358458
+Node: System context361227
+Node: date invocation361717
+Node: Time conversion specifiers363375
+Node: Date conversion specifiers365775
+Node: Literal conversion specifiers368899
+Node: Padding and other flags369257
+Node: Setting the time371451
+Node: Options for date372457
+Node: Examples of date375762
+Ref: %s-examples377205
+Node: uname invocation379390
+Node: hostname invocation381963
+Node: hostid invocation382576
+Node: Modified command invocation383263
+Node: chroot invocation383889
+Node: env invocation386008
+Node: nice invocation388087
+Node: nohup invocation391583
+Node: su invocation393574
+Node: Process control398047
+Node: kill invocation398270
+Node: Delaying402636
+Node: sleep invocation402833
+Node: Numeric operations403697
+Node: factor invocation404029
+Node: seq invocation405367
+Node: File permissions409113
+Node: Mode Structure409731
+Node: Symbolic Modes413426
+Node: Setting Permissions414524
+Node: Copying Permissions417137
+Node: Changing Special Mode Bits417956
+Node: Conditional Executability419778
+Node: Multiple Changes420322
+Node: Umask and Protection421989
+Node: Numeric Modes423094
+Node: Directory Setuid and Setgid424994
+Node: Date input formats427256
+Node: General date syntax429609
+Node: Calendar date items432568
+Node: Time of day items434573
+Node: Time zone items436697
+Node: Day of week items437939
+Node: Relative items in date strings438936
+Node: Pure numbers in date strings441746
+Node: Seconds since the Epoch442735
+Node: Specifying time zone rules444364
+Node: Authors of get_date446736
+Node: Opening the software toolbox447496
+Node: Toolbox introduction448157
+Node: I/O redirection450880
+Node: The who command453714
+Node: The cut command454611
+Node: The sort command455674
+Node: The uniq command456378
+Node: Putting the tools together457068
+Ref: Putting the tools together-Footnote-1469025
+Node: Copying This Manual469099
+Node: GNU Free Documentation License469354
+Node: Index491755
 
 End Tag Table
