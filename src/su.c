@@ -1,5 +1,5 @@
 /* su for GNU.  Run a shell with substitute user and group IDs.
-   Copyright (C) 1992-2006, 2008-2011 Free Software Foundation, Inc.
+   Copyright (C) 1992-2006, 2008-2012 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -173,7 +173,10 @@ log_su (struct passwd const *pw, bool successful)
     {
       /* getlogin can fail -- usually due to lack of utmp entry.
          Resort to getpwuid.  */
-      struct passwd *pwd = getpwuid (getuid ());
+      errno = 0;
+      uid_t ruid = getuid ();
+      uid_t NO_UID = -1;
+      struct passwd *pwd = (ruid == NO_UID && errno ? NULL : getpwuid (ruid));
       old_user = (pwd ? pwd->pw_name : "");
     }
   tty = ttyname (STDERR_FILENO);

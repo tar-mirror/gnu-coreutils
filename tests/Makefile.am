@@ -220,6 +220,7 @@ TESTS =						\
   misc/printf-surprise				\
   misc/pwd-long					\
   misc/readlink-fp-loop				\
+  misc/realpath					\
   misc/runcon-no-reorder			\
   misc/sha1sum					\
   misc/sha1sum-vec				\
@@ -274,6 +275,7 @@ TESTS =						\
   misc/sum-sysv					\
   misc/tac					\
   misc/tac-continue				\
+  misc/tac-2-nonseekable			\
   misc/tail					\
   misc/tee					\
   misc/tee-dash					\
@@ -398,6 +400,7 @@ TESTS =						\
   du/slink					\
   du/trailing-slash				\
   du/two-args					\
+  id/gnu-zero-uids				\
   id/no-context					\
   install/basic-1				\
   install/create-leading			\
@@ -414,6 +417,7 @@ TESTS =						\
   ln/slash-decorated-nonexistent-dest		\
   ln/target-1					\
   ls/abmon-align				\
+  ls/block-size					\
   ls/color-clear-to-eol				\
   ls/color-dtype-dir				\
   ls/color-norm					\
@@ -438,6 +442,7 @@ TESTS =						\
   ls/stat-free-symlinks				\
   ls/stat-vs-dirent				\
   ls/symlink-slash				\
+  ls/time-style-diag				\
   ls/x-option					\
   mkdir/p-1					\
   mkdir/p-2					\

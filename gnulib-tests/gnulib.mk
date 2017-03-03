@@ -1,6 +1,6 @@
 ## DO NOT EDIT! GENERATED AUTOMATICALLY!
 ## Process this file with automake to produce Makefile.in.
-# Copyright (C) 2002-2011 Free Software Foundation, Inc.
+# Copyright (C) 2002-2012 Free Software Foundation, Inc.
 #
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -292,7 +292,7 @@ EXTRA_DIST += test-close.c signature.h macros.h
 TESTS += test-closein.sh
 check_PROGRAMS += test-closein
 test_closein_LDADD = $(LDADD) @LIBINTL@
-EXTRA_DIST += init.sh test-closein.sh test-closein.c
+EXTRA_DIST += test-closein.sh test-closein.c
 
 ## end   gnulib module closein-tests
 
@@ -451,6 +451,24 @@ test_fchdir_LDADD = $(LDADD) $(LIBINTL)
 EXTRA_DIST += test-fchdir.c signature.h macros.h
 
 ## end   gnulib module fchdir-tests
+
+## begin gnulib module fchmodat-tests
+
+TESTS += test-fchmodat
+check_PROGRAMS += test-fchmodat
+test_fchmodat_LDADD = $(LDADD) @LIBINTL@
+EXTRA_DIST += test-fchmodat.c signature.h macros.h
+
+## end   gnulib module fchmodat-tests
+
+## begin gnulib module fchownat-tests
+
+TESTS += test-fchownat
+check_PROGRAMS += test-fchownat
+test_fchownat_LDADD = $(LDADD) @LIBINTL@
+EXTRA_DIST += nap.h test-chown.h test-lchown.h test-fchownat.c signature.h macros.h
+
+## end   gnulib module fchownat-tests
 
 ## begin gnulib module fclose-tests
 
@@ -721,6 +739,15 @@ EXTRA_DIST += test-fstat.c signature.h macros.h
 
 ## end   gnulib module fstat-tests
 
+## begin gnulib module fstatat-tests
+
+TESTS += test-fstatat
+check_PROGRAMS += test-fstatat
+test_fstatat_LDADD = $(LDADD) @LIBINTL@
+EXTRA_DIST += test-fstatat.c test-lstat.h test-stat.h signature.h macros.h
+
+## end   gnulib module fstatat-tests
+
 ## begin gnulib module fsync-tests
 
 TESTS += test-fsync
@@ -801,10 +828,10 @@ EXTRA_DIST += test-getcwd-lgpl.c signature.h macros.h
 
 ## begin gnulib module getcwd-tests
 
-TESTS += test-getcwd
+TESTS += test-getcwd.sh
 check_PROGRAMS += test-getcwd
 test_getcwd_LDADD = $(LDADD) @LIBINTL@
-EXTRA_DIST += test-getcwd.c
+EXTRA_DIST += test-getcwd.c test-getcwd.sh
 
 ## end   gnulib module getcwd-tests
 
@@ -1346,19 +1373,10 @@ EXTRA_DIST += test-openat-safer.c macros.h
 
 ## begin gnulib module openat-tests
 
-TESTS += \
-  test-fchmodat test-fchownat test-fstatat test-mkdirat test-openat \
-  test-unlinkat
-check_PROGRAMS += \
-  test-fchmodat test-fchownat test-fstatat test-mkdirat test-openat \
-  test-unlinkat
-test_fchmodat_LDADD = $(LDADD) @LIBINTL@
-test_fchownat_LDADD = $(LDADD) @LIBINTL@
-test_fstatat_LDADD = $(LDADD) @LIBINTL@
-test_mkdirat_LDADD = $(LDADD) @LIBINTL@
+TESTS += test-openat
+check_PROGRAMS += test-openat
 test_openat_LDADD = $(LDADD) @LIBINTL@
-test_unlinkat_LDADD = $(LDADD) @LIBINTL@
-EXTRA_DIST += nap.h test-chown.h test-lchown.h test-lstat.h test-mkdir.h test-rmdir.h test-stat.h test-unlink.h test-fchownat.c test-fstatat.c test-mkdirat.c test-openat.c test-unlinkat.c test-fchmodat.c signature.h macros.h
+EXTRA_DIST += test-openat.c test-open.h signature.h macros.h
 
 ## end   gnulib module openat-tests
 
@@ -1392,7 +1410,7 @@ EXTRA_libtests_a_SOURCES += perror.c
 
 TESTS += test-perror.sh test-perror2
 check_PROGRAMS += test-perror test-perror2
-EXTRA_DIST += init.sh macros.h signature.h test-perror.c test-perror2.c test-perror.sh
+EXTRA_DIST += macros.h signature.h test-perror.c test-perror2.c test-perror.sh
 
 ## end   gnulib module perror-tests
 
@@ -1804,6 +1822,14 @@ EXTRA_DIST += test-stat-time.c macros.h
 
 ## end   gnulib module stat-time-tests
 
+## begin gnulib module stdalign-tests
+
+TESTS += test-stdalign
+check_PROGRAMS += test-stdalign
+EXTRA_DIST += test-stdalign.c macros.h
+
+## end   gnulib module stdalign-tests
+
 ## begin gnulib module stdbool-tests
 
 TESTS += test-stdbool
@@ -1936,6 +1962,22 @@ EXTRA_DIST += test-strtoimax.c signature.h macros.h
 
 ## end   gnulib module strtoimax-tests
 
+## begin gnulib module strtoll-tests
+
+TESTS += test-strtoll
+check_PROGRAMS += test-strtoll
+EXTRA_DIST += test-strtoll.c signature.h macros.h
+
+## end   gnulib module strtoll-tests
+
+## begin gnulib module strtoull-tests
+
+TESTS += test-strtoull
+check_PROGRAMS += test-strtoull
+EXTRA_DIST += test-strtoull.c signature.h macros.h
+
+## end   gnulib module strtoull-tests
+
 ## begin gnulib module strtoumax-tests
 
 TESTS += test-strtoumax
@@ -1955,9 +1997,9 @@ EXTRA_DIST += test-symlink.h test-symlink.c signature.h macros.h
 ## begin gnulib module symlinkat
 
 
-EXTRA_DIST += symlinkat.c
+EXTRA_DIST += at-func.c symlinkat.c
 
-EXTRA_libtests_a_SOURCES += symlinkat.c
+EXTRA_libtests_a_SOURCES += at-func.c symlinkat.c
 
 ## end   gnulib module symlinkat
 
@@ -2049,6 +2091,14 @@ check_PROGRAMS += test-termios
 EXTRA_DIST += test-termios.c
 
 ## end   gnulib module termios-tests
+
+## begin gnulib module test-framework-sh-tests
+
+TESTS += test-init.sh
+EXTRA_DIST += init.sh
+EXTRA_DIST += test-init.sh
+
+## end   gnulib module test-framework-sh-tests
 
 ## begin gnulib module thread
 
@@ -2157,6 +2207,15 @@ EXTRA_DIST += test-unlink.h test-unlink.c signature.h macros.h
 
 ## end   gnulib module unlink-tests
 
+## begin gnulib module unlinkat-tests
+
+TESTS += test-unlinkat
+check_PROGRAMS += test-unlinkat
+test_unlinkat_LDADD = $(LDADD) @LIBINTL@
+EXTRA_DIST += test-unlinkat.c test-rmdir.h test-unlink.h signature.h macros.h
+
+## end   gnulib module unlinkat-tests
+
 ## begin gnulib module unlinkdir
 
 libtests_a_SOURCES += unlinkdir.c
@@ -2257,7 +2316,7 @@ EXTRA_DIST += test-vasprintf.c signature.h macros.h
 TESTS += test-vc-list-files-git.sh
 TESTS += test-vc-list-files-cvs.sh
 TESTS_ENVIRONMENT += abs_aux_dir='$(abs_aux_dir)'
-EXTRA_DIST += test-vc-list-files-git.sh test-vc-list-files-cvs.sh init.sh
+EXTRA_DIST += test-vc-list-files-git.sh test-vc-list-files-cvs.sh
 
 ## end   gnulib module vc-list-files-tests
 
@@ -2266,7 +2325,7 @@ EXTRA_DIST += test-vc-list-files-git.sh test-vc-list-files-cvs.sh init.sh
 TESTS_ENVIRONMENT += MAKE='$(MAKE)'
 TESTS += test-verify test-verify.sh
 check_PROGRAMS += test-verify
-EXTRA_DIST += test-verify.c test-verify.sh init.sh
+EXTRA_DIST += test-verify.c test-verify.sh
 
 ## end   gnulib module verify-tests
 
@@ -2368,7 +2427,7 @@ EXTRA_DIST += test-write.c signature.h macros.h
 TESTS += test-xalloc-die.sh
 check_PROGRAMS += test-xalloc-die
 test_xalloc_die_LDADD = $(LDADD) @LIBINTL@
-EXTRA_DIST += test-xalloc-die.c test-xalloc-die.sh init.sh
+EXTRA_DIST += test-xalloc-die.c test-xalloc-die.sh
 
 ## end   gnulib module xalloc-die-tests
 
@@ -2387,7 +2446,7 @@ EXTRA_DIST += test-xprintf-posix.sh test-xfprintf-posix.c test-xprintf-posix.c t
 TESTS += test-xstrtoimax.sh
 check_PROGRAMS += test-xstrtoimax
 test_xstrtoimax_LDADD = $(LDADD) @LIBINTL@
-EXTRA_DIST += init.sh test-xstrtoimax.c test-xstrtoimax.sh
+EXTRA_DIST += test-xstrtoimax.c test-xstrtoimax.sh
 
 ## end   gnulib module xstrtoimax-tests
 
@@ -2397,7 +2456,7 @@ TESTS += test-xstrtol.sh
 check_PROGRAMS += test-xstrtol test-xstrtoul
 test_xstrtol_LDADD = $(LDADD) @LIBINTL@
 test_xstrtoul_LDADD = $(LDADD) @LIBINTL@
-EXTRA_DIST += init.sh test-xstrtol.c test-xstrtoul.c test-xstrtol.sh
+EXTRA_DIST += test-xstrtol.c test-xstrtoul.c test-xstrtol.sh
 
 ## end   gnulib module xstrtol-tests
 
@@ -2406,7 +2465,7 @@ EXTRA_DIST += init.sh test-xstrtol.c test-xstrtoul.c test-xstrtol.sh
 TESTS += test-xstrtoumax.sh
 check_PROGRAMS += test-xstrtoumax
 test_xstrtoumax_LDADD = $(LDADD) @LIBINTL@
-EXTRA_DIST += init.sh test-xstrtoumax.c test-xstrtoumax.sh
+EXTRA_DIST += test-xstrtoumax.c test-xstrtoumax.sh
 
 ## end   gnulib module xstrtoumax-tests
 
@@ -2425,7 +2484,7 @@ EXTRA_DIST += test-xvasprintf.c macros.h
 TESTS += test-yesno.sh
 check_PROGRAMS += test-yesno
 test_yesno_LDADD = $(LDADD) @LIBINTL@
-EXTRA_DIST += init.sh test-yesno.c test-yesno.sh
+EXTRA_DIST += test-yesno.c test-yesno.sh
 
 ## end   gnulib module yesno-tests
 

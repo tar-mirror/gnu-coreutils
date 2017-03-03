@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # Test pr.
 
-# Copyright (C) 2008-2011 Free Software Foundation, Inc.
+# Copyright (C) 2008-2012 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -392,7 +392,7 @@ my @tv = (
 # Before coreutils-5.3.1, --pages=1:-1 would be treated like
 # --pages=1:18446744073709551615.
 ['neg-page', '--pages=1:-1', '', '', 1,
- "$prog: invalid --pages argument `1:-1'\n"],
+ "$prog: invalid --pages argument '1:-1'\n"],
 
 # Up to coreutils-6.10, this would cause pr to decrement its
 # internal "input_position" below zero and sometimes segfault.

@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in -*-Makefile-*-
 
-## Copyright (C) 1990-1991, 1993-2011 Free Software Foundation, Inc.
+## Copyright (C) 1990-1991, 1993-2012 Free Software Foundation, Inc.
 
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -97,6 +97,7 @@ EXTRA_PROGRAMS = \
   ptx		\
   pwd		\
   readlink	\
+  realpath	\
   rm		\
   rmdir		\
   runcon	\
@@ -148,6 +149,7 @@ noinst_HEADERS =	\
   fiemap.h		\
   find-mount-point.h	\
   fs.h			\
+  fs-is-local.h		\
   group-list.h		\
   ioblksize.h		\
   ls.h			\
@@ -247,6 +249,7 @@ printf_LDADD = $(LDADD)
 ptx_LDADD = $(LDADD)
 pwd_LDADD = $(LDADD)
 readlink_LDADD = $(LDADD)
+realpath_LDADD = $(LDADD)
 rm_LDADD = $(LDADD)
 rmdir_LDADD = $(LDADD)
 runcon_LDADD = $(LDADD)
@@ -372,6 +375,7 @@ du_LDADD += $(LIBICONV)
 getlimits_LDADD += $(LIBICONV)
 printf_LDADD += $(LIBICONV)
 ptx_LDADD += $(LIBICONV)
+realpath_LDADD += $(LIBICONV)
 split_LDADD += $(LIBICONV)
 stdbuf_LDADD += $(LIBICONV)
 timeout_LDADD += $(LIBICONV)
@@ -571,11 +575,11 @@ fs_normalize_perl_subst =			\
   -e 's/(\s+0x)(\X{6})\b/$${1}00$$2/;'		\
   -e 's/(\s+0x)(\X{7})\b/$${1}0$$2/;'		\
   -e 's/^\s+//;'				\
-  -e 's/^\#define\s+//;'			\
+  -e 's/^\043define\s+//;'			\
   -e 's/^_(XIAFS)/$$1/;'			\
   -e 's/^USBDEVICE/USBDEVFS/;'			\
   -e 's/NTFS_SB/NTFS/;'				\
-  -e 's/^/\# define S_MAGIC_/;'			\
+  -e 's/^/\043 define S_MAGIC_/;'		\
   -e 's,\s*/\* .*? \*/,,;'
 
 CLEANFILES += fs-magic
@@ -596,6 +600,14 @@ fs-kernel-magic: Makefile
 	  | grep -Ev 'S_MAGIC_EXT[34]|STACK_END'			\
 	  | LC_ALL=C sort						\
 	  > $@-t && mv $@-t $@
+
+BUILT_SOURCES += fs-is-local.h
+fs-is-local.h: stat.c extract-magic
+	$(AM_V_GEN)rm -f $@
+	$(AM_V_at)$(PERL) $(srcdir)/extract-magic --local $(srcdir)/stat.c \
+	  > $@t
+	$(AM_V_at)chmod a-w $@t
+	$(AM_V_at)mv $@t $@
 
 BUILT_SOURCES += fs.h
 fs.h: stat.c extract-magic

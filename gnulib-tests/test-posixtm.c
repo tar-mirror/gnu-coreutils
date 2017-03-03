@@ -1,7 +1,5 @@
-/* -*- buffer-read-only: t -*- vi: set ro: */
-/* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 /* Test that posixtime works as required.
-   Copyright (C) 2009-2011 Free Software Foundation, Inc.
+   Copyright (C) 2009-2012 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -120,7 +118,7 @@ main (void)
   for (i = 0; T[i].in; i++)
     {
       time_t t_out;
-      time_t t_exp = T[i].t_expected;
+      time_t t_exp;
       bool ok;
 
       /* Some tests assume that time_t is signed.
@@ -132,12 +130,15 @@ main (void)
           continue;
         }
 
-      if (T[i].valid && t_exp != T[i].t_expected)
+      if (! (TYPE_MINIMUM (time_t) <= T[i].t_expected
+             && T[i].t_expected <= TYPE_MAXIMUM (time_t)))
         {
           printf ("skipping %s: result is out of range of your time_t\n",
                   T[i].in);
           continue;
         }
+
+      t_exp = T[i].t_expected;
 
       /* If an input string does not specify the year number, determine
          the expected output by calling posixtime with an otherwise

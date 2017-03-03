@@ -1,5 +1,5 @@
 /* POSIX compatible signal blocking.
-   Copyright (C) 2008-2011 Free Software Foundation, Inc.
+   Copyright (C) 2008-2012 Free Software Foundation, Inc.
    Written by Eric Blake <ebb9@byu.net>, 2008.
 
    This program is free software: you can redistribute it and/or modify
@@ -39,9 +39,9 @@
      - We don't implement SA_NOCLDSTOP or SA_NOCLDWAIT, because SIGCHLD
        is not defined.
      - We don't implement SA_ONSTACK, because sigaltstack() is not present.
-     - We ignore SA_RESTART, because blocking Win32 calls are not interrupted
-       anyway when an asynchronous signal occurs, and the MSVCRT runtime
-       never sets errno to EINTR.
+     - We ignore SA_RESTART, because blocking native Windows API calls are
+       not interrupted anyway when an asynchronous signal occurs, and the
+       MSVCRT runtime never sets errno to EINTR.
      - We don't implement SA_SIGINFO because it is impossible to do so
        portably.
 

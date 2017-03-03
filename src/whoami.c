@@ -1,6 +1,6 @@
 /* whoami -- print effective userid
 
-   Copyright (C) 1989-1997, 1999-2002, 2004-2005, 2007-2011 Free Software
+   Copyright (C) 1989-1997, 1999-2002, 2004-2005, 2007-2012 Free Software
    Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
@@ -61,6 +61,7 @@ main (int argc, char **argv)
 {
   struct passwd *pw;
   uid_t uid;
+  uid_t NO_UID = -1;
 
   initialize_main (&argc, &argv);
   set_program_name (argv[0]);
@@ -81,8 +82,9 @@ main (int argc, char **argv)
       usage (EXIT_FAILURE);
     }
 
+  errno = 0;
   uid = geteuid ();
-  pw = getpwuid (uid);
+  pw = (uid == NO_UID && errno ? NULL : getpwuid (uid));
   if (pw)
     {
       puts (pw->pw_name);

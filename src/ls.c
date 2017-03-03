@@ -1,5 +1,5 @@
 /* `dir', `vdir' and `ls' directory listing programs for GNU.
-   Copyright (C) 1985, 1988, 1990-1991, 1995-2011 Free Software Foundation,
+   Copyright (C) 1985, 1988, 1990-1991, 1995-2012 Free Software Foundation,
    Inc.
 
    This program is free software: you can redistribute it and/or modify
@@ -282,7 +282,6 @@ static void queue_directory (char const *name, char const *realname,
                              bool command_line_arg);
 static void sort_files (void);
 static void parse_ls_color (void);
-void usage (int status);
 
 /* Initial size of hash table.
    Most hierarchies are likely to be shallower than this.  */
@@ -479,13 +478,14 @@ static bool numeric_ids;
 
 static bool print_block_size;
 
-/* Human-readable options for output.  */
+/* Human-readable options for output, when printing block counts.  */
 static int human_output_opts;
 
-/* The units to use when printing sizes other than file sizes.  */
+/* The units to use when printing block counts.  */
 static uintmax_t output_block_size;
 
 /* Likewise, but for file sizes.  */
+static int file_human_output_opts;
 static uintmax_t file_output_block_size = 1;
 
 /* Follow the output with a special string.  Using this format,
@@ -809,6 +809,7 @@ static struct option const long_options[] =
    GROUP_DIRECTORIES_FIRST_OPTION},
   {"human-readable", no_argument, NULL, 'h'},
   {"inode", no_argument, NULL, 'i'},
+  {"kibibytes", no_argument, NULL, 'k'},
   {"numeric-uid-gid", no_argument, NULL, 'n'},
   {"no-group", no_argument, NULL, 'G'},
   {"hide-control-chars", no_argument, NULL, 'q'},
@@ -1512,8 +1513,8 @@ decode_switches (int argc, char **argv)
 {
   char *time_style_option = NULL;
 
-  /* Record whether there is an option specifying sort type.  */
   bool sort_type_specified = false;
+  bool kibibytes_specified = false;
 
   qmark_funny_chars = false;
 
@@ -1580,14 +1581,6 @@ decode_switches (int argc, char **argv)
          _("ignoring invalid value of environment variable QUOTING_STYLE: %s"),
                  quotearg (q_style));
       }
-  }
-
-  {
-    char const *ls_block_size = getenv ("LS_BLOCK_SIZE");
-    human_options (ls_block_size,
-                   &human_output_opts, &output_block_size);
-    if (ls_block_size || getenv ("BLOCK_SIZE"))
-      file_output_block_size = output_block_size;
   }
 
   line_length = 80;
@@ -1689,7 +1682,8 @@ decode_switches (int argc, char **argv)
           break;
 
         case 'h':
-          human_output_opts = human_autoscale | human_SI | human_base_1024;
+          file_human_output_opts = human_output_opts =
+            human_autoscale | human_SI | human_base_1024;
           file_output_block_size = output_block_size = 1;
           break;
 
@@ -1698,8 +1692,7 @@ decode_switches (int argc, char **argv)
           break;
 
         case 'k':
-          human_output_opts = 0;
-          file_output_block_size = output_block_size = 1024;
+          kibibytes_specified = true;
           break;
 
         case 'l':
@@ -1937,12 +1930,14 @@ decode_switches (int argc, char **argv)
                                                  &output_block_size);
             if (e != LONGINT_OK)
               xstrtol_fatal (e, oi, 0, long_options, optarg);
+            file_human_output_opts = human_output_opts;
             file_output_block_size = output_block_size;
           }
           break;
 
         case SI_OPTION:
-          human_output_opts = human_autoscale | human_SI;
+          file_human_output_opts = human_output_opts =
+            human_autoscale | human_SI;
           file_output_block_size = output_block_size = 1;
           break;
 
@@ -1956,6 +1951,23 @@ decode_switches (int argc, char **argv)
 
         default:
           usage (LS_FAILURE);
+        }
+    }
+
+  if (! output_block_size)
+    {
+      char const *ls_block_size = getenv ("LS_BLOCK_SIZE");
+      human_options (ls_block_size,
+                     &human_output_opts, &output_block_size);
+      if (ls_block_size || getenv ("BLOCK_SIZE"))
+        {
+          file_human_output_opts = human_output_opts;
+          file_output_block_size = output_block_size;
+        }
+      if (kibibytes_specified)
+        {
+          human_output_opts = 0;
+          output_block_size = 1024;
         }
     }
 
@@ -2027,33 +2039,57 @@ decode_switches (int argc, char **argv)
           long_time_format[1] = p1;
         }
       else
-        switch (XARGMATCH ("time style", style,
-                           time_style_args,
-                           time_style_types))
-          {
-          case full_iso_time_style:
-            long_time_format[0] = long_time_format[1] =
-              "%Y-%m-%d %H:%M:%S.%N %z";
-            break;
+        {
+          ptrdiff_t res = argmatch (style, time_style_args,
+                                    (char const *) time_style_types,
+                                    sizeof (*time_style_types));
+          if (res < 0)
+            {
+              /* This whole block used to be a simple use of XARGMATCH.
+                 but that didn't print the "posix-"-prefixed variants or
+                 the "+"-prefixed format string option upon failure.  */
+              argmatch_invalid ("time style", style, res);
 
-          case long_iso_time_style:
-            long_time_format[0] = long_time_format[1] = "%Y-%m-%d %H:%M";
-            break;
+              /* The following is a manual expansion of argmatch_valid,
+                 but with the added "+ ..." description and the [posix-]
+                 prefixes prepended.  Note that this simplification works
+                 only because all four existing time_style_types values
+                 are distinct.  */
+              fputs (_("Valid arguments are:\n"), stderr);
+              char const *const *p = time_style_args;
+              while (*p)
+                fprintf (stderr, "  - [posix-]%s\n", *p++);
+              fputs (_("  - +FORMAT (e.g., +%H:%M) for a `date'-style"
+                       " format\n"), stderr);
+              usage (LS_FAILURE);
+            }
+          switch (res)
+            {
+            case full_iso_time_style:
+              long_time_format[0] = long_time_format[1] =
+                "%Y-%m-%d %H:%M:%S.%N %z";
+              break;
 
-          case iso_time_style:
-            long_time_format[0] = "%Y-%m-%d ";
-            long_time_format[1] = "%m-%d %H:%M";
-            break;
+            case long_iso_time_style:
+              long_time_format[0] = long_time_format[1] = "%Y-%m-%d %H:%M";
+              break;
 
-          case locale_time_style:
-            if (hard_locale (LC_TIME))
-              {
-                int i;
-                for (i = 0; i < 2; i++)
-                  long_time_format[i] =
-                    dcgettext (NULL, long_time_format[i], LC_TIME);
-              }
-          }
+            case iso_time_style:
+              long_time_format[0] = "%Y-%m-%d ";
+              long_time_format[1] = "%m-%d %H:%M";
+              break;
+
+            case locale_time_style:
+              if (hard_locale (LC_TIME))
+                {
+                  int i;
+                  for (i = 0; i < 2; i++)
+                    long_time_format[i] =
+                      dcgettext (NULL, long_time_format[i], LC_TIME);
+                }
+            }
+        }
+
       /* Note we leave %5b etc. alone so user widths/flags are honored.  */
       if (strstr (long_time_format[0], "%b")
           || strstr (long_time_format[1], "%b"))
@@ -2583,6 +2619,11 @@ print_dir (char const *name, char const *realname, bool command_line_arg)
         }
       else
         break;
+
+      /* When processing a very large directory, and since we've inhibited
+         interrupts, this loop would take so long that ls would be annoyingly
+         uninterruptible.  This ensures that it handles signals promptly.  */
+      process_signals ();
     }
 
   if (closedir (dirp) != 0)
@@ -2702,8 +2743,16 @@ has_capability (char const *name ATTRIBUTE_UNUSED)
 
 /* Enter and remove entries in the table `cwd_file'.  */
 
-/* Empty the table of files.  */
+static void
+free_ent (struct fileinfo *f)
+{
+  free (f->name);
+  free (f->linkname);
+  if (f->scontext != UNKNOWN_SECURITY_CONTEXT)
+    freecon (f->scontext);
+}
 
+/* Empty the table of files.  */
 static void
 clear_files (void)
 {
@@ -2712,10 +2761,7 @@ clear_files (void)
   for (i = 0; i < cwd_n_used; i++)
     {
       struct fileinfo *f = sorted_file[i];
-      free (f->name);
-      free (f->linkname);
-      if (f->scontext != UNKNOWN_SECURITY_CONTEXT)
-        freecon (f->scontext);
+      free_ent (f);
     }
 
   cwd_n_used = 0;
@@ -3025,7 +3071,8 @@ gobble_file (char const *name, enum filetype type, ino_t inode,
             {
               char buf[LONGEST_HUMAN_READABLE + 1];
               uintmax_t size = unsigned_file_size (f->stat.st_size);
-              int len = mbswidth (human_readable (size, buf, human_output_opts,
+              int len = mbswidth (human_readable (size, buf,
+                                                  file_human_output_opts,
                                                   1, file_output_block_size),
                                   0);
               if (file_size_width < len)
@@ -3150,7 +3197,7 @@ extract_dirs_from_files (char const *dirname, bool command_line_arg)
               free (name);
             }
           if (f->filetype == arg_directory)
-            free (f->name);
+            free_ent (f);
         }
     }
 
@@ -3767,7 +3814,8 @@ print_long_format (const struct fileinfo *f)
         (! f->stat_ok
          ? "?"
          : human_readable (unsigned_file_size (f->stat.st_size),
-                           hbuf, human_output_opts, 1, file_output_block_size));
+                           hbuf, file_human_output_opts, 1,
+                           file_output_block_size));
       int pad;
       for (pad = file_size_width - mbswidth (size, 0); 0 < pad; pad--)
         *p++ = ' ';
@@ -4041,9 +4089,9 @@ print_name_with_quoting (const struct fileinfo *f,
   if (stack)
     PUSH_CURRENT_DIRED_POS (stack);
 
+  process_signals ();
   if (used_color_this_time)
     {
-      process_signals ();
       prep_non_filename_text ();
       if (start_col / line_length != (start_col + width - 1) / line_length)
         put_indicator (&color_indicator[C_CLR_TO_EOL]);
@@ -4672,7 +4720,7 @@ Mandatory arguments to long options are mandatory for short options too.\n\
   -i, --inode                print the index number of each file\n\
   -I, --ignore=PATTERN       do not list implied entries matching shell PATTERN\
 \n\
-  -k                         like --block-size=1K\n\
+  -k, --kibibytes            use 1024-byte blocks\n\
 "), stdout);
       fputs (_("\
   -l                         use a long listing format\n\

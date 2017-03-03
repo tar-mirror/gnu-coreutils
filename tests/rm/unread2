@@ -1,7 +1,7 @@
 #!/bin/sh
 # exercise one small part of remove.c
 
-# Copyright (C) 2002-2011 Free Software Foundation, Inc.
+# Copyright (C) 2002-2012 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,6 +30,6 @@ cat <<\EOF > exp
 rm: cannot remove `a': Permission denied
 EOF
 
-compare out exp || fail=1
+compare exp out || fail=1
 
 Exit $fail

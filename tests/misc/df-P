@@ -1,7 +1,7 @@
 #!/bin/sh
 # Ensure that df -P is not affected by BLOCK_SIZE settings
 
-# Copyright (C) 2007-2011 Free Software Foundation, Inc.
+# Copyright (C) 2007-2012 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,6 +32,6 @@ BLOCK_SIZE=1M df -P . > t2 || fail=1
 head -n1 t1 > exp || fail=1
 head -n1 t2 > out || fail=1
 
-compare out exp || fail=1
+compare exp out || fail=1
 
 Exit $fail

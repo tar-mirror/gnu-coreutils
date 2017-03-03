@@ -1,7 +1,5 @@
-/* -*- buffer-read-only: t -*- vi: set ro: */
-/* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 /* Test of parse_datetime() function.
-   Copyright (C) 2008-2011 Free Software Foundation, Inc.
+   Copyright (C) 2008-2012 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -32,7 +30,7 @@
 
 #ifdef DEBUG
 #define LOG(str, now, res)                                              \
-  printf ("string `%s' diff %d %d\n",                   \
+  printf ("string '%s' diff %d %d\n",                                 \
           str, res.tv_sec - now.tv_sec, res.tv_nsec - now.tv_nsec);
 #else
 #define LOG(str, now, res) (void) 0
@@ -96,20 +94,17 @@ tm_diff (struct tm const *a, struct tm const *b)
 #endif /* ! HAVE_TM_GMTOFF */
 
 static long
-gmt_offset ()
+gmt_offset (time_t s)
 {
-  time_t now;
   long gmtoff;
 
-  time (&now);
-
 #if !HAVE_TM_GMTOFF
-  struct tm tm_local = *localtime (&now);
-  struct tm tm_gmt   = *gmtime (&now);
+  struct tm tm_local = *localtime (&s);
+  struct tm tm_gmt   = *gmtime (&s);
 
   gmtoff = tm_diff (&tm_local, &tm_gmt);
 #else
-  gmtoff = localtime (&now)->tm_gmtoff;
+  gmtoff = localtime (&s)->tm_gmtoff;
 #endif
 
   return gmtoff;
@@ -125,16 +120,17 @@ main (int argc _GL_UNUSED, char **argv)
   const char *p;
   int i;
   long gmtoff;
+  time_t ref_time = 1304250918;
 
   set_program_name (argv[0]);
 
-  gmtoff = gmt_offset ();
+  gmtoff = gmt_offset (ref_time);
 
 
   /* ISO 8601 extended date and time of day representation,
      'T' separator, local time zone */
   p = "2011-05-01T11:55:18";
-  expected.tv_sec = 1304250918 - gmtoff;
+  expected.tv_sec = ref_time - gmtoff;
   expected.tv_nsec = 0;
   ASSERT (parse_datetime (&result, p, 0));
   LOG (p, expected, result);
@@ -144,7 +140,7 @@ main (int argc _GL_UNUSED, char **argv)
   /* ISO 8601 extended date and time of day representation,
      ' ' separator, local time zone */
   p = "2011-05-01 11:55:18";
-  expected.tv_sec = 1304250918 - gmtoff;
+  expected.tv_sec = ref_time - gmtoff;
   expected.tv_nsec = 0;
   ASSERT (parse_datetime (&result, p, 0));
   LOG (p, expected, result);
@@ -155,7 +151,7 @@ main (int argc _GL_UNUSED, char **argv)
   /* ISO 8601, extended date and time of day representation,
      'T' separator, UTC */
   p = "2011-05-01T11:55:18Z";
-  expected.tv_sec = 1304250918;
+  expected.tv_sec = ref_time;
   expected.tv_nsec = 0;
   ASSERT (parse_datetime (&result, p, 0));
   LOG (p, expected, result);
@@ -165,7 +161,7 @@ main (int argc _GL_UNUSED, char **argv)
   /* ISO 8601, extended date and time of day representation,
      ' ' separator, UTC */
   p = "2011-05-01 11:55:18Z";
-  expected.tv_sec = 1304250918;
+  expected.tv_sec = ref_time;
   expected.tv_nsec = 0;
   ASSERT (parse_datetime (&result, p, 0));
   LOG (p, expected, result);

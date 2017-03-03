@@ -1,6 +1,6 @@
 # Make coreutils man pages.				-*-Makefile-*-
 
-# Copyright (C) 2002-2011 Free Software Foundation, Inc.
+# Copyright (C) 2002-2012 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,7 +19,8 @@ dist_man1_MANS = $(MAN)
 
 man_aux = $(dist_man1_MANS:.1=.x)
 
-EXTRA_DIST = $(man_aux) $(NO_INSTALL_PROGS_DEFAULT:%=%.x) help2man
+EXTRA_DIST = $(man_aux) $(NO_INSTALL_PROGS_DEFAULT:%=%.x) help2man \
+	$(NO_INSTALL_PROGS_DEFAULT:%=%.1)
 MAINTAINERCLEANFILES = $(dist_man1_MANS)
 
 # Depend on ../.version to get version number changes.
@@ -91,6 +92,7 @@ printf.1:	$(common_dep)	$(srcdir)/printf.x	../src/printf.c
 ptx.1:		$(common_dep)	$(srcdir)/ptx.x		../src/ptx.c
 pwd.1:		$(common_dep)	$(srcdir)/pwd.x		../src/pwd.c
 readlink.1:	$(common_dep)	$(srcdir)/readlink.x	../src/readlink.c
+realpath.1:	$(common_dep)	$(srcdir)/realpath.x	../src/realpath.c
 rm.1:		$(common_dep)	$(srcdir)/rm.x		../src/rm.c
 rmdir.1:	$(common_dep)	$(srcdir)/rmdir.x	../src/rmdir.c
 runcon.1:	$(common_dep)	$(srcdir)/runcon.x	../src/runcon.c

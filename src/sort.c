@@ -1,5 +1,5 @@
 /* sort - sort lines of text (with all kinds of options).
-   Copyright (C) 1988, 1991-2011 Free Software Foundation, Inc.
+   Copyright (C) 1988, 1991-2012 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -457,8 +457,7 @@ Other options:\n\
                             If F is - then read names from standard input\n\
 "), stdout);
       fputs (_("\
-  -k, --key=POS1[,POS2]     start a key at POS1 (origin 1), end it at POS2\n\
-                            (default end of line).  See POS syntax below\n\
+  -k, --key=KEYDEF          sort via a key; KEYDEF gives location and type\n\
   -m, --merge               merge already sorted files; do not sort\n\
 "), stdout);
       fputs (_("\
@@ -483,13 +482,14 @@ Other options:\n\
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
       fputs (_("\
 \n\
-POS is F[.C][OPTS], where F is the field number and C the character position\n\
-in the field; both are origin 1.  If neither -t nor -b is in effect, characters\
+KEYDEF is F[.C][OPTS][,F[.C][OPTS]] for start and stop position, where F is a\n\
+field number and C a character position in the field; both are origin 1, and\n\
+the stop position defaults to the line's end.  If neither -t nor -b is in\n\
+effect, characters in a field are counted from the beginning of the preceding\n\
+whitespace.  OPTS is one or more single-letter ordering options [bdfgiMhnRrV],\
 \n\
-in a field are counted from the beginning of the preceding whitespace.  OPTS is\
-\n\
-one or more single-letter ordering options, which override global ordering\n\
-options for that key.  If no key is given, use the entire line as the key.\n\
+which override global ordering options for that key.  If no key is given, use\n\
+the entire line as the key.\n\
 \n\
 SIZE may be followed by the following multiplicative suffixes:\n\
 "), stdout);
@@ -3488,7 +3488,7 @@ merge_loop (struct merge_node_queue *queue,
 
 
 static void sortlines (struct line *restrict, size_t, size_t,
-                       struct merge_node *, bool, struct merge_node_queue *,
+                       struct merge_node *, struct merge_node_queue *,
                        FILE *, char const *);
 
 /* Thread arguments for sortlines_thread. */
@@ -3509,9 +3509,6 @@ struct thread_args
      to this node's parent. */
   struct merge_node *const node;
 
-  /* True if this node is sorting the lower half of the parent's work.  */
-  bool is_lo_child;
-
   /* The priority queue controlling available work for the entire
      internal sort.  */
   struct merge_node_queue *const queue;
@@ -3529,7 +3526,7 @@ sortlines_thread (void *data)
 {
   struct thread_args const *args = data;
   sortlines (args->lines, args->nthreads, args->total_lines,
-             args->node, args->is_lo_child, args->queue, args->tfp,
+             args->node, args->queue, args->tfp,
              args->output_temp);
   return NULL;
 }
@@ -3560,7 +3557,7 @@ sortlines_thread (void *data)
 
 static void
 sortlines (struct line *restrict lines, size_t nthreads,
-           size_t total_lines, struct merge_node *node, bool is_lo_child,
+           size_t total_lines, struct merge_node *node,
            struct merge_node_queue *queue, FILE *tfp, char const *temp_output)
 {
   size_t nlines = node->nlo + node->nhi;
@@ -3570,13 +3567,13 @@ sortlines (struct line *restrict lines, size_t nthreads,
   size_t hi_threads = nthreads - lo_threads;
   pthread_t thread;
   struct thread_args args = {lines, lo_threads, total_lines,
-                             node->lo_child, true, queue, tfp, temp_output};
+                             node->lo_child, queue, tfp, temp_output};
 
   if (nthreads > 1 && SUBTHREAD_LINES_HEURISTIC <= nlines
       && pthread_create (&thread, NULL, sortlines_thread, &args) == 0)
     {
       sortlines (lines - node->nlo, hi_threads, total_lines,
-                 node->hi_child, false, queue, tfp, temp_output);
+                 node->hi_child, queue, tfp, temp_output);
       pthread_join (thread, NULL);
     }
   else
@@ -3871,7 +3868,7 @@ sort (char *const *files, size_t nfiles, char const *output_file,
               struct merge_node *root = merge_tree + 1;
 
               sortlines (line, nthreads, buf.nlines, root,
-                         true, &queue, tfp, temp_output);
+                         &queue, tfp, temp_output);
               queue_destroy (&queue);
               pthread_mutex_destroy (&root->lock);
               merge_tree_destroy (merge_tree);

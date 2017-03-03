@@ -1,5 +1,5 @@
 # Include this file at the end of each tests/*/Makefile.am.
-# Copyright (C) 2007-2011 Free Software Foundation, Inc.
+# Copyright (C) 2007-2012 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,21 +20,17 @@
 _v = TESTS
 _w = root_tests
 vc_exe_in_TESTS: Makefile
-	$(AM_V_GEN)rm -f t1 t2;						\
-	if test -d $(top_srcdir)/.git && test $(srcdir) = .; then	\
-	  { sed -n '/^$(_v) =[	 ]*\\$$/,/[^\]$$/p'			\
-		$(srcdir)/Makefile.am					\
-	    | sed 's/^  *//;/^\$$.*/d;/^$(_v) =/d';			\
-	    sed -n '/^$(_w) =[	 ]*\\$$/,/[^\]$$/p'			\
-		$(srcdir)/Makefile.am					\
-	    | sed 's/^  *//;/^\$$.*/d;/^$(_w) =/d'; }			\
-	    | tr -s '\012\\' '  ' | fmt -1 | sort -u > t1 &&		\
-	  for f in `cd $(top_srcdir) && build-aux/vc-list-files $(subdir)`; do \
-	    f=`echo $$f|sed 's!^$(subdir)/!!'`;				\
+	$(AM_V_GEN)if test -d $(top_srcdir)/.git && test $(srcdir) = .; then \
+	 {								\
+	  for list in $(_v) $(_w); do					\
+	    sed -n "/^$$list =[	 ]*\\\\$$/,/[^\]$$/p" Makefile.am |	\
+	    sed -n 's/^  *\([^$$	 ]\{1,\}\).*/\1/p';		\
+	  done;								\
+	  for f in `cd $(top_srcdir) &&					\
+	   build-aux/vc-list-files $(subdir) | sed 's!^$(subdir)/!!'`; do \
 	    test -f "$$f" && test -x "$$f" && echo "$$f";		\
-	  done | sort -u > t2 &&					\
-	  diff -u t1 t2 || exit 1;					\
-	  rm -f t1 t2;							\
+	  done;								\
+	 } | sort | uniq -u | grep . && exit 1 ||:;			\
 	else :; fi
 
 check: vc_exe_in_TESTS
@@ -43,7 +39,7 @@ check: vc_exe_in_TESTS
 CLEANFILES =
 CLEANFILES += .built-programs
 check-am: .built-programs
-.built-programs:
+.built-programs: $(top_srcdir)/src/Makefile.am
 	$(AM_V_GEN)(cd $(top_builddir)/src				\
             && MAKEFLAGS= $(MAKE) -s built_programs.list)		\
           > $@-t && mv $@-t $@

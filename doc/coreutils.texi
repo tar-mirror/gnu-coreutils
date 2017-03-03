@@ -94,6 +94,7 @@
 * ptx: (coreutils)ptx invocation.               Produce permuted indexes.
 * pwd: (coreutils)pwd invocation.               Print working directory.
 * readlink: (coreutils)readlink invocation.     Print referent of a symlink.
+* realpath: (coreutils)readpath invocation.     Print resolved file names.
 * rm: (coreutils)rm invocation.                 Remove files.
 * rmdir: (coreutils)rmdir invocation.           Remove empty directories.
 * runcon: (coreutils)runcon invocation.         Run in specified SELinux CTX.
@@ -139,7 +140,7 @@
 This manual documents version @value{VERSION} of the @sc{gnu} core
 utilities, including the standard programs for text and file manipulation.
 
-Copyright @copyright{} 1994-1996, 2000-2011 Free Software Foundation, Inc.
+Copyright @copyright{} 1994-1996, 2000-2012 Free Software Foundation, Inc.
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -194,7 +195,7 @@ Free Documentation License''.
 * Printing text::                echo printf yes
 * Conditions::                   false true test expr
 * Redirection::                  tee
-* File name manipulation::       dirname basename pathchk mktemp
+* File name manipulation::       dirname basename pathchk mktemp realpath
 * Working context::              pwd stty printenv tty
 * User information::             id logname whoami groups users who
 * System context::               date arch nproc uname hostname hostid uptime
@@ -381,6 +382,7 @@ File name manipulation
 * dirname invocation::           Strip last file name component
 * pathchk invocation::           Check file name validity and portability
 * mktemp invocation::            Create temporary file or directory
+* realpath invocation::          Print resolved file names
 
 Working context
 
@@ -901,10 +903,10 @@ A block size specification can be a positive integer specifying the number
 of bytes per block, or it can be @code{human-readable} or @code{si} to
 select a human-readable format.  Integers may be followed by suffixes
 that are upward compatible with the
-@uref{http://www.bipm.fr/enus/3_SI/si-prefixes.html, SI prefixes}
+@uref{http://www.bipm.org/en/si/si_brochure/chapter3/prefixes.html, SI prefixes}
 for decimal multiples and with the
-@uref{http://physics.nist.gov/cuu/Units/binary.html, IEC 60027-2
-prefixes for binary multiples}.
+@uref{http://physics.nist.gov/cuu/Units/binary.html, ISO/IEC 80000-13
+(formerly IEC 60027-2) prefixes} for binary multiples.
 
 With human-readable formats, output sizes are followed by a size letter
 such as @samp{M} for megabytes.  @code{BLOCK_SIZE=human-readable} uses
@@ -946,7 +948,7 @@ kilobyte: @math{10^3 = 1000}.
 @itemx KiB
 @cindex kibibyte, definition of
 kibibyte: @math{2^{10} = 1024}.  @samp{K} is special: the SI prefix is
-@samp{k} and the IEC 60027-2 prefix is @samp{Ki}, but tradition and
+@samp{k} and the ISO/IEC 80000-13 prefix is @samp{Ki}, but tradition and
 @acronym{POSIX} use @samp{k} to mean @samp{KiB}.
 @item MB
 @cindex megabyte, definition of
@@ -989,14 +991,12 @@ zettabyte: @math{10^{21} = 1,000,000,000,000,000,000,000}
 @item Z
 @itemx ZiB
 @math{2^{70} = 1,180,591,620,717,411,303,424}.
-(@samp{Zi} is a @acronym{GNU} extension to IEC 60027-2.)
 @item YB
 @cindex yottabyte, definition of
 yottabyte: @math{10^{24} = 1,000,000,000,000,000,000,000,000}.
 @item Y
 @itemx YiB
 @math{2^{80} = 1,208,925,819,614,629,174,706,176}.
-(@samp{Yi} is a @acronym{GNU} extension to IEC 60027-2.)
 @end table
 
 @opindex -k
@@ -4362,7 +4362,7 @@ sort -n -r
 @end example
 
 @item
-Run no more that 4 sorts concurrently, using a buffer size of 10M.
+Run no more than 4 sorts concurrently, using a buffer size of 10M.
 
 @example
 sort --parallel=4 -S 10M
@@ -7127,10 +7127,19 @@ Append @samp{*} for executable regular files, otherwise behave as for
 @end table
 
 @item -k
+@itemx --kibibytes
 @opindex -k
-Print file sizes in 1024-byte blocks, overriding the default block
-size (@pxref{Block size}).
-This option is equivalent to @option{--block-size=1K}.
+@opindex --kibibytes
+Set the default block size to its normal value of 1024 bytes,
+overriding any contrary specification in environment variables
+(@pxref{Block size}).  This option is in turn overridden by the
+@option{--block-size}, @option{-h} or @option{--human-readable}, and
+@option{--si} options.
+
+The @option{-k} or @option{--kibibytes} option affects the
+per-directory block count written by the @option{-l} and similar
+options, and the size written by the @option{-s} or @option{--size}
+option.  It does not affect the file size written by @option{-l}.
 
 @item -m
 @itemx --format=commas
@@ -7192,6 +7201,7 @@ a date like @samp{Mar 30@ @ 2002} for non-recent timestamps, and a
 date-without-year and time like @samp{Mar 30 23:45} for recent timestamps.
 This format can change depending on the current locale as detailed below.
 
+@cindex clock skew
 A timestamp is considered to be @dfn{recent} if it is less than six
 months old, and is not dated in the future.  If a timestamp dated
 today is not listed in recent form, the timestamp is in the future,
@@ -9595,7 +9605,6 @@ Set the default SELinux security context to be used for created files.
 @cindex displaying value of a symbolic link
 @cindex canonical file name
 @cindex canonicalize a file name
-@pindex realpath
 @findex realpath
 
 @command{readlink} may work in one of two supported modes:
@@ -9678,8 +9687,8 @@ Report error messages.
 
 The @command{readlink} utility first appeared in OpenBSD 2.1.
 
-There is a @command{realpath} command on some systems
-which operates like @command{readlink} in canonicalize mode.
+The @command{realpath} command without options, operates like
+@command{readlink} in canonicalize mode.
 
 @exitstatus
 
@@ -10254,11 +10263,39 @@ A @var{file} argument string of @samp{-} is handled specially and
 causes @command{touch} to change the times of the file associated with
 standard output.
 
+@cindex clock skew
+By default, @command{touch} sets file timestamps to the current time.
+Because @command{touch} acts on its operands left to right, the
+resulting timestamps of earlier and later operands may disagree.
+Also, the determination of what time is ``current'' depends on the
+platform.  Platforms with network file systems often use different
+clocks for the operating system and for file systems; because
+@command{touch} typically uses file systems' clocks by default, clock
+skew can cause the resulting file timestamps to appear to be in a
+program's ``future'' or ``past''.
+
+@cindex file timestamp resolution
+The @command{touch} command sets the file's timestamp to the greatest
+representable value that is not greater than the requested time.  This
+can differ from the requested time for several reasons.  First, the
+requested time may have a higher resolution than supported.  Second, a
+file system may use different resolutions for different types of
+times.  Third, file timestamps may use a different resolution than
+operating system timestamps.  Fourth, the operating system primitives
+used to update timestamps may employ yet a different resolution.  For
+example, in theory a file system might use 10-microsecond resolution
+for access time and 100-nanosecond resolution for modification time,
+and the operating system might use nanosecond resolution for the
+current time and microsecond resolution for the primitive that
+@command{touch} uses to set a file's timestamp to an arbitrary value.
+
 @cindex permissions, for changing file timestamps
-If changing both the access and modification times to the current
-time, @command{touch} can change the timestamps for files that the user
-running it does not own but has write permission for.  Otherwise, the
-user must own the files.
+When setting file timestamps to the current time, @command{touch} can
+change the timestamps for files that the user does not own but has
+write permission for.  Otherwise, the user must own the files.  Some
+older systems have a further restriction: the user must own the files
+unless both the access and modification times are being set to the
+current time.
 
 Although @command{touch} provides options for changing two of the times---the
 times of last access and modification---of a file, there is actually
@@ -12318,6 +12355,7 @@ This section describes commands that manipulate file names.
 * dirname invocation::          Strip last file name component.
 * pathchk invocation::          Check file name validity and portability.
 * mktemp invocation::           Create temporary file or directory.
+* realpath invocation::         Print resolved file names.
 @end menu
 
 
@@ -12667,6 +12705,119 @@ Exit status:
 
 @display
 0 if the file was created,
+1 otherwise.
+@end display
+
+
+@node realpath invocation
+@section @command{realpath}: Print the resolved file name.
+
+@pindex realpath
+@cindex file names, canonicalization
+@cindex symlinks, resolution
+@cindex canonical file name
+@cindex canonicalize a file name
+@pindex realpath
+@findex realpath
+
+@command{realpath} expands all symbolic links and resolves references to
+@samp{/./}, @samp{/../} and extra @samp{/} characters.  By default,
+all but the last component of the specified files must exist.  Synopsis:
+
+@example
+realpath [@var{option}]@dots{} @var{file}@dots{}
+@end example
+
+The program accepts the following options.  Also see @ref{Common options}.
+
+@table @samp
+
+@item -e
+@itemx --canonicalize-existing
+@opindex -e
+@opindex --canonicalize-existing
+Ensure that all components of the specified file names exist.
+If any component is missing or unavailable, @command{realpath} will output
+a diagnostic unless the @option{-q} option is specified, and exit with a
+nonzero exit code.  A trailing slash requires that the name resolve to a
+directory.
+
+@item -m
+@itemx --canonicalize-missing
+@opindex -m
+@opindex --canonicalize-missing
+If any component of a specified file name is missing or unavailable,
+treat it as a directory.
+
+@item -L
+@itemx --logical
+@opindex -L
+@opindex --logical
+Symbolic links are resolved in the specified file names,
+but they are resolved after any subsequent @samp{..} components are processed.
+
+@item -P
+@itemx --physical
+@opindex -P
+@opindex --physical
+Symbolic links are resolved in the specified file names,
+and they are resolved before any subsequent @samp{..} components are processed.
+This is the default mode of operation.
+
+@item -q
+@itemx --quiet
+@opindex -q
+@opindex --quiet
+Suppress diagnostic messages for specified file names.
+
+@item -s
+@itemx --strip
+@itemx --no-symlinks
+@opindex -s
+@opindex --strip
+@opindex --no-symlinks
+Do not resolve symbolic links.  Only resolve references to
+@samp{/./}, @samp{/../} and remove extra @samp{/} characters.
+When combined with the @option{-m} option, realpath operates
+only on the file name, and does not touch any actual file.
+
+@item -z
+@itemx --zero
+@opindex -z
+@opindex --zero
+Separate output items with @sc{nul} characters.
+
+@itemx --relative-to=@var{file}
+@opindex --relative-to
+@cindex relpath
+Print the resolved file names relative to the specified file.
+Note this option honors the @option{-m} and @option{-e} options
+pertaining to file existence.
+
+@itemx --relative-base=@var{base}
+@opindex --relative-base
+This option is valid when used with @option{--relative-to}, and will restrict
+the output of @option{--relative-to} so that relative names are output,
+only when @var{file}s are descendants of @var{base}.  Otherwise output the
+absolute file name.  Note: this option honors the @option{-m} and @option{-e}
+options pertaining to file existence.  For example:
+
+@example
+realpath --relative-to=/usr /tmp /usr/bin
+@result{} ../tmp
+@result{} bin
+realpath --relative-base=/usr --relative-to=/usr /tmp /usr/bin
+@result{} /tmp
+@result{} bin
+@end example
+
+@end table
+
+@cindex exit status of @command{realpath}
+Exit status:
+
+@display
+0 if all file names were printed without issue.
 1 otherwise.
 @end display
 
@@ -13952,7 +14103,6 @@ This is a @acronym{GNU} extension.
 locale's 12-hour clock time (e.g., @samp{11:11:04 PM})
 @item %R
 24-hour hour and minute.  Same as @samp{%H:%M}.
-This is a @acronym{GNU} extension.
 @item %s
 @cindex epoch, seconds since
 @cindex seconds since the epoch
@@ -13976,7 +14126,6 @@ appropriate for the current time, using the time zone rules specified
 by the @env{TZ} environment variable.
 The time (and optionally, the time zone rules) can be overridden
 by the @option{--date} option.
-This is a @acronym{GNU} extension.
 @item %:z
 @w{@acronym{RFC} 3339/@acronym{ISO} 8601} style numeric time zone with
 @samp{:} (e.g., @samp{-06:00} or @samp{+05:30}), or nothing if no time
@@ -14033,14 +14182,12 @@ full date in @acronym{ISO} 8601 format; same as @samp{%Y-%m-%d}.
 This is a good choice for a date format, as it is standard and
 is easy to sort in the usual case where years are in the range
 0000@dots{}9999.
-This is a @acronym{GNU} extension.
 @item %g
 year corresponding to the @acronym{ISO} week number, but without the century
 (range @samp{00} through @samp{99}).  This has the same format and value
 as @samp{%y}, except that if the @acronym{ISO} week number (see
 @samp{%V}) belongs
 to the previous or next year, that year is used instead.
-This is a @acronym{GNU} extension.
 @item %G
 year corresponding to the @acronym{ISO} week number.  This has the
 same format and value as @samp{%Y}, except that if the @acronym{ISO}
@@ -14050,7 +14197,6 @@ instead.
 It is normally useful only if @samp{%V} is also used;
 for example, the format @samp{%G-%m-%d} is probably a mistake,
 since it combines the ISO week number year with the conventional month and day.
-This is a @acronym{GNU} extension.
 @item %h
 same as @samp{%b}
 @item %j
@@ -14188,11 +14334,9 @@ is available, it is ignored.
 If given an argument that does not start with @samp{+}, @command{date} sets
 the system clock to the date and time specified by that argument (as
 described below).  You must have appropriate privileges to set the
-system clock.  The @option{--date} and @option{--set} options may not be
-used with such an argument.  The @option{--universal} option may be used
-with such an argument to indicate that the specified date and time are
-relative to Coordinated Universal Time rather than to the local time
-zone.
+system clock.  Note for changes to persist across a reboot, the
+hardware clock may need to be updated from the system clock, which
+might not happen automatically on your system.
 
 The argument must consist entirely of digits, which have the following
 meaning:
@@ -14214,7 +14358,10 @@ last two digits of year (optional)
 second (optional)
 @end table
 
-The @option{--set} option also sets the system clock; see the next section.
+Note, the @option{--date} and @option{--set} options may not be used with an
+argument in the above format.  The @option{--universal} option may be used
+with such an argument to indicate that the specified date and time are
+relative to Coordinated Universal Time rather than to the local time zone.
 
 
 @node Options for date
@@ -14261,6 +14408,34 @@ resulting date and time.  If @var{datefile} is @samp{-}, use standard
 input.  This is useful when you have many dates to process, because the
 system overhead of starting up the @command{date} executable many times can
 be considerable.
+
+@item -I[@var{timespec}]
+@itemx --iso-8601[=@var{timespec}]
+@opindex -I[@var{timespec}]
+@opindex --iso-8601[=@var{timespec}]
+Display the date using the @acronym{ISO} 8601 format, @samp{%Y-%m-%d}.
+
+The argument @var{timespec} specifies the number of additional
+terms of the time to include.  It can be one of the following:
+@table @samp
+@item auto
+Print just the date.  This is the default if @var{timespec} is omitted.
+
+@item hours
+Append the hour of the day to the date.
+
+@item minutes
+Append the hours and minutes.
+
+@item seconds
+Append the hours, minutes and seconds.
+
+@item ns
+Append the hours, minutes, seconds and nanoseconds.
+@end table
+
+If showing any time terms, then include the time zone using the format
+@samp{%z}.
 
 @item -r @var{file}
 @itemx --reference=@var{file}
@@ -14327,6 +14502,7 @@ This is equivalent to the format @samp{%Y-%m-%d %H:%M:%S.%N%:z}.
 @opindex -s
 @opindex --set
 Set the date and time to @var{datestr}.  See @option{-d} above.
+See also @ref{Setting the time}.
 
 @item -u
 @itemx --utc
@@ -15903,8 +16079,10 @@ Factoring the product of the eighth and ninth Mersenne primes
 takes about 30 milliseconds of CPU time on a 2.2 GHz Athlon.
 
 @example
-M8=`echo 2^31-1|bc` ; M9=`echo 2^61-1|bc`
-/usr/bin/time -f '%U' factor $(echo "$M8 * $M9" | bc)
+M8=$(echo 2^31-1|bc)
+M9=$(echo 2^61-1|bc)
+n=$(echo "$M8 * $M9" | bc)
+/usr/bin/time -f %U factor $n
 4951760154835678088235319297: 2147483647 2305843009213693951
 0.03
 @end example

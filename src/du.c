@@ -1,5 +1,5 @@
 /* du -- summarize disk usage
-   Copyright (C) 1988-1991, 1995-2011 Free Software Foundation, Inc.
+   Copyright (C) 1988-1991, 1995-2012 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -443,6 +443,9 @@ process_file (FTS *fts, FTSENT *ent)
               error (0, ent->fts_errno, _("cannot access %s"), quote (file));
               return false;
             }
+
+          if (fts->fts_options & FTS_XDEV && fts->fts_dev != sb->st_dev)
+            excluded = true;
         }
 
       if (excluded

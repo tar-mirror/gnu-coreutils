@@ -1,5 +1,5 @@
 /* POSIX compatible signal blocking.
-   Copyright (C) 2006-2011 Free Software Foundation, Inc.
+   Copyright (C) 2006-2012 Free Software Foundation, Inc.
    Written by Bruno Haible <bruno@clisp.org>, 2006.
 
    This program is free software: you can redistribute it and/or modify
@@ -344,5 +344,6 @@ _gl_raise_SIGPIPE (void)
       else if (handler != SIG_IGN)
         (*handler) (SIGPIPE);
     }
+  return 0;
 }
 #endif

@@ -1,7 +1,7 @@
 # -*- autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-# Copyright (C) 1991, 1993-2011 Free Software Foundation, Inc.
+# Copyright (C) 1991, 1993-2012 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -121,8 +121,9 @@ if test "$gl_gcc_warnings" = yes; then
   gl_WARN_ADD([-Wno-unused-parameter]) # Too many warnings for now
   gl_WARN_ADD([-Wsuggest-attribute=const])
   gl_WARN_ADD([-Wsuggest-attribute=noreturn])
+  gl_WARN_ADD([-Wno-format-nonliteral])
 
-  # Enable this warning only with gcc-4.7 and newer.  With 4.6.1 20110824,
+  # Enable this warning only with gcc-4.7 and newer.  With 4.6.2 20111027,
   # it suggests test.c's advance function may be pure, even though it
   # increments a global variable.  Oops.
   # Normally we'd write code to test for the precise failure, but that
@@ -151,15 +152,18 @@ if test "$gl_gcc_warnings" = yes; then
   nw="$nw -Wunused-macros"
   nw="$nw -Wmissing-prototypes"
   nw="$nw -Wold-style-definition"
-  # FIXME: remove/reenable the following two, once gnulib is adjusted.
-  nw="$nw -Wsuggest-attribute=const"
-  nw="$nw -Wsuggest-attribute=pure"
+  # FIXME: it may be easy to remove this, since it affects only one file:
+  # the snprintf call at ftoastr.c:132.
+  nw="$nw -Wdouble-promotion"
   gl_MANYWARN_COMPLEMENT([GNULIB_WARN_CFLAGS], [$WARN_CFLAGS], [$nw])
   AC_SUBST([GNULIB_WARN_CFLAGS])
 
   # For gnulib-tests, the set is slightly smaller still.
   nw=
   nw="$nw -Wstrict-prototypes"
+  # It's not worth being this picky about test programs.
+  nw="$nw -Wsuggest-attribute=const"
+  nw="$nw -Wsuggest-attribute=pure"
   gl_MANYWARN_COMPLEMENT([GNULIB_TEST_WARN_CFLAGS],
                          [$GNULIB_WARN_CFLAGS], [$nw])
   AC_SUBST([GNULIB_TEST_WARN_CFLAGS])

@@ -1,6 +1,6 @@
 /* readtokens.c  -- Functions for reading tokens from an input stream.
 
-   Copyright (C) 1990-1991, 1999-2004, 2006, 2009-2011 Free Software
+   Copyright (C) 1990-1991, 1999-2004, 2006, 2009-2012 Free Software
    Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
@@ -143,7 +143,7 @@ readtoken (FILE *stream,
    All storage is obtained through calls to xmalloc-like functions.
 
    %%% Question: is it worth it to do a single
-   %%% realloc() of `tokens' just before returning? */
+   %%% realloc() of 'tokens' just before returning? */
 
 size_t
 readtokens (FILE *stream,

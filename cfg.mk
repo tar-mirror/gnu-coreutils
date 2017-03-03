@@ -1,5 +1,5 @@
 # Customize maint.mk                           -*- makefile -*-
-# Copyright (C) 2003-2011 Free Software Foundation, Inc.
+# Copyright (C) 2003-2012 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,6 +17,10 @@
 # Used in maint.mk's web-manual rule
 manual_title = Core GNU utilities
 
+# Use the direct link.  This is guaranteed to work immediately, while
+# it can take a while for the faster mirror links to become usable.
+url_dir_list = http://ftp.gnu.org/gnu/$(PACKAGE)
+
 # Tests not to run as part of "make distcheck".
 local-checks-to-skip = \
   sc_texinfo_acronym
@@ -27,7 +31,7 @@ bootstrap-tools = autoconf,automake,gnulib,bison
 # Now that we have better tests, make this the default.
 export VERBOSE = yes
 
-old_NEWS_hash = 0869235d8e62fd7ed8d8dfacfad2e4d9
+old_NEWS_hash = 60c2a8ae70e77352e301825426aee27d
 
 # Add an exemption for sc_makefile_at_at_check.
 _makefile_at_at_check_exceptions = ' && !/^cu_install_program =/'
@@ -241,6 +245,15 @@ sc_prohibit_fail_0:
 	halt='fail=0 initialization'					\
 	  $(_sc_search_regexp)
 
+# The mode part of a setfacl -m option argument must be three bytes long.
+# I.e., an argument of user:bin:rw or user:bin:r will make Solaris 10's
+# setfacl reject it with: "Unrecognized character found in mode field".
+# Use hyphens to give it a length of 3: "...:rw-" or "...:r--".
+sc_prohibit_short_facl_mode_spec:
+	@prohibit='\<setfacl .*-m.*:.*:[rwx-]{1,2} '			\
+	halt='setfacl mode string length < 3; extend with hyphen(s)'	\
+	  $(_sc_search_regexp)
+
 # Ensure that "stdio--.h" is used where appropriate.
 sc_require_stdio_safer:
 	@if $(VC_LIST_EXCEPT) | grep -l '\.[ch]$$' > /dev/null; then	\
@@ -384,13 +397,15 @@ exclude_file_name_regexp--sc_file_system = \
 exclude_file_name_regexp--sc_prohibit_always_true_header_tests = \
   ^m4/stat-prog\.m4$$
 exclude_file_name_regexp--sc_prohibit_fail_0 = \
-  (^tests/init\.sh|Makefile\.am|\.mk)$$
+  (^scripts/git-hooks/commit-msg|^tests/init\.sh|Makefile\.am|\.mk)$$
 exclude_file_name_regexp--sc_prohibit_atoi_atof = ^lib/euidaccess-stat\.c$$
+
+tbi_1 = ^tests/pr/|(^gl/lib/reg.*\.c\.diff|Makefile(\.am)?|\.mk|^man/help2man)$$
+tbi_2 = ^scripts/git-hooks/(pre-commit|pre-applypatch|applypatch-msg)$$
 exclude_file_name_regexp--sc_prohibit_tab_based_indentation = \
-  ^tests/pr/|(^gl/lib/reg.*\.c\.diff|Makefile(\.am)?|\.mk|^man/help2man)$$
+  $(tbi_1)|$(tbi_2)
+
 exclude_file_name_regexp--sc_preprocessor_indentation = \
   ^(gl/lib/rand-isaac\.[ch]|gl/tests/test-rand-isaac\.c)$$
-
-
 exclude_file_name_regexp--sc_prohibit_stat_st_blocks = \
   ^(src/system\.h|tests/du/2g)$$

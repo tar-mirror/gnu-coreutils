@@ -1,5 +1,5 @@
 /* tail -- output the last part of file(s)
-   Copyright (C) 1989-1991, 1995-2006, 2008-2011 Free Software Foundation, Inc.
+   Copyright (C) 1989-1991, 1995-2006, 2008-2012 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -54,6 +54,7 @@
 
 /* inotify needs to know if a file is local.  */
 # include "fs.h"
+# include "fs-is-local.h"
 # if HAVE_SYS_STATFS_H
 #  include <sys/statfs.h>
 # elif HAVE_SYS_VFS_H
@@ -847,9 +848,7 @@ start_lines (const char *pretty_filename, int fd, uintmax_t n_lines,
   while (1)
     {
       char buffer[BUFSIZ];
-      char *p = buffer;
       size_t bytes_read = safe_read (fd, buffer, BUFSIZ);
-      char *buffer_end = buffer + bytes_read;
       if (bytes_read == 0) /* EOF */
         return -1;
       if (bytes_read == SAFE_READ_ERROR) /* error */
@@ -858,8 +857,11 @@ start_lines (const char *pretty_filename, int fd, uintmax_t n_lines,
           return 1;
         }
 
+      char *buffer_end = buffer + bytes_read;
+
       *read_pos += bytes_read;
 
+      char *p = buffer;
       while ((p = memchr (p, '\n', buffer_end - p)))
         {
           ++p;
@@ -896,24 +898,24 @@ fremote (int fd, const char *name)
     }
   else
     {
-      switch (buf.f_type)
+      switch (is_local_fs_type (buf.f_type))
         {
-        case S_MAGIC_AFS:
-        case S_MAGIC_CIFS:
-        case S_MAGIC_CODA:
-        case S_MAGIC_FUSEBLK:
-        case S_MAGIC_FUSECTL:
-        case S_MAGIC_GFS:
-        case S_MAGIC_KAFS:
-        case S_MAGIC_LUSTRE:
-        case S_MAGIC_NCP:
-        case S_MAGIC_NFS:
-        case S_MAGIC_NFSD:
-        case S_MAGIC_OCFS2:
-        case S_MAGIC_SMB:
+        case 0:
+          break;
+        case -1:
+          {
+            unsigned long int fs_type = buf.f_type;
+            error (0, 0, _("unrecognized file system type 0x%08lx for %s. "
+                           "please report this to %s. reverting to polling"),
+                   fs_type, quote (name), PACKAGE_BUGREPORT);
+            /* Treat as "remote", so caller polls.  */
+          }
+          break;
+        case 1:
+          remote = false;
           break;
         default:
-          remote = false;
+          assert (!"unexpected return value from is_local_fs_type");
         }
     }
 # endif

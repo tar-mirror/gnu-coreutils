@@ -1,5 +1,5 @@
 /* pr -- convert text files for printing.
-   Copyright (C) 1988, 1991, 1995-2011 Free Software Foundation, Inc.
+   Copyright (C) 1988, 1991, 1995-2012 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -426,7 +426,6 @@ static void pad_across_to (int position);
 static void add_line_number (COLUMN *p);
 static void getoptarg (char *arg, char switch_char, char *character,
                        int *number);
-void usage (int status);
 static void print_files (int number_of_files, char **av);
 static void init_parameters (int number_of_files);
 static void init_header (char const *filename, int desc);

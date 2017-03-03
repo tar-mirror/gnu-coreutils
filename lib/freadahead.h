@@ -1,5 +1,5 @@
 /* Retrieve information about a FILE stream.
-   Copyright (C) 2007-2011 Free Software Foundation, Inc.
+   Copyright (C) 2007-2012 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ extern "C" {
 
    STREAM must not be wide-character oriented.  */
 
-extern size_t freadahead (FILE *stream);
+extern size_t freadahead (FILE *stream) _GL_ATTRIBUTE_PURE;
 
 #ifdef __cplusplus
 }

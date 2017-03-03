@@ -1,5 +1,5 @@
-# math_h.m4 serial 50
-dnl Copyright (C) 2007-2011 Free Software Foundation, Inc.
+# math_h.m4 serial 56
+dnl Copyright (C) 2007-2012 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -41,9 +41,9 @@ AC_DEFUN([gl_MATH_H],
   gl_WARN_ON_USE_PREPARE([[#include <math.h>]],
     [acosf acosl asinf asinl atanf atanl
      ceilf ceill copysign copysignf copysignl cosf cosl coshf
-     expf expl fabsf floorf floorl fmodf frexpf frexpl
+     expf expl fabsf floorf floorl fma fmaf fmal fmodf frexpf frexpl
      ldexpf ldexpl logb logf logl log10f modff powf
-     round roundf roundl sinf sinl sinhf sqrtf sqrtl
+     rint rintf rintl round roundf roundl sinf sinl sinhf sqrtf sqrtl
      tanf tanl tanhf trunc truncf truncl])
 ])
 
@@ -80,6 +80,9 @@ AC_DEFUN([gl_MATH_H_DEFAULTS],
   GNULIB_FLOOR=0;     AC_SUBST([GNULIB_FLOOR])
   GNULIB_FLOORF=0;    AC_SUBST([GNULIB_FLOORF])
   GNULIB_FLOORL=0;    AC_SUBST([GNULIB_FLOORL])
+  GNULIB_FMA=0;       AC_SUBST([GNULIB_FMA])
+  GNULIB_FMAF=0;      AC_SUBST([GNULIB_FMAF])
+  GNULIB_FMAL=0;      AC_SUBST([GNULIB_FMAL])
   GNULIB_FMODF=0;     AC_SUBST([GNULIB_FMODF])
   GNULIB_FREXPF=0;    AC_SUBST([GNULIB_FREXPF])
   GNULIB_FREXP=0;     AC_SUBST([GNULIB_FREXP])
@@ -98,6 +101,9 @@ AC_DEFUN([gl_MATH_H_DEFAULTS],
   GNULIB_LOG10F=0;    AC_SUBST([GNULIB_LOG10F])
   GNULIB_MODFF=0;     AC_SUBST([GNULIB_MODFF])
   GNULIB_POWF=0;      AC_SUBST([GNULIB_POWF])
+  GNULIB_RINT=0;      AC_SUBST([GNULIB_RINT])
+  GNULIB_RINTF=0;     AC_SUBST([GNULIB_RINTF])
+  GNULIB_RINTL=0;     AC_SUBST([GNULIB_RINTL])
   GNULIB_ROUND=0;     AC_SUBST([GNULIB_ROUND])
   GNULIB_ROUNDF=0;    AC_SUBST([GNULIB_ROUNDF])
   GNULIB_ROUNDL=0;    AC_SUBST([GNULIB_ROUNDL])
@@ -130,6 +136,9 @@ AC_DEFUN([gl_MATH_H_DEFAULTS],
   HAVE_EXPF=1;                 AC_SUBST([HAVE_EXPF])
   HAVE_EXPL=1;                 AC_SUBST([HAVE_EXPL])
   HAVE_FABSF=1;                AC_SUBST([HAVE_FABSF])
+  HAVE_FMA=1;                  AC_SUBST([HAVE_FMA])
+  HAVE_FMAF=1;                 AC_SUBST([HAVE_FMAF])
+  HAVE_FMAL=1;                 AC_SUBST([HAVE_FMAL])
   HAVE_FMODF=1;                AC_SUBST([HAVE_FMODF])
   HAVE_FREXPF=1;               AC_SUBST([HAVE_FREXPF])
   HAVE_ISNANF=1;               AC_SUBST([HAVE_ISNANF])
@@ -141,6 +150,9 @@ AC_DEFUN([gl_MATH_H_DEFAULTS],
   HAVE_LOG10F=1;               AC_SUBST([HAVE_LOG10F])
   HAVE_MODFF=1;                AC_SUBST([HAVE_MODFF])
   HAVE_POWF=1;                 AC_SUBST([HAVE_POWF])
+  HAVE_RINT=1;                 AC_SUBST([HAVE_RINT])
+  HAVE_RINTF=1;                AC_SUBST([HAVE_RINTF])
+  HAVE_RINTL=1;                AC_SUBST([HAVE_RINTL])
   HAVE_SINF=1;                 AC_SUBST([HAVE_SINF])
   HAVE_SINL=1;                 AC_SUBST([HAVE_SINL])
   HAVE_SINHF=1;                AC_SUBST([HAVE_SINHF])
@@ -177,6 +189,9 @@ AC_DEFUN([gl_MATH_H_DEFAULTS],
   REPLACE_FLOOR=0;             AC_SUBST([REPLACE_FLOOR])
   REPLACE_FLOORF=0;            AC_SUBST([REPLACE_FLOORF])
   REPLACE_FLOORL=0;            AC_SUBST([REPLACE_FLOORL])
+  REPLACE_FMA=0;               AC_SUBST([REPLACE_FMA])
+  REPLACE_FMAF=0;              AC_SUBST([REPLACE_FMAF])
+  REPLACE_FMAL=0;              AC_SUBST([REPLACE_FMAL])
   REPLACE_FREXPF=0;            AC_SUBST([REPLACE_FREXPF])
   REPLACE_FREXP=0;             AC_SUBST([REPLACE_FREXP])
   REPLACE_FREXPL=0;            AC_SUBST([REPLACE_FREXPL])

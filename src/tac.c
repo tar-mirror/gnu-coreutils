@@ -1,5 +1,5 @@
 /* tac - concatenate and print files in reverse
-   Copyright (C) 1988-1991, 1995-2006, 2008-2011 Free Software Foundation, Inc.
+   Copyright (C) 1988-1991, 1995-2006, 2008-2012 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,6 +44,7 @@ tac -r -s '.\|
 #include <regex.h>
 
 #include "error.h"
+#include "filenamecat.h"
 #include "quote.h"
 #include "quotearg.h"
 #include "safe-read.h"
@@ -417,6 +418,73 @@ record_or_unlink_tempfile (char const *fn, FILE *fp ATTRIBUTE_UNUSED)
 
 #endif
 
+/* A wrapper around mkstemp that gives us both an open stream pointer,
+   FP, and the corresponding FILE_NAME.  Always return the same FP/name
+   pair, rewinding/truncating it upon each reuse.  */
+static bool
+temp_stream (FILE **fp, char **file_name)
+{
+  static char *tempfile = NULL;
+  static FILE *tmp_fp;
+  if (tempfile == NULL)
+    {
+      char const *t = getenv ("TMPDIR");
+      char const *tempdir = t ? t : DEFAULT_TMPDIR;
+      tempfile = mfile_name_concat (tempdir, "tacXXXXXX", NULL);
+      if (tempdir == NULL)
+        {
+          error (0, 0, _("memory exhausted"));
+          return false;
+        }
+
+      /* FIXME: there's a small window between a successful mkstemp call
+         and the unlink that's performed by record_or_unlink_tempfile.
+         If we're interrupted in that interval, this code fails to remove
+         the temporary file.  On systems that define DONT_UNLINK_WHILE_OPEN,
+         the window is much larger -- it extends to the atexit-called
+         unlink_tempfile.
+         FIXME: clean up upon fatal signal.  Don't block them, in case
+         $TMPFILE is a remote file system.  */
+
+      int fd = mkstemp (tempfile);
+      if (fd < 0)
+        {
+          error (0, errno, _("failed to create temporary file in %s"),
+                 quote (tempdir));
+          goto Reset;
+        }
+
+      tmp_fp = fdopen (fd, (O_BINARY ? "w+b" : "w+"));
+      if (! tmp_fp)
+        {
+          error (0, errno, _("failed to open %s for writing"),
+                 quote (tempfile));
+          close (fd);
+          unlink (tempfile);
+        Reset:
+          free (tempfile);
+          tempfile = NULL;
+          return false;
+        }
+
+      record_or_unlink_tempfile (tempfile, tmp_fp);
+    }
+  else
+    {
+      if (fseek (tmp_fp, 0, SEEK_SET) < 0
+          || ftruncate (fileno (tmp_fp), 0) < 0)
+        {
+          error (0, errno, _("failed to rewind stream for %s"),
+                 quote (tempfile));
+          return false;
+        }
+    }
+
+  *fp = tmp_fp;
+  *file_name = tempfile;
+  return true;
+}
+
 /* Copy from file descriptor INPUT_FD (corresponding to the named FILE) to
    a temporary file, and set *G_TMP and *G_TEMPFILE to the resulting stream
    and file name.  Return true if successful.  */
@@ -424,52 +492,10 @@ record_or_unlink_tempfile (char const *fn, FILE *fp ATTRIBUTE_UNUSED)
 static bool
 copy_to_temp (FILE **g_tmp, char **g_tempfile, int input_fd, char const *file)
 {
-  static char *template = NULL;
-  static char const *tempdir;
-  char *tempfile;
-  FILE *tmp;
-  int fd;
-
-  if (template == NULL)
-    {
-      char const * const Template = "%s/tacXXXXXX";
-      tempdir = getenv ("TMPDIR");
-      if (tempdir == NULL)
-        tempdir = DEFAULT_TMPDIR;
-
-      /* Subtract 2 for `%s' and add 1 for the trailing NUL byte.  */
-      template = xmalloc (strlen (tempdir) + strlen (Template) - 2 + 1);
-      sprintf (template, Template, tempdir);
-    }
-
-  /* FIXME: there's a small window between a successful mkstemp call
-     and the unlink that's performed by record_or_unlink_tempfile.
-     If we're interrupted in that interval, this code fails to remove
-     the temporary file.  On systems that define DONT_UNLINK_WHILE_OPEN,
-     the window is much larger -- it extends to the atexit-called
-     unlink_tempfile.
-     FIXME: clean up upon fatal signal.  Don't block them, in case
-     $TMPFILE is a remote file system.  */
-
-  tempfile = template;
-  fd = mkstemp (template);
-  if (fd < 0)
-    {
-      error (0, errno, _("cannot create temporary file in %s"),
-             quote (tempdir));
-      return false;
-    }
-
-  tmp = fdopen (fd, (O_BINARY ? "w+b" : "w+"));
-  if (! tmp)
-    {
-      error (0, errno, _("cannot open %s for writing"), quote (tempfile));
-      close (fd);
-      unlink (tempfile);
-      return false;
-    }
-
-  record_or_unlink_tempfile (tempfile, tmp);
+  FILE *fp;
+  char *file_name;
+  if (!temp_stream (&fp, &file_name))
+    return false;
 
   while (1)
     {
@@ -482,25 +508,25 @@ copy_to_temp (FILE **g_tmp, char **g_tempfile, int input_fd, char const *file)
           goto Fail;
         }
 
-      if (fwrite (G_buffer, 1, bytes_read, tmp) != bytes_read)
+      if (fwrite (G_buffer, 1, bytes_read, fp) != bytes_read)
         {
-          error (0, errno, _("%s: write error"), quotearg_colon (tempfile));
+          error (0, errno, _("%s: write error"), quotearg_colon (file_name));
           goto Fail;
         }
     }
 
-  if (fflush (tmp) != 0)
+  if (fflush (fp) != 0)
     {
-      error (0, errno, _("%s: write error"), quotearg_colon (tempfile));
+      error (0, errno, _("%s: write error"), quotearg_colon (file_name));
       goto Fail;
     }
 
-  *g_tmp = tmp;
-  *g_tempfile = tempfile;
+  *g_tmp = fp;
+  *g_tempfile = file_name;
   return true;
 
  Fail:
-  fclose (tmp);
+  fclose (fp);
   return false;
 }
 
@@ -512,8 +538,11 @@ tac_nonseekable (int input_fd, const char *file)
 {
   FILE *tmp_stream;
   char *tmp_file;
-  return (copy_to_temp (&tmp_stream, &tmp_file, input_fd, file)
-          && tac_seekable (fileno (tmp_stream), tmp_file));
+  if (!copy_to_temp (&tmp_stream, &tmp_file, input_fd, file))
+    return false;
+
+  bool ok = tac_seekable (fileno (tmp_stream), tmp_file);
+  return ok;
 }
 
 /* Print FILE in reverse, copying it to a temporary
@@ -541,7 +570,8 @@ tac_file (const char *filename)
       fd = open (filename, O_RDONLY | O_BINARY);
       if (fd < 0)
         {
-          error (0, errno, _("cannot open %s for reading"), quote (filename));
+          error (0, errno, _("failed to open %s for reading"),
+                 quote (filename));
           return false;
         }
     }

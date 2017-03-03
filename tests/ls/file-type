@@ -1,7 +1,7 @@
 #!/bin/sh
 # contrast ls -F, ls -p, and ls --indicator-style=file-type
 
-# Copyright (C) 2002, 2005-2011 Free Software Foundation, Inc.
+# Copyright (C) 2002, 2005-2012 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -53,13 +53,13 @@ ls --indicator-style=file-type sub > out2 || fail=1
 sed 's/[@|]$//' exp2 > exp3
 ls -p sub > out3 || fail=1
 
-compare out exp || fail=1
+compare exp out || fail=1
 
-compare out2 exp2 || fail=1
+compare exp2 out2 || fail=1
 
-compare out3 exp3 || fail=1
+compare exp3 out3 || fail=1
 
 ls --color=auto -F sub > out || fail=1
-compare out exp || fail=1
+compare exp out || fail=1
 
 Exit $fail

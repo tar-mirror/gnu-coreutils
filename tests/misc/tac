@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Copyright (C) 2008-2011 Free Software Foundation, Inc.
+# Copyright (C) 2008-2012 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ my @Tests =
    {ENV => "TMPDIR=$bad_dir"},
    {IN_PIPE => "a\n"},
    {ERR_SUBST => "s,`$bad_dir': .*,...,"},
-   {ERR => "$prog: cannot create temporary file in ...\n"},
+   {ERR => "$prog: failed to create temporary file in ...\n"},
    {EXIT => 1}],
 
   # coreutils-8.5's tac would double-free its primary buffer.

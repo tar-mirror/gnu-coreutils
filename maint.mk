@@ -2,7 +2,7 @@
 # This Makefile fragment tries to be general-purpose enough to be
 # used by many projects via the gnulib maintainer-makefile module.
 
-## Copyright (C) 2001-2011 Free Software Foundation, Inc.
+## Copyright (C) 2001-2012 Free Software Foundation, Inc.
 ##
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -21,8 +21,12 @@
 # ME := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 ME := maint.mk
 
-# Override this in cfg.mk if you use a non-standard build-aux directory.
-build_aux ?= $(srcdir)/build-aux
+# Diagnostic for continued use of deprecated variable.
+# Remove in 2013
+ifneq ($(build_aux),)
+ $(error "$(ME): \
+set $$(_build-aux) relative to $$(srcdir) instead of $$(build_aux)")
+endif
 
 # Do not save the original name or timestamp in the .tar.gz file.
 # Use --rsyncable if available.
@@ -34,7 +38,7 @@ GZIP_ENV = '--no-name --best $(gzip_rsyncable)'
 GIT = git
 VC = $(GIT)
 
-VC_LIST = $(build_aux)/vc-list-files -C $(srcdir)
+VC_LIST = $(srcdir)/$(_build-aux)/vc-list-files -C $(srcdir)
 
 # You can override this variable in cfg.mk to set your own regexp
 # matching files to ignore.
@@ -122,7 +126,7 @@ export LC_ALL = C
 
 _cfg_mk := $(shell test -f $(srcdir)/cfg.mk && echo '$(srcdir)/cfg.mk')
 
-# Collect the names of rules starting with `sc_'.
+# Collect the names of rules starting with 'sc_'.
 syntax-check-rules := $(sort $(shell sed -n 's/^\(sc_[a-zA-Z0-9_-]*\):.*/\1/p' \
 			$(srcdir)/$(ME) $(_cfg_mk)))
 .PHONY: $(syntax-check-rules)
@@ -217,15 +221,6 @@ define _sc_say_and_exit
    { printf '%s\n' "$(ME): $$msg" 1>&2; exit 1; };
 endef
 
-# _sc_search_regexp used to be named _prohibit_regexp.  However,
-# upgrading to the new definition and leaving the old name undefined
-# would usually convert each custom rule using $(_prohibit_regexp)
-# (usually defined in cfg.mk) into a no-op.  This definition ensures
-# that people know right away if they're still using the old name.
-# FIXME: remove in 2012.
-_prohibit_regexp = \
-  $(error '*** you need to s/_prohibit_regexp/_sc_search_regexp/, and adapt')
-
 define _sc_search_regexp
    dummy=; : so we do not need a semicolon before each use;		\
 									\
@@ -274,7 +269,7 @@ define _sc_search_regexp
 endef
 
 sc_avoid_if_before_free:
-	@$(build_aux)/useless-if-before-free				\
+	@$(srcdir)/$(_build-aux)/useless-if-before-free			\
 		$(useless_free_options)					\
 	    $$($(VC_LIST_EXCEPT) | grep -v useless-if-before-free) &&	\
 	  { echo '$(ME): found useless "if" before "free" above' 1>&2;	\
@@ -299,7 +294,7 @@ sc_space_tab:
 	halt='found SPACE-TAB sequence; remove the SPACE'		\
 	  $(_sc_search_regexp)
 
-# Don't use *scanf or the old ato* functions in `real' code.
+# Don't use *scanf or the old ato* functions in "real" code.
 # They provide no error checking mechanism.
 # Instead, use strto* functions.
 sc_prohibit_atoi_atof:
@@ -331,15 +326,15 @@ sc_prohibit_magic_number_exit:
 	  $(_sc_search_regexp)
 
 # Using EXIT_SUCCESS as the first argument to error is misleading,
-# since when that parameter is 0, error does not exit.  Use `0' instead.
+# since when that parameter is 0, error does not exit.  Use '0' instead.
 sc_error_exit_success:
 	@prohibit='error *\(EXIT_SUCCESS,'				\
 	in_vc_files='\.[chly]$$'					\
 	halt='found error (EXIT_SUCCESS'				\
 	 $(_sc_search_regexp)
 
-# `FATAL:' should be fully upper-cased in error messages
-# `WARNING:' should be fully upper-cased, or fully lower-cased
+# "FATAL:" should be fully upper-cased in error messages
+# "WARNING:" should be fully upper-cased, or fully lower-cased
 sc_error_message_warn_fatal:
 	@grep -nEA2 '[^rp]error *\(' $$($(VC_LIST_EXCEPT))		\
 	    | grep -E '"Warning|"Fatal|"fatal' &&			\
@@ -618,7 +613,17 @@ _stddef_syms_re = NULL|offsetof|ptrdiff_t|size_t|wchar_t
 # Prohibit the inclusion of stddef.h without an actual use.
 sc_prohibit_stddef_without_use:
 	@h='stddef.h'							\
-	re='\<($(_stddef_syms_re)) *\('					\
+	re='\<($(_stddef_syms_re))\>'					\
+	  $(_sc_header_without_use)
+
+_de1 = dirfd|(close|(fd)?open|read|rewind|seek|tell)dir(64)?(_r)?
+_de2 = (versionsort|struct dirent|getdirentries|alphasort|scandir(at)?)(64)?
+_de3 = MAXNAMLEN|DIR|ino_t|d_ino|d_fileno|d_namlen
+_dirent_syms_re = $(_de1)|$(_de2)|$(_de3)
+# Prohibit the inclusion of dirent.h without an actual use.
+sc_prohibit_dirent_without_use:
+	@h='dirent.h'							\
+	re='\<($(_dirent_syms_re))\>'					\
 	  $(_sc_header_without_use)
 
 # Prohibit the inclusion of verify.h without an actual use.
@@ -749,10 +754,12 @@ gl_other_headers_ ?= \
 
 # Perl -lne code to extract "significant" cpp-defined symbols from a
 # gnulib header file, eliminating a few common false-positives.
+# The exempted names below are defined only conditionally in gnulib,
+# and hence sometimes must/may be defined in application code.
 gl_extract_significant_defines_ = \
   /^\# *define ([^_ (][^ (]*)(\s*\(|\s+\w+)/\
     && $$2 !~ /(?:rpl_|_used_without_)/\
-    && $$1 !~ /^(?:NSIG)$$/\
+    && $$1 !~ /^(?:NSIG|ENODATA)$$/\
     && $$1 !~ /^(?:SA_RESETHAND|SA_RESTART)$$/\
     and print $$1
 
@@ -1071,15 +1078,15 @@ sc_po_check:
 
 # Sometimes it is useful to change the PATH environment variable
 # in Makefiles.  When doing so, it's better not to use the Unix-centric
-# path separator of `:', but rather the automake-provided `$(PATH_SEPARATOR)'.
-msg = '$(ME): Do not use `:'\'' above; use $$(PATH_SEPARATOR) instead'
+# path separator of ':', but rather the automake-provided '$(PATH_SEPARATOR)'.
+msg = '$(ME): Do not use '\'':'\'' above; use $$(PATH_SEPARATOR) instead'
 sc_makefile_path_separator_check:
 	@prohibit='PATH[=].*:'						\
 	in_vc_files='akefile|\.mk$$'					\
 	halt=$(msg)							\
 	  $(_sc_search_regexp)
 
-# Check that `make alpha' will not fail at the end of the process,
+# Check that 'make alpha' will not fail at the end of the process,
 # i.e., when pkg-M.N.tar.xz already exists (either in "." or in ../release)
 # and is read-only.
 writable-files:
@@ -1141,6 +1148,16 @@ sc_cross_check_PATH_usage_in_tests:
 		1>&2; exit 1; } || :;					\
 	fi
 
+# BRE regex of file contents to identify a test script.
+_test_script_regex ?= \<init\.sh\>
+
+# In tests, use "compare expected actual", not the reverse.
+sc_prohibit_reversed_compare_failure:
+	@prohibit='\<compare [^ ]+ ([^ ]*exp|/dev/null)'		\
+	containing='$(_test_script_regex)'				\
+	halt='reversed compare arguments'				\
+	  $(_sc_search_regexp)
+
 # #if HAVE_... will evaluate to false for any non numeric string.
 # That would be flagged by using -Wundef, however gnulib currently
 # tests many undefined macros, and so we can't enable that option.
@@ -1187,9 +1204,9 @@ bootstrap-tools ?= autoconf,automake,gnulib
 # If it's not already specified, derive the GPG key ID from
 # the signed tag we've just applied to mark this release.
 gpg_key_ID ?= \
-  $$(git cat-file tag v$(VERSION) > .ann-sig \
-     && gpgv .ann-sig - < /dev/null 2>&1 \
-	  | sed -n '/.*key ID \([0-9A-F]*\)/s//\1/p'; rm -f .ann-sig)
+  $$(git cat-file tag v$(VERSION) \
+     | gpgv --status-fd 1 --keyring /dev/null - - 2>/dev/null \
+     | sed -n '/^\[GNUPG:\] ERRSIG /{s///;s/ .*//p;q}')
 
 translation_project_ ?= coordinator@translationproject.org
 
@@ -1208,7 +1225,7 @@ else
 endif
 
 announcement: NEWS ChangeLog $(rel-files)
-	@$(build_aux)/announce-gen					\
+	@$(srcdir)/$(_build-aux)/announce-gen				\
 	    --mail-headers='$(announcement_mail_headers_)'		\
 	    --release-type=$(RELEASE_TYPE)				\
 	    --package=$(PACKAGE)					\
@@ -1232,7 +1249,7 @@ upload_dest_dir_ ?= $(PACKAGE)
 emit_upload_commands:
 	@echo =====================================
 	@echo =====================================
-	@echo "$(build_aux)/gnupload $(GNUPLOADFLAGS) \\"
+	@echo "$(srcdir)/$(_build-aux)/gnupload $(GNUPLOADFLAGS) \\"
 	@echo "    --to $(gnu_rel_host):$(upload_dest_dir_) \\"
 	@echo "  $(rel-files)"
 	@echo '# send the ~/announce-$(my_distdir) e-mail'
@@ -1327,7 +1344,7 @@ web-manual:
 	@test -z "$(manual_title)" \
 	  && { echo define manual_title in cfg.mk 1>&2; exit 1; } || :
 	@cd '$(srcdir)/doc'; \
-	  $(SHELL) ../build-aux/gendocs.sh $(gendocs_options_) \
+	  $(SHELL) ../$(_build-aux)/gendocs.sh $(gendocs_options_) \
 	     -o '$(abs_builddir)/doc/manual' \
 	     --email $(PACKAGE_BUGREPORT) $(PACKAGE) \
 	    "$(PACKAGE_NAME) - $(manual_title)"
@@ -1392,7 +1409,7 @@ update-copyright-env ?=
 update-copyright:
 	grep -l -w Copyright                                             \
 	  $$(export VC_LIST_EXCEPT_DEFAULT=COPYING && $(VC_LIST_EXCEPT)) \
-	  | $(update-copyright-env) xargs $(build_aux)/$@
+	  | $(update-copyright-env) xargs $(srcdir)/$(_build-aux)/$@
 
 # This tight_scope test is skipped with a warning if $(_gl_TS_headers) is not
 # overridden and $(_gl_TS_dir)/Makefile.am does not mention noinst_HEADERS.
@@ -1422,16 +1439,16 @@ sc_tight_scope: tight-scope.mk
 
 tight-scope.mk: $(ME)
 	@rm -f $@ $@-t
-	@perl -ne '/^# TS-start/.../^# TS-end/ and print' $(ME) > $@-t
+	@perl -ne '/^# TS-start/.../^# TS-end/ and print' $(srcdir)/$(ME) > $@-t
 	@chmod a=r $@-t && mv $@-t $@
 
 ifeq (a,b)
 # TS-start
 
 # Most functions should have static scope.
-# Any that don't must be marked with `extern', but `main'
-# and `usage' are exceptions: they're always extern, but
-# do not need to be marked.  Symbols matching `__.*' are
+# Any that don't must be marked with 'extern', but 'main'
+# and 'usage' are exceptions: they're always extern, but
+# do not need to be marked.  Symbols matching '__.*' are
 # reserved by the compiler, so are automatically excluded below.
 _gl_TS_unmarked_extern_functions ?= main usage
 _gl_TS_function_match ?= /^(?:$(_gl_TS_extern)) +.*?(\S+) *\(/
@@ -1441,9 +1458,9 @@ _gl_TS_function_match ?= /^(?:$(_gl_TS_extern)) +.*?(\S+) *\(/
 # export _gl_TS_extern = extern|XTERN
 _gl_TS_extern ?= extern
 
-# The second nm|grep checks for file-scope variables with `extern' scope.
+# The second nm|grep checks for file-scope variables with 'extern' scope.
 # Without gnulib's progname module, you might put program_name here.
-# Symbols matching `__.*' are reserved by the compiler,
+# Symbols matching '__.*' are reserved by the compiler,
 # so are automatically excluded below.
 _gl_TS_unmarked_extern_vars ?=
 

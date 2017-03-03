@@ -1,7 +1,5 @@
-/* -*- buffer-read-only: t -*- vi: set ro: */
-/* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 /* read-file.c -- read file contents into a string
-   Copyright (C) 2006, 2009-2011 Free Software Foundation, Inc.
+   Copyright (C) 2006, 2009-2012 Free Software Foundation, Inc.
    Written by Simon Josefsson and Bruno Haible.
 
    This program is free software; you can redistribute it and/or modify

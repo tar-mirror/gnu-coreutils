@@ -1,5 +1,63 @@
 GNU coreutils NEWS                                    -*- outline -*-
 
+* Noteworthy changes in release 8.15 (2012-01-06) [stable]
+
+** New programs
+
+  realpath: print resolved file names.
+
+** Bug fixes
+
+  du -x no longer counts root directories of other file systems.
+  [bug introduced in coreutils-5.1.0]
+
+  ls --color many-entry-directory was uninterruptible for too long
+  [bug introduced in coreutils-5.2.1]
+
+  ls's -k option no longer affects how ls -l outputs file sizes.
+  It now affects only the per-directory block counts written by -l,
+  and the sizes written by -s.  This is for compatibility with BSD
+  and with POSIX 2008.  Because -k is no longer equivalent to
+  --block-size=1KiB, a new long option --kibibyte stands for -k.
+  [bug introduced in coreutils-4.5.4]
+
+  ls -l would leak a little memory (security context string) for each
+  nonempty directory listed on the command line, when using SELinux.
+  [bug probably introduced in coreutils-6.10 with SELinux support]
+
+  rm -rf DIR would fail with "Device or resource busy" on Cygwin with NWFS
+  and NcFsd file systems.  This did not affect Unix/Linux-based kernels.
+  [bug introduced in coreutils-8.0, when rm began using fts]
+
+  split -n 1/2 FILE no longer fails when operating on a growing file, or
+  (on some systems) when operating on a non-regular file like /dev/zero.
+  It would report "/dev/zero: No such file or directory" even though
+  the file obviously exists.  Same for -n l/2.
+  [bug introduced in coreutils-8.8, with the addition of the -n option]
+
+  stat -f now recognizes the FhGFS and PipeFS file system types.
+
+  tac no longer fails to handle two or more non-seekable inputs
+  [bug introduced in coreutils-5.3.0]
+
+  tail -f no longer tries to use inotify on GPFS or FhGFS file systems
+  [you might say this was introduced in coreutils-7.5, along with inotify
+   support, but the new magic numbers weren't in the usual places then.]
+
+** Changes in behavior
+
+  df avoids long UUID-including file system names in the default listing.
+  With recent enough kernel/tools, these long names would be used, pushing
+  second and subsequent columns far to the right.  Now, when a long name
+  refers to a symlink, and no file systems are specified, df prints the
+  usually-short referent instead.
+
+  tail -f now uses polling (not inotify) when any of its file arguments
+  resides on a file system of unknown type.  In addition, for each such
+  argument, tail -f prints a warning with the FS type magic number and a
+  request to report it to the bug-reporting address.
+
+
 * Noteworthy changes in release 8.14 (2011-10-12) [stable]
 
 ** Bug fixes
@@ -3411,7 +3469,7 @@ packages, see ./old/*/NEWS.
 
 ========================================================================
 
-Copyright (C) 2001-2011 Free Software Foundation, Inc.
+Copyright (C) 2001-2012 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or

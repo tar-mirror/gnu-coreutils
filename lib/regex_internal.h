@@ -1,7 +1,5 @@
-/* -*- buffer-read-only: t -*- vi: set ro: */
-/* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 /* Extended regular expression matching and search library.
-   Copyright (C) 2002-2011 Free Software Foundation, Inc.
+   Copyright (C) 2002-2012 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Isamu Hasegawa <isamu@yamato.ibm.com>.
 
@@ -336,7 +334,7 @@ typedef struct
     Idx idx;			/* for BACK_REF */
     re_context_type ctx_type;	/* for ANCHOR */
   } opr;
-#if __GNUC__ >= 2 && !__STRICT_ANSI__
+#if __GNUC__ >= 2 && !defined __STRICT_ANSI__
   re_token_type_t type : 8;
 #else
   re_token_type_t type;
@@ -485,8 +483,8 @@ struct bin_tree_t
 
   re_token_t token;
 
-  /* `node_idx' is the index in dfa->nodes, if `type' == 0.
-     Otherwise `type' indicate the type of this node.  */
+  /* 'node_idx' is the index in dfa->nodes, if 'type' == 0.
+     Otherwise 'type' indicate the type of this node.  */
   Idx node_idx;
 };
 typedef struct bin_tree_t bin_tree_t;
@@ -539,9 +537,9 @@ struct re_dfastate_t
   struct re_dfastate_t **trtable, **word_trtable;
   unsigned int context : 4;
   unsigned int halt : 1;
-  /* If this state can accept `multi byte'.
+  /* If this state can accept "multi byte".
      Note that we refer to multibyte characters, and multi character
-     collating elements as `multi byte'.  */
+     collating elements as "multi byte".  */
   unsigned int accept_mb : 1;
   /* If this state has backreference node(s).  */
   unsigned int has_backref : 1;
@@ -670,7 +668,7 @@ struct re_dfa_t
   re_bitset_ptr_t sb_char;
   int str_tree_storage_idx;
 
-  /* number of subexpressions `re_nsub' is in regex_t.  */
+  /* number of subexpressions 're_nsub' is in regex_t.  */
   re_hashval_t state_hash_mask;
   Idx init_node;
   Idx nbackref; /* The number of backreference in this dfa.  */

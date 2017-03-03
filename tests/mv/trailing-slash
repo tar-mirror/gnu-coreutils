@@ -4,7 +4,7 @@
 # Also, ensure that "mv dir non-exist-dir/" works.
 # Also, ensure that "cp dir non-exist-dir/" works.
 
-# Copyright (C) 2004, 2006-2011 Free Software Foundation, Inc.
+# Copyright (C) 2004, 2006-2012 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -60,6 +60,6 @@ cp b no-such/ 2> err && fail=1
 # Map "No such file..." diagnostic to the expected "Not a directory"
 sed 's/No such file or directory/Not a directory/' err > k && mv k err
 
-compare err expected-err || fail=1
+compare expected-err err || fail=1
 
 Exit $fail

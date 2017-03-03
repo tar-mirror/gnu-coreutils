@@ -1,5 +1,5 @@
 /* system-dependent definitions for coreutils
-   Copyright (C) 1989, 1991-2011 Free Software Foundation, Inc.
+   Copyright (C) 1989, 1991-2012 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -74,15 +74,12 @@ you must include <sys/types.h> before including this file
 # define makedev(maj, min)  mkdev (maj, min)
 #endif
 
-/* Don't use bcopy!  Use memmove if source and destination may overlap,
-   memcpy otherwise.  */
-
 #include <string.h>
-
 #include <errno.h>
 
 /* Some systems don't define this; POSIX mentions it but says it is
-   obsolete, so gnulib does not provide it either.  */
+   obsolete.  gnulib defines it, but only on native Windows systems,
+   and there only because MSVC 10 does.  */
 #ifndef ENODATA
 # define ENODATA (-1)
 #endif
@@ -519,8 +516,8 @@ static inline void
 emit_size_note (void)
 {
   fputs (_("\n\
-SIZE may be (or may be an integer optionally followed by) one of following:\n\
-KB 1000, K 1024, MB 1000*1000, M 1024*1024, and so on for G, T, P, E, Z, Y.\n\
+SIZE is an integer and optional unit (example: 10M is 10*1024*1024).  Units\n\
+are K, M, G, T, P, E, Z, Y (powers of 1024) or KB, MB, ... (powers of 1000).\n\
 "), stdout);
 }
 

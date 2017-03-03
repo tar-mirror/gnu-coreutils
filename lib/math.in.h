@@ -1,6 +1,6 @@
 /* A GNU-like <math.h>.
 
-   Copyright (C) 2002-2003, 2007-2011 Free Software Foundation, Inc.
+   Copyright (C) 2002-2003, 2007-2012 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -34,6 +34,44 @@
 /* The definition of _GL_ARG_NONNULL is copied here.  */
 
 /* The definition of _GL_WARN_ON_USE is copied here.  */
+
+#ifdef __cplusplus
+/* Helper macros to define type-generic function FUNC as overloaded functions,
+   rather than as macros like in C.  POSIX declares these with an argument of
+   real-floating (that is, one of float, double, or long double).  */
+# define _GL_MATH_CXX_REAL_FLOATING_DECL_1(func) \
+static inline int                                                   \
+_gl_cxx_ ## func ## f (float f)                                     \
+{                                                                   \
+  return func (f);                                                  \
+}                                                                   \
+static inline int                                                   \
+_gl_cxx_ ## func ## d (double d)                                    \
+{                                                                   \
+  return func (d);                                                  \
+}                                                                   \
+static inline int                                                   \
+_gl_cxx_ ## func ## l (long double l)                               \
+{                                                                   \
+  return func (l);                                                  \
+}
+# define _GL_MATH_CXX_REAL_FLOATING_DECL_2(func) \
+inline int                                                          \
+func (float f)                                                      \
+{                                                                   \
+  return _gl_cxx_ ## func ## f (f);                                 \
+}                                                                   \
+inline int                                                          \
+func (double d)                                                     \
+{                                                                   \
+  return _gl_cxx_ ## func ## d (d);                                 \
+}                                                                   \
+inline int                                                          \
+func (long double l)                                                \
+{                                                                   \
+  return _gl_cxx_ ## func ## l (l);                                 \
+}
+#endif
 
 /* Helper macros to define a portability warning for the
    classification macro FUNC called with VALUE.  POSIX declares the
@@ -469,6 +507,80 @@ _GL_WARN_ON_USE (floorl, "floorl is unportable - "
 #endif
 
 
+#if @GNULIB_FMAF@
+# if @REPLACE_FMAF@
+#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#   undef fmaf
+#   define fmaf rpl_fmaf
+#  endif
+_GL_FUNCDECL_RPL (fmaf, float, (float x, float y, float z));
+_GL_CXXALIAS_RPL (fmaf, float, (float x, float y, float z));
+# else
+#  if !@HAVE_FMAF@
+_GL_FUNCDECL_SYS (fmaf, float, (float x, float y, float z));
+#  endif
+_GL_CXXALIAS_SYS (fmaf, float, (float x, float y, float z));
+# endif
+_GL_CXXALIASWARN (fmaf);
+#elif defined GNULIB_POSIXCHECK
+# undef fmaf
+# if HAVE_RAW_DECL_FMAF
+_GL_WARN_ON_USE (fmaf, "fmaf is unportable - "
+                 "use gnulib module fmaf for portability");
+# endif
+#endif
+
+#if @GNULIB_FMA@
+# if @REPLACE_FMA@
+#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#   undef fma
+#   define fma rpl_fma
+#  endif
+_GL_FUNCDECL_RPL (fma, double, (double x, double y, double z));
+_GL_CXXALIAS_RPL (fma, double, (double x, double y, double z));
+# else
+#  if !@HAVE_FMA@
+_GL_FUNCDECL_SYS (fma, double, (double x, double y, double z));
+#  endif
+_GL_CXXALIAS_SYS (fma, double, (double x, double y, double z));
+# endif
+_GL_CXXALIASWARN (fma);
+#elif defined GNULIB_POSIXCHECK
+# undef fma
+# if HAVE_RAW_DECL_FMA
+_GL_WARN_ON_USE (fma, "fma is unportable - "
+                 "use gnulib module fma for portability");
+# endif
+#endif
+
+#if @GNULIB_FMAL@
+# if @REPLACE_FMAL@
+#  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+#   undef fmal
+#   define fmal rpl_fmal
+#  endif
+_GL_FUNCDECL_RPL (fmal, long double,
+                  (long double x, long double y, long double z));
+_GL_CXXALIAS_RPL (fmal, long double,
+                  (long double x, long double y, long double z));
+# else
+#  if !@HAVE_FMAL@
+_GL_FUNCDECL_SYS (fmal, long double,
+                  (long double x, long double y, long double z));
+#  endif
+_GL_CXXALIAS_SYS (fmal, long double,
+                  (long double x, long double y, long double z));
+# endif
+_GL_CXXALIASWARN (fmal);
+#elif defined GNULIB_POSIXCHECK
+# undef fmal
+# if HAVE_RAW_DECL_FMAL
+_GL_WARN_ON_USE (fmal, "fmal is unportable - "
+                 "use gnulib module fmal for portability");
+# endif
+#endif
+
+
 #if @GNULIB_FMODF@
 # if !@HAVE_FMODF@
 #  undef fmodf
@@ -708,6 +820,49 @@ _GL_CXXALIASWARN (powf);
 # if HAVE_RAW_DECL_POWF
 _GL_WARN_ON_USE (powf, "powf is unportable - "
                  "use gnulib module powf for portability");
+# endif
+#endif
+
+
+#if @GNULIB_RINTF@
+# if !@HAVE_RINTF@
+_GL_FUNCDECL_SYS (rintf, float, (float x));
+# endif
+_GL_CXXALIAS_SYS (rintf, float, (float x));
+_GL_CXXALIASWARN (rintf);
+#elif defined GNULIB_POSIXCHECK
+# undef rintf
+# if HAVE_RAW_DECL_RINTF
+_GL_WARN_ON_USE (rintf, "rintf is unportable - "
+                 "use gnulib module rintf for portability");
+# endif
+#endif
+
+#if @GNULIB_RINT@
+# if !@HAVE_RINT@
+_GL_FUNCDECL_SYS (rint, double, (double x));
+# endif
+_GL_CXXALIAS_SYS (rint, double, (double x));
+_GL_CXXALIASWARN (rint);
+#elif defined GNULIB_POSIXCHECK
+# undef rint
+# if HAVE_RAW_DECL_RINT
+_GL_WARN_ON_USE (rint, "rint is unportable - "
+                 "use gnulib module rint for portability");
+# endif
+#endif
+
+#if @GNULIB_RINTL@
+# if !@HAVE_RINTL@
+_GL_FUNCDECL_SYS (rintl, long double, (long double x));
+# endif
+_GL_CXXALIAS_SYS (rintl, long double, (long double x));
+_GL_CXXALIASWARN (rintl);
+#elif defined GNULIB_POSIXCHECK
+# undef rintl
+# if HAVE_RAW_DECL_RINTL
+_GL_WARN_ON_USE (rintl, "rintl is unportable - "
+                 "use gnulib module rintl for portability");
 # endif
 #endif
 
@@ -987,6 +1142,13 @@ _GL_EXTERN_C int gl_isfinitel (long double x);
     sizeof (x) == sizeof (double) ? gl_isfinited (x) : \
     gl_isfinitef (x))
 # endif
+# ifdef __cplusplus
+#  ifdef isfinite
+_GL_MATH_CXX_REAL_FLOATING_DECL_1 (isfinite)
+#   undef isfinite
+_GL_MATH_CXX_REAL_FLOATING_DECL_2 (isfinite)
+#  endif
+# endif
 #elif defined GNULIB_POSIXCHECK
 # if defined isfinite
 _GL_WARN_REAL_FLOATING_DECL (isfinite);
@@ -1006,6 +1168,13 @@ _GL_EXTERN_C int gl_isinfl (long double x);
    (sizeof (x) == sizeof (long double) ? gl_isinfl (x) : \
     sizeof (x) == sizeof (double) ? gl_isinfd (x) : \
     gl_isinff (x))
+# endif
+# ifdef __cplusplus
+#  ifdef isinf
+_GL_MATH_CXX_REAL_FLOATING_DECL_1 (isinf)
+#   undef isinf
+_GL_MATH_CXX_REAL_FLOATING_DECL_2 (isinf)
+#  endif
 # endif
 #elif defined GNULIB_POSIXCHECK
 # if defined isinf
@@ -1077,7 +1246,7 @@ _GL_EXTERN_C int isnand (double x);
 /* Test whether X is a NaN.  */
 #  undef isnanl
 #  define isnanl rpl_isnanl
-_GL_EXTERN_C int isnanl (long double x);
+_GL_EXTERN_C int isnanl (long double x) _GL_ATTRIBUTE_CONST;
 # endif
 #endif
 
@@ -1103,7 +1272,7 @@ _GL_EXTERN_C int rpl_isnand (double x);
 #  if @HAVE_ISNANL@ && __GNUC__ >= 4
 #   define gl_isnan_l(x) __builtin_isnanl ((long double)(x))
 #  else
-_GL_EXTERN_C int rpl_isnanl (long double x);
+_GL_EXTERN_C int rpl_isnanl (long double x) _GL_ATTRIBUTE_CONST;
 #   define gl_isnan_l(x) rpl_isnanl (x)
 #  endif
 #  undef isnan
@@ -1118,9 +1287,17 @@ _GL_EXTERN_C int rpl_isnanl (long double x);
     sizeof (x) == sizeof (double) ? __builtin_isnan ((double)(x)) : \
     __builtin_isnanf ((float)(x)))
 # endif
+# ifdef __cplusplus
+#  ifdef isnan
+_GL_MATH_CXX_REAL_FLOATING_DECL_1 (isnan)
+#   undef isnan
+_GL_MATH_CXX_REAL_FLOATING_DECL_2 (isnan)
+#  endif
+# else
 /* Ensure isnan is a macro.  */
-# ifndef isnan
-#  define isnan isnan
+#  ifndef isnan
+#   define isnan isnan
+#  endif
 # endif
 #elif defined GNULIB_POSIXCHECK
 # if defined isnan
@@ -1145,7 +1322,7 @@ _GL_WARN_REAL_FLOATING_DECL (isnan);
 _GL_EXTERN_C int gl_signbitf (float arg);
 _GL_EXTERN_C int gl_signbitd (double arg);
 _GL_EXTERN_C int gl_signbitl (long double arg);
-#  if __GNUC__ >= 2 && !__STRICT_ANSI__
+#  if __GNUC__ >= 2 && !defined __STRICT_ANSI__
 #   define _GL_NUM_UINT_WORDS(type) \
       ((sizeof (type) + sizeof (unsigned int) - 1) / sizeof (unsigned int))
 #   if defined FLT_SIGNBIT_WORD && defined FLT_SIGNBIT_BIT && !defined gl_signbitf
@@ -1183,6 +1360,13 @@ _GL_EXTERN_C int gl_signbitl (long double arg);
    (sizeof (x) == sizeof (long double) ? gl_signbitl (x) : \
     sizeof (x) == sizeof (double) ? gl_signbitd (x) : \
     gl_signbitf (x))
+# endif
+# ifdef __cplusplus
+#  ifdef signbit
+_GL_MATH_CXX_REAL_FLOATING_DECL_1 (signbit)
+#   undef signbit
+_GL_MATH_CXX_REAL_FLOATING_DECL_2 (signbit)
+#  endif
 # endif
 #elif defined GNULIB_POSIXCHECK
 # if defined signbit

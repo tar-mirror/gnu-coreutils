@@ -1,6 +1,6 @@
 /* Traverse a file hierarchy.
 
-   Copyright (C) 2004-2011 Free Software Foundation, Inc.
+   Copyright (C) 2004-2012 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+ * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
  * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
@@ -229,11 +229,6 @@ static int      fts_safe_changedir (FTS *, FTSENT *, int, const char *)
 #define ISSET(opt)      (sp->fts_options & (opt))
 #define SET(opt)        (sp->fts_options |= (opt))
 
-/* FIXME: make this a function */
-#define RESTORE_INITIAL_CWD(sp)                 \
-  (fd_ring_clear (&((sp)->fts_fd_ring)),        \
-   FCHDIR ((sp), (ISSET (FTS_CWDFD) ? AT_FDCWD : (sp)->fts_rfd)))
-
 /* FIXME: FTS_NOCHDIR is now misnamed.
    Call it FTS_USE_FULL_RELATIVE_FILE_NAMES instead. */
 #define FCHDIR(sp, fd)                                  \
@@ -349,6 +344,18 @@ cwd_advance_fd (FTS *sp, int fd, bool chdir_down_one)
   sp->fts_cwd_fd = fd;
 }
 
+/* Restore the initial, pre-traversal, "working directory".
+   In FTS_CWDFD mode, we merely call cwd_advance_fd, otherwise,
+   we may actually change the working directory.
+   Return 0 upon success. Upon failure, set errno and return nonzero.  */
+static int
+restore_initial_cwd (FTS *sp)
+{
+  int fail = FCHDIR (sp, ISSET (FTS_CWDFD) ? AT_FDCWD : sp->fts_rfd);
+  fd_ring_clear (&(sp->fts_fd_ring));
+  return fail;
+}
+
 /* Open the directory DIR if possible, and return a file
    descriptor.  Return -1 and set errno on failure.  It doesn't matter
    whether the file descriptor has read or write access.  */
@@ -420,7 +427,7 @@ fts_open (char * const *argv,
                            O_SEARCH | (ISSET (FTS_NOATIME) ? O_NOATIME : 0));
             if (fd < 0)
               {
-                /* Even if `.' is unreadable, don't revert to FTS_NOCHDIR mode
+                /* Even if "." is unreadable, don't revert to FTS_NOCHDIR mode
                    on systems like Linux+PROC_FS, where our openat emulation
                    is good enough.  Note: on a system that emulates
                    openat via /proc, this technique can still fail, but
@@ -948,7 +955,7 @@ next:   tmp = p;
                  * root.
                  */
                 if (p->fts_level == FTS_ROOTLEVEL) {
-                        if (RESTORE_INITIAL_CWD(sp)) {
+                        if (restore_initial_cwd(sp)) {
                                 SET(FTS_STOP);
                                 return (NULL);
                         }
@@ -1055,7 +1062,7 @@ cd_dot_dot:
          * one level, via "..".
          */
         if (p->fts_level == FTS_ROOTLEVEL) {
-                if (RESTORE_INITIAL_CWD(sp)) {
+                if (restore_initial_cwd(sp)) {
                         p->fts_errno = errno;
                         SET(FTS_STOP);
                 }
@@ -1422,7 +1429,7 @@ fts_build (register FTS *sp, int type)
 
         level = cur->fts_level + 1;
 
-        /* Read the directory, attaching each entry to the `link' pointer. */
+        /* Read the directory, attaching each entry to the "link" pointer. */
         doadjust = false;
         head = NULL;
         tail = NULL;
@@ -1579,7 +1586,7 @@ mem1:                           saved_errno = errno;
          */
         if (!continue_readdir && descend && (type == BCHILD || !nitems) &&
             (cur->fts_level == FTS_ROOTLEVEL
-             ? RESTORE_INITIAL_CWD(sp)
+             ? restore_initial_cwd(sp)
              : fts_safe_changedir(sp, cur->fts_parent, -1, ".."))) {
                 cur->fts_info = FTS_ERR;
                 SET(FTS_STOP);
@@ -1981,7 +1988,7 @@ fts_padjust (FTS *sp, FTSENT *head)
 }
 
 static size_t
-internal_function
+internal_function _GL_ATTRIBUTE_PURE
 fts_maxarglen (char * const *argv)
 {
         size_t len, max;
@@ -1997,7 +2004,7 @@ fts_maxarglen (char * const *argv)
  * tricked by someone changing the world out from underneath us.
  * Assumes p->fts_statp->st_dev and p->fts_statp->st_ino are filled in.
  * If FD is non-negative, expect it to be used after this function returns,
- * and to be closed eventually.  So don't pass e.g., `dirfd(dirp)' and then
+ * and to be closed eventually.  So don't pass e.g., 'dirfd(dirp)' and then
  * do closedir(dirp), because that would invalidate the saved FD.
  * Upon failure, close FD immediately and return nonzero.
  */
@@ -2046,7 +2053,7 @@ fts_safe_changedir (FTS *sp, FTSENT *p, int fd, char const *dir)
           return -1;
 
         /* The following dev/inode check is necessary if we're doing a
-           `logical' traversal (through symlinks, a la chown -L), if the
+           "logical" traversal (through symlinks, a la chown -L), if the
            system lacks O_NOFOLLOW support, or if we're changing to ".."
            (but not via a popped file descriptor).  When changing to the
            name "..", O_NOFOLLOW can't help.  In general, when the target is

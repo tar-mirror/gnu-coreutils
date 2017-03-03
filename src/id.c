@@ -1,5 +1,5 @@
 /* id -- print real and effective UIDs and GIDs
-   Copyright (C) 1989-2011 Free Software Foundation, Inc.
+   Copyright (C) 1989-2012 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -195,16 +195,48 @@ main (int argc, char **argv)
     {
       struct passwd *pwd = getpwnam (argv[optind]);
       if (pwd == NULL)
-        error (EXIT_FAILURE, 0, _("%s: No such user"), argv[optind]);
+        error (EXIT_FAILURE, 0, _("%s: no such user"), argv[optind]);
       ruid = euid = pwd->pw_uid;
       rgid = egid = pwd->pw_gid;
     }
   else
     {
-      euid = geteuid ();
-      ruid = getuid ();
-      egid = getegid ();
-      rgid = getgid ();
+      /* POSIX says identification functions (getuid, getgid, and
+         others) cannot fail, but they can fail under GNU/Hurd and a
+         few other systems.  Test for failure by checking errno.  */
+      uid_t NO_UID = -1;
+      gid_t NO_GID = -1;
+
+      if (just_user ? !use_real
+          : !just_group && !just_group_list && !just_context)
+        {
+          errno = 0;
+          euid = geteuid ();
+          if (euid == NO_UID && errno)
+            error (EXIT_FAILURE, errno, _("cannot get effective UID"));
+        }
+
+      if (just_user ? use_real
+          : !just_group && (just_group_list || !just_context))
+        {
+          errno = 0;
+          ruid = getuid ();
+          if (ruid == NO_UID && errno)
+            error (EXIT_FAILURE, errno, _("cannot get real UID"));
+        }
+
+      if (!just_user && (just_group || just_group_list || !just_context))
+        {
+          errno = 0;
+          egid = getegid ();
+          if (egid == NO_GID && errno)
+            error (EXIT_FAILURE, errno, _("cannot get effective GID"));
+
+          errno = 0;
+          rgid = getgid ();
+          if (rgid == NO_GID && errno)
+            error (EXIT_FAILURE, errno, _("cannot get real GID"));
+        }
     }
 
   if (just_user)
@@ -296,7 +328,7 @@ print_full_info (const char *username)
     gid_t *groups;
     int i;
 
-    int n_groups = xgetgroups (username, (pwd ? pwd->pw_gid : (gid_t) -1),
+    int n_groups = xgetgroups (username, (pwd ? pwd->pw_gid : -1),
                                &groups);
     if (n_groups < 0)
       {

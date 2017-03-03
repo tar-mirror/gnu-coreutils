@@ -1,6 +1,6 @@
 /* shred.c - overwrite files and devices to make it harder to recover data
 
-   Copyright (C) 1999-2011 Free Software Foundation, Inc.
+   Copyright (C) 1999-2012 Free Software Foundation, Inc.
    Copyright (C) 1997, 1998, 1999 Colin Plumb.
 
    This program is free software: you can redistribute it and/or modify
@@ -17,17 +17,6 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
    Written by Colin Plumb.  */
-
-/* TODO:
-   - use consistent non-capitalization in error messages
-   - add standard GNU copyleft comment
-
-  - Add -r/-R/--recursive
-  - Add -i/--interactive
-  - Reserve -d
-  - Add -L
-  - Add an unlink-all option to emulate rm.
- */
 
 /*
  * Do a more secure overwrite of given files or devices, to make it harder

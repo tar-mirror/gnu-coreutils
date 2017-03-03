@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # Test "sort -m".
 
-# Copyright (C) 2002-2003, 2005-2011 Free Software Foundation, Inc.
+# Copyright (C) 2002-2003, 2005-2012 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -50,10 +50,10 @@ my @Tests =
               "$prog: minimum --batch-size argument is `2'\n"}, {EXIT=>2}],
 
      ['nmerge-neg', "-m --batch-size=-1", @inputs,
-        {ERR=>"$prog: invalid --batch-size argument `-1'\n"}, {EXIT=>2}],
+        {ERR=>"$prog: invalid --batch-size argument '-1'\n"}, {EXIT=>2}],
 
      ['nmerge-nan', "-m --batch-size=a", @inputs,
-        {ERR=>"$prog: invalid --batch-size argument `a'\n"}, {EXIT=>2}],
+        {ERR=>"$prog: invalid --batch-size argument 'a'\n"}, {EXIT=>2}],
 
      ['nmerge-big', "-m --batch-size=$bigint", @inputs,
         {ERR_SUBST=>'s/(current rlimit is) \d+/$1/'},

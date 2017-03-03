@@ -1,5 +1,5 @@
 /* od -- dump files in octal and other formats
-   Copyright (C) 1992, 1995-2011 Free Software Foundation, Inc.
+   Copyright (C) 1992, 1995-2012 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -771,32 +771,34 @@ this system doesn't provide a %lu-byte floating point type"),
         }
       size_spec = fp_type_size[size];
 
-      struct lconv const *locale = localeconv ();
-      size_t decimal_point_len =
-        (locale->decimal_point[0] ? strlen (locale->decimal_point) : 1);
+      {
+        struct lconv const *locale = localeconv ();
+        size_t decimal_point_len =
+          (locale->decimal_point[0] ? strlen (locale->decimal_point) : 1);
 
-      switch (size_spec)
-        {
-        case FLOAT_SINGLE:
-          print_function = print_float;
-          field_width = FLT_STRLEN_BOUND_L (decimal_point_len);
-          break;
+        switch (size_spec)
+          {
+          case FLOAT_SINGLE:
+            print_function = print_float;
+            field_width = FLT_STRLEN_BOUND_L (decimal_point_len);
+            break;
 
-        case FLOAT_DOUBLE:
-          print_function = print_double;
-          field_width = DBL_STRLEN_BOUND_L (decimal_point_len);
-          break;
+          case FLOAT_DOUBLE:
+            print_function = print_double;
+            field_width = DBL_STRLEN_BOUND_L (decimal_point_len);
+            break;
 
-        case FLOAT_LONG_DOUBLE:
-          print_function = print_long_double;
-          field_width = LDBL_STRLEN_BOUND_L (decimal_point_len);
-          break;
+          case FLOAT_LONG_DOUBLE:
+            print_function = print_long_double;
+            field_width = LDBL_STRLEN_BOUND_L (decimal_point_len);
+            break;
 
-        default:
-          abort ();
-        }
+          default:
+            abort ();
+          }
 
-      break;
+        break;
+      }
 
     case 'a':
       ++s;
