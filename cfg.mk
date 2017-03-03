@@ -45,7 +45,7 @@ export VERBOSE = yes
 # 4914152 9e
 export XZ_OPT = -8e
 
-old_NEWS_hash = c2d954b7c19745272321cc4c4b676993
+old_NEWS_hash = d2ba572c2f1135b74e24ea3fb20e674e
 
 # Add an exemption for sc_makefile_at_at_check.
 _makefile_at_at_check_exceptions = ' && !/^cu_install_program =/'
@@ -200,6 +200,18 @@ sc_no_exec_perl_coreutils:
 	      exit 1; } || :;						\
 	fi
 
+# With split lines, don't leave an operator at end of line.
+# Instead, put it on the following line, where it is more apparent.
+# Don't bother checking for "*" at end of line, since it provokes
+# far too many false positives, matching constructs like "TYPE *".
+# Similarly, omit "=" (initializers).
+binop_re_ ?= [-/+^!<>]|[-/+*^!<>=]=|&&?|\|\|?|<<=?|>>=?
+sc_prohibit_operator_at_end_of_line:
+	@prohibit='. ($(binop_re_))$$'					\
+	in_vc_files='\.[chly]$$'					\
+	halt='found operator at end of line'				\
+	  $(_sc_search_regexp)
+
 # Don't use "readlink" or "readlinkat" directly
 sc_prohibit_readlink:
 	@prohibit='\<readlink(at)? \('					\
@@ -301,6 +313,12 @@ sc_prohibit_verbose_version:
 sc_prohibit_framework_failure:
 	@prohibit='\<framework_''failure\>'				\
 	halt='use framework_failure_ instead'				\
+	  $(_sc_search_regexp)
+
+# Prohibit the use of `...` in tests/.  Use $(...) instead.
+sc_prohibit_test_backticks:
+	@prohibit='`' in_vc_files='^tests/'				\
+	halt='use $$(...), not `...` in tests/'				\
 	  $(_sc_search_regexp)
 
 # Exempt the contents of any usage function from the following.
@@ -447,3 +465,10 @@ exclude_file_name_regexp--sc_prohibit_stat_st_blocks = \
 
 exclude_file_name_regexp--sc_prohibit_continued_string_alpha_in_column_1 = \
   ^src/(system\.h|od\.c|printf\.c)$$
+
+exclude_file_name_regexp--sc_prohibit_test_backticks = \
+  ^tests/(init\.sh|check\.mk|misc/stdbuf)$$
+
+# Exempt test.c, since it's nominally shared, and relatively static.
+exclude_file_name_regexp--sc_prohibit_operator_at_end_of_line = \
+  ^src/(ptx|test|head)\.c$$

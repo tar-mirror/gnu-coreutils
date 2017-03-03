@@ -1,5 +1,49 @@
 GNU coreutils NEWS                                    -*- outline -*-
 
+* Noteworthy changes in release 8.17 (2012-05-10) [stable]
+
+** Bug fixes
+
+  id and groups, when invoked with no user name argument, would print
+  the default group ID listed in the password database, and sometimes
+  that ID would be neither real nor effective.  For example, when run
+  set-GID, or in a session for which the default group has just been
+  changed, the new group ID would be listed, even though it is not
+  yet effective. [bug introduced in coreutils-8.1]
+
+  cp S D is no longer subject to a race: if an existing D were removed
+  between the initial stat and subsequent open-without-O_CREATE, cp would
+  fail with a confusing diagnostic saying that the destination, D, was not
+  found.  Now, in this unusual case, it retries the open (but with O_CREATE),
+  and hence usually succeeds.  With NFS attribute caching, the condition
+  was particularly easy to trigger, since there, the removal of D could
+  precede the initial stat.  [This bug was present in "the beginning".]
+
+  split --number=C /dev/null no longer appears to infloop on GNU/Hurd
+  [bug introduced in coreutils-8.8]
+
+  stat no longer reports a negative file size as a huge positive number.
+  [bug present since 'stat' was introduced in fileutils-4.1.9]
+
+** New features
+
+  split and truncate now allow any seekable files in situations where
+  the file size is needed, instead of insisting on regular files.
+
+  fmt now accepts the --goal=WIDTH (-g) option.
+
+  stat -f recognizes new file system types: bdevfs, inodefs, qnx6
+
+** Changes in behavior
+
+  cp,mv,install,cat,split: now read and write a minimum of 64KiB at a time.
+  This was previously 32KiB and increasing to 64KiB was seen to increase
+  throughput by about 10% when reading cached files on 64 bit GNU/Linux.
+
+  cp --attributes-only no longer truncates any existing destination file,
+  allowing for more general copying of attributes from one file to another.
+
+
 * Noteworthy changes in release 8.16 (2012-03-26) [stable]
 
 ** New features
@@ -868,7 +912,7 @@ GNU coreutils NEWS                                    -*- outline -*-
 
   On Solaris 9, many commands would mistakenly treat file/ the same as
   file.  Now, even on such a system, path resolution obeys the POSIX
-  rules that a trailing slash ensures that the preceeding name is a
+  rules that a trailing slash ensures that the preceding name is a
   directory or a symlink to a directory.
 
 ** Changes in behavior
@@ -1089,7 +1133,7 @@ GNU coreutils NEWS                                    -*- outline -*-
 ** Changes in behavior
 
   shred, sort, shuf: now use an internal pseudorandom generator by default.
-  This is mainly noticable in shred where the 3 random passes it does by
+  This is mainly noticeable in shred where the 3 random passes it does by
   default should proceed at the speed of the disk.  Previously /dev/urandom
   was used if available, which is relatively slow on GNU/Linux systems.
 
@@ -3335,7 +3379,7 @@ point at which the packages merged to form the coreutils:
 * Any time style can be preceded by "posix-"; this causes "ls" to
   use traditional timestamp format when in the POSIX locale.
 * The default time style is now posix-long-iso instead of posix-iso.
-  Set TIME_STYLE="posix-iso" to revert to the behavior of 4.1.1 thru 4.1.9.
+  Set TIME_STYLE="posix-iso" to revert to the behavior of 4.1.1 through 4.1.9.
 * 'rm dangling-symlink' doesn't prompt [introduced in 4.1.9]
 * stat: remove support for --secure/-s option and related %S and %C format specs
 * stat: rename --link/-l to --dereference/-L.

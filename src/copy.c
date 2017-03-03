@@ -39,6 +39,7 @@
 #include "cp-hash.h"
 #include "extent-scan.h"
 #include "error.h"
+#include "fadvise.h"
 #include "fcntl--.h"
 #include "fiemap.h"
 #include "file-set.h"
@@ -826,7 +827,9 @@ copy_reg (char const *src_name, char const *dst_name,
      by the specs for both cp and mv.  */
   if (! *new_dst)
     {
-      dest_desc = open (dst_name, O_WRONLY | O_TRUNC | O_BINARY);
+      int open_flags =
+        O_WRONLY | O_BINARY | (x->data_copy_required ? O_TRUNC : 0);
+      dest_desc = open (dst_name, open_flags);
       dest_errno = errno;
 
       /* When using cp --preserve=context to copy to an existing destination,
@@ -889,6 +892,8 @@ copy_reg (char const *src_name, char const *dst_name,
 
   if (*new_dst)
     {
+    open_with_O_CREAT:;
+
       int open_flags = O_WRONLY | O_CREAT | O_BINARY;
       dest_desc = open (dst_name, open_flags | O_EXCL,
                         dst_mode & ~omitted_permissions);
@@ -939,6 +944,23 @@ copy_reg (char const *src_name, char const *dst_name,
 
   if (dest_desc < 0)
     {
+      /* If we've just failed due to ENOENT for an ostensibly preexisting
+         destination (*new_dst was 0), that's a bit of a contradiction/race:
+         the prior stat/lstat said the file existed (*new_dst was 0), yet
+         the subsequent open-existing-file failed with ENOENT.  With NFS,
+         the race window is wider still, since its meta-data caching tends
+         to make the stat succeed for a just-removed remote file, while the
+         more-definitive initial open call will fail with ENOENT.  When this
+         situation arises, we attempt to open again, but this time with
+         O_CREAT.  Do this only when not in move-mode, since when handling
+         a cross-device move, we must never open an existing destination.  */
+      if (dest_errno == ENOENT && ! *new_dst && ! x->move_mode)
+        {
+          *new_dst = 1;
+          goto open_with_O_CREAT;
+        }
+
+      /* Otherwise, it's an error.  */
       error (0, dest_errno, _("cannot create regular file %s"),
              quote (dst_name));
       return_val = false;
@@ -977,6 +999,8 @@ copy_reg (char const *src_name, char const *dst_name,
       size_t buf_alignment = lcm (getpagesize (), sizeof (word));
       size_t buf_alignment_slop = sizeof (word) + buf_alignment - 1;
       size_t buf_size = io_blksize (sb);
+
+      fdadvise (source_desc, 0, 0, FADVISE_SEQUENTIAL);
 
       /* Deal with sparse files.  */
       bool make_holes = false;
@@ -1053,8 +1077,8 @@ copy_reg (char const *src_name, char const *dst_name,
                           make_holes, src_name, dst_name,
                           UINTMAX_MAX, &n_read,
                           &wrote_hole_at_eof)
-           || (wrote_hole_at_eof &&
-               ftruncate (dest_desc, n_read) < 0))
+           || (wrote_hole_at_eof
+               && ftruncate (dest_desc, n_read) < 0))
         {
           error (0, errno, _("failed to extend %s"), quote (dst_name));
           return_val = false;

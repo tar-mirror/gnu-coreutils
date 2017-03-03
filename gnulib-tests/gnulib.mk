@@ -1136,6 +1136,14 @@ EXTRA_DIST += test-locale.c
 
 ## end   gnulib module locale-tests
 
+## begin gnulib module localeconv-tests
+
+TESTS += test-localeconv
+check_PROGRAMS += test-localeconv
+EXTRA_DIST += test-localeconv.c signature.h macros.h
+
+## end   gnulib module localeconv-tests
+
 ## begin gnulib module localename
 
 libtests_a_SOURCES += localename.c
@@ -2146,6 +2154,14 @@ check_PROGRAMS += test-sys_ioctl
 EXTRA_DIST += test-sys_ioctl.c
 
 ## end   gnulib module sys_ioctl-tests
+
+## begin gnulib module sys_resource-tests
+
+TESTS += test-sys_resource
+check_PROGRAMS += test-sys_resource
+EXTRA_DIST += test-sys_resource.c
+
+## end   gnulib module sys_resource-tests
 
 ## begin gnulib module sys_select-tests
 

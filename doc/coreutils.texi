@@ -23,7 +23,7 @@
 @dircategory Basics
 @direntry
 * Coreutils: (coreutils).       Core GNU (file, text, shell) utilities.
-* Common options: (coreutils)Common options.      Common options.
+* Common options: (coreutils)Common options.
 * File permissions: (coreutils)File permissions.  Access modes.
 * Date input formats: (coreutils)Date input formats.
 @end direntry
@@ -2203,9 +2203,15 @@ between sentences to two spaces.
 @opindex -@var{width}
 @opindex -w
 @opindex --width
-Fill output lines up to @var{width} characters (default 75).  @command{fmt}
-initially tries to make lines about 7% shorter than this, to give it
-room to balance line lengths.
+Fill output lines up to @var{width} characters (default 75 or @var{goal}
+plus 10, if @var{goal} is provided).
+
+@itemx -g @var{goal}
+@itemx --goal=@var{goal}
+@opindex -g
+@opindex --goal
+@command{fmt} initially tries to make lines @var{goal} characters wide.
+By default, this is 7% shorter than @var{width}.
 
 @item -p @var{prefix}
 @itemx --prefix=@var{prefix}
@@ -2360,7 +2366,7 @@ Double space the output.
 @cindex time formats
 @cindex formatting times
 Format header dates using @var{format}, using the same conventions as
-for the command @samp{date +@var{format}}; @xref{date invocation}.
+for the command @samp{date +@var{format}}.  @xref{date invocation}.
 Except for directives, which start with
 @samp{%}, characters in @var{format} are printed unchanged.  You can use
 this option to specify an arbitrary string in place of the header date,
@@ -3091,7 +3097,7 @@ and so can be a pipe for example.
 Use suffixes of length @var{length}.  If a @var{length} of 0 is specified,
 this is the same as if (any previous) @option{-a} was not specified, and
 thus enables the default behavior, which starts the suffix length at 2,
-and unless @option{-n} or @option{--numeric-suffixes=@var{from}} are
+and unless @option{-n} or @option{--numeric-suffixes=@var{from}} is
 specified, will auto increase the length by 2 as required.
 
 @item -d
@@ -4904,7 +4910,7 @@ all @sc{gnu} extensions and reverts to traditional mode, thus introducing some
 limitations and changing several of the program's default option values.
 When @option{-G} is not specified, @sc{gnu} extensions are always enabled.
 @sc{gnu} extensions to @command{ptx} are documented wherever appropriate in this
-document.  For the full list, see @xref{Compatibility in ptx}.
+document.  @xref{Compatibility in ptx}, for the full list.
 
 Individual options are explained in the following sections.
 
@@ -5041,8 +5047,9 @@ if it is listed in the Only file and not in the Ignore file.
 
 On each input line, the leading sequence of non-white space characters will be
 taken to be a reference that has the purpose of identifying this input
-line in the resulting permuted index.  For more information about reference
-production, see @xref{Output formatting in ptx}.
+line in the resulting permuted index.
+@xref{Output formatting in ptx},
+for more information about reference production.
 Using this option changes the default value for option @option{-S}.
 
 Using this option, the program does not try very hard to remove
@@ -7649,9 +7656,9 @@ Equivalent to @option{-dR --preserve=all} with the reduced diagnostics.
 
 @itemx --attributes-only
 @opindex --attributes-only
-Preserve the specified attributes of the original files in the copy,
-but do not copy any data.  See the @option{--preserve} option for
-controlling which attributes to copy.
+Copy only the specified attributes of the source file to the destination.
+If the destination already exists, do not alter its contents.
+See the @option{--preserve} option for controlling which attributes to copy.
 
 @item -b
 @itemx @w{@kbd{--backup}[=@var{method}]}
@@ -8160,9 +8167,12 @@ On a file system that supports sparse files, this will create
 sparse output when extending the output file.
 Be careful when using this option in conjunction with
 @samp{conv=notrunc} or @samp{oflag=append}.
-With @samp{conv=notrunc}, existing data in the output
+With @samp{conv=notrunc}, existing data in the output file
 corresponding to @sc{nul} blocks from the input, will be untouched.
 With @samp{oflag=append} the seeks performed will be ineffective.
+Similarly, when the output is a device rather than a file,
+@sc{nul} input blocks are not copied, and therefore this option
+is most useful with virtual or pre zeroed devices.
 
 @item swab
 @opindex swab @r{(byte-swapping)}
@@ -14884,7 +14894,7 @@ parsed reliably.  In the following example, @var{release} is
 
 @smallexample
 uname -a
-@result{} Linux dum 2.2.18 #4 SMP Tue Jun 5 11:24:08 PDT 2001 i686@c
+@result{} Linux dumdum 2.2.18 #4 SMP Tue Jun 5 11:24:08 PDT 2001 i686@c
  unknown unknown GNU/Linux
 @end smallexample
 
@@ -15994,7 +16004,7 @@ the @var{command}.
 @opindex --signal
 Send this @var{signal} to @var{command} on timeout, rather than the
 default @samp{TERM} signal. @var{signal} may be a name like @samp{HUP}
-or a number. Also see @xref{Signal specifications}.
+or a number. @xref{Signal specifications}.
 @end table
 
 @cindex time units
@@ -16102,8 +16112,9 @@ number like @samp{1}, or an exit status of a process terminated by the
 signal.  A signal name can be given in canonical form or prefixed by
 @samp{SIG}.  The case of the letters is ignored, except for the
 @option{-@var{signal}} option which must use upper case to avoid
-ambiguity with lower case option letters.  For a list of supported
-signal names and numbers see @xref{Signal specifications}.
+ambiguity with lower case option letters.
+@xref{Signal specifications}, for a list of supported
+signal names and numbers.
 
 @node Delaying
 @chapter Delaying

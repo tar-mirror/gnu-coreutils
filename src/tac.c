@@ -339,7 +339,7 @@ tac_seekable (int input_fd, const char *file)
              The source and destination regions probably overlap.  */
           memmove (G_buffer + read_size, G_buffer, saved_record_size);
           past_end = G_buffer + read_size + saved_record_size;
-          /* For non-regexp searches, avoid unneccessary scanning. */
+          /* For non-regexp searches, avoid unnecessary scanning. */
           if (sentinel_length)
             match_start = G_buffer + read_size;
           else
@@ -664,7 +664,7 @@ main (int argc, char **argv)
   G_buffer = xmalloc (G_buffer_size);
   if (sentinel_length)
     {
-      strcpy (G_buffer, separator);
+      memcpy (G_buffer, separator, sentinel_length + 1);
       G_buffer += sentinel_length;
     }
   else

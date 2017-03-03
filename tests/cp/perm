@@ -49,19 +49,19 @@ for u in 31 37 2; do
 
             case "$cmd:$force:$existing_dest" in
               cp:*:yes)
-                _g_perm=`echo rwx|sed 's/[^'$g_perm']/-/g'`
-                _o_perm=`echo rwx|sed 's/[^'$o_perm']/-/g'`
+                _g_perm=$(echo rwx|sed 's/[^'$g_perm']/-/g')
+                _o_perm=$(echo rwx|sed 's/[^'$o_perm']/-/g')
                 expected_perms=-rw-$_g_perm$_o_perm
                 ;;
               cp:*:no)
                 test $u = 37 &&
-                  expected_perms=`
+                  expected_perms=$(
                     echo $expected_perms | sed 's/.....$/-----/'
-                  `
+                  )
                 test $u = 31 &&
-                  expected_perms=`
+                  expected_perms=$(
                     echo $expected_perms | sed 's/..\(..\).$/--\1-/'
-                  `
+                  )
                 ;;
             esac
             test _$actual_perms = _$expected_perms || exit 1

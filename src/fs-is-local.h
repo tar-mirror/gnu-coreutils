@@ -12,8 +12,9 @@ is_local_fs_type (unsigned long int magic)
       case S_MAGIC_ANON_INODE_FS: return 1;
       case S_MAGIC_AUTOFS: return 1;
       case S_MAGIC_BEFS: return 1;
+      case S_MAGIC_BDEVFS: return 1;
       case S_MAGIC_BFS: return 1;
-      case S_MAGIC_BINFMT_MISC: return 1;
+      case S_MAGIC_BINFMTFS: return 1;
       case S_MAGIC_BTRFS: return 1;
       case S_MAGIC_CGROUP: return 1;
       case S_MAGIC_CIFS: return 0;
@@ -39,6 +40,7 @@ is_local_fs_type (unsigned long int magic)
       case S_MAGIC_HFS: return 1;
       case S_MAGIC_HPFS: return 1;
       case S_MAGIC_HUGETLBFS: return 1;
+      case S_MAGIC_MTD_INODE_FS: return 1;
       case S_MAGIC_INOTIFYFS: return 1;
       case S_MAGIC_ISOFS: return 1;
       case S_MAGIC_ISOFS_R_WIN: return 1;
@@ -66,6 +68,7 @@ is_local_fs_type (unsigned long int magic)
       case S_MAGIC_PROC: return 1;
       case S_MAGIC_PSTOREFS: return 1;
       case S_MAGIC_QNX4: return 1;
+      case S_MAGIC_QNX6: return 1;
       case S_MAGIC_RAMFS: return 1;
       case S_MAGIC_REISERFS: return 1;
       case S_MAGIC_ROMFS: return 1;

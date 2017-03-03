@@ -3037,11 +3037,10 @@ gobble_file (char const *name, enum filetype type, ino_t inode,
       if (S_ISLNK (f->stat.st_mode)
           && (format == long_format || check_symlink_color))
         {
-          char *linkname;
           struct stat linkstats;
 
           get_link_name (absolute_name, f, command_line_arg);
-          linkname = make_link_name (absolute_name, f->linkname);
+          char *linkname = make_link_name (absolute_name, f->linkname);
 
           /* Avoid following symbolic links when possible, ie, when
              they won't be traced and when no indicator is needed.  */
@@ -3193,34 +3192,29 @@ get_link_name (char const *filename, struct fileinfo *f, bool command_line_arg)
                   filename);
 }
 
-/* If 'linkname' is a relative name and 'name' contains one or more
-   leading directories, return 'linkname' with those directories
-   prepended; otherwise, return a copy of 'linkname'.
-   If 'linkname' is zero, return zero.  */
+/* If LINKNAME is a relative name and NAME contains one or more
+   leading directories, return LINKNAME with those directories
+   prepended; otherwise, return a copy of LINKNAME.
+   If LINKNAME is NULL, return NULL.  */
 
 static char *
 make_link_name (char const *name, char const *linkname)
 {
-  char *linkbuf;
-  size_t bufsiz;
-
   if (!linkname)
     return NULL;
 
-  if (*linkname == '/')
+  if (IS_ABSOLUTE_FILE_NAME (linkname))
     return xstrdup (linkname);
 
   /* The link is to a relative name.  Prepend any leading directory
      in 'name' to the link name.  */
-  linkbuf = strrchr (name, '/');
-  if (linkbuf == 0)
+  size_t prefix_len = dir_len (name);
+  if (prefix_len == 0)
     return xstrdup (linkname);
 
-  bufsiz = linkbuf - name + 1;
-  linkbuf = xmalloc (bufsiz + strlen (linkname) + 1);
-  strncpy (linkbuf, name, bufsiz);
-  strcpy (linkbuf + bufsiz, linkname);
-  return linkbuf;
+  char *p = xmalloc (prefix_len + 1 + strlen (linkname) + 1);
+  stpcpy (stpncpy (p, name, prefix_len + 1), linkname);
+  return p;
 }
 
 /* Return true if the last component of NAME is '.' or '..'
@@ -3449,13 +3443,13 @@ static int rev_xstrcoll_df_version (V a, V b)
 { DIRFIRST_CHECK (a, b); return cmp_version (b, a); }
 
 
-/* We have 2^3 different variants for each sortkey function
+/* We have 2^3 different variants for each sort-key function
    (for 3 independent sort modes).
    The function pointers stored in this array must be dereferenced as:
 
     sort_variants[sort_key][use_strcmp][reverse][dirs_first]
 
-   Note that the order in which sortkeys are listed in the function pointer
+   Note that the order in which sort keys are listed in the function pointer
    array below is defined by the order of the elements in the time_type and
    sort_type enums!  */
 
@@ -3499,14 +3493,14 @@ static qsortFunc const sort_functions[][2][2][2] =
     LIST_SORTFUNCTION_VARIANTS (atime)
   };
 
-/* The number of sortkeys is calculated as
-     the number of elements in the sort_type enum (i.e. sort_numtypes) +
+/* The number of sort keys is calculated as the sum of
+     the number of elements in the sort_type enum (i.e. sort_numtypes)
      the number of elements in the time_type enum (i.e. time_numtypes) - 1
    This is because when sort_type==sort_time, we have up to
-   time_numtypes possible sortkeys.
+   time_numtypes possible sort keys.
 
    This line verifies at compile-time that the array of sort functions has been
-   initialized for all possible sortkeys. */
+   initialized for all possible sort keys. */
 verify (ARRAY_CARDINALITY (sort_functions)
         == sort_numtypes + time_numtypes - 1 );
 
@@ -3924,10 +3918,10 @@ print_long_format (const struct fileinfo *f)
           gettime (&current_time);
         }
 
-      /* Consider a time to be recent if it is within the past six
-         months.  A Gregorian year has 365.2425 * 24 * 60 * 60 ==
-         31556952 seconds on the average.  Write this value as an
-         integer constant to avoid floating point hassles.  */
+      /* Consider a time to be recent if it is within the past six months.
+         A Gregorian year has 365.2425 * 24 * 60 * 60 == 31556952 seconds
+         on the average.  Write this value as an integer constant to
+         avoid floating point hassles.  */
       six_months_ago.tv_sec = current_time.tv_sec - 31556952 / 2;
       six_months_ago.tv_nsec = current_time.tv_nsec;
 

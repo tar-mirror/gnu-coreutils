@@ -102,16 +102,16 @@ for args in 'foo symlink' 'symlink foo' 'foo foo' 'sl1 sl2' 'foo hardlink'; do
           ' _err
         fi
         # Strip off all but the file names.
-        ls=`ls -gG --ignore=_err . \
-            | sed \
+        ls=$(ls -gG --ignore=_err . \
+             | sed \
                 -e '/^total /d' \
-                -e 's/^[^ ]*  *[^ ]*  *[^ ]*  *[^ ]*  *[^ ]*  *[^ ]*  *//'`
+                -e 's/^[^ ]*  *[^ ]*  *[^ ]*  *[^ ]*  *[^ ]*  *[^ ]*  *//')
         echo "($ls)"
         # Make sure the original is unchanged and that
         # the destination is a copy.
         for f in $args; do
           if test -f $f; then
-            case "`cat $f`" in
+            case "$(cat $f)" in
               "$contents") ;;
               *) echo cp FAILED;;
             esac

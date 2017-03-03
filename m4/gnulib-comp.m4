@@ -374,6 +374,8 @@ AC_DEFUN([gl_EARLY],
   # Code from module localcharset:
   # Code from module locale:
   # Code from module locale-tests:
+  # Code from module localeconv:
+  # Code from module localeconv-tests:
   # Code from module localename:
   # Code from module localename-tests:
   # Code from module lock:
@@ -663,6 +665,8 @@ AC_DEFUN([gl_EARLY],
   # Code from module symlinkat-tests:
   # Code from module sys_ioctl:
   # Code from module sys_ioctl-tests:
+  # Code from module sys_resource:
+  # Code from module sys_resource-tests:
   # Code from module sys_select:
   # Code from module sys_select-tests:
   # Code from module sys_socket:
@@ -1076,6 +1080,7 @@ gl_STDIO_MODULE_INDICATOR([fseek])
 gl_FUNC_FSEEKO
 if test $HAVE_FSEEKO = 0 || test $REPLACE_FSEEKO = 1; then
   AC_LIBOBJ([fseeko])
+  gl_PREREQ_FSEEKO
 fi
 gl_STDIO_MODULE_INDICATOR([fseeko])
 gl_FUNC_FSTAT
@@ -1110,12 +1115,13 @@ gl_STDIO_MODULE_INDICATOR([ftell])
 gl_FUNC_FTELLO
 if test $HAVE_FTELLO = 0 || test $REPLACE_FTELLO = 1; then
   AC_LIBOBJ([ftello])
+  gl_PREREQ_FTELLO
 fi
 gl_STDIO_MODULE_INDICATOR([ftello])
 AC_CHECK_FUNCS_ONCE([strtof])
 AC_REQUIRE([gl_C99_STRTOLD])
 gl_FUNC_FTRUNCATE
-if test $HAVE_FTRUNCATE = 0; then
+if test $HAVE_FTRUNCATE = 0 || test $REPLACE_FTRUNCATE = 1; then
   AC_LIBOBJ([ftruncate])
   gl_PREREQ_FTRUNCATE
 fi
@@ -1326,6 +1332,7 @@ else
 fi
 gl_WCTYPE_MODULE_INDICATOR([iswblank])
 gl_LANGINFO_H
+AC_REQUIRE([gl_LARGEFILE])
 gl_FUNC_LCHMOD
 gl_SYS_STAT_MODULE_INDICATOR([lchmod])
 gl_FUNC_LCHOWN
@@ -1353,6 +1360,12 @@ gl_LOCALCHARSET
 LOCALCHARSET_TESTS_ENVIRONMENT="CHARSETALIASDIR=\"\$(abs_top_builddir)/$gl_source_base\""
 AC_SUBST([LOCALCHARSET_TESTS_ENVIRONMENT])
 gl_LOCALE_H
+gl_FUNC_LOCALECONV
+if test $REPLACE_LOCALECONV = 1; then
+  AC_LIBOBJ([localeconv])
+  gl_PREREQ_LOCALECONV
+fi
+gl_LOCALE_MODULE_INDICATOR([localeconv])
 gl_LOCK
 gl_FUNC_LSEEK
 if test $REPLACE_LSEEK = 1; then
@@ -1881,6 +1894,8 @@ if test $HAVE_SYMLINK = 0 || test $REPLACE_SYMLINK = 1; then
 fi
 gl_UNISTD_MODULE_INDICATOR([symlink])
 gl_SYS_IOCTL_H
+AC_PROG_MKDIR_P
+gl_HEADER_SYS_RESOURCE
 AC_PROG_MKDIR_P
 gl_HEADER_SYS_SELECT
 AC_PROG_MKDIR_P
@@ -2654,6 +2669,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/localcharset.c
   lib/localcharset.h
   lib/locale.in.h
+  lib/localeconv.c
   lib/long-options.c
   lib/long-options.h
   lib/lseek.c
@@ -2920,6 +2936,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/strtoumax.c
   lib/symlink.c
   lib/sys_ioctl.in.h
+  lib/sys_resource.in.h
   lib/sys_select.in.h
   lib/sys_socket.in.h
   lib/sys_stat.in.h
@@ -3187,6 +3204,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/locale-tr.m4
   m4/locale-zh.m4
   m4/locale_h.m4
+  m4/localeconv.m4
   m4/localename.m4
   m4/lock.m4
   m4/longlong.m4
@@ -3235,6 +3253,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/nl_langinfo.m4
   m4/nocrash.m4
   m4/nproc.m4
+  m4/off_t.m4
   m4/open.m4
   m4/openat.m4
   m4/opendir.m4
@@ -3343,6 +3362,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/symlink.m4
   m4/symlinkat.m4
   m4/sys_ioctl_h.m4
+  m4/sys_resource_h.m4
   m4/sys_select_h.m4
   m4/sys_socket_h.m4
   m4/sys_stat_h.m4
@@ -3598,6 +3618,7 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-linkat.c
   tests/test-listen.c
   tests/test-locale.c
+  tests/test-localeconv.c
   tests/test-localename.c
   tests/test-lock.c
   tests/test-lseek.c
@@ -3750,6 +3771,7 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-symlink.h
   tests/test-symlinkat.c
   tests/test-sys_ioctl.c
+  tests/test-sys_resource.c
   tests/test-sys_select.c
   tests/test-sys_socket.c
   tests/test-sys_stat.c

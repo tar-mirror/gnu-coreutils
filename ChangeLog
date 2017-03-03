@@ -1,4 +1,461 @@
+2012-05-10  Jim Meyering  <meyering@redhat.com>
+
+	version 8.17
+	* NEWS: Record release date.
+
+	tests: misc/tty-eof: increase timeout to avoid unwarranted failure
+	* tests/misc/tty-eof: Increase timeout from 1s to 10s, to avoid
+	unwarranted failure under heavy load.
+	* tests/Makefile.am (TESTS): Move misc/tty-eof "up" to nearer the
+	beginning of the list (from near the middle) so that it is started
+	earlier in parallel test runs.  Otherwise, it would frequently be
+	among the last two tests to complete.
+
+	stat,tail: recognize new FS types: bdevfs, inodefs, qnx6
+	* src/stat.c (human_fstype) [__linux__]: Add 'case's for these local
+	file system types: bdevfs (0x62646576), inodefs (0x42494E4D),
+	qnx6 (0x68191122).
+	Now that the kernel has a name for S_MAGIC_BINFMTFS, use
+	theirs in place of our S_MAGIC_BINFMT_MISC.
+	* NEWS (New features): Mention it.
+
+	scripts: encourage use of shorter "bugs.gnu.org" in bug URLs
+	* scripts/git-hooks/commit-msg: Also ding debbugs.gnu.org URLs.
+
+2012-05-10  Paul Eggert  <eggert@cs.ucla.edu>
+
+	maint: handle file sizes more reliably
+	Problem reported by Samuel Thibault in <http://bugs.gnu.org/11424>.
+	* NEWS: Document this.
+	* src/dd.c (skip): Handle skipping past EOF on shared or typed
+	memory objects the same way as with regular files.
+	(dd_copy): It's OK to truncate shared memory objects.
+	* src/du.c (duinfo_add): Check for overflow.
+	(print_only_size): Report overflow.
+	(process_file): Ignore negative file sizes in the --apparent-size case.
+	* src/od.c (skip): Fix comment about st_size.
+	* src/split.c (main):
+	* src/truncate.c (do_ftruncate, main):
+	On files where st_size is not portable, fall back on using lseek
+	with SEEK_END to determine the size.  Although strictly speaking
+	POSIX says the behavior is implementation-defined, in practice
+	if lseek returns a nonnegative value it's a reasonable one to
+	use for the file size.
+	* src/system.h (usable_st_size): Symlinks have reliable st_size too.
+	* tests/misc/truncate-dir-fail: Don't assume that getting the size
+	of a dir is not allowed, as it's now allowed on many platforms,
+	e.g., GNU/Linux.
+
+	stat: don't report negative file size as huge positive number
+	* src/stat.c (print_stat): Use out_int, not out_uint for stat.st_size.
+	* NEWS (Bug fixes): Mention it.
+
+2012-05-08  Jim Meyering  <meyering@redhat.com>
+
+	split: avoid apparent infloop when splitting /dev/zero w/-n on the Hurd
+	* src/split.c (main): Use stat.st_size only for regular files.
+	Samuel Thibault reported in http://bugs.gnu.org/11424 that the
+	/dev/zero-splitting tests would appear to infloop on GNU/Hurd,
+	because /dev/zero's st_size is LONG_MAX.  It was only a problem
+	when using the --number (-n) option.
+	* NEWS (Bug fixes): Mention it.
+	This bug was introduced with the --number option, via
+	commit v8.7-25-gbe10739
+
+	build: update gnulib submodule to latest; also bootstrap and init.sh
+	* bootstrap: Update from gnulib.
+	* tests/init.sh: Likewise.
+
+2012-05-08  Pádraig Brady  <P@draigBrady.com>
+
+	doc: clarify dd conv=sparse usage with devices
+	* doc/coreutils.texi (dd invocation): Clarify that NUL blocks
+	are not copied for devices either, and give examples of where
+	it might be useful.
+
+2012-05-08  Jim Meyering  <meyering@redhat.com>
+
+	maint: new function: usable_st_size
+
+2012-05-08  Kevin Lyda  <kevin@ie.suberic.net>
+
+	maint: fix common spelling errors
+	These were identified using: https://github.com/lyda/misspell-check
+	executed like: git ls-files | misspellings -f -
+
+	* src/cat.c: Correct a spelling error.
+	* src/comm.c: Likewise.
+	* src/expr.c: Likewise.
+	* src/pr.c: Likewise.
+	* src/tac.c: Likewise.
+	* src/test.c: Likewise.
+	* src/ChangeLog-2005: Likewise.
+	* src/ChangeLog-2007: Likewise.
+	* src/NEWS: Likewise.
+	* src/doc/coreutils.texi: Likewise.
+	* src/lib/ChangeLog-2007: Likewise.
+	* src/man/help2man: Likewise.
+	* src/old/fileutils/ChangeLog-1997: Likewise.
+	* src/old/fileutils/NEWS: Likewise.
+	* src/old/sh-utils/ChangeLog.0: Likewise.
+	* src/old/textutils/ChangeLog: Likewise.
+	* src/tests/misc/comm: Likewise.
+	* src/tests/misc/uniq: Likewise.
+	* src/tests/mv/dir2dir: Likewise.
+	* src/cfg.mk (old_NEWS_hash): update with `make update-NEWS-hash`
+
+2012-05-07  Jim Meyering  <meyering@redhat.com>
+
+	tests: avoid LD_PRELOAD lookup error for dlsym
+	* tests/cp/nfs-removal-race: Link with -ldl.
+
+	cp: handle a race condition more sensibly
+	* src/copy.c (copy_reg): In a narrow race (stat sees dest, yet
+	open-without-O_CREAT fails with ENOENT), retry the open with O_CREAT.
+	* tests/cp/nfs-removal-race: New file.
+	* tests/Makefile.am (TESTS): Add it.
+	* NEWS (Bug fixes): Mention it.
+	Reported by Philipp Thomas and Neil F. Brown in
+	http://bugs.gnu.org/11100
+
+	doc: NEWS: note when the id/groups bug was introduced
+	* NEWS (Bug fixes): Note the first affected release.
+	The id bug was introduced by commit v8.0-112-g719a95a.
+
+2012-05-04  Jim Meyering  <meyering@redhat.com>
+
+	build: update gnulib submodule to latest
+
+	maint: rely on gnulib's new sys_resource module
+	* bootstrap.conf (gnulib_modules): Add sys_resource.
+	* src/sort.c: Remove #if HAVE_SYS_RESOURCE_H guard around inclusion
+	of <sys/resource.h> and move the inclusion "up" into the alphabetized
+	list of its peers.  This also avoids a failure of the
+	sc_prohibit_always_true_header_tests syntax-check rule.
+	* m4/jm-macros.m4 (gl_CHECK_ALL_HEADERS): Remove sys/resource.h.
+
+2012-05-02  Pádraig Brady  <P@draigBrady.com>
+
+	cp,mv,install: provide POSIX_FADV_SEQUENTIAL hint to input
+	This was inadvertently omitted from v8.5-104-g47076e3,
+	and gives the same 5% speedup when copying from an SSD.
+
+	* src/copy.c (copy_internal): Apply the FADVISE_SEQUENTIAL hint.
+
+2012-05-02  Jim Meyering  <meyering@redhat.com>
+
+	maint: prohibit an operator at end of line
+	Many coding standards, including GNU's, advocate that when
+	splitting a line near a binary operator, one should put the
+	operator at the beginning of the continued line, rather than
+	at the end of the preceding one.  This is for readability:
+	such operators are relatively important to readability, and
+	they are more apparent at the beginning of a line than
+	at the varying-column end of line,
+	* cfg.mk (sc_prohibit_operator_at_end_of_line): New rule.
+	Exempt test.c and head.c.
+
+	maint: adjust comments to avoid FP match on binary-operator-at-EOL
+	* src/ls.c (print_long_format): Reformat comment to avoid "=="
+	at end of line.
+	Also, "sortkey" is not a word: s/sortkey/sort key/.
+	* src/ioblksize.h: Likewise, for "|" from a shell snippet.
+	* src/runcon.c: Likewise, for "|" in grammar-like usage.
+
+	maint: with split lines, don't leave an operator at end of line
+	* src/copy.c (copy_reg): Split an expression before a binary operator,
+	not after it.
+	* src/cut.c (set_fields): Likewise.
+	* src/id.c (main): Likewise.
+	* src/install.c (setdefaultfilecon): Likewise.
+	* src/join.c (ignore_case): Likewise.
+	* src/pr.c (cols_ready_to_print, init_parameters, print_page): Likewise.
+	* src/stty.c (set_window_size): Likewise.
+	* src/wc.c (SUPPORT_OLD_MBRTOWC): Likewise.
+	* src/who.c (scan_entries): Likewise.
+	* src/test.c (binary_operator): Join a split line.
+	* src/extent-scan.c (extent_scan_read): Move an ">" from end of line
+	to beginning of the following.
+	Likewise for two other expressions.
+
+2012-04-30  Pádraig Brady  <P@draigBrady.com>
+
+	cat,cp,mv,install,split: Set the minimum IO block size used to 64KiB
+	* NEWS: Mention the change in behavior.
+	* src/ioblksize.h: Add updated test results and
+	increase value from 32KiB to 64KiB.
+
+2012-04-27  Jim Meyering  <meyering@redhat.com>
+
+	id: -Zn/-Zr: avoid an invalid diagnostic
+	* src/id.c (main): Using -Z with -r or -n would fail with "id: cannot
+	print only names or real IDs in default format", in spite of that "-Z",
+	which specifies a non-default format.  Now, it succeeds and ignores
+	the -n or -r option.  The error was that the test for default_format
+	was not updated when I added the new --context (-Z) option in
+	commit v6.9-33-g5320d0f.
+
+	id: don't call getcon unnecessarily
+	* src/id.c (main): Invocations like "id" and "id -G" would call getcon
+	to determine the current security context even though that result would
+	not be used.  Similarly, when POSIXLY_CORRECT is set.  Rearrange
+	conditionals and hoist the POSIXLY_CORRECT test so that we call
+	getcon only when necessary.
+
+	maint: id: minor factorization
+	* src/id.c (main): Factor out uses of "argc - optind".
+	Move option-consistency checks to precede the potential getcon call.
+
+2012-04-27  Jim Meyering  <meyering@redhat.com>
+
+	id,groups: with no user name, print only real and/or effective IDs,
+	... i.e., don't use the getpw* functions.
+
+	Before this change, running groups or id with no user name argument
+	would include a group name or ID from /etc/passwd.  Thus, under unusual
+	circumstances (default group is changed, but has not taken effect for a
+	given session), those programs could print a name or ID that is neither
+	real nor effective.
+
+	To demonstrate, run this:
+
+	    echo 'for i in 1 2; do id -G; sleep 1.5; done' \
+	      |su -s /bin/sh ftp - &
+	    sleep 1; perl -pi -e 's/^(ftp:x:\d+):(\d+)/$1:9876/' /etc/passwd
+
+	Those id -G commands printed the following:
+
+	    50
+	    50 9876
+
+	With this change, they print this:
+
+	    50
+	    50
+
+	Similarly, running those programs set-GID could make them
+	print one ID too many.
+
+	* src/group-list.c (print_group_list): When username is NULL, pass
+	egid, not getpwuid(ruid)->pw_gid), to xgetgroups, per the API
+	requirements of xgetgroups callee, mgetgroups.
+	When not using the password database, don't call getpwuid.
+	* NEWS (Bug fixes): Mention it.
+	* tests/misc/id-setgid: New file.
+	* tests/Makefile.am (TESTS): Add it.
+	(root_tests): It's a root-only test, so add it here, too.
+	Originally reported by Brynnen Owen as http://bugs.gnu.org/7320.
+	Raised again by Marc Mengel in http://bugzilla.redhat.com/816708.
+
+2012-04-23  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	maint: sync up required autoconf version in bootstrap.conf
+	* bootstrap.conf ($buildreq): Require autoconf 2.64, not 2.62.  This is
+	consistent with what is required by AC_PREREQ in configure.ac.
+
+2012-04-19  Jim Meyering  <meyering@redhat.com>
+
+	doc: fix a grammar nit
+	* doc/coreutils.texi (split invocation): s/are/is/ in "P or Q are".
+
+2012-04-19  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	tests: factor out expensive "pairs" code of misc/stty
+	* tests/Makefile.am (TESTS): Add misc/stty-pairs.
+	* tests/init.cfg (stty_reversible_init_): New function.
+	(stty_reversible_query_): New function.
+	* tests/misc/stty: Factor out expensive "pairs" code into new test.
+	Use new stty_reversible_* functions instead of evaluating static
+	REV_* variables.
+	* tests/misc/stty-pairs: Add new test.  Code added from misc/stty.
+	Mark this as an expensive test.  Skip 'parenb' and 'cread' options,
+	as these tests are known to fail.  Like in misc/stty, also use
+	the new stty_reversible_* functions.
+
+	tests: add iutf8 option to misc/stty
+	* tests/misc/stty: Add iutf8 to the list of REV_* options.
+	That option has been implemented in commit v5.2.1-193-g733e79e.
+
+2012-04-19  Jim Meyering  <meyering@redhat.com>
+
+	maint: tac: use memcpy, not strcpy
+	* src/tac.c (main): Use memcpy, not strcpy, since we know the length.
+
+	maint: ls: use stpncpy/stpcpy, not strncpy/strcpy
+	* src/ls.c (gobble_file): Move a decl "down".
+	(make_link_name): Do not hard-code '/'.  Use IS_ABSOLUTE_FILE_NAME
+	and dir_len instead.
+	Use stpcpy/stpncpy in place of strncpy/strcpy.
+
+	maint: modernize/clean-up a small function in ls.c
+	* src/ls.c (make_link_name): Adjust comment style to refer to VARIABLE
+	names, not 'variable'.
+	Move each of two declarations "down" to first use.
+	Compare pointer to NULL, not to 0.
+	Don't reuse local, "linkbuf" for a different purpose.
+
+	doc: tweak README-hacking
+	* README-hacking: Don't say "...on your hard drive".
+	That is unnecessary, and now, borderline anachronistic.
+
+2012-04-17  Jim Meyering  <meyering@redhat.com>
+
+	doc: use @xref{... only at start of a sentence
+	* doc/coreutils.texi: Correct many misuses of @xref.
+
+2012-04-16  Jim Meyering  <meyering@redhat.com>
+
+	maint: replace a use of strcpy in chmod.c with memcpy
+	* src/chmod.c (main): Use memcpy rather than strcpy,
+	since we already have the length handy.
+
+2012-04-14  Karl Berry  <karl@freefriends.org>
+
+	doc: remove a little direntry redundancy
+	* doc/coreutils.texi (Basics direntry): Remove 3rd "Common options."
+
+2012-04-12  Bruce Korb  <bkorb@gnu.org>
+
+	fmt: accept new --goal=WIDTH (-g) option
+	Accept -g for BSD/Plan9 compatibility.
+	* NEWS (New features): Mention it.
+	* tests/fmt/goal-option: New test.
+	* tests/fmt/long-line: Rename from tests/fmt-long-line.
+	* tests/fmt/base: Rename from tests/misc/fmt.
+	* doc/coreutils.texi: Document it.
+	* src/fmt.c (main): Accept the new option
+	(check_for_goals): new function to implement the operands
+	Based on BSD's and Plan-9's fmt programs.
+
+2012-04-12  Pádraig Brady  <P@draigBrady.com>
+
+	cp: change --attributes-only to not truncate existing files
+	* src/copy.c (copy_reg): Don't truncate an existing file,
+	to support copying attributes between existing files.
+	The original use case only considered creating new files,
+	and it would be a very unusual use case to be relying
+	on the truncating behavior.
+	* doc/coreutils.texi (cp invocation): Mention the non
+	truncating behavior.
+	* tests/cp/attr-existing: A new test to ensure O_TRUNC skipped.
+	* tests/Makefile.am: Reference the new test.
+	* NEWS: Mention the change in behavior.
+
+2012-04-04  Andreas Schwab  <schwab@linux-m68k.org>
+
+	tests: avoid unnecessary subshells in misc/stty
+	* tests/misc/stty: Don't waste a subshell to perform this:
+	eval rev=\$REV_$opt.  Fix rev1,rev2 assignments similarly.
+
+2012-04-04  Jim Meyering  <meyering@redhat.com>
+
+	build: update gnulib submodule to latest
+
+	tests: correct reversed args to "compare"
+	* tests/misc/sort-discrim: Correct reversed args to "compare".
+	This nit was masked by a bug in maint.mk that effectively disabled
+	many of the syntax-check rules.
+
+	tests: new syntax-check rule to prohibit use of `...` in tests/
+	* cfg.mk (sc_prohibit_test_backticks): New rule.  Exempt 3 files.
+
+	tests: remove nearly all remaining backticks
+	* tests/rm/isatty: Remove now-unneeded "# `" line.
+	* tests/misc/ls-time: Likewise.
+	* tests/misc/date-sec: Remove stray "`" in comment.
+	* tests/du/long-sloop: Likewise.
+	* tests/mv/part-symlink: Replace multi-line `...` by $(...).
+	* tests/mv/sticky-to-xpart: Likewise.
+	* tests/rm/fail-2eperm: Likewise.
+	* tests/ls/nameless-uid: Likewise.
+	* tests/cp/perm: Likewise.
+	* tests/cp/preserve-gid: Likewise.
+	* tests/cp/same-file: Likewise.
+
+	tests: use perl's qx!...! rather than `...`
+	* tests/misc/expr: As above.
+	* tests/misc/ls-misc: Likewise.
+	* tests/misc/pwd-long: Likewise.
+	* tests/misc/uniq: Likewise.
+
+2012-04-04  Jim Meyering  <meyering@redhat.com>
+
+	tests: convert nearly all `...` expressions to $(...)
+	Exempt init.sh because it runs before we're assured to have a
+	shell that groks $(...).  Exempt *.mk because "$" would have to
+	be doubled, and besides, any `...` expression in a .mk file is
+	almost certainly evaluated before init.sh is run.  Finally, also
+	exempt the perl-based tests, because perl's `...` cannot be
+	converted to $(...).  Do that by running this command:
+
+	git grep -l '`.*`' tests \
+	  | grep -Ev 'init\.sh|\.mk$' | xargs grep -Lw perl \
+	  | xargs perl -pi -e 's/`(.*?)`/\$($1)/g'
+
+	One minor fix-up change was required after that, due to how
+	quoting differs:
+	diff --git a/tests/chmod/equals b/tests/chmod/equals
+	-    expected_perms=$(eval 'echo \$expected_'$dest)
+	+    expected_perms=$(eval 'echo $expected_'$dest)
+
+	Another was to make these required quoting adjustments:
+	diff --git a/tests/misc/stty b/tests/misc/stty
+	...
+	-  rev=$(eval echo "\\\$REV_$opt")
+	+  rev=$(eval echo "\$REV_$opt")
+	...
+	-      rev1=$(eval echo "\\\$REV_$opt1")
+	-      rev2=$(eval echo "\\\$REV_$opt2")
+	+      rev1=$(eval echo "\$REV_$opt1")
+	+      rev2=$(eval echo "\$REV_$opt2")
+
+	Also, transform two files that were needlessly excluded above:
+	(both use perl, but are mostly bourne shell)
+
+	  perl -pi -e 's/`(.*?)`/\$($1)/g' \
+	    tests/du/long-from-unreadable tests/init.cfg
+
+2012-04-03  Jim Meyering  <meyering@redhat.com>
+
+	tests: convert one `...` expression manually
+	* tests/ls/stat-vs-dirent: Manually convert `(...)` to $(...),
+	to avoid automatically producing an invalid result.
+
+	tests: fix quoting bug in misc/nohup
+	* tests/misc/nohup: Fix invalid quoting.
+
+	doc: identify/refer to source of each fixed bug in log and in NEWS
+	* HACKING (Commit log requirements): Describe our policy: when you
+	fix a bug, put the "git describe" string of the bug-introducing commit
+	in your commit log and put the "fixed-in-release version number"
+	in the NEWS blurb.
+
+	tests: avoid spurious misc/expr failure on AIX 6.1
+	* tests/misc/expr: Avoid spurious failure on AIX 6.1 due to
+	differing regexp diagnostic.  Reported by Michael Felt.
+
+2012-03-28  Paul Eggert  <eggert@cs.ucla.edu>
+
+	chmod: undo previous change
+	It's not portable; see <http://bugs.gnu.org/11108#17>.
+	* src/chmod.c, NEWS: Undo previous change.
+
+	chmod: fix symlink race condition
+	* NEWS: Document this.
+	* src/chmod.c (process_file): Don't follow symlink if we
+	think the file is not a symlink.
+
 2012-03-26  Jim Meyering  <meyering@redhat.com>
+
+	tests: remove temporary skip for sort-stale-thread-mem failure
+	* tests/misc/sort-stale-thread-mem: Invoke framework_failure_, now,
+	hoping that valgrind is fixed (or we add exclusions) before the
+	next release.
+
+	maint: post-release administrivia
+	* NEWS: Add header line for next release.
+	* .prev-version: Record previous version.
+	* cfg.mk (old_NEWS_hash): Auto-update.
 
 	version 8.16
 	* NEWS: Record release date.

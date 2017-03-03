@@ -94,7 +94,7 @@ test_syntax_error (char const *format, char const *arg)
 }
 
 /* Increment our position in the argument list.  Check that we're not
-   past the end of the argument list.  This check is supressed if the
+   past the end of the argument list.  This check is suppressed if the
    argument is false.  */
 
 static void
@@ -367,8 +367,8 @@ binary_operator (bool l_is_l)
       test_syntax_error (_("unknown binary operator"), argv[op]);
     }
 
-  if (argv[op][0] == '=' && (!argv[op][1] ||
-       ((argv[op][1] == '=') && !argv[op][2])))
+  if (argv[op][0] == '='
+      && (!argv[op][1] || ((argv[op][1] == '=') && !argv[op][2])))
     {
       bool value = STREQ (argv[pos], argv[pos + 2]);
       pos += 3;

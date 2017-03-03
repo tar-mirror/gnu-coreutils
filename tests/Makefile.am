@@ -36,6 +36,7 @@ root_tests =					\
   ls/nameless-uid				\
   misc/chcon					\
   misc/chroot-credentials			\
+  misc/id-setgid				\
   misc/selinux					\
   misc/truncate-owned-by-other			\
   mkdir/writable-under-readonly			\
@@ -86,6 +87,7 @@ TESTS =						\
   rm/ext3-perf					\
   rm/cycle					\
   cp/link-heap					\
+  misc/tty-eof					\
   tail-2/inotify-hash-abuse			\
   tail-2/inotify-hash-abuse2			\
   tail-2/F-vs-missing				\
@@ -140,6 +142,9 @@ TESTS =						\
   chgrp/no-x					\
   chgrp/posix-H					\
   chgrp/recurse					\
+  fmt/base					\
+  fmt/long-line					\
+  fmt/goal-option				\
   misc/env					\
   misc/ptx					\
   misc/test					\
@@ -188,8 +193,6 @@ TESTS =						\
   misc/expr					\
   misc/factor					\
   misc/false-status				\
-  misc/fmt					\
-  misc/fmt-long-line				\
   misc/fold					\
   misc/groups-dash				\
   misc/groups-version				\
@@ -197,6 +200,7 @@ TESTS =						\
   misc/head-pos					\
   misc/id-context				\
   misc/id-groups				\
+  misc/id-setgid				\
   misc/md5sum					\
   misc/md5sum-bsd				\
   misc/md5sum-newline				\
@@ -274,6 +278,7 @@ TESTS =						\
   misc/stdbuf					\
   misc/stty					\
   misc/stty-invalid				\
+  misc/stty-pairs				\
   misc/stty-row-col				\
   misc/su-fail					\
   misc/sum					\
@@ -299,7 +304,6 @@ TESTS =						\
   misc/truncate-parameters			\
   misc/truncate-relative			\
   misc/tsort					\
-  misc/tty-eof					\
   misc/unexpand					\
   misc/uniq					\
   misc/uniq-perf				\
@@ -320,6 +324,7 @@ TESTS =						\
   chown/separator				\
   cp/abuse					\
   cp/acl					\
+  cp/attr-existing				\
   cp/backup-1					\
   cp/backup-dir					\
   cp/backup-is-src				\
@@ -344,6 +349,7 @@ TESTS =						\
   cp/link-no-deref				\
   cp/link-preserve				\
   cp/link-symlink				\
+  cp/nfs-removal-race				\
   cp/no-deref-link1				\
   cp/no-deref-link2				\
   cp/no-deref-link3				\
