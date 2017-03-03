@@ -1,7 +1,7 @@
 #!/bin/sh
 # Test for assertion failure in "test".
 
-# Copyright (C) 1999-2000, 2004, 2006-2012 Free Software Foundation, Inc.
+# Copyright (C) 1999-2012 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 # This test fails with tail from textutils-2.0.
 # It would get something like this:
-#   tail: tail.c:718: recheck: Assertion `valid_file_spec (f)' failed.
+#   tail: tail.c:718: recheck: Assertion 'valid_file_spec (f)' failed.
 #   Aborted
 # due to a race condition in which a dev/inode pair is reused.
 
@@ -39,8 +39,8 @@ tail_pid=$!
 
 echo sleeping for 7 seconds...
 
-# Give the backgrounded `tail' a chance to start before removing foo.
-# Otherwise, without --retry, tail wouldn't try to open `foo' again.
+# Give the backgrounded 'tail' a chance to start before removing foo.
+# Otherwise, without --retry, tail wouldn't try to open 'foo' again.
 sleep 1
 
 rm -f foo

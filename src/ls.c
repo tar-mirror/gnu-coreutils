@@ -1,6 +1,5 @@
-/* `dir', `vdir' and `ls' directory listing programs for GNU.
-   Copyright (C) 1985, 1988, 1990-1991, 1995-2012 Free Software Foundation,
-   Inc.
+/* 'dir', 'vdir' and 'ls' directory listing programs for GNU.
+   Copyright (C) 1985-2012 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,17 +17,17 @@
 /* If ls_mode is LS_MULTI_COL,
    the multi-column format is the default regardless
    of the type of output device.
-   This is for the `dir' program.
+   This is for the 'dir' program.
 
    If ls_mode is LS_LONG_FORMAT,
    the long format is the default regardless of the
    type of output device.
-   This is for the `vdir' program.
+   This is for the 'vdir' program.
 
    If ls_mode is LS_LS,
    the output format depends on whether the output
    device is a terminal.
-   This is for the `ls' program.  */
+   This is for the 'ls' program.  */
 
 /* Written by Richard Stallman and David MacKenzie.  */
 
@@ -287,7 +286,7 @@ static void parse_ls_color (void);
    Most hierarchies are likely to be shallower than this.  */
 #define INITIAL_TABLE_SIZE 30
 
-/* The set of `active' directories, from the current command-line argument
+/* The set of 'active' directories, from the current command-line argument
    to the level in the hierarchy at which files are being listed.
    A directory is represented by its device and inode numbers (struct dev_ino).
    A directory is added to this set when ls begins listing it or its
@@ -300,17 +299,17 @@ static Hash_table *active_dir_set;
 
 /* The table of files in the current directory:
 
-   `cwd_file' points to a vector of `struct fileinfo', one per file.
-   `cwd_n_alloc' is the number of elements space has been allocated for.
-   `cwd_n_used' is the number actually in use.  */
+   'cwd_file' points to a vector of 'struct fileinfo', one per file.
+   'cwd_n_alloc' is the number of elements space has been allocated for.
+   'cwd_n_used' is the number actually in use.  */
 
 /* Address of block containing the files that are described.  */
 static struct fileinfo *cwd_file;
 
-/* Length of block that `cwd_file' points to, measured in files.  */
+/* Length of block that 'cwd_file' points to, measured in files.  */
 static size_t cwd_n_alloc;
 
-/* Index of first unused slot in `cwd_file'.  */
+/* Index of first unused slot in 'cwd_file'.  */
 static size_t cwd_n_used;
 
 /* Vector of pointers to files, in proper sorted order, and the number
@@ -319,9 +318,9 @@ static void **sorted_file;
 static size_t sorted_file_alloc;
 
 /* When true, in a color listing, color each symlink name according to the
-   type of file it points to.  Otherwise, color them according to the `ln'
+   type of file it points to.  Otherwise, color them according to the 'ln'
    directive in LS_COLORS.  Dangling (orphan) symlinks are treated specially,
-   regardless.  This is set when `ln=target' appears in LS_COLORS.  */
+   regardless.  This is set when 'ln=target' appears in LS_COLORS.  */
 
 static bool color_symlink_as_referent;
 
@@ -337,7 +336,7 @@ struct pending
   {
     char *name;
     /* If the directory is actually the file pointed to by a symbolic link we
-       were told to list, `realname' will contain the name of the symbolic
+       were told to list, 'realname' will contain the name of the symbolic
        link, otherwise zero.  */
     char *realname;
     bool command_line_arg;
@@ -396,9 +395,9 @@ enum format
 
 static enum format format;
 
-/* `full-iso' uses full ISO-style dates and times.  `long-iso' uses longer
-   ISO-style time stamps, though shorter than `full-iso'.  `iso' uses shorter
-   ISO-style time stamps.  `locale' uses locale-dependent time stamps.  */
+/* 'full-iso' uses full ISO-style dates and times.  'long-iso' uses longer
+   ISO-style time stamps, though shorter than 'full-iso'.  'iso' uses shorter
+   ISO-style time stamps.  'locale' uses locale-dependent time stamps.  */
 enum time_style
   {
     full_iso_time_style,	/* --time-style=full-iso */
@@ -493,10 +492,10 @@ static uintmax_t file_output_block_size = 1;
    strange characters in file names.  */
 static bool dired;
 
-/* `none' means don't mention the type of files.
-   `slash' means mention directories only, with a '/'.
-   `file_type' means mention file types.
-   `classify' means mention file types and mark executables.
+/* 'none' means don't mention the type of files.
+   'slash' means mention directories only, with a '/'.
+   'file_type' means mention file types.
+   'classify' means mention file types and mark executables.
 
    Controlled by -F, -p, and --indicator-style.  */
 
@@ -638,11 +637,11 @@ static bool directories_first;
 
 static enum
 {
-  /* Ignore files whose names start with `.', and files specified by
+  /* Ignore files whose names start with '.', and files specified by
      --hide and --ignore.  */
   IGNORE_DEFAULT,
 
-  /* Ignore `.', `..', and files specified by --ignore.  */
+  /* Ignore '.', '..', and files specified by --ignore.  */
   IGNORE_DOT_AND_DOTDOT,
 
   /* Ignore only files specified by --ignore.  */
@@ -652,7 +651,7 @@ static enum
 /* A linked list of shell-style globbing patterns.  If a non-argument
    file name matches any of these patterns, it is ignored.
    Controlled by -I.  Multiple -I options accumulate.
-   The -B option adds `*~' and `.*~' to this list.  */
+   The -B option adds '*~' and '.*~' to this list.  */
 
 struct ignore_pattern
   {
@@ -666,12 +665,12 @@ static struct ignore_pattern *ignore_patterns;
    variable itself to be ignored.  */
 static struct ignore_pattern *hide_patterns;
 
-/* True means output nongraphic chars in file names as `?'.
+/* True means output nongraphic chars in file names as '?'.
    (-q, --hide-control-chars)
    qmark_funny_chars and the quoting style (-Q, --quoting-style=WORD) are
    independent.  The algorithm is: first, obey the quoting style to get a
    string representing the file name;  then, if qmark_funny_chars is set,
-   replace all nonprintable chars in that string with `?'.  It's necessary
+   replace all nonprintable chars in that string with '?'.  It's necessary
    to replace nonprintable chars even in quoted strings, because we don't
    want to mess up the terminal if control chars get sent to it, and some
    quoting methods pass through control chars as-is.  */
@@ -700,7 +699,7 @@ static size_t line_length;
 
 static bool format_needs_stat;
 
-/* Similar to `format_needs_stat', but set if only the file type is
+/* Similar to 'format_needs_stat', but set if only the file type is
    needed.  */
 
 static bool format_needs_type;
@@ -942,7 +941,7 @@ static size_t dired_pos;
 static struct obstack dired_obstack;
 
 /* With --dired, store pairs of beginning and ending indices of any
-   directory names that appear as headers (just before `total' line)
+   directory names that appear as headers (just before 'total' line)
    for lists of directory entries.  Such directory names are seen when
    listing hierarchies using -R and when a directory is listed with at
    least one other command line argument.  */
@@ -1403,10 +1402,10 @@ main (int argc, char **argv)
       sort_files ();
       if (!immediate_dirs)
         extract_dirs_from_files (NULL, true);
-      /* `cwd_n_used' might be zero now.  */
+      /* 'cwd_n_used' might be zero now.  */
     }
 
-  /* In the following if/else blocks, it is sufficient to test `pending_dirs'
+  /* In the following if/else blocks, it is sufficient to test 'pending_dirs'
      (and not pending_dirs->name) because there may be no markers in the queue
      at this point.  A marker may be enqueued when extract_dirs_from_files is
      called with a non-empty string or via print_dir.  */
@@ -1523,19 +1522,19 @@ decode_switches (int argc, char **argv)
   switch (ls_mode)
     {
     case LS_MULTI_COL:
-      /* This is for the `dir' program.  */
+      /* This is for the 'dir' program.  */
       format = many_per_line;
       set_quoting_style (NULL, escape_quoting_style);
       break;
 
     case LS_LONG_FORMAT:
-      /* This is for the `vdir' program.  */
+      /* This is for the 'vdir' program.  */
       format = long_format;
       set_quoting_style (NULL, escape_quoting_style);
       break;
 
     case LS_LS:
-      /* This is for the `ls' program.  */
+      /* This is for the 'ls' program.  */
       if (isatty (STDOUT_FILENO))
         {
           format = many_per_line;
@@ -1995,7 +1994,7 @@ decode_switches (int argc, char **argv)
   /* If -c or -u is specified and not -l (or any other option that implies -l),
      and no sort-type was specified, then sort by the ctime (-c) or atime (-u).
      The behavior of ls when using either -c or -u but with neither -l nor -t
-     appears to be unspecified by POSIX.  So, with GNU ls, `-u' alone means
+     appears to be unspecified by POSIX.  So, with GNU ls, '-u' alone means
      sort by atime (this is the one that's not specified by the POSIX spec),
      -lu means show atime and sort by name, -lut means show atime and sort
      by atime.  */
@@ -2059,7 +2058,7 @@ decode_switches (int argc, char **argv)
               char const *const *p = time_style_args;
               while (*p)
                 fprintf (stderr, "  - [posix-]%s\n", *p++);
-              fputs (_("  - +FORMAT (e.g., +%H:%M) for a `date'-style"
+              fputs (_("  - +FORMAT (e.g., +%H:%M) for a 'date'-style"
                        " format\n"), stderr);
               usage (LS_FAILURE);
             }
@@ -2559,7 +2558,7 @@ print_dir (char const *name, char const *realname, bool command_line_arg)
       DIRED_FPUTS_LITERAL (":\n", stdout);
     }
 
-  /* Read the directory entries, and insert the subfiles into the `cwd_file'
+  /* Read the directory entries, and insert the subfiles into the 'cwd_file'
      table.  */
 
   clear_files ();
@@ -2660,7 +2659,7 @@ print_dir (char const *name, char const *realname, bool command_line_arg)
     print_current_files ();
 }
 
-/* Add `pattern' to the list of patterns for which files that match are
+/* Add 'pattern' to the list of patterns for which files that match are
    not listed.  */
 
 static void
@@ -2737,11 +2736,12 @@ has_capability (char const *name)
 static bool
 has_capability (char const *name ATTRIBUTE_UNUSED)
 {
+  errno = ENOTSUP;
   return false;
 }
 #endif
 
-/* Enter and remove entries in the table `cwd_file'.  */
+/* Enter and remove entries in the table 'cwd_file'.  */
 
 static void
 free_ent (struct fileinfo *f)
@@ -2778,10 +2778,90 @@ clear_files (void)
   file_size_width = 0;
 }
 
+/* Return true if ERR implies lack-of-support failure by a
+   getxattr-calling function like getfilecon or file_has_acl.  */
+static bool
+errno_unsupported (int err)
+{
+  return (err == EINVAL
+          || err == ENOSYS
+          || err == ENOTSUP
+          || err == EOPNOTSUPP);
+}
+
+/* Cache *getfilecon failure, when it's trivial to do so.
+   Like getfilecon/lgetfilecon, but when F's st_dev says it's on a known-
+   SELinux-challenged file system, fail with ENOTSUP immediately.  */
+static int
+getfilecon_cache (char const *file, struct fileinfo *f, bool deref)
+{
+  /* st_dev of the most recently processed device for which we've
+     found that [l]getfilecon fails indicating lack of support.  */
+  static dev_t unsupported_device;
+
+  if (f->stat.st_dev == unsupported_device)
+    {
+      errno = ENOTSUP;
+      return -1;
+    }
+  int r = (deref
+           ? getfilecon (file, &f->scontext)
+           : lgetfilecon (file, &f->scontext));
+  if (r < 0 && errno_unsupported (errno))
+    unsupported_device = f->stat.st_dev;
+  return r;
+}
+
+/* Cache file_has_acl failure, when it's trivial to do.
+   Like file_has_acl, but when F's st_dev says it's on a file
+   system lacking ACL support, return 0 with ENOTSUP immediately.  */
+static int
+file_has_acl_cache (char const *file, struct fileinfo *f)
+{
+  /* st_dev of the most recently processed device for which we've
+     found that file_has_acl fails indicating lack of support.  */
+  static dev_t unsupported_device;
+
+  if (f->stat.st_dev == unsupported_device)
+    {
+      errno = ENOTSUP;
+      return 0;
+    }
+
+  /* Zero errno so that we can distinguish between two 0-returning cases:
+     "has-ACL-support, but only a default ACL" and "no ACL support". */
+  errno = 0;
+  int n = file_has_acl (file, &f->stat);
+  if (n <= 0 && errno_unsupported (errno))
+    unsupported_device = f->stat.st_dev;
+  return n;
+}
+
+/* Cache has_capability failure, when it's trivial to do.
+   Like has_capability, but when F's st_dev says it's on a file
+   system lacking capability support, return 0 with ENOTSUP immediately.  */
+static bool
+has_capability_cache (char const *file, struct fileinfo *f)
+{
+  /* st_dev of the most recently processed device for which we've
+     found that has_capability fails indicating lack of support.  */
+  static dev_t unsupported_device;
+
+  if (f->stat.st_dev == unsupported_device)
+    {
+      errno = ENOTSUP;
+      return 0;
+    }
+
+  bool b = has_capability (file);
+  if ( !b && errno_unsupported (errno))
+    unsupported_device = f->stat.st_dev;
+  return b;
+}
+
 /* Add a file to the current table of files.
    Verify that the file exists, and print an error message if it does not.
    Return the number of blocks that the file occupies.  */
-
 static uintmax_t
 gobble_file (char const *name, enum filetype type, ino_t inode,
              bool command_line_arg, char const *dirname)
@@ -2910,18 +2990,16 @@ gobble_file (char const *name, enum filetype type, ino_t inode,
 
       f->stat_ok = true;
 
-      /* Note has_capability() adds around 30% runtime to `ls --color`  */
+      /* Note has_capability() adds around 30% runtime to 'ls --color'  */
       if ((type == normal || S_ISREG (f->stat.st_mode))
           && print_with_color && is_colored (C_CAP))
-        f->has_capability = has_capability (absolute_name);
+        f->has_capability = has_capability_cache (absolute_name, f);
 
       if (format == long_format || print_scontext)
         {
           bool have_selinux = false;
           bool have_acl = false;
-          int attr_len = (do_deref
-                          ?  getfilecon (absolute_name, &f->scontext)
-                          : lgetfilecon (absolute_name, &f->scontext));
+          int attr_len = getfilecon_cache (absolute_name, f, do_deref);
           err = (attr_len < 0);
 
           if (err == 0)
@@ -2940,7 +3018,7 @@ gobble_file (char const *name, enum filetype type, ino_t inode,
 
           if (err == 0 && format == long_format)
             {
-              int n = file_has_acl (absolute_name, &f->stat);
+              int n = file_has_acl_cache (absolute_name, f);
               err = (n < 0);
               have_acl = (0 < n);
             }
@@ -3103,7 +3181,7 @@ is_directory (const struct fileinfo *f)
 }
 
 /* Put the name of the file that FILENAME is a symbolic link to
-   into the LINKNAME field of `f'.  COMMAND_LINE_ARG indicates whether
+   into the LINKNAME field of 'f'.  COMMAND_LINE_ARG indicates whether
    FILENAME is a command-line argument.  */
 
 static void
@@ -3115,10 +3193,10 @@ get_link_name (char const *filename, struct fileinfo *f, bool command_line_arg)
                   filename);
 }
 
-/* If `linkname' is a relative name and `name' contains one or more
-   leading directories, return `linkname' with those directories
-   prepended; otherwise, return a copy of `linkname'.
-   If `linkname' is zero, return zero.  */
+/* If 'linkname' is a relative name and 'name' contains one or more
+   leading directories, return 'linkname' with those directories
+   prepended; otherwise, return a copy of 'linkname'.
+   If 'linkname' is zero, return zero.  */
 
 static char *
 make_link_name (char const *name, char const *linkname)
@@ -3133,7 +3211,7 @@ make_link_name (char const *name, char const *linkname)
     return xstrdup (linkname);
 
   /* The link is to a relative name.  Prepend any leading directory
-     in `name' to the link name.  */
+     in 'name' to the link name.  */
   linkbuf = strrchr (name, '/');
   if (linkbuf == 0)
     return xstrdup (linkname);
@@ -3145,8 +3223,8 @@ make_link_name (char const *name, char const *linkname)
   return linkbuf;
 }
 
-/* Return true if the last component of NAME is `.' or `..'
-   This is so we don't try to recurse on `././././. ...' */
+/* Return true if the last component of NAME is '.' or '..'
+   This is so we don't try to recurse on '././././. ...' */
 
 static bool
 basename_is_dot_or_dotdot (const char *name)
@@ -3326,7 +3404,7 @@ cmp_name (struct fileinfo const *a, struct fileinfo const *b,
   return cmp (a->name, b->name);
 }
 
-/* Compare file extensions.  Files with no extension are `smallest'.
+/* Compare file extensions.  Files with no extension are 'smallest'.
    If extensions are the same, compare by filenames instead.  */
 
 static inline int
@@ -3523,7 +3601,7 @@ print_current_files (void)
 }
 
 /* Replace the first %b with precomputed aligned month names.
-   Note on glibc-2.7 at least, this speeds up the whole `ls -lU`
+   Note on glibc-2.7 at least, this speeds up the whole 'ls -lU'
    process by around 17%, compared to letting strftime() handle the %b.  */
 
 static size_t
@@ -4113,7 +4191,7 @@ prep_non_filename_text (void)
     }
 }
 
-/* Print the file name of `f' with appropriate quoting.
+/* Print the file name of 'f' with appropriate quoting.
    Also print file size, inode number, and filetype indicator character,
    as requested by switches.  */
 
@@ -4492,7 +4570,7 @@ indent (size_t from, size_t to)
     }
 }
 
-/* Put DIRNAME/NAME into DEST, handling `.' and `/' properly.  */
+/* Put DIRNAME/NAME into DEST, handling '.' and '/' properly.  */
 /* FIXME: maybe remove this function someday.  See about using a
    non-malloc'ing version of file_name_concat.  */
 
@@ -4506,7 +4584,7 @@ attach (char *dest, const char *dirname, const char *name)
     {
       while (*dirnamep)
         *dest++ = *dirnamep++;
-      /* Add '/' if `dirname' doesn't already end with it.  */
+      /* Add '/' if 'dirname' doesn't already end with it.  */
       if (dirnamep > dirname && dirnamep[-1] != '/')
         *dest++ = '/';
     }
@@ -4642,8 +4720,7 @@ void
 usage (int status)
 {
   if (status != EXIT_SUCCESS)
-    fprintf (stderr, _("Try `%s --help' for more information.\n"),
-             program_name);
+    emit_try_help ();
   else
     {
       printf (_("Usage: %s [OPTION]... [FILE]...\n"), program_name);
@@ -4663,7 +4740,7 @@ Mandatory arguments to long options are mandatory for short options too.\n\
 "), stdout);
       fputs (_("\
       --block-size=SIZE      scale sizes by SIZE before printing them.  E.g.,\n\
-                               `--block-size=M' prints sizes in units of\n\
+                               '--block-size=M' prints sizes in units of\n\
                                1,048,576 bytes.  See SIZE format below.\n\
   -B, --ignore-backups       do not list implied entries ending with ~\n\
   -c                         with -lt: sort by, and show, ctime (time of last\n\
@@ -4673,8 +4750,8 @@ Mandatory arguments to long options are mandatory for short options too.\n\
 "), stdout);
       fputs (_("\
   -C                         list entries by columns\n\
-      --color[=WHEN]         colorize the output.  WHEN defaults to `always'\n\
-                               or can be `never' or `auto'.  More info below\n\
+      --color[=WHEN]         colorize the output.  WHEN defaults to 'always'\n\
+                               or can be 'never' or 'auto'.  More info below\n\
   -d, --directory            list directory entries instead of contents,\n\
                                and do not dereference symbolic links\n\
   -D, --dired                generate output designed for Emacs' dired mode\n\
@@ -4682,7 +4759,7 @@ Mandatory arguments to long options are mandatory for short options too.\n\
       fputs (_("\
   -f                         do not sort, enable -aU, disable -ls --color\n\
   -F, --classify             append indicator (one of */=>@|) to entries\n\
-      --file-type            likewise, except do not append `*'\n\
+      --file-type            likewise, except do not append '*'\n\
       --format=WORD          across -x, commas -m, horizontal -x, long -l,\n\
                                single-column -1, verbose -l, vertical -C\n\
       --full-time            like -l --time-style=full-iso\n\
@@ -4741,7 +4818,7 @@ Mandatory arguments to long options are mandatory for short options too.\n\
       fputs (_("\
   -q, --hide-control-chars   print ? instead of non graphic characters\n\
       --show-control-chars   show non graphic characters as-is (default\n\
-                             unless program is `ls' and output is a terminal)\n\
+                             unless program is 'ls' and output is a terminal)\n\
   -Q, --quote-name           enclose entry names in double quotes\n\
       --quoting-style=WORD   use quoting style WORD for entry names:\n\
                                literal, locale, shell, shell-always, c, escape\
@@ -4765,10 +4842,10 @@ Mandatory arguments to long options are mandatory for short options too.\n\
       fputs (_("\
       --time-style=STYLE     with -l, show times using style STYLE:\n\
                              full-iso, long-iso, iso, locale, +FORMAT.\n\
-                             FORMAT is interpreted like `date'; if FORMAT is\n\
+                             FORMAT is interpreted like 'date'; if FORMAT is\n\
                              FORMAT1<newline>FORMAT2, FORMAT1 applies to\n\
                              non-recent files and FORMAT2 to recent files;\n\
-                             if STYLE is prefixed with `posix-', STYLE\n\
+                             if STYLE is prefixed with 'posix-', STYLE\n\
                              takes effect only outside the POSIX locale\n\
 "), stdout);
       fputs (_("\

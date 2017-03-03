@@ -68,7 +68,7 @@
  *   drastically bad if told to attack a named pipe or socket?
  */
 
-/* The official name of this program (e.g., no `g' prefix).  */
+/* The official name of this program (e.g., no 'g' prefix).  */
 #define PROGRAM_NAME "shred"
 
 #define AUTHORS proper_name ("Colin Plumb")
@@ -141,8 +141,7 @@ void
 usage (int status)
 {
   if (status != EXIT_SUCCESS)
-    fprintf (stderr, _("Try `%s --help' for more information.\n"),
-             program_name);
+    emit_try_help ();
   else
     {
       printf (_("Usage: %s [OPTION]... FILE...\n"), program_name);
@@ -811,7 +810,7 @@ do_wipefd (int fd, char const *qname, struct randint_source *s,
             }
         }
 
-      /* Allow `rounding up' only for regular files.  */
+      /* Allow 'rounding up' only for regular files.  */
       if (0 <= size && !(flags->exact) && S_ISREG (st.st_mode))
         {
           size += ST_BLKSIZE (st) - 1 - (size - 1) % ST_BLKSIZE (st);

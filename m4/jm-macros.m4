@@ -2,7 +2,7 @@
 
 dnl Misc type-related macros for coreutils.
 
-# Copyright (C) 1998, 2000-2012 Free Software Foundation, Inc.
+# Copyright (C) 1998-2012 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -141,7 +141,7 @@ AC_DEFUN([coreutils_MACROS],
   fi
   AC_SUBST([LIB_CAP])
 
-  # See if linking `seq' requires -lm.
+  # See if linking 'seq' requires -lm.
   # It does on nearly every system.  The single exception (so far) is
   # BeOS which has all the math functions in the normal runtime library
   # and doesn't have a separate math library.

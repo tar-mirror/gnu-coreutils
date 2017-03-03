@@ -1,6 +1,5 @@
 /* touch -- change modification and access times of files
-   Copyright (C) 1987, 1989-1991, 1995-2005, 2007-2012 Free Software
-   Foundation, Inc.
+   Copyright (C) 1987-2012 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,7 +34,7 @@
 #include "stat-time.h"
 #include "utimens.h"
 
-/* The official name of this program (e.g., no `g' prefix).  */
+/* The official name of this program (e.g., no 'g' prefix).  */
 #define PROGRAM_NAME "touch"
 
 #define AUTHORS \
@@ -45,7 +44,7 @@
   proper_name ("David MacKenzie"), \
   proper_name ("Randy Smith")
 
-/* Bitmasks for `change_times'. */
+/* Bitmasks for 'change_times'. */
 #define CH_ATIME 1
 #define CH_MTIME 2
 
@@ -93,13 +92,13 @@ static struct option const longopts[] =
   {NULL, 0, NULL, 0}
 };
 
-/* Valid arguments to the `--time' option. */
+/* Valid arguments to the '--time' option. */
 static char const* const time_args[] =
 {
   "atime", "access", "use", "mtime", "modify", NULL
 };
 
-/* The bits in `change_times' that those arguments set. */
+/* The bits in 'change_times' that those arguments set. */
 static int const time_masks[] =
 {
   CH_ATIME, CH_ATIME, CH_ATIME, CH_MTIME, CH_MTIME
@@ -139,7 +138,7 @@ touch (const char *file)
                       default_permissions);
 
       /* Don't save a copy of errno if it's EISDIR, since that would lead
-         touch to give a bogus diagnostic for e.g., `touch /' (assuming
+         touch to give a bogus diagnostic for e.g., 'touch /' (assuming
          we don't own / or have write access to it).  On Solaris 5.6,
          and probably other systems, it is EINVAL.  On SunOS4, it's EPERM.  */
       if (fd == -1 && errno != EISDIR && errno != EINVAL && errno != EPERM)
@@ -210,8 +209,7 @@ void
 usage (int status)
 {
   if (status != EXIT_SUCCESS)
-    fprintf (stderr, _("Try `%s --help' for more information.\n"),
-             program_name);
+    emit_try_help ();
   else
     {
       printf (_("Usage: %s [OPTION]... FILE...\n"), program_name);
@@ -392,7 +390,7 @@ main (int argc, char **argv)
         }
     }
 
-  /* The obsolete `MMDDhhmm[YY]' form is valid IFF there are
+  /* The obsolete 'MMDDhhmm[YY]' form is valid IFF there are
      two or more non-option arguments.  */
   if (!date_set && 2 <= argc - optind && posix2_version () < 200112
       && posixtime (&newtime[0].tv_sec, argv[optind],
@@ -412,8 +410,8 @@ main (int argc, char **argv)
              would fail.  However, skip the warning if it ever fails.  */
           if (tm)
             error (0, 0,
-                   _("warning: `touch %s' is obsolete; use "
-                     "`touch -t %04ld%02d%02d%02d%02d.%02d'"),
+                   _("warning: 'touch %s' is obsolete; use "
+                     "'touch -t %04ld%02d%02d%02d%02d.%02d'"),
                    argv[optind],
                    tm->tm_year + 1900L, tm->tm_mon + 1, tm->tm_mday,
                    tm->tm_hour, tm->tm_min, tm->tm_sec);

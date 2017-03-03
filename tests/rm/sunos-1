@@ -1,8 +1,7 @@
 #!/bin/sh
 # Make sure that rm -r '' fails.
 
-# Copyright (C) 1997-1998, 2002, 2004, 2006, 2008-2012 Free Software
-# Foundation, Inc.
+# Copyright (C) 1997-2012 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,7 +19,7 @@
 
 # On SunOS 4.1.3, running rm -r '' in a nonempty directory may
 # actually remove files with names of entries in the current directory
-# but relative to `/' rather than relative to the current directory.
+# but relative to '/' rather than relative to the current directory.
 
 . "${srcdir=.}/init.sh"; path_prepend_ ../src
 print_ver_ rm

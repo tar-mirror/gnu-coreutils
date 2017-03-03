@@ -1,5 +1,5 @@
 /* chown -- change user and group ownership of files
-   Copyright (C) 1989-1991, 1995-2012 Free Software Foundation, Inc.
+   Copyright (C) 1989-2012 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 #include "root-dev-ino.h"
 #include "userspec.h"
 
-/* The official name of this program (e.g., no `g' prefix).  */
+/* The official name of this program (e.g., no 'g' prefix).  */
 #define PROGRAM_NAME "chown"
 
 #define AUTHORS \
@@ -73,8 +73,7 @@ void
 usage (int status)
 {
   if (status != EXIT_SUCCESS)
-    fprintf (stderr, _("Try `%s --help' for more information.\n"),
-             program_name);
+    emit_try_help ();
   else
     {
       printf (_("\
@@ -109,8 +108,8 @@ With --reference, change the owner and group of each FILE to those of RFILE.\n\
                          is not required for the omitted attribute\n\
 "), stdout);
       fputs (_("\
-      --no-preserve-root  do not treat `/' specially (the default)\n\
-      --preserve-root    fail to operate recursively on `/'\n\
+      --no-preserve-root  do not treat '/' specially (the default)\n\
+      --preserve-root    fail to operate recursively on '/'\n\
 "), stdout);
       fputs (_("\
       --reference=RFILE  use RFILE's owner and group rather than\n\
@@ -137,7 +136,7 @@ one takes effect.\n\
       fputs (_("\
 \n\
 Owner is unchanged if missing.  Group is unchanged if missing, but changed\n\
-to login group if implied by a `:' following a symbolic OWNER.\n\
+to login group if implied by a ':' following a symbolic OWNER.\n\
 OWNER and GROUP may be numeric as well as symbolic.\n\
 "), stdout);
       printf (_("\

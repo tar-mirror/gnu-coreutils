@@ -1,5 +1,5 @@
 /* sort - sort lines of text (with all kinds of options).
-   Copyright (C) 1988, 1991-2012 Free Software Foundation, Inc.
+   Copyright (C) 1988-2012 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ struct rlimit { size_t rlim_cur; };
 # define getrlimit(Resource, Rlp) (-1)
 #endif
 
-/* The official name of this program (e.g., no `g' prefix).  */
+/* The official name of this program (e.g., no 'g' prefix).  */
 #define PROGRAM_NAME "sort"
 
 #define AUTHORS \
@@ -265,7 +265,7 @@ struct merge_node_queue
 
 /* FIXME: None of these tables work with multibyte character sets.
    Also, there are many other bugs when handling multibyte characters.
-   One way to fix this is to rewrite `sort' to use wide characters
+   One way to fix this is to rewrite 'sort' to use wide characters
    internally, but doing this with good performance is a bit
    tricky.  */
 
@@ -386,8 +386,7 @@ void
 usage (int status)
 {
   if (status != EXIT_SUCCESS)
-    fprintf (stderr, _("Try `%s --help' for more information.\n"),
-             program_name);
+    emit_try_help ();
   else
     {
       printf (_("\
@@ -415,7 +414,7 @@ Ordering options:\n\
       fputs (_("\
   -g, --general-numeric-sort  compare according to general numerical value\n\
   -i, --ignore-nonprinting    consider only printable characters\n\
-  -M, --month-sort            compare (unknown) < `JAN' < ... < `DEC'\n\
+  -M, --month-sort            compare (unknown) < 'JAN' < ... < 'DEC'\n\
 "), stdout);
       fputs (_("\
   -h, --human-numeric-sort    compare human readable numbers (e.g., 2K 1G)\n\
@@ -895,7 +894,7 @@ create_temp_file (int *pfd, bool survive_fd_exhaustion)
    Note this option was seen to shorten the runtime for sort
    on a multicore system with lots of RAM and other processes
    competing for CPU.  It could be argued that more explicit
-   scheduling hints with `nice` et. al. are more appropriate
+   scheduling hints with 'nice' et. al. are more appropriate
    for this situation.
 
    POSIX_FADV_NOREUSE is a possibility as it could lower
@@ -1415,13 +1414,9 @@ default_sort_size (void)
   struct rlimit rlimit;
 
   /* Let SIZE be MEM, but no more than the maximum object size or
-     system resource limits.  Avoid the MIN macro here, as it is not
-     quite right when only one argument is floating point.  Don't
-     bother to check for values like RLIM_INFINITY since in practice
-     they are not much less than SIZE_MAX.  */
+     system resource limits.  Don't bother to check for values like
+     RLIM_INFINITY since in practice they are not much less than SIZE_MAX.  */
   size_t size = SIZE_MAX;
-  if (mem < size)
-    size = mem;
   if (getrlimit (RLIMIT_DATA, &rlimit) == 0 && rlimit.rlim_cur < size)
     size = rlimit.rlim_cur;
 #ifdef RLIMIT_AS
@@ -1440,7 +1435,11 @@ default_sort_size (void)
     size = rlimit.rlim_cur / 16 * 15;
 #endif
 
-  /* Use no less than the minimum.  */
+  /* Return the minimum of MEM and SIZE, but no less than
+     MIN_SORT_SIZE.  Avoid the MIN macro here, as it is not quite
+     right when only one argument is floating point.  */
+  if (mem < size)
+    size = mem;
   return MAX (size, MIN_SORT_SIZE);
 }
 
@@ -1606,8 +1605,8 @@ limfield (struct line const *line, struct keyfield const *key)
      whichever comes first.  If there are more than EWORD fields, leave
      PTR pointing at the beginning of the field having zero-based index,
      EWORD.  If a delimiter character was specified (via -t), then that
-     `beginning' is the first character following the delimiting TAB.
-     Otherwise, leave PTR pointing at the first `blank' character after
+     'beginning' is the first character following the delimiting TAB.
+     Otherwise, leave PTR pointing at the first 'blank' character after
      the preceding field.  */
   if (tab != TAB_DEFAULT)
     while (ptr < lim && eword--)
@@ -1636,7 +1635,7 @@ limfield (struct line const *line, struct keyfield const *key)
      Date: Thu, 30 May 96 12:20:41 -0400
      [Translated to POSIX 1003.1-2001 terminology by Paul Eggert.]
 
-     [...]I believe I've found another bug in `sort'.
+     [...]I believe I've found another bug in 'sort'.
 
      $ cat /tmp/sort.in
      a b c 2 d
@@ -2374,8 +2373,8 @@ key_warnings (struct keyfield const *gkey, bool gkey_only)
                       umaxtostr (eword + 1
                                  + (key->echar == SIZE_MAX), tmp));
             }
-          error (0, 0, _("obsolescent key `%s' used; consider `%s' instead"),
-                 obuf, nbuf);
+          error (0, 0, _("obsolescent key %s used; consider %s instead"),
+                 quote_n (0, obuf), quote_n (1, nbuf));
         }
 
       /* Warn about field specs that will never match.  */
@@ -2392,7 +2391,7 @@ key_warnings (struct keyfield const *gkey, bool gkey_only)
               || (!key->skipsblanks && key->schar)
               || (!key->skipeblanks && key->echar)))
         error (0, 0, _("leading blanks are significant in key %lu; "
-                       "consider also specifying `b'"), keynum);
+                       "consider also specifying 'b'"), keynum);
 
       /* Warn about numeric comparisons spanning fields,
          as field delimiters could be interpreted as part
@@ -2436,13 +2435,13 @@ key_warnings (struct keyfield const *gkey, bool gkey_only)
       char opts[sizeof short_options];
       key_to_opts (&ugkey, opts);
       error (0, 0,
-             ngettext ("option `-%s' is ignored",
-                       "options `-%s' are ignored",
+             ngettext ("option '-%s' is ignored",
+                       "options '-%s' are ignored",
                        select_plural (strlen (opts))), opts);
       ugkey.reverse = ugkey_reverse;
     }
   if (ugkey.reverse && !(stable || unique) && keylist)
-    error (0, 0, _("option `-r' only applies to last-resort comparison"));
+    error (0, 0, _("option '-r' only applies to last-resort comparison"));
 }
 
 /* Compare two lines A and B trying every key in sequence until there
@@ -3120,7 +3119,7 @@ sequential_sort (struct line *restrict lines, size_t nlines,
 {
   if (nlines == 2)
     {
-      /* Declare `swap' as int, not bool, to work around a bug
+      /* Declare 'swap' as int, not bool, to work around a bug
          <http://lists.gnu.org/archive/html/bug-coreutils/2005-10/msg00086.html>
          in the IBM xlc 6.0.0.0 compiler in 64-bit mode.  */
       int swap = (0 < compare (&lines[-1], &lines[-2]));
@@ -3937,7 +3936,7 @@ static void incompatible_options (char const *) ATTRIBUTE_NORETURN;
 static void
 incompatible_options (char const *opts)
 {
-  error (SORT_FAILURE, 0, _("options `-%s' are incompatible"), opts);
+  error (SORT_FAILURE, 0, _("options '-%s' are incompatible"), opts);
   abort ();
 }
 
@@ -4245,10 +4244,10 @@ main (int argc, char **argv)
                         {
                           char const *optarg1 = argv[optind++];
                           s = parse_field_count (optarg1 + 1, &key->eword,
-                                             N_("invalid number after `-'"));
+                                             N_("invalid number after '-'"));
                           if (*s == '.')
                             s = parse_field_count (s + 1, &key->echar,
-                                               N_("invalid number after `.'"));
+                                               N_("invalid number after '.'"));
                           if (!key->echar && key->eword)
                             {
                               /* obsolescent syntax +A.x -B.y is equivalent to:
@@ -4328,16 +4327,16 @@ main (int argc, char **argv)
                                  N_("invalid number at field start"));
           if (! key->sword--)
             {
-              /* Provoke with `sort -k0' */
+              /* Provoke with 'sort -k0' */
               badfieldspec (optarg, N_("field number is zero"));
             }
           if (*s == '.')
             {
               s = parse_field_count (s + 1, &key->schar,
-                                     N_("invalid number after `.'"));
+                                     N_("invalid number after '.'"));
               if (! key->schar--)
                 {
-                  /* Provoke with `sort -k1.0' */
+                  /* Provoke with 'sort -k1.0' */
                   badfieldspec (optarg, N_("character offset is zero"));
                 }
             }
@@ -4353,16 +4352,16 @@ main (int argc, char **argv)
             {
               /* Get POS2. */
               s = parse_field_count (s + 1, &key->eword,
-                                     N_("invalid number after `,'"));
+                                     N_("invalid number after ','"));
               if (! key->eword--)
                 {
-                  /* Provoke with `sort -k1,0' */
+                  /* Provoke with 'sort -k1,0' */
                   badfieldspec (optarg, N_("field number is zero"));
                 }
               if (*s == '.')
                 {
                   s = parse_field_count (s + 1, &key->echar,
-                                         N_("invalid number after `.'"));
+                                         N_("invalid number after '.'"));
                 }
               s = set_ordering (s, key, bl_end);
             }
@@ -4410,7 +4409,7 @@ main (int argc, char **argv)
                   newtab = '\0';
                 else
                   {
-                    /* Provoke with `sort -txx'.  Complain about
+                    /* Provoke with 'sort -txx'.  Complain about
                        "multi-character tab" instead of "multibyte tab", so
                        that the diagnostic's wording does not need to be
                        changed once multibyte characters are supported.  */
@@ -4513,7 +4512,7 @@ main (int argc, char **argv)
                        quote (files[i]));
               else if (files[i][0] == '\0')
                 {
-                  /* Using the standard `filename:line-number:' prefix here is
+                  /* Using the standard 'filename:line-number:' prefix here is
                      not totally appropriate, since NUL is the separator,
                      not NL, but it might be better than nothing.  */
                   unsigned long int file_number = i + 1;

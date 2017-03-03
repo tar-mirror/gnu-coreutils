@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # Sample vectors for "sha1sum".
 
-# Copyright (C) 2000-2001, 2003, 2005, 2007-2012 Free Software Foundation, Inc.
+# Copyright (C) 2000-2012 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -495,8 +495,8 @@ sub binary_expand ($$)
   defined $n && defined $b or die "$test_name: too few args\n";
   my @a = split ' ', $rest, $n + 1;
   my $caret = pop @a;
-  $caret eq '^' or die "test $test_name: @a missing `^'\n";
-  $b eq '1' || $b eq '0' or die "test $test_name: bad `b'=$b\n";
+  $caret eq '^' or die "test $test_name: @a missing '^'\n";
+  $b eq '1' || $b eq '0' or die "test $test_name: bad 'b'=$b\n";
   my $n_bad = @a;
   @a == $n or
     die "test $test_name: wrong number of args (expected $n, found $n_bad)\n";
@@ -522,7 +522,7 @@ foreach $t (@Tests)
     my $h = $t->[2];
     $h->{OUT} = lc $h->{OUT} . "  f\n";
 
-    # Insert the `--text' argument for each test.
+    # Insert the '--text' argument for each test.
     splice @$t, 1, 0, '--text';
   }
 

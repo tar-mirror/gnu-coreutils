@@ -31,7 +31,7 @@
 #include "stat-size.h"
 #include "xstrtol.h"
 
-/* The official name of this program (e.g., no `g' prefix).  */
+/* The official name of this program (e.g., no 'g' prefix).  */
 #define PROGRAM_NAME "truncate"
 
 #define AUTHORS proper_name_utf8 ("Padraig Brady", "P\303\241draig Brady")
@@ -90,8 +90,7 @@ void
 usage (int status)
 {
   if (status != EXIT_SUCCESS)
-    fprintf (stderr, _("Try `%s --help' for more information.\n"),
-             program_name);
+    emit_try_help ();
   else
     {
       printf (_("Usage: %s OPTION... FILE...\n"), program_name);
@@ -122,8 +121,8 @@ Mandatory arguments to long options are mandatory for short options too.\n\
       emit_size_note ();
       fputs (_("\n\
 SIZE may also be prefixed by one of the following modifying characters:\n\
-`+' extend by, `-' reduce by, `<' at most, `>' at least,\n\
-`/' round down to multiple of, `%' round up to multiple of.\n"), stdout);
+'+' extend by, '-' reduce by, '<' at most, '>' at least,\n\
+'/' round down to multiple of, '%' round up to multiple of.\n"), stdout);
       emit_ancillary_info ();
     }
   exit (status);
@@ -367,10 +366,10 @@ main (int argc, char **argv)
     {
       if ((fd = open (fname, oflags, omode)) == -1)
         {
-          /* `truncate -s0 -c no-such-file`  shouldn't gen error
-             `truncate -s0 no-such-dir/file` should gen ENOENT error
-             `truncate -s0 no-such-dir/` should gen EISDIR error
-             `truncate -s0 .` should gen EISDIR error */
+          /* 'truncate -s0 -c no-such-file'  shouldn't gen error
+             'truncate -s0 no-such-dir/file' should gen ENOENT error
+             'truncate -s0 no-such-dir/' should gen EISDIR error
+             'truncate -s0 .' should gen EISDIR error */
           if (!(no_create && errno == ENOENT))
             {
               error (0, errno, _("cannot open %s for writing"),

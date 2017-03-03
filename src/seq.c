@@ -33,7 +33,7 @@
 # define isfinite(x) ((x) * 0 == 0)
 #endif
 
-/* The official name of this program (e.g., no `g' prefix).  */
+/* The official name of this program (e.g., no 'g' prefix).  */
 #define PROGRAM_NAME "seq"
 
 #define AUTHORS proper_name ("Ulrich Drepper")
@@ -62,8 +62,7 @@ void
 usage (int status)
 {
   if (status != EXIT_SUCCESS)
-    fprintf (stderr, _("Try `%s --help' for more information.\n"),
-             program_name);
+    emit_try_help ();
   else
     {
       printf (_("\
@@ -89,7 +88,7 @@ INCREMENT is usually positive if FIRST is smaller than LAST, and\n\
 INCREMENT is usually negative if FIRST is greater than LAST.\n\
 "), stdout);
       fputs (_("\
-FORMAT must be suitable for printing one argument of type `double';\n\
+FORMAT must be suitable for printing one argument of type 'double';\n\
 it defaults to %.PRECf if FIRST, INCREMENT, and LAST are all fixed point\n\
 decimal numbers with maximum precision PREC, and to %g otherwise.\n\
 "), stdout);
@@ -429,8 +428,8 @@ main (int argc, char **argv)
 
   if (format_str != NULL && equal_width)
     {
-      error (0, 0, _("\
-format string may not be specified when printing equal width strings"));
+      error (0, 0, _("format string may not be specified"
+                     " when printing equal width strings"));
       usage (EXIT_FAILURE);
     }
 

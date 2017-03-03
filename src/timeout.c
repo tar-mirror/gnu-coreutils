@@ -32,8 +32,8 @@
      If you start a command in the background, which reads from the tty
      and so is immediately sent SIGTTIN to stop, then the timeout
      process will ignore this so it can timeout the command as expected.
-     This can be seen with `timeout 10 dd&` for example.
-     However if one brings this group to the foreground with the `fg`
+     This can be seen with 'timeout 10 dd&' for example.
+     However if one brings this group to the foreground with the 'fg'
      command before the timer expires, the command will remain
      in the stop state as the shell doesn't send a SIGCONT
      because the timeout process (group leader) is already running.
@@ -198,8 +198,7 @@ void
 usage (int status)
 {
   if (status != EXIT_SUCCESS)
-    fprintf (stderr, _("Try `%s --help' for more information.\n"),
-             program_name);
+    emit_try_help ();
   else
     {
       printf (_("\
@@ -221,23 +220,24 @@ Mandatory arguments to long options are mandatory for short options too.\n\
                  this long after the initial signal was sent.\n\
   -s, --signal=SIGNAL\n\
                  specify the signal to be sent on timeout.\n\
-                 SIGNAL may be a name like `HUP' or a number.\n\
-                 See `kill -l` for a list of signals\n"), stdout);
+                 SIGNAL may be a name like 'HUP' or a number.\n\
+                 See 'kill -l' for a list of signals\n"), stdout);
 
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
 
       fputs (_("\n\
 DURATION is a floating point number with an optional suffix:\n\
-`s' for seconds (the default), `m' for minutes, `h' for hours \
-or `d' for days.\n"), stdout);
+'s' for seconds (the default), 'm' for minutes, 'h' for hours \
+or 'd' for days.\n"), stdout);
 
       fputs (_("\n\
 If the command times out, then exit with status 124.  Otherwise, exit\n\
 with the status of COMMAND.  If no signal is specified, send the TERM\n\
 signal upon timeout.  The TERM signal kills any process that does not\n\
 block or catch that signal.  For other processes, it may be necessary to\n\
-use the KILL (9) signal, since this signal cannot be caught.\n"), stdout);
+use the KILL (9) signal, since this signal cannot be caught.  If the\n\
+KILL (9) signal is sent, the exit status is 128+9 rather than 124.\n"), stdout);
       emit_ancillary_info ();
     }
   exit (status);
@@ -245,8 +245,8 @@ use the KILL (9) signal, since this signal cannot be caught.\n"), stdout);
 
 /* Given a floating point value *X, and a suffix character, SUFFIX_CHAR,
    scale *X by the multiplier implied by SUFFIX_CHAR.  SUFFIX_CHAR may
-   be the NUL byte or `s' to denote seconds, `m' for minutes, `h' for
-   hours, or `d' for days.  If SUFFIX_CHAR is invalid, don't modify *X
+   be the NUL byte or 's' to denote seconds, 'm' for minutes, 'h' for
+   hours, or 'd' for days.  If SUFFIX_CHAR is invalid, don't modify *X
    and return false.  Otherwise return true.  */
 
 static bool

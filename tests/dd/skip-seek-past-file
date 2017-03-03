@@ -18,14 +18,14 @@
 
 . "${srcdir=.}/init.sh"; path_prepend_ ../src
 print_ver_ dd
-require_sparse_support_ # for `truncate --size=$OFF_T_MAX`
+require_sparse_support_ # for 'truncate --size=$OFF_T_MAX'
 eval $(getlimits) # for OFF_T limits
 
 
 printf "1234" > file || framework_failure_
 
 echo "\
-dd: \`standard input': cannot skip to specified offset
+dd: 'standard input': cannot skip to specified offset
 0+0 records in
 0+0 records out" > skip_err || framework_failure_
 

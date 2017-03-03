@@ -41,7 +41,7 @@
 # include <grp.h>
 #endif
 
-/* The official name of this program (e.g., no `g' prefix).  */
+/* The official name of this program (e.g., no 'g' prefix).  */
 #define PROGRAM_NAME "who"
 
 #define AUTHORS \
@@ -103,7 +103,7 @@ static bool do_lookup;
 
 /* If true, display only a list of usernames and count of
    the users logged on.
-   Ignored for `who am i'.  */
+   Ignored for 'who am i'.  */
 static bool short_list;
 
 /* If true, display only name, line, and time fields.  */
@@ -117,8 +117,8 @@ static bool include_idle;
 /* If true, display a line at the top describing each field.  */
 static bool include_heading;
 
-/* If true, display a `+' for each user if mesg y, a `-' if mesg n,
-   or a `?' if their tty cannot be statted. */
+/* If true, display a '+' for each user if mesg y, a '-' if mesg n,
+   or a '?' if their tty cannot be statted. */
 static bool include_mesg;
 
 /* If true, display process termination & exit status.  */
@@ -218,10 +218,10 @@ time_string (const STRUCT_UTMP *utmp_ent)
 
   /* Don't take the address of UT_TIME_MEMBER directly.
      Ulrich Drepper wrote:
-     ``... GNU libc (and perhaps other libcs as well) have extended
+     "... GNU libc (and perhaps other libcs as well) have extended
      utmp file formats which do not use a simple time_t ut_time field.
      In glibc, ut_time is a macro which selects for backward compatibility
-     the tv_sec member of a struct timeval value.''  */
+     the tv_sec member of a struct timeval value."  */
   time_t t = UT_TIME_MEMBER (utmp_ent);
   struct tm *tmp = localtime (&t);
 
@@ -344,7 +344,7 @@ print_user (const STRUCT_UTMP *utmp_ent, time_t boottime)
   char line[sizeof (utmp_ent->ut_line) + DEV_DIR_LEN + 1];
   PIDSTR_DECL_AND_INIT (pidstr, utmp_ent);
 
-  /* Copy ut_line into LINE, prepending `/dev/' if ut_line is not
+  /* Copy ut_line into LINE, prepending '/dev/' if ut_line is not
      already an absolute file name.  Some systems may put the full,
      absolute file name in ut_line.  */
   if (utmp_ent->ut_line[0] == '/')
@@ -643,8 +643,7 @@ void
 usage (int status)
 {
   if (status != EXIT_SUCCESS)
-    fprintf (stderr, _("Try `%s --help' for more information.\n"),
-             program_name);
+    emit_try_help ();
   else
     {
       printf (_("Usage: %s [OPTION]... [ FILE | ARG1 ARG2 ]\n"), program_name);
@@ -683,7 +682,7 @@ Print information about users who are currently logged in.\n\
       printf (_("\
 \n\
 If FILE is not specified, use %s.  %s as FILE is common.\n\
-If ARG1 ARG2 given, -m presumed: `am i' or `mom likes' are usual.\n\
+If ARG1 ARG2 given, -m presumed: 'am i' or 'mom likes' are usual.\n\
 "), UTMP_FILE, WTMP_FILE);
       emit_ancillary_info ();
     }

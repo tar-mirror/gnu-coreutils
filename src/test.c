@@ -2,7 +2,7 @@
 
 /* Modified to run with the GNU shell by bfox. */
 
-/* Copyright (C) 1987-2005, 2007-2012 Free Software Foundation, Inc.
+/* Copyright (C) 1987-2012 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@
 # define LBRACKET 0
 #endif
 
-/* The official name of this program (e.g., no `g' prefix).  */
+/* The official name of this program (e.g., no 'g' prefix).  */
 #if LBRACKET
 # define PROGRAM_NAME "["
 #else
@@ -210,7 +210,7 @@ term (void)
   bool value;
   bool negated = false;
 
-  /* Deal with leading `not's.  */
+  /* Deal with leading 'not's.  */
   while (pos < argc && argv[pos][0] == '!' && argv[pos][1] == '\0')
     {
       advance (true);
@@ -698,8 +698,7 @@ void
 usage (int status)
 {
   if (status != EXIT_SUCCESS)
-    fprintf (stderr, _("Try `%s --help' for more information.\n"),
-             program_name);
+    emit_try_help ();
   else
     {
       fputs (_("\
@@ -856,7 +855,7 @@ main (int margc, char **margv)
             }
         }
       if (margc < 2 || !STREQ (margv[margc - 1], "]"))
-        test_syntax_error (_("missing `]'"), NULL);
+        test_syntax_error (_("missing ']'"), NULL);
 
       --margc;
     }

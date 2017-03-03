@@ -31,7 +31,21 @@ bootstrap-tools = autoconf,automake,gnulib,bison
 # Now that we have better tests, make this the default.
 export VERBOSE = yes
 
-old_NEWS_hash = 60c2a8ae70e77352e301825426aee27d
+# Comparing tarball sizes compressed using different xz presets, we see that
+# an -8e-compressed tarball is only 9KiB larger than the -9e-compressed one.
+# Using -8e is preferred, since that lets the decompression process use half
+# the memory (32MiB rather than 64MiB).
+# $ for i in {7,8,9}{e,}; do \
+#     (n=$(xz -$i < coreutils-8.15*.tar|wc -c);echo $n $i) & done |sort -nr
+# 5129388 7
+# 5036524 7e
+# 5017476 8
+# 5010604 9
+# 4923016 8e
+# 4914152 9e
+export XZ_OPT = -8e
+
+old_NEWS_hash = c2d954b7c19745272321cc4c4b676993
 
 # Add an exemption for sc_makefile_at_at_check.
 _makefile_at_at_check_exceptions = ' && !/^cu_install_program =/'
@@ -70,7 +84,7 @@ ifneq ($(wildcard $(dd_c)),)
 	fi
 endif
 
-# Many m4 macros names once began with `jm_'.
+# Many m4 macros names once began with 'jm_'.
 # On 2004-04-13, they were all changed to start with gl_ instead.
 # Make sure that none are inadvertently reintroduced.
 sc_prohibit_jm_in_m4:
@@ -289,6 +303,26 @@ sc_prohibit_framework_failure:
 	halt='use framework_failure_ instead'				\
 	  $(_sc_search_regexp)
 
+# Exempt the contents of any usage function from the following.
+_continued_string_col_1 = \
+s/^usage .*?\n}//ms;/\\\n\w/ and print ("$$ARGV\n"),$$e=1;END{$$e||=0;exit $$e}
+# Ding any source file that has a continued string with an alphabetic in the
+# first column of the following line.  We prohibit them because they usually
+# trigger false positives in tools that try to map an arbitrary line number
+# to the enclosing function name.  Of course, very many strings do precisely
+# this, *when they are part of the usage function*.  That is why we exempt
+# the contents of any function named "usage".
+sc_prohibit_continued_string_alpha_in_column_1:
+	@perl -0777 -ne '$(_continued_string_col_1)' \
+	    $$($(VC_LIST_EXCEPT) | grep '\.[ch]$$') \
+	  || { echo '$(ME): continued string with word in first column' \
+		1>&2; exit 1; } || :
+# Use this to list offending lines:
+# git ls-files |grep '\.[ch]$' | xargs \
+#   perl -n -0777 -e 's/^usage.*?\n}//ms;/\\\n\w/ and print "$ARGV\n"' \
+#     | xargs grep -A1 '\\$'|grep '\.[ch][:-][_a-zA-Z]'
+
+
 ###########################################################
 _p0 = \([^"'/]\|"\([^\"]\|[\].\)*"\|'\([^\']\|[\].\)*'
 _pre = $(_p0)\|[/][^"'/*]\|[/]"\([^\"]\|[\].\)*"\|[/]'\([^\']\|[\].\)*'\)*
@@ -368,7 +402,8 @@ announcement_Cc_ = $(translation_project_), \
 -include $(srcdir)/dist-check.mk
 
 update-copyright-env = \
-  UPDATE_COPYRIGHT_USE_INTERVALS=1 \
+  UPDATE_COPYRIGHT_FORCE=1 \
+  UPDATE_COPYRIGHT_USE_INTERVALS=2 \
   UPDATE_COPYRIGHT_MAX_LINE_LENGTH=79
 
 # List syntax-check exemptions.
@@ -409,3 +444,6 @@ exclude_file_name_regexp--sc_preprocessor_indentation = \
   ^(gl/lib/rand-isaac\.[ch]|gl/tests/test-rand-isaac\.c)$$
 exclude_file_name_regexp--sc_prohibit_stat_st_blocks = \
   ^(src/system\.h|tests/du/2g)$$
+
+exclude_file_name_regexp--sc_prohibit_continued_string_alpha_in_column_1 = \
+  ^src/(system\.h|od\.c|printf\.c)$$

@@ -56,7 +56,7 @@
 #include "quote.h"
 #include "quotearg.h"
 
-/* The official name of this program (e.g., no `g' prefix).  */
+/* The official name of this program (e.g., no 'g' prefix).  */
 #define PROGRAM_NAME "runcon"
 
 #define AUTHORS proper_name ("Russell Coker")
@@ -77,8 +77,7 @@ void
 usage (int status)
 {
   if (status != EXIT_SUCCESS)
-    fprintf (stderr, _("Try `%s --help' for more information.\n"),
-             program_name);
+    emit_try_help ();
   else
     {
       printf (_("\

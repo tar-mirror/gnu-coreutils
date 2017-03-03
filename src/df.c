@@ -1,5 +1,5 @@
 /* df - summarize free disk space
-   Copyright (C) 1991, 1995-2012 Free Software Foundation, Inc.
+   Copyright (C) 1991-2012 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@
 #include "quote.h"
 #include "find-mount-point.h"
 
-/* The official name of this program (e.g., no `g' prefix).  */
+/* The official name of this program (e.g., no 'g' prefix).  */
 #define PROGRAM_NAME "df"
 
 #define AUTHORS \
@@ -69,7 +69,7 @@ static bool posix_format;
 /* True if a file system has been processed for output.  */
 static bool file_systems_processed;
 
-/* If true, invoke the `sync' system call before getting any usage data.
+/* If true, invoke the 'sync' system call before getting any usage data.
    Using this option can make df very slow, especially with many or very
    busy disks.  Note that this may make a difference on some systems --
    SunOS 4.1.3, for one.  It is *not* necessary on GNU/Linux.  */
@@ -87,7 +87,7 @@ struct fs_type_list
 };
 
 /* Linked list of file system types to display.
-   If `fs_select_list' is NULL, list all types.
+   If 'fs_select_list' is NULL, list all types.
    This table is generated dynamically from command-line options,
    rather than hardcoding into the program what it thinks are the
    valid file system types; let the user specify any file system type
@@ -617,7 +617,7 @@ get_dev (char const *disk, char const *mount_point,
                   long int lipct = pct = u * 100 / nonroot_total;
                   double ipct = lipct;
 
-                  /* Like `pct = ceil (dpct);', but avoid ceil so that
+                  /* Like 'pct = ceil (dpct);', but avoid ceil so that
                      the math library needn't be linked.  */
                   if (ipct - 1 < pct && pct <= ipct + 1)
                     pct = ipct + (ipct < pct);
@@ -690,7 +690,7 @@ get_disk (char const *disk)
 
 /* Figure out which device file or directory POINT is mounted on
    and show its disk usage.
-   STATP must be the result of `stat (POINT, STATP)'.  */
+   STATP must be the result of 'stat (POINT, STATP)'.  */
 static void
 get_point (const char *point, const struct stat *statp)
 {
@@ -785,7 +785,7 @@ get_point (const char *point, const struct stat *statp)
 }
 
 /* Determine what kind of node NAME is and show the disk usage
-   for it.  STATP is the results of `stat' on NAME.  */
+   for it.  STATP is the results of 'stat' on NAME.  */
 
 static void
 get_entry (char const *name, struct stat const *statp)
@@ -840,8 +840,7 @@ void
 usage (int status)
 {
   if (status != EXIT_SUCCESS)
-    fprintf (stderr, _("Try `%s --help' for more information.\n"),
-             program_name);
+    emit_try_help ();
   else
     {
       printf (_("Usage: %s [OPTION]... [FILE]...\n"), program_name);
@@ -856,7 +855,7 @@ Mandatory arguments to long options are mandatory for short options too.\n\
       fputs (_("\
   -a, --all             include dummy file systems\n\
   -B, --block-size=SIZE  scale sizes by SIZE before printing them.  E.g.,\n\
-                           `-BM' prints sizes in units of 1,048,576 bytes.\n\
+                           '-BM' prints sizes in units of 1,048,576 bytes.\n\
                            See SIZE format below.\n\
       --total           produce a grand total\n\
   -h, --human-readable  print sizes in human readable format (e.g., 1K 234M 2G)\

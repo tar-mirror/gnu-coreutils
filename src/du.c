@@ -1,5 +1,5 @@
 /* du -- summarize disk usage
-   Copyright (C) 1988-1991, 1995-2012 Free Software Foundation, Inc.
+   Copyright (C) 1988-2012 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@
 
 extern bool fts_debug;
 
-/* The official name of this program (e.g., no `g' prefix).  */
+/* The official name of this program (e.g., no 'g' prefix).  */
 #define PROGRAM_NAME "du"
 
 #define AUTHORS \
@@ -138,7 +138,7 @@ static bool opt_separate_dirs = false;
 
 /* Show the total for each directory (and file if --all) that is at
    most MAX_DEPTH levels down from the root of the hierarchy.  The root
-   is at level 0, so `du --max-depth=0' is equivalent to `du -s'.  */
+   is at level 0, so 'du --max-depth=0' is equivalent to 'du -s'.  */
 static size_t max_depth = SIZE_MAX;
 
 /* Human-readable options for output.  */
@@ -229,8 +229,8 @@ static enum time_type const time_types[] =
 };
 ARGMATCH_VERIFY (time_args, time_types);
 
-/* `full-iso' uses full ISO-style dates and times.  `long-iso' uses longer
-   ISO-style time stamps, though shorter than `full-iso'.  `iso' uses shorter
+/* 'full-iso' uses full ISO-style dates and times.  'long-iso' uses longer
+   ISO-style time stamps, though shorter than 'full-iso'.  'iso' uses shorter
    ISO-style time stamps.  */
 enum time_style
   {
@@ -253,8 +253,7 @@ void
 usage (int status)
 {
   if (status != EXIT_SUCCESS)
-    fprintf (stderr, _("Try `%s --help' for more information.\n"),
-             program_name);
+    emit_try_help ();
   else
     {
       printf (_("\
@@ -273,14 +272,14 @@ Mandatory arguments to long options are mandatory for short options too.\n\
       --apparent-size   print apparent sizes, rather than disk usage; although\
 \n\
                           the apparent size is usually smaller, it may be\n\
-                          larger due to holes in (`sparse') files, internal\n\
+                          larger due to holes in ('sparse') files, internal\n\
                           fragmentation, indirect blocks, and the like\n\
 "), stdout);
       fputs (_("\
   -B, --block-size=SIZE  scale sizes by SIZE before printing them.  E.g.,\n\
-                           `-BM' prints sizes in units of 1,048,576 bytes.\n\
+                           '-BM' prints sizes in units of 1,048,576 bytes.\n\
                            See SIZE format below.\n\
-  -b, --bytes           equivalent to `--apparent-size --block-size=1'\n\
+  -b, --bytes           equivalent to '--apparent-size --block-size=1'\n\
   -c, --total           produce a grand total\n\
   -D, --dereference-args  dereference only symlinks that are listed on the\n\
                           command line\n\
@@ -322,7 +321,7 @@ Mandatory arguments to long options are mandatory for short options too.\n\
                           atime, access, use, ctime or status\n\
       --time-style=STYLE  show times using style STYLE:\n\
                           full-iso, long-iso, iso, +FORMAT\n\
-                          FORMAT is interpreted like `date'\n\
+                          FORMAT is interpreted like 'date'\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
@@ -444,7 +443,14 @@ process_file (FTS *fts, FTSENT *ent)
               return false;
             }
 
-          if (fts->fts_options & FTS_XDEV && fts->fts_dev != sb->st_dev)
+          /* The --one-file-system (-x) option cannot exclude anything
+             specified on the command-line.  By definition, it can exclude
+             a file or directory only when its device number is different
+             from that of its just-processed parent directory, and du does
+             not process the parent of a command-line argument.  */
+          if (fts->fts_options & FTS_XDEV
+              && FTS_ROOTLEVEL < ent->fts_level
+              && fts->fts_dev != sb->st_dev)
             excluded = true;
         }
 
@@ -970,7 +976,7 @@ main (int argc, char **argv)
             error (0, 0, "%s", _("invalid zero-length file name"));
           else
             {
-              /* Using the standard `filename:line-number:' prefix here is
+              /* Using the standard 'filename:line-number:' prefix here is
                  not totally appropriate, since NUL is the separator, not NL,
                  but it might be better than nothing.  */
               unsigned long int file_number = argv_iter_n_args (ai);

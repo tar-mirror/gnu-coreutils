@@ -1,5 +1,5 @@
-/* `rm' file deletion utility for GNU.
-   Copyright (C) 1988, 1990-1991, 1994-2012 Free Software Foundation, Inc.
+/* 'rm' file deletion utility for GNU.
+   Copyright (C) 1988-2012 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@
 #include "yesno.h"
 #include "priv-set.h"
 
-/* The official name of this program (e.g., no `g' prefix).  */
+/* The official name of this program (e.g., no 'g' prefix).  */
 #define PROGRAM_NAME "rm"
 
 #define AUTHORS \
@@ -98,7 +98,7 @@ static enum interactive_type const interactive_types[] =
 ARGMATCH_VERIFY (interactive_args, interactive_types);
 
 /* Advise the user about invalid usages like "rm -foo" if the file
-   "-foo" exists, assuming ARGC and ARGV are as with `main'.  */
+   "-foo" exists, assuming ARGC and ARGV are as with 'main'.  */
 
 static void
 diagnose_leading_hyphen (int argc, char **argv)
@@ -115,7 +115,7 @@ diagnose_leading_hyphen (int argc, char **argv)
       if (arg[0] == '-' && arg[1] && lstat (arg, &st) == 0)
         {
           fprintf (stderr,
-                   _("Try `%s ./%s' to remove the file %s.\n"),
+                   _("Try '%s ./%s' to remove the file %s.\n"),
                    argv[0],
                    quotearg_n_style (1, shell_quoting_style, arg),
                    quote (arg));
@@ -128,15 +128,14 @@ void
 usage (int status)
 {
   if (status != EXIT_SUCCESS)
-    fprintf (stderr, _("Try `%s --help' for more information.\n"),
-             program_name);
+    emit_try_help ();
   else
     {
       printf (_("Usage: %s [OPTION]... FILE...\n"), program_name);
       fputs (_("\
 Remove (unlink) the FILE(s).\n\
 \n\
-  -f, --force           ignore nonexistent files, never prompt\n\
+  -f, --force           ignore nonexistent files and arguments, never prompt\n\
   -i                    prompt before every removal\n\
 "), stdout);
       fputs (_("\
@@ -152,8 +151,8 @@ Remove (unlink) the FILE(s).\n\
                           that of the corresponding command line argument\n\
 "), stdout);
       fputs (_("\
-      --no-preserve-root  do not treat `/' specially\n\
-      --preserve-root   do not remove `/' (default)\n\
+      --no-preserve-root  do not treat '/' specially\n\
+      --preserve-root   do not remove '/' (default)\n\
   -r, -R, --recursive   remove directories and their contents recursively\n\
   -v, --verbose         explain what is being done\n\
 "), stdout);
@@ -166,7 +165,7 @@ option to remove each listed directory, too, along with all of its contents.\n\
 "), stdout);
       printf (_("\
 \n\
-To remove a file whose name starts with a `-', for example `-foo',\n\
+To remove a file whose name starts with a '-', for example '-foo',\n\
 use one of these commands:\n\
   %s -- -foo\n\
 \n\
@@ -195,7 +194,7 @@ rm_option_init (struct rm_options *x)
   x->stdin_tty = isatty (STDIN_FILENO);
   x->verbose = false;
 
-  /* Since this program exits immediately after calling `rm', rm need not
+  /* Since this program exits immediately after calling 'rm', rm need not
      expend unnecessary effort to preserve the initial working directory.  */
   x->require_restore_cwd = false;
 }

@@ -2,7 +2,7 @@
 # Ensure that rm works even when run from a directory
 # for which the user has no access at all.
 
-# Copyright (C) 2004, 2006-2012 Free Software Foundation, Inc.
+# Copyright (C) 2004-2012 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ test -d "$p/abs1" && fail=1
 test -d "$p/abs2" && fail=1
 
 cat <<\EOF > exp || fail=1
-rm: cannot remove `rel': Permission denied
+rm: cannot remove 'rel': Permission denied
 EOF
 
 # AIX 4.3.3 fails with a different diagnostic.

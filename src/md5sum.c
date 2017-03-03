@@ -40,7 +40,7 @@
 #include "stdio--.h"
 #include "xfreopen.h"
 
-/* The official name of this program (e.g., no `g' prefix).  */
+/* The official name of this program (e.g., no 'g' prefix).  */
 #if HASH_ALGO_MD5
 # define PROGRAM_NAME "md5sum"
 # define DIGEST_TYPE_STRING "MD5"
@@ -156,8 +156,7 @@ void
 usage (int status)
 {
   if (status != EXIT_SUCCESS)
-    fprintf (stderr, _("Try `%s --help' for more information.\n"),
-             program_name);
+    emit_try_help ();
   else
     {
       printf (_("\
@@ -205,7 +204,7 @@ The following three options are useful only when verifying checksums:\n\
 \n\
 The sums are computed as described in %s.  When checking, the input\n\
 should be a former output of this program.  The default mode is to print\n\
-a line with checksum, a character indicating input mode (`*' for binary,\n\
+a line with checksum, a character indicating input mode ('*' for binary,\n\
 space for text), and name for each FILE.\n"),
               DIGEST_REFERENCE);
       emit_ancillary_info ();
@@ -288,7 +287,7 @@ split_3 (char *s, size_t s_len,
     }
 
   /* Ignore this line if it is too short.
-     Each line must have at least `min_digest_line_length - 1' (or one more, if
+     Each line must have at least 'min_digest_line_length - 1' (or one more, if
      the first is a backslash) more characters to contain correct message digest
      information.  */
   if (s_len - i < min_digest_line_length + (s[i] == '\\'))
@@ -335,8 +334,8 @@ split_3 (char *s, size_t s_len,
 
   if (escaped_filename)
     {
-      /* Translate each `\n' string in the file name to a NEWLINE,
-         and each `\\' string to a backslash.  */
+      /* Translate each '\n' string in the file name to a NEWLINE,
+         and each '\\' string to a backslash.  */
 
       char *dst = &s[i];
 
@@ -360,7 +359,7 @@ split_3 (char *s, size_t s_len,
                   *dst++ = '\\';
                   break;
                 default:
-                  /* Only `\' or `n' may follow a backslash.  */
+                  /* Only '\' or 'n' may follow a backslash.  */
                   return false;
                 }
               break;

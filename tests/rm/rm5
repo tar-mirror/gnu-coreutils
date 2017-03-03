@@ -1,7 +1,7 @@
 #!/bin/sh
 # a basic test of rm -ri
 
-# Copyright (C) 2002-2004, 2006-2012 Free Software Foundation, Inc.
+# Copyright (C) 2002-2012 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,16 +28,16 @@ y
 EOF
 
 cat <<\EOF > exp || framework_failure_
-rm: descend into directory `d'
-rm: remove directory `d/e'
-rm: remove directory `d'
+rm: descend into directory 'd'
+rm: remove directory 'd/e'
+rm: remove directory 'd'
 EOF
 
 
 rm -ir d < in > out 2>&1 || fail=1
 
-# Given input like `rm: ...? rm: ...? ' (no trailing newline),
-# the `head...' part of the pipeline below removes the trailing space, so
+# Given input like 'rm: ...? rm: ...? ' (no trailing newline),
+# the 'head...' part of the pipeline below removes the trailing space, so
 # that sed doesn't have to deal with a line lacking a terminating newline.
 # This avoids a bug whereby some vendor-provided (Tru64) versions of sed
 # would mistakenly tack a newline onto the end of the output.

@@ -1,6 +1,6 @@
 # Make coreutils documentation.				-*-Makefile-*-
 
-# Copyright (C) 1995-1998, 2001-2012 Free Software Foundation, Inc.
+# Copyright (C) 1995-2012 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ sc-avoid-path:
 	  && fail=1;							\
 	exit $$fail
 
-# Use `time zone', not `timezone'.
+# Use "time zone", not "timezone".
 sc-avoid-timezone:
 	$(AM_V_GEN)$(EGREP) timezone $(srcdir)/*.texi && exit 1 || :
 
@@ -108,7 +108,7 @@ sc-avoid-io:
 sc-avoid-non-zero:
 	$(AM_V_GEN)$(EGREP) non-zero $(srcdir)/*.texi && exit 1 || :
 
-# Use `zeros', not `zeroes' (nothing wrong with `zeroes'. just be consistent).
+# Use "zeros", not "zeroes" (nothing wrong with "zeroes"; just be consistent).
 sc-avoid-zeroes:
 	$(AM_V_GEN)$(EGREP) -i '$(_W)zeroes$(W_)' $(srcdir)/*.texi \
 	  && exit 1 || :

@@ -1,7 +1,7 @@
 #!/bin/sh
 # exercise another small part of remove.c
 
-# Copyright (C) 2002, 2004, 2006-2012 Free Software Foundation, Inc.
+# Copyright (C) 2002-2012 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,13 +27,13 @@ chmod u-w b/a || framework_failure_
 # This should fail.
 rm -rf b > out 2>&1 && fail=1
 cat <<\EOF > exp
-rm: cannot remove directory `b/a/p': Permission denied
+rm: cannot remove directory 'b/a/p': Permission denied
 EOF
 
 # On some systems, rm doesn't have enough information to
 # say it's a directory.
 cat <<\EOF > exp2
-rm: cannot remove `b/a/p': Permission denied
+rm: cannot remove 'b/a/p': Permission denied
 EOF
 
 cmp out exp > /dev/null 2>&1 || {

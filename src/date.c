@@ -33,7 +33,7 @@
 #include "stat-time.h"
 #include "fprintftime.h"
 
-/* The official name of this program (e.g., no `g' prefix).  */
+/* The official name of this program (e.g., no 'g' prefix).  */
 #define PROGRAM_NAME "date"
 
 #define AUTHORS proper_name ("David MacKenzie")
@@ -117,8 +117,7 @@ void
 usage (int status)
 {
   if (status != EXIT_SUCCESS)
-    fprintf (stderr, _("Try `%s --help' for more information.\n"),
-             program_name);
+    emit_try_help ();
   else
     {
       printf (_("\
@@ -129,11 +128,11 @@ Usage: %s [OPTION]... [+FORMAT]\n\
       fputs (_("\
 Display the current time in the given FORMAT, or set the system date.\n\
 \n\
-  -d, --date=STRING         display time described by STRING, not `now'\n\
+  -d, --date=STRING         display time described by STRING, not 'now'\n\
   -f, --file=DATEFILE       like --date once for each line of DATEFILE\n\
   -I[TIMESPEC], --iso-8601[=TIMESPEC]  output date/time in ISO 8601 format.\n\
-                            TIMESPEC=`date' for date only (the default),\n\
-                            `hours', `minutes', `seconds', or `ns' for date\n\
+                            TIMESPEC='date' for date only (the default),\n\
+                            'hours', 'minutes', 'seconds', or 'ns' for date\n\
                             and time to the indicated precision.\n\
 "), stdout);
       fputs (_("\
@@ -143,7 +142,7 @@ Display the current time in the given FORMAT, or set the system date.\n\
 "), stdout);
       fputs (_("\
       --rfc-3339=TIMESPEC   output date and time in RFC 3339 format.\n\
-                            TIMESPEC=`date', `seconds', or `ns' for\n\
+                            TIMESPEC='date', 'seconds', or 'ns' for\n\
                             date and time to the indicated precision.\n\
                             Date and time components are separated by\n\
                             a single space: 2006-08-07 12:34:56-06:00\n\
@@ -225,7 +224,7 @@ FORMAT controls the output.  Interpreted sequences are:\n\
 By default, date pads numeric fields with zeroes.\n\
 "), stdout);
       fputs (_("\
-The following optional flags may follow `%':\n\
+The following optional flags may follow '%':\n\
 \n\
   -  (hyphen) do not pad the field\n\
   _  (underscore) pad with spaces\n\
@@ -396,7 +395,7 @@ main (int argc, char **argv)
           set_date = true;
           break;
         case 'u':
-          /* POSIX says that `date -u' is equivalent to setting the TZ
+          /* POSIX says that 'date -u' is equivalent to setting the TZ
              environment variable, so this option should do nothing other
              than setting TZ.  */
           if (putenv (bad_cast ("TZ=UTC0")) != 0)
@@ -452,9 +451,9 @@ main (int argc, char **argv)
       else if (set_date || option_specified_date)
         {
           error (0, 0,
-                 _("the argument %s lacks a leading `+';\n"
+                 _("the argument %s lacks a leading '+';\n"
                    "when using an option to specify date(s), any non-option\n"
-                   "argument must be a format string beginning with `+'"),
+                   "argument must be a format string beginning with '+'"),
                  quote (argv[optind]));
           usage (EXIT_FAILURE);
         }

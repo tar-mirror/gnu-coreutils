@@ -25,8 +25,9 @@
 #include "canonicalize.h"
 #include "error.h"
 #include "quote.h"
+#include "relpath.h"
 
-/* The official name of this program (e.g., no `g' prefix).  */
+/* The official name of this program (e.g., no 'g' prefix).  */
 #define PROGRAM_NAME "realpath"
 
 #define AUTHORS proper_name_utf8 ("Padraig Brady", "P\303\241draig Brady")
@@ -64,8 +65,7 @@ void
 usage (int status)
 {
   if (status != EXIT_SUCCESS)
-    fprintf (stderr, _("Try `%s --help' for more information.\n"),
-             program_name);
+    emit_try_help ();
   else
     {
       printf (_("Usage: %s [OPTION]... FILE...\n"), program_name);
@@ -77,7 +77,7 @@ all but the last component must exist\n\
       fputs (_("\
   -e, --canonicalize-existing  all components of the path must exist\n\
   -m, --canonicalize-missing   no components of the path need exist\n\
-  -L, --logical                resolve `..' components before symlinks\n\
+  -L, --logical                resolve '..' components before symlinks\n\
   -P, --physical               resolve symlinks as encountered (default)\n\
   -q, --quiet                  suppress most error messages\n\
       --relative-to=FILE       print the resolved path relative to FILE\n\
@@ -109,10 +109,24 @@ realpath_canon (const char *fname, int can_mode)
   return can_fname;
 }
 
-/* Test whether prefix is parent or match of path.  */
+/* Test whether canonical prefix is parent or match of path.  */
 static bool _GL_ATTRIBUTE_PURE
 path_prefix (const char *prefix, const char *path)
 {
+  /* We already know prefix[0] and path[0] are '/'.  */
+  prefix++;
+  path++;
+
+  /* '/' is the prefix of everything except '//' (since we know '//'
+     is only present after canonicalization if it is distinct).  */
+  if (!*prefix)
+    return *path != '/';
+
+  /* Likewise, '//' is a prefix of any double-slash path.  */
+  if (*prefix == '/' && !prefix[1])
+    return *path == '/';
+
+  /* Any other prefix has a non-slash portion.  */
   while (*prefix && *path)
     {
       if (*prefix != *path)
@@ -121,85 +135,6 @@ path_prefix (const char *prefix, const char *path)
       path++;
     }
   return (!*prefix && (*path == '/' || !*path));
-}
-
-/* Return the length of the longest common prefix
-   of PATH1 and PATH2, ensuring only full path components
-   are matched.  Return 0 on no match.  */
-static int _GL_ATTRIBUTE_PURE
-path_common_prefix (const char *path1, const char *path2)
-{
-  int i = 0;
-  int ret = 0;
-
-  while (*path1 && *path2)
-    {
-      if (*path1 != *path2)
-        break;
-      if (*path1 == '/')
-        ret = i;
-      path1++;
-      path2++;
-      i++;
-    }
-
-  if (!*path1 && !*path2)
-    ret = i;
-  if (!*path1 && *path2 == '/')
-    ret = i;
-  if (!*path2 && *path1 == '/')
-    ret = i;
-
-  return ret;
-}
-
-/* Output the relative representation if requested.  */
-static bool
-relpath (const char *can_fname)
-{
-  if (can_relative_to)
-    {
-      /* Enforce --relative-base.  */
-      if (can_relative_base)
-        {
-          if (!path_prefix (can_relative_base, can_fname)
-              || !path_prefix (can_relative_base, can_relative_to))
-            return false;
-        }
-
-      /* Skip the prefix common to --relative-to and path.  */
-      int common_index = path_common_prefix (can_relative_to, can_fname);
-      const char *relto_suffix = can_relative_to + common_index;
-      const char *fname_suffix = can_fname + common_index;
-
-      /* Replace remaining components of --relative-to with '..', to get
-         to a common directory.  Then output the remainder of fname.  */
-      if (*relto_suffix)
-        {
-          ++relto_suffix;
-          printf ("%s", "..");
-          for (; *relto_suffix; ++relto_suffix)
-            {
-              if (*relto_suffix == '/')
-                printf ("%s", "/..");
-            }
-
-          printf ("%s", fname_suffix);
-        }
-      else
-        {
-          if (*fname_suffix)
-            printf ("%s", ++fname_suffix);
-          else
-            printf ("%c", '.');
-        }
-
-      putchar (use_nuls ? '\0' : '\n');
-
-      return true;
-    }
-
-  return false;
 }
 
 static bool
@@ -222,8 +157,12 @@ process_path (const char *fname, int can_mode)
       return false;
     }
 
-  if (!relpath (can_fname))
-    printf ("%s%c", can_fname, (use_nuls ? '\0' : '\n'));
+  if (!can_relative_to
+      || (can_relative_base && !path_prefix (can_relative_base, can_fname))
+      || (can_relative_to && !relpath (can_fname, can_relative_to, NULL, 0)))
+    fputs (can_fname, stdout);
+
+  putchar (use_nuls ? '\0' : '\n');
 
   free (can_fname);
 
@@ -299,10 +238,7 @@ main (int argc, char **argv)
     }
 
   if (relative_base && !relative_to)
-    {
-      error (0, 0, _("--relative-base requires --relative-to"));
-      usage (EXIT_FAILURE);
-    }
+    relative_to = relative_base;
 
   bool need_dir = (can_mode & CAN_MODE_MASK) == CAN_EXISTING;
   if (relative_to)
@@ -313,13 +249,25 @@ main (int argc, char **argv)
       if (need_dir && !isdir (can_relative_to))
         error (EXIT_FAILURE, ENOTDIR, "%s", quote (relative_to));
     }
-  if (relative_base)
+  if (relative_base == relative_to)
+    can_relative_base = can_relative_to;
+  else if (relative_base)
     {
-      can_relative_base = realpath_canon (relative_base, can_mode);
-      if (!can_relative_base)
+      char *base = realpath_canon (relative_base, can_mode);
+      if (!base)
         error (EXIT_FAILURE, errno, "%s", quote (relative_base));
-      if (need_dir && !isdir (can_relative_base))
+      if (need_dir && !isdir (base))
         error (EXIT_FAILURE, ENOTDIR, "%s", quote (relative_base));
+      /* --relative-to is a no-op if it does not have --relative-base
+           as a prefix */
+      if (path_prefix (base, can_relative_to))
+        can_relative_base = base;
+      else
+        {
+          free (base);
+          can_relative_base = can_relative_to;
+          can_relative_to = NULL;
+        }
     }
 
   for (; optind < argc; ++optind)

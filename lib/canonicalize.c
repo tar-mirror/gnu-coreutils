@@ -145,8 +145,12 @@ canonicalize_filename_mode (const char *name, canonicalize_mode_t can_mode)
       rname_limit = rname + PATH_MAX;
       rname[0] = '/';
       dest = rname + 1;
-      if (DOUBLE_SLASH_IS_DISTINCT_ROOT && name[1] == '/')
-        *dest++ = '/';
+      if (DOUBLE_SLASH_IS_DISTINCT_ROOT)
+        {
+          if (name[1] == '/' && name[2] != '/')
+            *dest++ = '/';
+          *dest = '\0';
+        }
     }
 
   for (start = name; *start; start = end)
@@ -169,7 +173,7 @@ canonicalize_filename_mode (const char *name, canonicalize_mode_t can_mode)
           if (dest > rname + 1)
             while ((--dest)[-1] != '/');
           if (DOUBLE_SLASH_IS_DISTINCT_ROOT && dest == rname + 1
-              && *dest == '/')
+              && *dest == '/' && dest[1] != '/')
             dest++;
         }
       else
@@ -267,8 +271,12 @@ canonicalize_filename_mode (const char *name, canonicalize_mode_t can_mode)
               if (buf[0] == '/')
                 {
                   dest = rname + 1;     /* It's an absolute symlink */
-                  if (DOUBLE_SLASH_IS_DISTINCT_ROOT && buf[1] == '/')
-                    *dest++ = '/';
+                  if (DOUBLE_SLASH_IS_DISTINCT_ROOT)
+                    {
+                      if (buf[1] == '/' && buf[2] != '/')
+                        *dest++ = '/';
+                      *dest = '\0';
+                    }
                 }
               else
                 {
@@ -277,7 +285,7 @@ canonicalize_filename_mode (const char *name, canonicalize_mode_t can_mode)
                   if (dest > rname + 1)
                     while ((--dest)[-1] != '/');
                   if (DOUBLE_SLASH_IS_DISTINCT_ROOT && dest == rname + 1
-                      && *dest == '/')
+                      && *dest == '/' && dest[1] != '/')
                     dest++;
                 }
 
@@ -295,7 +303,8 @@ canonicalize_filename_mode (const char *name, canonicalize_mode_t can_mode)
     }
   if (dest > rname + 1 && dest[-1] == '/')
     --dest;
-  if (DOUBLE_SLASH_IS_DISTINCT_ROOT && dest == rname + 1 && *dest == '/')
+  if (DOUBLE_SLASH_IS_DISTINCT_ROOT && dest == rname + 1
+      && *dest == '/' && dest[1] != '/')
     dest++;
   *dest = '\0';
   if (rname_limit != dest + 1)

@@ -34,9 +34,7 @@ my $prog = 'dirname';
 my @Tests =
     (
      ['fail-1', {ERR => "$prog: missing operand\n"
-       . "Try `$prog --help' for more information.\n"}, {EXIT => '1'}],
-     ['fail-2', qw(a b), {ERR => "$prog: extra operand `b'\n"
-       . "Try `$prog --help' for more information.\n"}, {EXIT => '1'}],
+       . "Try '$prog --help' for more information.\n"}, {EXIT => '1'}],
 
      ['a', qw(d/f),        {OUT => 'd'}],
      ['b', qw(/d/f),       {OUT => '/d'}],
@@ -51,9 +49,10 @@ my @Tests =
      ['k', qw(///a///b),   {OUT => '///a'}],
      ['l', qw(///a//b/),   {OUT => '///a'}],
      ['m', qw(''),         {OUT => '.'}],
+     ['n', qw(a/b c/d),    {OUT => "a\nc"}],
     );
 
-# Append a newline to end of each expected `OUT' string.
+# Append a newline to end of each expected 'OUT' string.
 my $t;
 foreach $t (@Tests)
   {

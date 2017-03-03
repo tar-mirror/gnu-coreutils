@@ -1,7 +1,7 @@
 # -*- autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-# Copyright (C) 1991, 1993-2012 Free Software Foundation, Inc.
+# Copyright (C) 1991-2012 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,6 +34,20 @@ AC_CONFIG_HEADERS([lib/config.h:lib/config.hin])
 
 AM_INIT_AUTOMAKE([1.11.1 no-dist-gzip dist-xz color-tests parallel-tests])
 AM_SILENT_RULES([yes]) # make --enable-silent-rules the default.
+
+dnl POSIXCHECK is worthwhile for maintainers, but adds several seconds
+dnl (more than 10% execution time) to ./configure, with no benefit for
+dnl most users.  Using it to look for bugs requires:
+dnl   GNULIB_POSIXCHECK=1 autoreconf -f
+dnl   ./configure
+dnl   make
+dnl   make -C src clean
+dnl   make CFLAGS=-DGNULIB_POSIXCHECK=1
+dnl FIXME: Once we figure out how to avoid false positives, we should
+dnl have 'make my-distcheck' in dist-check.mk exercise this.
+m4_syscmd([test "${GNULIB_POSIXCHECK+set}" = set])
+m4_if(m4_sysval, [0], [], [dnl
+gl_ASSERT_NO_GNULIB_POSIXCHECK])
 
 AC_PROG_CC_STDC
 AM_PROG_CC_C_O

@@ -1,7 +1,6 @@
 /* whoami -- print effective userid
 
-   Copyright (C) 1989-1997, 1999-2002, 2004-2005, 2007-2012 Free Software
-   Foundation, Inc.
+   Copyright (C) 1989-2012 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,7 +15,7 @@
    You should have received a copy of the GNU General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-/* Equivalent to `id -un'. */
+/* Equivalent to 'id -un'. */
 /* Written by Richard Mlynarik. */
 
 #include <config.h>
@@ -30,7 +29,7 @@
 #include "long-options.h"
 #include "quote.h"
 
-/* The official name of this program (e.g., no `g' prefix).  */
+/* The official name of this program (e.g., no 'g' prefix).  */
 #define PROGRAM_NAME "whoami"
 
 #define AUTHORS proper_name ("Richard Mlynarik")
@@ -39,8 +38,7 @@ void
 usage (int status)
 {
   if (status != EXIT_SUCCESS)
-    fprintf (stderr, _("Try `%s --help' for more information.\n"),
-             program_name);
+    emit_try_help ();
   else
     {
       printf (_("Usage: %s [OPTION]...\n"), program_name);

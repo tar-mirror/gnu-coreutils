@@ -23,14 +23,14 @@ ls -l --time-style=XX > out 2> err
 test $? = 2 || fail=1
 
 cat <<\EOF > exp || fail=1
-ls: invalid argument `XX' for `time style'
+ls: invalid argument 'XX' for 'time style'
 Valid arguments are:
   - [posix-]full-iso
   - [posix-]long-iso
   - [posix-]iso
   - [posix-]locale
-  - +FORMAT (e.g., +%H:%M) for a `date'-style format
-Try `ls --help' for more information.
+  - +FORMAT (e.g., +%H:%M) for a 'date'-style format
+Try 'ls --help' for more information.
 EOF
 
 compare exp err || fail=1

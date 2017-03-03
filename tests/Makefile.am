@@ -53,7 +53,7 @@ check-root:
 
 check-recursive: root-hint
 
-# Advertise `check-root' target.
+# Advertise 'check-root' target.
 .PHONY: root-hint
 root-hint:
 	@echo '***********************************************************'
@@ -220,6 +220,7 @@ TESTS =						\
   misc/printf-surprise				\
   misc/pwd-long					\
   misc/readlink-fp-loop				\
+  misc/readlink-root				\
   misc/realpath					\
   misc/runcon-no-reorder			\
   misc/sha1sum					\
@@ -240,6 +241,7 @@ TESTS =						\
   misc/sort-continue				\
   misc/sort-debug-keys				\
   misc/sort-debug-warn				\
+  misc/sort-discrim				\
   misc/sort-files0-from				\
   misc/sort-float				\
   misc/sort-merge				\
@@ -253,12 +255,15 @@ TESTS =						\
   misc/sort-version				\
   misc/sort-NaN-infloop				\
   split/filter					\
+  split/suffix-auto-length			\
   split/suffix-length				\
+  split/additional-suffix			\
   split/b-chunk					\
   split/fail					\
   split/lines					\
   split/l-chunk					\
   split/r-chunk					\
+  split/numeric					\
   misc/stat-birthtime				\
   misc/stat-fmt					\
   misc/stat-hyphen				\
@@ -369,7 +374,9 @@ TESTS =						\
   dd/reblock					\
   dd/skip-seek					\
   dd/skip-seek2					\
+  dd/bytes					\
   dd/skip-seek-past-file			\
+  dd/sparse					\
   dd/stderr					\
   dd/unblock					\
   dd/unblock-sync				\
@@ -413,6 +420,7 @@ TESTS =						\
   ln/hard-backup				\
   ln/hard-to-sym				\
   ln/misc					\
+  ln/relative					\
   ln/sf-1					\
   ln/slash-decorated-nonexistent-dest		\
   ln/target-1					\
@@ -425,6 +433,7 @@ TESTS =						\
   ls/dired					\
   ls/file-type					\
   ls/follow-slink				\
+  ls/getxattr-speedup				\
   ls/infloop					\
   ls/inode					\
   ls/m-option					\
@@ -491,6 +500,8 @@ TESTS =						\
   mv/part-symlink				\
   mv/partition-perm				\
   mv/perm-1					\
+  mv/symlink-onto-hardlink			\
+  mv/symlink-onto-hardlink-to-self		\
   mv/to-symlink					\
   mv/trailing-slash				\
   mv/update					\

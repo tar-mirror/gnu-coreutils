@@ -14,8 +14,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License along
-   with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. */
+   with this program; if not, see <http://www.gnu.org/licenses/>.  */
 
 /* Define this to have a standalone program to test this implementation of
    mktime.  */
@@ -23,24 +22,6 @@
 
 #ifndef _LIBC
 # include <config.h>
-#endif
-
-/* Some of the code in this file assumes that signed integer overflow
-   silently wraps around.  This assumption can't easily be programmed
-   around, nor can it be checked for portably at compile-time or
-   easily eliminated at run-time.
-
-   Define WRAPV to 1 if the assumption is valid.  Otherwise, define it
-   to 0; this forces the use of slower code that, while not guaranteed
-   by the C Standard, works on all production platforms that we know
-   about.  */
-#ifndef WRAPV
-# if (__GNUC__ == 4 && 4 <= __GNUC_MINOR__) || 4 < __GNUC__
-#  pragma GCC optimize ("wrapv")
-#  define WRAPV 1
-# else
-#  define WRAPV 0
-# endif
 #endif
 
 /* Assume that leap seconds are possible, unless told otherwise.
@@ -63,6 +44,26 @@
 # undef mktime
 # define mktime my_mktime
 #endif /* DEBUG */
+
+/* Some of the code in this file assumes that signed integer overflow
+   silently wraps around.  This assumption can't easily be programmed
+   around, nor can it be checked for portably at compile-time or
+   easily eliminated at run-time.
+
+   Define WRAPV to 1 if the assumption is valid and if
+     #pragma GCC optimize ("wrapv")
+   does not trigger GCC bug <http://gcc.gnu.org/bugzilla/show_bug.cgi?id=51793>.
+   Otherwise, define it to 0; this forces the use of slower code that,
+   while not guaranteed by the C Standard, works on all production
+   platforms that we know about.  */
+#ifndef WRAPV
+# if ((__GNUC__ == 4 && 4 <= __GNUC_MINOR__) || 4 < __GNUC__) && defined __GLIBC__
+#  pragma GCC optimize ("wrapv")
+#  define WRAPV 1
+# else
+#  define WRAPV 0
+# endif
+#endif
 
 /* Verify a requirement at compile-time (unlike assert, which is runtime).  */
 #define verify(name, assertion) struct name { char a[(assertion) ? 1 : -1]; }

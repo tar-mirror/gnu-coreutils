@@ -1,5 +1,5 @@
 /* stty -- change and print terminal line settings
-   Copyright (C) 1990-2005, 2007-2012 Free Software Foundation, Inc.
+   Copyright (C) 1990-2012 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@
 #include "quote.h"
 #include "xstrtol.h"
 
-/* The official name of this program (e.g., no `g' prefix).  */
+/* The official name of this program (e.g., no 'g' prefix).  */
 #define PROGRAM_NAME "stty"
 
 #define AUTHORS proper_name ("David MacKenzie")
@@ -116,8 +116,8 @@
 # define CSWTCH _POSIX_VDISABLE
 #endif
 
-/* SunOS 5.3 loses (^Z doesn't work) if `swtch' is the same as `susp'.
-   So the default is to disable `swtch.'  */
+/* SunOS 5.3 loses (^Z doesn't work) if 'swtch' is the same as 'susp'.
+   So the default is to disable 'swtch.'  */
 #if defined __sparc__ && defined __svr4__
 # undef CSWTCH
 # define CSWTCH _POSIX_VDISABLE
@@ -178,16 +178,16 @@ enum output_type
     changed, all, recoverable	/* Default, -a, -g.  */
   };
 
-/* Which member(s) of `struct termios' a mode uses.  */
+/* Which member(s) of 'struct termios' a mode uses.  */
 enum mode_type
   {
     control, input, output, local, combination
   };
 
-/* Flags for `struct mode_info'. */
-#define SANE_SET 1		/* Set in `sane' mode. */
-#define SANE_UNSET 2		/* Unset in `sane' mode. */
-#define REV 4			/* Can be turned off by prepending `-'. */
+/* Flags for 'struct mode_info'. */
+#define SANE_SET 1		/* Set in 'sane' mode. */
+#define SANE_UNSET 2		/* Unset in 'sane' mode. */
+#define REV 4			/* Can be turned off by prepending '-'. */
 #define OMIT 8			/* Don't display value. */
 
 /* Each mode.  */
@@ -366,7 +366,7 @@ static struct mode_info const mode_info[] =
 struct control_info
   {
     const char *name;		/* Name given on command line.  */
-    cc_t saneval;		/* Value to set for `stty sane'.  */
+    cc_t saneval;		/* Value to set for 'stty sane'.  */
     size_t offset;		/* Offset in c_cc.  */
   };
 
@@ -503,8 +503,7 @@ void
 usage (int status)
 {
   if (status != EXIT_SUCCESS)
-    fprintf (stderr, _("Try `%s --help' for more information.\n"),
-             program_name);
+    emit_try_help ();
   else
     {
       printf (_("\
@@ -580,11 +579,11 @@ Control settings:\n\
    csN           set character size to N bits, N in [5..8]\n\
 "), stdout);
       fputs (_("\
-   [-]cstopb     use two stop bits per character (one with `-')\n\
+   [-]cstopb     use two stop bits per character (one with '-')\n\
    [-]hup        send a hangup signal when the last process closes the tty\n\
    [-]hupcl      same as [-]hup\n\
    [-]parenb     generate parity bit in output and expect parity bit in input\n\
-   [-]parodd     set odd parity (even with `-')\n\
+   [-]parodd     set odd parity (even with '-')\n\
 "), stdout);
       fputs (_("\
 \n\
@@ -644,7 +643,7 @@ Local settings:\n\
  * -crtkill      kill all line by obeying the echoctl and echok settings\n\
 "), stdout);
       fputs (_("\
- * [-]ctlecho    echo control characters in hat notation (`^c')\n\
+ * [-]ctlecho    echo control characters in hat notation ('^c')\n\
    [-]echo       echo input characters\n\
  * [-]echoctl    same as [-]ctlecho\n\
    [-]echoe      same as [-]crterase\n\
@@ -653,7 +652,7 @@ Local settings:\n\
       fputs (_("\
  * [-]echoke     same as [-]crtkill\n\
    [-]echonl     echo newline even if not echoing other characters\n\
- * [-]echoprt    echo erased characters backward, between `\\' and '/'\n\
+ * [-]echoprt    echo erased characters backward, between '\\' and '/'\n\
    [-]icanon     enable erase, kill, werase, and rprnt special characters\n\
    [-]iexten     enable non-POSIX special characters\n\
 "), stdout);
@@ -662,7 +661,7 @@ Local settings:\n\
    [-]noflsh     disable flushing after interrupt and quit special characters\n\
  * [-]prterase   same as [-]echoprt\n\
  * [-]tostop     stop background jobs that try to write to the terminal\n\
- * [-]xcase      with icanon, escape with `\\' for uppercase characters\n\
+ * [-]xcase      with icanon, escape with '\\' for uppercase characters\n\
 "), stdout);
       fputs (_("\
 \n\
@@ -1010,7 +1009,7 @@ main (int argc, char **argv)
 
       /* POSIX (according to Zlotnick's book) tcsetattr returns zero if
          it performs *any* of the requested operations.  This means it
-         can report `success' when it has actually failed to perform
+         can report 'success' when it has actually failed to perform
          some proper subset of the requested operations.  To detect
          this partial failure, get the current terminal attributes and
          compare them to the requested ones.  */
@@ -1019,7 +1018,7 @@ main (int argc, char **argv)
         error (EXIT_FAILURE, errno, "%s", device_name);
 
       /* Normally, one shouldn't use memcmp to compare structures that
-         may have `holes' containing uninitialized data, but we have been
+         may have 'holes' containing uninitialized data, but we have been
          careful to initialize the storage of these two variables to all
          zeroes.  One might think it more efficient simply to compare the
          modified fields, but that would require enumerating those fields --
@@ -1842,7 +1841,7 @@ sane_mode (struct termios *mode)
 }
 
 /* Return a string that is the printable representation of character CH.  */
-/* Adapted from `cat' by Torbjorn Granlund.  */
+/* Adapted from 'cat' by Torbjorn Granlund.  */
 
 static const char *
 visible (cc_t ch)

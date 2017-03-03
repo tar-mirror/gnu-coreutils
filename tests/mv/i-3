@@ -1,8 +1,8 @@
 #!/bin/sh
-# Make sure that `mv file unwritable-file' prompts the user
-# and that `mv -f file unwritable-file' doesn't.
+# Make sure that 'mv file unwritable-file' prompts the user
+# and that 'mv -f file unwritable-file' doesn't.
 
-# Copyright (C) 2001, 2004, 2006-2012 Free Software Foundation, Inc.
+# Copyright (C) 2001-2012 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ check_overwrite_prompt()
 {
   local delay="$1"
   case "`cat out`" in
-    "mv: try to overwrite \`g', overriding mode 0000"*) ;;
+    "mv: try to overwrite 'g', overriding mode 0000"*) ;;
     *) sleep $delay; return 1;;
   esac
 }

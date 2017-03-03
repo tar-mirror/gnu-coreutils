@@ -1,7 +1,7 @@
 #!/bin/sh
 # Test "rm" with a deep hierarchy.
 
-# Copyright (C) 1997, 2002-2004, 2006-2012 Free Software Foundation, Inc.
+# Copyright (C) 1997-2012 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,11 +34,11 @@ k200=$k20$k20$k20$k20$k20$k20$k20$k20$k20$k20
 
 # Be careful not to exceed max file name length (usu 512?).
 # Doing so wouldn't affect GNU mkdir or GNU rm, but any tool that
-# operates on the full pathname (like `test') would choke.
+# operates on the full pathname (like 'test') would choke.
 k_deep=$k200$k200
 
 t=t
-# Create a directory in $t with lots of `k' components.
+# Create a directory in $t with lots of 'k' components.
 deep=$t$k_deep
 mkdir -p $deep || fail=1
 

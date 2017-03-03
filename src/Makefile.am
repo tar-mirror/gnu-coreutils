@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in -*-Makefile-*-
 
-## Copyright (C) 1990-1991, 1993-2012 Free Software Foundation, Inc.
+## Copyright (C) 1990-2012 Free Software Foundation, Inc.
 
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -179,7 +179,7 @@ nodist_libver_a_SOURCES = version.c version.h
 AM_LDFLAGS = $(IGNORE_UNUSED_LIBRARIES_CFLAGS)
 
 # Sometimes, the expansion of $(LIBINTL) includes -lc which may
-# include modules defining variables like `optind', so libcoreutils.a
+# include modules defining variables like 'optind', so libcoreutils.a
 # must precede $(LIBINTL) in order to ensure we use GNU getopt.
 # But libcoreutils.a must also follow $(LIBINTL), since libintl uses
 # replacement functions defined in libcoreutils.a.
@@ -458,8 +458,8 @@ uninstall-local:
 
 copy_sources = copy.c cp-hash.c extent-scan.c extent-scan.h
 
-# Use `ginstall' in the definition of PROGRAMS and in dependencies to avoid
-# confusion with the `install' target.  The install rule transforms `ginstall'
+# Use 'ginstall' in the definition of PROGRAMS and in dependencies to avoid
+# confusion with the 'install' target.  The install rule transforms 'ginstall'
 # to install before applying any user-specified name transformations.
 
 transform = s/ginstall/install/; $(program_transform_name)
@@ -473,11 +473,12 @@ dir_SOURCES = ls.c ls-dir.c
 vdir_SOURCES = ls.c ls-vdir.c
 id_SOURCES = id.c group-list.c
 groups_SOURCES = groups.c group-list.c
-ln_SOURCES = ln.c
 ls_SOURCES = ls.c ls-ls.c
+ln_SOURCES = ln.c relpath.c relpath.h
 chown_SOURCES = chown.c chown-core.c
 chgrp_SOURCES = chgrp.c chown-core.c
 kill_SOURCES = kill.c operand2sig.c
+realpath_SOURCES = realpath.c relpath.c relpath.h
 timeout_SOURCES = timeout.c operand2sig.c
 
 mv_SOURCES = mv.c remove.c $(copy_sources)
@@ -491,9 +492,7 @@ stat_SOURCES = stat.c find-mount-point.c
 
 uname_SOURCES = uname.c uname-uname.c
 arch_SOURCES = uname.c uname-arch.c
-nproc_SOURCES = nproc.c
 
-md5sum_SOURCES = md5sum.c
 md5sum_CPPFLAGS = -DHASH_ALGO_MD5=1 $(AM_CPPFLAGS)
 sha1sum_SOURCES = md5sum.c
 sha1sum_CPPFLAGS = -DHASH_ALGO_SHA1=1 $(AM_CPPFLAGS)

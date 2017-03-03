@@ -1,5 +1,5 @@
 /* GNU fmt -- simple text formatter.
-   Copyright (C) 1994-2006, 2008-2012 Free Software Foundation, Inc.
+   Copyright (C) 1994-2012 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
 #include "quote.h"
 #include "xstrtol.h"
 
-/* The official name of this program (e.g., no `g' prefix).  */
+/* The official name of this program (e.g., no 'g' prefix).  */
 #define PROGRAM_NAME "fmt"
 
 #define AUTHORS proper_name ("Ross Paterson")
@@ -116,7 +116,7 @@ typedef long int COST;
 
 /* Extra ctype(3)-style macros.  */
 
-#define isopen(c)	(strchr ("([`'\"", c) != NULL)
+#define isopen(c)	(strchr ("(['`\"", c) != NULL)
 #define isclose(c)	(strchr (")]'\"", c) != NULL)
 #define isperiod(c)	(strchr (".?!", c) != NULL)
 
@@ -263,8 +263,7 @@ void
 usage (int status)
 {
   if (status != EXIT_SUCCESS)
-    fprintf (stderr, _("Try `%s --help' for more information.\n"),
-             program_name);
+    emit_try_help ();
   else
     {
       printf (_("Usage: %s [-WIDTH] [OPTION]... [FILE]...\n"), program_name);
@@ -475,7 +474,7 @@ fmt (FILE *f)
     }
 }
 
-/* Set the global variable `other_indent' according to SAME_PARAGRAPH
+/* Set the global variable 'other_indent' according to SAME_PARAGRAPH
    and other global variables.  */
 
 static void
@@ -865,7 +864,7 @@ fmt_paragraph (void)
               start->line_length = len;
             }
 
-          /* This is a kludge to keep us from computing `len' as the
+          /* This is a kludge to keep us from computing 'len' as the
              sum of the sentinel length and some non-zero number.
              Since the sentinel w->length may be INT_MAX, adding
              to that would give a negative result.  */

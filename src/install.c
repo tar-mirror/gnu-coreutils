@@ -1,5 +1,5 @@
 /* install - copy files and set attributes
-   Copyright (C) 1989-1991, 1995-2012 Free Software Foundation, Inc.
+   Copyright (C) 1989-2012 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@
 #include "utimens.h"
 #include "xstrtol.h"
 
-/* The official name of this program (e.g., no `g' prefix).  */
+/* The official name of this program (e.g., no 'g' prefix).  */
 #define PROGRAM_NAME "install"
 
 #define AUTHORS proper_name ("David MacKenzie")
@@ -72,14 +72,14 @@ static bool use_default_selinux_context = true;
    the current user ID. */
 static char *owner_name;
 
-/* The user ID corresponding to `owner_name'. */
+/* The user ID corresponding to 'owner_name'. */
 static uid_t owner_id;
 
 /* The group name that will own the files, or NULL to make the group
    the current group ID. */
 static char *group_name;
 
-/* The group ID corresponding to `group_name'. */
+/* The group ID corresponding to 'group_name'. */
 static gid_t group_id;
 
 #define DEFAULT_MODE (S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH)
@@ -587,8 +587,7 @@ void
 usage (int status)
 {
   if (status != EXIT_SUCCESS)
-    fprintf (stderr, _("Try `%s --help' for more information.\n"),
-             program_name);
+    emit_try_help ();
   else
     {
       printf (_("\
@@ -649,7 +648,7 @@ Mandatory arguments to long options are mandatory for short options too.\n\
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
       fputs (_("\
 \n\
-The backup suffix is `~', unless set with --suffix or SIMPLE_BACKUP_SUFFIX.\n\
+The backup suffix is '~', unless set with --suffix or SIMPLE_BACKUP_SUFFIX.\n\
 The version control method may be selected via the --backup option or through\n\
 the VERSION_CONTROL environment variable.  Here are the values:\n\
 \n\

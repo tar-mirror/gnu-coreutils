@@ -169,12 +169,6 @@ EXTRA_DIST += test-base64.c macros.h
 
 ## end   gnulib module base64-tests
 
-## begin gnulib module binary-io
-
-libtests_a_SOURCES += binary-io.h
-
-## end   gnulib module binary-io
-
 ## begin gnulib module binary-io-tests
 
 TESTS += test-binary-io.sh
@@ -502,14 +496,14 @@ EXTRA_DIST += test-fcntl.c signature.h macros.h
 
 ## end   gnulib module fcntl-tests
 
-## begin gnulib module fdopen
+## begin gnulib module fdatasync-tests
 
+TESTS += test-fdatasync
+check_PROGRAMS += test-fdatasync
+test_fdatasync_LDADD = $(LDADD) $(LIB_FDATASYNC)
+EXTRA_DIST += test-fdatasync.c signature.h macros.h
 
-EXTRA_DIST += fdopen.c
-
-EXTRA_libtests_a_SOURCES += fdopen.c
-
-## end   gnulib module fdopen
+## end   gnulib module fdatasync-tests
 
 ## begin gnulib module fdopen-tests
 
@@ -692,8 +686,8 @@ EXTRA_DIST += test-freopen.c signature.h macros.h
 
 TESTS += test-frexp-nolibm
 check_PROGRAMS += test-frexp-nolibm
-test_frexp_nolibm_SOURCES = test-frexp.c
-EXTRA_DIST += test-frexp.c minus-zero.h infinity.h nan.h signature.h macros.h
+test_frexp_nolibm_SOURCES = test-frexp.c randomd.c
+EXTRA_DIST += test-frexp.c test-frexp.h minus-zero.h infinity.h nan.h signature.h macros.h randomd.c
 
 ## end   gnulib module frexp-nolibm-tests
 
@@ -701,8 +695,8 @@ EXTRA_DIST += test-frexp.c minus-zero.h infinity.h nan.h signature.h macros.h
 
 TESTS += test-frexpl-nolibm
 check_PROGRAMS += test-frexpl-nolibm
-test_frexpl_nolibm_SOURCES = test-frexpl.c
-EXTRA_DIST += test-frexpl.c minus-zero.h infinity.h nan.h signature.h macros.h
+test_frexpl_nolibm_SOURCES = test-frexpl.c randoml.c
+EXTRA_DIST += test-frexpl.c test-frexp.h minus-zero.h infinity.h nan.h signature.h macros.h randoml.c
 
 ## end   gnulib module frexpl-nolibm-tests
 
@@ -773,15 +767,6 @@ MOSTLYCLEANFILES += t-ftello3.tmp
 EXTRA_DIST += test-ftello.c test-ftello.sh test-ftello2.sh test-ftello3.c test-ftello4.c test-ftello4.sh signature.h macros.h
 
 ## end   gnulib module ftello-tests
-
-## begin gnulib module ftruncate
-
-
-EXTRA_DIST += ftruncate.c
-
-EXTRA_libtests_a_SOURCES += ftruncate.c
-
-## end   gnulib module ftruncate
 
 ## begin gnulib module ftruncate-tests
 
@@ -886,6 +871,14 @@ test_getloadavg_LDADD = $(LDADD) @GETLOADAVG_LIBS@
 EXTRA_DIST += test-getloadavg.c signature.h
 
 ## end   gnulib module getloadavg-tests
+
+## begin gnulib module getlogin-tests
+
+TESTS += test-getlogin
+check_PROGRAMS += test-getlogin
+EXTRA_DIST += test-getlogin.c signature.h macros.h
+
+## end   gnulib module getlogin-tests
 
 ## begin gnulib module getndelim2-tests
 
@@ -1031,6 +1024,14 @@ check_PROGRAMS += test-ioctl
 EXTRA_DIST += test-ioctl.c signature.h macros.h
 
 ## end   gnulib module ioctl-tests
+
+## begin gnulib module isatty-tests
+
+TESTS += test-isatty
+check_PROGRAMS += test-isatty
+EXTRA_DIST += test-isatty.c signature.h macros.h
+
+## end   gnulib module isatty-tests
 
 ## begin gnulib module isblank-tests
 
@@ -1199,7 +1200,7 @@ EXTRA_DIST += test-malloca.c
 
 TESTS += test-math
 check_PROGRAMS += test-math
-EXTRA_DIST += test-math.c
+EXTRA_DIST += test-math.c macros.h
 
 ## end   gnulib module math-tests
 
@@ -1320,6 +1321,22 @@ EXTRA_DIST += test-mkdir.h test-mkdir.c signature.h macros.h
 
 ## end   gnulib module mkdir-tests
 
+## begin gnulib module mkfifo-tests
+
+TESTS += test-mkfifo
+check_PROGRAMS += test-mkfifo
+EXTRA_DIST += test-mkfifo.h test-mkfifo.c signature.h macros.h
+
+## end   gnulib module mkfifo-tests
+
+## begin gnulib module mknod-tests
+
+TESTS += test-mknod
+check_PROGRAMS += test-mknod
+EXTRA_DIST += test-mkfifo.h test-mknod.c signature.h macros.h
+
+## end   gnulib module mknod-tests
+
 ## begin gnulib module nanosleep-tests
 
 TESTS += test-nanosleep
@@ -1431,6 +1448,63 @@ EXTRA_DIST += test-pipe.c signature.h macros.h
 
 ## end   gnulib module pipe-posix-tests
 
+## begin gnulib module pipe2-tests
+
+TESTS += test-pipe2
+check_PROGRAMS += test-pipe2
+test_pipe2_LDADD = $(LDADD) $(LIBSOCKET)
+EXTRA_DIST += test-pipe2.c signature.h macros.h
+
+## end   gnulib module pipe2-tests
+
+## begin gnulib module posix_spawn_file_actions_addclose-tests
+
+TESTS += test-posix_spawn_file_actions_addclose
+check_PROGRAMS += test-posix_spawn_file_actions_addclose
+EXTRA_DIST += test-posix_spawn_file_actions_addclose.c signature.h macros.h
+
+## end   gnulib module posix_spawn_file_actions_addclose-tests
+
+## begin gnulib module posix_spawn_file_actions_adddup2-tests
+
+TESTS += test-posix_spawn_file_actions_adddup2
+check_PROGRAMS += test-posix_spawn_file_actions_adddup2
+EXTRA_DIST += test-posix_spawn_file_actions_adddup2.c signature.h macros.h
+
+## end   gnulib module posix_spawn_file_actions_adddup2-tests
+
+## begin gnulib module posix_spawn_file_actions_addopen-tests
+
+TESTS += test-posix_spawn_file_actions_addopen
+check_PROGRAMS += test-posix_spawn_file_actions_addopen
+EXTRA_DIST += test-posix_spawn_file_actions_addopen.c signature.h macros.h
+
+## end   gnulib module posix_spawn_file_actions_addopen-tests
+
+## begin gnulib module posix_spawnp-tests
+
+if POSIX_SPAWN_PORTED
+TESTS += test-posix_spawn1 test-posix_spawn2
+check_PROGRAMS += test-posix_spawn1 test-posix_spawn2
+
+BUILT_SOURCES += test-posix_spawn1.sh
+test-posix_spawn1.sh: test-posix_spawn1.in.sh
+	$(AM_V_GEN)rm -f $@-t $@ && \
+	cp $(srcdir)/test-posix_spawn1.in.sh $@-t && \
+	mv $@-t $@
+MOSTLYCLEANFILES += test-posix_spawn1.sh test-posix_spawn1.sh-t
+
+BUILT_SOURCES += test-posix_spawn2.sh
+test-posix_spawn2.sh: test-posix_spawn2.in.sh
+	$(AM_V_GEN)rm -f $@-t $@ && \
+	cp $(srcdir)/test-posix_spawn2.in.sh $@-t && \
+	mv $@-t $@
+MOSTLYCLEANFILES += test-posix_spawn2.sh test-posix_spawn2.sh-t
+endif
+EXTRA_DIST += test-posix_spawn1.c test-posix_spawn1.in.sh test-posix_spawn2.c test-posix_spawn2.in.sh signature.h
+
+## end   gnulib module posix_spawnp-tests
+
 ## begin gnulib module posixtm-tests
 
 TESTS += test-posixtm
@@ -1488,6 +1562,14 @@ EXTRA_DIST += test-rand-isaac.c macros.h
 
 ## end   gnulib module randread-tests
 
+## begin gnulib module rawmemchr-tests
+
+TESTS += test-rawmemchr
+check_PROGRAMS += test-rawmemchr
+EXTRA_DIST += test-rawmemchr.c zerosize-ptr.h signature.h macros.h
+
+## end   gnulib module rawmemchr-tests
+
 ## begin gnulib module read-file-tests
 
 TESTS += test-read-file
@@ -1520,6 +1602,14 @@ test_readlinkat_LDADD = $(LDADD) @LIBINTL@
 EXTRA_DIST += test-readlink.h test-readlinkat.c signature.h macros.h
 
 ## end   gnulib module readlinkat-tests
+
+## begin gnulib module readtokens-tests
+
+TESTS += test-readtokens.sh
+check_PROGRAMS += test-readtokens
+EXTRA_DIST += macros.h test-readtokens.c test-readtokens.sh
+
+## end   gnulib module readtokens-tests
 
 ## begin gnulib module realloc-gnu-tests
 
@@ -1805,6 +1895,27 @@ EXTRA_DIST += test-sockets.c
 
 ## end   gnulib module sockets-tests
 
+## begin gnulib module spawn-pipe-tests
+
+TESTS += test-spawn-pipe.sh
+check_PROGRAMS += test-spawn-pipe-main test-spawn-pipe-child
+test_spawn_pipe_main_LDADD = $(LDADD) @LIBINTL@
+# The test-spawn-pipe-child program must be a real executable, not a libtool
+# wrapper script, and should link against as few libraries as possible.
+# Therefore don't link it against any libraries other than -lc.
+test_spawn_pipe_child_LDADD =
+EXTRA_DIST += test-spawn-pipe.sh test-spawn-pipe-main.c test-spawn-pipe-child.c macros.h
+
+## end   gnulib module spawn-pipe-tests
+
+## begin gnulib module spawn-tests
+
+TESTS += test-spawn
+check_PROGRAMS += test-spawn
+EXTRA_DIST += test-spawn.c
+
+## end   gnulib module spawn-tests
+
 ## begin gnulib module stat-tests
 
 TESTS += test-stat
@@ -1870,6 +1981,14 @@ EXTRA_DIST += test-stdlib.c test-sys_wait.h
 
 ## end   gnulib module stdlib-tests
 
+## begin gnulib module strchrnul-tests
+
+TESTS += test-strchrnul
+check_PROGRAMS += test-strchrnul
+EXTRA_DIST += test-strchrnul.c signature.h macros.h
+
+## end   gnulib module strchrnul-tests
+
 ## begin gnulib module strerror-tests
 
 TESTS += test-strerror
@@ -1928,6 +2047,14 @@ check_PROGRAMS += test-strings
 EXTRA_DIST += test-strings.c
 
 ## end   gnulib module strings-tests
+
+## begin gnulib module strncat-tests
+
+TESTS += test-strncat
+check_PROGRAMS += test-strncat
+EXTRA_DIST += test-strncat.c unistr/test-strncat.h zerosize-ptr.h signature.h macros.h
+
+## end   gnulib module strncat-tests
 
 ## begin gnulib module strnlen-tests
 

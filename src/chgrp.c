@@ -1,5 +1,5 @@
 /* chgrp -- change group ownership of files
-   Copyright (C) 1989-1991, 1995-2012 Free Software Foundation, Inc.
+   Copyright (C) 1989-2012 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 #include "root-dev-ino.h"
 #include "xstrtol.h"
 
-/* The official name of this program (e.g., no `g' prefix).  */
+/* The official name of this program (e.g., no 'g' prefix).  */
 #define PROGRAM_NAME "chgrp"
 
 #define AUTHORS \
@@ -102,8 +102,7 @@ void
 usage (int status)
 {
   if (status != EXIT_SUCCESS)
-    fprintf (stderr, _("Try `%s --help' for more information.\n"),
-             program_name);
+    emit_try_help ();
   else
     {
       printf (_("\
@@ -131,8 +130,8 @@ With --reference, change the group of each FILE to that of RFILE.\n\
                          ownership of a symlink)\n\
 "), stdout);
       fputs (_("\
-      --no-preserve-root  do not treat `/' specially (the default)\n\
-      --preserve-root    fail to operate recursively on `/'\n\
+      --no-preserve-root  do not treat '/' specially (the default)\n\
+      --preserve-root    fail to operate recursively on '/'\n\
 "), stdout);
       fputs (_("\
       --reference=RFILE  use RFILE's group rather than specifying a\n\

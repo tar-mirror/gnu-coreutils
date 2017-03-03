@@ -140,7 +140,7 @@
 This manual documents version @value{VERSION} of the @sc{gnu} core
 utilities, including the standard programs for text and file manipulation.
 
-Copyright @copyright{} 1994-1996, 2000-2012 Free Software Foundation, Inc.
+Copyright @copyright{} 1994-2012 Free Software Foundation, Inc.
 
 @quotation
 Permission is granted to copy, distribute and/or modify this document
@@ -1327,7 +1327,7 @@ other parts of that standard.
 @cindex symbolic link to directory, controlling traversal of
 
 The following options modify how @command{chown} and @command{chgrp}
-@c FIXME: note that `du' has these options, too, but they have slightly
+@c FIXME: note that 'du' has these options, too, but they have slightly
 @c different meaning.
 traverse a hierarchy when the @option{--recursive} (@option{-R})
 option is also specified.
@@ -2299,8 +2299,8 @@ The program accepts the following options.  Also see @ref{Common options}.
 
 @item +@var{first_page}[:@var{last_page}]
 @itemx --pages=@var{first_page}[:@var{last_page}]
-@c The two following @opindex lines evoke warnings because they contain `:'
-@c The `info' spec does not permit that.  If we use those lines, we end
+@c The two following @opindex lines evoke warnings because they contain ':'
+@c The 'info' spec does not permit that.  If we use those lines, we end
 @c up with truncated index entries that don't work.
 @c @opindex +@var{first_page}[:@var{last_page}]
 @c @opindex --pages=@var{first_page}[:@var{last_page}]
@@ -2518,7 +2518,7 @@ three column options (@option{-COLUMN}|@option{-a -COLUMN}|@option{-m}) unless
 @option{-w} is set.  This is a @acronym{POSIX}-compliant formulation.
 
 
-@item -S@var{string}
+@item -S[@var{string}]
 @itemx --sep-string[=@var{string}]
 @opindex -S
 @opindex --sep-string
@@ -2528,8 +2528,8 @@ does not affect line truncation or column alignment.
 Without @option{-S}, and with @option{-J}, @command{pr} uses the default output
 separator, TAB@.
 Without @option{-S} or @option{-J}, @command{pr} uses a @samp{space}
-(same as @option{-S"@w{ }"}).  @option{--sep-string} with no
-@samp{=@var{string}} is equivalent to @option{--sep-string=""}.
+(same as @option{-S"@w{ }"}).
+If no @samp{@var{string}} argument is specified, @samp{""} is assumed.
 
 @item -t
 @itemx --omit-header
@@ -2990,8 +2990,15 @@ The output files' names consist of @var{prefix} (@samp{x} by default)
 followed by a group of characters (@samp{aa}, @samp{ab}, @dots{} by
 default), such that concatenating the output files in traditional
 sorted order by file name produces the original input file (except
-@option{-r}).  If the output file names are exhausted, @command{split}
-reports an error without deleting the output files that it did create.
+@option{-nr/@var{n}}).  By default split will initially create files
+with two generated suffix characters, and will increase this width by two
+when the next most significant position reaches the last character.
+(@samp{yz}, @samp{zaaa}, @samp{zaab}, @dots{}).  In this way an arbitrary
+number of output files are supported, which sort as described above,
+even in the presence of an @option{--additional-suffix} option.
+If the @option{-a} option is specified and the output file names are
+exhausted, @command{split} reports an error without deleting the
+output files that it did create.
 
 The program accepts the following options.  Also see @ref{Common options}.
 
@@ -3040,7 +3047,7 @@ xz -dc BIG.xz | split -b200G --filter='xz > $FILE.xz' - big-
 @end example
 
 Assuming a 10:1 compression ratio, that would create about fifty 20GiB files
-with names @file{big-xaa.xz}, @file{big-xab.xz}, @file{big-xac.xz}, etc.
+with names @file{big-aa.xz}, @file{big-ab.xz}, @file{big-ac.xz}, etc.
 
 @item -n @var{chunks}
 @itemx --number=@var{chunks}
@@ -3081,13 +3088,26 @@ and so can be a pipe for example.
 @itemx --suffix-length=@var{length}
 @opindex -a
 @opindex --suffix-length
-Use suffixes of length @var{length}.  The default @var{length} is 2.
+Use suffixes of length @var{length}.  If a @var{length} of 0 is specified,
+this is the same as if (any previous) @option{-a} was not specified, and
+thus enables the default behavior, which starts the suffix length at 2,
+and unless @option{-n} or @option{--numeric-suffixes=@var{from}} are
+specified, will auto increase the length by 2 as required.
 
 @item -d
-@itemx --numeric-suffixes
+@itemx --numeric-suffixes[=@var{from}]
 @opindex -d
 @opindex --numeric-suffixes
-Use digits in suffixes rather than lower-case letters.
+Use digits in suffixes rather than lower-case letters.  The numerical
+suffix counts from @var{from} if specified, 0 otherwise.
+Note specifying a @var{from} value also disables the default
+auto suffix length expansion described above, and so you may also
+want to specify @option{-a} to allow suffixes beyond @samp{99}.
+
+@itemx --additional-suffix=@var{suffix}
+@opindex --additional-suffix
+Append an additional @var{suffix} to output file names. @var{suffix}
+must not contain slash.
 
 @item -e
 @itemx --elide-empty-files
@@ -4813,7 +4833,7 @@ contains lines unique to @var{file1}, column two contains lines unique
 to @var{file2}, and column three contains lines common to both files.
 Columns are separated by a single TAB character.
 @c FIXME: when there's an option to supply an alternative separator
-@c string, append `by default' to the above sentence.
+@c string, append "by default" to the above sentence.
 
 @opindex -1
 @opindex -2
@@ -7401,7 +7421,7 @@ locale.
 @c Use @t instead of @samp to avoid duplicate quoting in some output styles.
 Quote strings as for C character string literals, except use
 surrounding quotation marks appropriate for the locale, and quote
-@t{`like this'} instead of @t{"like
+@t{'like this'} instead of @t{"like
 this"} in the default C locale.  This looks nicer on many displays.
 @end table
 
@@ -7454,7 +7474,7 @@ terminal for color output from @command{ls} (and @command{dir}, etc.).
 Typical usage:
 
 @example
-eval "`dircolors [@var{option}]@dots{} [@var{file}]`"
+eval "$(dircolors [@var{option}]@dots{} [@var{file}])"
 @end example
 
 If @var{file} is specified, @command{dircolors} reads it to determine which
@@ -8057,18 +8077,24 @@ When converting variable-length records to fixed-length ones
 (@option{conv=block}) or the reverse (@option{conv=unblock}),
 use @var{bytes} as the fixed record length.
 
-@item skip=@var{blocks}
+@item skip=@var{n}
 @opindex skip
-Skip @var{blocks} @samp{ibs}-byte blocks in the input file before copying.
+Skip @var{n} @samp{ibs}-byte blocks in the input file before copying.
+If @samp{iflag=skip_bytes} is specified, @var{n} is interpreted
+as a byte count rather than a block count.
 
-@item seek=@var{blocks}
+@item seek=@var{n}
 @opindex seek
-Skip @var{blocks} @samp{obs}-byte blocks in the output file before copying.
+Skip @var{n} @samp{obs}-byte blocks in the output file before copying.
+if @samp{oflag=seek_bytes} is specified, @var{n} is interpreted
+as a byte count rather than a block count.
 
-@item count=@var{blocks}
+@item count=@var{n}
 @opindex count
-Copy @var{blocks} @samp{ibs}-byte blocks from the input file, instead
+Copy @var{n} @samp{ibs}-byte blocks from the input file, instead
 of everything until the end of the file.
+if @samp{iflag=count_bytes} is specified, @var{n} is interpreted
+as a byte count rather than a block count.
 
 @item status=noxfer
 @opindex status
@@ -8126,6 +8152,17 @@ Change uppercase letters to lowercase.
 Change lowercase letters to uppercase.
 
 The @samp{lcase} and @samp{ucase} conversions are mutually exclusive.
+
+@item sparse
+@opindex sparse
+Try to seek rather than write @sc{nul} output blocks.
+On a file system that supports sparse files, this will create
+sparse output when extending the output file.
+Be careful when using this option in conjunction with
+@samp{conv=notrunc} or @samp{oflag=append}.
+With @samp{conv=notrunc}, existing data in the output
+corresponding to @sc{nul} blocks from the input, will be untouched.
+With @samp{oflag=append} the seeks performed will be ineffective.
 
 @item swab
 @opindex swab @r{(byte-swapping)}
@@ -8321,6 +8358,27 @@ When that happens, continue calling @code{read} to fill the remainder
 of the block.
 This flag can be used only with @code{iflag}.
 
+@item count_bytes
+@opindex count_bytes
+Interpret the @samp{count=} operand as a byte count,
+rather than a block count, which allows specifying
+a length that is not a multiple of the I/O block size.
+This flag can be used only with @code{iflag}.
+
+@item skip_bytes
+@opindex skip_bytes
+Interpret the @samp{skip=} operand as a byte count,
+rather than a block count, which allows specifying
+an offset that is not a multiple of the I/O block size.
+This flag can be used only with @code{iflag}.
+
+@item seek_bytes
+@opindex seek_bytes
+Interpret the @samp{seek=} operand as a byte count,
+rather than a block count, which allows specifying
+an offset that is not a multiple of the I/O block size.
+This flag can be used only with @code{oflag}.
+
 @end table
 
 These flags are not supported on all systems, and @samp{dd} rejects
@@ -8343,10 +8401,13 @@ should not be too large---values larger than a few megabytes
 are generally wasteful or (as in the gigabyte..exabyte case) downright
 counterproductive or error-inducing.
 
-Use different @command{dd} invocations to use different block sizes for
-skipping and I/O@.  For example, the following shell commands copy data
-in 512 KiB blocks between a disk and a tape, but do not save or restore a
-4 KiB label at the start of the disk:
+To process data that is at an offset or size that is not a
+multiple of the I/O@ block size, you can use the @samp{skip_bytes},
+@samp{seek_bytes} and @samp{count_bytes} flags.  Alternatively
+the traditional method of separate @command{dd} invocations can be used.
+For example, the following shell commands copy data
+in 512 KiB blocks between a disk and a tape, but do not save
+or restore a 4 KiB label at the start of the disk:
 
 @example
 disk=/dev/rdsk/c0t1d0s2
@@ -8739,7 +8800,7 @@ The program accepts the following options.  Also see @ref{Common options}.
 @itemx --force
 @opindex -f
 @opindex --force
-Ignore nonexistent files and never prompt the user.
+Ignore nonexistent files and missing operands, and never prompt the user.
 Ignore any previous @option{--interactive} (@option{-i}) option.
 
 @item -i
@@ -9070,7 +9131,7 @@ The intended use of this is to shred a removed temporary file.
 For example:
 
 @example
-i=`mktemp`
+i=$(mktemp)
 exec 3<>"$i"
 rm -- "$i"
 echo "Hello, world" >&3
@@ -9328,6 +9389,22 @@ symbolic link with identical contents; since symbolic link contents
 cannot be edited, any file name resolution performed through either
 link will be the same as if a hard link had been created.
 
+@item -r
+@itemx --relative
+@opindex -r
+@opindex --relative
+Make symbolic links relative to the link location.
+
+Example:
+
+@smallexample
+ln -srv /a/file /tmp
+'/tmp/file' -> '../a/file'
+@end smallexample
+
+@xref{realpath invocation}, which gives greater control
+over relative file name generation.
+
 @item -s
 @itemx --symbolic
 @opindex -s
@@ -9557,7 +9634,7 @@ for a FIFO
 for a block special file
 
 @item c
-@c Don't document the `u' option -- it's just a synonym for `c'.
+@c Don't document the 'u' option -- it's just a synonym for 'c'.
 @c Do *any* versions of mknod still use it?
 @c @itemx u
 @opindex c @r{for character special file}
@@ -11031,7 +11108,7 @@ The valid @var{format} directives for files with @option{--format} and
 @item %m - Mount point (See note below)
 @item %n - File name
 @item %N - Quoted file name with dereference if symbolic link
-@item %o - I/O block size
+@item %o - Optimal I/O transfer size hint
 @item %s - Total size, in bytes
 @item %t - Major device type in hex
 @item %T - Minor device type in hex
@@ -12145,7 +12222,7 @@ Here are a few examples, including quoting for shell metacharacters.
 To add 1 to the shell variable @code{foo}, in Bourne-compatible shells:
 
 @example
-foo=`expr $foo + 1`
+foo=$(expr $foo + 1)
 @end example
 
 To print the non-directory part of the file name stored in
@@ -12374,6 +12451,7 @@ This section describes commands that manipulate file names.
 
 @example
 basename @var{name} [@var{suffix}]
+basename @var{option}... @var{name}...
 @end example
 
 If @var{suffix} is specified and is identical to the end of @var{name},
@@ -12397,8 +12475,33 @@ for everything except file names containing a trailing newline.
 result is @samp{//} on platforms where @var{//} is distinct from
 @var{/}, and @samp{/} on platforms where there is no difference.
 
-The only options are @option{--help} and @option{--version}.  @xref{Common
-options}.  Options must precede operands.
+The program accepts the following options.  Also see @ref{Common options}.
+Options must precede operands.
+
+@table @samp
+
+@item -a
+@itemx --multiple
+@opindex -a
+@opindex --multiple
+Support more than one argument.  Treat every argument as a @var{name}.
+With this, an optional @var{suffix} must be specified using the
+@option{-s} option.
+
+@item -s @var{suffix}
+@itemx --suffix=@var{suffix}
+@opindex -s
+@opindex --suffix
+Remove a trailing @var{suffix}.
+This option implies the @option{-a} option.
+
+@item -z
+@itemx --zero
+@opindex -z
+@opindex --zero
+Separate output items with @sc{nul} characters.
+
+@end table
 
 @exitstatus
 
@@ -12410,6 +12513,12 @@ basename /usr/bin/sort
 
 # Output "stdio".
 basename include/stdio.h .h
+
+# Output "stdio".
+basename -s .h include/stdio.h
+
+# Output "stdio" followed by "stdlib"
+basename -a -s .h include/stdio.h include/stdlib.h
 @end smallexample
 
 
@@ -12421,13 +12530,13 @@ basename include/stdio.h .h
 @cindex stripping non-directory suffix
 @cindex non-directory suffix, stripping
 
-@command{dirname} prints all but the final slash-delimited component of
-@var{name}.  Slashes on either side of the final component are also
-removed.  If the string contains no slash, @command{dirname} prints
-@samp{.} (meaning the current directory).  Synopsis:
+@command{dirname} prints all but the final slash-delimited component
+of each @var{name}.  Slashes on either side of the final component are
+also removed.  If the string contains no slash, @command{dirname}
+prints @samp{.} (meaning the current directory).  Synopsis:
 
 @example
-dirname @var{name}
+dirname [@var{option}] @var{name}...
 @end example
 
 @var{name} need not be a file name, but if it is, this operation
@@ -12441,8 +12550,17 @@ including the case when the final component is itself a directory.
 result is @samp{//} on platforms where @var{//} is distinct from
 @var{/}, and @samp{/} on platforms where there is no difference.
 
-The only options are @option{--help} and @option{--version}.  @xref{Common
-options}.
+The program accepts the following option.  Also see @ref{Common options}.
+
+@table @samp
+
+@item -z
+@itemx --zero
+@opindex -z
+@opindex --zero
+Separate output items with @sc{nul} characters.
+
+@end table
 
 @exitstatus
 
@@ -12452,6 +12570,9 @@ Examples:
 # Output "/usr/bin".
 dirname /usr/bin/sort
 dirname /usr/bin//.//
+
+# Output "dir1" followed by "dir2"
+dirname dir1/str dir2/str
 
 # Output ".".
 dirname stdio.h
@@ -12799,14 +12920,18 @@ pertaining to file existence.
 This option is valid when used with @option{--relative-to}, and will restrict
 the output of @option{--relative-to} so that relative names are output,
 only when @var{file}s are descendants of @var{base}.  Otherwise output the
-absolute file name.  Note: this option honors the @option{-m} and @option{-e}
+absolute file name.  If @option{--relative-to} was not specified, then
+the descendants of @var{base} are printed relative to @var{base}.  If
+@option{--relative-to} is specified, then that directory must be a
+descendant of @var{base} for this option to have an effect.
+Note: this option honors the @option{-m} and @option{-e}
 options pertaining to file existence.  For example:
 
 @example
 realpath --relative-to=/usr /tmp /usr/bin
 @result{} ../tmp
 @result{} bin
-realpath --relative-base=/usr --relative-to=/usr /tmp /usr/bin
+realpath --relative-base=/usr /tmp /usr/bin
 @result{} /tmp
 @result{} bin
 @end example
@@ -15892,6 +16017,7 @@ Exit status:
 125 if @command{timeout} itself fails
 126 if @var{command} is found but cannot be invoked
 127 if @var{command} cannot be found
+137 if @var{command} is sent the KILL(9) signal (128+9)
 the exit status of @var{command} otherwise
 @end display
 
@@ -16182,7 +16308,7 @@ If you want hexadecimal integer output, you can use @command{printf}
 to perform the conversion:
 
 @example
-$ printf '%x\n' `seq 1048575 1024 1050623`
+$ printf '%x\n' $(seq 1048575 1024 1050623)
 fffff
 1003ff
 1007ff
@@ -16242,7 +16368,7 @@ outputs 1.0000000000000000007 twice and skips 1.0000000000000000008.
 
 An earlier version of this chapter appeared in
 @uref{http://www.linuxjournal.com/article.php?sid=2762, the
-@cite{What's GNU?} column of @cite{Linux Journal}, 2 (June, 1994)}.
+@cite{What's GNU?} column of the June 1994 @cite{Linux Journal}}.
 It was written by Arnold Robbins.
 
 @menu

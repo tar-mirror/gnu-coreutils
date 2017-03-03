@@ -1,4 +1,891 @@
+2012-03-26  Jim Meyering  <meyering@redhat.com>
+
+	version 8.16
+	* NEWS: Record release date.
+
+	tests: work around F17-valgrind sort-stale-thread-mem failure
+	* tests/misc/sort-stale-thread-mem: Skip upon known failure.
+
+	doc: use $(...), not `...` in documentation and comments
+	* doc/coreutils.texi (dircolors invocation, Examples of expr):
+	(shred invocation, seq invocation): Use $(...), not `...`.
+	* src/mv.c (do_move): Likewise, in a comment.
+
+2012-03-23  Jim Meyering  <meyering@redhat.com>
+
+	tests: skip ls/stat-free-color on XFS, rather than always failing
+	* tests/init.cfg (require_dirent_d_type_): Manually skip when
+	"." is an xfs file system.
+
+	tests: skip part of dd/sparse on some file systems
+	* tests/dd/sparse: The last two parts of this test would fail due to
+	the underlying file system at least on Solaris 10 with NFS.  That file
+	system would report that a 3MiB file was occupying <= 1KiB of space
+	for nearly 50 seconds after creation.
+	Improved-by: Bernhard Voelker
+
+2012-03-22  Pádraig Brady  <P@draigBrady.com>
+
+	maint: avoid a doc syntax check failure
+	Prompted by the continuous integration build failure at:
+	http://hydra.nixos.org/build/2315847
+
+	* doc/coreutils.texi (ln invocation): s/path/file name/
+
+2012-03-22  Harald Hoyer  <harald@redhat.com>
+
+	ln: add the --relative option
+	With the "--relative --symbolic" options, ln computes the relative
+	symbolic link for the user.
+
+	So, ln works just as cp, but creates relative symbolic links instead
+	of copying the file.
+
+	I miss this feature since the beginning of using ln.
+
+	$ tree ./
+	/
+	`-- usr
+	    |-- bin
+	    `-- lib
+	        `-- foo
+	            `-- foo
+
+	4 directories, 1 file
+
+	$ ln -s -v --relative usr/lib/foo/foo usr/bin/foo
+	‘usr/bin/foo’ -> ‘../lib/foo/foo’
+
+	$ tree ./
+	/
+	`-- usr
+	    |-- bin
+	    |   `-- foo -> ../lib/foo/foo
+	    `-- lib
+	        `-- foo
+	            `-- foo
+
+	4 directories, 2 files
+
+	$ ln -s -v --relative usr/bin/foo usr/lib/foo/link-to-foo
+	‘usr/lib/foo/link-to-foo’ -> ‘foo’
+
+	$ tree ./
+	/
+	`-- usr
+	    |-- bin
+	    |   `-- foo -> ../lib/foo/foo
+	    `-- lib
+	        `-- foo
+	            |-- link-to-foo -> foo
+	            `-- foo
+
+	4 directories, 3 files
+
+	* src/Makefile.am: Reference the relpath module.
+	* src/ln.c (usage): Mention the new option.
+	(do_link): Call the relative conversion if specified.
+	(convert_abs_rel): Perform the relative conversion
+	using the relpath module.
+	* tests/ln/relative: Add a new test.
+	* tests/Makefile.am: Reference the new test.
+	* doc/coreutils.texi: Document the new feature.
+	* NEWS: Mention the new feature.
+
+2012-03-22  Pádraig Brady  <P@draigBrady.com>
+
+	maint: refactor relpath() from `realpath` for use by `ln`
+	* src/relpath.c: Refactored from realpath.c and adjusted
+	to support returning the relative path rather than just
+	printing to stdout.
+	* src/relpath.h: Export the relpath function.
+	* src/Makefile.am: Reference the refactored relpath module.
+	* po/POTFILES.in: Likewise.
+	* src/realpath.c: Adjust to the refactored relpath module.
+
+2012-03-22  Pádraig Brady  <P@draigBrady.com>
+
+	maint: ensure PATH_MAX is set correctly
+	This reverts part of commit v8.12-103-g54cbe6e.
+
+	* src/system.h: Include gnulib's pathmax.h to honor
+	system specific limits, and then we set PATH_MAX only if needed.
+	Note pathmax.h no longer uses pathconf ("/", _PC_PATH_MAX).
+	Note I didn't reinstate the comments about limits.h inclusion
+	order, because pathmax.h includes limits.h anyway.
+
+2012-03-21  Jim Meyering  <meyering@redhat.com>
+
+	build: add numerous gnulib modules, mostly for improved portability
+	* bootstrap.conf (gnulib_modules): Add numerous modules for
+	improved portability.  Reported by Eric Blake in
+	http://thread.gmane.org/gmane.comp.gnu.coreutils.general/2426/focus=2489
+	* po/POTFILES.in: Add new files.
+
+	build: update gnulib submodule to latest
+
+	maint: use more modern fseeko, rather than fseek
+	* src/tac.c (temp_stream): Use fseeko, not fseek, on principle:
+	use the more modern interface.  In general it is better to avoid
+	fseek due to its ABI-imposed 4GiB limit on the "offset", here its
+	use was fine because the offset was always 0.  Using fseeko also
+	has the advantage of not triggering a GNULIB_POSIXCHECK warning.
+	Reported by Eric Blake in
+	http://thread.gmane.org/gmane.comp.gnu.coreutils.general/2426/focus=2489
+
+2012-03-20  Eric Blake  <eblake@redhat.com>
+
+	build: speed up configure for releases
+	Since most users won't be building with GNULIB_POSIXCHECK defined in
+	CFLAGS, and since we can make ./configure 10% (several seconds!) faster
+	by omitting the framework for a posix check, this patch makes it so
+	that the framework is omitted by default, while still giving
+	instructions for maintainers to re-enable it.
+
+	It's been a while since we've used GNULIB_POSIXCHECK; see this email:
+	https://lists.gnu.org/archive/html/coreutils/2012-03/msg00126.html
+	Some of those failures are because we are intentionally avoiding
+	specific gnulib modules (that is, we have chosen not to use things
+	like fprintf-posix), but until we work with gnulib to avoid particular
+	warnings, wiring up an automatic GNULIB_POSIXCHECK to happen during
+	'make my-distcheck' is not feasible.
+
+	* configure.ac (gl_ASSERT_NO_GNULIB_POSIXCHECK): Conditionally
+	define, according to whether $GNULIB_POSIXCHECK is in environment.
+
+2012-03-20  Jim Meyering  <meyering@redhat.com>
+
+	tests: avoid spurious misc/factor failure on OpenBSD 5.1
+	* tests/misc/factor: Map OpenBSD 5.1's "unknown option" to our
+	expected "invalid option".  Reported by Bruno Haible.
+
+	maint: remove now-superfluous coreutils-path-check rule
+	* dist-check.mk (coreutils-path-check): Now that we set PATH in
+	TESTS_ENVIRONMENT, it seems like overkill to make "distcheck"
+	rerun all tests just to check this.
+	(my-distcheck): Remove sole use.
+
+2012-03-20  Eric Blake  <eblake@redhat.com>
+
+	doc: clarify current realpath --relative-base behavior
+	For compatibility with MacOS relpath(1), as seen here:
+
+	http://opensource.apple.com/source/bootstrap_cmds/\
+	bootstrap_cmds-79/relpath.tproj/relpath.c
+
+	we implemented 'realpath --relative-base=dir1 --relative-to=dir2 file'
+	in the same way as 'relpath -d dir1 dir2 file'.  This can result
+	in --relative-base rendering --relative-to as a no-op if dir1 is a
+	child of dir2.  Document this.
+
+	* doc/coreutils.texi (realpath invocation): Mention restriction.
+
+2012-03-20  Pádraig Brady  <P@draigBrady.com>
+
+	tests: avoid spurious dd/sparse failure
+	* tests/dd/sparse: Allow for greater variation in sparse-block counts.
+	Reported by Nelson H. F. Beebe and Bruno Haible.
+
+2012-03-17  Pádraig Brady  <P@draigBrady.com>
+
+	tests: fix sort-discrim to work without GMP
+	* tests/misc/sort-discrim: The expr limit is intmax_t without GMP.
+
+2012-03-16  Pádraig Brady  <P@draigBrady.com>
+
+	tests: avoid an ls-time false positive on Solaris 10
+	* tests/misc/ls-time: Force a ctime update as updating
+	the atime doesn't update ctime on tmpfs on Solaris 10.
+
+2012-03-15  Eric Blake  <eblake@redhat.com>
+
+	realpath: optimize --relative-base usage
+	There is no need to recompute for every path being visited whether
+	the base is a prefix of the relative location.
+
+	* src/realpath.c (relpath): Hoist base check...
+	(main): ...here.
+	Based on a suggestion by Pádraig Brady.
+
+2012-03-15  Eric Blake  <eblake@redhat.com>
+
+	realpath: let --relative-to default to --relative-base
+	Most of the time, if someone wants to filter which paths are
+	relative while leaving all others absolute, they also want to
+	to the filtering based on the same --relative-to directory.
+	Make this easier to specify.
+
+	* src/realpath.c (main): Convert error to default.
+	* doc/coreutils.texi (realpath invocation): Document this.
+	* tests/misc/realpath: Adjust test to match.
+	* NEWS: Document it.
+
+2012-03-15  Eric Blake  <eblake@redhat.com>
+
+	tests: cover more realpath scenarios
+	'realpath --relative-base --relative-to' is identical to
+	--relative-base=--relative-to, so the test wasn't covering what
+	it claimed.  Expose recent fixes for handling of // on systems
+	where // is distinct, and for --relative-base=/.  Add test that
+	exposes our design decision that --relative-base that is not a
+	prefix of --relative-to is a no-op (if we later change behavior,
+	we will also have to change that part of the test).
+
+	* tests/misc/realpath: Fix typo. Add some tests.
+
+2012-03-15  Eric Blake  <eblake@redhat.com>
+
+	realpath: fix problems with root handling
+	When --relative-base is /, all other paths should be treated as
+	relative (except for // where it matters).
+
+	Also, on platforms like Cygwin where / and // are distinct, realpath
+	was incorrectly collapsing // into /.  http://debbugs.gnu.org/10472.
+
+	* src/realpath.c (path_prefix, path_common_prefix): Treat /
+	and // as having no common match.
+	(relpath): Allow for no match even without --relative-base.
+	* NEWS: Document this.
+
+2012-03-14  Eric Blake  <eblake@redhat.com>
+
+	test: expose recent gnulib canonicalize bug
+	https://lists.gnu.org/archive/html/bug-gnulib/2012-02/msg00038.html
+	detailed a couple of bugs in gnulib's canonicalize that were visible
+	through coreutils' readlink, but only on systems where // is distinct
+	from /.  This particular test assumes the POSIX fix which requires
+	canonicalization of a symlink containing just slashes to behave as
+	if slashes separating the symlink from the rest of the name are
+	elided (see http://austingroupbugs.net/view.php?id=541), as that is
+	the only useful (and current) behavior on Cygwin.  That is,
+
+	ln -s / root
+	ls root/dev
+
+	must list the contents of /dev, not //dev.
+
+	* tests/misc/readlink-root: New test.
+	* tests/Makefile.am (TESTS): Run it.
+
+2012-03-14  Paul Eggert  <eggert@cs.ucla.edu>
+	    Drew Kutilek  <dkutilek@ucla.edu>
+	    James Wendt  <jwendt@cs.ucla.edu>
+
+	tests: new discriminator-based test for sort -n and -h
+	* tests/Makefile.am (TESTS): Add misc/sort-discrim.
+	* tests/misc/sort-discrim: New file, which tests a discriminator-based
+	implementation of 'sort'.  Coreutils doesn't use this implementation
+	yet, but the test is useful anyway.
+
+2012-03-10  Jérémy Compostella  <jeremy.compostella@gmail.com>
+
+	dirname: support more than one argument
+	* src/dirname.c (main): Handle new -z option and manage more than one
+	  argument.
+	* doc/coreutils.texi (dirname invocation): Mention it.
+	* NEWS (New features): Mention it.
+	* tests/misc/dirname: Add a two arguments test.
+
+	split: support an arbitrary number of split files by default
+	* src/split.c (next_file_name): If `suffix_auto' is true and the first
+	suffix character is 'z', generate a new file file name adding `z' to
+	the prefix and increasing the suffix length by one.
+	(set_suffix_length): Disable auto suffix width in various cases.
+	* tests/split/suffix-auto-length: Test it.
+	* doc/coreutils.texi (split invocation): Mention it.
+	* NEWS (Improvements): Likewise.
+
+2012-03-09  Jérémy Compostella  <jeremy.compostella@gmail.com>
+
+	doc: add missing documentation for basename -z
+	doc/coreutils.texi (basename invocation): Add -z option documentation.
+
+2012-03-09  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	maint: fix a version number typo in NEWS
+	* NEWS: s/8.14/8.15/
+
+2012-03-09  Paul Eggert  <eggert@cs.ucla.edu>
+
+	chmod: add notations +40, 00440, etc.
+	* NEWS: Document this.
+	* doc/perm.texi (Operator Numeric Modes): New section.
+	(Numeric Modes, Directory Setuid and Setgid): Document new behavior.
+	* src/chmod.c (usage): Document new behavior.
+	(main): Support new options -0, -1, etc.
+	* tests/chmod/setgid: Test these new features.
+
+	build: update gnulib submodule to latest
+
+2012-03-08  Jim Meyering  <meyering@redhat.com>
+
+	du: fix -x: don't ignore non-directory arguments
+	Surprise!  "du -x non-DIR" would print nothing.
+	Note that the problem arises only when processing a non-directory
+	specified on the command line.  Not surprisingly, "du -x" still
+	works as expected for any directory argument.
+
+	When performing its same-file-system check, du may skip an entry
+	only if it is at fts_level 1 or greater.  Command-line arguments
+	are at fts_level == 0 (FTS_ROOTLEVEL).
+
+	* src/du.c (process_file): Don't use the top-level FTS->fts_dev
+	when testing for --one-file-system (-x).  It happens to be valid
+	for directories, but it is always 0 for a non-directory.
+	* tests/du/one-file-system: Add tests for this.
+	* NEWS (Bug fixes): Mention it.
+	Reported by Daniel Stavrovski in http://bugs.gnu.org/10967.
+	Introduced by commit v8.14-95-gcfe1040.
+
+2012-03-07  Jim Meyering  <meyering@redhat.com>
+
+	maint: use an optimal-for-coreutils xz compression setting
+	* cfg.mk: Set XZ_OPT = -8e (determined empirically).
+	This sacrifices 8 KiB of compressed tarball size for a 32-MiB
+	decrease in the memory required during decompression.  I.e.,
+	using -9e would shave off only 8 KiB from the tar.xz file, yet
+	would force every decompression process to use 32 MiB more memory.
+
+2012-03-07  Jérémy Compostella  <jeremy.compostella@gmail.com>
+
+	basename: support more than one argument
+	* src/basename.c (perform_basename): New function refactored from
+	main() that performs the basename work on a STRING, optionally
+	removes a trailing SUFFIX and outputs the result.
+	(main): Handle new options.
+	* doc/coreutils.texi (basename invocation): Mention new options.
+	* test/misc/basename: Add new options test cases.
+	* NEWS (New features): Mention it.
+
+2012-03-07  Pádraig Brady  <P@draigBrady.com>
+
+	maint: refactor copy to use is_nul()
+	* src/dd.c: Move is_nul() from here to ...
+	* src/system.h: ... here
+	* src/copy.c (sparse_copy): Adjust to use the refactored is_nul()
+
+2012-03-02  Pádraig Brady  <P@draigBrady.com>
+
+	tests: work around a block alignment issue in dd/sparse
+	Prompted by the continuous integration build failure at:
+	http://hydra.nixos.org/build/2188210 (which uses XFS).
+
+	* tests/dd/sparse (alloc_equal): Add a block allocation
+	comparison function that accounts for variations due
+	to alignment.
+
+2012-02-29  Rodrigo Campos  <rodrigo@sdfg.com.ar>
+
+	doc: timeout: document the exit status when run with "-s KILL"
+	* src/timeout.c (usage): Document the exit status for this case,
+	in --help and thus in the man page.  Word so that it covers
+	both the -s9 and -k options.
+	* doc/coreutils.texi (timeout invocation): Document the exit
+	status for this case.
+
+2012-02-29  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	tests: compile and link shared object with $CC to make LD_PRELOAD work
+	* tests/ls/getxattr-speedup: Compile and link in one step with $CC.
+	If the shared object file is created by ld (binutils), then the
+	destructor print_call_count() may not run (seen on OpenSuSE 12.1).
+	See http://lists.opensuse.org/opensuse/2012-02/msg01342.html
+	Thanks to Cristian Rodríguez.
+
+2012-02-29  Roman Rybalko  <devel@romanr.info>
+
+	dd: add support for the conv=sparse option
+	Notes:
+	  Small seeks are not coalesced to larger ones,
+	  like is done in cache_round() for example.
+
+	  conv= is used rather then oflag= for FreeBSD compatibility.
+
+	* src/dd.c (final_op_was_seek): A new global boolean to flag
+	whether the final "write" was converted to a seek.
+	(usage): Describe the new conf=sparse option.
+	(iwrite): Convert a write of a NUL block to a seek if requested.
+	(do_copy): Initialize the output buffer to have a sentinel,
+	to allow for efficient testing for NUL output blocks.
+	If the last block in the file was converted to a seek,
+	then convert back to a write so the size is updated.
+	* NEWS: Mention the new feature.
+	* tests/dd/sparse: A new test for the feature.
+	* tests/Makefile.am: Reference the new test.
+
+2012-02-27  Jérémy Compostella  <jeremy.compostella@gmail.com>
+
+	doc: fix a wrong option reference in split invocation
+	* doc/coreutils.texi (split invocation): replace `-r' reference with
+	`-nr/n'.
+
+2012-02-26  Jim Meyering  <meyering@redhat.com>
+
+	tests: fix help-version on cygwin, where $EXEEXT is nonempty
+	* tests/misc/help-version: Remove the $EXEEXT suffix from each
+	program name before comparing with a literal.
+
+2012-02-26  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	tests: remove unnecessary use of -lc
+	* tests/ls/getxattr-speedup: Remove unneeded use of -lc.
+
+2012-02-25  Paul Eggert  <eggert@cs.ucla.edu>
+
+	sort: default to physmem/8, not physmem/16
+	* src/sort.c (default_sort_size): Don't divide advice by 2.
+	Just divide the hard limits by 2.  This matches the comments.
+	Reported by Rogier Wolff in http://bugs.gnu.org/10877
+
+2012-02-24  Jim Meyering  <meyering@redhat.com>
+
+	doc: clarify a comment in system.h
+	* src/system.h (STRNCMP_LIT): Clarify comment.
+	Suggested by Bruno Haible.
+
+2012-02-20  Jérémy Compostella  <jeremy.compostella@gmail.com>
+
+	split: add the --additional-suffix option
+	Add the --additional-suffix option, to append an
+	additional static suffix to output file names.
+
+	* src/split.c (next_file_name): Append suffix to output file names.
+	(main): Handle new --additional-suffix option.
+	* NEWS (New features): Mention it.
+	* doc/coreutils.texi (split invocation): Mention it.
+	* tests/split/additional-suffix: New file. Test --additional-suffix.
+	* tests/Makefile.am (TESTS): Add it.
+	Requested by Peng Yu, in bug 6554
+
+2012-02-20  Pádraig Brady  <P@draigBrady.com>
+
+	ls: adjust errnos indicating device non support for xattrs
+	* src/ls.c (errno_unsupported): Remove EBUSY, as this caters for
+	the case where ACLs can't be accessed because the _file_ is locked.
+	http://lists.gnu.org/archive/html/bug-coreutils/2005-06/msg00191.html
+	Also ENOENT is not safe to include as you get that if the _file_
+	is removed between the stat() and subsequent querying of xattrs.
+
+2012-02-19  Jérémy Compostella  <jeremy.compostella@gmail.com>
+
+	tests: ls/getxattr-speedup: include <sys/types.h> for older headers
+	Modern <stdio.h> provides ssize_t, but the one from Debian's
+	libc6-dev 2.11.2-10 apparently does not.
+	* tests/ls/getxattr-speedup: Also include <sys/types.h>.
+
+2012-02-18  Jérémy Compostella  <jeremy.compostella@gmail.com>
+
+	doc: fix file names in split --filter=command example
+	* doc/coreutils.texi (split invocation): Output file names should be
+	prefixed with `big-' not `big-x'.
+
+2012-02-18  Jim Meyering  <meyering@redhat.com>
+
+	tests: test for ls speed-up
+	* tests/ls/getxattr-speedup: New test.
+	* tests/Makefile.am (TESTS): Add it.
+	Improved-by: Bernhard Voelker
+
+	ls: cache ACL- and CAP-querying syscall failures
+	Like the optimization to avoid always-failing getfilecon calls,
+	this change avoids always-failing queries for whether a file has
+	a nontrivial ACL and for whether a file has certain "capabilities".
+	When such a query fails for one file (indicating no support), we know it
+	will always fail that way for the affected device.  With this change, we
+	have thus eliminated nearly all failing-unsupported getxattr syscalls.
+	* src/ls.c (has_capability) [!HAVE_CAP]: Set errno to ENOTSUP.
+	(errno_unsupported): Expand the list of E* errno values to match
+	that of lib/acl-internal.h's ACL_NOT_WELL_SUPPORTED macro.
+	(file_has_acl_cache, has_capability_cache): New functions.
+	(gobble_file): Use them in place of non-caching ones.
+	* NEWS (Improvements): Mention it.
+	Suggested by Sven Breuner in
+	http://thread.gmane.org/gmane.comp.gnu.coreutils.general/2187
+	While eliminating most getfilecon calls saved about 33%,
+	eliminating these other calls can save almost all of the
+	remaining ~67% cost, on some remote file systems.
+
+	ls: optimize for when getfilecon would often fail (~33% perf. gain)
+	On systems or file systems without SELinux support, all getfilecon
+	and lgetfilecon calls would fail due to lack of support.  We can non-
+	invasively cache such failure (on most recently accessed device) and
+	avoid the vast majority of the failing underlying getxattr syscalls.
+	* src/ls.c (errno_unsupported): New function.
+	(selinux_challenged_device): New file-scoped global.
+	(getfilecon_cache, lgetfilecon_cache): New error-caching wrapper
+	functions.
+	(gobble_file): Use the caching wrappers, for when many *getfilecon
+	calls would fail with ENOTSUP or EOPNOTSUPP.
+	Suggested by Sven Breuner in
+	http://thread.gmane.org/gmane.comp.gnu.coreutils.general/2187
+	Improved-by: Pádraig Brady.
+
+2012-02-18  Jérémy Compostella  <jeremy.compostella@gmail.com>
+
+	split: support optional start value for --numeric-suffixes
+	Allow changing the --numeric-suffixes start number
+	from the default of 0.
+
+	* src/split.c (next_file_name): Initialize the suffix index
+	and the output filename according to start value.
+	(main): Check that the suffix length is large enough for the
+	numerical suffix start value.
+	* doc/coreutils.texi (split invocation): Mention it.
+	* NEWS (New features): Mention it.
+	* tests/split/numeric: New file. Test --numeric-suffixes[=FROM].
+	* tests/Makefile.am (TESTS): Reference the new test.
+
+2012-02-17  Pádraig Brady  <P@draigBrady.com>
+
+	doc: fix a typo about seek_bytes in NEWS
+	* NEWS: s/count_bytes/seek_bytes/2
+
+2012-02-16  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	doc: improve 'rm -f' description
+	* doc/coreutils.texi (rm invocation): Mention that the -f option also
+	silences the message for missing operands, which is useful in scripts
+	e.g., for "rm -f $file_list" when $file_list is empty.
+	* src/rm.c (usage):  Likewise.
+	Reported by Jérémy Magrin in http://bugs.gnu.org/10819
+
+2012-02-13  Pádraig Brady  <P@draigBrady.com>
+
+	dd: fix issues in the count_bytes and seek_bytes flags change
+	These edge cases were missed in the previous commit 140eca15c.
+
+	* src/dd.c (main): Include the bytes slop when truncating
+	without further I/O.  Don't invalidate the whole file cache
+	in the case where 0 < count < ibs.
+	* tests/dd/bytes: Change to using the independent truncate
+	command to generate the file for comparison.  Remove a redundant
+	test case and replace with one testing the truncation only logic.
+
+2012-02-12  Jérémy Compostella  <jeremy.compostella@gmail.com>
+
+	dd: add count_bytes, skip_bytes and seek_bytes flags
+	dd now accepts the count_bytes and skip_bytes input flag and the
+	seek_bytes output flag, to more easily allow processing portions of a
+	file.
+
+	* src/dd.c (scanargs): Compute skip_records and skip_bytes when
+	'skip_bytes' iflag is used. Compute max_records and max_bytes when
+	'count_bytes' iflag is used. Compute seek_records and seek_bytes
+	when 'seek_bytes' oflag is used.
+	(skip_via_lseek): Use new 'bytes' parameter and handle potential
+	'records' equals to zero. Update the bytes parameter when called with
+	'fdesc' equal to STDOUT_FILENO. Update the header comments.
+	(dd_copy): Skip accordingly to skip_records AND skip_bytes. Count
+	accordingly to max_records AND max_bytes. Seek on output accordingly
+	to seek_records AND seek_bytes.
+	* NEWS (New features): Mention it.
+	* doc/coreutils.texi (dd invocation): Detail new flags and behaviors.
+	* tests/dd/bytes: New file. Tests for these new flags.
+	* tests/Makefile.am (TESTS): Add it.
+
+2012-02-12  Jim Meyering  <meyering@redhat.com>
+
+	build: correct @@-,length values in last hunk of regcomp.c.diff
+	* gl/lib/regcomp.c.diff: Correct invalid hunk lengths (s/1/7/g)
+	in the last hunk's @@-line.
+
+	build: update gnulib, bootstrap, gl/lib/regcomp.c.diff
+	* gnulib: Update submodule to latest.
+	* bootstrap: Update from gnulib.
+	* gl/lib/regcomp.c.diff: Adapt to gnulib changes.
+
+	mv: "mv A B" would sometimes succeed, yet A would remain, ...
+	But only when both A and B were hard links to the same symlink.
+	* src/copy.c (same_file_ok): Handle another special case: the one
+	in which we are moving a symlink onto a hard link to itself.
+	In this case, we must explicitly tell the caller to unlink the
+	source file.  Otherwise, at least the linux-3.x kernel rename
+	function would do nothing, as mandated by POSIX 2008.
+	* tests/mv/symlink-onto-hardlink-to-self: New test.
+	* tests/Makefile.am (TESTS): Add it.
+	* NEWS (Bug fixes): Mention it.
+	Reported by Bernhard Voelker in http://bugs.gnu.org/10686
+
+2012-02-06  Jérémy Compostella  <jeremy.compostella@gmail.com>
+
+	maint: add braces as requested by HACKING coding standard
+	* src/dd.c (dd_copy): Braces were missing for this do/while statement.
+
+2012-01-31  Pádraig Brady  <P@draigBrady.com>
+
+	doc: clarify --help output for some optional arguments
+	* src/pr.c (usage): Fix the -S description to indicate
+	that the argument is optional for the short option.
+	* doc/coreutils.texi (pr invocation): Likewise.
+	* src/od.c (usage): Fix the -S description to indicate
+	that the argument is required for the short option.
+	Clarify -w takes an argument and that it is optional.
+
+2012-01-30  Jim Meyering  <meyering@redhat.com>
+
+	maint: sort: remove the last uses of "'%s'" in diagnostics
+	* src/sort.c (key_warnings): Use quote (quote_n, since there are two)
+	rather than literal single quotes ('%s') in diagnostic.
+
+	mv: allow moving symlink onto same-inode dest with >= 2 hard links
+	Normally, mv detects a few subtle cases in which proceeding with a
+	same-file rename would, with very high probability, cause data loss.
+	Here, we have found a corner case in which one of these same-inode
+	tests makes mv refuse to perform a useful operation.  Permit that
+	corner case.
+	* src/copy.c (same_file_ok): Detect/exempt this case.
+	* tests/mv/symlink-onto-hardlink: New test.
+	* tests/Makefile.am (TESTS): Add it.
+	* NEWS (Bug fixes): Mention it.
+	Initially reported by: Matt McCutchen in http://bugs.gnu.org/6960.
+	Raised again by Anders Kaseorg due to http://bugs.debian.org/654596.
+	Improved-by: Paul Eggert.
+
+	build: update gnulib, for syntax-check vs canonicalize fix
+
+2012-01-27  Jim Meyering  <meyering@redhat.com>
+
+	maint: use single copyright year range
+	Run "make update-copyright".
+
+	maint: make copyright statements more consistent; update gnulib
+	* cfg.mk (update-copyright-env): Add UPDATE_COPYRIGHT_FORCE=1
+	to rejoin some split lines, and UPDATE_COPYRIGHT_USE_INTERVALS=2
+	to make update-copyright use only one year range.
+	* gnulib: Update to latest, for newer update-copyright script.
+
+	maint: fix copyright in old fileutils ChangeLog
+	* old/fileutils/ChangeLog-1997: Insert omitted "Free Software" in
+	the name of the copyright holder.  Compress year range.
+
+2012-01-26  Pádraig Brady  <P@draigBrady.com>
+
+	maint: remove some redundant automake _SOURCES
+	* src/Makefile.am: Remove auto generated entries.
+
+	maint: cleanup an extraneous version output in a test
+	* test/misc/stdbuf: Fixup the minor copy & paste issue
+	introduced in commit ff7f0ff8
+
+2012-01-25  Pádraig Brady  <P@draigBrady.com>
+
+	realpath: avoid the use of printf
+	This was seen to give an 11% performance improvement.
+
+	* src/realpath.c (relpath): Avoid using printf.
+	(process_path): Likewise.
+
+2012-01-25  Pádraig Brady  <P@draigBrady.com>
+
+	maint: use the standard require_perl_ function
+	* tests/cp/sparse-fiemap: Don't use a separate check.
+
+	realpath: remove extraneous '/' for --relative-to edge cases
+	* src/realpath.c (path_common_prefix): Be consistent and
+	always include a leading '/' in the count returned.
+	(relpath): Account for the change in path_common_prefix()
+	and avoid outputting extra '/' chars in relative paths that
+	span the root dir.
+	* tests/misc/realpath: Add the two reported cases.
+	Reported by Mike Frysinger
+
+2012-01-23  Jim Meyering  <meyering@redhat.com>
+
+	build: update gnulib to latest, for test warning fixes
+	See http://thread.gmane.org/gmane.comp.lib.gnulib.bugs/29810
+	for details.
+
+	tests: remove crufty test=test_name code from old tests
+	Before init.sh and similar, we would set test=test_name, and then
+	construct temporary file names using $test.  Now that each
+	init.sh-using test is in its own directory, that practice is unwelcome.
+	Remove bad examples.
+	* tests/rm/f-1: Per above.
+	* tests/rm/i-1: Likewise.
+	* tests/rm/interactive-always: Likewise.
+	* tests/rm/interactive-once: Likewise.
+	* tests/rm/ir-1: Likewise.
+	* tests/rm/r-1: Likewise.
+
+2012-01-23  Paul Eggert  <eggert@cs.ucla.edu>
+
+	maint: quote 'like this' or "like this", not `like this'
+	* doc/coreutils.texi (Formatting the file names):
+	coreutils now quotes 'like this'.
+	* man/help2man:
+	* src/timeout.c (usage): Quote 'like this' in diagnostics.
+	* HACKING, Makefile.am, NEWS, README, README-hacking, TODO, cfg.mk:
+	* doc/Makefile.am, doc/coreutils.texi, m4/jm-macros.m4:
+	* man/Makefile.am, man/help2man, src/Makefile.am, src/copy.h:
+	* src/extract-magic, src/ls.c, src/pinky.c, src/pr.c, src/sort.c:
+	* src/split.c, src/timeout.c, src/who.c, tests/dd/skip-seek-past-file:
+	* tests/pr/pr-tests: Quote 'like this' in commentary.
+	* cfg.mk (old_NEWS_hash): Update due to changed old NEWS.
+
+2012-01-20  Pádraig Brady  <P@draigBrady.com>
+
+	stat: clarify the description of the %o stat format
+	* src/stat.c (usage):  Indicate this is a transfer size
+	suggestion, rather than some persistent block size.
+	* doc/coreutils.texi (stat invocation): Likewise.
+
+2012-01-14  Jim Meyering  <meyering@redhat.com>
+
+	doc: tweak an @uref so its alt reference text renders in info
+	* doc/coreutils.texi (Opening the software toolbox): Remove commas
+	from @uref argument, so the alternate text renders properly in info.
+	Reported by Reuben Thomas.
+
+2012-01-11  Pádraig Brady  <P@draigBrady.com>
+
+	maint: fix minor whitespace issues
+	The previous commit introduced a couple of spacing issues,
+	luckily one of which caused a test to fail.
+
+	* src/stat.c (default_format): Add a space so times are aligned.
+	* src/tr.c (string2_extentd): Remove an extraneous space.
+
+2012-01-11  Jim Meyering  <meyering@redhat.com>
+
+	maint: adjust formatting of certain continued strings
+	Add a rule to ding any source file that has a continued string
+	with a word in the first column of the following line.
+	Those tend to trigger malfunction in tools that try to map an
+	arbitrary line number to an enclosing function name.  Of course,
+	very many strings do precisely this, *when they are part of the
+	usage function*.  So we exempt the body of each usage function.
+	* src/dircolors.c (main): Separate a long, continued string
+	into two separately-quoted parts.
+	* src/od.c (decode_one_format): Likewise.
+	(decode_one_format, main): Move a space from end of
+	preceding line to the beginning of the continued line.
+	* src/tr.c (unquote, string2_extend, validate): Likewise.
+	* src/seq.c (main): Split in two and use string concatenation.
+	* src/stat.c (default_format): Use a mix of techniques.
+	* cfg.mk (sc_prohibit_continued_string_alpha_in_column_1): New rule.
+	Exempt three files in src: system.h, od.c, printf.c.
+
+2012-01-09  Jim Meyering  <meyering@redhat.com>
+
+	maint: straggler *.[ch] files: convert more `...' to '...'
+	The preceding commands ignored .[ch] files in lib/ and gl/.
+	This is what I should have been doing from the start:
+
+	  git grep -l '`.*'\' $(g ls-files |grep '\.[ch]$') \
+	    | xargs perl -pi -e 's/`(.+?'\'')/'\''$1/'
+
+2012-01-09  Jim Meyering  <meyering@redhat.com>
+
+	maint: src/*.[ch]: convert more `...' to '...'
+	Run this (twice):
+	  git grep -E -l '`.+'\' src/*.[ch] \
+	    |xargs perl -pi -e 's/`(.+?'\'')/'\''$1/'
+
+	maint: src/*.c: change remaining quotes (without embedded spaces)
+	Run this (twice):
+	  git grep -E -l '`[^ ]+'\' src/*.c \
+	    |xargs perl -pi -e 's/`([^ ]+'\'')/'\''$1/'
+
+	maint: convert `...' to '...' in --help output
+	All affected lines end with \ or \n\, so run this command
+	until it produces no new changes (4 times):
+	  git grep -E -l '`[^ ]+'\''.*\\' src \
+	    |xargs perl -pi -e 's/`([^ ]+'\''.*\\)/'\''$1/'
+
+	maint: adjust quoting: emit '...', not `...' in diagnostics
+	* src/csplit.c (parse_repeat_count, extract_regexp): As above.
+	* src/date.c (main): Likewise.
+	* src/ls.c (decode_switches): Likewise.
+	* src/od.c (decode_one_format, main): Likewise.
+	* src/pathchk.c (no_leading_hyphen): Likewise.
+	* src/pr.c (main, getoptarg): Likewise.
+	* src/rm.c (diagnose_leading_hyphen): Likewise.
+	* src/sort.c (key_warnings, incompatible_options, main): Likewise.
+	* src/stat.c (print_esc_char): Print '\x', not `\x' in diagnostic.
+	* src/test.c (main): Likewise.
+	* src/touch.c (main): Likewise.
+	* src/tr.c (build_spec_list, validate, append_range): Likewise.
+	* tests/misc/mktemp: This is an unusual case, since the affected
+	string contains only the ` of an `...' string.  So we change
+	the long ` to a lone '.
+	* tests/pr/pr-tests: Manual quote adapting fix-up.
+	* tests/ln/hard-to-sym: Likewise.
+	* tests/split/suffix-length: Likewise.
+	* tests/mv/part-fail: Likewise.
+	* tests/misc/chcon: Likewise.
+	* tests/misc/stat-printf: Likewise.
+
+2012-01-09  Jim Meyering  <meyering@redhat.com>
+
+	tests: more automated quote adjustment
+	Relax initial regexp to match more instances, but add a
+	filter to avoid some invalid conversions.  Run this:
+
+	git grep -l "\`[^']*'" tests | xargs perl -pi -e '$q=q"'\''";' \
+	  -e '$q="$q\\$q$q"; /(= ?\`|\`expr|\`echo|\Q$q\E)/ and next;' \
+	  -e ' s/\`([^'\''"]*?'\'')/'\''$1/g'
+	The last disjunct in the above (...) filter is to exempt
+	any line that contains this string: '\''
+	With quoting like that, converting a ` to ' is likely to cause trouble,
+	so we'll handle those manually.  Here are three examples where
+	the exemption is required:
+
+	  *': `link-to-dir/'\'': hard link not allowed for directory'*) ;;
+	  printf 'creating file `%s'\''\n' $f
+	  'mv: inter-device move failed: `%s'\'' to `%s'\'';'\
+
+2012-01-09  Jim Meyering  <meyering@redhat.com>
+
+	tests: change `...' to '...' on lines not matching /[=\$]/
+	Exempt lines with '$' or '=', since those are prone to improper
+	conversion.  Run this:
+	  git grep -l "\`[^']*'" tests \
+	   |xargs perl -pi -e '/[=\$]/ and next;s/\`([^'\''"]*?'\'')/'\''$1/g'
+
+	tests: adjust \`...' quoting to '...' to adapt to latest gnulib
+	Run this:
+	  git grep -l "\\\\\`[^']*'" tests \
+	    |xargs perl -pi -e 's/\\\`(.*?'\'')/'\''$1/g
+
+	build: update gnulib submodule to latest (quoting change)
+	This pulls in changes to the quote and quotearg modules that
+	render quoted strings in diagnostics.  `Old' vs 'new'.
+
+	maint: prep for global quoting changes: handle irregular cases manually
+	* src/chroot.c (usage): Change ``...'' to '...', and describe the
+	default more accurately (also adding quotes): s,/bin/sh,'/bin/sh -i',
+	* src/join.c (usage): Change ` ...'' ' to "...''".
+	* src/fmt.c (isopen): Change `' to '` in list of bytes, so that
+	a subsequent change can safely perform the `...' to '...' conversion.
+	* src/truncate.c (main): Tweak quoting in comments to use '...',
+	not `...`, for consistency with the rest of comments in coreutils.
+
+2012-01-07  Jim Meyering  <meyering@redhat.com>
+
+	maint: update quoting of "Try `prog --help'" to "Try 'prog --help'"
+	Automatically adjust both the source (now in only one place)
+	and all tests that expect the resulting output via this:
+
+	git grep -l 'Try.*--help' src/system.h tests \
+	  | xargs perl -pi -e 's/Try \\?`(\S+ --help)/Try '\''$1/'
+
+2012-01-07  Jim Meyering  <meyering@redhat.com>
+
+	maint: use new emit_try_help in place of equivalent fprintf
+	Run this command:
+	  perl -0777 -pi -e \
+	   's/fprintf \(stderr, _\("Try `%s --help.*\n.*;/emit_try_help ();/m'\
+	     src/*.c
+
+	maint: factor out all `Try --help'-emitting statements
+	* src/system.h (emit_try_help): New function.
+
 2012-01-06  Jim Meyering  <meyering@redhat.com>
+
+	maint: post-release administrivia
+	* NEWS: Add header line for next release.
+	* .prev-version: Record previous version.
+	* cfg.mk (old_NEWS_hash): Auto-update.
 
 	version 8.15
 	* NEWS: Record release date.

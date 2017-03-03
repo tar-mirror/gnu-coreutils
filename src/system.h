@@ -1,5 +1,5 @@
 /* system-dependent definitions for coreutils
-   Copyright (C) 1989, 1991-2012 Free Software Foundation, Inc.
+   Copyright (C) 1989-2012 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -41,6 +41,8 @@ you must include <sys/types.h> before including this file
 #include <unistd.h>
 
 #include <limits.h>
+
+#include "pathmax.h"
 #ifndef PATH_MAX
 # define PATH_MAX 8192
 #endif
@@ -50,7 +52,7 @@ you must include <sys/types.h> before including this file
 #include <sys/time.h>
 #include <time.h>
 
-/* Since major is a function on SVR4, we can't use `ifndef major'.  */
+/* Since major is a function on SVR4, we can't use 'ifndef major'.  */
 #if MAJOR_IN_MKDEV
 # include <sys/mkdev.h>
 # define HAVE_MAJOR
@@ -147,7 +149,7 @@ enum
    - It's typically faster.
    POSIX says that only '0' through '9' are digits.  Prefer ISDIGIT to
    isdigit unless it's important to use the locale's definition
-   of `digit' even when the host does not conform to POSIX.  */
+   of 'digit' even when the host does not conform to POSIX.  */
 #define ISDIGIT(c) ((unsigned int) (c) - '0' <= 9)
 
 /* Convert a possibly-signed character to an unsigned character.  This is
@@ -186,7 +188,7 @@ select_plural (uintmax_t n)
 #define STRPREFIX(a, b) (strncmp(a, b, strlen (b)) == 0)
 
 /* Just like strncmp, but the second argument must be a literal string
-   and you don't specify the length.  */
+   and you don't specify the length;  that comes from the literal.  */
 #define STRNCMP_LIT(s, literal) \
   strncmp (s, "" literal "", sizeof (literal) - 1)
 
@@ -236,7 +238,7 @@ uid_t getuid ();
 #include "verify.h"
 
 /* This is simply a shorthand for the common case in which
-   the third argument to x2nrealloc would be `sizeof *(P)'.
+   the third argument to x2nrealloc would be 'sizeof *(P)'.
    Ensure that sizeof *(P) is *not* 1.  In that case, it'd be
    better to use X2REALLOC, although not strictly necessary.  */
 #define X2NREALLOC(P, PN) ((void) verify_true (sizeof *(P) != 1), \
@@ -267,7 +269,7 @@ dot_or_dotdot (char const *file_name)
     return false;
 }
 
-/* A wrapper for readdir so that callers don't see entries for `.' or `..'.  */
+/* A wrapper for readdir so that callers don't see entries for '.' or '..'.  */
 static inline struct dirent const *
 readdir_ignoring_dot_and_dotdot (DIR *dirp)
 {
@@ -403,7 +405,7 @@ enum
 # define PID_T_MAX TYPE_MAXIMUM (pid_t)
 #endif
 
-/* Use this to suppress gcc's `...may be used before initialized' warnings. */
+/* Use this to suppress gcc's '...may be used before initialized' warnings. */
 #ifdef lint
 # define IF_LINT(Code) Code
 #else
@@ -491,6 +493,27 @@ ptr_align (void const *ptr, size_t alignment)
   return (void *) (p1 - (size_t) p1 % alignment);
 }
 
+/* Return whether the buffer consists entirely of NULs.
+   Note the word after the buffer must be non NUL. */
+
+static inline bool _GL_ATTRIBUTE_PURE
+is_nul (const char *buf, size_t bufsize)
+{
+  typedef uintptr_t word;
+
+  /* Find first nonzero *word*, or the word with the sentinel.  */
+  word *wp = (word *) buf;
+  while (*wp++ == 0)
+    continue;
+
+  /* Find the first nonzero *byte*, or the sentinel.  */
+  char *cp = (char *) (wp - 1);
+  while (*cp++ == 0)
+    continue;
+
+  return cp > buf + bufsize;
+}
+
 /* If 10*Accum + Digit_val is larger than the maximum value for Type,
    then don't update Accum and return false to indicate it would
    overflow.  Otherwise, set Accum to that new value and return true.
@@ -554,6 +577,12 @@ emit_ancillary_info (void)
     }
   printf (_("For complete documentation, run: "
             "info coreutils '%s invocation'\n"), last_component (program_name));
+}
+
+static inline void
+emit_try_help (void)
+{
+  fprintf (stderr, _("Try '%s --help' for more information.\n"), program_name);
 }
 
 #include "inttostr.h"

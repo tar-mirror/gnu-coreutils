@@ -29,7 +29,7 @@
 #include "stdio--.h"
 #include "tempname.h"
 
-/* The official name of this program (e.g., no `g' prefix).  */
+/* The official name of this program (e.g., no 'g' prefix).  */
 #define PROGRAM_NAME "mktemp"
 
 #define AUTHORS \
@@ -62,14 +62,13 @@ void
 usage (int status)
 {
   if (status != EXIT_SUCCESS)
-    fprintf (stderr, _("Try `%s --help' for more information.\n"),
-             program_name);
+    emit_try_help ();
   else
     {
       printf (_("Usage: %s [OPTION]... [TEMPLATE]\n"), program_name);
       fputs (_("\
 Create a temporary file or directory, safely, and print its name.\n\
-TEMPLATE must contain at least 3 consecutive `X's in last component.\n\
+TEMPLATE must contain at least 3 consecutive 'X's in last component.\n\
 If TEMPLATE is not specified, use tmp.XXXXXXXXXX, and --tmpdir is implied.\n\
 "), stdout);
       fputs (_("\

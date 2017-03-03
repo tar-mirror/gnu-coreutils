@@ -232,7 +232,7 @@ human_fstype (STRUCT_STATVFS const *statfsbuf)
       /* Also compare with the list in "man 2 statfs" using the
          fs-magic-compare make target.  */
 
-      /* IMPORTANT NOTE: Each of the following `case S_MAGIC_...:'
+      /* IMPORTANT NOTE: Each of the following 'case S_MAGIC_...:'
          statements must be followed by a hexadecimal constant in
          a comment.  The S_MAGIC_... name and constant are automatically
          combined to produce the #define directives in fs.h.  */
@@ -1041,7 +1041,7 @@ print_esc_char (char c)
     case '\\':
       break;
     default:
-      error (0, 0, _("warning: unrecognized escape `\\%c'"), c);
+      error (0, 0, _("warning: unrecognized escape '\\%c'"), c);
       break;
     }
   putchar (c);
@@ -1058,8 +1058,8 @@ print_it (char const *format, char const *filename,
 {
   bool fail = false;
 
-  /* Add 2 to accommodate our conversion of the stat `%s' format string
-     to the longer printf `%llu' one.  */
+  /* Add 2 to accommodate our conversion of the stat '%s' format string
+     to the longer printf '%llu' one.  */
   enum
     {
       MAX_ADDITIONAL_BYTES =
@@ -1236,13 +1236,11 @@ default_format (bool fs, bool terse, bool device)
         {
           /* TRANSLATORS: This string uses format specifiers from
              'stat --help' with --file-system, and NOT from printf.  */
-          format = xstrdup (_("\
-  File: \"%n\"\n\
-    ID: %-8i Namelen: %-7l Type: %T\n\
-Block size: %-10s Fundamental block size: %S\n\
-Blocks: Total: %-10b Free: %-10f Available: %a\n\
-Inodes: Total: %-10c Free: %d\n\
-"));
+          format = xstrdup (_("  File: \"%n\"\n"
+                              "    ID: %-8i Namelen: %-7l Type: %T\n"
+                              "Block size: %-10s Fundamental block size: %S\n"
+                              "Blocks: Total: %-10b Free: %-10f Available: %a\n"
+                              "Inodes: Total: %-10c Free: %d\n"));
         }
     }
   else /* ! fs */
@@ -1272,7 +1270,7 @@ Inodes: Total: %-10c Free: %d\n\
               /* TRANSLATORS: This string uses format specifiers from
                  'stat --help' without --file-system, and NOT from printf.  */
               format = xasprintf ("%s%s", format, _("\
-Device: %Dh/%dd\tInode: %-10i  Links: %-5h Device type: %t,%T\n\
+" "Device: %Dh/%dd\tInode: %-10i  Links: %-5h Device type: %t,%T\n\
 "));
             }
           else
@@ -1280,7 +1278,7 @@ Device: %Dh/%dd\tInode: %-10i  Links: %-5h Device type: %t,%T\n\
               /* TRANSLATORS: This string uses format specifiers from
                  'stat --help' without --file-system, and NOT from printf.  */
               format = xasprintf ("%s%s", format, _("\
-Device: %Dh/%dd\tInode: %-10i  Links: %h\n\
+" "Device: %Dh/%dd\tInode: %-10i  Links: %h\n\
 "));
             }
           free (temp);
@@ -1289,7 +1287,7 @@ Device: %Dh/%dd\tInode: %-10i  Links: %h\n\
           /* TRANSLATORS: This string uses format specifiers from
              'stat --help' without --file-system, and NOT from printf.  */
           format = xasprintf ("%s%s", format, _("\
-Access: (%04a/%10.10A)  Uid: (%5u/%8U)   Gid: (%5g/%8G)\n\
+" "Access: (%04a/%10.10A)  Uid: (%5u/%8U)   Gid: (%5g/%8G)\n\
 "));
           free (temp);
 
@@ -1298,21 +1296,18 @@ Access: (%04a/%10.10A)  Uid: (%5u/%8U)   Gid: (%5g/%8G)\n\
               temp = format;
               /* TRANSLATORS: This string uses format specifiers from
                  'stat --help' without --file-system, and NOT from printf.  */
-              format = xasprintf ("%s%s", format, _("\
-Context: %C\n\
-"));
+              format = xasprintf ("%s%s", format, _("Context: %C\n"));
               free (temp);
             }
 
           temp = format;
           /* TRANSLATORS: This string uses format specifiers from
              'stat --help' without --file-system, and NOT from printf.  */
-          format = xasprintf ("%s%s", format, _("\
-Access: %x\n\
-Modify: %y\n\
-Change: %z\n\
- Birth: %w\n\
-"));
+          format = xasprintf ("%s%s", format,
+                              _("Access: %x\n"
+                                "Modify: %y\n"
+                                "Change: %z\n"
+                                " Birth: %w\n"));
           free (temp);
         }
     }
@@ -1323,8 +1318,7 @@ void
 usage (int status)
 {
   if (status != EXIT_SUCCESS)
-    fprintf (stderr, _("Try `%s --help' for more information.\n"),
-             program_name);
+    emit_try_help ();
   else
     {
       printf (_("Usage: %s [OPTION]... FILE...\n"), program_name);
@@ -1368,7 +1362,7 @@ The valid format sequences for files (without --file-system):\n\
   %m   mount point\n\
   %n   file name\n\
   %N   quoted file name with dereference if symbolic link\n\
-  %o   I/O block size\n\
+  %o   optimal I/O transfer size hint\n\
   %s   total size, in bytes\n\
   %t   major device type in hex\n\
   %T   minor device type in hex\n\
