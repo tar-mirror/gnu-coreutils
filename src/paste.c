@@ -1,5 +1,5 @@
 /* paste - merge lines of files
-   Copyright (C) 1997-2014 Free Software Foundation, Inc.
+   Copyright (C) 1997-2015 Free Software Foundation, Inc.
    Copyright (C) 1984 David M. Ihnat
 
    This program is free software: you can redistribute it and/or modify
@@ -235,7 +235,7 @@ paste_parallel (size_t nfiles, char **fnamptr)
         {
           int chr IF_LINT ( = 0);	/* Input character. */
           int err IF_LINT ( = 0);	/* Input errno value.  */
-          size_t line_length = 0;	/* Number of chars in line. */
+          bool sometodo = false;	/* Input chars to process.  */
 
           if (fileptr[i])
             {
@@ -250,7 +250,7 @@ paste_parallel (size_t nfiles, char **fnamptr)
 
               while (chr != EOF)
                 {
-                  line_length++;
+                  sometodo = true;
                   if (chr == '\n')
                     break;
                   xputchar (chr);
@@ -259,7 +259,7 @@ paste_parallel (size_t nfiles, char **fnamptr)
                 }
             }
 
-          if (line_length == 0)
+          if (! sometodo)
             {
               /* EOF, read error, or closed file.
                  If an EOF or error, close the file.  */
@@ -439,9 +439,9 @@ Usage: %s [OPTION]... [FILE]...\n\
       fputs (_("\
 Write lines consisting of the sequentially corresponding lines from\n\
 each FILE, separated by TABs, to standard output.\n\
-With no FILE, or when FILE is -, read standard input.\n\
 "), stdout);
 
+      emit_stdin_note ();
       emit_mandatory_arg_note ();
 
       fputs (_("\
@@ -451,7 +451,7 @@ With no FILE, or when FILE is -, read standard input.\n\
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
       /* FIXME: add a couple of examples.  */
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
@@ -518,5 +518,5 @@ main (int argc, char **argv)
 
   if (have_read_stdin && fclose (stdin) == EOF)
     error (EXIT_FAILURE, errno, "-");
-  exit (ok ? EXIT_SUCCESS : EXIT_FAILURE);
+  return ok ? EXIT_SUCCESS : EXIT_FAILURE;
 }

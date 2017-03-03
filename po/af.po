@@ -3,11 +3,12 @@
 # This file is distributed under the same license as the PACKAGE package.
 # Petri Jooste <rkwjpj@puknet.puk.ac.za>, 2004.
 #
+#: src/stty.c:941
 msgid ""
 msgstr ""
 "Project-Id-Version: coreutils 5.2.1\n"
 "Report-Msgid-Bugs-To: bug-coreutils@gnu.org\n"
-"POT-Creation-Date: 2014-07-18 20:17+0100\n"
+"POT-Creation-Date: 2015-07-03 22:03+0100\n"
 "PO-Revision-Date: 2004-03-17 11:58+0200\n"
 "Last-Translator: Petri Jooste <rkwjpj@puk.ac.za>\n"
 "Language-Team: Afrikaans <i18n@af.org.za>\n"
@@ -35,18 +36,18 @@ msgstr "Geldige parameters is soos volg:"
 msgid "error closing file"
 msgstr "toevoerlêer %s word toegemaak"
 
-#: lib/closeout.c:112 src/base64.c:113 src/base64.c:125 src/base64.c:131
-#: src/base64.c:172 src/base64.c:228 src/cat.c:186 src/cat.c:202 src/cat.c:286
-#: src/cksum.c:251 src/expand.c:329 src/expand.c:354 src/mktemp.c:338
-#: src/od.c:966 src/paste.c:160 src/shuf.c:606 src/split.c:793
-#: src/split.c:1028 src/split.c:1033 src/tail.c:1234 src/tail.c:1362
-#: src/tail.c:2286 src/tr.c:1620 src/tr.c:1845 src/tr.c:1939
+#: lib/closeout.c:112 src/base64.c:111 src/base64.c:123 src/base64.c:129
+#: src/base64.c:170 src/base64.c:226 src/cat.c:187 src/cat.c:203 src/cat.c:287
+#: src/cksum.c:251 src/expand.c:329 src/expand.c:354 src/factor.c:2360
+#: src/mktemp.c:338 src/od.c:969 src/paste.c:160 src/shuf.c:600
+#: src/split.c:872 src/split.c:1121 src/split.c:1126 src/tail.c:1233
+#: src/tail.c:1365 src/tail.c:2332 src/tr.c:1620 src/tr.c:1845 src/tr.c:1939
 #: src/unexpand.c:426 src/unexpand.c:442
 #, c-format
 msgid "write error"
 msgstr "skryffout"
 
-#: lib/copy-acl.c:54 src/copy.c:1271 src/copy.c:2751
+#: lib/copy-acl.c:54 src/copy.c:1377 src/copy.c:2844
 #, fuzzy, c-format
 msgid "preserving permissions for %s"
 msgstr "toegangsregte vir %s word gestel"
@@ -237,57 +238,62 @@ msgstr ""
 msgid "Unknown error"
 msgstr "Onbekende stelselfout"
 
-#: lib/getopt.c:547 lib/getopt.c:576
+#: lib/getopt.c:575 lib/getopt.c:604
 #, fuzzy, c-format
 msgid "%s: option '%s' is ambiguous; possibilities:"
 msgstr "%s: opsie `%s' is dubbelsinnig\n"
 
-#: lib/getopt.c:624 lib/getopt.c:628
+#: lib/getopt.c:619
+#, fuzzy, c-format
+msgid "%s: option '%s' is ambiguous\n"
+msgstr "%s: opsie `-W %s' is dubbelsinnig\n"
+
+#: lib/getopt.c:654 lib/getopt.c:658
 #, fuzzy, c-format
 msgid "%s: option '--%s' doesn't allow an argument\n"
 msgstr "%s: opsie `--%s' laat nie 'n parameter toe nie\n"
 
-#: lib/getopt.c:637 lib/getopt.c:642
+#: lib/getopt.c:667 lib/getopt.c:672
 #, fuzzy, c-format
 msgid "%s: option '%c%s' doesn't allow an argument\n"
 msgstr "%s: opsie `%c%s' laat nie 'n parameter toe nie\n"
 
-#: lib/getopt.c:685 lib/getopt.c:704
+#: lib/getopt.c:715 lib/getopt.c:734
 #, fuzzy, c-format
 msgid "%s: option '--%s' requires an argument\n"
 msgstr "%s: opsie `%s' benodig 'n parameter\n"
 
-#: lib/getopt.c:742 lib/getopt.c:745
+#: lib/getopt.c:772 lib/getopt.c:775
 #, fuzzy, c-format
 msgid "%s: unrecognized option '--%s'\n"
 msgstr "%s: onbekende opsie `--%s'\n"
 
-#: lib/getopt.c:753 lib/getopt.c:756
+#: lib/getopt.c:783 lib/getopt.c:786
 #, fuzzy, c-format
 msgid "%s: unrecognized option '%c%s'\n"
 msgstr "%s: onbekende opsie `%c%s'\n"
 
-#: lib/getopt.c:805 lib/getopt.c:808
+#: lib/getopt.c:835 lib/getopt.c:838
 #, fuzzy, c-format
 msgid "%s: invalid option -- '%c'\n"
 msgstr "%s: ongeldige opsie -- %c\n"
 
-#: lib/getopt.c:861 lib/getopt.c:878 lib/getopt.c:1088 lib/getopt.c:1106
+#: lib/getopt.c:891 lib/getopt.c:908 lib/getopt.c:1118 lib/getopt.c:1136
 #, fuzzy, c-format
 msgid "%s: option requires an argument -- '%c'\n"
 msgstr "%s: opsie benodig 'n parameter -- %c\n"
 
-#: lib/getopt.c:934 lib/getopt.c:950
+#: lib/getopt.c:964 lib/getopt.c:980
 #, fuzzy, c-format
 msgid "%s: option '-W %s' is ambiguous\n"
 msgstr "%s: opsie `-W %s' is dubbelsinnig\n"
 
-#: lib/getopt.c:974 lib/getopt.c:992
+#: lib/getopt.c:1004 lib/getopt.c:1022
 #, fuzzy, c-format
 msgid "%s: option '-W %s' doesn't allow an argument\n"
 msgstr "%s: opsie `-W %s' laat nie 'n parameter toe nie\n"
 
-#: lib/getopt.c:1013 lib/getopt.c:1031
+#: lib/getopt.c:1043 lib/getopt.c:1061
 #, fuzzy, c-format
 msgid "%s: option '-W %s' requires an argument\n"
 msgstr "%s: opsie `%s' benodig 'n parameter\n"
@@ -297,13 +303,13 @@ msgstr "%s: opsie `%s' benodig 'n parameter\n"
 msgid "cannot change permissions of %s"
 msgstr "kan nie toegangsregte van %s verander nie"
 
-#: lib/mkdir-p.c:191 src/copy.c:2377 src/install.c:722 src/install.c:735
+#: lib/mkdir-p.c:191 src/copy.c:2470 src/install.c:722 src/install.c:735
 #, c-format
 msgid "cannot create directory %s"
 msgstr "Kan nie lêergids %s skep nie."
 
-#: lib/obstack.c:416 lib/obstack.c:418 lib/xalloc-die.c:34 src/csplit.c:231
-#: src/tac.c:434
+#: lib/obstack.c:338 lib/obstack.c:340 lib/xalloc-die.c:34 src/csplit.c:232
+#: src/tac.c:443
 #, c-format
 msgid "memory exhausted"
 msgstr "geheue uitgeput"
@@ -351,6 +357,12 @@ msgstr "'"
 #, fuzzy, c-format
 msgid "%s: end of file"
 msgstr "%s: seek het misluk"
+
+#: lib/randread.c:128 src/du.c:1068 src/md5sum.c:609 src/od.c:953
+#: src/tac.c:252 src/tac.c:358 src/tac.c:515 src/tac.c:601 src/wc.c:767
+#, c-format
+msgid "%s: read error"
+msgstr "%s: leesfout"
 
 #: lib/regcomp.c:131
 msgid "Success"
@@ -466,7 +478,7 @@ msgstr "^[jJ]"
 msgid "^[nN]"
 msgstr "^[nN]"
 
-#: lib/set-acl.c:46 src/copy.c:2400 src/cp.c:523
+#: lib/set-acl.c:46 src/copy.c:2493 src/cp.c:523
 #, c-format
 msgid "setting permissions for %s"
 msgstr "toegangsregte vir %s word gestel"
@@ -909,7 +921,7 @@ msgid ""
 "Base64 encode or decode FILE, or standard input, to standard output.\n"
 msgstr ""
 
-#: src/base64.c:67
+#: src/base64.c:68
 msgid ""
 "  -d, --decode          decode data\n"
 "  -i, --ignore-garbage  when decoding, ignore non-alphabet characters\n"
@@ -919,15 +931,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/base64.c:76 src/cat.c:110 src/fmt.c:295 src/shuf.c:86 src/sum.c:70
-msgid ""
-"\n"
-"With no FILE, or when FILE is -, read standard input.\n"
-msgstr ""
-"\n"
-"Met geen LÊER, of wanneer die LÊER - is, lees standaardtoevoer.\n"
-
-#: src/base64.c:79
+#: src/base64.c:77
 msgid ""
 "\n"
 "The data are encoded as described for the base64 alphabet in RFC 3548.\n"
@@ -936,51 +940,51 @@ msgid ""
 "from any other non-alphabet bytes in the encoded stream.\n"
 msgstr ""
 
-#: src/base64.c:175 src/base64.c:212 src/csplit.c:275 src/csplit.c:1465
-#: src/join.c:458 src/shuf.c:235 src/shuf.c:284 src/shuf.c:570
-#: src/tac-pipe.c:74 src/tee.c:204 src/tr.c:1644
+#: src/base64.c:173 src/base64.c:210 src/csplit.c:276 src/csplit.c:1463
+#: src/join.c:464 src/shuf.c:233 src/shuf.c:282 src/shuf.c:564
+#: src/tac-pipe.c:74 src/tee.c:268 src/tr.c:1644
 #, c-format
 msgid "read error"
 msgstr "leesfout"
 
-#: src/base64.c:231
+#: src/base64.c:229
 #, fuzzy, c-format
 msgid "invalid input"
 msgstr "ongeldige gebruiker"
 
-#: src/base64.c:268
+#: src/base64.c:266
 #, fuzzy, c-format
 msgid "invalid wrap size: %s"
 msgstr "ongeldige keepgrootte: %s"
 
-#: src/base64.c:287 src/basename.c:175 src/comm.c:435 src/cp.c:612
-#: src/date.c:445 src/dircolors.c:447 src/du.c:985 src/hostid.c:74
-#: src/hostname.c:111 src/id.c:189 src/install.c:972 src/join.c:968
+#: src/base64.c:285 src/basename.c:175 src/comm.c:439 src/cp.c:612
+#: src/date.c:451 src/dircolors.c:447 src/du.c:1006 src/hostid.c:74
+#: src/hostname.c:111 src/id.c:189 src/install.c:972 src/join.c:974
 #: src/link.c:85 src/ln.c:580 src/logname.c:71 src/mknod.c:181 src/mv.c:463
-#: src/nproc.c:119 src/od.c:1861 src/ptx.c:2088 src/seq.c:548 src/shuf.c:507
-#: src/sort.c:4572 src/split.c:1376 src/tr.c:1797 src/tsort.c:554
+#: src/nproc.c:115 src/od.c:1869 src/ptx.c:2088 src/seq.c:594 src/shuf.c:501
+#: src/sort.c:4571 src/split.c:1469 src/tr.c:1797 src/tsort.c:558
 #: src/tty.c:112 src/uname.c:251 src/uniq.c:524 src/uniq.c:541 src/unlink.c:81
-#: src/uptime.c:252 src/users.c:146 src/wc.c:666 src/who.c:827 src/whoami.c:79
+#: src/uptime.c:252 src/users.c:146 src/wc.c:700 src/who.c:827 src/whoami.c:79
 #, fuzzy, c-format
 msgid "extra operand %s"
 msgstr "ekstra operand `%s'"
 
-#: src/base64.c:319 src/cat.c:781
+#: src/base64.c:317 src/cat.c:765
 #, c-format
 msgid "closing standard input"
 msgstr "standaard-toevoer word nou toegemaak"
 
 #. This is a proper name. See the gettext manual, section Names.
 #: src/basename.c:29 src/chgrp.c:37 src/chmod.c:39 src/chown.c:36
-#: src/comm.c:38 src/cp.c:57 src/csplit.c:43 src/cut.c:45 src/date.c:39
-#: src/dd.c:45 src/df.c:43 src/dirname.c:32 src/du.c:54 src/env.c:33
-#: src/expand.c:49 src/fold.c:36 src/groups.c:35 src/head.c:46 src/id.c:41
-#: src/install.c:50 src/ln.c:42 src/ls.c:126 src/mkdir.c:38 src/mkfifo.c:35
+#: src/comm.c:38 src/cp.c:57 src/csplit.c:44 src/cut.c:45 src/date.c:39
+#: src/dd.c:46 src/df.c:43 src/dirname.c:32 src/du.c:54 src/env.c:33
+#: src/expand.c:49 src/fold.c:35 src/groups.c:35 src/head.c:47 src/id.c:41
+#: src/install.c:50 src/ln.c:42 src/ls.c:127 src/mkdir.c:38 src/mkfifo.c:35
 #: src/mknod.c:36 src/mv.c:42 src/nice.c:39 src/nl.c:41 src/paste.c:53
 #: src/pathchk.c:33 src/pinky.c:37 src/printenv.c:44 src/printf.c:63
-#: src/rm.c:42 src/rmdir.c:38 src/stty.c:66 src/sum.c:38 src/tac.c:59
-#: src/tail.c:70 src/tee.c:36 src/touch.c:44 src/tty.c:43 src/uname.c:60
-#: src/unexpand.c:50 src/uniq.c:42 src/uptime.c:46 src/users.c:36 src/wc.c:51
+#: src/rm.c:42 src/rmdir.c:38 src/stty.c:67 src/sum.c:38 src/tac.c:59
+#: src/tail.c:72 src/tee.c:37 src/touch.c:44 src/tty.c:43 src/uname.c:60
+#: src/unexpand.c:50 src/uniq.c:42 src/uptime.c:46 src/users.c:36 src/wc.c:52
 #: src/who.c:49 src/yes.c:32
 msgid "David MacKenzie"
 msgstr ""
@@ -1023,39 +1027,45 @@ msgid ""
 msgstr ""
 
 #: src/basename.c:169 src/chcon.c:535 src/chgrp.c:277 src/chmod.c:529
-#: src/chown.c:279 src/chroot.c:268 src/comm.c:427 src/csplit.c:1399
-#: src/dirname.c:116 src/expr.c:318 src/join.c:1158 src/link.c:77
-#: src/mkdir.c:262 src/mkfifo.c:129 src/mknod.c:170 src/nohup.c:111
+#: src/chown.c:279 src/chroot.c:277 src/comm.c:431 src/csplit.c:1397
+#: src/dirname.c:116 src/expr.c:318 src/join.c:1164 src/link.c:77
+#: src/mkdir.c:251 src/mkfifo.c:129 src/mknod.c:170 src/nohup.c:111
 #: src/pathchk.c:148 src/printf.c:674 src/readlink.c:145 src/realpath.c:236
-#: src/rm.c:321 src/rmdir.c:223 src/seq.c:542 src/sleep.c:119 src/stat.c:1561
+#: src/rm.c:321 src/rmdir.c:223 src/seq.c:588 src/sleep.c:119 src/stat.c:1564
 #: src/stdbuf.c:370 src/tr.c:1782 src/unlink.c:75
 #, fuzzy, c-format
 msgid "missing operand"
 msgstr "lêerparameter ontbreek"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/cat.c:48 src/cp.c:56 src/df.c:42 src/du.c:53 src/factor.c:110
+#: src/cat.c:48 src/cp.c:56 src/df.c:42 src/du.c:53 src/factor.c:111
 #: src/split.c:48
 msgid "Torbjorn Granlund"
 msgstr ""
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/cat.c:49 src/comm.c:37 src/ls.c:125 src/rm.c:43 src/split.c:49
-#: src/tee.c:35 src/uniq.c:41
+#: src/cat.c:49 src/comm.c:37 src/ls.c:126 src/rm.c:43 src/split.c:49
+#: src/tee.c:36 src/uniq.c:41
 msgid "Richard M. Stallman"
 msgstr ""
 
-#: src/cat.c:88 src/df.c:1383 src/expand.c:103 src/fold.c:66 src/head.c:105
-#: src/ls.c:4780 src/nl.c:175 src/paste.c:435 src/pr.c:2752 src/sum.c:58
-#: src/tac.c:133 src/tail.c:258 src/tee.c:62 src/unexpand.c:113
+#: src/cat.c:88 src/df.c:1404 src/expand.c:103 src/fold.c:65 src/head.c:106
+#: src/ls.c:4774 src/nl.c:175 src/paste.c:435 src/pr.c:2722 src/rm.c:135
+#: src/sum.c:58 src/tac.c:133 src/tail.c:253 src/tee.c:86 src/unexpand.c:113
 #, c-format
 msgid "Usage: %s [OPTION]... [FILE]...\n"
 msgstr "Gebruik so:  %s [OPSIE]... [LÊER]...\n"
 
 #: src/cat.c:92
 #, fuzzy
+msgid "Concatenate FILE(s) to standard output.\n"
+msgstr ""
+"Druk die geselekteerde dele van reëls uit elke LÊER na standaardafvoer.\n"
+"\n"
+
+#: src/cat.c:98
+#, fuzzy
 msgid ""
-"Concatenate FILE(s), or standard input, to standard output.\n"
 "\n"
 "  -A, --show-all           equivalent to -vET\n"
 "  -b, --number-nonblank    number nonempty output lines, overrides -n\n"
@@ -1073,7 +1083,7 @@ msgstr ""
 "  -n, --number             nommer al die afvoerreëls\n"
 "  -s, --squeeze-blank      nooit meer as een leë reël word gewys nie\n"
 
-#: src/cat.c:102
+#: src/cat.c:107
 msgid ""
 "  -t                       equivalent to -vT\n"
 "  -T, --show-tabs          display TAB characters as ^I\n"
@@ -1086,7 +1096,7 @@ msgstr ""
 "  -v, --show-nonprinting   gebruik ^ and M- notasie, behalwe vir LFD and "
 "TAB\n"
 
-#: src/cat.c:114
+#: src/cat.c:115
 #, c-format
 msgid ""
 "\n"
@@ -1095,17 +1105,18 @@ msgid ""
 "  %s        Copy standard input to standard output.\n"
 msgstr ""
 
-#: src/cat.c:326
+#: src/cat.c:327
 #, fuzzy, c-format
 msgid "cannot do ioctl on %s"
 msgstr "kan nie ioctl uitvoer op `%s' nie"
 
-#: src/cat.c:637 src/dd.c:2256 src/sort.c:411 src/tee.c:165 src/yes.c:86
+#: src/cat.c:638 src/dd.c:2372 src/sort.c:411 src/tee.c:212 src/yes.c:111
+#: src/yes.c:123 src/yes.c:130
 #, c-format
 msgid "standard output"
 msgstr "standaard-afvoer"
 
-#: src/cat.c:716
+#: src/cat.c:700
 #, c-format
 msgid "%s: input file is output file"
 msgstr "%s: Die toevoerlêernaam is 'n afvoerlêer."
@@ -1117,10 +1128,10 @@ msgstr ""
 
 #. This is a proper name. See the gettext manual, section Names.
 #: src/chcon.c:37 src/chgrp.c:38 src/chmod.c:40 src/chown.c:37 src/cp.c:58
-#: src/cut.c:46 src/dirname.c:33 src/du.c:56 src/head.c:47 src/hostid.c:33
-#: src/hostname.c:33 src/mktemp.c:35 src/mv.c:43 src/nohup.c:37 src/od.c:37
-#: src/pathchk.c:34 src/pwd.c:31 src/rm.c:44 src/sleep.c:34 src/sync.c:31
-#: src/tail.c:72 src/tr.c:37 src/true.c:33
+#: src/cut.c:46 src/dirname.c:33 src/du.c:56 src/head.c:48 src/hostid.c:33
+#: src/hostname.c:33 src/mktemp.c:35 src/mv.c:43 src/nohup.c:37 src/od.c:38
+#: src/pathchk.c:34 src/pwd.c:31 src/rm.c:44 src/sleep.c:34 src/sync.c:33
+#: src/tail.c:74 src/tr.c:37 src/true.c:33
 msgid "Jim Meyering"
 msgstr ""
 
@@ -1134,8 +1145,8 @@ msgstr "kon nie attribute van %s verkry nie"
 msgid "failed to set %s security context component to %s"
 msgstr ""
 
-#: src/chcon.c:156 src/chcon.c:546 src/copy.c:805 src/runcon.c:221
-#: src/stat.c:730
+#: src/chcon.c:156 src/chcon.c:546 src/copy.c:907 src/runcon.c:221
+#: src/stat.c:733
 #, fuzzy, c-format
 msgid "failed to get security context of %s"
 msgstr "kon nie attribute van %s verkry nie"
@@ -1150,13 +1161,13 @@ msgstr ""
 msgid "failed to change context of %s to %s"
 msgstr "groep kon nie eienaarskap van %s na %s verander nie\n"
 
-#: src/chcon.c:255 src/chmod.c:218 src/chown-core.c:325 src/copy.c:606
-#: src/du.c:472 src/ls.c:3036
+#: src/chcon.c:255 src/chmod.c:218 src/chown-core.c:325 src/copy.c:708
+#: src/du.c:493 src/ls.c:3029
 #, c-format
 msgid "cannot access %s"
 msgstr "kan nie toegang verkry na %s nie"
 
-#: src/chcon.c:265 src/chmod.c:231 src/chown-core.c:338 src/du.c:452
+#: src/chcon.c:265 src/chmod.c:231 src/chown-core.c:338 src/du.c:473
 #, c-format
 msgid "cannot read directory %s"
 msgstr "kan nie gids %s lees nie"
@@ -1172,7 +1183,7 @@ msgstr "toegangsregte van %s word verander"
 msgid "fts_read failed"
 msgstr "fts_read het misluk"
 
-#: src/chcon.c:337 src/chmod.c:360 src/chown-core.c:551 src/du.c:654
+#: src/chcon.c:337 src/chmod.c:360 src/chown-core.c:551 src/du.c:675
 #: src/remove.c:581 src/selinux.c:334
 #, fuzzy, c-format
 msgid "fts_close failed"
@@ -1263,7 +1274,7 @@ msgid "-R -h requires -P"
 msgstr ""
 
 #: src/chcon.c:537 src/chgrp.c:279 src/chmod.c:531 src/chown.c:281
-#: src/comm.c:429 src/csplit.c:1401 src/join.c:1160 src/link.c:79
+#: src/comm.c:433 src/csplit.c:1399 src/join.c:1166 src/link.c:79
 #: src/mknod.c:172 src/tr.c:1785
 #, fuzzy, c-format
 msgid "missing operand after %s"
@@ -1280,9 +1291,8 @@ msgid "conflicting security context specifiers given"
 msgstr ""
 
 #: src/chcon.c:575 src/chgrp.c:287 src/chgrp.c:305 src/chmod.c:539
-#: src/chmod.c:558 src/chown.c:289 src/chown.c:318 src/chroot.c:168
-#: src/chroot.c:173 src/cp.c:438 src/cp.c:498 src/mv.c:98 src/pwd.c:276
-#: src/rm.c:331 src/touch.c:347
+#: src/chmod.c:558 src/chown.c:289 src/chown.c:318 src/cp.c:438 src/cp.c:498
+#: src/mv.c:98 src/pwd.c:276 src/rm.c:331 src/touch.c:347
 #, c-format
 msgid "failed to get attributes of %s"
 msgstr "kon nie attribute van %s verkry nie"
@@ -1542,17 +1552,17 @@ msgstr ""
 msgid "Roland McGrath"
 msgstr ""
 
-#: src/chroot.c:135 src/install.c:583
+#: src/chroot.c:137 src/install.c:583
 #, c-format
 msgid "invalid group %s"
 msgstr "ongeldige groep  %s"
 
-#: src/chroot.c:150
+#: src/chroot.c:152
 #, fuzzy, c-format
 msgid "invalid group list %s"
 msgstr "ongeldige groep  %s"
 
-#: src/chroot.c:186
+#: src/chroot.c:185
 #, fuzzy, c-format
 msgid ""
 "Usage: %s [OPTION] NEWROOT [COMMAND [ARG]...]\n"
@@ -1561,7 +1571,7 @@ msgstr ""
 "Gebruik so: %s NUWEBEGINPUNT [BEVEL...]\n"
 "  of:  %s OPSIE\n"
 
-#: src/chroot.c:191
+#: src/chroot.c:190
 msgid ""
 "Run COMMAND with root directory set to NEWROOT.\n"
 "\n"
@@ -1569,13 +1579,20 @@ msgstr ""
 "Loop BEVEL met wortelgids gestel volgens NUWEBEGINPUNT.\n"
 "\n"
 
-#: src/chroot.c:196
-msgid ""
-"  --userspec=USER:GROUP  specify user and group (ID or name) to use\n"
-"  --groups=G_LIST        specify supplementary groups as g1,g2,..,gN\n"
+#: src/chroot.c:195
+msgid "  --groups=G_LIST        specify supplementary groups as g1,g2,..,gN\n"
 msgstr ""
 
-#: src/chroot.c:203
+#: src/chroot.c:198
+msgid "  --userspec=USER:GROUP  specify user and group (ID or name) to use\n"
+msgstr ""
+
+#: src/chroot.c:201
+#, c-format
+msgid "  --skip-chdir           do not change working directory to %s\n"
+msgstr ""
+
+#: src/chroot.c:207
 #, fuzzy
 msgid ""
 "\n"
@@ -1584,42 +1601,47 @@ msgstr ""
 "\n"
 "As geen bevel gegee is nie, loop ``${SHELL} -i'' (verstek: /bin/sh).\n"
 
-#: src/chroot.c:311
+#: src/chroot.c:286
+#, c-format
+msgid "option --skip-chdir only permitted if NEWROOT is old %s"
+msgstr ""
+
+#: src/chroot.c:329
 #, c-format
 msgid "cannot change root directory to %s"
 msgstr "kan nie wortelgids verander na %s toe nie"
 
-#: src/chroot.c:315
+#: src/chroot.c:333
 #, c-format
 msgid "cannot chdir to root directory"
 msgstr "kan nie chdir uitvoer na wortelgids toe nie"
 
-#: src/chroot.c:358
+#: src/chroot.c:375
 #, c-format
 msgid "no group specified for unknown uid: %d"
 msgstr ""
 
-#: src/chroot.c:383
+#: src/chroot.c:400
 #, fuzzy, c-format
 msgid "failed to get supplemental groups"
 msgstr "kan nie aanvullende groeplys verkry nie"
 
-#: src/chroot.c:395
+#: src/chroot.c:412
 #, fuzzy, c-format
-msgid "failed to %s supplemental groups"
-msgstr "kan nie die aanvullende groep stel nie"
+msgid "failed to set supplemental groups"
+msgstr "kan nie aanvullende groeplys verkry nie"
 
-#: src/chroot.c:402
+#: src/chroot.c:418
 #, fuzzy, c-format
 msgid "failed to set group-ID"
 msgstr "kan nie groep-ID na %ld verander nie"
 
-#: src/chroot.c:405
+#: src/chroot.c:421
 #, fuzzy, c-format
 msgid "failed to set user-ID"
 msgstr "kon nie %s oopmaak nie"
 
-#: src/chroot.c:412 src/nohup.c:236 src/stdbuf.c:392 src/timeout.c:457
+#: src/chroot.c:427 src/nohup.c:230 src/stdbuf.c:391 src/timeout.c:457
 #, fuzzy, c-format
 msgid "failed to run command %s"
 msgstr "kan nie bevel %s uitvoer nie"
@@ -1660,7 +1682,16 @@ msgstr "Gebruik so: %s [OPSIE]... LÊER1 LÊER2 \n"
 msgid "Compare sorted files FILE1 and FILE2 line by line.\n"
 msgstr "Vergelyk gesorteerde lêers LÊER1 en LÊER2 reël-vir-reël.\n"
 
-#: src/comm.c:110
+#: src/comm.c:110 src/join.c:200
+#, fuzzy
+msgid ""
+"\n"
+"When FILE1 or FILE2 (not both) is -, read standard input.\n"
+msgstr ""
+"\n"
+"Met geen LÊER, of wanneer die LÊER - is, lees standaardtoevoer.\n"
+
+#: src/comm.c:114
 msgid ""
 "\n"
 "With no options, produce three-column output.  Column one contains\n"
@@ -1668,7 +1699,7 @@ msgid ""
 "and column three contains lines common to both files.\n"
 msgstr ""
 
-#: src/comm.c:116
+#: src/comm.c:120
 msgid ""
 "\n"
 "  -1              suppress column 1 (lines unique to FILE1)\n"
@@ -1676,7 +1707,7 @@ msgid ""
 "  -3              suppress column 3 (lines that appear in both files)\n"
 msgstr ""
 
-#: src/comm.c:122
+#: src/comm.c:126
 msgid ""
 "\n"
 "  --check-order     check that the input is correctly sorted, even\n"
@@ -1684,17 +1715,17 @@ msgid ""
 "  --nocheck-order   do not check that the input is correctly sorted\n"
 msgstr ""
 
-#: src/comm.c:128
+#: src/comm.c:132
 msgid "  --output-delimiter=STR  separate columns with STR\n"
 msgstr ""
 
-#: src/comm.c:133
+#: src/comm.c:137
 msgid ""
 "\n"
 "Note, comparisons honor the rules specified by 'LC_COLLATE'.\n"
 msgstr ""
 
-#: src/comm.c:137
+#: src/comm.c:141
 #, c-format
 msgid ""
 "\n"
@@ -1703,314 +1734,328 @@ msgid ""
 "  %s -3 file1 file2  Print lines in file1 not in file2, and vice versa.\n"
 msgstr ""
 
-#: src/comm.c:222
+#: src/comm.c:226
 #, c-format
 msgid "file %d is not in sorted order"
 msgstr ""
 
-#: src/comm.c:407
+#: src/comm.c:411
 #, fuzzy, c-format
 msgid "multiple delimiters specified"
 msgstr "veelvuldige afvoerlêers is gespesifiseer"
 
-#: src/comm.c:411
+#: src/comm.c:415
 #, c-format
 msgid "empty %s not allowed"
 msgstr ""
 
-#: src/copy.c:178 src/dd.c:1698 src/dd.c:2022 src/du.c:1106 src/head.c:148
-#: src/head.c:271 src/head.c:349 src/head.c:553 src/head.c:630 src/head.c:699
-#: src/head.c:748 src/head.c:771 src/tail.c:415 src/tail.c:503 src/tail.c:552
-#: src/tail.c:645 src/tail.c:773 src/tail.c:821 src/tail.c:858 src/tail.c:1840
-#: src/tail.c:1870 src/uniq.c:464
-#, c-format
-msgid "error reading %s"
-msgstr "fout met die les van %s"
-
-#: src/copy.c:205 src/copy.c:356 src/copy.c:367
+#: src/copy.c:181 src/copy.c:452
 #, c-format
 msgid "cannot lseek %s"
 msgstr "kan nie lseek op %s doen nie"
 
-#: src/copy.c:216 src/dd.c:2086 src/dd.c:2149 src/head.c:176 src/tail.c:390
+#: src/copy.c:191 src/copy.c:554
+#, fuzzy, c-format
+msgid "error deallocating %s"
+msgstr "fout met die les van %s"
+
+#: src/copy.c:229 src/dd.c:1801 src/dd.c:2138 src/du.c:1127 src/head.c:149
+#: src/head.c:300 src/head.c:382 src/head.c:578 src/head.c:660 src/head.c:729
+#: src/head.c:779 src/head.c:802 src/tail.c:410 src/tail.c:498 src/tail.c:547
+#: src/tail.c:640 src/tail.c:768 src/tail.c:816 src/tail.c:853 src/tail.c:1898
+#: src/tail.c:1928 src/uniq.c:464
+#, c-format
+msgid "error reading %s"
+msgstr "fout met die les van %s"
+
+#: src/copy.c:272 src/dd.c:2202 src/dd.c:2265 src/head.c:177 src/tail.c:385
 #, c-format
 msgid "error writing %s"
 msgstr "fout met die skryf na %s"
 
-#: src/copy.c:323
+#: src/copy.c:302
+#, fuzzy, c-format
+msgid "overflow reading %s"
+msgstr "fout met die les van %s"
+
+#: src/copy.c:419
 #, fuzzy, c-format
 msgid "%s: failed to get extents info"
 msgstr "kon nie attribute van %s verkry nie"
 
-#: src/copy.c:383
+#: src/copy.c:478
 #, fuzzy, c-format
 msgid "%s: write failed"
 msgstr "'write' het gefaal"
 
-#: src/copy.c:452 src/copy.c:1189
+#: src/copy.c:547 src/copy.c:1295
 #, fuzzy, c-format
 msgid "failed to extend %s"
 msgstr "kon nie %s oopmaak nie"
 
-#: src/copy.c:687
+#: src/copy.c:789
 #, fuzzy, c-format
 msgid "clearing permissions for %s"
 msgstr "toegangsregte vir %s word gestel"
 
-#: src/copy.c:722 src/copy.c:2600 src/cp.c:336
+#: src/copy.c:824 src/copy.c:2693 src/cp.c:336
 #, c-format
 msgid "failed to preserve ownership for %s"
 msgstr "eienaarskap van %s kon nie behou word nie"
 
-#: src/copy.c:748
+#: src/copy.c:850
 #, c-format
 msgid "failed to lookup file %s"
 msgstr "kon nie lêer %s opspoor nie"
 
-#: src/copy.c:753
+#: src/copy.c:855
 #, c-format
 msgid "failed to preserve authorship for %s"
 msgstr "outeurskap van %s kon nie behou word nie"
 
-#: src/copy.c:790 src/cp.c:1201 src/install.c:948 src/mkdir.c:279
+#: src/copy.c:892 src/cp.c:1201 src/install.c:948 src/mkdir.c:268
 #: src/mkfifo.c:143 src/mknod.c:199
 #, fuzzy, c-format
 msgid "failed to set default file creation context to %s"
 msgstr "kon nie attribute van %s verkry nie"
 
-#: src/copy.c:820
+#: src/copy.c:922
 #, fuzzy, c-format
 msgid "failed to set default file creation context for %s"
 msgstr "kon nie attribute van %s verkry nie"
 
-#: src/copy.c:846
+#: src/copy.c:948
 #, fuzzy, c-format
 msgid "failed to set the security context of %s"
 msgstr "kon nie attribute van %s verkry nie"
 
-#: src/copy.c:919 src/csplit.c:653 src/du.c:992 src/fmt.c:451 src/head.c:855
-#: src/sort.c:4584 src/split.c:1392 src/tail.c:1814 src/wc.c:678
+#: src/copy.c:1021 src/csplit.c:654 src/du.c:1013 src/fmt.c:440 src/head.c:882
+#: src/sort.c:4583 src/split.c:1485 src/tail.c:1872 src/wc.c:712
 #, c-format
 msgid "cannot open %s for reading"
 msgstr "kan nie %s oopmaak om te lees nie"
 
-#: src/copy.c:925 src/copy.c:1078 src/dd.c:1623 src/dd.c:2161 src/dd.c:2300
-#: src/head.c:811 src/tail.c:1650 src/tail.c:1716 src/truncate.c:140
+#: src/copy.c:1027 src/copy.c:1180 src/dd.c:1726 src/dd.c:2277 src/dd.c:2416
+#: src/head.c:840 src/tail.c:1718 src/tail.c:1774 src/truncate.c:113
 #, c-format
 msgid "cannot fstat %s"
 msgstr "kan nie fstat op %s uitvoer nie"
 
-#: src/copy.c:935
+#: src/copy.c:1037
 #, c-format
 msgid "skipping file %s, as it was replaced while being copied"
 msgstr "lêer %s word oorgeslaan, want dit is vervang tydens kopieëring"
 
-#: src/copy.c:975 src/copy.c:1695 src/copy.c:1911 src/copy.c:2068 src/ln.c:330
+#: src/copy.c:1077 src/copy.c:1784 src/copy.c:2148 src/ln.c:330
 #: src/remove.c:263 src/remove.c:280 src/remove.c:406 src/remove.c:432
 #, c-format
 msgid "cannot remove %s"
 msgstr "kan nie %s verwyder nie"
 
-#: src/copy.c:980 src/copy.c:1699 src/copy.c:1906 src/copy.c:2073
-#: src/remove.c:376
+#: src/copy.c:1082 src/copy.c:1788 src/copy.c:2153 src/remove.c:376
 #, c-format
 msgid "removed %s\n"
 msgstr "%s is verwyder.\n"
 
-#: src/copy.c:1032
+#: src/copy.c:1134
 #, c-format
 msgid "not writing through dangling symlink %s"
 msgstr ""
 
-#: src/copy.c:1070
+#: src/copy.c:1172
 #, c-format
 msgid "cannot create regular file %s"
 msgstr "kan nie 'n gewone lêer %s skep nie"
 
-#: src/copy.c:1091
+#: src/copy.c:1193
 #, fuzzy, c-format
 msgid "failed to clone %s from %s"
 msgstr "kon nie %s oopmaak nie"
 
-#: src/copy.c:1204 src/copy.c:2674
+#: src/copy.c:1310 src/copy.c:2767
 #, c-format
 msgid "preserving times for %s"
 msgstr "lêertye van %s word behou"
 
-#: src/copy.c:1281 src/copy.c:1287 src/head.c:863 src/touch.c:172
-#: src/truncate.c:417
+#: src/copy.c:1387 src/copy.c:1393 src/head.c:890 src/sync.c:161
+#: src/touch.c:172 src/truncate.c:391
 #, fuzzy, c-format
 msgid "failed to close %s"
 msgstr "kon nie %s oopmaak nie"
 
-#: src/copy.c:1580
+#: src/copy.c:1669
 #, fuzzy, c-format
 msgid "%s: replace %s, overriding mode %04lo (%s)? "
 msgstr "%s: oorskryf %s, moet modus %04lo ter syde gestel word? "
 
-#: src/copy.c:1581
+#: src/copy.c:1670
 #, c-format
 msgid "%s: unwritable %s (mode %04lo, %s); try anyway? "
 msgstr ""
 
-#: src/copy.c:1588
+#: src/copy.c:1677
 #, c-format
 msgid "%s: overwrite %s? "
 msgstr "%s: oorskryf %s?"
 
-#: src/copy.c:1658
+#: src/copy.c:1747
 #, c-format
 msgid " (backup: %s)"
 msgstr "(rugsteun: %s)"
 
-#: src/copy.c:1668
+#: src/copy.c:1757
 #, c-format
 msgid "failed to restore the default file creation context"
 msgstr ""
 
-#: src/copy.c:1706
+#: src/copy.c:1795
 #, c-format
 msgid "cannot create hard link %s to %s"
 msgstr "kon nie vaste skakel %s na %s skep nie"
 
-#: src/copy.c:1769 src/copy.c:1823 src/copy.c:2388 src/copy.c:2738
+#: src/copy.c:1858 src/copy.c:1912 src/copy.c:2481 src/copy.c:2831
 #: src/find-mount-point.c:84 src/install.c:687 src/realpath.c:145
-#: src/stat.c:1301 src/truncate.c:363
+#: src/stat.c:1304 src/truncate.c:337
 #, c-format
 msgid "cannot stat %s"
 msgstr "kan nie stat %s uitvoer nie"
 
-#: src/copy.c:1777
+#: src/copy.c:1866
 #, c-format
 msgid "omitting directory %s"
 msgstr "lêergids %s word oorgeslaan"
 
-#: src/copy.c:1791
+#: src/copy.c:1880
 #, c-format
 msgid "warning: source file %s specified more than once"
 msgstr "waarskuwing: bronlêer %s is meer as een keer gespesifiseer"
 
-#: src/copy.c:1841 src/ln.c:262
+#: src/copy.c:1929 src/ln.c:262
 #, c-format
 msgid "%s and %s are the same file"
 msgstr "%s en %s is dieselfde lêer"
 
-#: src/copy.c:1939
+#: src/copy.c:2019
 #, c-format
 msgid "cannot overwrite non-directory %s with directory %s"
 msgstr "die nie-gids %s kan nie met gids %s oorskryf word nie"
 
-#: src/copy.c:1957 src/ln.c:230
+#: src/copy.c:2037 src/ln.c:230
 #, c-format
 msgid "will not overwrite just-created %s with %s"
 msgstr "die pasgeskepte %s sal nie met %s oorskryf word nie"
 
-#: src/copy.c:1975
+#: src/copy.c:2055
 #, c-format
 msgid "cannot overwrite directory %s with non-directory"
 msgstr "gids %s kan nie oorskryf word met 'n nie-gids nie"
 
-#: src/copy.c:1989
+#: src/copy.c:2069
 #, c-format
 msgid "cannot move directory onto non-directory: %s -> %s"
 msgstr "'n gids kan nie geskuif word bo-oor 'n nie-gids nie: %s -> %s"
 
-#: src/copy.c:2019
+#: src/copy.c:2099
 #, c-format
 msgid "backing up %s would destroy source;  %s not moved"
 msgstr ""
 "om rugsteun te neem van %s sal die bron vernietig; %s is nie verskuif nie"
 
-#: src/copy.c:2020
+#: src/copy.c:2100
 #, c-format
 msgid "backing up %s would destroy source;  %s not copied"
 msgstr ""
 "om rugsteun te neem van %s sal die bron vernietig; %s is nie gekopieer nie"
 
-#: src/copy.c:2043 src/ln.c:292
+#: src/copy.c:2123 src/ln.c:292
 #, c-format
 msgid "cannot backup %s"
 msgstr "kan nie rugsteun neem van %s nie"
 
-#: src/copy.c:2107
+#: src/copy.c:2187
 #, fuzzy, c-format
 msgid "will not copy %s through just-created symlink %s"
 msgstr "die pasgeskepte %s sal nie met %s oorskryf word nie"
 
-#: src/copy.c:2184
+#: src/copy.c:2264
 #, c-format
 msgid "cannot copy a directory, %s, into itself, %s"
 msgstr "kan nie 'n lêergids, %s, na homself kopieer nie, %s"
 
-#: src/copy.c:2201
+#: src/copy.c:2272
+#, fuzzy, c-format
+msgid "warning: source directory %s specified more than once"
+msgstr "waarskuwing: bronlêer %s is meer as een keer gespesifiseer"
+
+#: src/copy.c:2294
 #, c-format
 msgid "will not create hard link %s to directory %s"
 msgstr "sal nie 'n vaste skakel %s skep na gids %s nie"
 
-#: src/copy.c:2258
+#: src/copy.c:2351
 #, c-format
 msgid "cannot move %s to a subdirectory of itself, %s"
 msgstr "kan nie 'n gids %s skuif na 'n kind van dieselfde gids nie, %s"
 
-#: src/copy.c:2301
+#: src/copy.c:2394
 #, c-format
 msgid "cannot move %s to %s"
 msgstr "kan nie %s skuif na %s nie"
 
-#: src/copy.c:2317
+#: src/copy.c:2410
 #, c-format
 msgid "inter-device move failed: %s to %s; unable to remove target"
 msgstr ""
 "inter-toestel verskuiwing het misluk: %s na %s; die bestemming kan nie "
 "verwyder word nie"
 
-#: src/copy.c:2357
+#: src/copy.c:2450
 #, c-format
 msgid "cannot copy cyclic symbolic link %s"
 msgstr "sikliese simboliese skakel %s kan nie gekopieer word nie"
 
-#: src/copy.c:2477
+#: src/copy.c:2570
 #, c-format
 msgid "%s: can make relative symbolic links only in current directory"
 msgstr ""
 "%s: relatiewe simboliese skakels kan slegs in die huidige gids gemaak word"
 
-#: src/copy.c:2484
+#: src/copy.c:2577
 #, c-format
 msgid "cannot create symbolic link %s to %s"
 msgstr "kon nie simboliese skakel %s na %s skep nie"
 
-#: src/copy.c:2536 src/mkfifo.c:169
+#: src/copy.c:2629 src/mkfifo.c:169
 #, c-format
 msgid "cannot create fifo %s"
 msgstr "kan nie die pyp %s skep nie"
 
-#: src/copy.c:2545
+#: src/copy.c:2638
 #, c-format
 msgid "cannot create special file %s"
 msgstr "kan nie spesiale lêer %s skep nie"
 
-#: src/copy.c:2556 src/ls.c:3245 src/stat.c:983
+#: src/copy.c:2649 src/ls.c:3238 src/stat.c:986
 #, c-format
 msgid "cannot read symbolic link %s"
 msgstr "simboliese skakel %s kan nie gelees word nie"
 
-#: src/copy.c:2583
+#: src/copy.c:2676
 #, c-format
 msgid "cannot create symbolic link %s"
 msgstr "kon nie simboliese skakel %s skep nie"
 
-#: src/copy.c:2615
+#: src/copy.c:2708
 #, c-format
 msgid "%s has unknown file type"
 msgstr "%s het 'n onbekende lêertipe"
 
-#: src/copy.c:2778 src/ln.c:375
+#: src/copy.c:2871 src/ln.c:375
 #, c-format
 msgid "cannot un-backup %s"
 msgstr "kan nie %s ont-rugsteun nie"
 
-#: src/copy.c:2782
+#: src/copy.c:2875
 #, c-format
 msgid "%s -> %s (unbackup)\n"
 msgstr "%s -> %s (ont-rugsteun)\n"
@@ -2020,25 +2065,25 @@ msgstr "%s -> %s (ont-rugsteun)\n"
 msgid "Alex Deymo"
 msgstr ""
 
-#: src/coreutils.c:67
+#: src/coreutils.c:64
 #, c-format
 msgid "Usage: %s --coreutils-prog=PROGRAM_NAME [PARAMETERS]... \n"
 msgstr ""
 
-#: src/coreutils.c:70
+#: src/coreutils.c:67
 msgid ""
 "Execute the PROGRAM_NAME built-in program with the given PARAMETERS.\n"
 "\n"
 msgstr ""
 
-#: src/coreutils.c:86
+#: src/coreutils.c:85
 #, c-format
 msgid ""
 "\n"
 "Use: '%s --coreutils-prog=PROGRAM_NAME --help' for individual program help.\n"
 msgstr ""
 
-#: src/coreutils.c:178 src/coreutils.c:202
+#: src/coreutils.c:177 src/coreutils.c:201
 #, fuzzy, c-format
 msgid "unknown program %s"
 msgstr "onbekende gebruiker-id: %s"
@@ -2225,8 +2270,8 @@ msgstr "%s bestaan maar is nie 'n lêergids nie"
 msgid "failed to access %s"
 msgstr "kon nie %s oopmaak nie"
 
-#: src/cp.c:597 src/install.c:957 src/ln.c:563 src/mv.c:448 src/shred.c:1297
-#: src/touch.c:429 src/truncate.c:354
+#: src/cp.c:597 src/install.c:957 src/ln.c:563 src/mv.c:448 src/shred.c:1284
+#: src/touch.c:429 src/truncate.c:328
 #, fuzzy, c-format
 msgid "missing file operand"
 msgstr "lêerparameter ontbreek"
@@ -2298,138 +2343,147 @@ msgid "cannot preserve extended attributes, cp is built without xattr support"
 msgstr ""
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/csplit.c:42 src/dd.c:46
+#: src/csplit.c:43 src/dd.c:47
 msgid "Stuart Kemp"
 msgstr ""
 
-#: src/csplit.c:543
+#: src/csplit.c:544
 #, c-format
 msgid "input disappeared"
 msgstr "toevoer het verdwyn"
 
-#: src/csplit.c:673 src/csplit.c:684
+#: src/csplit.c:674 src/csplit.c:685
 #, c-format
 msgid "%s: line number out of range"
 msgstr "%s: reëlnommer buite bereik"
 
-#: src/csplit.c:713
+#: src/csplit.c:714
 #, fuzzy, c-format
 msgid "%s: %s: line number out of range"
 msgstr "%s: `%s': reëlnommer buite bereik"
 
-#: src/csplit.c:716 src/csplit.c:772
+#: src/csplit.c:717 src/csplit.c:773
 #, c-format
 msgid " on repetition %s\n"
 msgstr "by herhaling %s\n"
 
-#: src/csplit.c:766
+#: src/csplit.c:767
 #, fuzzy, c-format
 msgid "%s: %s: match not found"
 msgstr "%s: `%s': patroon nie gevind nie"
 
-#: src/csplit.c:833 src/csplit.c:873 src/nl.c:351 src/tac.c:273
+#: src/csplit.c:834 src/csplit.c:874 src/nl.c:351 src/tac.c:287
 #, c-format
 msgid "error in regular expression search"
 msgstr "fout in soektog met reëlmatige uitdrukking"
 
-#: src/csplit.c:1006
+#: src/csplit.c:1007
 #, fuzzy, c-format
 msgid "write error for %s"
 msgstr "skryffout vir `%s'"
 
-#: src/csplit.c:1082
+#: src/csplit.c:1083
 #, c-format
 msgid "%s: integer expected after delimiter"
 msgstr "%s: 'n heelgetal is verwag na die skeisimbool"
 
-#: src/csplit.c:1098
+#: src/csplit.c:1099
 #, fuzzy, c-format
 msgid "%s: '}' is required in repeat count"
 msgstr "%s: `}' word benodig in herhaaltelling"
 
-#: src/csplit.c:1108
+#: src/csplit.c:1109
 #, fuzzy, c-format
 msgid "%s}: integer required between '{' and '}'"
 msgstr "%s}: tussen `{' en `}' moet 'n heelgetal wees"
 
-#: src/csplit.c:1135
+#: src/csplit.c:1136
 #, fuzzy, c-format
 msgid "%s: closing delimiter '%c' missing"
 msgstr "%s: afsluit-skeisimbool `%c' ontbreek"
 
-#: src/csplit.c:1152
+#: src/csplit.c:1153
 #, c-format
 msgid "%s: invalid regular expression: %s"
 msgstr "%s: ongeldige reëlmatige uitdrukking: %s"
 
-#: src/csplit.c:1185
+#: src/csplit.c:1186
 #, c-format
 msgid "%s: invalid pattern"
 msgstr "%s: ongeldige patroon"
 
-#: src/csplit.c:1188
+#: src/csplit.c:1189
 #, c-format
 msgid "%s: line number must be greater than zero"
 msgstr "%s: reëlnommer moet groter as nul wees"
 
-#: src/csplit.c:1194
+#: src/csplit.c:1195
 #, fuzzy, c-format
 msgid "line number %s is smaller than preceding line number, %s"
 msgstr "reëlnommer `%s' is kleiner as die voorafgaande reëlnommer, %s"
 
-#: src/csplit.c:1200
+#: src/csplit.c:1201
 #, fuzzy, c-format
 msgid "warning: line number %s is the same as preceding line number"
 msgstr ""
 "waarskuwing: reëlnommer `%s' is dieselfde as die voorafgaande reëlnommer"
 
-#: src/csplit.c:1278
+#: src/csplit.c:1279
 #, c-format
 msgid "missing conversion specifier in suffix"
 msgstr "ontbrekende omskakelingaanduider in suffiks"
 
-#: src/csplit.c:1284
+#: src/csplit.c:1285
 #, c-format
 msgid "invalid conversion specifier in suffix: %c"
 msgstr "ontbrekende omskakelingaanduider in suffiks: %c"
 
-#: src/csplit.c:1287
+#: src/csplit.c:1288
 #, c-format
 msgid "invalid conversion specifier in suffix: \\%.3o"
 msgstr "ontbrekende omskakelingaanduider in suffiks: \\%.3o"
 
-#: src/csplit.c:1292
+#: src/csplit.c:1293
 #, fuzzy, c-format
 msgid "invalid flags in conversion specification: %%%c%c"
 msgstr "ontbrekende omskakelingaanduider in suffiks: %c"
 
-#: src/csplit.c:1309
+#: src/csplit.c:1310
 #, c-format
 msgid "too many %% conversion specifications in suffix"
 msgstr "te veel %% omskakelingaanduiders in suffiks"
 
-#: src/csplit.c:1323
+#: src/csplit.c:1324
 #, c-format
 msgid "missing %% conversion specification in suffix"
 msgstr "ontbrekende %% omskakelingaanduider in suffiks"
 
-#: src/csplit.c:1371
-#, c-format
-msgid "%s: invalid number"
-msgstr "%s: ongeldige getal"
+#: src/csplit.c:1370 src/dd.c:1436 src/nproc.c:105 src/tail.c:2020
+#, fuzzy
+msgid "invalid number"
+msgstr "ongeldige nommer %s"
 
-#: src/csplit.c:1479
+#: src/csplit.c:1477
 #, c-format
 msgid "Usage: %s [OPTION]... FILE PATTERN...\n"
 msgstr "Gebruik so: %s [OPSIE]... LÊER PATROON...\n"
 
-#: src/csplit.c:1483
+#: src/csplit.c:1481
 msgid ""
 "Output pieces of FILE separated by PATTERN(s) to files 'xx00', 'xx01', ...,\n"
 "and output byte counts of each piece to standard output.\n"
 msgstr ""
 
-#: src/csplit.c:1490
+#: src/csplit.c:1485
+#, fuzzy
+msgid ""
+"\n"
+"Read standard input if FILE is -\n"
+msgstr ""
+"\n"
+"Lees vanaf standaardtoevoer as LÊER gegee is as -.  Elke PATROON kan wees:\n"
+
+#: src/csplit.c:1492
 #, c-format
 msgid ""
 "  -b, --suffix-format=FORMAT  use sprintf FORMAT instead of %02d\n"
@@ -2437,28 +2491,21 @@ msgid ""
 "  -k, --keep-files           do not remove output files on errors\n"
 msgstr ""
 
-#: src/csplit.c:1495
+#: src/csplit.c:1497
 msgid "  -m, --suppress-matched     suppress the lines matching PATTERN\n"
 msgstr ""
 
-#: src/csplit.c:1498
+#: src/csplit.c:1500
 msgid ""
 "  -n, --digits=DIGITS        use specified number of digits instead of 2\n"
 "  -s, --quiet, --silent      do not print counts of output file sizes\n"
 "  -z, --elide-empty-files    remove empty output files\n"
 msgstr ""
 
-#: src/csplit.c:1505
+#: src/csplit.c:1507
 msgid ""
 "\n"
-"Read standard input if FILE is -.  Each PATTERN may be:\n"
-msgstr ""
-"\n"
-"Lees vanaf standaardtoevoer as LÊER gegee is as -.  Elke PATROON kan wees:\n"
-
-#: src/csplit.c:1509
-msgid ""
-"\n"
+"Each PATTERN may be:\n"
 "  INTEGER            copy up to but not including specified line number\n"
 "  /REGEXP/[OFFSET]   copy up to but not including a matching line\n"
 "  %REGEXP%[OFFSET]   skip to, but not including a matching line\n"
@@ -2485,14 +2532,14 @@ msgstr ""
 "Druk die geselekteerde dele van reëls uit elke LÊER na standaardafvoer.\n"
 "\n"
 
-#: src/cut.c:182
+#: src/cut.c:183
 msgid ""
 "  -b, --bytes=LIST        select only these bytes\n"
 "  -c, --characters=LIST   select only these characters\n"
 "  -d, --delimiter=DELIM   use DELIM instead of TAB for field delimiter\n"
 msgstr ""
 
-#: src/cut.c:187
+#: src/cut.c:188
 msgid ""
 "  -f, --fields=LIST       select only these fields;  also print any line\n"
 "                            that contains no delimiter character, unless\n"
@@ -2500,7 +2547,7 @@ msgid ""
 "  -n                      (ignored)\n"
 msgstr ""
 
-#: src/cut.c:193
+#: src/cut.c:194
 #, fuzzy
 msgid ""
 "      --complement        complement the set of selected bytes, characters\n"
@@ -2509,14 +2556,14 @@ msgstr ""
 "      --verbose           druk 'n diagnostiese boodskap op standaardafvoer\n"
 "                            direk voor elke afvoerlêer oopgemaak word\n"
 
-#: src/cut.c:197
+#: src/cut.c:198
 msgid ""
 "  -s, --only-delimited    do not print lines not containing delimiters\n"
 "      --output-delimiter=STRING  use STRING as the output delimiter\n"
 "                            the default is to use the input delimiter\n"
 msgstr ""
 
-#: src/cut.c:204
+#: src/cut.c:205
 msgid ""
 "\n"
 "Use one, and only one of -b, -c or -f.  Each LIST is made up of one\n"
@@ -2524,7 +2571,7 @@ msgid ""
 "in the same order that it is read, and is written exactly once.\n"
 msgstr ""
 
-#: src/cut.c:210
+#: src/cut.c:211
 msgid ""
 "Each range is one of:\n"
 "\n"
@@ -2532,59 +2579,57 @@ msgid ""
 "  N-    from N'th byte, character or field, to end of line\n"
 "  N-M   from N'th to M'th (included) byte, character or field\n"
 "  -M    from first to M'th (included) byte, character or field\n"
-"\n"
-"With no FILE, or when FILE is -, read standard input.\n"
 msgstr ""
 
-#: src/cut.c:300 src/cut.c:394
+#: src/cut.c:299 src/cut.c:393
 #, fuzzy
 msgid "invalid byte, character or field list"
 msgstr "ongeldige greep of veldlys"
 
-#: src/cut.c:305 src/cut.c:345
+#: src/cut.c:304 src/cut.c:344
 msgid "fields and positions are numbered from 1"
 msgstr ""
 
-#: src/cut.c:320
+#: src/cut.c:319
 #, fuzzy
 msgid "invalid range with no endpoint: -"
 msgstr "ongeldige opsie %s vir wydte"
 
-#: src/cut.c:334
-#, fuzzy
+#: src/cut.c:333 src/numfmt.c:1417
+#, fuzzy, c-format
 msgid "invalid decreasing range"
 msgstr "ongeldige modusstring: %s"
 
-#: src/cut.c:383
+#: src/cut.c:382
 #, c-format
 msgid "byte offset %s is too large"
 msgstr "greepuitwyking %s is te groot"
 
-#: src/cut.c:386
+#: src/cut.c:385
 #, c-format
 msgid "field number %s is too large"
 msgstr "veldnommer %s is te groot"
 
-#: src/cut.c:735 src/cut.c:743
+#: src/cut.c:734 src/cut.c:742
 msgid "only one type of list may be specified"
 msgstr "slegs een soort lys mag gespesifiseer word"
 
-#: src/cut.c:752 src/numfmt.c:1425
+#: src/cut.c:751 src/numfmt.c:1655
 #, c-format
 msgid "the delimiter must be a single character"
 msgstr "die verdeler mag net een karakter wees"
 
-#: src/cut.c:787
+#: src/cut.c:786
 msgid "you must specify a list of bytes, characters, or fields"
 msgstr "u moet 'n lys van grepe, karakters of velde spesifiseer"
 
-#: src/cut.c:790
+#: src/cut.c:789
 msgid "an input delimiter may be specified only when operating on fields"
 msgstr ""
 "slegs wanneer velde gebruik word mag 'n toevoer-skeikarakter gespesifiseer "
 "word"
 
-#: src/cut.c:794
+#: src/cut.c:793
 msgid ""
 "suppressing non-delimited lines makes sense\n"
 "\tonly when operating on fields"
@@ -2592,11 +2637,11 @@ msgstr ""
 "om nie-afgeslote reëls te onderdruk, maak slegs sin\n"
 "\twanneer dit op velde van toepassing gemaak word"
 
-#: src/cut.c:800
+#: src/cut.c:799
 msgid "missing list of fields"
 msgstr "ontbrekende lys van velde"
 
-#: src/cut.c:802
+#: src/cut.c:801
 msgid "missing list of positions"
 msgstr "ontbrekende lys van posisies"
 
@@ -2613,33 +2658,47 @@ msgstr ""
 
 #: src/date.c:134
 msgid ""
-"  -d, --date=STRING         display time described by STRING, not 'now'\n"
-"  -f, --file=DATEFILE       like --date once for each line of DATEFILE\n"
-"  -I[TIMESPEC], --iso-8601[=TIMESPEC]  output date/time in ISO 8601 format.\n"
-"                            TIMESPEC='date' for date only (the default),\n"
-"                            'hours', 'minutes', 'seconds', or 'ns' for date\n"
-"                            and time to the indicated precision.\n"
+"  -d, --date=STRING          display time described by STRING, not 'now'\n"
+"  -f, --file=DATEFILE        like --date; once for each line of DATEFILE\n"
 msgstr ""
 
-#: src/date.c:142
+#: src/date.c:138
 msgid ""
-"  -r, --reference=FILE      display the last modification time of FILE\n"
-"  -R, --rfc-2822            output date and time in RFC 2822 format.\n"
-"                            Example: Mon, 07 Aug 2006 12:34:56 -0600\n"
+"  -I[FMT], --iso-8601[=FMT]  output date/time in ISO 8601 format.\n"
+"                               FMT='date' for date only (the default),\n"
+"                               'hours', 'minutes', 'seconds', or 'ns'\n"
+"                               for date and time to the indicated "
+"precision.\n"
+"                               Example: 2006-08-14T02:34:56-0600\n"
 msgstr ""
 
-#: src/date.c:147
+#: src/date.c:145
 msgid ""
-"      --rfc-3339=TIMESPEC   output date and time in RFC 3339 format.\n"
-"                            TIMESPEC='date', 'seconds', or 'ns' for\n"
-"                            date and time to the indicated precision.\n"
-"                            Date and time components are separated by\n"
-"                            a single space: 2006-08-07 12:34:56-06:00\n"
-"  -s, --set=STRING          set time described by STRING\n"
-"  -u, --utc, --universal    print or set Coordinated Universal Time (UTC)\n"
+"  -R, --rfc-2822             output date and time in RFC 2822 format.\n"
+"                               Example: Mon, 14 Aug 2006 02:34:56 -0600\n"
+msgstr ""
+
+#: src/date.c:149
+msgid ""
+"      --rfc-3339=FMT         output date/time in RFC 3339 format.\n"
+"                               FMT='date', 'seconds', or 'ns'\n"
+"                               for date and time to the indicated "
+"precision.\n"
+"                               Example: 2006-08-14 02:34:56-06:00\n"
+msgstr ""
+
+#: src/date.c:155
+msgid ""
+"  -r, --reference=FILE       display the last modification time of FILE\n"
 msgstr ""
 
 #: src/date.c:158
+msgid ""
+"  -s, --set=STRING           set time described by STRING\n"
+"  -u, --utc, --universal     print or set Coordinated Universal Time (UTC)\n"
+msgstr ""
+
+#: src/date.c:164
 msgid ""
 "\n"
 "FORMAT controls the output.  Interpreted sequences are:\n"
@@ -2648,7 +2707,7 @@ msgid ""
 "  %a   locale's abbreviated weekday name (e.g., Sun)\n"
 msgstr ""
 
-#: src/date.c:165
+#: src/date.c:171
 msgid ""
 "  %A   locale's full weekday name (e.g., Sunday)\n"
 "  %b   locale's abbreviated month name (e.g., Jan)\n"
@@ -2656,7 +2715,7 @@ msgid ""
 "  %c   locale's date and time (e.g., Thu Mar  3 23:05:25 2005)\n"
 msgstr ""
 
-#: src/date.c:171
+#: src/date.c:177
 msgid ""
 "  %C   century; like %Y, except omit last two digits (e.g., 20)\n"
 "  %d   day of month (e.g., 01)\n"
@@ -2664,14 +2723,14 @@ msgid ""
 "  %e   day of month, space padded; same as %_d\n"
 msgstr ""
 
-#: src/date.c:177
+#: src/date.c:183
 msgid ""
 "  %F   full date; same as %Y-%m-%d\n"
 "  %g   last two digits of year of ISO week number (see %G)\n"
 "  %G   year of ISO week number (see %V); normally useful only with %V\n"
 msgstr ""
 
-#: src/date.c:182
+#: src/date.c:188
 msgid ""
 "  %h   same as %b\n"
 "  %H   hour (00..23)\n"
@@ -2679,7 +2738,7 @@ msgid ""
 "  %j   day of year (001..366)\n"
 msgstr ""
 
-#: src/date.c:188
+#: src/date.c:194
 msgid ""
 "  %k   hour, space padded ( 0..23); same as %_H\n"
 "  %l   hour, space padded ( 1..12); same as %_I\n"
@@ -2687,7 +2746,7 @@ msgid ""
 "  %M   minute (00..59)\n"
 msgstr ""
 
-#: src/date.c:194
+#: src/date.c:200
 msgid ""
 "  %n   a newline\n"
 "  %N   nanoseconds (000000000..999999999)\n"
@@ -2698,7 +2757,7 @@ msgid ""
 "  %s   seconds since 1970-01-01 00:00:00 UTC\n"
 msgstr ""
 
-#: src/date.c:203
+#: src/date.c:209
 msgid ""
 "  %S   second (00..60)\n"
 "  %t   a tab\n"
@@ -2706,7 +2765,7 @@ msgid ""
 "  %u   day of week (1..7); 1 is Monday\n"
 msgstr ""
 
-#: src/date.c:209
+#: src/date.c:215
 msgid ""
 "  %U   week number of year, with Sunday as first day of week (00..53)\n"
 "  %V   ISO week number, with Monday as first day of week (01..53)\n"
@@ -2714,7 +2773,7 @@ msgid ""
 "  %W   week number of year, with Monday as first day of week (00..53)\n"
 msgstr ""
 
-#: src/date.c:215
+#: src/date.c:221
 msgid ""
 "  %x   locale's date representation (e.g., 12/31/99)\n"
 "  %X   locale's time representation (e.g., 23:13:48)\n"
@@ -2722,7 +2781,7 @@ msgid ""
 "  %Y   year\n"
 msgstr ""
 
-#: src/date.c:221
+#: src/date.c:227
 msgid ""
 "  %z   +hhmm numeric time zone (e.g., -0400)\n"
 "  %:z  +hh:mm numeric time zone (e.g., -04:00)\n"
@@ -2734,7 +2793,7 @@ msgid ""
 "By default, date pads numeric fields with zeroes.\n"
 msgstr ""
 
-#: src/date.c:230
+#: src/date.c:236
 msgid ""
 "The following optional flags may follow '%':\n"
 "\n"
@@ -2745,7 +2804,7 @@ msgid ""
 "  #  use opposite case if possible\n"
 msgstr ""
 
-#: src/date.c:239
+#: src/date.c:245
 msgid ""
 "\n"
 "After any flags comes an optional field width, as a decimal number;\n"
@@ -2754,7 +2813,7 @@ msgid ""
 "O to use the locale's alternate numeric symbols if available.\n"
 msgstr ""
 
-#: src/date.c:246
+#: src/date.c:252
 msgid ""
 "\n"
 "Examples:\n"
@@ -2768,36 +2827,36 @@ msgid ""
 "  $ date --date='TZ=\"America/Los_Angeles\" 09:00 next Fri'\n"
 msgstr ""
 
-#: src/date.c:279 src/dd.c:2240 src/head.c:846 src/md5sum.c:496
-#: src/md5sum.c:875 src/od.c:910 src/od.c:1973 src/pr.c:1172 src/pr.c:1362
-#: src/pr.c:1484 src/stty.c:855 src/tac.c:562 src/tail.c:339 src/tee.c:126
-#: src/tr.c:1945 src/tsort.c:529 src/wc.c:196
+#: src/date.c:285 src/dd.c:2356 src/head.c:873 src/md5sum.c:499
+#: src/md5sum.c:878 src/od.c:913 src/od.c:1982 src/pr.c:1135 src/pr.c:1332
+#: src/pr.c:1454 src/stty.c:1179 src/tac.c:578 src/tail.c:334 src/tee.c:172
+#: src/tr.c:1945 src/tsort.c:533 src/wc.c:203
 #, c-format
 msgid "standard input"
 msgstr "standaardtoevoer"
 
-#: src/date.c:307 src/date.c:527
+#: src/date.c:313 src/date.c:533
 #, fuzzy, c-format
 msgid "invalid date %s"
 msgstr "ongeldige datum `%s'"
 
-#: src/date.c:418 src/date.c:452
+#: src/date.c:424 src/date.c:458
 #, fuzzy, c-format
 msgid "multiple output formats specified"
 msgstr "veelvuldige afvoerlêers is gespesifiseer"
 
-#: src/date.c:430
+#: src/date.c:436
 #, c-format
 msgid "the options to specify dates for printing are mutually exclusive"
 msgstr "die opsies om drukdatums te spesifiseer is onderling uitsluitend"
 
-#: src/date.c:437
+#: src/date.c:443
 #, c-format
 msgid "the options to print and set the time may not be used together"
 msgstr ""
 "die opsies om die tyd te vertoon en te stel kan nie saam gebruik word nie"
 
-#: src/date.c:458
+#: src/date.c:464
 #, c-format
 msgid ""
 "the argument %s lacks a leading '+';\n"
@@ -2805,23 +2864,23 @@ msgid ""
 "argument must be a format string beginning with '+'"
 msgstr ""
 
-#: src/date.c:535
+#: src/date.c:541
 #, c-format
 msgid "cannot set date"
 msgstr "kon nie die datum stel nie"
 
-#: src/date.c:558 src/du.c:383
+#: src/date.c:564 src/du.c:383
 #, c-format
 msgid "time %s is out of range"
 msgstr "tyd %s is buite bereik"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/dd.c:44 src/factor.c:109 src/rm.c:41 src/tail.c:69 src/touch.c:41
-#: src/wc.c:50
+#: src/dd.c:45 src/factor.c:110 src/rm.c:41 src/tail.c:71 src/touch.c:41
+#: src/wc.c:51
 msgid "Paul Rubin"
 msgstr ""
 
-#: src/dd.c:527
+#: src/dd.c:556
 #, fuzzy, c-format
 msgid ""
 "Usage: %s [OPERAND]...\n"
@@ -2830,7 +2889,7 @@ msgstr ""
 "Gebruik so: %s [GETAL]... \n"
 "   of:  %s OPSIE\n"
 
-#: src/dd.c:532
+#: src/dd.c:561
 msgid ""
 "Copy a file, converting and formatting according to the operands.\n"
 "\n"
@@ -2841,7 +2900,7 @@ msgid ""
 "  ibs=BYTES       read up to BYTES bytes at a time (default: 512)\n"
 msgstr ""
 
-#: src/dd.c:541
+#: src/dd.c:570
 #, fuzzy
 msgid ""
 "  if=FILE         read from FILE instead of stdin\n"
@@ -2851,8 +2910,10 @@ msgid ""
 "  oflag=FLAGS     write as per the comma separated symbol list\n"
 "  seek=N          skip N obs-sized blocks at start of output\n"
 "  skip=N          skip N ibs-sized blocks at start of input\n"
-"  status=WHICH    WHICH info to suppress outputting to stderr;\n"
-"                  'noxfer' suppresses transfer stats, 'none' suppresses all\n"
+"  status=LEVEL    The LEVEL of information to print to stderr;\n"
+"                  'none' suppresses everything but error messages,\n"
+"                  'noxfer' suppresses the final transfer statistics,\n"
+"                  'progress' shows periodic transfer statistics\n"
 msgstr ""
 "  if=LÊER         lees vanaf LÊER in plaas van stdin\n"
 "  obs=GREPE       skryf GREPE(aantal) grepe op 'n slag\n"
@@ -2862,7 +2923,7 @@ msgstr ""
 "  skip=BLOKKE     slaan BLOKKE(aantal) ibs-grootte blokke oor aan die begin "
 "van toevoer\n"
 
-#: src/dd.c:552
+#: src/dd.c:583
 msgid ""
 "\n"
 "N and BYTES may be followed by the following multiplicative suffixes:\n"
@@ -2873,7 +2934,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/dd.c:561
+#: src/dd.c:592
 #, fuzzy
 msgid ""
 "  ascii     from EBCDIC to ASCII\n"
@@ -2901,7 +2962,7 @@ msgstr ""
 "  sync      pad every input block with NULs to ibs-size; when used\n"
 "            with block or unblock, pad with spaces rather than NULs\n"
 
-#: src/dd.c:574
+#: src/dd.c:605
 msgid ""
 "  excl      fail if the output file already exists\n"
 "  nocreat   do not create the output file\n"
@@ -2911,7 +2972,7 @@ msgid ""
 "  fsync     likewise, but also write metadata\n"
 msgstr ""
 
-#: src/dd.c:582
+#: src/dd.c:613
 msgid ""
 "\n"
 "Each FLAG symbol may be:\n"
@@ -2920,124 +2981,104 @@ msgid ""
 "suggested)\n"
 msgstr ""
 
-#: src/dd.c:589
+#: src/dd.c:620
 msgid "  cio       use concurrent I/O for data\n"
 msgstr ""
 
-#: src/dd.c:591
+#: src/dd.c:622
 msgid "  direct    use direct I/O for data\n"
 msgstr ""
 
-#: src/dd.c:593
+#: src/dd.c:624
 #, fuzzy
 msgid "  directory  fail unless a directory\n"
 msgstr "%s: hierdie bestemming is nie 'n lêergids nie"
 
-#: src/dd.c:595
+#: src/dd.c:626
 msgid "  dsync     use synchronized I/O for data\n"
 msgstr ""
 
-#: src/dd.c:597
+#: src/dd.c:628
 msgid "  sync      likewise, but also for metadata\n"
 msgstr ""
 
-#: src/dd.c:598
+#: src/dd.c:629
 msgid "  fullblock  accumulate full blocks of input (iflag only)\n"
 msgstr ""
 
-#: src/dd.c:601
+#: src/dd.c:632
 msgid "  nonblock  use non-blocking I/O\n"
 msgstr ""
 
-#: src/dd.c:603
+#: src/dd.c:634
 msgid "  noatime   do not update access time\n"
 msgstr ""
 
-#: src/dd.c:606
+#: src/dd.c:637
 msgid "  nocache   discard cached data\n"
 msgstr ""
 
-#: src/dd.c:609
+#: src/dd.c:640
 msgid "  noctty    do not assign controlling terminal from file\n"
 msgstr ""
 
-#: src/dd.c:612
+#: src/dd.c:643
 msgid "  nofollow  do not follow symlinks\n"
 msgstr ""
 
-#: src/dd.c:614
+#: src/dd.c:645
 msgid "  nolinks   fail if multiply-linked\n"
 msgstr ""
 
-#: src/dd.c:616
+#: src/dd.c:647
 msgid "  binary    use binary I/O for data\n"
 msgstr ""
 
-#: src/dd.c:618
+#: src/dd.c:649
 msgid "  text      use text I/O for data\n"
 msgstr ""
 
-#: src/dd.c:620
+#: src/dd.c:651
 msgid "  count_bytes  treat 'count=N' as a byte count (iflag only)\n"
 msgstr ""
 
-#: src/dd.c:623
+#: src/dd.c:654
 msgid "  skip_bytes  treat 'skip=N' as a byte count (iflag only)\n"
 msgstr ""
 
-#: src/dd.c:626
+#: src/dd.c:657
 msgid "  seek_bytes  treat 'seek=N' as a byte count (oflag only)\n"
 msgstr ""
 
-#: src/dd.c:631
+#: src/dd.c:661
 #, c-format
 msgid ""
 "\n"
 "Sending a %s signal to a running 'dd' process makes it\n"
 "print I/O statistics to standard error and then resume copying.\n"
 "\n"
-"  $ dd if=/dev/zero of=/dev/null& pid=$!\n"
-"  $ kill -%s $pid; sleep 1; kill $pid\n"
-"  18335302+0 records in\n"
-"  18335302+0 records out\n"
-"  9387674624 bytes (9.4 GB) copied, 34.6279 seconds, 271 MB/s\n"
-"\n"
 "Options are:\n"
 "\n"
 msgstr ""
 
-#: src/dd.c:676
+#: src/dd.c:699
 #, c-format
-msgid "memory exhausted by input buffer of size %zu bytes (%s)"
+msgid "memory exhausted by input buffer of size %<PRIuMAX> bytes (%s)"
 msgstr ""
 
-#: src/dd.c:698
+#: src/dd.c:721
 #, c-format
-msgid "memory exhausted by output buffer of size %zu bytes (%s)"
+msgid "memory exhausted by output buffer of size %<PRIuMAX> bytes (%s)"
 msgstr ""
 
-#: src/dd.c:748
-#, c-format
-msgid ""
-"%<PRIuMAX>+%<PRIuMAX> records in\n"
-"%<PRIuMAX>+%<PRIuMAX> records out\n"
-msgstr ""
-
-#: src/dd.c:754
-#, fuzzy, c-format
-msgid "%<PRIuMAX> truncated record\n"
-msgid_plural "%<PRIuMAX> truncated records\n"
-msgstr[0] "afgekapte rekord"
-msgstr[1] "afgekapte rekord"
-
-#: src/dd.c:766
+#: src/dd.c:774
 #, c-format
 msgid "%<PRIuMAX> byte (%s) copied"
 msgid_plural "%<PRIuMAX> bytes (%s) copied"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/dd.c:785
+#: src/dd.c:794
 msgid "Infinity B"
 msgstr ""
 
@@ -3051,168 +3092,182 @@ msgstr ""
 #. but that was incorrect for languages like Polish.  To fix this
 #. bug we now use SI symbols even though they're a bit more
 #. confusing in English.
-#: src/dd.c:798
+#: src/dd.c:807
 #, c-format
 msgid ", %g s, %s/s\n"
 msgstr ""
 
-#: src/dd.c:877
+#: src/dd.c:809
+#, c-format
+msgid ", %.6f s, %s/s"
+msgstr ""
+
+#: src/dd.c:828
+#, c-format
+msgid ""
+"%<PRIuMAX>+%<PRIuMAX> records in\n"
+"%<PRIuMAX>+%<PRIuMAX> records out\n"
+msgstr ""
+
+#: src/dd.c:834
+#, fuzzy, c-format
+msgid "%<PRIuMAX> truncated record\n"
+msgid_plural "%<PRIuMAX> truncated records\n"
+msgstr[0] "afgekapte rekord"
+msgstr[1] "afgekapte rekord"
+
+#: src/dd.c:920
 #, c-format
 msgid "closing input file %s"
 msgstr "toevoerlêer %s word toegemaak"
 
-#: src/dd.c:884
+#: src/dd.c:927
 #, c-format
 msgid "closing output file %s"
 msgstr "afvoerlêer %s word toegemaak"
 
-#: src/dd.c:1089
+#: src/dd.c:1142
 #, c-format
 msgid "failed to turn off O_DIRECT: %s"
 msgstr ""
 
-#: src/dd.c:1160 src/dd.c:1976
+#: src/dd.c:1213 src/dd.c:2079
 #, c-format
 msgid "writing to %s"
 msgstr "besig om te skryf na %s"
 
-#: src/dd.c:1274 src/dd.c:1328
+#: src/dd.c:1365 src/dd.c:1425
 #, fuzzy, c-format
 msgid "unrecognized operand %s"
 msgstr "onbekende opsie %s"
 
-#: src/dd.c:1285
+#: src/dd.c:1376
 #, fuzzy
 msgid "invalid conversion"
 msgstr "ongeldige omskakeling: %s"
 
-#: src/dd.c:1288 src/dd.c:1364
+#: src/dd.c:1379 src/dd.c:1467
 #, fuzzy
 msgid "invalid input flag"
 msgstr "ongeldige nommer by begin van veld"
 
-#: src/dd.c:1291 src/dd.c:1358 src/dd.c:1370
+#: src/dd.c:1382 src/dd.c:1461 src/dd.c:1473
 #, fuzzy
 msgid "invalid output flag"
 msgstr "ongeldige groep "
 
-#: src/dd.c:1294
+#: src/dd.c:1385
 #, fuzzy
-msgid "invalid status flag"
+msgid "invalid status level"
 msgstr "ongeldige gebruiker %s"
 
-#: src/dd.c:1333 src/truncate.c:310
-#, c-format
-msgid "invalid number %s"
-msgstr "ongeldige nommer %s"
-
-#: src/dd.c:1415
+#: src/dd.c:1518
 #, c-format
 msgid "cannot combine any two of {ascii,ebcdic,ibm}"
 msgstr ""
 
-#: src/dd.c:1417
+#: src/dd.c:1520
 #, fuzzy, c-format
 msgid "cannot combine block and unblock"
 msgstr "die gebruikernaam en groepnaam mag nie albei ontbreek nie"
 
-#: src/dd.c:1419
+#: src/dd.c:1522
 #, fuzzy, c-format
 msgid "cannot combine lcase and ucase"
 msgstr "die gebruikernaam en groepnaam mag nie albei ontbreek nie"
 
-#: src/dd.c:1421
+#: src/dd.c:1524
 #, c-format
 msgid "cannot combine excl and nocreat"
 msgstr ""
 
-#: src/dd.c:1424
+#: src/dd.c:1527
 #, c-format
 msgid "cannot combine direct and nocache"
 msgstr ""
 
-#: src/dd.c:1582
+#: src/dd.c:1685
 #, c-format
 msgid ""
 "warning: working around lseek kernel bug for file (%s)\n"
 "  of mt_type=0x%0lx -- see <sys/mtio.h> for the list of types"
 msgstr ""
 
-#: src/dd.c:1670
+#: src/dd.c:1773
 #, fuzzy, c-format
 msgid "%s: cannot skip"
 msgstr "%s: kan nie teruggaan nie"
 
-#: src/dd.c:1672 src/dd.c:1703 src/dd.c:1764
+#: src/dd.c:1775 src/dd.c:1806 src/dd.c:1867
 #, fuzzy, c-format
 msgid "%s: cannot seek"
 msgstr "%s: kan nie verwyder nie"
 
-#: src/dd.c:1744
+#: src/dd.c:1847
 #, c-format
 msgid "offset overflow while reading file %s"
 msgstr ""
 
-#: src/dd.c:1756
+#: src/dd.c:1859
 #, c-format
 msgid "warning: invalid file offset after failed read"
 msgstr ""
 
-#: src/dd.c:1760
+#: src/dd.c:1863
 #, c-format
 msgid "cannot work around kernel bug after all"
 msgstr ""
 
-#: src/dd.c:1903
+#: src/dd.c:2006
 #, fuzzy, c-format
 msgid "setting flags for %s"
 msgstr "die tyd van %s is verstel"
 
-#: src/dd.c:1957
+#: src/dd.c:2060
 #, fuzzy, c-format
 msgid "%s: cannot skip to specified offset"
 msgstr "%s: kan nie skuif tot by uitwyking %s nie"
 
-#: src/dd.c:2172
+#: src/dd.c:2288
 #, c-format
 msgid "failed to truncate to %<PRIdMAX> bytes in output file %s"
 msgstr ""
 
-#: src/dd.c:2185
+#: src/dd.c:2301
 #, c-format
 msgid "fdatasync failed for %s"
 msgstr ""
 
-#: src/dd.c:2195
+#: src/dd.c:2311
 #, fuzzy, c-format
 msgid "fsync failed for %s"
 msgstr "kon nie %s oopmaak nie"
 
-#: src/dd.c:2246 src/dd.c:2275 src/nohup.c:163 src/nohup.c:165
+#: src/dd.c:2362 src/dd.c:2391 src/nohup.c:161 src/nohup.c:163
 #, c-format
 msgid "failed to open %s"
 msgstr "kon nie %s oopmaak nie"
 
-#: src/dd.c:2285
+#: src/dd.c:2401
 #, c-format
 msgid ""
 "offset too large: cannot truncate to a length of seek=%<PRIuMAX> (%lu-byte) "
 "blocks"
 msgstr ""
 
-#: src/dd.c:2306
+#: src/dd.c:2422
 #, c-format
 msgid "failed to truncate to %<PRIuMAX> bytes in output file %s"
 msgstr ""
 
-#: src/dd.c:2322 src/dd.c:2328
+#: src/dd.c:2438 src/dd.c:2444
 #, fuzzy, c-format
 msgid "failed to discard cache for: %s"
 msgstr "lêertye van %s kon nie behou word nie"
 
 #. This is a proper name. See the gettext manual, section Names.
 #: src/df.c:44 src/du.c:55 src/expr.c:152 src/kill.c:33 src/pathchk.c:32
-#: src/shuf.c:40 src/sleep.c:35 src/sort.c:67
+#: src/shuf.c:41 src/sleep.c:35 src/sort.c:67
 msgid "Paul Eggert"
 msgstr ""
 
@@ -3293,12 +3348,12 @@ msgstr ""
 msgid "%s-%s"
 msgstr ""
 
-#: src/df.c:1215
+#: src/df.c:1236
 #, c-format
 msgid "cannot access %s: over-mounted by another device"
 msgstr ""
 
-#: src/df.c:1384
+#: src/df.c:1405
 msgid ""
 "Show information about the file system on which each FILE resides,\n"
 "or all file systems by default.\n"
@@ -3306,18 +3361,18 @@ msgstr ""
 
 #. TRANSLATORS: The thousands and decimal separators are best
 #. adjusted to an appropriate default for your locale.
-#: src/df.c:1393
+#: src/df.c:1414
 msgid ""
-"  -a, --all             include dummy file systems\n"
+"  -a, --all             include pseudo, duplicate, inaccessible file "
+"systems\n"
 "  -B, --block-size=SIZE  scale sizes by SIZE before printing them; e.g.,\n"
 "                           '-BM' prints sizes in units of 1,048,576 bytes;\n"
 "                           see SIZE format below\n"
-"      --total           produce a grand total\n"
 "  -h, --human-readable  print sizes in powers of 1024 (e.g., 1023M)\n"
 "  -H, --si              print sizes in powers of 1000 (e.g., 1.1G)\n"
 msgstr ""
 
-#: src/df.c:1402
+#: src/df.c:1422
 msgid ""
 "  -i, --inodes          list inode information instead of block usage\n"
 "  -k                    like --block-size=1K\n"
@@ -3326,20 +3381,33 @@ msgid ""
 "(default)\n"
 msgstr ""
 
-#: src/df.c:1409
+#: src/df.c:1429
 msgid ""
 "      --output[=FIELD_LIST]  use the output format defined by FIELD_LIST,\n"
 "                               or print all fields if FIELD_LIST is "
 "omitted.\n"
 "  -P, --portability     use the POSIX output format\n"
 "      --sync            invoke sync before getting usage info\n"
+msgstr ""
+
+#: src/df.c:1435
+#, fuzzy
+msgid ""
+"      --total           elide all entries insignificant to available space,\n"
+"                          and produce a grand total\n"
+msgstr ""
+"      --verbose           druk 'n diagnostiese boodskap op standaardafvoer\n"
+"                            direk voor elke afvoerlêer oopgemaak word\n"
+
+#: src/df.c:1439
+msgid ""
 "  -t, --type=TYPE       limit listing to file systems of type TYPE\n"
 "  -T, --print-type      print file system type\n"
 "  -x, --exclude-type=TYPE   limit listing to file systems not of type TYPE\n"
 "  -v                    (ignored)\n"
 msgstr ""
 
-#: src/df.c:1423
+#: src/df.c:1449
 msgid ""
 "\n"
 "FIELD_LIST is a comma-separated list of columns to be included.  Valid\n"
@@ -3347,26 +3415,26 @@ msgid ""
 "'size', 'used', 'avail', 'pcent', 'file' and 'target' (see info page).\n"
 msgstr ""
 
-#: src/df.c:1460
+#: src/df.c:1486
 #, fuzzy, c-format
 msgid "options %s and %s are mutually exclusive"
 msgstr "die --string en --check opsies is onderling uitsluitend"
 
-#: src/df.c:1610
+#: src/df.c:1636
 #, c-format
 msgid "file system type %s both selected and excluded"
 msgstr ""
 
-#: src/df.c:1668
+#: src/df.c:1694
 msgid "Warning: "
 msgstr "Waarskuwing: "
 
-#: src/df.c:1670 src/stat.c:842
+#: src/df.c:1696 src/stat.c:845
 #, fuzzy
 msgid "cannot read table of mounted file systems"
 msgstr "%s kan nie die tabel met gemonteerde lêerstelsels lees nie"
 
-#: src/df.c:1707
+#: src/df.c:1735
 #, c-format
 msgid "no file systems processed"
 msgstr ""
@@ -3459,7 +3527,7 @@ msgid ""
 "  %s stdio.h            -> \".\"\n"
 msgstr ""
 
-#: src/du.c:281 src/sort.c:422 src/wc.c:112
+#: src/du.c:281 src/sort.c:422 src/wc.c:113
 #, fuzzy, c-format
 msgid ""
 "Usage: %s [OPTION]... [FILE]...\n"
@@ -3469,7 +3537,8 @@ msgstr ""
 "  of:  %s [OPSIE]... --reference=RLÊER LÊER...\n"
 
 #: src/du.c:285
-msgid "Summarize disk usage of each FILE, recursively for directories.\n"
+msgid ""
+"Summarize disk usage of the set of FILEs, recursively for directories.\n"
 msgstr ""
 
 #: src/du.c:291
@@ -3553,62 +3622,56 @@ msgstr ""
 msgid "Infinity"
 msgstr ""
 
-#: src/du.c:636
+#: src/du.c:657
 #, fuzzy, c-format
 msgid "fts_read failed: %s"
 msgstr "fts_read het misluk"
 
-#: src/du.c:787
+#: src/du.c:808
 #, c-format
 msgid "invalid maximum depth %s"
 msgstr "ongeldige maksimum diepte %s"
 
-#: src/du.c:816
+#: src/du.c:837
 #, fuzzy, c-format
 msgid "invalid --threshold argument '-0'"
 msgstr "ongeldige heelgetalparameter `%s'"
 
-#: src/du.c:898
+#: src/du.c:919
 #, c-format
 msgid "cannot both summarize and show all entries"
 msgstr ""
 
-#: src/du.c:905
+#: src/du.c:926
 #, c-format
 msgid "warning: summarizing is the same as using --max-depth=0"
 msgstr ""
 
-#: src/du.c:911
+#: src/du.c:932
 #, c-format
 msgid "warning: summarizing conflicts with --max-depth=%lu"
 msgstr ""
 
-#: src/du.c:922
+#: src/du.c:943
 #, c-format
 msgid "warning: options --apparent-size and -b are ineffective with --inodes"
 msgstr ""
 
-#: src/du.c:987 src/sort.c:4574 src/wc.c:668
+#: src/du.c:1008 src/sort.c:4573 src/wc.c:702
 msgid "file operands cannot be combined with --files0-from"
 msgstr ""
 
-#: src/du.c:1047 src/md5sum.c:606 src/od.c:950 src/tac.c:238 src/tac.c:349
-#: src/tac.c:505 src/tac.c:585 src/wc.c:733
-#, c-format
-msgid "%s: read error"
-msgstr "%s: leesfout"
-
-#: src/du.c:1061 src/sort.c:4603 src/wc.c:747
+#: src/du.c:1082 src/sort.c:4602 src/wc.c:781
 #, c-format
 msgid "when reading file names from stdin, no file name of %s allowed"
 msgstr ""
 
-#: src/du.c:1078 src/du.c:1086 src/wc.c:760 src/wc.c:768
+#: src/du.c:1099 src/du.c:1107 src/wc.c:794 src/wc.c:802
 #, fuzzy
 msgid "invalid zero-length file name"
 msgstr "ongeldige groepnaam %s"
 
-#: src/du.c:1109 src/ls.c:2692 src/wc.c:791
+#: src/du.c:1130 src/ls.c:2689 src/wc.c:825
 msgid "total"
 msgstr "totaal"
 
@@ -3721,9 +3784,7 @@ msgstr ""
 
 #: src/expand.c:107
 #, fuzzy
-msgid ""
-"Convert tabs in each FILE to spaces, writing to standard output.\n"
-"With no FILE, or when FILE is -, read standard input.\n"
+msgid "Convert tabs in each FILE to spaces, writing to standard output.\n"
 msgstr ""
 "Verander spasies in elke LÊER na keepkarakters, terwyl dit op "
 "standaardafvoer geskryf word.\n"
@@ -3767,7 +3828,7 @@ msgid "input line is too long"
 msgstr "groepnaam te lank"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/expr.c:150 src/ln.c:41 src/mv.c:41 src/tee.c:34
+#: src/expr.c:150 src/ln.c:41 src/mv.c:41 src/tee.c:35
 msgid "Mike Parker"
 msgstr ""
 
@@ -3875,12 +3936,12 @@ msgstr "fout in soektog met reëlmatige uitdrukking"
 msgid "non-integer argument"
 msgstr "nie-numeriese parameter"
 
-#: src/expr.c:785 src/truncate.c:314
+#: src/expr.c:785 src/truncate.c:288
 #, c-format
 msgid "division by zero"
 msgstr "deling deur nul"
 
-#: src/expr.c:879 src/sort.c:2077
+#: src/expr.c:879 src/sort.c:2076
 #, fuzzy, c-format
 msgid "set LC_ALL='C' to work around the problem"
 msgstr "Stel  LC_ALL='C' om die probleem te systap"
@@ -3891,31 +3952,31 @@ msgid "the strings compared were %s and %s"
 msgstr "Die stringe wat vergelyk is, is %s en %s."
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/factor.c:111
+#: src/factor.c:112
 msgid "Niels Moller"
 msgstr ""
 
-#: src/factor.c:1267 src/factor.c:1367 src/factor.c:1443
+#: src/factor.c:1268 src/factor.c:1368 src/factor.c:1444
 #, c-format
 msgid "Lucas prime test failure.  This should not happen"
 msgstr ""
 
-#: src/factor.c:2076
+#: src/factor.c:2078
 #, c-format
 msgid "squfof queue overflow"
 msgstr ""
 
-#: src/factor.c:2403
+#: src/factor.c:2492
 #, fuzzy, c-format
 msgid "%s is not a valid positive integer"
 msgstr "`%s' is nie 'n geldige positiewe heelgetal nie"
 
-#: src/factor.c:2426 src/od.c:1687 src/od.c:1768
+#: src/factor.c:2516 src/od.c:1695 src/od.c:1776
 #, c-format
 msgid "%s is too large"
 msgstr "%s is te groot"
 
-#: src/factor.c:2438
+#: src/factor.c:2528
 #, c-format
 msgid ""
 "Usage: %s [NUMBER]...\n"
@@ -3924,7 +3985,7 @@ msgstr ""
 "Gebruik so: %s [GETAL]... \n"
 "   of:  %s OPSIE\n"
 
-#: src/factor.c:2443
+#: src/factor.c:2533
 msgid ""
 "Print the prime factors of each specified integer NUMBER.  If none\n"
 "are specified on the command line, read them from standard input.\n"
@@ -3963,7 +4024,7 @@ msgid ""
 "The option -WIDTH is an abbreviated form of --width=DIGITS.\n"
 msgstr ""
 
-#: src/fmt.c:278
+#: src/fmt.c:279
 msgid ""
 "  -c, --crown-margin        preserve indentation of first two lines\n"
 "  -p, --prefix=STRING       reformat only lines beginning with STRING,\n"
@@ -3971,7 +4032,7 @@ msgid ""
 "  -s, --split-only          split long lines, but do not refill\n"
 msgstr ""
 
-#: src/fmt.c:287
+#: src/fmt.c:288
 #, no-c-format
 msgid ""
 "  -t, --tagged-paragraph    indentation of first line different from second\n"
@@ -3980,34 +4041,35 @@ msgid ""
 "  -g, --goal=WIDTH          goal width (default of 93% of width)\n"
 msgstr ""
 
-#: src/fmt.c:359
+#: src/fmt.c:356
 #, c-format
 msgid ""
 "invalid option -- %c; -WIDTH is recognized only when it is the first\n"
 "option; use -w N instead"
 msgstr ""
 
-#: src/fmt.c:405 src/fmt.c:416
-#, c-format
-msgid "invalid width: %s"
+#: src/fmt.c:400 src/fmt.c:407
+#, fuzzy
+msgid "invalid width"
 msgstr "ongeldige wydte: %s"
 
-#: src/fold.c:70
-msgid ""
-"Wrap input lines in each FILE (standard input by default), writing to\n"
-"standard output.\n"
+#: src/fold.c:69
+#, fuzzy
+msgid "Wrap input lines in each FILE, writing to standard output.\n"
 msgstr ""
+"Druk die geselekteerde dele van reëls uit elke LÊER na standaardafvoer.\n"
+"\n"
 
-#: src/fold.c:77
+#: src/fold.c:76
 msgid ""
 "  -b, --bytes         count bytes rather than columns\n"
 "  -s, --spaces        break at spaces\n"
 "  -w, --width=WIDTH   use WIDTH columns instead of 80\n"
 msgstr ""
 
-#: src/fold.c:288 src/pr.c:832
-#, fuzzy, c-format
-msgid "invalid number of columns: %s"
+#: src/fold.c:283 src/pr.c:831
+#, fuzzy
+msgid "invalid number of columns"
 msgstr "ongeldige aantal kolomme: `%s'"
 
 #. This is a proper name. See the gettext manual, section Names.
@@ -4074,19 +4136,18 @@ msgstr "kan nie gebruiker-id stel nie"
 msgid "%s: no such user"
 msgstr "%s: gebruiker bestaan nie"
 
-#: src/head.c:109
+#: src/head.c:110
 #, fuzzy
 msgid ""
 "Print the first 10 lines of each FILE to standard output.\n"
 "With more than one FILE, precede each with a header giving the file name.\n"
-"With no FILE, or when FILE is -, read standard input.\n"
 msgstr ""
 "Verander spasies in elke LÊER na keepkarakters, terwyl dit op "
 "standaardafvoer geskryf word.\n"
 "Met geen LÊER, of as LÊER gegee is as -, lees vanaf standaardtoevoer.\n"
 "\n"
 
-#: src/head.c:117
+#: src/head.c:118
 msgid ""
 "  -c, --bytes=[-]K         print the first K bytes of each file;\n"
 "                             with the leading '-', print all but the last\n"
@@ -4096,13 +4157,13 @@ msgid ""
 "                             K lines of each file\n"
 msgstr ""
 
-#: src/head.c:125
+#: src/head.c:126
 msgid ""
 "  -q, --quiet, --silent    never print headers giving file names\n"
 "  -v, --verbose            always print headers giving file names\n"
 msgstr ""
 
-#: src/head.c:131
+#: src/head.c:132
 msgid ""
 "\n"
 "K may have a multiplier suffix:\n"
@@ -4110,48 +4171,36 @@ msgid ""
 "GB 1000*1000*1000, G 1024*1024*1024, and so on for T, P, E, Z, Y.\n"
 msgstr ""
 
-#: src/head.c:151
+#: src/head.c:152
 #, c-format
 msgid "%s: file has shrunk too much"
 msgstr ""
 
-#: src/head.c:237 src/head.c:1052
-#, c-format
-msgid "%s: number of bytes is too large"
-msgstr "%s: aantal grepe is te veel"
-
-#: src/head.c:422 src/tail.c:453
+#: src/head.c:224 src/tail.c:448
 #, c-format
 msgid "%s: cannot seek to offset %s"
 msgstr "%s: kan nie skuif tot by uitwyking %s nie"
 
-#: src/head.c:423 src/tail.c:457
+#: src/head.c:225 src/tail.c:452
 #, c-format
 msgid "%s: cannot seek to relative offset %s"
 msgstr ""
 
-#: src/head.c:886
+#: src/head.c:267
 #, c-format
-msgid "%s: %s is so large that it is not representable"
-msgstr ""
+msgid "%s: number of bytes is too large"
+msgstr "%s: aantal grepe is te veel"
 
-#: src/head.c:887
-msgid "number of lines"
-msgstr "aantal reëls"
-
-#: src/head.c:887
-msgid "number of bytes"
-msgstr "aantal grepe"
-
-#: src/head.c:894 src/tail.c:2005
+#: src/head.c:906 src/split.c:1289 src/split.c:1450 src/tail.c:2061
 msgid "invalid number of lines"
 msgstr "ongeldige aantal reëls"
 
-#: src/head.c:895 src/tail.c:2006
+#: src/head.c:907 src/head.c:1061 src/split.c:1281 src/split.c:1297
+#: src/tail.c:2062
 msgid "invalid number of bytes"
 msgstr "ongeldige aantal grepe"
 
-#: src/head.c:982 src/head.c:1040
+#: src/head.c:991 src/head.c:1049
 #, fuzzy, c-format
 msgid "invalid trailing option -- %c"
 msgstr "ongeldige opsie -- %c"
@@ -4318,7 +4367,7 @@ msgstr "kan nie eienaarskap van %s verander nie"
 msgid "cannot set time stamps for %s"
 msgstr ""
 
-#: src/install.c:531 src/split.c:425 src/timeout.c:442
+#: src/install.c:531 src/split.c:479 src/timeout.c:444
 #, c-format
 msgid "fork system call failed"
 msgstr "fork-stelselroep het gefaal"
@@ -4437,7 +4486,7 @@ msgstr ""
 msgid "target directory not allowed when installing a directory"
 msgstr "%s: hierdie bestemming is nie 'n lêergids nie"
 
-#: src/install.c:989 src/mkdir.c:294 src/stdbuf.c:351
+#: src/install.c:989 src/mkdir.c:283 src/stdbuf.c:351
 #, c-format
 msgid "invalid mode %s"
 msgstr "ongeldige modus %s"
@@ -4472,15 +4521,19 @@ msgstr ""
 #: src/join.c:195
 msgid ""
 "For each pair of input lines with identical join fields, write a line to\n"
-"standard output.  The default join field is the first, delimited\n"
-"by whitespace.  When FILE1 or FILE2 (not both) is -, read standard input.\n"
+"standard output.  The default join field is the first, delimited by "
+"whitespace.\n"
+msgstr ""
+
+#: src/join.c:204
+msgid ""
 "\n"
 "  -a FILENUM        also print unpairable lines from file FILENUM, where\n"
 "                      FILENUM is 1 or 2, corresponding to FILE1 or FILE2\n"
 "  -e EMPTY          replace missing input fields with EMPTY\n"
 msgstr ""
 
-#: src/join.c:204
+#: src/join.c:210
 msgid ""
 "  -i, --ignore-case  ignore differences in case when comparing fields\n"
 "  -j FIELD          equivalent to '-1 FIELD -2 FIELD'\n"
@@ -4488,7 +4541,7 @@ msgid ""
 "  -t CHAR           use CHAR as input and output field separator\n"
 msgstr ""
 
-#: src/join.c:210
+#: src/join.c:216
 msgid ""
 "  -v FILENUM        like -a FILENUM, but suppress joined output lines\n"
 "  -1 FIELD          join on this FIELD of file 1\n"
@@ -4500,14 +4553,14 @@ msgid ""
 "                      print them without trying to pair them\n"
 msgstr ""
 
-#: src/join.c:220 src/shuf.c:81 src/sort.c:506 src/uniq.c:204
+#: src/join.c:226 src/shuf.c:83 src/sort.c:507 src/uniq.c:204
 #, fuzzy
 msgid "  -z, --zero-terminated     line delimiter is NUL, not newline\n"
 msgstr ""
 "  -z, --zero-terminated     beëindig reëls met 'n 0-greep, i.p.v. 'n "
 "nuwereëlkarakter\n"
 
-#: src/join.c:225
+#: src/join.c:231
 msgid ""
 "\n"
 "Unless -t CHAR is given, leading blanks separate fields and are ignored,\n"
@@ -4526,47 +4579,47 @@ msgid ""
 "warning message will be given.\n"
 msgstr ""
 
-#: src/join.c:410
+#: src/join.c:416
 #, c-format
 msgid "%s:%<PRIuMAX>: is not sorted: %.*s"
 msgstr ""
 
-#: src/join.c:847 src/join.c:1045
+#: src/join.c:853 src/join.c:1051
 #, c-format
 msgid "invalid field number: %s"
 msgstr "ongeldige veldnommer: %s"
 
-#: src/join.c:868 src/join.c:877
+#: src/join.c:874 src/join.c:883
 #, fuzzy, c-format
 msgid "invalid field specifier: %s"
 msgstr "ongeldige veld-aanduider: `%s'"
 
-#: src/join.c:884
+#: src/join.c:890
 #, fuzzy, c-format
 msgid "invalid file number in field spec: %s"
 msgstr "ongeldige wydte vir reëlnommer veld: %s"
 
-#: src/join.c:927
+#: src/join.c:933
 #, c-format
 msgid "incompatible join fields %lu, %lu"
 msgstr ""
 
-#: src/join.c:1056
+#: src/join.c:1062
 #, c-format
 msgid "conflicting empty-field replacement strings"
 msgstr ""
 
-#: src/join.c:1108 src/sort.c:4509
+#: src/join.c:1114 src/sort.c:4508
 #, fuzzy, c-format
 msgid "multi-character tab %s"
 msgstr "saamgestelde keepkarakter `%s'"
 
-#: src/join.c:1112 src/sort.c:4514
+#: src/join.c:1118 src/sort.c:4513
 #, c-format
 msgid "incompatible tabs"
 msgstr "onversoenbare keepkarakters"
 
-#: src/join.c:1185
+#: src/join.c:1191
 #, c-format
 msgid "both files cannot be standard input"
 msgstr ""
@@ -4633,17 +4686,17 @@ msgstr ""
 msgid "no process ID specified"
 msgstr "geen proses-id is gespesifiseer"
 
-#: src/libstdbuf.c:109
+#: src/libstdbuf.c:107
 #, c-format
 msgid "failed to allocate a %<PRIuMAX> byte stdio buffer\n"
 msgstr ""
 
-#: src/libstdbuf.c:116
+#: src/libstdbuf.c:114
 #, fuzzy, c-format
 msgid "invalid buffering mode %s for %s\n"
 msgstr "ongeldige parameter %s vir %s"
 
-#: src/libstdbuf.c:124
+#: src/libstdbuf.c:122
 #, c-format
 msgid "could not set buffering of %s to mode %s\n"
 msgstr ""
@@ -4792,7 +4845,7 @@ msgstr "kon nie simboliese skakel %s skep nie"
 msgid "FIXME: unknown"
 msgstr ""
 
-#: src/logname.c:39 src/sync.c:40
+#: src/logname.c:39
 #, c-format
 msgid "Usage: %s [OPTION]\n"
 msgstr "Gebruik so:  %s [OPSIE]\n"
@@ -4805,7 +4858,7 @@ msgstr ""
 "Druk die naam van die huidige gebruiker.\n"
 "\n"
 
-#: src/logname.c:84
+#: src/logname.c:79
 #, c-format
 msgid "no login name"
 msgstr "geen gebruikersnaam"
@@ -4815,7 +4868,7 @@ msgstr "geen gebruikersnaam"
 #. Note %b is handled specially by ls and aligned correctly.
 #. Note also that specifying a width as in %5b is erroneous as strftime
 #. will count bytes rather than characters in multibyte locales.
-#: src/ls.c:734
+#: src/ls.c:737
 msgid "%b %e  %Y"
 msgstr "%b %e  %Y"
 
@@ -4824,101 +4877,101 @@ msgstr "%b %e  %Y"
 #. Note %b is handled specially by ls and aligned correctly.
 #. Note also that specifying a width as in %5b is erroneous as strftime
 #. will count bytes rather than characters in multibyte locales.
-#: src/ls.c:747
+#: src/ls.c:750
 msgid "%b %e %H:%M"
 msgstr "%b %e %H:%M"
 
-#: src/ls.c:1590
-#, c-format
-msgid "ignoring invalid value of environment variable QUOTING_STYLE: %s"
-msgstr ""
-
-#: src/ls.c:1609
+#: src/ls.c:1599
 #, c-format
 msgid "ignoring invalid width in environment variable COLUMNS: %s"
 msgstr ""
 
-#: src/ls.c:1639
+#: src/ls.c:1629
 #, c-format
 msgid "ignoring invalid tab size in environment variable TABSIZE: %s"
 msgstr ""
 
-#: src/ls.c:1760 src/ptx.c:1978
-#, c-format
-msgid "invalid line width: %s"
+#: src/ls.c:1747
+#, fuzzy
+msgid "invalid line width"
 msgstr "ongeldige reëlwydte: %s"
 
-#: src/ls.c:1834
-#, c-format
-msgid "invalid tab size: %s"
+#: src/ls.c:1815
+#, fuzzy
+msgid "invalid tab size"
 msgstr "ongeldige keepgrootte: %s"
 
-#: src/ls.c:2043
+#: src/ls.c:2021
 #, c-format
 msgid "invalid time style format %s"
 msgstr "ongeldige tydformaatstring: %s"
 
-#: src/ls.c:2067
+#: src/ls.c:2045
 #, fuzzy
 msgid "Valid arguments are:\n"
 msgstr "Geldige parameters is soos volg:"
 
-#: src/ls.c:2071
+#: src/ls.c:2049
 msgid "  - +FORMAT (e.g., +%H:%M) for a 'date'-style format\n"
 msgstr ""
 
-#: src/ls.c:2106
+#: src/ls.c:2084
 #, c-format
 msgid "error initializing month strings"
 msgstr ""
 
-#: src/ls.c:2450
+#: src/ls.c:2428
 #, c-format
 msgid "unrecognized prefix: %s"
 msgstr "onbekende voorvoegsel: %s"
 
-#: src/ls.c:2480
+#: src/ls.c:2458
 #, c-format
 msgid "unparsable value for LS_COLORS environment variable"
 msgstr ""
 
-#: src/ls.c:2557 src/pwd.c:164
+#: src/ls.c:2488
+#, c-format
+msgid "ignoring invalid value of environment variable QUOTING_STYLE: %s"
+msgstr ""
+
+#: src/ls.c:2554 src/pwd.c:164
 #, c-format
 msgid "cannot open directory %s"
 msgstr "Kan nie lêergids %s oopmaak nie."
 
-#: src/ls.c:2572
+#: src/ls.c:2569
 #, c-format
 msgid "cannot determine device and inode of %s"
 msgstr ""
 
-#: src/ls.c:2581
+#: src/ls.c:2578
 #, fuzzy, c-format
 msgid "%s: not listing already-listed directory"
 msgstr "%s: kan nie die gids oorskryf nie"
 
-#: src/ls.c:2658 src/pwd.c:232
+#: src/ls.c:2655 src/pwd.c:232
 #, c-format
 msgid "reading directory %s"
 msgstr "lêergids %s word gelees"
 
-#: src/ls.c:2673
+#: src/ls.c:2670
 #, fuzzy, c-format
 msgid "closing directory %s"
 msgstr "lêergids %s word oorgeslaan"
 
-#: src/ls.c:3362
+#: src/ls.c:3355
 #, c-format
 msgid "cannot compare file names %s and %s"
 msgstr ""
 
-#: src/ls.c:4781
+#: src/ls.c:4775
 msgid ""
 "List information about the FILEs (the current directory by default).\n"
 "Sort entries alphabetically if none of -cftuvSUX nor --sort is specified.\n"
 msgstr ""
 
-#: src/ls.c:4788
+#: src/ls.c:4782
 msgid ""
 "  -a, --all                  do not ignore entries starting with .\n"
 "  -A, --almost-all           do not list implied . and ..\n"
@@ -4927,7 +4980,7 @@ msgid ""
 "characters\n"
 msgstr ""
 
-#: src/ls.c:4794
+#: src/ls.c:4788
 msgid ""
 "      --block-size=SIZE      scale sizes by SIZE before printing them; e."
 "g.,\n"
@@ -4941,18 +4994,19 @@ msgid ""
 "                               otherwise: sort by ctime, newest first\n"
 msgstr ""
 
-#: src/ls.c:4804
+#: src/ls.c:4798
 msgid ""
 "  -C                         list entries by columns\n"
-"      --color[=WHEN]         colorize the output; WHEN can be 'never', "
-"'auto',\n"
-"                               or 'always' (the default); more info below\n"
+"      --color[=WHEN]         colorize the output; WHEN can be "
+"'always' (default\n"
+"                               if omitted), 'auto', or 'never'; more info "
+"below\n"
 "  -d, --directory            list directories themselves, not their "
 "contents\n"
 "  -D, --dired                generate output designed for Emacs' dired mode\n"
 msgstr ""
 
-#: src/ls.c:4812
+#: src/ls.c:4807
 msgid ""
 "  -f                         do not sort, enable -aU, disable -ls --color\n"
 "  -F, --classify             append indicator (one of */=>@|) to entries\n"
@@ -4962,11 +5016,11 @@ msgid ""
 "      --full-time            like -l --time-style=full-iso\n"
 msgstr ""
 
-#: src/ls.c:4820
+#: src/ls.c:4815
 msgid "  -g                         like -l, but do not list owner\n"
 msgstr ""
 
-#: src/ls.c:4823
+#: src/ls.c:4818
 msgid ""
 "      --group-directories-first\n"
 "                             group directories before files;\n"
@@ -4975,7 +5029,7 @@ msgid ""
 "                               use of --sort=none (-U) disables grouping\n"
 msgstr ""
 
-#: src/ls.c:4829
+#: src/ls.c:4824
 msgid ""
 "  -G, --no-group             in a long listing, don't print group names\n"
 "  -h, --human-readable       with -l and/or -s, print human readable sizes\n"
@@ -4983,7 +5037,7 @@ msgid ""
 "      --si                   likewise, but use powers of 1000 not 1024\n"
 msgstr ""
 
-#: src/ls.c:4835
+#: src/ls.c:4830
 msgid ""
 "  -H, --dereference-command-line\n"
 "                             follow symbolic links listed on the command "
@@ -4996,7 +5050,7 @@ msgid ""
 "                               (overridden by -a or -A)\n"
 msgstr ""
 
-#: src/ls.c:4845
+#: src/ls.c:4840
 msgid ""
 "      --indicator-style=WORD  append indicator with style WORD to entry "
 "names:\n"
@@ -5008,7 +5062,7 @@ msgid ""
 "  -k, --kibibytes            default to 1024-byte blocks for disk usage\n"
 msgstr ""
 
-#: src/ls.c:4855
+#: src/ls.c:4850
 msgid ""
 "  -l                         use a long listing format\n"
 "  -L, --dereference          when showing file information for a symbolic\n"
@@ -5018,7 +5072,7 @@ msgid ""
 "entries\n"
 msgstr ""
 
-#: src/ls.c:4863
+#: src/ls.c:4858
 msgid ""
 "  -n, --numeric-uid-gid      like -l, but list numeric user and group IDs\n"
 "  -N, --literal              print raw entry names (don't treat e.g. "
@@ -5029,7 +5083,7 @@ msgid ""
 "                             append / indicator to directories\n"
 msgstr ""
 
-#: src/ls.c:4871
+#: src/ls.c:4866
 msgid ""
 "  -q, --hide-control-chars   print ? instead of nongraphic characters\n"
 "      --show-control-chars   show nongraphic characters as-is (the default,\n"
@@ -5041,7 +5095,7 @@ msgid ""
 "escape\n"
 msgstr ""
 
-#: src/ls.c:4881
+#: src/ls.c:4876
 msgid ""
 "  -r, --reverse              reverse order while sorting\n"
 "  -R, --recursive            list subdirectories recursively\n"
@@ -5049,21 +5103,21 @@ msgid ""
 "blocks\n"
 msgstr ""
 
-#: src/ls.c:4886
+#: src/ls.c:4881
 msgid ""
-"  -S                         sort by file size\n"
+"  -S                         sort by file size, largest first\n"
 "      --sort=WORD            sort by WORD instead of name: none (-U), size (-"
 "S),\n"
 "                               time (-t), version (-v), extension (-X)\n"
 "      --time=WORD            with -l, show time as WORD instead of default\n"
 "                               modification time: atime or access or use (-"
-"u)\n"
+"u);\n"
 "                               ctime or status (-c); also use specified "
 "time\n"
-"                               as sort key if --sort=time\n"
+"                               as sort key if --sort=time (newest first)\n"
 msgstr ""
 
-#: src/ls.c:4896
+#: src/ls.c:4892
 msgid ""
 "      --time-style=STYLE     with -l, show times using style STYLE:\n"
 "                               full-iso, long-iso, iso, locale, or +FORMAT;\n"
@@ -5077,31 +5131,32 @@ msgid ""
 "                               takes effect only outside the POSIX locale\n"
 msgstr ""
 
-#: src/ls.c:4908
+#: src/ls.c:4904
 msgid ""
 "  -t                         sort by modification time, newest first\n"
 "  -T, --tabsize=COLS         assume tab stops at each COLS instead of 8\n"
 msgstr ""
 
-#: src/ls.c:4912
+#: src/ls.c:4908
 msgid ""
 "  -u                         with -lt: sort by, and show, access time;\n"
 "                               with -l: show access time and sort by name;\n"
-"                               otherwise: sort by access time\n"
+"                               otherwise: sort by access time, newest first\n"
 "  -U                         do not sort; list entries in directory order\n"
 "  -v                         natural sort of (version) numbers within text\n"
 msgstr ""
 
-#: src/ls.c:4919
+#: src/ls.c:4915
 msgid ""
 "  -w, --width=COLS           assume screen width instead of current value\n"
 "  -x                         list entries by lines instead of by columns\n"
 "  -X                         sort alphabetically by entry extension\n"
 "  -Z, --context              print any security context of each file\n"
-"  -1                         list one file per line\n"
+"  -1                         list one file per line.  Avoid '\\n' with -q or "
+"-b\n"
 msgstr ""
 
-#: src/ls.c:4929
+#: src/ls.c:4926
 msgid ""
 "\n"
 "Using color to distinguish file types is disabled both by default and\n"
@@ -5110,7 +5165,7 @@ msgid ""
 "variable can change the settings.  Use the dircolors command to set it.\n"
 msgstr ""
 
-#: src/ls.c:4936
+#: src/ls.c:4933
 msgid ""
 "\n"
 "Exit status:\n"
@@ -5139,47 +5194,52 @@ msgstr ""
 msgid ""
 "Usage: %s [OPTION]... [FILE]...\n"
 "Print or check %s (%d-bit) checksums.\n"
-"With no FILE, or when FILE is -, read standard input.\n"
-"\n"
 msgstr ""
 "Verander spasies in elke LÊER na keepkarakters, terwyl dit op "
 "standaardafvoer geskryf word.\n"
 "Met geen LÊER, of as LÊER gegee is as -, lees vanaf standaardtoevoer.\n"
 "\n"
 
-#: src/md5sum.c:174
+#: src/md5sum.c:175
+#, fuzzy
 msgid ""
+"\n"
 "  -b, --binary         read in binary mode (default unless reading tty "
 "stdin)\n"
-msgstr ""
-
-#: src/md5sum.c:178
-#, fuzzy
-msgid "  -b, --binary         read in binary mode\n"
 msgstr ""
 "\n"
 "  -B, --binary             skryf binêre data na die konsole-toestel.\n"
 "\n"
 
-#: src/md5sum.c:181
+#: src/md5sum.c:180
+#, fuzzy
+msgid ""
+"\n"
+"  -b, --binary         read in binary mode\n"
+msgstr ""
+"\n"
+"  -B, --binary             skryf binêre data na die konsole-toestel.\n"
+"\n"
+
+#: src/md5sum.c:184
 #, c-format
 msgid "  -c, --check          read %s sums from the FILEs and check them\n"
 msgstr ""
 
-#: src/md5sum.c:184
+#: src/md5sum.c:187
 msgid "      --tag            create a BSD-style checksum\n"
 msgstr ""
 
-#: src/md5sum.c:188
+#: src/md5sum.c:191
 msgid ""
 "  -t, --text           read in text mode (default if reading tty stdin)\n"
 msgstr ""
 
-#: src/md5sum.c:192
+#: src/md5sum.c:195
 msgid "  -t, --text           read in text mode (default)\n"
 msgstr ""
 
-#: src/md5sum.c:195
+#: src/md5sum.c:198
 msgid ""
 "\n"
 "The following four options are useful only when verifying checksums:\n"
@@ -5191,97 +5251,98 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/md5sum.c:206
+#: src/md5sum.c:209
 #, c-format
 msgid ""
 "\n"
 "The sums are computed as described in %s.  When checking, the input\n"
-"should be a former output of this program.  The default mode is to print\n"
-"a line with checksum, a character indicating input mode ('*' for binary,\n"
-"space for text), and name for each FILE.\n"
+"should be a former output of this program.  The default mode is to print a\n"
+"line with checksum, a space, a character indicating input mode ('*' for "
+"binary,\n"
+"' ' for text or where binary is insignificant), and name for each FILE.\n"
 msgstr ""
 
-#: src/md5sum.c:521
+#: src/md5sum.c:524
 #, c-format
 msgid "%s: too many checksum lines"
 msgstr ""
 
-#: src/md5sum.c:545
+#: src/md5sum.c:548
 #, c-format
 msgid "%s: %<PRIuMAX>: improperly formatted %s checksum line"
 msgstr ""
 
-#: src/md5sum.c:570
+#: src/md5sum.c:573
 #, c-format
 msgid "%s: FAILED open or read\n"
 msgstr "%s: MISLUKTE open of lees\n"
 
-#: src/md5sum.c:593
+#: src/md5sum.c:596
 msgid "FAILED"
 msgstr "GEFAAL"
 
-#: src/md5sum.c:595
+#: src/md5sum.c:598
 msgid "OK"
 msgstr "OK"
 
-#: src/md5sum.c:619
+#: src/md5sum.c:622
 #, c-format
 msgid "%s: no properly formatted %s checksum lines found"
 msgstr ""
 
-#: src/md5sum.c:629
+#: src/md5sum.c:632
 #, c-format
 msgid "WARNING: %<PRIuMAX> line is improperly formatted"
 msgid_plural "WARNING: %<PRIuMAX> lines are improperly formatted"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/md5sum.c:637
+#: src/md5sum.c:640
 #, fuzzy, c-format
 msgid "WARNING: %<PRIuMAX> listed file could not be read"
 msgid_plural "WARNING: %<PRIuMAX> listed files could not be read"
 msgstr[0] "WAARSKUWING: %d van %d gelyste %s kon nie gelees word nie"
 msgstr[1] "WAARSKUWING: %d van %d gelyste %s kon nie gelees word nie"
 
-#: src/md5sum.c:645
+#: src/md5sum.c:648
 #, c-format
 msgid "WARNING: %<PRIuMAX> computed checksum did NOT match"
 msgid_plural "WARNING: %<PRIuMAX> computed checksums did NOT match"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/md5sum.c:764
+#: src/md5sum.c:767
 #, c-format
 msgid "--tag does not support --text mode"
 msgstr ""
 
-#: src/md5sum.c:770
+#: src/md5sum.c:773
 #, fuzzy, c-format
 msgid "the --tag option is meaningless when verifying checksums"
 msgstr "die --status opsie is slegs sinvol by die nagaan van toetssomme"
 
-#: src/md5sum.c:777
+#: src/md5sum.c:780
 #, c-format
 msgid ""
 "the --binary and --text options are meaningless when verifying checksums"
 msgstr ""
 
-#: src/md5sum.c:785
+#: src/md5sum.c:788
 #, c-format
 msgid "the --status option is meaningful only when verifying checksums"
 msgstr "die --status opsie is slegs sinvol by die nagaan van toetssomme"
 
-#: src/md5sum.c:792
+#: src/md5sum.c:795
 #, c-format
 msgid "the --warn option is meaningful only when verifying checksums"
 msgstr "die --warn opsie is slegs sinvol by die nagaan van toetssomme"
 
-#: src/md5sum.c:799
+#: src/md5sum.c:802
 #, fuzzy, c-format
 msgid "the --quiet option is meaningful only when verifying checksums"
 msgstr "die --status opsie is slegs sinvol by die nagaan van toetssomme"
 
-#: src/md5sum.c:806
+#: src/md5sum.c:809
 #, fuzzy, c-format
 msgid "the --strict option is meaningful only when verifying checksums"
 msgstr "die --status opsie is slegs sinvol by die nagaan van toetssomme"
@@ -5314,22 +5375,22 @@ msgid ""
 "                         or SMACK security context to CTX\n"
 msgstr ""
 
-#: src/mkdir.c:127 src/mkdir.c:172
+#: src/mkdir.c:127 src/mkdir.c:160
 #, fuzzy, c-format
 msgid "failed to set default creation context for %s"
 msgstr "kon nie attribute van %s verkry nie"
 
-#: src/mkdir.c:191
+#: src/mkdir.c:180
 #, fuzzy, c-format
 msgid "failed to restore context for %s"
 msgstr "lêertye van %s kon nie behou word nie"
 
-#: src/mkdir.c:231
+#: src/mkdir.c:220
 #, c-format
 msgid "created directory %s"
 msgstr "gids %s is geskep"
 
-#: src/mkdir.c:249 src/mkfifo.c:116 src/mknod.c:133
+#: src/mkdir.c:238 src/mkfifo.c:116 src/mknod.c:133
 #, c-format
 msgid ""
 "warning: ignoring --context; it requires an SELinux/SMACK-enabled kernel"
@@ -5500,7 +5561,7 @@ msgstr "te veel parameters"
 msgid "with --suffix, template %s must end in X"
 msgstr ""
 
-#: src/mktemp.c:255 src/split.c:1180
+#: src/mktemp.c:255 src/split.c:1266
 #, c-format
 msgid "invalid suffix %s, contains directory separator"
 msgstr ""
@@ -5612,9 +5673,7 @@ msgstr ""
 
 #: src/nl.c:179
 #, fuzzy
-msgid ""
-"Write each FILE to standard output, with line numbers added.\n"
-"With no FILE, or when FILE is -, read standard input.\n"
+msgid "Write each FILE to standard output, with line numbers added.\n"
 msgstr ""
 "Verander spasies in elke LÊER na keepkarakters, terwyl dit op "
 "standaardafvoer geskryf word.\n"
@@ -5691,27 +5750,27 @@ msgstr "ongeldige styl vir lyfnommering: %s"
 msgid "invalid footer numbering style: %s"
 msgstr "ongeldige styl vir voetnommering: %s"
 
-#: src/nl.c:503
-#, c-format
-msgid "invalid starting line number: %s"
+#: src/nl.c:501
+#, fuzzy
+msgid "invalid starting line number"
 msgstr "ongeldige beginreëlnommer: %s"
 
-#: src/nl.c:512
-#, c-format
-msgid "invalid line number increment: %s"
+#: src/nl.c:506
+#, fuzzy
+msgid "invalid line number increment"
 msgstr "ongeldige inkrement vir reëlnommers: %s"
 
-#: src/nl.c:524
-#, c-format
-msgid "invalid number of blank lines: %s"
+#: src/nl.c:513
+#, fuzzy
+msgid "invalid line number of blank lines"
 msgstr "ongeldige aantal leë reëls: %s"
 
-#: src/nl.c:538
-#, c-format
-msgid "invalid line number field width: %s"
+#: src/nl.c:520
+#, fuzzy
+msgid "invalid line number field width"
 msgstr "ongeldige wydte vir reëlnommer veld: %s"
 
-#: src/nl.c:557
+#: src/nl.c:531
 #, c-format
 msgid "invalid line numbering format: %s"
 msgstr "ongeldige reëlnommeringformaat: %s"
@@ -5735,7 +5794,7 @@ msgstr ""
 #, c-format
 msgid ""
 "\n"
-"If standard input is a terminal, redirect it from /dev/null.\n"
+"If standard input is a terminal, redirect it from an unreadable file.\n"
 "If standard output is a terminal, append output to 'nohup.out' if possible,\n"
 "'$HOME/nohup.out' otherwise.\n"
 "If standard error is a terminal, redirect it to standard output.\n"
@@ -5747,43 +5806,43 @@ msgstr ""
 msgid "failed to render standard input unusable"
 msgstr "herleiding van standaardafvoer het misluk"
 
-#: src/nohup.c:131
+#: src/nohup.c:129
 #, fuzzy, c-format
 msgid "ignoring input"
 msgstr "all parameters word geïgnoreer"
 
-#: src/nohup.c:175
+#: src/nohup.c:173
 #, fuzzy, c-format
 msgid "ignoring input and appending output to %s"
 msgstr "afvoer word bygevoeg by %s"
 
-#: src/nohup.c:176
+#: src/nohup.c:174
 #, c-format
 msgid "appending output to %s"
 msgstr "afvoer word bygevoeg by %s"
 
-#: src/nohup.c:193
+#: src/nohup.c:191
 #, c-format
 msgid "failed to set the copy of stderr to close on exec"
 msgstr ""
 
-#: src/nohup.c:198
+#: src/nohup.c:196
 #, c-format
 msgid "ignoring input and redirecting stderr to stdout"
 msgstr ""
 
-#: src/nohup.c:199
+#: src/nohup.c:197
 #, c-format
 msgid "redirecting stderr to stdout"
 msgstr ""
 
-#: src/nohup.c:203
+#: src/nohup.c:201
 #, c-format
 msgid "failed to redirect standard error"
 msgstr "kon nie standaardfoutafvoer herlei nie"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/nproc.c:33
+#: src/nproc.c:33 src/sync.c:34
 msgid "Giuseppe Scrivano"
 msgstr ""
 
@@ -5805,96 +5864,93 @@ msgid ""
 "     --ignore=N  if possible, exclude N processing units\n"
 msgstr ""
 
-#: src/nproc.c:107
-#, fuzzy, c-format
-msgid "%s: invalid number to ignore"
-msgstr "%s: ongeldige aantal reëls"
-
 #. This is a proper name. See the gettext manual, section Names.
-#: src/numfmt.c:36
+#: src/numfmt.c:42
 msgid "Assaf Gordon"
 msgstr ""
 
-#: src/numfmt.c:659
+#: src/numfmt.c:690
 #, fuzzy, c-format
 msgid "value too large to be converted: %s"
 msgstr "%s: waarde is nie volledig omgeskakel nie"
 
-#: src/numfmt.c:663
+#: src/numfmt.c:694
 #, fuzzy, c-format
 msgid "invalid number: %s"
 msgstr "ongeldige nommer %s"
 
-#: src/numfmt.c:667
+#: src/numfmt.c:698
 #, c-format
 msgid "rejecting suffix in input: %s (consider using --from)"
 msgstr ""
 
-#: src/numfmt.c:671
+#: src/numfmt.c:702
 #, fuzzy, c-format
 msgid "invalid suffix in input: %s"
 msgstr "ongeldige reëlwydte: %s"
 
-#: src/numfmt.c:675
+#: src/numfmt.c:706
 #, c-format
 msgid "missing 'i' suffix in input: %s (e.g Ki/Mi/Gi)"
 msgstr ""
 
-#: src/numfmt.c:722 src/numfmt.c:768
+#: src/numfmt.c:753 src/numfmt.c:805
 #, fuzzy, c-format
 msgid "failed to prepare value '%Lf' for printing"
 msgstr "lêertye van %s kon nie behou word nie"
 
-#: src/numfmt.c:791
+#: src/numfmt.c:854
 #, fuzzy, c-format
 msgid "invalid unit size: %s"
 msgstr "ongeldige keepgrootte: %s"
 
-#: src/numfmt.c:814
+#: src/numfmt.c:880
 #, fuzzy, c-format
 msgid "Usage: %s [OPTION]... [NUMBER]...\n"
 msgstr "Gebruik so:  %s [OPSIE]... [GEBRUIKER]...\n"
 
-#: src/numfmt.c:817
+#: src/numfmt.c:883
 msgid ""
 "Reformat NUMBER(s), or the numbers from standard input if none are "
 "specified.\n"
 msgstr ""
 
-#: src/numfmt.c:821
+#: src/numfmt.c:887
 msgid "      --debug          print warnings about invalid input\n"
 msgstr ""
 
-#: src/numfmt.c:824
+#: src/numfmt.c:890
 msgid ""
 "  -d, --delimiter=X    use X instead of whitespace for field delimiter\n"
 msgstr ""
 
-#: src/numfmt.c:827
+#: src/numfmt.c:893
 msgid ""
-"      --field=N        replace the number in input field N (default is 1)\n"
+"      --field=FIELDS   replace the numbers in these input fields "
+"(default=1)\n"
+"                         see FIELDS below\n"
 msgstr ""
 
-#: src/numfmt.c:830
+#: src/numfmt.c:897
 msgid ""
 "      --format=FORMAT  use printf style floating-point FORMAT;\n"
 "                         see FORMAT below for details\n"
 msgstr ""
 
-#: src/numfmt.c:834
+#: src/numfmt.c:901
 msgid ""
 "      --from=UNIT      auto-scale input numbers to UNITs; default is "
 "'none';\n"
 "                         see UNIT below\n"
 msgstr ""
 
-#: src/numfmt.c:838
+#: src/numfmt.c:905
 msgid ""
 "      --from-unit=N    specify the input unit size (instead of the default "
 "1)\n"
 msgstr ""
 
-#: src/numfmt.c:841
+#: src/numfmt.c:908
 msgid ""
 "      --grouping       use locale-defined grouping of digits, e.g. "
 "1,000,000\n"
@@ -5902,19 +5958,19 @@ msgid ""
 "locale)\n"
 msgstr ""
 
-#: src/numfmt.c:845
+#: src/numfmt.c:912
 msgid ""
 "      --header[=N]     print (without converting) the first N header lines;\n"
 "                         N defaults to 1 if not specified\n"
 msgstr ""
 
-#: src/numfmt.c:849
+#: src/numfmt.c:916
 msgid ""
 "      --invalid=MODE   failure mode for invalid numbers: MODE can be:\n"
 "                         abort (default), fail, warn, ignore\n"
 msgstr ""
 
-#: src/numfmt.c:853
+#: src/numfmt.c:920
 msgid ""
 "      --padding=N      pad the output to N characters; positive N will\n"
 "                         right-align; negative N will left-align;\n"
@@ -5924,40 +5980,40 @@ msgid ""
 "                         is found\n"
 msgstr ""
 
-#: src/numfmt.c:860
+#: src/numfmt.c:927
 msgid ""
 "      --round=METHOD   use METHOD for rounding when scaling; METHOD can be:\n"
 "                         up, down, from-zero (default), towards-zero, "
 "nearest\n"
 msgstr ""
 
-#: src/numfmt.c:864
+#: src/numfmt.c:931
 msgid ""
 "      --suffix=SUFFIX  add SUFFIX to output numbers, and accept optional\n"
 "                         SUFFIX in input numbers\n"
 msgstr ""
 
-#: src/numfmt.c:868
+#: src/numfmt.c:935
 msgid ""
 "      --to=UNIT        auto-scale output numbers to UNITs; see UNIT below\n"
 msgstr ""
 
-#: src/numfmt.c:871
+#: src/numfmt.c:938
 msgid ""
 "      --to-unit=N      the output unit size (instead of the default 1)\n"
 msgstr ""
 
-#: src/numfmt.c:878
+#: src/numfmt.c:945
 msgid ""
 "\n"
 "UNIT options:\n"
 msgstr ""
 
-#: src/numfmt.c:881
+#: src/numfmt.c:948
 msgid "  none       no auto-scaling is done; suffixes will trigger an error\n"
 msgstr ""
 
-#: src/numfmt.c:884
+#: src/numfmt.c:951
 msgid ""
 "  auto       accept optional single/two letter suffix:\n"
 "               1K = 1000,\n"
@@ -5966,7 +6022,7 @@ msgid ""
 "               1Mi = 1048576,\n"
 msgstr ""
 
-#: src/numfmt.c:890
+#: src/numfmt.c:957
 msgid ""
 "  si         accept optional single letter suffix:\n"
 "               1K = 1000,\n"
@@ -5974,7 +6030,7 @@ msgid ""
 "               ...\n"
 msgstr ""
 
-#: src/numfmt.c:895
+#: src/numfmt.c:962
 msgid ""
 "  iec        accept optional single letter suffix:\n"
 "               1K = 1024,\n"
@@ -5982,7 +6038,7 @@ msgid ""
 "               ...\n"
 msgstr ""
 
-#: src/numfmt.c:900
+#: src/numfmt.c:967
 msgid ""
 "  iec-i      accept optional two-letter suffix:\n"
 "               1Ki = 1024,\n"
@@ -5990,7 +6046,19 @@ msgid ""
 "               ...\n"
 msgstr ""
 
-#: src/numfmt.c:906
+#: src/numfmt.c:973
+msgid ""
+"\n"
+"FIELDS supports cut(1) style field ranges:\n"
+"  N    N'th field, counted from 1\n"
+"  N-   from N'th field, to end of line\n"
+"  N-M  from N'th to M'th field (inclusive)\n"
+"  -M   from first to M'th field (inclusive)\n"
+"  -    all fields\n"
+"Multiple fields/ranges can be separated with commas\n"
+msgstr ""
+
+#: src/numfmt.c:983
 #, c-format
 msgid ""
 "\n"
@@ -5999,9 +6067,10 @@ msgid ""
 "locale).\n"
 "Optional width value (%10f) will pad output. Optional zero (%010f) width\n"
 "will zero pad the number. Optional negative values (%-10f) will left align.\n"
+"Optional precision (%.1f) will override the input determined precision.\n"
 msgstr ""
 
-#: src/numfmt.c:913
+#: src/numfmt.c:991
 #, c-format
 msgid ""
 "\n"
@@ -6013,7 +6082,7 @@ msgid ""
 "errors are not diagnosed and the exit status is 0.\n"
 msgstr ""
 
-#: src/numfmt.c:922
+#: src/numfmt.c:1000
 #, c-format
 msgid ""
 "\n"
@@ -6028,118 +6097,130 @@ msgid ""
 "           -> \"1000\"\n"
 "  $ echo 1K | %s --from=iec\n"
 "           -> \"1024\"\n"
-"  $ df | %s --header --field 2 --to=si\n"
-"  $ ls -l | %s --header --field 5 --to=iec\n"
+"  $ df -B1 | %s --header --field 2-4 --to=si\n"
+"  $ ls -l  | %s --header --field 5 --to=iec\n"
 "  $ ls -lh | %s --header --field 5 --from=iec --padding=10\n"
 "  $ ls -lh | %s --header --field 5 --from=iec --format %%10f\n"
 msgstr ""
 
-#: src/numfmt.c:976 src/seq.c:214
+#: src/numfmt.c:1053 src/seq.c:228
 #, c-format
 msgid "format %s has no %% directive"
 msgstr ""
 
-#: src/numfmt.c:1003
+#: src/numfmt.c:1080
 #, fuzzy, c-format
 msgid "invalid format %s (width overflow)"
 msgstr "ongeldige wydte vir formaat"
 
-#: src/numfmt.c:1008
+#: src/numfmt.c:1085
 #, c-format
-msgid "--format padding overridding --padding"
+msgid "--format padding overriding --padding"
 msgstr ""
 
-#: src/numfmt.c:1027 src/seq.c:231
+#: src/numfmt.c:1104 src/seq.c:245
 #, c-format
 msgid "format %s ends in %%"
 msgstr ""
 
-#: src/numfmt.c:1030
+#: src/numfmt.c:1120
+#, fuzzy, c-format
+msgid "invalid precision in format %s"
+msgstr "ongeldige presisie: %s"
+
+#: src/numfmt.c:1126
 #, c-format
-msgid "invalid format %s, directive must be %%[0]['][-][N]f"
+msgid "invalid format %s, directive must be %%[0]['][-][N][.][N]f"
 msgstr ""
 
-#: src/numfmt.c:1038 src/seq.c:238
+#: src/numfmt.c:1134 src/seq.c:252
 #, c-format
 msgid "format %s has too many %% directives"
 msgstr ""
 
-#: src/numfmt.c:1081
+#: src/numfmt.c:1177
 #, fuzzy, c-format
 msgid "invalid suffix in input %s: %s"
 msgstr "ongeldige reëlwydte: %s"
 
-#: src/numfmt.c:1103
+#: src/numfmt.c:1206
+#, c-format
+msgid ""
+"value/precision too large to be printed: '%Lg/%<PRIuMAX>' (consider using --"
+"to)"
+msgstr ""
+
+#: src/numfmt.c:1210
 #, c-format
 msgid "value too large to be printed: '%Lg' (consider using --to)"
 msgstr ""
 
-#: src/numfmt.c:1111
+#: src/numfmt.c:1219
 #, c-format
 msgid "value too large to be printed: '%Lg' (cannot handle values > 999Y)"
 msgstr ""
 
-#: src/numfmt.c:1196
+#: src/numfmt.c:1305
 #, c-format
 msgid "large input value %s: possible precision loss"
 msgstr ""
 
-#: src/numfmt.c:1308
-#, c-format
-msgid "input line is too short, no numbers found to convert in field %ld"
-msgstr ""
-
-#: src/numfmt.c:1403
-#, fuzzy, c-format
-msgid "invalid padding value %s"
-msgstr "ongeldige datum `%s'"
-
-#: src/numfmt.c:1417
+#: src/numfmt.c:1386 src/numfmt.c:1399
 #, fuzzy, c-format
 msgid "invalid field value %s"
 msgstr "ongeldige veldnommer: %s"
 
-#: src/numfmt.c:1447
+#: src/numfmt.c:1631
+#, fuzzy, c-format
+msgid "invalid padding value %s"
+msgstr "ongeldige datum `%s'"
+
+#: src/numfmt.c:1646
+#, fuzzy, c-format
+msgid "multiple field specifications"
+msgstr "%s: ongeldige veldspesifikasie `%s'"
+
+#: src/numfmt.c:1677
 #, fuzzy, c-format
 msgid "invalid header value %s"
 msgstr "ongeldige styl vir kopnommering: %s"
 
-#: src/numfmt.c:1473
+#: src/numfmt.c:1704
 #, c-format
 msgid "--grouping cannot be combined with --format"
 msgstr ""
 
-#: src/numfmt.c:1478
+#: src/numfmt.c:1709
 #, fuzzy, c-format
 msgid "no conversion option specified"
 msgstr "geen proses-id is gespesifiseer"
 
-#: src/numfmt.c:1486
+#: src/numfmt.c:1717
 #, c-format
 msgid "grouping cannot be combined with --to"
 msgstr ""
 
-#: src/numfmt.c:1488
+#: src/numfmt.c:1719
 #, c-format
 msgid "grouping has no effect in this locale"
 msgstr ""
 
-#: src/numfmt.c:1501
+#: src/numfmt.c:1732
 #, c-format
 msgid "--header ignored with command-line input"
 msgstr ""
 
-#: src/numfmt.c:1526
+#: src/numfmt.c:1757
 #, fuzzy, c-format
 msgid "error reading input"
 msgstr "fout met die les van %s"
 
-#: src/numfmt.c:1535
+#: src/numfmt.c:1770
 #, c-format
 msgid "failed to convert some of the input numbers"
 msgstr ""
 
-#: src/od.c:320
+#: src/od.c:321
 #, c-format
 msgid ""
 "Usage: %s [OPTION]... [FILE]...\n"
@@ -6148,18 +6229,17 @@ msgid ""
 "[b]]\n"
 msgstr ""
 
-#: src/od.c:326
+#: src/od.c:327
 msgid ""
 "\n"
 "Write an unambiguous representation, octal bytes by default,\n"
 "of FILE to standard output.  With more than one FILE argument,\n"
 "concatenate them in the listed order to form the input.\n"
-"With no FILE, or when FILE is -, read standard input.\n"
-"\n"
 msgstr ""
 
-#: src/od.c:333
+#: src/od.c:335
 msgid ""
+"\n"
 "If first and second call formats both apply, the second format is assumed\n"
 "if the last operand begins with + or (if there are 2 operands) a digit.\n"
 "An OFFSET operand means -j OFFSET.  LABEL is the pseudo-address\n"
@@ -6168,7 +6248,7 @@ msgid ""
 "suffixes may be . for octal and b for multiply by 512.\n"
 msgstr ""
 
-#: src/od.c:344
+#: src/od.c:347
 msgid ""
 "  -A, --address-radix=RADIX   output format for file offsets; RADIX is one\n"
 "                                of [doxn], for Decimal, Octal, Hex or None\n"
@@ -6177,7 +6257,7 @@ msgid ""
 "  -j, --skip-bytes=BYTES      skip BYTES input bytes first\n"
 msgstr ""
 
-#: src/od.c:350
+#: src/od.c:353
 msgid ""
 "  -N, --read-bytes=BYTES      limit dump to BYTES input bytes\n"
 "  -S BYTES, --strings[=BYTES]  output strings of at least BYTES graphic "
@@ -6190,7 +6270,7 @@ msgid ""
 "      --traditional           accept arguments in third form above\n"
 msgstr ""
 
-#: src/od.c:363
+#: src/od.c:366
 msgid ""
 "\n"
 "\n"
@@ -6201,7 +6281,7 @@ msgid ""
 "  -d   same as -t u2, select unsigned decimal 2-byte units\n"
 msgstr ""
 
-#: src/od.c:372
+#: src/od.c:375
 msgid ""
 "  -f   same as -t fF, select floats\n"
 "  -i   same as -t dI, select decimal ints\n"
@@ -6211,7 +6291,7 @@ msgid ""
 "  -x   same as -t x2, select hexadecimal 2-byte units\n"
 msgstr ""
 
-#: src/od.c:380
+#: src/od.c:383
 msgid ""
 "\n"
 "\n"
@@ -6220,7 +6300,7 @@ msgid ""
 "  c          printable character or backslash escape\n"
 msgstr ""
 
-#: src/od.c:387
+#: src/od.c:390
 msgid ""
 "  d[SIZE]    signed decimal, SIZE bytes per integer\n"
 "  f[SIZE]    floating point, SIZE bytes per integer\n"
@@ -6229,7 +6309,7 @@ msgid ""
 "  x[SIZE]    hexadecimal, SIZE bytes per integer\n"
 msgstr ""
 
-#: src/od.c:394
+#: src/od.c:397
 msgid ""
 "\n"
 "SIZE is a number.  For TYPE in [doux], SIZE may also be C for\n"
@@ -6238,14 +6318,14 @@ msgid ""
 "for sizeof(double) or L for sizeof(long double).\n"
 msgstr ""
 
-#: src/od.c:401
+#: src/od.c:404
 msgid ""
 "\n"
 "Adding a z suffix to any type displays printable characters at the end of\n"
 "each output line.\n"
 msgstr ""
 
-#: src/od.c:406
+#: src/od.c:409
 msgid ""
 "\n"
 "\n"
@@ -6258,55 +6338,55 @@ msgid ""
 "and so on for G, T, P, E, Z, Y.\n"
 msgstr ""
 
-#: src/od.c:680 src/od.c:800
+#: src/od.c:683 src/od.c:803
 #, fuzzy, c-format
 msgid "invalid type string %s"
 msgstr "ongeldige tipe-string `%s'"
 
-#: src/od.c:690
+#: src/od.c:693
 #, c-format
 msgid ""
 "invalid type string %s;\n"
 "this system doesn't provide a %lu-byte integral type"
 msgstr ""
 
-#: src/od.c:811
+#: src/od.c:814
 #, c-format
 msgid ""
 "invalid type string %s;\n"
 "this system doesn't provide a %lu-byte floating point type"
 msgstr ""
 
-#: src/od.c:869
+#: src/od.c:872
 #, fuzzy, c-format
 msgid "invalid character '%c' in type string %s"
 msgstr "ongeldige karakter `%c' in tipe-string `%s'"
 
-#: src/od.c:1094
+#: src/od.c:1105
 #, c-format
 msgid "cannot skip past end of combined input"
 msgstr ""
 
-#: src/od.c:1650
+#: src/od.c:1658
 #, c-format
 msgid "invalid output address radix '%c'; it must be one character from [doxn]"
 msgstr ""
 
-#: src/od.c:1788
+#: src/od.c:1796
 #, c-format
 msgid "no type may be specified when dumping strings"
 msgstr ""
 
-#: src/od.c:1863
+#: src/od.c:1871
 msgid "compatibility mode supports at most one file"
 msgstr ""
 
-#: src/od.c:1884
+#: src/od.c:1892
 #, c-format
 msgid "skip-bytes + read-bytes is too large"
 msgstr ""
 
-#: src/od.c:1927
+#: src/od.c:1935
 #, c-format
 msgid "warning: invalid width %lu; using %d instead"
 msgstr ""
@@ -6326,7 +6406,6 @@ msgstr "standaardtoevoer is gesluit"
 msgid ""
 "Write lines consisting of the sequentially corresponding lines from\n"
 "each FILE, separated by TABs, to standard output.\n"
-"With no FILE, or when FILE is -, read standard input.\n"
 msgstr ""
 "Verander spasies in elke LÊER na keepkarakters, terwyl dit op "
 "standaardafvoer geskryf word.\n"
@@ -6462,12 +6541,12 @@ msgstr "Wanneer"
 msgid "Where"
 msgstr "Waar"
 
-#: src/pinky.c:495
+#: src/pinky.c:494
 #, c-format
 msgid "Usage: %s [OPTION]... [USER]...\n"
 msgstr "Gebruik so:  %s [OPSIE]... [GEBRUIKER]...\n"
 
-#: src/pinky.c:496
+#: src/pinky.c:495
 msgid ""
 "\n"
 "  -l              produce long format output for the specified USERs\n"
@@ -6477,7 +6556,7 @@ msgid ""
 "  -s              do short format output, this is the default\n"
 msgstr ""
 
-#: src/pinky.c:504
+#: src/pinky.c:503
 msgid ""
 "  -f              omit the line of column headings in short format\n"
 "  -w              omit the user's full name in short format\n"
@@ -6486,7 +6565,7 @@ msgid ""
 "                  in short format\n"
 msgstr ""
 
-#: src/pinky.c:513
+#: src/pinky.c:512
 #, c-format
 msgid ""
 "\n"
@@ -6494,96 +6573,96 @@ msgid ""
 "The utmp file will be %s.\n"
 msgstr ""
 
-#: src/pinky.c:597
+#: src/pinky.c:596
 #, c-format
 msgid "no username specified; at least one must be specified when using -l"
 msgstr ""
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/pr.c:330
+#: src/pr.c:331
 msgid "Pete TerMaat"
 msgstr ""
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/pr.c:331
+#: src/pr.c:332
 msgid "Roland Huebner"
 msgstr ""
 
-#: src/pr.c:908
+#: src/pr.c:905
 #, c-format
 msgid "'--pages=FIRST_PAGE[:LAST_PAGE]' missing argument"
 msgstr ""
 
-#: src/pr.c:910
+#: src/pr.c:907
 #, fuzzy, c-format
 msgid "invalid page range %s"
 msgstr "ongeldige tipe-string `%s'"
 
-#: src/pr.c:975
-#, fuzzy, c-format
-msgid "'-l PAGE_LENGTH' invalid number of lines: %s"
+#: src/pr.c:967
+#, fuzzy
+msgid "'-l PAGE_LENGTH' invalid number of lines"
 msgstr "`-l PAGE_LENGTH' ongeldige aantal reëls: `%s'"
 
-#: src/pr.c:999
-#, fuzzy, c-format
-msgid "'-N NUMBER' invalid starting line number: %s"
+#: src/pr.c:982
+#, fuzzy
+msgid "'-N NUMBER' invalid starting line number"
 msgstr "`-N NUMBER' ongeldige beginreëlnommer: `%s'"
 
-#: src/pr.c:1011
-#, fuzzy, c-format
-msgid "'-o MARGIN' invalid line offset: %s"
+#: src/pr.c:986
+#, fuzzy
+msgid "'-o MARGIN' invalid line offset"
 msgstr "`-o MARGIN' ongeldige lynuitwyking: `%s'"
 
-#: src/pr.c:1052
-#, fuzzy, c-format
-msgid "'-w PAGE_WIDTH' invalid number of characters: %s"
+#: src/pr.c:1023
+#, fuzzy
+msgid "'-w PAGE_WIDTH' invalid number of characters"
 msgstr "`-w PAGE_WIDTH' ongeldige aantal karakters: `%s'"
 
-#: src/pr.c:1066
-#, fuzzy, c-format
-msgid "'-W PAGE_WIDTH' invalid number of characters: %s"
+#: src/pr.c:1032
+#, fuzzy
+msgid "'-W PAGE_WIDTH' invalid number of characters"
 msgstr "`-W PAGE_WIDTH' ongeldige aantal karakters: `%s'"
 
-#: src/pr.c:1096
+#: src/pr.c:1059
 #, c-format
 msgid "cannot specify number of columns when printing in parallel"
 msgstr ""
 
-#: src/pr.c:1100
+#: src/pr.c:1063
 #, c-format
 msgid "cannot specify both printing across and printing in parallel"
 msgstr ""
 
-#: src/pr.c:1196
+#: src/pr.c:1166
 #, c-format
 msgid "'-%c' extra characters or invalid number in the argument: %s"
 msgstr ""
 
-#: src/pr.c:1293
+#: src/pr.c:1263
 #, c-format
 msgid "page width too narrow"
 msgstr "Bladsywydte te nou"
 
-#: src/pr.c:2353
+#: src/pr.c:2323
 #, c-format
 msgid "starting page number %<PRIuMAX> exceeds page count %<PRIuMAX>"
 msgstr ""
 
-#: src/pr.c:2380
+#: src/pr.c:2350
 #, fuzzy, c-format
 msgid "page number overflow"
 msgstr "veldnommer is nul"
 
-#: src/pr.c:2385
+#: src/pr.c:2355
 #, c-format
 msgid "Page %<PRIuMAX>"
 msgstr ""
 
-#: src/pr.c:2757
+#: src/pr.c:2727
 msgid "Paginate or columnate FILE(s) for printing.\n"
 msgstr ""
 
-#: src/pr.c:2763
+#: src/pr.c:2734
 msgid ""
 "  +FIRST_PAGE[:LAST_PAGE], --pages=FIRST_PAGE[:LAST_PAGE]\n"
 "                    begin [stop] printing with page FIRST_[LAST_]PAGE\n"
@@ -6593,7 +6672,7 @@ msgid ""
 "                    columns on each page\n"
 msgstr ""
 
-#: src/pr.c:2771
+#: src/pr.c:2742
 msgid ""
 "  -a, --across      print columns across rather than down, used together\n"
 "                    with -COLUMN\n"
@@ -6603,7 +6682,7 @@ msgid ""
 "                    double space the output\n"
 msgstr ""
 
-#: src/pr.c:2779
+#: src/pr.c:2750
 msgid ""
 "  -D, --date-format=FORMAT\n"
 "                    use FORMAT for the header date\n"
@@ -6615,7 +6694,7 @@ msgid ""
 "                    and trailer without -F)\n"
 msgstr ""
 
-#: src/pr.c:2789
+#: src/pr.c:2760
 msgid ""
 "  -h, --header=HEADER\n"
 "                    use a centered HEADER instead of filename in page "
@@ -6628,16 +6707,21 @@ msgid ""
 "                    alignment, --sep-string[=STRING] sets separators\n"
 msgstr ""
 
-#: src/pr.c:2798
+#: src/pr.c:2769
 msgid ""
 "  -l, --length=PAGE_LENGTH\n"
 "                    set the page length to PAGE_LENGTH (66) lines\n"
-"                    (default number of lines of text 56, and with -F 63)\n"
+"                    (default number of lines of text 56, and with -F 63).\n"
+"                    implies -t if PAGE_LENGTH <= 10\n"
+msgstr ""
+
+#: src/pr.c:2775
+msgid ""
 "  -m, --merge       print all files in parallel, one in each column,\n"
 "                    truncate lines, but join lines of full length with -J\n"
 msgstr ""
 
-#: src/pr.c:2805
+#: src/pr.c:2779
 msgid ""
 "  -n[SEP[DIGITS]], --number-lines[=SEP[DIGITS]]\n"
 "                    number lines, use DIGITS (5) digits, then SEP (TAB),\n"
@@ -6647,7 +6731,7 @@ msgid ""
 "                    page printed (see +FIRST_PAGE)\n"
 msgstr ""
 
-#: src/pr.c:2813
+#: src/pr.c:2787
 msgid ""
 "  -o, --indent=MARGIN\n"
 "                    offset each line with MARGIN (zero) spaces, do not\n"
@@ -6656,7 +6740,7 @@ msgid ""
 "                    omit warning when a file cannot be opened\n"
 msgstr ""
 
-#: src/pr.c:2820
+#: src/pr.c:2794
 msgid ""
 "  -s[CHAR], --separator[=CHAR]\n"
 "                    separate columns by a single character, default for "
@@ -6667,17 +6751,22 @@ msgid ""
 "                    options (-COLUMN|-a -COLUMN|-m) except -w is set\n"
 msgstr ""
 
-#: src/pr.c:2828
+#: src/pr.c:2802
 msgid ""
 "  -S[STRING], --sep-string[=STRING]\n"
 "                    separate columns by STRING,\n"
 "                    without -S: Default separator <TAB> with -J and <space>\n"
 "                    otherwise (same as -S\" \"), no effect on column "
 "options\n"
-"  -t, --omit-header  omit page headers and trailers\n"
 msgstr ""
 
-#: src/pr.c:2835
+#: src/pr.c:2808
+msgid ""
+"  -t, --omit-header  omit page headers and trailers;\n"
+"                     implied if PAGE_LENGTH <= 10\n"
+msgstr ""
+
+#: src/pr.c:2812
 msgid ""
 "  -T, --omit-pagination\n"
 "                    omit page headers and trailers, eliminate any "
@@ -6691,7 +6780,7 @@ msgid ""
 "(72)\n"
 msgstr ""
 
-#: src/pr.c:2845
+#: src/pr.c:2822
 msgid ""
 "  -W, --page-width=PAGE_WIDTH\n"
 "                    set page width to PAGE_WIDTH (72) characters always,\n"
@@ -6699,16 +6788,6 @@ msgid ""
 "interference\n"
 "                    with -S or -s\n"
 msgstr ""
-
-#: src/pr.c:2853
-#, fuzzy
-msgid ""
-"\n"
-"-t is implied if PAGE_LENGTH <= 10.  With no FILE, or when FILE is -, read\n"
-"standard input.\n"
-msgstr ""
-"\n"
-"Met geen LÊER, of wanneer die LÊER - is, lees standaardtoevoer.\n"
 
 #: src/printenv.c:62
 #, c-format
@@ -6839,14 +6918,19 @@ msgid ""
 "files.\n"
 msgstr ""
 
-#: src/ptx.c:1830
+#: src/ptx.c:1831
 msgid ""
 "  -A, --auto-reference           output automatically generated references\n"
 "  -G, --traditional              behave more like System V 'ptx'\n"
-"  -F, --flag-truncation=STRING   use STRING for flagging line truncations\n"
 msgstr ""
 
 #: src/ptx.c:1835
+msgid ""
+"  -F, --flag-truncation=STRING   use STRING for flagging line truncations.\n"
+"                                 The default is '/'\n"
+msgstr ""
+
+#: src/ptx.c:1839
 msgid ""
 "  -M, --macro-name=STRING        macro name to use instead of 'xx'\n"
 "  -O, --format=roff              generate output as roff directives\n"
@@ -6855,7 +6939,7 @@ msgid ""
 "  -T, --format=tex               generate output as TeX directives\n"
 msgstr ""
 
-#: src/ptx.c:1842
+#: src/ptx.c:1846
 msgid ""
 "  -W, --word-regexp=REGEXP       use REGEXP to match each keyword\n"
 "  -b, --break-file=FILE          word break characters in this FILE\n"
@@ -6865,7 +6949,7 @@ msgid ""
 "  -o, --only-file=FILE           read only word list from this FILE\n"
 msgstr ""
 
-#: src/ptx.c:1850
+#: src/ptx.c:1854
 msgid ""
 "  -r, --references               first field of each line is a reference\n"
 "  -t, --typeset-mode               - not implemented -\n"
@@ -6873,19 +6957,15 @@ msgid ""
 "excluded\n"
 msgstr ""
 
-#: src/ptx.c:1857
-#, fuzzy
-msgid ""
-"\n"
-"With no FILE, or when FILE is -, read standard input.  Default is '-F /'.\n"
-msgstr ""
-"\n"
-"Met geen LÊER, of wanneer die LÊER - is, lees standaardtoevoer.\n"
-
 #: src/ptx.c:1951
 #, fuzzy, c-format
 msgid "invalid gap width: %s"
 msgstr "ongeldige wydte: %s"
+
+#: src/ptx.c:1978
+#, c-format
+msgid "invalid line width: %s"
+msgstr "ongeldige reëlwydte: %s"
 
 #: src/pwd.c:57
 msgid ""
@@ -6910,7 +6990,7 @@ msgstr ""
 msgid "failed to chdir to %s"
 msgstr "kon nie %s oopmaak nie"
 
-#: src/pwd.c:173 src/pwd.c:280 src/split.c:372
+#: src/pwd.c:173 src/pwd.c:280 src/split.c:426
 #, fuzzy, c-format
 msgid "failed to stat %s"
 msgstr "kon nie %s oopmaak nie"
@@ -6930,8 +7010,8 @@ msgstr "parameters wat nie opsies is nie word geïgnoreer"
 msgid "Dmitry V. Levin"
 msgstr ""
 
-#: src/readlink.c:62 src/realpath.c:71 src/rm.c:135 src/shred.c:169
-#: src/stat.c:1411 src/touch.c:212
+#: src/readlink.c:62 src/realpath.c:71 src/shred.c:169 src/stat.c:1414
+#: src/touch.c:212
 #, c-format
 msgid "Usage: %s [OPTION]... FILE...\n"
 msgstr "Gebruik so:  %s [OPSIE]...  LÊER...\n"
@@ -7120,16 +7200,16 @@ msgid ""
 msgstr ""
 
 #: src/rm.c:342
-#, c-format
-msgid "%s: remove %zu argument recursively? "
-msgid_plural "%s: remove %zu arguments recursively? "
-msgstr[0] ""
-msgstr[1] ""
+#, fuzzy, c-format
+msgid "%s: remove %<PRIuMAX> argument recursively? "
+msgid_plural "%s: remove %<PRIuMAX> arguments recursively? "
+msgstr[0] "%s: verwyder %s %s? "
+msgstr[1] "%s: verwyder %s %s? "
 
 #: src/rm.c:345
 #, fuzzy, c-format
-msgid "%s: remove %zu argument? "
-msgid_plural "%s: remove %zu arguments? "
+msgid "%s: remove %<PRIuMAX> argument? "
+msgid_plural "%s: remove %<PRIuMAX> arguments? "
 msgstr[0] "%s: verwyder %s %s? "
 msgstr[1] "%s: verwyder %s %s? "
 
@@ -7307,12 +7387,12 @@ msgstr ""
 msgid "invalid floating point argument: %s"
 msgstr "ongeldige wisselpunt parameter: %s"
 
-#: src/seq.c:234
+#: src/seq.c:248
 #, fuzzy, c-format
 msgid "format %s has unknown %%%c directive"
 msgstr "%s het 'n onbekende lêertipe"
 
-#: src/seq.c:557
+#: src/seq.c:603
 #, c-format
 msgid "format string may not be specified when printing equal width strings"
 msgstr ""
@@ -7328,7 +7408,16 @@ msgid ""
 "for even very expensive hardware probing to recover the data.\n"
 msgstr ""
 
-#: src/shred.c:177
+#: src/shred.c:174
+#, fuzzy
+msgid ""
+"\n"
+"If FILE is -, shred standard output.\n"
+msgstr ""
+"\n"
+"Met geen LÊER, of wanneer die LÊER - is, lees standaardtoevoer.\n"
+
+#: src/shred.c:181
 #, c-format
 msgid ""
 "  -f, --force    change permissions to allow writing if necessary\n"
@@ -7337,7 +7426,7 @@ msgid ""
 "  -s, --size=N   shred this many bytes (suffixes like K, M, G accepted)\n"
 msgstr ""
 
-#: src/shred.c:183
+#: src/shred.c:187
 msgid ""
 "  -u, --remove[=HOW]  truncate and remove file after overwriting; See below\n"
 "  -v, --verbose  show progress\n"
@@ -7346,10 +7435,8 @@ msgid ""
 "  -z, --zero     add a final overwrite with zeros to hide shredding\n"
 msgstr ""
 
-#: src/shred.c:192
+#: src/shred.c:196
 msgid ""
-"\n"
-"If FILE is -, shred standard output.\n"
 "\n"
 "Delete FILE(s) if --remove (-u) is specified.  The default is not to remove\n"
 "the files because it is common to operate on device files like /dev/hda,\n"
@@ -7362,7 +7449,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/shred.c:206
+#: src/shred.c:208
 msgid ""
 "CAUTION: Note that shred relies on a very important assumption:\n"
 "that the file system overwrites data in place.  This is the traditional\n"
@@ -7373,7 +7460,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/shred.c:214
+#: src/shred.c:216
 msgid ""
 "* log-structured or journaled file systems, such as those supplied with\n"
 "AIX and Solaris (and JFS, ReiserFS, XFS, Ext3, etc.)\n"
@@ -7385,7 +7472,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/shred.c:224
+#: src/shred.c:226
 msgid ""
 "* file systems that cache in temporary locations, such as NFS\n"
 "version 3 clients\n"
@@ -7394,7 +7481,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/shred.c:231
+#: src/shred.c:233
 msgid ""
 "In the case of ext3 file systems, the above disclaimer applies\n"
 "(and shred is thus of limited effectiveness) only in data=journal mode,\n"
@@ -7406,134 +7493,134 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/shred.c:241
+#: src/shred.c:243
 msgid ""
 "In addition, file system backups and remote mirrors may contain copies\n"
 "of the file that cannot be removed, and that will allow a shredded file\n"
 "to be recovered later.\n"
 msgstr ""
 
-#: src/shred.c:340
+#: src/shred.c:342
 #, fuzzy, c-format
 msgid "%s: fdatasync failed"
 msgstr "%s: seek het misluk"
 
-#: src/shred.c:351
+#: src/shred.c:353
 #, fuzzy, c-format
 msgid "%s: fsync failed"
 msgstr "%s: seek het misluk"
 
-#: src/shred.c:461
+#: src/shred.c:463
 #, c-format
 msgid "%s: cannot rewind"
 msgstr "%s: kan nie teruggaan nie"
 
-#: src/shred.c:481
+#: src/shred.c:483
 #, c-format
 msgid "%s: pass %lu/%lu (%s)..."
 msgstr "%s: pass %lu/%lu (%s)..."
 
-#: src/shred.c:529
+#: src/shred.c:531
 #, c-format
 msgid "%s: error writing at offset %s"
 msgstr "%s: fout tydens skryfbewerking by uitwyking %s"
 
-#: src/shred.c:549
+#: src/shred.c:551
 #, fuzzy, c-format
 msgid "%s: lseek failed"
 msgstr "%s: seek het misluk"
 
-#: src/shred.c:561
+#: src/shred.c:563
 #, c-format
 msgid "%s: file too large"
 msgstr "%s: lêer te groot"
 
-#: src/shred.c:585
+#: src/shred.c:587
 #, c-format
 msgid "%s: pass %lu/%lu (%s)...%s"
 msgstr "%s: pass %lu/%lu (%s)...%s"
 
-#: src/shred.c:601
+#: src/shred.c:603
 #, c-format
 msgid "%s: pass %lu/%lu (%s)...%s/%s %d%%"
 msgstr "%s: pass %lu/%lu (%s)...%s/%s %d%%"
 
-#: src/shred.c:859
+#: src/shred.c:861
 #, fuzzy, c-format
 msgid "%s: fstat failed"
 msgstr "'stat' het gefaal"
 
-#: src/shred.c:870
+#: src/shred.c:872
 #, c-format
 msgid "%s: invalid file type"
 msgstr "%s: ongeldige lêertipe:"
 
-#: src/shred.c:875
+#: src/shred.c:877
 #, c-format
 msgid "%s: file has negative size"
 msgstr "%s: lêer het negatiewe grootte"
 
-#: src/shred.c:969 src/sort.c:960 src/split.c:377
+#: src/shred.c:971 src/sort.c:959 src/split.c:431
 #, c-format
 msgid "%s: error truncating"
 msgstr "%s: fout tydens afeindiging"
 
-#: src/shred.c:989
+#: src/shred.c:991
 #, fuzzy, c-format
 msgid "%s: fcntl failed"
 msgstr "%s: seek het misluk"
 
-#: src/shred.c:994
+#: src/shred.c:996
 #, c-format
 msgid "%s: cannot shred append-only file descriptor"
 msgstr ""
 
-#: src/shred.c:1078
+#: src/shred.c:1080
 #, c-format
 msgid "%s: removing"
 msgstr "%s: besig om te verwyder"
 
-#: src/shred.c:1102
+#: src/shred.c:1104
 #, c-format
 msgid "%s: renamed to %s"
 msgstr "%s: hernoem as %s"
 
-#: src/shred.c:1124
+#: src/shred.c:1126
 #, fuzzy, c-format
 msgid "%s: failed to remove"
 msgstr "%s: lêer te groot"
 
-#: src/shred.c:1128
+#: src/shred.c:1130
 #, c-format
 msgid "%s: removed"
 msgstr "%s: is verwyder"
 
-#: src/shred.c:1135 src/shred.c:1178
+#: src/shred.c:1137 src/shred.c:1180
 #, fuzzy, c-format
 msgid "%s: failed to close"
 msgstr "%s: lêer te lank"
 
-#: src/shred.c:1171
+#: src/shred.c:1173
 #, fuzzy, c-format
 msgid "%s: failed to open for writing"
 msgstr "%s: lêer te lank"
 
 #: src/shred.c:1236
-#, c-format
-msgid "%s: invalid number of passes"
+#, fuzzy
+msgid "invalid number of passes"
 msgstr "%s: ongeldige aantal lopies"
 
-#: src/shred.c:1245 src/shuf.c:478 src/sort.c:4482
+#: src/shred.c:1241 src/shuf.c:472 src/sort.c:4481
 #, fuzzy, c-format
 msgid "multiple random sources specified"
 msgstr "veelvuldige afvoerlêers is gespesifiseer"
 
-#: src/shred.c:1264
-#, c-format
-msgid "%s: invalid file size"
+#: src/shred.c:1255
+#, fuzzy
+msgid "invalid file size"
 msgstr "%s: ongeldige lêergrootte."
 
-#: src/shuf.c:61
+#: src/shuf.c:62
 #, fuzzy, c-format
 msgid ""
 "Usage: %s [OPTION]... [FILE]\n"
@@ -7544,11 +7631,11 @@ msgstr ""
 "  or:  %s [OPSIE]... :GROEP LÊER...\n"
 "  or:  %s [OPSIE]... --reference=RLÊER LÊER...\n"
 
-#: src/shuf.c:67
+#: src/shuf.c:68
 msgid "Write a random permutation of the input lines to standard output.\n"
 msgstr ""
 
-#: src/shuf.c:73
+#: src/shuf.c:75
 msgid ""
 "  -e, --echo                treat each ARG as an input line\n"
 "  -i, --input-range=LO-HI   treat each number LO through HI as an input "
@@ -7559,37 +7646,37 @@ msgid ""
 "  -r, --repeat              output lines can be repeated\n"
 msgstr ""
 
-#: src/shuf.c:228
+#: src/shuf.c:226
 #, fuzzy, c-format
 msgid "too many input lines"
 msgstr "te veel nie-opsie parameters"
 
-#: src/shuf.c:431
+#: src/shuf.c:428
 #, fuzzy, c-format
 msgid "multiple -i options specified"
 msgstr "veelvuldige -l of -t opsies is gespesifiseer"
 
-#: src/shuf.c:452
-#, fuzzy, c-format
-msgid "invalid input range %s"
+#: src/shuf.c:435 src/shuf.c:441 src/shuf.c:446
+#, fuzzy
+msgid "invalid input range"
 msgstr "ongeldige nommer %s"
 
-#: src/shuf.c:465
+#: src/shuf.c:459
 #, fuzzy, c-format
-msgid "invalid line count %s"
+msgid "invalid line count: %s"
 msgstr "ongeldige reëlwydte: %s"
 
-#: src/shuf.c:472 src/sort.c:4476
+#: src/shuf.c:466 src/sort.c:4475
 #, c-format
 msgid "multiple output files specified"
 msgstr "veelvuldige afvoerlêers is gespesifiseer"
 
-#: src/shuf.c:502
+#: src/shuf.c:496
 #, fuzzy, c-format
 msgid "cannot combine -e and -i options"
 msgstr "die gebruikernaam en groepnaam mag nie albei ontbreek nie"
 
-#: src/shuf.c:586
+#: src/shuf.c:580
 #, c-format
 msgid "no lines to repeat"
 msgstr ""
@@ -7608,12 +7695,12 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/sleep.c:135 src/timeout.c:323
+#: src/sleep.c:135 src/timeout.c:325
 #, fuzzy, c-format
 msgid "invalid time interval %s"
 msgstr "ongeldige tydinterval `%s'"
 
-#: src/sleep.c:146 src/tail.c:1252
+#: src/sleep.c:146 src/tail.c:1251
 #, c-format
 msgid "cannot read realtime clock"
 msgstr "kan nie die reëletyd-horlosie lees nie"
@@ -7625,13 +7712,13 @@ msgstr ""
 "Druk die geselekteerde dele van reëls uit elke LÊER na standaardafvoer.\n"
 "\n"
 
-#: src/sort.c:433
+#: src/sort.c:434
 msgid ""
 "Ordering options:\n"
 "\n"
 msgstr ""
 
-#: src/sort.c:437
+#: src/sort.c:438
 msgid ""
 "  -b, --ignore-leading-blanks  ignore leading blanks\n"
 "  -d, --dictionary-order      consider only blanks and alphanumeric "
@@ -7639,19 +7726,19 @@ msgid ""
 "  -f, --ignore-case           fold lower case to upper case characters\n"
 msgstr ""
 
-#: src/sort.c:443
+#: src/sort.c:444
 msgid ""
 "  -g, --general-numeric-sort  compare according to general numerical value\n"
 "  -i, --ignore-nonprinting    consider only printable characters\n"
 "  -M, --month-sort            compare (unknown) < 'JAN' < ... < 'DEC'\n"
 msgstr ""
 
-#: src/sort.c:448
+#: src/sort.c:449
 msgid ""
 "  -h, --human-numeric-sort    compare human readable numbers (e.g., 2K 1G)\n"
 msgstr ""
 
-#: src/sort.c:451
+#: src/sort.c:452
 msgid ""
 "  -n, --numeric-sort          compare according to string numerical value\n"
 "  -R, --random-sort           sort by random hash of keys\n"
@@ -7659,7 +7746,7 @@ msgid ""
 "  -r, --reverse               reverse the result of comparisons\n"
 msgstr ""
 
-#: src/sort.c:457
+#: src/sort.c:458
 msgid ""
 "      --sort=WORD             sort according to WORD:\n"
 "                                general-numeric -g, human-numeric -h, month -"
@@ -7669,19 +7756,19 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/sort.c:465
+#: src/sort.c:466
 msgid ""
 "Other options:\n"
 "\n"
 msgstr ""
 
-#: src/sort.c:469
+#: src/sort.c:470
 msgid ""
 "      --batch-size=NMERGE   merge at most NMERGE inputs at once;\n"
 "                            for more use temp files\n"
 msgstr ""
 
-#: src/sort.c:473
+#: src/sort.c:474
 msgid ""
 "  -c, --check, --check=diagnose-first  check for sorted input; do not sort\n"
 "  -C, --check=quiet, --check=silent  like -c, but do not report first bad "
@@ -7690,7 +7777,7 @@ msgid ""
 "                              decompress them with PROG -d\n"
 msgstr ""
 
-#: src/sort.c:480
+#: src/sort.c:481
 msgid ""
 "      --debug               annotate the part of the line used to sort,\n"
 "                              and warn about questionable usage to stderr\n"
@@ -7699,13 +7786,13 @@ msgid ""
 "                            If F is - then read names from standard input\n"
 msgstr ""
 
-#: src/sort.c:487
+#: src/sort.c:488
 msgid ""
 "  -k, --key=KEYDEF          sort via a key; KEYDEF gives location and type\n"
 "  -m, --merge               merge already sorted files; do not sort\n"
 msgstr ""
 
-#: src/sort.c:491
+#: src/sort.c:492
 msgid ""
 "  -o, --output=FILE         write result to FILE instead of standard output\n"
 "  -s, --stable              stabilize sort by disabling last-resort "
@@ -7713,7 +7800,7 @@ msgid ""
 "  -S, --buffer-size=SIZE    use SIZE for main memory buffer\n"
 msgstr ""
 
-#: src/sort.c:497
+#: src/sort.c:498
 #, c-format
 msgid ""
 "  -t, --field-separator=SEP  use SEP instead of non-blank to blank "
@@ -7728,7 +7815,7 @@ msgid ""
 "run\n"
 msgstr ""
 
-#: src/sort.c:511
+#: src/sort.c:512
 msgid ""
 "\n"
 "KEYDEF is F[.C][OPTS][,F[.C][OPTS]] for start and stop position, where F is "
@@ -7747,11 +7834,9 @@ msgid ""
 "SIZE may be followed by the following multiplicative suffixes:\n"
 msgstr ""
 
-#: src/sort.c:524
+#: src/sort.c:525
 msgid ""
 "% 1% of memory, b 1, K 1024 (default), and so on for M, G, T, P, E, Z, Y.\n"
-"\n"
-"With no FILE, or when FILE is -, read standard input.\n"
 "\n"
 "*** WARNING ***\n"
 "The locale specified by the environment affects sort order.\n"
@@ -7759,271 +7844,272 @@ msgid ""
 "native byte values.\n"
 msgstr ""
 
-#: src/sort.c:725
+#: src/sort.c:724
 #, fuzzy, c-format
 msgid "waiting for %s [-d]"
 msgstr "besig om te skryf na %s"
 
-#: src/sort.c:730
+#: src/sort.c:729
 #, c-format
 msgid "%s [-d] terminated abnormally"
 msgstr ""
 
-#: src/sort.c:884
+#: src/sort.c:883
 #, fuzzy, c-format
 msgid "cannot create temporary file in %s"
 msgstr "kan nie 'n tydelike lêer skep nie"
 
-#: src/sort.c:978 src/sort.c:2058 src/sort.c:3104 src/sort.c:3753
-#: src/sort.c:3844 src/sort.c:3847
+#: src/sort.c:977 src/sort.c:2057 src/sort.c:3103 src/sort.c:3752
+#: src/sort.c:3843 src/sort.c:3846
 msgid "open failed"
 msgstr "'open' het gefaal"
 
-#: src/sort.c:998
+#: src/sort.c:997
 #, fuzzy
 msgid "fflush failed"
 msgstr "'close' het gefaal"
 
-#: src/sort.c:1003 src/sort.c:2061 src/sort.c:4747
+#: src/sort.c:1002 src/sort.c:2060 src/sort.c:4746
 msgid "close failed"
 msgstr "'close' het gefaal"
 
-#: src/sort.c:1140
+#: src/sort.c:1139
 #, fuzzy
 msgid "couldn't create temporary file"
 msgstr "kan nie 'n tydelike lêer skep nie"
 
-#: src/sort.c:1179
+#: src/sort.c:1178
 #, fuzzy, c-format
 msgid "couldn't create process for %s -d"
 msgstr "Kan nie lêergids %s skep nie."
 
-#: src/sort.c:1252
+#: src/sort.c:1251
 #, fuzzy, c-format
 msgid "warning: cannot remove: %s"
 msgstr "kan nie %s verwyder nie"
 
-#: src/sort.c:1338
+#: src/sort.c:1337
 #, fuzzy, c-format
 msgid "invalid --%s argument %s"
 msgstr "ongeldige parameter: %s"
 
-#: src/sort.c:1341
+#: src/sort.c:1340
 #, fuzzy, c-format
 msgid "minimum --%s argument is %s"
 msgstr "dubbelsinnige parameter %s vir %s"
 
-#: src/sort.c:1356
+#: src/sort.c:1355
 #, fuzzy, c-format
 msgid "--%s argument %s too large"
 msgstr "%s: telling `%.*s' is te groot"
 
-#: src/sort.c:1359
+#: src/sort.c:1358
 #, c-format
 msgid "maximum --%s argument with current rlimit is %s"
 msgstr ""
 
-#: src/sort.c:1441
+#: src/sort.c:1440
 #, c-format
 msgid "number in parallel must be nonzero"
 msgstr ""
 
-#: src/sort.c:1526
+#: src/sort.c:1525
 msgid "stat failed"
 msgstr "'stat' het gefaal"
 
-#: src/sort.c:1788
+#: src/sort.c:1787
 msgid "read failed"
 msgstr "'read' het gefaal"
 
-#: src/sort.c:2076
+#: src/sort.c:2075
 #, fuzzy, c-format
 msgid "string transformation failed"
 msgstr "stringvergelyking het gefaal"
 
-#: src/sort.c:2079
+#: src/sort.c:2078
 #, c-format
 msgid "the untransformed string was %s"
 msgstr ""
 
-#: src/sort.c:2242
+#: src/sort.c:2241
 #, c-format
 msgid "^ no match for key\n"
 msgstr ""
 
-#: src/sort.c:2422
+#: src/sort.c:2421
 #, c-format
 msgid "obsolescent key %s used; consider %s instead"
 msgstr ""
 
-#: src/sort.c:2428
+#: src/sort.c:2427
 #, c-format
 msgid "key %lu has zero width and will be ignored"
 msgstr ""
 
-#: src/sort.c:2439
+#: src/sort.c:2438
 #, c-format
 msgid "leading blanks are significant in key %lu; consider also specifying 'b'"
 msgstr ""
 
-#: src/sort.c:2452
+#: src/sort.c:2451
 #, c-format
 msgid "key %lu is numeric and spans multiple fields"
 msgstr ""
 
-#: src/sort.c:2484
+#: src/sort.c:2483
 #, fuzzy, c-format
 msgid "option '-%s' is ignored"
 msgid_plural "options '-%s' are ignored"
 msgstr[0] "%s: opsie `-W %s' is dubbelsinnig\n"
 msgstr[1] "%s: opsie `-W %s' is dubbelsinnig\n"
 
-#: src/sort.c:2490
+#: src/sort.c:2489
 #, c-format
 msgid "option '-r' only applies to last-resort comparison"
 msgstr ""
 
-#: src/sort.c:2764 src/sort.c:2773
+#: src/sort.c:2763 src/sort.c:2772
 msgid "write failed"
 msgstr "'write' het gefaal"
 
-#: src/sort.c:2816
+#: src/sort.c:2815
 #, c-format
 msgid "%s: %s:%s: disorder: "
 msgstr ""
 
-#: src/sort.c:2819
+#: src/sort.c:2818
 msgid "standard error"
 msgstr "standaardfout-afvoer"
 
-#: src/sort.c:3738
+#: src/sort.c:3737
 #, fuzzy
 msgid "cannot read"
 msgstr "%s: kan nie teruggaan nie"
 
-#: src/sort.c:4017
+#: src/sort.c:4016
 #, fuzzy, c-format
 msgid "%s: invalid field specification %s"
 msgstr "%s: ongeldige veldspesifikasie `%s'"
 
-#: src/sort.c:4028
+#: src/sort.c:4027
 #, c-format
 msgid "options '-%s' are incompatible"
 msgstr ""
 
-#: src/sort.c:4079
+#: src/sort.c:4078
 #, fuzzy, c-format
 msgid "%s: invalid count at start of %s"
 msgstr "%s: ongeldige telling by begin van `%s'"
 
-#: src/sort.c:4336
+#: src/sort.c:4335
 #, fuzzy
 msgid "invalid number after '-'"
 msgstr "ongeldige getal na `-'"
 
-#: src/sort.c:4343 src/sort.c:4429 src/sort.c:4457
+#: src/sort.c:4342 src/sort.c:4428 src/sort.c:4456
 #, fuzzy
 msgid "invalid number after '.'"
 msgstr "ongeldige getal na `.'"
 
-#: src/sort.c:4356 src/sort.c:4462
+#: src/sort.c:4355 src/sort.c:4461
 msgid "stray character in field spec"
 msgstr "verdwaalde karakter in veldspesifikasie"
 
-#: src/sort.c:4403
+#: src/sort.c:4402
 #, fuzzy, c-format
 msgid "multiple compress programs specified"
 msgstr "veelvuldige -l of -t opsies is gespesifiseer"
 
-#: src/sort.c:4420
+#: src/sort.c:4419
 msgid "invalid number at field start"
 msgstr "ongeldige nommer by begin van veld"
 
-#: src/sort.c:4424 src/sort.c:4452
+#: src/sort.c:4423 src/sort.c:4451
 msgid "field number is zero"
 msgstr "veldnommer is nul"
 
-#: src/sort.c:4433
+#: src/sort.c:4432
 msgid "character offset is zero"
 msgstr "karakteruitwyking is nul"
 
-#: src/sort.c:4448
+#: src/sort.c:4447
 #, fuzzy
 msgid "invalid number after ','"
 msgstr "ongeldige getal na `,'"
 
-#: src/sort.c:4498
+#: src/sort.c:4497
 #, c-format
 msgid "empty tab"
 msgstr "leë keepkarakter"
 
-#: src/sort.c:4591 src/wc.c:692
+#: src/sort.c:4590 src/wc.c:726
 #, fuzzy, c-format
 msgid "cannot read file names from %s"
 msgstr "kan nie die pyp %s skep nie"
 
-#: src/sort.c:4613
+#: src/sort.c:4612
 #, fuzzy, c-format
 msgid "%s:%lu: invalid zero-length file name"
 msgstr "%s: ongeldige lêertipe:"
 
-#: src/sort.c:4619
+#: src/sort.c:4618
 #, fuzzy, c-format
 msgid "no input from %s"
 msgstr "toevoerlêer %s word toegemaak"
 
-#: src/sort.c:4665
+#: src/sort.c:4664
 #, c-format
 msgid "using %s sorting rules"
 msgstr ""
 
-#: src/sort.c:4668
+#: src/sort.c:4667
 #, c-format
 msgid "using simple byte comparison"
 msgstr ""
 
-#: src/sort.c:4699
+#: src/sort.c:4698
 #, c-format
 msgid "extra operand %s not allowed with -%c"
 msgstr ""
 
-#: src/split.c:186
+#: src/split.c:207
 #, c-format
-msgid "the suffix length needs to be at least %zu"
+msgid "the suffix length needs to be at least %<PRIuMAX>"
 msgstr ""
 
-#: src/split.c:203
+#: src/split.c:224
 #, fuzzy, c-format
-msgid "Usage: %s [OPTION]... [INPUT [PREFIX]]\n"
+msgid "Usage: %s [OPTION]... [FILE [PREFIX]]\n"
 msgstr "Gebruik so: %s [OPSIE] [TOEVOER [PREFIKS]]\n"
 
-#: src/split.c:207
+#: src/split.c:228
 msgid ""
-"Output fixed-size pieces of INPUT to PREFIXaa, PREFIXab, ...; default\n"
-"size is 1000 lines, and default PREFIX is 'x'.  With no INPUT, or when "
-"INPUT\n"
-"is -, read standard input.\n"
+"Output pieces of FILE to PREFIXaa, PREFIXab, ...;\n"
+"default size is 1000 lines, and default PREFIX is 'x'.\n"
 msgstr ""
 
-#: src/split.c:215
+#: src/split.c:236
 #, c-format
 msgid ""
 "  -a, --suffix-length=N   generate suffixes of length N (default %d)\n"
 "      --additional-suffix=SUFFIX  append an additional SUFFIX to file names\n"
 "  -b, --bytes=SIZE        put SIZE bytes per output file\n"
-"  -C, --line-bytes=SIZE   put at most SIZE bytes of lines per output file\n"
+"  -C, --line-bytes=SIZE   put at most SIZE bytes of records per output file\n"
 "  -d, --numeric-suffixes[=FROM]  use numeric suffixes instead of "
 "alphabetic;\n"
 "                                   FROM changes the start value (default 0)\n"
 "  -e, --elide-empty-files  do not generate empty output files with '-n'\n"
 "      --filter=COMMAND    write to shell COMMAND; file name is $FILE\n"
-"  -l, --lines=NUMBER      put NUMBER lines per output file\n"
+"  -l, --lines=NUMBER      put NUMBER lines/records per output file\n"
 "  -n, --number=CHUNKS     generate CHUNKS output files; see explanation "
 "below\n"
+"  -t, --separator=SEP     use SEP instead of newline as the record "
+"separator;\n"
+"                            '\\0' (zero) specifies the NUL character\n"
 "  -u, --unbuffered        immediately copy input to output with '-n r/...'\n"
 msgstr ""
 
-#: src/split.c:228
+#: src/split.c:251
 #, fuzzy
 msgid ""
 "      --verbose           print a diagnostic just before each\n"
@@ -8032,201 +8118,206 @@ msgstr ""
 "      --verbose           druk 'n diagnostiese boodskap op standaardafvoer\n"
 "                            direk voor elke afvoerlêer oopgemaak word\n"
 
-#: src/split.c:235
+#: src/split.c:258
 msgid ""
 "\n"
 "CHUNKS may be:\n"
-"N       split into N files based on size of input\n"
-"K/N     output Kth of N to stdout\n"
-"l/N     split into N files without splitting lines\n"
-"l/K/N   output Kth of N to stdout without splitting lines\n"
-"r/N     like 'l' but use round robin distribution\n"
-"r/K/N   likewise but only output Kth of N to stdout\n"
+"  N       split into N files based on size of input\n"
+"  K/N     output Kth of N to stdout\n"
+"  l/N     split into N files without splitting lines/records\n"
+"  l/K/N   output Kth of N to stdout without splitting lines/records\n"
+"  r/N     like 'l' but use round robin distribution\n"
+"  r/K/N   likewise but only output Kth of N to stdout\n"
 msgstr ""
 
-#: src/split.c:353
+#: src/split.c:407
 #, fuzzy, c-format
 msgid "output file suffixes exhausted"
 msgstr "uitgange vir afvoerlêers is uitgeput"
 
-#: src/split.c:365
+#: src/split.c:419
 #, fuzzy, c-format
 msgid "creating file %s\n"
 msgstr "besig om nuwe lêer `%s' te skep\n"
 
-#: src/split.c:374
+#: src/split.c:428
 #, c-format
 msgid "%s would overwrite input; aborting"
 msgstr ""
 
-#: src/split.c:390
+#: src/split.c:444
 #, c-format
 msgid "failed to set FILE environment variable"
 msgstr ""
 
-#: src/split.c:392
+#: src/split.c:446
 #, c-format
 msgid "executing with FILE=%s\n"
 msgstr ""
 
-#: src/split.c:394
+#: src/split.c:448
 #, fuzzy, c-format
 msgid "failed to create pipe"
 msgstr "kon nie %s oopmaak nie"
 
-#: src/split.c:408
+#: src/split.c:462
 #, fuzzy, c-format
 msgid "closing prior pipe"
 msgstr "toevoerlêer %s word toegemaak"
 
-#: src/split.c:410
+#: src/split.c:464
 #, fuzzy, c-format
 msgid "closing output pipe"
 msgstr "afvoerlêer %s word toegemaak"
 
-#: src/split.c:414
+#: src/split.c:468
 #, fuzzy, c-format
 msgid "moving input pipe"
 msgstr "toevoerlêer %s word toegemaak"
 
-#: src/split.c:416
+#: src/split.c:470
 #, fuzzy, c-format
 msgid "closing input pipe"
 msgstr "toevoerlêer %s word toegemaak"
 
-#: src/split.c:421
+#: src/split.c:475
 #, fuzzy, c-format
 msgid "failed to run command: \"%s -c %s\""
 msgstr "kan nie bevel %s uitvoer nie"
 
-#: src/split.c:427
+#: src/split.c:481
 #, fuzzy, c-format
 msgid "failed to close input pipe"
 msgstr "kon nie %s oopmaak nie"
 
-#: src/split.c:463
+#: src/split.c:517
 #, c-format
 msgid "waiting for child process"
 msgstr ""
 
-#: src/split.c:473
+#: src/split.c:527
 #, c-format
 msgid "with FILE=%s, signal %s from command: %s"
 msgstr ""
 
-#: src/split.c:481
+#: src/split.c:535
 #, c-format
 msgid "with FILE=%s, exit %d from command: %s"
 msgstr ""
 
-#: src/split.c:488 src/timeout.c:497
+#: src/split.c:542
 #, c-format
 msgid "unknown status from command (0x%X)"
 msgstr ""
 
-#: src/split.c:1102
+#: src/split.c:1195
 #, c-format
 msgid "cannot split in more than one way"
 msgstr "kan nie verdeel op meer as een manier nie"
 
-#: src/split.c:1115 src/split.c:1255 src/split.c:1426
-#, fuzzy, c-format
-msgid "%s: invalid number of chunks"
+#: src/split.c:1207 src/split.c:1322 src/split.c:1535
+#, fuzzy
+msgid "invalid number of chunks"
 msgstr "%s: ongeldige aantal sekondes"
 
-#: src/split.c:1119
-#, fuzzy, c-format
-msgid "%s: invalid chunk number"
+#: src/split.c:1212
+#, fuzzy
+msgid "invalid chunk number"
 msgstr "%s: ongeldige getal"
 
-#: src/split.c:1169
-#, c-format
-msgid "%s: invalid suffix length"
+#: src/split.c:1259
+#, fuzzy
+msgid "invalid suffix length"
 msgstr "%s: ongeldige suffikslengte"
 
-#: src/split.c:1194 src/split.c:1202 src/split.c:1225 src/split.c:1230
+#: src/split.c:1333
 #, c-format
-msgid "%s: invalid number of bytes"
-msgstr "%s: ongeldige aantal grepe"
+msgid "empty record separator"
+msgstr ""
 
-#: src/split.c:1213 src/split.c:1360
-#, c-format
-msgid "%s: invalid number of lines"
-msgstr "%s: ongeldige aantal reëls"
+#: src/split.c:1344
+#, fuzzy, c-format
+msgid "multi-character separator %s"
+msgstr "saamgestelde keepkarakter `%s'"
 
-#: src/split.c:1286
+#: src/split.c:1352
+#, fuzzy, c-format
+msgid "multiple separator characters specified"
+msgstr "spesiale karakterlêer"
+
+#: src/split.c:1383
 #, c-format
 msgid "line count option -%s%c... is too large"
 msgstr "opsie om reëls te tel -%s%c... is te groot"
 
-#: src/split.c:1298
+#: src/split.c:1395
 #, fuzzy, c-format
 msgid "%s: invalid start value for numerical suffix"
 msgstr "ongeldige beginreëlnommer: %s"
 
-#: src/split.c:1326
-#, fuzzy, c-format
-msgid "%s: invalid IO block size"
+#: src/split.c:1419
+#, fuzzy
+msgid "invalid IO block size"
 msgstr "%s: ongeldige lêergrootte."
 
-#: src/split.c:1347
+#: src/split.c:1437
 #, c-format
 msgid "--filter does not process a chunk extracted to stdout"
 msgstr ""
 
-#: src/split.c:1384
+#: src/split.c:1477
 #, c-format
 msgid "numerical suffix start value is too large for the suffix length"
 msgstr ""
 
-#: src/split.c:1419
+#: src/split.c:1528
 #, fuzzy, c-format
 msgid "%s: cannot determine file size"
 msgstr "kan die masjiennaam nie vasstel nie"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/stat.c:178
+#: src/stat.c:179
 msgid "Michael Meskes"
 msgstr ""
 
-#: src/stat.c:887
+#: src/stat.c:890
 #, fuzzy, c-format
 msgid "failed to canonicalize %s"
 msgstr "kon nie %s oopmaak nie"
 
-#: src/stat.c:1129
+#: src/stat.c:1132
 #, fuzzy, c-format
 msgid "warning: unrecognized escape '\\%c'"
 msgstr "%s: onbekende opsie `%c%s'\n"
 
-#: src/stat.c:1184
+#: src/stat.c:1187
 #, fuzzy, c-format
 msgid "%s: invalid directive"
 msgstr "%%%c: ongeldige direktief"
 
-#: src/stat.c:1231
+#: src/stat.c:1234
 #, c-format
 msgid "warning: backslash at end of format"
 msgstr ""
 
-#: src/stat.c:1262
+#: src/stat.c:1265
 #, c-format
 msgid "using %s to denote standard input does not work in file system mode"
 msgstr ""
 
-#: src/stat.c:1269
+#: src/stat.c:1272
 #, c-format
 msgid "cannot read file system information for %s"
 msgstr ""
 
-#: src/stat.c:1290
+#: src/stat.c:1293
 #, fuzzy, c-format
 msgid "cannot stat standard input"
 msgstr "standaard-toevoer word nou toegemaak"
 
 #. TRANSLATORS: This string uses format specifiers from
 #. 'stat --help' with --file-system, and NOT from printf.
-#: src/stat.c:1326
+#: src/stat.c:1329
 msgid ""
 "  File: \"%n\"\n"
 "    ID: %-8i Namelen: %-7l Type: %T\n"
@@ -8237,7 +8328,7 @@ msgstr ""
 
 #. TRANSLATORS: This string uses format specifiers from
 #. 'stat --help' without --file-system, and NOT from printf.
-#: src/stat.c:1349
+#: src/stat.c:1352
 msgid ""
 "  File: %N\n"
 "  Size: %-10s\tBlocks: %-10b IO Block: %-6o %F\n"
@@ -8245,30 +8336,30 @@ msgstr ""
 
 #. TRANSLATORS: This string uses format specifiers from
 #. 'stat --help' without --file-system, and NOT from printf.
-#: src/stat.c:1359
+#: src/stat.c:1362
 msgid "Device: %Dh/%dd\tInode: %-10i  Links: %-5h Device type: %t,%T\n"
 msgstr ""
 
 #. TRANSLATORS: This string uses format specifiers from
 #. 'stat --help' without --file-system, and NOT from printf.
-#: src/stat.c:1367
+#: src/stat.c:1370
 msgid "Device: %Dh/%dd\tInode: %-10i  Links: %h\n"
 msgstr ""
 
 #. TRANSLATORS: This string uses format specifiers from
 #. 'stat --help' without --file-system, and NOT from printf.
-#: src/stat.c:1376
+#: src/stat.c:1379
 msgid "Access: (%04a/%10.10A)  Uid: (%5u/%8U)   Gid: (%5g/%8G)\n"
 msgstr ""
 
 #. TRANSLATORS: This string uses format specifiers from
 #. 'stat --help' without --file-system, and NOT from printf.
-#: src/stat.c:1386
+#: src/stat.c:1389
 #, c-format
 msgid "Context: %C\n"
 msgstr ""
 
-#: src/stat.c:1394
+#: src/stat.c:1397
 msgid ""
 "Access: %x\n"
 "Modify: %y\n"
@@ -8276,17 +8367,17 @@ msgid ""
 " Birth: %w\n"
 msgstr ""
 
-#: src/stat.c:1412
+#: src/stat.c:1415
 msgid "Display file or file system status.\n"
 msgstr ""
 
-#: src/stat.c:1418
+#: src/stat.c:1421
 msgid ""
 "  -L, --dereference     follow links\n"
 "  -f, --file-system     display file system status instead of file status\n"
 msgstr ""
 
-#: src/stat.c:1422
+#: src/stat.c:1425
 msgid ""
 "  -c  --format=FORMAT   use the specified FORMAT instead of the default;\n"
 "                          output a newline after each use of FORMAT\n"
@@ -8296,7 +8387,7 @@ msgid ""
 "  -t, --terse           print the information in terse form\n"
 msgstr ""
 
-#: src/stat.c:1433
+#: src/stat.c:1436
 msgid ""
 "\n"
 "The valid format sequences for files (without --file-system):\n"
@@ -8308,7 +8399,7 @@ msgid ""
 "  %C   SELinux security context string\n"
 msgstr ""
 
-#: src/stat.c:1442
+#: src/stat.c:1445
 msgid ""
 "  %d   device number in decimal\n"
 "  %D   device number in hex\n"
@@ -8318,7 +8409,7 @@ msgid ""
 "  %G   group name of owner\n"
 msgstr ""
 
-#: src/stat.c:1450
+#: src/stat.c:1453
 msgid ""
 "  %h   number of hard links\n"
 "  %i   inode number\n"
@@ -8331,7 +8422,7 @@ msgid ""
 "  %T   minor device type in hex, for character/block device special files\n"
 msgstr ""
 
-#: src/stat.c:1461
+#: src/stat.c:1464
 msgid ""
 "  %u   user ID of owner\n"
 "  %U   user name of owner\n"
@@ -8346,7 +8437,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/stat.c:1475
+#: src/stat.c:1478
 msgid ""
 "Valid format sequences for file systems:\n"
 "\n"
@@ -8357,7 +8448,7 @@ msgid ""
 "  %f   free blocks in file system\n"
 msgstr ""
 
-#: src/stat.c:1484
+#: src/stat.c:1487
 msgid ""
 "  %i   file system ID in hex\n"
 "  %l   maximum length of filenames\n"
@@ -8412,8 +8503,7 @@ msgstr ""
 msgid ""
 "\n"
 "NOTE: If COMMAND adjusts the buffering of its standard streams ('tee' does\n"
-"for e.g.) then that will override corresponding settings changed by "
-"'stdbuf'.\n"
+"for example) then that will override corresponding changes by 'stdbuf'.\n"
 "Also some filters (like 'dd' and 'cat' etc.) don't use streams for I/O,\n"
 "and are thus unaffected by 'stdbuf' settings.\n"
 msgstr ""
@@ -8438,7 +8528,7 @@ msgstr ""
 msgid "you must specify a buffering mode option"
 msgstr ""
 
-#: src/stty.c:516
+#: src/stty.c:524
 #, c-format
 msgid ""
 "Usage: %s [-F DEVICE | --file=DEVICE] [SETTING]...\n"
@@ -8446,96 +8536,149 @@ msgid ""
 "  or:  %s [-F DEVICE | --file=DEVICE] [-g|--save]\n"
 msgstr ""
 
-#: src/stty.c:522
+#: src/stty.c:530
 msgid "Print or change terminal characteristics.\n"
 msgstr ""
 
-#: src/stty.c:528
+#: src/stty.c:536
 msgid ""
 "  -a, --all          print all current settings in human-readable form\n"
 "  -g, --save         print all current settings in a stty-readable form\n"
 "  -F, --file=DEVICE  open and use the specified DEVICE instead of stdin\n"
 msgstr ""
 
-#: src/stty.c:535
+#: src/stty.c:543
 msgid ""
 "\n"
 "Optional - before SETTING indicates negation.  An * marks non-POSIX\n"
 "settings.  The underlying system defines which settings are available.\n"
 msgstr ""
 
-#: src/stty.c:540
+#: src/stty.c:548
 msgid ""
 "\n"
 "Special characters:\n"
+msgstr ""
+
+#: src/stty.c:552
+msgid " * discard CHAR  CHAR will toggle discarding of output\n"
+msgstr ""
+
+#: src/stty.c:557
+msgid ""
 " * dsusp CHAR    CHAR will send a terminal stop signal once input flushed\n"
+msgstr ""
+
+#: src/stty.c:561
+msgid ""
 "   eof CHAR      CHAR will send an end of file (terminate the input)\n"
 "   eol CHAR      CHAR will end the line\n"
 msgstr ""
 
-#: src/stty.c:547
+#: src/stty.c:566
+msgid " * eol2 CHAR     alternate CHAR for ending the line\n"
+msgstr ""
+
+#: src/stty.c:570
 msgid ""
-" * eol2 CHAR     alternate CHAR for ending the line\n"
 "   erase CHAR    CHAR will erase the last character typed\n"
 "   intr CHAR     CHAR will send an interrupt signal\n"
 "   kill CHAR     CHAR will erase the current line\n"
 msgstr ""
 
-#: src/stty.c:553
-msgid ""
-" * lnext CHAR    CHAR will enter the next character quoted\n"
-"   quit CHAR     CHAR will send a quit signal\n"
-" * rprnt CHAR    CHAR will redraw the current line\n"
-"   start CHAR    CHAR will restart the output after stopping it\n"
+#: src/stty.c:576
+msgid " * lnext CHAR    CHAR will enter the next character quoted\n"
 msgstr ""
 
-#: src/stty.c:559
+#: src/stty.c:581
+msgid " * status CHAR   CHAR will send an info signal\n"
+msgstr ""
+
+#: src/stty.c:585
+msgid "   quit CHAR     CHAR will send a quit signal\n"
+msgstr ""
+
+#: src/stty.c:589
+msgid " * rprnt CHAR    CHAR will redraw the current line\n"
+msgstr ""
+
+#: src/stty.c:593
 msgid ""
+"   start CHAR    CHAR will restart the output after stopping it\n"
 "   stop CHAR     CHAR will stop the output\n"
 "   susp CHAR     CHAR will send a terminal stop signal\n"
-" * swtch CHAR    CHAR will switch to a different shell layer\n"
-" * werase CHAR   CHAR will erase the last word typed\n"
 msgstr ""
 
-#: src/stty.c:565
+#: src/stty.c:599
+msgid " * swtch CHAR    CHAR will switch to a different shell layer\n"
+msgstr ""
+
+#: src/stty.c:604
+msgid " * werase CHAR   CHAR will erase the last word typed\n"
+msgstr ""
+
+#: src/stty.c:608
 msgid ""
 "\n"
 "Special settings:\n"
 "   N             set the input and output speeds to N bauds\n"
+msgstr ""
+
+#: src/stty.c:614
+msgid ""
 " * cols N        tell the kernel that the terminal has N columns\n"
 " * columns N     same as cols N\n"
 msgstr ""
 
-#: src/stty.c:572
+#: src/stty.c:619
+msgid "   ispeed N      set the input speed to N\n"
+msgstr ""
+
+#: src/stty.c:623
+msgid " * line N        use line discipline N\n"
+msgstr ""
+
+#: src/stty.c:627
 msgid ""
-"   ispeed N      set the input speed to N\n"
-" * line N        use line discipline N\n"
 "   min N         with -icanon, set N characters minimum for a completed "
 "read\n"
 "   ospeed N      set the output speed to N\n"
 msgstr ""
 
-#: src/stty.c:578
+#: src/stty.c:632
 msgid ""
 " * rows N        tell the kernel that the terminal has N rows\n"
 " * size          print the number of rows and columns according to the "
 "kernel\n"
+msgstr ""
+
+#: src/stty.c:637
+msgid ""
 "   speed         print the terminal speed\n"
 "   time N        with -icanon, set read timeout of N tenths of a second\n"
 msgstr ""
 
-#: src/stty.c:584
+#: src/stty.c:641
 msgid ""
 "\n"
 "Control settings:\n"
 "   [-]clocal     disable modem control signals\n"
 "   [-]cread      allow input to be received\n"
-" * [-]crtscts    enable RTS/CTS handshaking\n"
-" * [-]cdtrdsr    enable DTR/DSR handshaking\n"
-"   csN           set character size to N bits, N in [5..8]\n"
 msgstr ""
 
-#: src/stty.c:593
+#: src/stty.c:648
+msgid " * [-]crtscts    enable RTS/CTS handshaking\n"
+msgstr ""
+
+#: src/stty.c:653
+msgid " * [-]cdtrdsr    enable DTR/DSR handshaking\n"
+msgstr ""
+
+#: src/stty.c:657
+msgid "   csN           set character size to N bits, N in [5..8]\n"
+msgstr ""
+
+#: src/stty.c:660
 msgid ""
 "   [-]cstopb     use two stop bits per character (one with '-')\n"
 "   [-]hup        send a hangup signal when the last process closes the tty\n"
@@ -8543,10 +8686,13 @@ msgid ""
 "   [-]parenb     generate parity bit in output and expect parity bit in "
 "input\n"
 "   [-]parodd     set odd parity (or even parity with '-')\n"
-" * [-]cmspar     use \"stick\" (mark/space) parity\n"
 msgstr ""
 
-#: src/stty.c:601
+#: src/stty.c:668
+msgid " * [-]cmspar     use \"stick\" (mark/space) parity\n"
+msgstr ""
+
+#: src/stty.c:672
 msgid ""
 "\n"
 "Input settings:\n"
@@ -8554,135 +8700,249 @@ msgid ""
 "   [-]icrnl      translate carriage return to newline\n"
 "   [-]ignbrk     ignore break characters\n"
 "   [-]igncr      ignore carriage return\n"
+"   [-]ignpar     ignore characters with parity errors\n"
 msgstr ""
 
-#: src/stty.c:609
+#: src/stty.c:682
 msgid ""
-"   [-]ignpar     ignore characters with parity errors\n"
 " * [-]imaxbel    beep and do not flush a full input buffer on a character\n"
+msgstr ""
+
+#: src/stty.c:686
+msgid ""
 "   [-]inlcr      translate newline to carriage return\n"
 "   [-]inpck      enable input parity checking\n"
 "   [-]istrip     clear high (8th) bit of input characters\n"
 msgstr ""
 
-#: src/stty.c:616
+#: src/stty.c:692
 msgid " * [-]iutf8      assume input characters are UTF-8 encoded\n"
 msgstr ""
 
-#: src/stty.c:619
+#: src/stty.c:697
+msgid " * [-]iuclc      translate uppercase characters to lowercase\n"
+msgstr ""
+
+#: src/stty.c:702
 msgid ""
-" * [-]iuclc      translate uppercase characters to lowercase\n"
 " * [-]ixany      let any character restart output, not only start character\n"
+msgstr ""
+
+#: src/stty.c:706
+msgid ""
 "   [-]ixoff      enable sending of start/stop characters\n"
 "   [-]ixon       enable XON/XOFF flow control\n"
 "   [-]parmrk     mark parity errors (with a 255-0-character sequence)\n"
 "   [-]tandem     same as [-]ixoff\n"
 msgstr ""
 
-#: src/stty.c:627
+#: src/stty.c:712
 msgid ""
 "\n"
 "Output settings:\n"
-" * bsN           backspace delay style, N in [0..1]\n"
-" * crN           carriage return delay style, N in [0..3]\n"
-" * ffN           form feed delay style, N in [0..1]\n"
-" * nlN           newline delay style, N in [0..1]\n"
 msgstr ""
 
-#: src/stty.c:635
+#: src/stty.c:717
+msgid " * bsN           backspace delay style, N in [0..1]\n"
+msgstr ""
+
+#: src/stty.c:722
+msgid " * crN           carriage return delay style, N in [0..3]\n"
+msgstr ""
+
+#: src/stty.c:727
+msgid " * ffN           form feed delay style, N in [0..1]\n"
+msgstr ""
+
+#: src/stty.c:732
+msgid " * nlN           newline delay style, N in [0..1]\n"
+msgstr ""
+
+#: src/stty.c:737
+msgid " * [-]ocrnl      translate carriage return to newline\n"
+msgstr ""
+
+#: src/stty.c:742
 msgid ""
-" * [-]ocrnl      translate carriage return to newline\n"
 " * [-]ofdel      use delete characters for fill instead of NUL characters\n"
-" * [-]ofill      use fill (padding) characters instead of timing for delays\n"
-" * [-]olcuc      translate lowercase characters to uppercase\n"
-" * [-]onlcr      translate newline to carriage return-newline\n"
-" * [-]onlret     newline performs a carriage return\n"
 msgstr ""
 
-#: src/stty.c:643
+#: src/stty.c:747
 msgid ""
-" * [-]onocr      do not print carriage returns in the first column\n"
-"   [-]opost      postprocess output\n"
+" * [-]ofill      use fill (padding) characters instead of timing for delays\n"
+msgstr ""
+
+#: src/stty.c:752
+msgid " * [-]olcuc      translate lowercase characters to uppercase\n"
+msgstr ""
+
+#: src/stty.c:757
+msgid " * [-]onlcr      translate newline to carriage return-newline\n"
+msgstr ""
+
+#: src/stty.c:762
+msgid " * [-]onlret     newline performs a carriage return\n"
+msgstr ""
+
+#: src/stty.c:767
+msgid " * [-]onocr      do not print carriage returns in the first column\n"
+msgstr ""
+
+#: src/stty.c:771
+msgid "   [-]opost      postprocess output\n"
+msgstr ""
+
+#: src/stty.c:775
+msgid ""
 " * tabN          horizontal tab delay style, N in [0..3]\n"
 " * tabs          same as tab0\n"
 " * -tabs         same as tab3\n"
-" * vtN           vertical tab delay style, N in [0..1]\n"
 msgstr ""
 
-#: src/stty.c:651
+#: src/stty.c:782
+msgid " * vtN           vertical tab delay style, N in [0..1]\n"
+msgstr ""
+
+#: src/stty.c:786
 msgid ""
 "\n"
 "Local settings:\n"
 "   [-]crterase   echo erase characters as backspace-space-backspace\n"
+msgstr ""
+
+#: src/stty.c:792
+msgid ""
 " * crtkill       kill all line by obeying the echoprt and echoe settings\n"
 " * -crtkill      kill all line by obeying the echoctl and echok settings\n"
 msgstr ""
 
-#: src/stty.c:658
+#: src/stty.c:798
+msgid " * [-]ctlecho    echo control characters in hat notation ('^c')\n"
+msgstr ""
+
+#: src/stty.c:802
+msgid "   [-]echo       echo input characters\n"
+msgstr ""
+
+#: src/stty.c:806
+msgid " * [-]echoctl    same as [-]ctlecho\n"
+msgstr ""
+
+#: src/stty.c:810
 msgid ""
-" * [-]ctlecho    echo control characters in hat notation ('^c')\n"
-"   [-]echo       echo input characters\n"
-" * [-]echoctl    same as [-]ctlecho\n"
 "   [-]echoe      same as [-]crterase\n"
 "   [-]echok      echo a newline after a kill character\n"
 msgstr ""
 
-#: src/stty.c:665
+#: src/stty.c:815
+msgid " * [-]echoke     same as [-]crtkill\n"
+msgstr ""
+
+#: src/stty.c:819
+msgid "   [-]echonl     echo newline even if not echoing other characters\n"
+msgstr ""
+
+#: src/stty.c:823
 msgid ""
-" * [-]echoke     same as [-]crtkill\n"
-"   [-]echonl     echo newline even if not echoing other characters\n"
 " * [-]echoprt    echo erased characters backward, between '\\' and '/'\n"
-"   [-]icanon     enable erase, kill, werase, and rprnt special characters\n"
+msgstr ""
+
+#: src/stty.c:828
+msgid " * [-]extproc    enable \"LINEMODE\"; useful with high latency links\n"
+msgstr ""
+
+#: src/stty.c:832
+#, c-format
+msgid ""
+"   [-]icanon     enable special characters: %s\n"
 "   [-]iexten     enable non-POSIX special characters\n"
 msgstr ""
 
-#: src/stty.c:672
+#: src/stty.c:843
 msgid ""
 "   [-]isig       enable interrupt, quit, and suspend special characters\n"
 "   [-]noflsh     disable flushing after interrupt and quit special "
 "characters\n"
-" * [-]prterase   same as [-]echoprt\n"
+msgstr ""
+
+#: src/stty.c:848
+msgid " * [-]prterase   same as [-]echoprt\n"
+msgstr ""
+
+#: src/stty.c:853
+msgid ""
 " * [-]tostop     stop background jobs that try to write to the terminal\n"
+msgstr ""
+
+#: src/stty.c:858
+msgid ""
 " * [-]xcase      with icanon, escape with '\\' for uppercase characters\n"
 msgstr ""
 
-#: src/stty.c:679
+#: src/stty.c:862
 msgid ""
 "\n"
 "Combination settings:\n"
-" * [-]LCASE      same as [-]lcase\n"
+msgstr ""
+
+#: src/stty.c:867
+msgid " * [-]LCASE      same as [-]lcase\n"
+msgstr ""
+
+#: src/stty.c:871
+msgid ""
 "   cbreak        same as -icanon\n"
 "   -cbreak       same as icanon\n"
 msgstr ""
 
-#: src/stty.c:686
+#: src/stty.c:875
 msgid ""
 "   cooked        same as brkint ignpar istrip icrnl ixon opost isig\n"
 "                 icanon, eof and eol characters to their default values\n"
 "   -cooked       same as raw\n"
-"   crt           same as echoe echoctl echoke\n"
 msgstr ""
 
-#: src/stty.c:692
+#: src/stty.c:880
+#, c-format
+msgid "   crt           same as %s\n"
+msgstr ""
+
+#: src/stty.c:890
+#, c-format
 msgid ""
-"   dec           same as echoe echoctl echoke -ixany intr ^c erase 0177\n"
+"   dec           same as %s intr ^c erase 0177\n"
 "                 kill ^u\n"
-" * [-]decctlq    same as [-]ixany\n"
+msgstr ""
+
+#: src/stty.c:905
+msgid " * [-]decctlq    same as [-]ixany\n"
+msgstr ""
+
+#: src/stty.c:909
+msgid ""
 "   ek            erase and kill characters to their default values\n"
 "   evenp         same as parenb -parodd cs7\n"
+"   -evenp        same as -parenb cs8\n"
 msgstr ""
 
-#: src/stty.c:699
+#: src/stty.c:915
+msgid " * [-]lcase      same as xcase iuclc olcuc\n"
+msgstr ""
+
+#: src/stty.c:919
 msgid ""
-"   -evenp        same as -parenb cs8\n"
-" * [-]lcase      same as xcase iuclc olcuc\n"
 "   litout        same as -parenb -istrip -opost cs8\n"
 "   -litout       same as parenb istrip opost cs7\n"
-"   nl            same as -icrnl -onlcr\n"
-"   -nl           same as icrnl -inlcr -igncr onlcr -ocrnl -onlret\n"
 msgstr ""
 
-#: src/stty.c:707
+#: src/stty.c:923
+#, c-format
+msgid ""
+"   nl            same as %s\n"
+"   -nl           same as %s\n"
+msgstr ""
+
+#: src/stty.c:943
 msgid ""
 "   oddp          same as parenb parodd cs7\n"
 "   -oddp         same as -parenb cs8\n"
@@ -8691,25 +8951,27 @@ msgid ""
 "   -pass8        same as parenb istrip cs7\n"
 msgstr ""
 
-#: src/stty.c:714
+#: src/stty.c:950
+#, c-format
 msgid ""
 "   raw           same as -ignbrk -brkint -ignpar -parmrk -inpck -istrip\n"
-"                 -inlcr -igncr -icrnl  -ixon  -ixoff  -iuclc  -ixany\n"
-"                 -imaxbel -opost -isig -icanon -xcase min 1 time 0\n"
+"                 -inlcr -igncr -icrnl -ixon -ixoff -icanon -opost\n"
+"                 -isig%s min 1 time 0\n"
 "   -raw          same as cooked\n"
 msgstr ""
 
-#: src/stty.c:720
+#: src/stty.c:969
+#, c-format
 msgid ""
-"   sane          same as cread -ignbrk brkint -inlcr -igncr icrnl -iutf8\n"
-"                 -ixoff -iuclc -ixany imaxbel opost -olcuc -ocrnl onlcr\n"
-"                 -onocr -onlret -ofill -ofdel nl0 cr0 tab0 bs0 vt0 ff0\n"
-"                 isig icanon iexten echo echoe echok -echonl -noflsh\n"
-"                 -xcase -tostop -echoprt echoctl echoke, all special\n"
-"                 characters to their default values\n"
+"   sane          same as cread -ignbrk brkint -inlcr -igncr icrnl\n"
+"                 icanon iexten echo echoe echok -echonl -noflsh\n"
+"                 %s\n"
+"                 %s\n"
+"                 %s,\n"
+"                 all special characters to their default values\n"
 msgstr ""
 
-#: src/stty.c:728
+#: src/stty.c:1052
 msgid ""
 "\n"
 "Handle the tty line connected to standard input.  Without arguments,\n"
@@ -8718,57 +8980,62 @@ msgid ""
 "127; special values ^- or undef used to disable special characters.\n"
 msgstr ""
 
-#: src/stty.c:800
+#: src/stty.c:1124
 #, c-format
 msgid "only one device may be specified"
 msgstr "slegs een toestel mag gespesifiseer word"
 
-#: src/stty.c:830
+#: src/stty.c:1154
 #, c-format
 msgid ""
 "the options for verbose and stty-readable output styles are\n"
 "mutually exclusive"
 msgstr ""
 
-#: src/stty.c:836
+#: src/stty.c:1160
 #, c-format
 msgid "when specifying an output style, modes may not be set"
 msgstr ""
 
-#: src/stty.c:851
+#: src/stty.c:1175
 #, c-format
 msgid "%s: couldn't reset non-blocking mode"
 msgstr ""
 
-#: src/stty.c:896 src/stty.c:1006
+#: src/stty.c:1226 src/stty.c:1350
 #, fuzzy, c-format
 msgid "invalid argument %s"
 msgstr "ongeldige parameter: %s"
 
-#: src/stty.c:907 src/stty.c:924 src/stty.c:936 src/stty.c:949 src/stty.c:961
-#: src/stty.c:981
+#: src/stty.c:1237 src/stty.c:1254 src/stty.c:1266 src/stty.c:1293
+#: src/stty.c:1305 src/stty.c:1325
 #, fuzzy, c-format
 msgid "missing argument to %s"
 msgstr "parameter vir `%s' ontbreek"
 
-#: src/stty.c:987
+#: src/stty.c:1283
+#, fuzzy, c-format
+msgid "%s: error setting %s"
+msgstr "%s: fout tydens afeindiging"
+
+#: src/stty.c:1331
 #, fuzzy, c-format
 msgid "invalid line discipline %s"
 msgstr "ongeldige reëlwydte: %s"
 
-#: src/stty.c:1057
+#: src/stty.c:1401
 #, c-format
 msgid "%s: unable to perform all requested operations"
 msgstr ""
 
-#: src/stty.c:1403
+#: src/stty.c:1747
 #, c-format
 msgid "%s: no size information for this device"
 msgstr "%s: geen grootte-inligting is beskikbaar vir hierdie toestel nie"
 
-#: src/stty.c:1924
-#, fuzzy, c-format
-msgid "invalid integer argument %s"
+#: src/stty.c:2279
+#, fuzzy
+msgid "invalid integer argument"
 msgstr "ongeldige heelgetalparameter `%s'"
 
 #. This is a proper name. See the gettext manual, section Names.
@@ -8777,25 +9044,67 @@ msgid "Kayvan Aghaiepour"
 msgstr ""
 
 #: src/sum.c:62
+#, fuzzy
+msgid "Print checksum and block counts for each FILE.\n"
+msgstr ""
+"Druk CRC-toetssom en greeptellings van elke LÊER.\n"
+"\n"
+
+#: src/sum.c:68
 msgid ""
-"Print checksum and block counts for each FILE.\n"
 "\n"
 "  -r              use BSD sum algorithm, use 1K blocks\n"
 "  -s, --sysv      use System V sum algorithm, use 512 bytes blocks\n"
 msgstr ""
 
-#: src/sync.c:41
+#: src/sync.c:64
+#, c-format
+msgid "Usage: %s [OPTION] [FILE]...\n"
+msgstr "Gebruik so:  %s [OPSIE] [ LÊER]...\n"
+
+#: src/sync.c:65
 msgid ""
-"Force changed blocks to disk, update the super block.\n"
+"Synchronize cached writes to persistent storage\n"
+"\n"
+"If one or more files are specified, sync only them,\n"
+"or their containing file systems.\n"
 "\n"
 msgstr ""
 
-#: src/sync.c:69
-#, c-format
-msgid "ignoring all arguments"
-msgstr "all parameters word geïgnoreer"
+#: src/sync.c:73
+msgid "  -d, --data             sync only file data, no unneeded metadata\n"
+msgstr ""
 
-#: src/system.h:343
+#: src/sync.c:76
+msgid "  -f, --file-system      sync the file systems that contain the files\n"
+msgstr ""
+
+#: src/sync.c:114
+#, fuzzy, c-format
+msgid "error opening %s"
+msgstr "fout met die les van %s"
+
+#: src/sync.c:124
+#, fuzzy, c-format
+msgid "couldn't reset non-blocking mode %s"
+msgstr "kan nie verander na die null-groep nie"
+
+#: src/sync.c:154
+#, fuzzy, c-format
+msgid "error syncing %s"
+msgstr "fout met die les van %s"
+
+#: src/sync.c:212
+#, c-format
+msgid "cannot specify both --data and --file-system"
+msgstr ""
+
+#: src/sync.c:216
+#, c-format
+msgid "--data needs at least one argument"
+msgstr ""
+
+#: src/system.h:337
 #, c-format
 msgid ""
 "\n"
@@ -8804,15 +9113,23 @@ msgid ""
 "for details about the options it supports.\n"
 msgstr ""
 
-#: src/system.h:349
+#: src/system.h:343
 msgid "      --help     display this help and exit\n"
 msgstr "      --help     wys hierdie teks en stop\n"
 
-#: src/system.h:351
+#: src/system.h:345
 msgid "      --version  output version information and exit\n"
 msgstr "      --version  wys weergawe-inligting en stop\n"
 
-#: src/system.h:543
+#: src/system.h:537
+msgid ""
+"\n"
+"With no FILE, or when FILE is -, read standard input.\n"
+msgstr ""
+"\n"
+"Met geen LÊER, of wanneer die LÊER - is, lees standaardtoevoer.\n"
+
+#: src/system.h:544
 #, fuzzy
 msgid ""
 "\n"
@@ -8821,7 +9138,7 @@ msgstr ""
 "Verpligte parameters vir langformaat opsies is ook verpligtend vir "
 "kortformaat opsies.\n"
 
-#: src/system.h:551
+#: src/system.h:552
 msgid ""
 "\n"
 "The SIZE argument is an integer and optional unit (example: 10K is "
@@ -8829,7 +9146,7 @@ msgid ""
 "Units are K,M,G,T,P,E,Z,Y (powers of 1024) or KB,MB,... (powers of 1000).\n"
 msgstr ""
 
-#: src/system.h:560
+#: src/system.h:561
 #, c-format
 msgid ""
 "\n"
@@ -8838,7 +9155,7 @@ msgid ""
 "Otherwise, units default to 1024 bytes (or 512 if POSIXLY_CORRECT is set).\n"
 msgstr ""
 
-#: src/system.h:570
+#: src/system.h:590
 #, c-format
 msgid ""
 "\n"
@@ -8849,22 +9166,27 @@ msgstr ""
 #. <http://translationproject.org/team/LANG_CODE.html> to form one of
 #. the URLs at http://translationproject.org/team/.  Otherwise, replace
 #. the entire URL with your translation team's email address.
-#: src/system.h:580
+#: src/system.h:601
 #, c-format
 msgid "Report %s translation bugs to <http://translationproject.org/team/>\n"
 msgstr ""
 
-#: src/system.h:584
+#: src/system.h:604
 #, c-format
-msgid "For complete documentation, run: info coreutils '%s invocation'\n"
+msgid "Full documentation at: <%s%s>\n"
 msgstr ""
 
-#: src/system.h:591
+#: src/system.h:606
+#, c-format
+msgid "or available locally via: info '(coreutils) %s%s'\n"
+msgstr ""
+
+#: src/system.h:613
 #, fuzzy, c-format
 msgid "Try '%s --help' for more information.\n"
 msgstr "Probeer `%s --help' vir meer inligting.\n"
 
-#: src/system.h:633
+#: src/system.h:655
 #, c-format
 msgid ""
 "WARNING: Circular directory structure.\n"
@@ -8881,9 +9203,7 @@ msgstr ""
 
 #: src/tac.c:137
 #, fuzzy
-msgid ""
-"Write each FILE to standard output, last line first.\n"
-"With no FILE, or when FILE is -, read standard input.\n"
+msgid "Write each FILE to standard output, last line first.\n"
 msgstr ""
 "Verander spasies in elke LÊER na keepkarakters, terwyl dit op "
 "standaardafvoer geskryf word.\n"
@@ -8897,70 +9217,69 @@ msgid ""
 "  -s, --separator=STRING   use STRING as the separator instead of newline\n"
 msgstr ""
 
-#: src/tac.c:234 src/tac.c:335
+#: src/tac.c:224 src/tac.c:234 src/tac.c:344
 #, c-format
 msgid "%s: seek failed"
 msgstr "%s: seek het misluk"
 
-#: src/tac.c:263
+#: src/tac.c:277
 #, fuzzy, c-format
 msgid "record too large"
 msgstr "%s: lêer te groot"
 
-#: src/tac.c:450
+#: src/tac.c:459
 #, fuzzy, c-format
 msgid "failed to create temporary file in %s"
 msgstr "kan nie 'n tydelike lêer skep nie"
 
-#: src/tac.c:458
+#: src/tac.c:467
 #, fuzzy, c-format
 msgid "failed to open %s for writing"
 msgstr "kon nie %s oopmaak nie"
 
-#: src/tac.c:475
+#: src/tac.c:484
 #, fuzzy, c-format
 msgid "failed to rewind stream for %s"
 msgstr "lêertye van %s kon nie behou word nie"
 
-#: src/tac.c:511 src/tac.c:518
+#: src/tac.c:521 src/tac.c:533
 #, fuzzy, c-format
 msgid "%s: write error"
 msgstr "skryffout"
 
-#: src/tac.c:571
+#: src/tac.c:587
 #, fuzzy, c-format
 msgid "failed to open %s for reading"
 msgstr "kan nie %s oopmaak om te lees nie"
 
-#: src/tac.c:629
+#: src/tac.c:645
 #, c-format
 msgid "separator cannot be empty"
 msgstr "verdeler mag nie leeg wees nie"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/tail.c:71
+#: src/tail.c:73
 msgid "Ian Lance Taylor"
 msgstr ""
 
-#: src/tail.c:262
+#: src/tail.c:257
 #, fuzzy, c-format
 msgid ""
 "Print the last %d lines of each FILE to standard output.\n"
 "With more than one FILE, precede each with a header giving the file name.\n"
-"With no FILE, or when FILE is -, read standard input.\n"
 msgstr ""
 "Verander spasies in elke LÊER na keepkarakters, terwyl dit op "
 "standaardafvoer geskryf word.\n"
 "Met geen LÊER, of as LÊER gegee is as -, lees vanaf standaardtoevoer.\n"
 "\n"
 
-#: src/tail.c:270
+#: src/tail.c:265
 msgid ""
 "  -c, --bytes=K            output the last K bytes; or use -c +K to output\n"
 "                             bytes starting with the Kth of each file\n"
 msgstr ""
 
-#: src/tail.c:274
+#: src/tail.c:269
 msgid ""
 "  -f, --follow[={name|descriptor}]\n"
 "                           output appended data as the file grows;\n"
@@ -8968,7 +9287,7 @@ msgid ""
 "  -F                       same as --follow=name --retry\n"
 msgstr ""
 
-#: src/tail.c:280
+#: src/tail.c:275
 #, c-format
 msgid ""
 "  -n, --lines=K            output the last K lines, instead of the last %d;\n"
@@ -8981,14 +9300,14 @@ msgid ""
 "                             with inotify, this option is rarely useful\n"
 msgstr ""
 
-#: src/tail.c:293
+#: src/tail.c:288
 msgid ""
 "      --pid=PID            with -f, terminate after process ID, PID dies\n"
 "  -q, --quiet, --silent    never output headers giving file names\n"
 "      --retry              keep trying to open a file if it is inaccessible\n"
 msgstr ""
 
-#: src/tail.c:298
+#: src/tail.c:293
 msgid ""
 "  -s, --sleep-interval=N   with -f, sleep for approximately N seconds\n"
 "                             (default 1.0) between iterations;\n"
@@ -8997,7 +9316,7 @@ msgid ""
 "  -v, --verbose            always output headers giving file names\n"
 msgstr ""
 
-#: src/tail.c:307
+#: src/tail.c:302
 msgid ""
 "\n"
 "If the first character of K (the number of bytes or lines) is a '+',\n"
@@ -9008,7 +9327,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: src/tail.c:316
+#: src/tail.c:311
 msgid ""
 "With --follow (-f), tail defaults to following the file descriptor, which\n"
 "means that even if a tail'ed file is renamed, tail will continue to track\n"
@@ -9018,169 +9337,168 @@ msgid ""
 "named file in a way that accommodates renaming, removal and creation.\n"
 msgstr ""
 
-#: src/tail.c:368
+#: src/tail.c:363
 #, c-format
 msgid "closing %s (fd=%d)"
 msgstr "lêer word toegemaak: %s (fd=%d)"
 
-#: src/tail.c:461
+#: src/tail.c:456
 #, c-format
 msgid "%s: cannot seek to end-relative offset %s"
 msgstr ""
 
-#: src/tail.c:898
+#: src/tail.c:893
 #, c-format
 msgid "cannot determine location of %s. reverting to polling"
 msgstr ""
 
-#: src/tail.c:910
+#: src/tail.c:905
 #, c-format
 msgid ""
 "unrecognized file system type 0x%08lx for %s. please report this to %s. "
 "reverting to polling"
 msgstr ""
 
-#: src/tail.c:965
+#: src/tail.c:958
 #, c-format
 msgid "%s has been replaced with a symbolic link. giving up on this name"
 msgstr ""
 
-#: src/tail.c:980
+#: src/tail.c:973
 #, fuzzy, c-format
 msgid "%s has become inaccessible"
 msgstr "`%s' het ontoeganklik geword"
 
-#: src/tail.c:997
+#: src/tail.c:990
 #, c-format
 msgid "%s has been replaced with an untailable file; giving up on this name"
 msgstr ""
 
-#: src/tail.c:1006
+#: src/tail.c:999
 #, c-format
 msgid "%s has been replaced with a remote file. giving up on this name"
 msgstr ""
 
-#: src/tail.c:1027
+#: src/tail.c:1020
 #, fuzzy, c-format
 msgid "%s has become accessible"
 msgstr "`%s' het toeganklik geword"
 
-#: src/tail.c:1035
+#: src/tail.c:1032
 #, c-format
-msgid "%s has appeared;  following end of new file"
+msgid "%s has appeared;  following new file"
 msgstr ""
 
-#: src/tail.c:1046
+#: src/tail.c:1042
 #, c-format
-msgid "%s has been replaced;  following end of new file"
+msgid "%s has been replaced;  following new file"
 msgstr ""
 
-#: src/tail.c:1163
+#: src/tail.c:1159
 #, fuzzy, c-format
 msgid "%s: cannot change nonblocking mode"
 msgstr "kan nie verander na die null-groep nie"
 
-#: src/tail.c:1205 src/tail.c:1342
+#: src/tail.c:1204 src/tail.c:1346
 #, c-format
 msgid "%s: file truncated"
 msgstr "%s: lêer is afgekap"
 
-#: src/tail.c:1229 src/tail.c:1498
+#: src/tail.c:1228 src/tail.c:1546
 #, c-format
 msgid "no files remaining"
 msgstr "geen oorblywende lêers"
 
-#: src/tail.c:1424
+#: src/tail.c:1440
 #, fuzzy, c-format
 msgid "cannot watch parent directory of %s"
 msgstr "Kan nie lêergids %s skep nie."
 
-#: src/tail.c:1427 src/tail.c:1442
+#: src/tail.c:1443 src/tail.c:1460 src/tail.c:1628
 #, fuzzy, c-format
 msgid "inotify resources exhausted"
 msgstr "geheue uitgeput"
 
-#: src/tail.c:1445 src/tail.c:1577
+#: src/tail.c:1464 src/tail.c:1636
 #, fuzzy, c-format
 msgid "cannot watch %s"
 msgstr "kan nie %s aanraak nie"
 
-#: src/tail.c:1529
+#: src/tail.c:1513
+#, fuzzy, c-format
+msgid "%s was replaced"
+msgstr "%s: vervang %s?"
+
+#: src/tail.c:1577
 #, c-format
 msgid "error monitoring inotify event"
 msgstr ""
 
-#: src/tail.c:1549
+#: src/tail.c:1597
 #, fuzzy, c-format
 msgid "error reading inotify event"
 msgstr "fout met die les van %s"
 
-#: src/tail.c:1844
+#: src/tail.c:1902
 #, c-format
 msgid "%s: cannot follow end of this type of file; giving up on this name"
 msgstr ""
 
-#: src/tail.c:1961
-#, fuzzy, c-format
-msgid "number in %s is too large"
-msgstr "veldnommer %s is te groot"
-
-#: src/tail.c:2033
-#, c-format
-msgid "%s: invalid maximum number of unchanged stats between opens"
+#: src/tail.c:2083
+msgid "invalid maximum number of unchanged stats between opens"
 msgstr ""
 
-#: src/tail.c:2049
-#, c-format
-msgid "%s: invalid PID"
+#: src/tail.c:2091
+#, fuzzy
+msgid "invalid PID"
 msgstr "%s: ongeldige PID"
 
-#: src/tail.c:2068
-#, c-format
-msgid "%s: invalid number of seconds"
-msgstr "%s: ongeldige aantal sekondes"
+#: src/tail.c:2107
+#, fuzzy, c-format
+msgid "invalid number of seconds: %s"
+msgstr "ongeldige aantal kolomme: `%s'"
 
-#: src/tail.c:2084
+#: src/tail.c:2123
 #, c-format
 msgid "option used in invalid context -- %c"
 msgstr ""
 
-#: src/tail.c:2096
+#: src/tail.c:2135
 #, c-format
 msgid "warning: --retry ignored; --retry is useful only when following"
 msgstr ""
 
-#: src/tail.c:2100
+#: src/tail.c:2139
 #, c-format
 msgid "warning: --retry only effective for the initial open"
 msgstr ""
 
-#: src/tail.c:2105
+#: src/tail.c:2144
 #, c-format
 msgid "warning: PID ignored; --pid=PID is useful only when following"
 msgstr ""
 
-#: src/tail.c:2108
+#: src/tail.c:2147
 #, c-format
 msgid "warning: --pid=PID is not supported on this system"
 msgstr ""
 
-#: src/tail.c:2209
+#: src/tail.c:2250
 #, c-format
 msgid "cannot follow %s by name"
 msgstr "kan nie %s per naam volg nie"
 
-#: src/tail.c:2215
+#: src/tail.c:2256
 #, c-format
 msgid "warning: following standard input indefinitely is ineffective"
 msgstr ""
 
-#: src/tail.c:2291
+#: src/tail.c:2337
 #, c-format
 msgid "inotify cannot be used, reverting to polling"
 msgstr ""
 
-#: src/tee.c:63
+#: src/tee.c:87
 msgid ""
 "Copy standard input to each FILE, and also to standard output.\n"
 "\n"
@@ -9188,66 +9506,77 @@ msgid ""
 "  -i, --ignore-interrupts   ignore interrupt signals\n"
 msgstr ""
 
-#: src/tee.c:71
-#, fuzzy
+#: src/tee.c:93
+msgid ""
+"  -p, --output-error[=MODE]  behavior on write error.  See MODE details "
+"below\n"
+msgstr ""
+
+#: src/tee.c:98
 msgid ""
 "\n"
-"If a FILE is -, copy again to standard output.\n"
+"MODE determines behavior with write errors on the outputs:\n"
+"  'warn'         diagnose errors writing to any output\n"
+"  'warn-nopipe'  diagnose errors writing to any output not a pipe\n"
+"  'exit'         exit on error writing to any output\n"
+"  'exit-nopipe'  exit on error writing to any output not a pipe\n"
+"The default MODE for the -p option is 'warn-nopipe'.\n"
+"The default operation when --output-error is not specified, is to\n"
+"exit immediately on error writing to a pipe, and diagnose errors\n"
+"writing to non pipe outputs.\n"
 msgstr ""
-"\n"
-"Met geen LÊER, of wanneer die LÊER - is, lees standaardtoevoer.\n"
 
-#: src/test.c:123
+#: src/test.c:125
 #, fuzzy, c-format
 msgid "missing argument after %s"
 msgstr "parameter vir `%s' ontbreek"
 
-#: src/test.c:159
+#: src/test.c:161
 #, fuzzy, c-format
 msgid "invalid integer %s"
 msgstr "ongeldige nommer %s"
 
-#: src/test.c:241
+#: src/test.c:243
 #, fuzzy
 msgid "')' expected"
 msgstr "')' is verwag\n"
 
-#: src/test.c:244
+#: src/test.c:246
 #, fuzzy, c-format
 msgid "')' expected, found %s"
 msgstr "')' is verwag, maar %s gevind\n"
 
-#: src/test.c:260 src/test.c:618
+#: src/test.c:262 src/test.c:620
 #, fuzzy, c-format
 msgid "%s: unary operator expected"
 msgstr "%s: unitêre operator is verwag\n"
 
-#: src/test.c:329
+#: src/test.c:331
 #, fuzzy
 msgid "-nt does not accept -l"
 msgstr "-nt aanvaar nie -l nie\n"
 
-#: src/test.c:342
+#: src/test.c:344
 #, fuzzy
 msgid "-ef does not accept -l"
 msgstr "-ef aanvaar nie -l nie \n"
 
-#: src/test.c:358
+#: src/test.c:360
 #, fuzzy
 msgid "-ot does not accept -l"
 msgstr "-ot aanvaar nie -l nie \n"
 
-#: src/test.c:367
+#: src/test.c:369
 #, fuzzy
 msgid "unknown binary operator"
 msgstr "onbenede binêre operator\n"
 
-#: src/test.c:646
+#: src/test.c:648
 #, fuzzy, c-format
 msgid "%s: binary operator expected"
 msgstr "%s: binêre operator is verwag\n"
 
-#: src/test.c:704
+#: src/test.c:706
 msgid ""
 "Usage: test EXPRESSION\n"
 "  or:  test\n"
@@ -9256,20 +9585,20 @@ msgid ""
 "  or:  [ OPTION\n"
 msgstr ""
 
-#: src/test.c:711
+#: src/test.c:713
 msgid ""
 "Exit with the status determined by EXPRESSION.\n"
 "\n"
 msgstr ""
 
-#: src/test.c:717
+#: src/test.c:719
 msgid ""
 "\n"
 "An omitted EXPRESSION defaults to false.  Otherwise,\n"
 "EXPRESSION is true or false and sets exit status.  It is one of:\n"
 msgstr ""
 
-#: src/test.c:722
+#: src/test.c:724
 msgid ""
 "\n"
 "  ( EXPRESSION )               EXPRESSION is true\n"
@@ -9278,7 +9607,7 @@ msgid ""
 "  EXPRESSION1 -o EXPRESSION2   either EXPRESSION1 or EXPRESSION2 is true\n"
 msgstr ""
 
-#: src/test.c:729
+#: src/test.c:731
 msgid ""
 "\n"
 "  -n STRING            the length of STRING is nonzero\n"
@@ -9288,7 +9617,7 @@ msgid ""
 "  STRING1 != STRING2   the strings are not equal\n"
 msgstr ""
 
-#: src/test.c:737
+#: src/test.c:739
 msgid ""
 "\n"
 "  INTEGER1 -eq INTEGER2   INTEGER1 is equal to INTEGER2\n"
@@ -9299,7 +9628,7 @@ msgid ""
 "  INTEGER1 -ne INTEGER2   INTEGER1 is not equal to INTEGER2\n"
 msgstr ""
 
-#: src/test.c:746
+#: src/test.c:748
 msgid ""
 "\n"
 "  FILE1 -ef FILE2   FILE1 and FILE2 have the same device and inode numbers\n"
@@ -9307,7 +9636,7 @@ msgid ""
 "  FILE1 -ot FILE2   FILE1 is older than FILE2\n"
 msgstr ""
 
-#: src/test.c:752
+#: src/test.c:754
 msgid ""
 "\n"
 "  -b FILE     FILE exists and is block special\n"
@@ -9316,7 +9645,7 @@ msgid ""
 "  -e FILE     FILE exists\n"
 msgstr ""
 
-#: src/test.c:759
+#: src/test.c:761
 msgid ""
 "  -f FILE     FILE exists and is a regular file\n"
 "  -g FILE     FILE exists and is set-group-ID\n"
@@ -9325,7 +9654,7 @@ msgid ""
 "  -k FILE     FILE exists and has its sticky bit set\n"
 msgstr ""
 
-#: src/test.c:766
+#: src/test.c:768
 msgid ""
 "  -L FILE     FILE exists and is a symbolic link (same as -h)\n"
 "  -O FILE     FILE exists and is owned by the effective user ID\n"
@@ -9334,7 +9663,7 @@ msgid ""
 "  -s FILE     FILE exists and has a size greater than zero\n"
 msgstr ""
 
-#: src/test.c:773
+#: src/test.c:775
 msgid ""
 "  -S FILE     FILE exists and is a socket\n"
 "  -t FD       file descriptor FD is opened on a terminal\n"
@@ -9343,7 +9672,7 @@ msgid ""
 "  -x FILE     FILE exists and execute (or search) permission is granted\n"
 msgstr ""
 
-#: src/test.c:780
+#: src/test.c:782
 msgid ""
 "\n"
 "Except for -h and -L, all FILE-related tests dereference symbolic links.\n"
@@ -9352,33 +9681,33 @@ msgid ""
 "INTEGER may also be -l STRING, which evaluates to the length of STRING.\n"
 msgstr ""
 
-#: src/test.c:786
+#: src/test.c:788
 msgid ""
 "\n"
 "NOTE: [ honors the --help and --version options, but test does not.\n"
 "test treats each of those as it treats any other nonempty STRING.\n"
 msgstr ""
 
-#: src/test.c:791
+#: src/test.c:793
 msgid "test and/or ["
 msgstr ""
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/test.c:803
+#: src/test.c:805
 msgid "Kevin Braunsdorf"
 msgstr ""
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/test.c:804
+#: src/test.c:806
 msgid "Matthew Bradburn"
 msgstr ""
 
-#: src/test.c:858
+#: src/test.c:860
 #, fuzzy
 msgid "missing ']'"
 msgstr "ontbrekende `]'\n"
 
-#: src/test.c:872
+#: src/test.c:874
 #, fuzzy, c-format
 msgid "extra argument %s"
 msgstr "ongeldige parameter: %s"
@@ -9398,7 +9727,7 @@ msgstr ""
 msgid "warning: timer_create"
 msgstr ""
 
-#: src/timeout.c:228
+#: src/timeout.c:230
 #, fuzzy, c-format
 msgid ""
 "Usage: %s [OPTION] DURATION COMMAND [ARG]...\n"
@@ -9407,11 +9736,11 @@ msgstr ""
 "Gebruik so: %s BEVEL [ARG]...\n"
 "  of:  %s OPSIE\n"
 
-#: src/timeout.c:232
+#: src/timeout.c:234
 msgid "Start COMMAND, and kill it if still running after DURATION.\n"
 msgstr ""
 
-#: src/timeout.c:238
+#: src/timeout.c:240
 msgid ""
 "      --preserve-status\n"
 "                 exit with the same status as COMMAND, even when the\n"
@@ -9429,7 +9758,7 @@ msgid ""
 "                   see 'kill -l' for a list of signals\n"
 msgstr ""
 
-#: src/timeout.c:257
+#: src/timeout.c:259
 msgid ""
 "\n"
 "DURATION is a floating point number with an optional suffix:\n"
@@ -9437,7 +9766,7 @@ msgid ""
 "days.\n"
 msgstr ""
 
-#: src/timeout.c:262
+#: src/timeout.c:264
 msgid ""
 "\n"
 "If the command times out, and --preserve-status is not set, then exit with\n"
@@ -9448,7 +9777,7 @@ msgid ""
 "case the exit status is 128+9 rather than 124.\n"
 msgstr ""
 
-#: src/timeout.c:366
+#: src/timeout.c:368
 #, c-format
 msgid "warning: disabling core dumps failed"
 msgstr ""
@@ -9461,6 +9790,11 @@ msgstr "fout met die skryf na %s"
 #: src/timeout.c:485
 #, c-format
 msgid "the monitored command dumped core"
+msgstr ""
+
+#: src/timeout.c:497
+#, c-format
+msgid "unknown status from command (%d)"
 msgstr ""
 
 #. This is a proper name. See the gettext manual, section Names.
@@ -9744,12 +10078,12 @@ msgstr ""
 msgid "Exit with a status code indicating failure."
 msgstr ""
 
-#: src/truncate.c:96
+#: src/truncate.c:69
 #, fuzzy, c-format
 msgid "Usage: %s OPTION... FILE...\n"
 msgstr "Gebruik so:  %s [OPSIE]...  LÊER...\n"
 
-#: src/truncate.c:97
+#: src/truncate.c:70
 msgid ""
 "Shrink or extend the size of each FILE to the specified size\n"
 "\n"
@@ -9760,22 +10094,22 @@ msgid ""
 "reads as zero bytes.\n"
 msgstr ""
 
-#: src/truncate.c:109
+#: src/truncate.c:82
 msgid "  -c, --no-create        do not create any files\n"
 msgstr ""
 
-#: src/truncate.c:112
+#: src/truncate.c:85
 msgid ""
 "  -o, --io-blocks        treat SIZE as number of IO blocks instead of bytes\n"
 msgstr ""
 
-#: src/truncate.c:115
+#: src/truncate.c:88
 msgid ""
 "  -r, --reference=RFILE  base size on RFILE\n"
 "  -s, --size=SIZE        set or adjust the file size by SIZE bytes\n"
 msgstr ""
 
-#: src/truncate.c:121
+#: src/truncate.c:94
 msgid ""
 "\n"
 "SIZE may also be prefixed by one of the following modifying characters:\n"
@@ -9783,57 +10117,62 @@ msgid ""
 "'/' round down to multiple of, '%' round up to multiple of.\n"
 msgstr ""
 
-#: src/truncate.c:149
+#: src/truncate.c:122
 #, c-format
 msgid "overflow in %<PRIdMAX> * %<PRIdMAX> byte blocks for file %s"
 msgstr ""
 
-#: src/truncate.c:173
+#: src/truncate.c:146
 #, fuzzy, c-format
 msgid "%s has unusable, apparently negative size"
 msgstr "%s: lêer het negatiewe grootte"
 
-#: src/truncate.c:183 src/truncate.c:384
+#: src/truncate.c:156 src/truncate.c:358
 #, fuzzy, c-format
 msgid "cannot get the size of %s"
 msgstr "kon nie die tyd van die dag vasstel nie"
 
-#: src/truncate.c:205
+#: src/truncate.c:178
 #, c-format
 msgid "overflow rounding up size of file %s"
 msgstr ""
 
-#: src/truncate.c:215
+#: src/truncate.c:188
 #, c-format
 msgid "overflow extending size of file %s"
 msgstr ""
 
-#: src/truncate.c:230
+#: src/truncate.c:203
 #, c-format
 msgid "failed to truncate %s at %<PRIdMAX> bytes"
 msgstr ""
 
-#: src/truncate.c:303
+#: src/truncate.c:276
 #, fuzzy, c-format
 msgid "multiple relative modifiers specified"
 msgstr "veelvuldige afvoerlêers is gespesifiseer"
 
-#: src/truncate.c:333
+#: src/truncate.c:285
+#, fuzzy
+msgid "Invalid number"
+msgstr "ongeldige nommer %s"
+
+#: src/truncate.c:307
 #, fuzzy, c-format
 msgid "you must specify either %s or %s"
 msgstr "u moet 'n lys van grepe, karakters of velde spesifiseer"
 
-#: src/truncate.c:340
+#: src/truncate.c:314
 #, c-format
 msgid "you must specify a relative %s with %s"
 msgstr ""
 
-#: src/truncate.c:347
+#: src/truncate.c:321
 #, c-format
 msgid "%s was specified but %s was not"
 msgstr ""
 
-#: src/truncate.c:404
+#: src/truncate.c:378
 #, fuzzy, c-format
 msgid "cannot open %s for writing"
 msgstr "kan nie %s oopmaak om te lees nie"
@@ -9848,16 +10187,19 @@ msgstr ""
 msgid ""
 "Usage: %s [OPTION] [FILE]\n"
 "Write totally ordered list consistent with the partial ordering in FILE.\n"
-"With no FILE, or when FILE is -, read standard input.\n"
-"\n"
 msgstr ""
 
-#: src/tsort.c:471
+#: src/tsort.c:89 src/uptime.c:212
+#, c-format
+msgid "\n"
+msgstr ""
+
+#: src/tsort.c:475
 #, c-format
 msgid "%s: input contains an odd number of tokens"
 msgstr ""
 
-#: src/tsort.c:517
+#: src/tsort.c:521
 #, c-format
 msgid "%s: input contains a loop:"
 msgstr "%s: toevoer bevat 'n lus"
@@ -9906,9 +10248,7 @@ msgstr "kan nie die stelselnaam vasstel nie"
 
 #: src/unexpand.c:117
 #, fuzzy
-msgid ""
-"Convert blanks in each FILE to tabs, writing to standard output.\n"
-"With no FILE, or when FILE is -, read standard input.\n"
+msgid "Convert blanks in each FILE to tabs, writing to standard output.\n"
 msgstr ""
 "Verander spasies in elke LÊER na keepkarakters, terwyl dit op "
 "standaardafvoer geskryf word.\n"
@@ -9954,8 +10294,8 @@ msgstr ""
 
 #: src/uniq.c:187
 msgid ""
-"  -D, --all-repeated[=METHOD]  print all duplicate lines\n"
-"                          groups can be delimited with an empty line\n"
+"  -D, --all-repeated[=METHOD]  print all duplicate lines;\n"
+"                          groups can be delimited with an empty line;\n"
 "                          METHOD={none(default),prepend,separate}\n"
 msgstr ""
 
@@ -9966,7 +10306,7 @@ msgstr ""
 #: src/uniq.c:195
 msgid ""
 "      --group[=METHOD]  show all items, separating groups with an empty "
-"line\n"
+"line;\n"
 "                          METHOD={separate(default),prepend,append,both}\n"
 msgstr ""
 
@@ -10104,11 +10444,6 @@ msgid ""
 "an uninterruptible sleep state also contribute to the load average.\n"
 msgstr ""
 
-#: src/uptime.c:212
-#, c-format
-msgid "\n"
-msgstr ""
-
 #: src/uptime.c:214
 #, fuzzy, c-format
 msgid ""
@@ -10130,12 +10465,16 @@ msgstr ""
 "As LÊER nie gespesifiseer is nie, gebruik %s.  %s vir LÊER is algemeen.\n"
 "\n"
 
-#: src/wc.c:117
+#: src/wc.c:118
 msgid ""
 "Print newline, word, and byte counts for each FILE, and a total line if\n"
-"more than one FILE is specified.  With no FILE, or when FILE is -,\n"
-"read standard input.  A word is a non-zero-length sequence of characters\n"
-"delimited by white space.\n"
+"more than one FILE is specified.  A word is a non-zero-length sequence of\n"
+"characters delimited by white space.\n"
+msgstr ""
+
+#: src/wc.c:126
+msgid ""
+"\n"
 "The options below may be used to select which counts are printed, always in\n"
 "the following order: newline, word, character, byte, maximum line length.\n"
 "  -c, --bytes            print the byte counts\n"
@@ -10143,12 +10482,12 @@ msgid ""
 "  -l, --lines            print the newline counts\n"
 msgstr ""
 
-#: src/wc.c:128
+#: src/wc.c:134
 msgid ""
 "      --files0-from=F    read input from the files specified by\n"
 "                           NUL-terminated names in file F;\n"
 "                           If F is - then read names from standard input\n"
-"  -L, --max-line-length  print the length of the longest line\n"
+"  -L, --max-line-length  print the maximum display width\n"
 "  -w, --words            print the word counts\n"
 msgstr ""
 
@@ -10294,9 +10633,9 @@ msgstr ""
 "Dieselfde as id -un.\n"
 "\n"
 
-#: src/whoami.c:91
+#: src/whoami.c:87
 #, fuzzy, c-format
-msgid "%s: cannot find name for user ID %lu\n"
+msgid "cannot find name for user ID %lu"
 msgstr "%s: kan nie die gebruikersnaam vir UID %u opspoor nie\n"
 
 #: src/yes.c:41
@@ -10316,6 +10655,62 @@ msgid ""
 msgstr ""
 "Skryf voortdurend 'n reël met al die gespesifiseerde STRING(e), of `y'.\n"
 "\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "-t is implied if PAGE_LENGTH <= 10.  With no FILE, or when FILE is -, "
+#~ "read\n"
+#~ "standard input.\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Met geen LÊER, of wanneer die LÊER - is, lees standaardtoevoer.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "With no FILE, or when FILE is -, read standard input.  Default is '-"
+#~ "F /'.\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Met geen LÊER, of wanneer die LÊER - is, lees standaardtoevoer.\n"
+
+#~ msgid "ignoring all arguments"
+#~ msgstr "all parameters word geïgnoreer"
+
+#~ msgid "%s: invalid number"
+#~ msgstr "%s: ongeldige getal"
+
+#~ msgid "number of lines"
+#~ msgstr "aantal reëls"
+
+#~ msgid "number of bytes"
+#~ msgstr "aantal grepe"
+
+#, fuzzy
+#~ msgid "%s: invalid number to ignore"
+#~ msgstr "%s: ongeldige aantal reëls"
+
+#~ msgid "%s: invalid number of bytes"
+#~ msgstr "%s: ongeldige aantal grepe"
+
+#~ msgid "%s: invalid number of lines"
+#~ msgstr "%s: ongeldige aantal reëls"
+
+#, fuzzy
+#~ msgid "number in %s is too large"
+#~ msgstr "veldnommer %s is te groot"
+
+#~ msgid "%s: invalid number of seconds"
+#~ msgstr "%s: ongeldige aantal sekondes"
+
+#, fuzzy
+#~ msgid "failed to %s supplemental groups"
+#~ msgstr "kan nie die aanvullende groep stel nie"
+
+#, fuzzy
+#~ msgid "%s: cannot find name for user ID %lu\n"
+#~ msgstr "%s: kan nie die gebruikersnaam vir UID %u opspoor nie\n"
 
 #~ msgid "%s: illegal option -- %c\n"
 #~ msgstr "%s: onwettige opsie -- %c\n"
@@ -10345,9 +10740,6 @@ msgstr ""
 
 #~ msgid "too few arguments"
 #~ msgstr "te min parameters"
-
-#~ msgid "Usage: %s [OPTION] [FILE]...\n"
-#~ msgstr "Gebruik so:  %s [OPSIE] [ LÊER]...\n"
 
 #~ msgid "closing standard output"
 #~ msgstr "standaard-afvoer word nou toegemaak"

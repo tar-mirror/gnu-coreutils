@@ -1,5 +1,5 @@
 /* system-dependent definitions for coreutils
-   Copyright (C) 1989-2014 Free Software Foundation, Inc.
+   Copyright (C) 1989-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,16 +17,6 @@
 /* Include this file _after_ system headers if possible.  */
 
 #include <alloca.h>
-
-/* Include <sys/types.h> before this file.
-   Note this doesn't warn if we're included
-   before all system headers.  */
-
-#if 2 < __GLIBC__ || ( 2 == ___GLIBC__ && 2 <= __GLIBC_MINOR__ )
-# if ! defined _SYS_TYPES_H
-you must include <sys/types.h> before including this file
-# endif
-#endif
 
 #include <sys/stat.h>
 
@@ -135,9 +125,14 @@ enum
 #include <inttypes.h>
 
 /* Redirection and wildcarding when done by the utility itself.
-   Generally a noop, but used in particular for native VMS. */
+   Generally a noop, but used in particular for OS/2.  */
 #ifndef initialize_main
-# define initialize_main(ac, av)
+# ifndef __OS2__
+#  define initialize_main(ac, av)
+# else
+#  define initialize_main(ac, av) \
+     do { _wildcard (ac, av); _response (ac, av); } while (0)
+# endif
 #endif
 
 #include "stat-macros.h"
@@ -188,12 +183,11 @@ select_plural (uintmax_t n)
 
 #define STREQ(a, b) (strcmp (a, b) == 0)
 #define STREQ_LEN(a, b, n) (strncmp (a, b, n) == 0)
-#define STRPREFIX(a, b) (strncmp(a, b, strlen (b)) == 0)
+#define STRPREFIX(a, b) (strncmp (a, b, strlen (b)) == 0)
 
 /* Just like strncmp, but the second argument must be a literal string
    and you don't specify the length;  that comes from the literal.  */
-#define STRNCMP_LIT(s, literal) \
-  strncmp (s, "" literal "", sizeof (literal) - 1)
+#define STRNCMP_LIT(s, lit) strncmp (s, "" lit "", sizeof (lit) - 1)
 
 #if !HAVE_DECL_GETLOGIN
 char *getlogin ();
@@ -538,6 +532,13 @@ is_nul (void const *buf, size_t bufsize)
   )
 
 static inline void
+emit_stdin_note (void)
+{
+  fputs (_("\n\
+With no FILE, or when FILE is -, read standard input.\n\
+"), stdout);
+}
+static inline void
 emit_mandatory_arg_note (void)
 {
   fputs (_("\n\
@@ -565,9 +566,29 @@ Otherwise, units default to 1024 bytes (or 512 if POSIXLY_CORRECT is set).\n\
 }
 
 static inline void
-emit_ancillary_info (void)
+emit_ancillary_info (char const *program)
 {
+  struct infomap { char const *program; char const *node; } const infomap[] = {
+    { "[", "test invocation" },
+    { "coreutils", "Multi-call invocation" },
+    { "sha224sum", "sha2 utilities" },
+    { "sha256sum", "sha2 utilities" },
+    { "sha384sum", "sha2 utilities" },
+    { "sha512sum", "sha2 utilities" },
+    { NULL, NULL }
+  };
+
+  char const *node = program;
+  struct infomap const *map_prog = infomap;
+
+  while (map_prog->program && ! STREQ (program, map_prog->program))
+    map_prog++;
+
+  if (map_prog->node)
+    node = map_prog->node;
+
   printf (_("\n%s online help: <%s>\n"), PACKAGE_NAME, PACKAGE_URL);
+
   /* Don't output this redundant message for English locales.
      Note we still output for 'C' so that it gets included in the man page.  */
   const char *lc_messages = setlocale (LC_MESSAGES, NULL);
@@ -578,11 +599,12 @@ emit_ancillary_info (void)
          the URLs at http://translationproject.org/team/.  Otherwise, replace
          the entire URL with your translation team's email address.  */
       printf (_("Report %s translation bugs to "
-                "<http://translationproject.org/team/>\n"),
-                last_component (program_name));
+                "<http://translationproject.org/team/>\n"), program);
     }
-  printf (_("For complete documentation, run: "
-            "info coreutils '%s invocation'\n"), last_component (program_name));
+  printf (_("Full documentation at: <%s%s>\n"),
+          PACKAGE_URL, program);
+  printf (_("or available locally via: info '(coreutils) %s%s'\n"),
+          node, node == program ? " invocation" : "");
 }
 
 static inline void
@@ -663,3 +685,13 @@ stzncpy (char *restrict dest, char const *restrict src, size_t len)
    in selinux.h before libselinux-2.3 (May 2014).
    When version >= 2.3 is ubiquitous remove this function.  */
 static inline char * se_const (char const * sctx) { return (char *) sctx; }
+
+/* Return true if ERR is ENOTSUP or EOPNOTSUPP, otherwise false.
+   This wrapper function avoids the redundant 'or'd comparison on
+   systems like Linux for which they have the same value.  It also
+   avoids the gcc warning to that effect.  */
+static inline bool
+is_ENOTSUP (int err)
+{
+  return err == EOPNOTSUPP || (ENOTSUP != EOPNOTSUPP && err == ENOTSUP);
+}

@@ -1,7 +1,7 @@
 #!/bin/sh
 # Verify behavior of env.
 
-# Copyright (C) 2009-2014 Free Software Foundation, Inc.
+# Copyright (C) 2009-2015 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -102,7 +102,7 @@ cat <<EOF > unlikely_name/also_unlikely || framework_failure_
 echo pass
 EOF
 chmod +x unlikely_name/also_unlikely || framework_failure_
-env also_unlikely && fail=1
+returns_ 127 env also_unlikely || fail=1
 test x$(PATH=$PATH:unlikely_name env also_unlikely) = xpass || fail=1
 test x$(env PATH="$PATH":unlikely_name also_unlikely) = xpass || fail=1
 

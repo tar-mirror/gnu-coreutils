@@ -2,7 +2,7 @@
 # cp -R --parents dir-specified-with-trailing-slash/ other-dir
 # would get a failed assertion.
 
-# Copyright (C) 2000-2014 Free Software Foundation, Inc.
+# Copyright (C) 2000-2015 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ test -d d/a/b/c || fail=1
 
 # With 6.7 and earlier, cp --parents f/g d would mistakenly create a
 # directory d/f, even though f is a regular file.
-cp --parents f/g d 2>/dev/null && fail=1
+returns_ 1 cp --parents f/g d 2>/dev/null || fail=1
 test -d d/f && fail=1
 
 # Check that re_protect works.

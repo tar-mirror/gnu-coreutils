@@ -4,7 +4,7 @@
 # But for fileutils-4.1.9, it would do the former and
 # for fileutils-4.1.10 the latter.
 
-# Copyright (C) 2002-2014 Free Software Foundation, Inc.
+# Copyright (C) 2002-2015 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,9 +25,10 @@ print_ver_ rm
 ln -s no-file dangle
 ln -s / symlink
 
+# Terminate any background processes
+cleanup_() { kill $pid 2>/dev/null && wait $pid; }
 
-rm ---presume-input-tty dangle symlink &
-pid=$!
+rm ---presume-input-tty dangle symlink & pid=$!
 # The buggy rm (fileutils-4.1.9) would hang here, waiting for input.
 
 # Wait up to 3.1s for rm to remove the files
@@ -40,6 +41,6 @@ check_files_removed() {
 }
 retry_delay_ check_files_removed .1 5 || fail=1
 
-kill $pid > /dev/null 2>&1
+cleanup_
 
 Exit $fail

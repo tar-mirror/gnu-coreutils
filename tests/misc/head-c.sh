@@ -1,7 +1,7 @@
 #!/bin/sh
 # exercise head -c
 
-# Copyright (C) 2001-2014 Free Software Foundation, Inc.
+# Copyright (C) 2001-2015 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,5 +41,17 @@ esac
 # Coreutils <= 8.21 would allocate memory up front
 # based on the value passed to -c
 (ulimit -v 20000; head --bytes=-$SSIZE_MAX < /dev/null) || fail=1
+
+# Make sure it works on funny files in /proc and /sys.
+
+for file in /proc/version /sys/kernel/profiling; do
+  if test -r $file; then
+    cp -f $file copy &&
+    head -c -1 copy > exp1 || framework_failure_
+
+    head -c -1 $file > out1 || fail=1
+    compare exp1 out1 || fail=1
+  fi
+done
 
 Exit $fail

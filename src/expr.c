@@ -1,5 +1,5 @@
 /* expr -- evaluate expressions.
-   Copyright (C) 1986-2014 Free Software Foundation, Inc.
+   Copyright (C) 1986-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -265,7 +265,7 @@ Pattern matches return the string matched between \\( and \\) or null; if\n\
 Exit status is 0 if EXPRESSION is neither null nor 0, 1 if EXPRESSION is null\n\
 or 0, 2 if EXPRESSION is syntactically invalid, and 3 if an error occurred.\n\
 "), stdout);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
@@ -326,7 +326,7 @@ main (int argc, char **argv)
     syntax_error ();
   printv (v);
 
-  exit (null (v));
+  return null (v);
 }
 
 /* Return a VALUE for I.  */

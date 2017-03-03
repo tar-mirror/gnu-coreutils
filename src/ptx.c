@@ -1,5 +1,5 @@
 /* Permuted index for GNU, with keywords in their context.
-   Copyright (C) 1990-2014 Free Software Foundation, Inc.
+   Copyright (C) 1990-2015 Free Software Foundation, Inc.
    François Pinard <pinard@iro.umontreal.ca>, 1988.
 
    This program is free software: you can redistribute it and/or modify
@@ -631,9 +631,9 @@ sort_found_occurs (void)
 {
 
   /* Only one language for the time being.  */
-
-  qsort (occurs_table[0], number_of_occurs[0], sizeof **occurs_table,
-         compare_occurs);
+  if (number_of_occurs[0])
+    qsort (occurs_table[0], number_of_occurs[0], sizeof **occurs_table,
+           compare_occurs);
 }
 
 /* Parameter files reading routines.  */
@@ -1825,12 +1825,16 @@ Usage: %s [OPTION]... [INPUT]...   (without -G)\n\
 Output a permuted index, including context, of the words in the input files.\n\
 "), stdout);
 
+      emit_stdin_note ();
       emit_mandatory_arg_note ();
 
       fputs (_("\
   -A, --auto-reference           output automatically generated references\n\
   -G, --traditional              behave more like System V 'ptx'\n\
-  -F, --flag-truncation=STRING   use STRING for flagging line truncations\n\
+"), stdout);
+      fputs (_("\
+  -F, --flag-truncation=STRING   use STRING for flagging line truncations.\n\
+                                 The default is '/'\n\
 "), stdout);
       fputs (_("\
   -M, --macro-name=STRING        macro name to use instead of 'xx'\n\
@@ -1854,11 +1858,7 @@ Output a permuted index, including context, of the words in the input files.\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
-      fputs (_("\
-\n\
-With no FILE, or when FILE is -, read standard input.  Default is '-F /'.\n\
-"), stdout);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
@@ -2155,5 +2155,5 @@ main (int argc, char **argv)
 
   /* All done.  */
 
-  exit (EXIT_SUCCESS);
+  return EXIT_SUCCESS;
 }

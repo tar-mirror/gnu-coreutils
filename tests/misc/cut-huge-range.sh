@@ -1,7 +1,7 @@
 #!/bin/sh
 # Ensure that cut does not allocate mem for large ranges
 
-# Copyright (C) 2012-2014 Free Software Foundation, Inc.
+# Copyright (C) 2012-2015 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -56,8 +56,8 @@ CUT_MAX=$(echo $SIZE_MAX | sed "$subtract_one")
 (ulimit -v 20000; : | cut -b1-$CUT_MAX >> err 2>&1) || fail=1
 
 # Explicitly disallow values above CUT_MAX
-(ulimit -v 20000; : | cut -b$SIZE_MAX 2>/dev/null) && fail=1
-(ulimit -v 20000; : | cut -b$SIZE_OFLOW 2>/dev/null) && fail=1
+(ulimit -v 20000; : | returns_ 1 cut -b$SIZE_MAX 2>/dev/null) || fail=1
+(ulimit -v 20000; : | returns_ 1 cut -b$SIZE_OFLOW 2>/dev/null) || fail=1
 
 compare /dev/null err || fail=1
 

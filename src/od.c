@@ -1,5 +1,5 @@
 /* od -- dump files in octal and other formats
-   Copyright (C) 1992-2014 Free Software Foundation, Inc.
+   Copyright (C) 1992-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 #include "error.h"
 #include "ftoastr.h"
 #include "quote.h"
+#include "stat-size.h"
 #include "xfreopen.h"
 #include "xprintf.h"
 #include "xstrtol.h"
@@ -327,10 +328,12 @@ Usage: %s [OPTION]... [FILE]...\n\
 Write an unambiguous representation, octal bytes by default,\n\
 of FILE to standard output.  With more than one FILE argument,\n\
 concatenate them in the listed order to form the input.\n\
-With no FILE, or when FILE is -, read standard input.\n\
-\n\
 "), stdout);
+
+      emit_stdin_note ();
+
       fputs (_("\
+\n\
 If first and second call formats both apply, the second format is assumed\n\
 if the last operand begins with + or (if there are 2 operands) a digit.\n\
 An OFFSET operand means -j OFFSET.  LABEL is the pseudo-address\n\
@@ -414,7 +417,7 @@ BYTES is hex with 0x or 0X prefix, and may have a multiplier suffix:\n\
   M    1024*1024\n\
 and so on for G, T, P, E, Z, Y.\n\
 "), stdout);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
@@ -1034,9 +1037,11 @@ skip (uintmax_t n_skip)
              If the number of bytes left to skip is larger than
              the size of the current file, we can decrement n_skip
              and go on to the next file.  Skip this optimization also
-             when st_size is 0, because some kernels report that
-             nonempty files in /proc have st_size == 0.  */
-          if (S_ISREG (file_stats.st_mode) && 0 < file_stats.st_size)
+             when st_size is no greater than the block size, because
+             some kernels report nonsense small file sizes for
+             proc-like file systems.  */
+          if (usable_st_size (&file_stats)
+              && ST_BLKSIZE (file_stats) < file_stats.st_size)
             {
               if ((uintmax_t) file_stats.st_size < n_skip)
                 n_skip -= file_stats.st_size;
@@ -1052,6 +1057,7 @@ skip (uintmax_t n_skip)
             }
 
           /* If it's not a regular file with nonnegative size,
+             or if it's so small that it might be in a proc-like file system,
              position the file pointer by reading.  */
 
           else
@@ -1067,10 +1073,15 @@ skip (uintmax_t n_skip)
                   n_skip -= n_bytes_read;
                   if (n_bytes_read != n_bytes_to_read)
                     {
-                      in_errno = errno;
-                      ok = false;
-                      n_skip = 0;
-                      break;
+                      if (ferror (in_stream))
+                        {
+                          in_errno = errno;
+                          ok = false;
+                          n_skip = 0;
+                          break;
+                        }
+                      if (feof (in_stream))
+                        break;
                     }
                 }
             }
@@ -1279,9 +1290,6 @@ read_block (size_t n, char *block, size_t *n_bytes_in_buffer)
   assert (0 < n && n <= bytes_per_block);
 
   *n_bytes_in_buffer = 0;
-
-  if (n == 0)
-    return true;
 
   while (in_stream != NULL)	/* EOF.  */
     {
@@ -1781,7 +1789,7 @@ main (int argc, char **argv)
     }
 
   if (!ok)
-    exit (EXIT_FAILURE);
+    return EXIT_FAILURE;
 
   if (flag_dump_strings && n_specs > 0)
     error (EXIT_FAILURE, 0,
@@ -1953,7 +1961,8 @@ main (int argc, char **argv)
     }
 
 #ifdef DEBUG
-  printf ("lcm=%d, width_per_block=%zu\n", l_c_m, width_per_block);
+  printf ("lcm=%d, width_per_block=%"PRIuMAX"\n", l_c_m,
+          (uintmax_t) width_per_block);
   for (i = 0; i < n_specs; i++)
     {
       int fields_per_block = bytes_per_block / width_bytes[spec[i].size];
@@ -1972,5 +1981,5 @@ cleanup:
   if (have_read_stdin && fclose (stdin) == EOF)
     error (EXIT_FAILURE, errno, _("standard input"));
 
-  exit (ok ? EXIT_SUCCESS : EXIT_FAILURE);
+  return ok ? EXIT_SUCCESS : EXIT_FAILURE;
 }

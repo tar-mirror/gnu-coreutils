@@ -1,6 +1,6 @@
 ## DO NOT EDIT! GENERATED AUTOMATICALLY!
 ## Process this file with automake to produce Makefile.in.
-# Copyright (C) 2002-2014 Free Software Foundation, Inc.
+# Copyright (C) 2002-2015 Free Software Foundation, Inc.
 #
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -79,16 +79,14 @@ EXTRA_DIST += test-accept.c signature.h macros.h
 ## begin gnulib module acl-tests
 
 TESTS += \
-  test-file-has-acl.sh test-file-has-acl-1.sh test-file-has-acl-2.sh \
   test-set-mode-acl.sh test-set-mode-acl-1.sh test-set-mode-acl-2.sh \
   test-copy-acl.sh test-copy-acl-1.sh test-copy-acl-2.sh
 TESTS_ENVIRONMENT += USE_ACL=$(USE_ACL)
-check_PROGRAMS += test-file-has-acl test-set-mode-acl test-copy-acl test-sameacls
-test_file_has_acl_LDADD = $(LDADD) $(LIB_ACL)
+check_PROGRAMS += test-set-mode-acl test-copy-acl test-sameacls
 test_set_mode_acl_LDADD = $(LDADD) $(LIB_ACL) @LIBINTL@
 test_copy_acl_LDADD = $(LDADD) $(LIB_ACL) @LIBINTL@
 test_sameacls_LDADD = $(LDADD) $(LIB_ACL) @LIBINTL@
-EXTRA_DIST += test-file-has-acl.sh test-file-has-acl-1.sh test-file-has-acl-2.sh test-set-mode-acl.sh test-set-mode-acl-1.sh test-set-mode-acl-2.sh test-copy-acl.sh test-copy-acl-1.sh test-copy-acl-2.sh test-file-has-acl.c test-set-mode-acl.c test-copy-acl.c test-sameacls.c macros.h
+EXTRA_DIST += test-set-mode-acl.sh test-set-mode-acl-1.sh test-set-mode-acl-2.sh test-copy-acl.sh test-copy-acl-1.sh test-copy-acl-2.sh test-set-mode-acl.c test-copy-acl.c test-sameacls.c macros.h
 
 ## end   gnulib module acl-tests
 
@@ -160,6 +158,21 @@ check_PROGRAMS += test-arpa_inet
 EXTRA_DIST += test-arpa_inet.c
 
 ## end   gnulib module arpa_inet-tests
+
+## begin gnulib module array-list
+
+libtests_a_SOURCES += gl_array_list.h gl_array_list.c
+
+## end   gnulib module array-list
+
+## begin gnulib module array-list-tests
+
+TESTS += test-array_list
+check_PROGRAMS += test-array_list
+
+EXTRA_DIST += test-array_list.c macros.h
+
+## end   gnulib module array-list-tests
 
 ## begin gnulib module base64-tests
 
@@ -557,6 +570,17 @@ check_PROGRAMS += test-fgetc
 EXTRA_DIST += test-fgetc.c signature.h macros.h
 
 ## end   gnulib module fgetc-tests
+
+## begin gnulib module file-has-acl-tests
+
+TESTS += \
+  test-file-has-acl.sh test-file-has-acl-1.sh test-file-has-acl-2.sh
+TESTS_ENVIRONMENT += USE_ACL=$(USE_ACL)
+check_PROGRAMS += test-file-has-acl
+test_file_has_acl_LDADD = $(LDADD) $(LIB_HAS_ACL)
+EXTRA_DIST += test-file-has-acl.sh test-file-has-acl-1.sh test-file-has-acl-2.sh test-file-has-acl.c macros.h
+
+## end   gnulib module file-has-acl-tests
 
 ## begin gnulib module filenamecat-tests
 
@@ -1137,6 +1161,14 @@ test_linkat_LDADD = $(LDADD) @LIBINTL@
 EXTRA_DIST += test-link.h test-linkat.c signature.h macros.h
 
 ## end   gnulib module linkat-tests
+
+## begin gnulib module linked-list-tests
+
+TESTS += test-linked_list
+check_PROGRAMS += test-linked_list
+EXTRA_DIST += test-linked_list.c macros.h
+
+## end   gnulib module linked-list-tests
 
 ## begin gnulib module listen
 

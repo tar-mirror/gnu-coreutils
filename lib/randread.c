@@ -1,6 +1,6 @@
 /* Generate buffers of random data.
 
-   Copyright (C) 2006-2014 Free Software Foundation, Inc.
+   Copyright (C) 2006-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -125,7 +125,7 @@ randread_error (void const *file_name)
 {
   if (file_name)
     error (exit_failure, errno,
-           _(errno == 0 ? "%s: end of file" : "%s: read error"),
+           errno == 0 ? _("%s: end of file") : _("%s: read error"),
            quotearg_colon (file_name));
   abort ();
 }

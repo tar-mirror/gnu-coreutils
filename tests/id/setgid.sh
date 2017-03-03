@@ -1,7 +1,7 @@
 #!/bin/sh
 # Verify that id [-G] prints the right group when run set-GID.
 
-# Copyright (C) 2012-2014 Free Software Foundation, Inc.
+# Copyright (C) 2012-2015 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,14 +27,14 @@ echo $gp1 > exp || framework_failure_
 
 # With coreutils-8.16 and earlier, id -G would print both:
 #  $gp1 $NON_ROOT_GID
-chroot --user=$NON_ROOT_USERNAME:+$gp1 --groups='' / env PATH="$PATH" \
-  id -G > out || fail=1
+chroot --skip-chdir --user=$NON_ROOT_USERNAME:+$gp1 --groups='' / \
+  env PATH="$PATH" id -G > out || fail=1
 compare exp out || fail=1
 
 # With coreutils-8.22 and earlier, id would erroneously print
 #  groups=$NON_ROOT_GID
-chroot --user=$NON_ROOT_USERNAME:+$gp1 --groups='' / env PATH="$PATH" \
-  id > out || fail=1
+chroot --skip-chdir --user=$NON_ROOT_USERNAME:+$gp1 --groups='' / \
+  env PATH="$PATH" id > out || fail=1
 grep -F "groups=$gp1" out || { cat out; fail=1; }
 
 Exit $fail

@@ -1,5 +1,5 @@
 /* Base64 encode/decode strings or files.
-   Copyright (C) 2004-2014 Free Software Foundation, Inc.
+   Copyright (C) 2004-2015 Free Software Foundation, Inc.
 
    This file is part of Base64.
 
@@ -62,6 +62,7 @@ Usage: %s [OPTION]... [FILE]\n\
 Base64 encode or decode FILE, or standard input, to standard output.\n\
 "), program_name);
 
+      emit_stdin_note ();
       emit_mandatory_arg_note ();
 
       fputs (_("\
@@ -75,15 +76,12 @@ Base64 encode or decode FILE, or standard input, to standard output.\n\
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
       fputs (_("\
 \n\
-With no FILE, or when FILE is -, read standard input.\n"), stdout);
-      fputs (_("\
-\n\
 The data are encoded as described for the base64 alphabet in RFC 3548.\n\
 When decoding, the input may contain newlines in addition to the bytes of\n\
 the formal base64 alphabet.  Use --ignore-garbage to attempt to recover\n\
 from any other non-alphabet bytes in the encoded stream.\n"),
              stdout);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
 
   exit (status);
@@ -321,5 +319,5 @@ main (int argc, char **argv)
         error (EXIT_FAILURE, errno, "%s", infile);
     }
 
-  exit (EXIT_SUCCESS);
+  return EXIT_SUCCESS;
 }

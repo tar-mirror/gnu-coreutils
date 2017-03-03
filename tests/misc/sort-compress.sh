@@ -1,7 +1,7 @@
 #!/bin/sh
 # Test use of compression by sort
 
-# Copyright (C) 2007-2014 Free Software Foundation, Inc.
+# Copyright (C) 2007-2015 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@ sort -S 1k in > out || fail=1
 compare exp out || fail=1
 
 # Create our own gzip program that will be used as the default
-cat <<\EOF > gzip || fail=1
-#!/bin/sh
+cat <<EOF > gzip || fail=1
+#!$SHELL
 tr 41 14
 touch ok
 EOF

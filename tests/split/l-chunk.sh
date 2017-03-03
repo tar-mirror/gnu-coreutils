@@ -1,7 +1,7 @@
 #!/bin/sh
 # test splitting into newline delineated chunks (-n l/...)
 
-# Copyright (C) 2010-2014 Free Software Foundation, Inc.
+# Copyright (C) 2010-2015 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 print_ver_ split
 
 # invalid number of chunks
-echo 'split: 1o: invalid number of chunks' > exp
+echo "split: invalid number of chunks: '1o'" > exp
 split -n l/1o 2>err && fail=1
 compare exp err || fail=1
 
@@ -53,8 +53,9 @@ lines=\
 
 printf "%s" "$lines" | tr '~' '\n' > in || framework_failure_
 
-echo 'split: 16: invalid chunk number' > exp
-split -n l/16/15 in 2>err && fail=1
+echo "split: invalid chunk number: '16'" > exp
+split -n l/16/15 in 2>err.t && fail=1
+sed "s/': .*/'/" < err.t > err || framework_failure_
 compare exp err || fail=1
 
 printf '%s' "\

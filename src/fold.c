@@ -1,5 +1,5 @@
 /* fold -- wrap each input line to fit in specified width.
-   Copyright (C) 1991-2014 Free Software Foundation, Inc.
+   Copyright (C) 1991-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,8 +25,7 @@
 #include "system.h"
 #include "error.h"
 #include "fadvise.h"
-#include "quote.h"
-#include "xstrtol.h"
+#include "xdectoint.h"
 
 #define TAB_WIDTH 8
 
@@ -68,10 +67,10 @@ Usage: %s [OPTION]... [FILE]...\n\
 "),
               program_name);
       fputs (_("\
-Wrap input lines in each FILE (standard input by default), writing to\n\
-standard output.\n\
+Wrap input lines in each FILE, writing to standard output.\n\
 "), stdout);
 
+      emit_stdin_note ();
       emit_mandatory_arg_note ();
 
       fputs (_("\
@@ -81,7 +80,7 @@ standard output.\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
@@ -280,14 +279,8 @@ main (int argc, char **argv)
             }
           /* Fall through.  */
         case 'w':		/* Line width. */
-          {
-            unsigned long int tmp_ulong;
-            if (! (xstrtoul (optarg, NULL, 10, &tmp_ulong, "") == LONGINT_OK
-                   && 0 < tmp_ulong && tmp_ulong < SIZE_MAX - TAB_WIDTH))
-              error (EXIT_FAILURE, 0,
-                     _("invalid number of columns: %s"), quote (optarg));
-            width = tmp_ulong;
-          }
+          width = xdectoumax (optarg, 1, SIZE_MAX - TAB_WIDTH - 1, "",
+                              _("invalid number of columns"), 0);
           break;
 
         case_GETOPT_HELP_CHAR;
@@ -311,5 +304,5 @@ main (int argc, char **argv)
   if (have_read_stdin && fclose (stdin) == EOF)
     error (EXIT_FAILURE, errno, "-");
 
-  exit (ok ? EXIT_SUCCESS : EXIT_FAILURE);
+  return ok ? EXIT_SUCCESS : EXIT_FAILURE;
 }

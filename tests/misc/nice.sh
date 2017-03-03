@@ -1,7 +1,7 @@
 #! /bin/sh
 # Test "nice".
 
-# Copyright (C) 2002-2014 Free Software Foundation, Inc.
+# Copyright (C) 2002-2015 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ done
 if test x$(nice -n -1 nice 2> /dev/null) = x0 ; then
   # unprivileged user - warn about failure to change
   nice -n -1 true 2> err || fail=1
-  test -s err || fail=1
+  compare /dev/null err && fail=1
   mv err exp || framework_failure_
   nice --1 true 2> err || fail=1
   compare exp err || fail=1

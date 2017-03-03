@@ -1,5 +1,5 @@
 /* GNU's uptime.
-   Copyright (C) 1992-2014 Free Software Foundation, Inc.
+   Copyright (C) 1992-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -217,7 +217,7 @@ If FILE is not specified, use %s.  %s as FILE is common.\n\
               UTMP_FILE, WTMP_FILE);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
@@ -253,5 +253,5 @@ main (int argc, char **argv)
       usage (EXIT_FAILURE);
     }
 
-  exit (EXIT_SUCCESS);
+  return EXIT_SUCCESS;
 }

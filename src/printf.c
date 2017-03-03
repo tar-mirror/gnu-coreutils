@@ -1,5 +1,5 @@
 /* printf - format and print data
-   Copyright (C) 1990-2014 Free Software Foundation, Inc.
+   Copyright (C) 1990-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -129,7 +129,7 @@ and all C format specifications ending with one of diouxXfeEgGcs, with\n\
 ARGUMENTs converted to proper type first.  Variable widths are handled.\n\
 "), stdout);
       printf (USAGE_BUILTIN_WARNING, PROGRAM_NAME);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
@@ -657,7 +657,7 @@ main (int argc, char **argv)
         {
           version_etc (stdout, PROGRAM_NAME, PACKAGE_NAME, Version, AUTHORS,
                        (char *) NULL);
-          exit (EXIT_SUCCESS);
+          return EXIT_SUCCESS;
         }
     }
 
@@ -692,5 +692,5 @@ main (int argc, char **argv)
            _("warning: ignoring excess arguments, starting with %s"),
            quote (argv[0]));
 
-  exit (exit_status);
+  return exit_status;
 }

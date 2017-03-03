@@ -1,5 +1,5 @@
 /* 'dir', 'vdir' and 'ls' directory listing programs for GNU.
-   Copyright (C) 1985-2014 Free Software Foundation, Inc.
+   Copyright (C) 1985-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -105,6 +105,7 @@
 #include "stat-size.h"
 #include "stat-time.h"
 #include "strftime.h"
+#include "xdectoint.h"
 #include "xstrtol.h"
 #include "areadlink.h"
 #include "mbsalign.h"
@@ -283,6 +284,8 @@ static void queue_directory (char const *name, char const *realname,
                              bool command_line_arg);
 static void sort_files (void);
 static void parse_ls_color (void);
+
+static void getenv_quoting_style (void);
 
 /* Initial size of hash table.
    Most hierarchies are likely to be shallower than this.  */
@@ -577,7 +580,7 @@ static struct bin_str color_indicator[] =
   {
     { LEN_STR_PAIR ("\033[") },		/* lc: Left of color sequence */
     { LEN_STR_PAIR ("m") },		/* rc: Right of color sequence */
-    { 0, NULL },			/* ec: End color (replaces lc+no+rc) */
+    { 0, NULL },			/* ec: End color (replaces lc+rs+rc) */
     { LEN_STR_PAIR ("0") },		/* rs: Reset to ordinary colors */
     { 0, NULL },			/* no: Normal */
     { 0, NULL },			/* fi: File: default */
@@ -987,7 +990,7 @@ dev_ino_pop (void)
   struct dev_ino *di;
   int dev_ino_size = sizeof *di;
   assert (dev_ino_size <= obstack_object_size (&dev_ino_obstack));
-  obstack_blank (&dev_ino_obstack, -dev_ino_size);
+  obstack_blank_fast (&dev_ino_obstack, -dev_ino_size);
   vdi = obstack_next_free (&dev_ino_obstack);
   di = vdi;
   return *di;
@@ -1511,7 +1514,7 @@ main (int argc, char **argv)
       hash_free (active_dir_set);
     }
 
-  exit (exit_status);
+  return exit_status;
 }
 
 /* Set all the option flags according to the switches specified.
@@ -1577,20 +1580,7 @@ decode_switches (int argc, char **argv)
   hide_patterns = NULL;
   print_scontext = false;
 
-  /* FIXME: put this in a function.  */
-  {
-    char const *q_style = getenv ("QUOTING_STYLE");
-    if (q_style)
-      {
-        int i = ARGMATCH (q_style, quoting_style_args, quoting_style_vals);
-        if (0 <= i)
-          set_quoting_style (NULL, quoting_style_vals[i]);
-        else
-          error (0, 0,
-         _("ignoring invalid value of environment variable QUOTING_STYLE: %s"),
-                 quotearg (q_style));
-      }
-  }
+  getenv_quoting_style ();
 
   line_length = 80;
   {
@@ -1753,15 +1743,9 @@ decode_switches (int argc, char **argv)
           break;
 
         case 'w':
-          {
-            unsigned long int tmp_ulong;
-            if (xstrtoul (optarg, NULL, 0, &tmp_ulong, NULL) != LONGINT_OK
-                || ! (0 < tmp_ulong && tmp_ulong <= SIZE_MAX))
-              error (LS_FAILURE, 0, _("invalid line width: %s"),
-                     quotearg (optarg));
-            line_length = tmp_ulong;
-            break;
-          }
+          line_length = xnumtoumax (optarg, 0, 1, SIZE_MAX, "",
+                                    _("invalid line width"), LS_FAILURE);
+          break;
 
         case 'x':
           format = horizontal;
@@ -1827,15 +1811,9 @@ decode_switches (int argc, char **argv)
           break;
 
         case 'T':
-          {
-            unsigned long int tmp_ulong;
-            if (xstrtoul (optarg, NULL, 0, &tmp_ulong, NULL) != LONGINT_OK
-                || SIZE_MAX < tmp_ulong)
-              error (LS_FAILURE, 0, _("invalid tab size: %s"),
-                     quotearg (optarg));
-            tabsize = tmp_ulong;
-            break;
-          }
+          tabsize = xnumtoumax (optarg, 0, 0, SIZE_MAX, "",
+                                _("invalid tab size"), LS_FAILURE);
+          break;
 
         case 'U':
           sort_type = sort_none;
@@ -2493,6 +2471,25 @@ parse_ls_color (void)
     color_symlink_as_referent = true;
 }
 
+/* Set the quoting style default if the environment variable
+   QUOTING_STYLE is set.  */
+
+static void
+getenv_quoting_style (void)
+{
+  char const *q_style = getenv ("QUOTING_STYLE");
+  if (q_style)
+    {
+      int i = ARGMATCH (q_style, quoting_style_args, quoting_style_vals);
+      if (0 <= i)
+        set_quoting_style (NULL, quoting_style_vals[i]);
+      else
+        error (0, 0,
+       _("ignoring invalid value of environment variable QUOTING_STYLE: %s"),
+               quotearg (q_style));
+    }
+}
+
 /* Set the exit status to report a failure.  If SERIOUS, it is a
    serious failure; otherwise, it is merely a minor problem.  */
 
@@ -2831,10 +2828,7 @@ clear_files (void)
 static bool
 errno_unsupported (int err)
 {
-  return (err == EINVAL
-          || err == ENOSYS
-          || err == ENOTSUP
-          || err == EOPNOTSUPP);
+  return (err == EINVAL || err == ENOSYS || is_ENOTSUP (err));
 }
 
 /* Cache *getfilecon failure, when it's trivial to do so.
@@ -2953,7 +2947,6 @@ gobble_file (char const *name, enum filetype type, ino_t inode,
       || ((print_inode || format_needs_type)
           && (type == symbolic_link || type == unknown)
           && (dereference == DEREF_ALWAYS
-              || (command_line_arg && dereference != DEREF_NEVER)
               || color_symlink_as_referent || check_symlink_color))
       /* Command line dereferences are already taken care of by the above
          assertion that the inode number is not yet known.  */
@@ -3072,7 +3065,7 @@ gobble_file (char const *name, enum filetype type, ino_t inode,
                  ls fail just because the file (even a command line argument)
                  isn't on the right type of file system.  I.e., a getfilecon
                  failure isn't in the same class as a stat failure.  */
-              if (errno == ENOTSUP || errno == EOPNOTSUPP || errno == ENODATA)
+              if (is_ENOTSUP (errno) || errno == ENODATA)
                 err = 0;
             }
 
@@ -3555,8 +3548,8 @@ static qsortFunc const sort_functions[][2][2][2] =
   };
 
 /* The number of sort keys is calculated as the sum of
-     the number of elements in the sort_type enum (i.e. sort_numtypes)
-     the number of elements in the time_type enum (i.e. time_numtypes) - 1
+     the number of elements in the sort_type enum (i.e., sort_numtypes)
+     the number of elements in the time_type enum (i.e., time_numtypes) - 1
    This is because when sort_type==sort_time, we have up to
    time_numtypes possible sort keys.
 
@@ -3668,7 +3661,8 @@ align_nstrftime (char *buf, size_t size, char const *fmt, struct tm const *tm,
      the replacement is not done.  A malloc here slows ls down by 2%  */
   char rpl_fmt[sizeof (abmon[0]) + 100];
   const char *pb;
-  if (required_mon_width && (pb = strstr (fmt, "%b")))
+  if (required_mon_width && (pb = strstr (fmt, "%b"))
+      && 0 <= tm->tm_mon && tm->tm_mon <= 11)
     {
       if (strlen (fmt) < (sizeof (rpl_fmt) - sizeof (abmon[0]) + 2))
         {
@@ -4803,9 +4797,10 @@ Sort entries alphabetically if none of -cftuvSUX nor --sort is specified.\n\
 "), stdout);
       fputs (_("\
   -C                         list entries by columns\n\
-      --color[=WHEN]         colorize the output; WHEN can be 'never', 'auto',\
+      --color[=WHEN]         colorize the output; WHEN can be 'always' (default\
 \n\
-                               or 'always' (the default); more info below\n\
+                               if omitted), 'auto', or 'never'; more info below\
+\n\
   -d, --directory            list directories themselves, not their contents\n\
   -D, --dired                generate output designed for Emacs' dired mode\n\
 "), stdout);
@@ -4884,14 +4879,15 @@ Sort entries alphabetically if none of -cftuvSUX nor --sort is specified.\n\
   -s, --size                 print the allocated size of each file, in blocks\n\
 "), stdout);
       fputs (_("\
-  -S                         sort by file size\n\
+  -S                         sort by file size, largest first\n\
       --sort=WORD            sort by WORD instead of name: none (-U), size (-S)\
 ,\n\
                                time (-t), version (-v), extension (-X)\n\
       --time=WORD            with -l, show time as WORD instead of default\n\
-                               modification time: atime or access or use (-u)\n\
+                               modification time: atime or access or use (-u);\
+\n\
                                ctime or status (-c); also use specified time\n\
-                               as sort key if --sort=time\n\
+                               as sort key if --sort=time (newest first)\n\
 "), stdout);
       fputs (_("\
       --time-style=STYLE     with -l, show times using style STYLE:\n\
@@ -4912,7 +4908,7 @@ Sort entries alphabetically if none of -cftuvSUX nor --sort is specified.\n\
       fputs (_("\
   -u                         with -lt: sort by, and show, access time;\n\
                                with -l: show access time and sort by name;\n\
-                               otherwise: sort by access time\n\
+                               otherwise: sort by access time, newest first\n\
   -U                         do not sort; list entries in directory order\n\
   -v                         natural sort of (version) numbers within text\n\
 "), stdout);
@@ -4921,7 +4917,8 @@ Sort entries alphabetically if none of -cftuvSUX nor --sort is specified.\n\
   -x                         list entries by lines instead of by columns\n\
   -X                         sort alphabetically by entry extension\n\
   -Z, --context              print any security context of each file\n\
-  -1                         list one file per line\n\
+  -1                         list one file per line.  Avoid '\\n' with -q or -b\
+\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
@@ -4940,7 +4937,7 @@ Exit status:\n\
  1  if minor problems (e.g., cannot access subdirectory),\n\
  2  if serious trouble (e.g., cannot access command-line argument).\n\
 "), stdout);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }

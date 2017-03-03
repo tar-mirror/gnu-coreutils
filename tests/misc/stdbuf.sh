@@ -1,7 +1,7 @@
 #!/bin/sh
 # Exercise stdbuf functionality
 
-# Copyright (C) 2009-2014 Free Software Foundation, Inc.
+# Copyright (C) 2009-2015 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -58,15 +58,18 @@ test $? = 126 || fail=1
 stdbuf -o1 no_such # no such command
 test $? = 127 || fail=1
 
+# Terminate any background processes
+cleanup_() { kill $pid 2>/dev/null && wait $pid; }
+
 # Ensure line buffering stdout takes effect
 stdbuf_linebuffer()
 {
   local delay="$1"
 
   printf '1\n' > exp
-  dd count=1 if=fifo > out 2> err &
+  dd count=1 if=fifo > out 2> err & pid=$!
   (printf '1\n'; sleep $delay; printf '2\n') | stdbuf -oL uniq > fifo
-  wait # for dd to complete
+  wait $pid
   compare exp out
 }
 
@@ -78,16 +81,16 @@ stdbuf_unbuffer()
 
   # Ensure un buffering stdout takes effect
   printf '1\n' > exp
-  dd count=1 if=fifo > out 2> err &
+  dd count=1 if=fifo > out 2> err & pid=$!
   (printf '1\n'; sleep $delay; printf '2\n') | stdbuf -o0 uniq > fifo
-  wait # for dd to complete
+  wait $pid
   compare exp out
 }
 
 retry_delay_ stdbuf_unbuffer .1 6 || fail=1
 
 # Ensure un buffering stdin takes effect
-#  The following works for me, but is racy. I.E. we're depending
+#  The following works for me, but is racy.  I.e., we're depending
 #  on dd to run and close the fifo before the second write by uniq.
 #  If we add a sleep, then we're just testing -oL
     # printf '3\n' > exp

@@ -1,5 +1,5 @@
 /* nice -- run a program with modified niceness
-   Copyright (C) 1990-2014 Free Software Foundation, Inc.
+   Copyright (C) 1990-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ With no COMMAND, print the current niceness.  Niceness values range from\n\
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
       printf (USAGE_BUILTIN_WARNING, PROGRAM_NAME);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
@@ -187,7 +187,7 @@ main (int argc, char **argv)
       if (current_niceness == -1 && errno != 0)
         error (EXIT_CANCELED, errno, _("cannot get niceness"));
       printf ("%d\n", current_niceness);
-      exit (EXIT_SUCCESS);
+      return EXIT_SUCCESS;
     }
 
   errno = 0;
@@ -209,14 +209,12 @@ main (int argc, char **argv)
          encountered a write failure, there is no need to try calling
          error() again.  */
       if (ferror (stderr))
-        exit (EXIT_CANCELED);
+        return EXIT_CANCELED;
     }
 
   execvp (argv[i], &argv[i]);
 
-  {
-    int exit_status = (errno == ENOENT ? EXIT_ENOENT : EXIT_CANNOT_INVOKE);
-    error (0, errno, "%s", argv[i]);
-    exit (exit_status);
-  }
+  int exit_status = errno == ENOENT ? EXIT_ENOENT : EXIT_CANNOT_INVOKE;
+  error (0, errno, "%s", argv[i]);
+  return exit_status;
 }

@@ -1,6 +1,6 @@
 /* Save and restore the working directory, possibly using a subprocess.
 
-   Copyright (C) 2006, 2009-2014 Free Software Foundation, Inc.
+   Copyright (C) 2006, 2009-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -125,7 +125,7 @@ int savewd_chdir (struct savewd *wd, char const *dir, int options,
 int savewd_restore (struct savewd *wd, int status);
 
 /* Return WD's error number, or 0 if WD is not in an error state.  */
-SAVEWD_INLINE int
+SAVEWD_INLINE int _GL_ATTRIBUTE_PURE
 savewd_errno (struct savewd const *wd)
 {
   return (wd->state == ERROR_STATE ? wd->val.errnum : 0);

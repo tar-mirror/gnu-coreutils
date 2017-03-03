@@ -1,5 +1,5 @@
 # DO NOT EDIT! GENERATED AUTOMATICALLY!
-# Copyright (C) 2002-2014 Free Software Foundation, Inc.
+# Copyright (C) 2002-2015 Free Software Foundation, Inc.
 #
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,6 +43,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module accept:
   # Code from module accept-tests:
   # Code from module acl:
+  # Code from module acl-permissions:
   # Code from module acl-tests:
   # Code from module alignof:
   # Code from module alignof-tests:
@@ -63,7 +64,10 @@ AC_DEFUN([gl_EARLY],
   # Code from module argv-iter-tests:
   # Code from module arpa_inet:
   # Code from module arpa_inet-tests:
+  # Code from module array-list:
+  # Code from module array-list-tests:
   # Code from module assert:
+  # Code from module assure:
   # Code from module at-internal:
   # Code from module autobuild:
   AB_INIT
@@ -190,6 +194,8 @@ AC_DEFUN([gl_EARLY],
   AC_REQUIRE([AC_FUNC_FSEEKO])
   # Code from module fflush-tests:
   # Code from module fgetc-tests:
+  # Code from module file-has-acl:
+  # Code from module file-has-acl-tests:
   # Code from module file-set:
   # Code from module file-type:
   # Code from module fileblocks:
@@ -373,6 +379,9 @@ AC_DEFUN([gl_EARLY],
   # Code from module link-tests:
   # Code from module linkat:
   # Code from module linkat-tests:
+  # Code from module linked-list:
+  # Code from module linked-list-tests:
+  # Code from module list:
   # Code from module listen:
   # Code from module listen-tests:
   # Code from module localcharset:
@@ -494,7 +503,8 @@ AC_DEFUN([gl_EARLY],
   AC_DEFINE([_REENTRANT], 1, [For thread-safety on OSF/1, Solaris.])
   AC_DEFINE([_THREAD_SAFE], 1, [For thread-safety on AIX, FreeBSD.])
   # Code from module putenv:
-  # Code from module qacl:
+  # Code from module qcopy-acl:
+  # Code from module qset-acl:
   # Code from module quote:
   # Code from module quotearg:
   # Code from module quotearg-simple:
@@ -763,11 +773,13 @@ AC_DEFUN([gl_EARLY],
   # Code from module xalloc-die:
   # Code from module xalloc-die-tests:
   # Code from module xalloc-oversized:
+  # Code from module xdectoint:
   # Code from module xfreopen:
   # Code from module xfts:
   # Code from module xgetcwd:
   # Code from module xgetgroups:
   # Code from module xgethostname:
+  # Code from module xlist:
   # Code from module xmemcoll:
   # Code from module xnanosleep:
   # Code from module xprintf:
@@ -808,6 +820,7 @@ AC_DEFUN([gl_INIT],
   m4_pushdef([gl_LIBSOURCES_DIR], [])
   gl_COMMON
   gl_source_base='lib'
+  gl_FUNC_ACL
   gl_FUNC_ALLOCA
   gl_MODULE_INDICATOR([areadlinkat])
   gl_HEADER_ARPA_INET
@@ -985,6 +998,7 @@ AC_DEFUN([gl_INIT],
   fi
   gl_MODULE_INDICATOR([fflush])
   gl_STDIO_MODULE_INDICATOR([fflush])
+  gl_FILE_HAS_ACL
   gl_FILEBLOCKS
   if test $ac_cv_member_struct_stat_st_blocks = no; then
     AC_LIBOBJ([fileblocks])
@@ -1332,8 +1346,6 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_LINKAT
   if test $HAVE_LINKAT = 0 || test $REPLACE_LINKAT = 1; then
     AC_LIBOBJ([linkat])
-  fi
-  if test $HAVE_LINKAT = 0; then
     AC_LIBOBJ([at-func2])
   fi
   gl_UNISTD_MODULE_INDICATOR([linkat])
@@ -1550,7 +1562,6 @@ AC_DEFUN([gl_INIT],
     gl_PREREQ_PUTENV
   fi
   gl_STDLIB_MODULE_INDICATOR([putenv])
-  gl_FUNC_ACL
   gl_QUOTE
   gl_QUOTEARG
   gl_FUNC_RAISE
@@ -1578,7 +1589,7 @@ AC_DEFUN([gl_INIT],
   fi
   gl_UNISTD_MODULE_INDICATOR([readlink])
   gl_FUNC_READLINKAT
-  if test $HAVE_READLINKAT = 0; then
+  if test $HAVE_READLINKAT = 0 || test $REPLACE_READLINKAT = 1; then
     AC_LIBOBJ([readlinkat])
   fi
   gl_UNISTD_MODULE_INDICATOR([readlinkat])
@@ -1709,8 +1720,8 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_SNPRINTF
   gl_STDIO_MODULE_INDICATOR([snprintf])
   gl_MODULE_INDICATOR([snprintf])
-  gl_SOCKETLIB
-  gl_SOCKETS
+  AC_REQUIRE([gl_SOCKETLIB])
+  AC_REQUIRE([gl_SOCKETS])
   gl_TYPE_SOCKLEN_T
   gt_TYPE_SSIZE_T
   gl_FUNC_STAT
@@ -1841,7 +1852,7 @@ AC_DEFUN([gl_INIT],
   AC_PROG_MKDIR_P
   gl_HEADER_SYS_SELECT
   AC_PROG_MKDIR_P
-  gl_HEADER_SYS_SOCKET
+  AC_REQUIRE([gl_HEADER_SYS_SOCKET])
   AC_PROG_MKDIR_P
   gl_HEADER_SYS_STAT_H
   AC_PROG_MKDIR_P
@@ -1878,14 +1889,14 @@ AC_DEFUN([gl_INIT],
   gl_UNICODEIO
   gl_UNISTD_H
   gl_UNISTD_SAFER
-  gl_LIBUNISTRING_LIBHEADER([0.9.2], [unistr.h])
+  gl_LIBUNISTRING_LIBHEADER([0.9.4], [unistr.h])
   gl_MODULE_INDICATOR([unistr/u8-mbtoucr])
   gl_LIBUNISTRING_MODULE([0.9], [unistr/u8-mbtoucr])
   gl_MODULE_INDICATOR([unistr/u8-uctomb])
   gl_LIBUNISTRING_MODULE([0.9], [unistr/u8-uctomb])
-  gl_LIBUNISTRING_LIBHEADER([0.9], [unitypes.h])
-  gl_LIBUNISTRING_LIBHEADER([0.9], [uniwidth.h])
-  gl_LIBUNISTRING_MODULE([0.9.4], [uniwidth/width])
+  gl_LIBUNISTRING_LIBHEADER([0.9.4], [unitypes.h])
+  gl_LIBUNISTRING_LIBHEADER([0.9.4], [uniwidth.h])
+  gl_LIBUNISTRING_MODULE([0.9.6], [uniwidth/width])
   gl_FUNC_UNLINK
   if test $REPLACE_UNLINK = 1; then
     AC_LIBOBJ([unlink])
@@ -2025,7 +2036,6 @@ changequote([, ])dnl
     AC_LIBOBJ([accept])
   fi
   gl_SYS_SOCKET_MODULE_INDICATOR([accept])
-  AC_CHECK_DECLS_ONCE([alarm])
   AC_REQUIRE([gl_HEADER_SYS_SOCKET])
   if test "$ac_cv_header_winsock2_h" = yes; then
     AC_LIBOBJ([bind])
@@ -2042,6 +2052,7 @@ changequote([, ])dnl
   fi
   gl_SYS_SOCKET_MODULE_INDICATOR([connect])
   AC_CHECK_FUNCS_ONCE([getegid])
+  AC_CHECK_DECLS_ONCE([alarm])
   gl_FUNC_UNGETC_WORKS
   gl_FUNC_UNGETC_WORKS
   gl_FUNC_UNGETC_WORKS
@@ -2168,7 +2179,7 @@ changequote([, ])dnl
   AC_CHECK_HEADERS_ONCE([sys/mman.h])
   AC_CHECK_FUNCS_ONCE([mprotect])
   gl_FUNC_SYMLINKAT
-  if test $HAVE_SYMLINKAT = 0; then
+  if test $HAVE_SYMLINKAT = 0 || test $REPLACE_SYMLINKAT = 1; then
     AC_LIBOBJ([symlinkat])
   fi
   gl_UNISTD_MODULE_INDICATOR([symlinkat])
@@ -2312,8 +2323,10 @@ AC_DEFUN([gl_FILE_LIST], [
   build-aux/vc-list-files
   doc/fdl.texi
   doc/gendocs_template
+  doc/gendocs_template_min
   doc/parse-datetime.texi
   lib/acl-errno-valid.c
+  lib/acl-internal.c
   lib/acl-internal.h
   lib/acl.h
   lib/acl_entries.c
@@ -2334,6 +2347,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/arpa_inet.in.h
   lib/asnprintf.c
   lib/asprintf.c
+  lib/assure.h
   lib/at-func.c
   lib/at-func2.c
   lib/backupfile.c
@@ -2500,6 +2514,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/full-write.h
   lib/futimens.c
   lib/gai_strerror.c
+  lib/get-permissions.c
   lib/getaddrinfo.c
   lib/getcwd-lgpl.c
   lib/getcwd.c
@@ -2528,7 +2543,15 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/getugroups.c
   lib/getugroups.h
   lib/getusershell.c
+  lib/gl_anylinked_list1.h
+  lib/gl_anylinked_list2.h
+  lib/gl_linked_list.c
+  lib/gl_linked_list.h
+  lib/gl_list.c
+  lib/gl_list.h
   lib/gl_openssl.h
+  lib/gl_xlist.c
+  lib/gl_xlist.h
   lib/glthread/lock.c
   lib/glthread/lock.h
   lib/glthread/threadlib.c
@@ -2775,6 +2798,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/selinux-at.c
   lib/selinux-at.h
   lib/set-acl.c
+  lib/set-permissions.c
   lib/setenv.c
   lib/settime.c
   lib/sha1.c
@@ -2928,6 +2952,10 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/xalloc-oversized.h
   lib/xalloc.h
   lib/xasprintf.c
+  lib/xdectoimax.c
+  lib/xdectoint.c
+  lib/xdectoint.h
+  lib/xdectoumax.c
   lib/xfreopen.c
   lib/xfreopen.h
   lib/xfts.c
@@ -3189,6 +3217,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/nocrash.m4
   m4/non-recursive-gnulib-prefix-hack.m4
   m4/nproc.m4
+  m4/obstack.m4
   m4/off_t.m4
   m4/open.m4
   m4/openat.m4
@@ -3379,6 +3408,7 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-argmatch.c
   tests/test-argv-iter.c
   tests/test-arpa_inet.c
+  tests/test-array_list.c
   tests/test-base64.c
   tests/test-binary-io.c
   tests/test-binary-io.sh
@@ -3545,6 +3575,7 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-link.c
   tests/test-link.h
   tests/test-linkat.c
+  tests/test-linked_list.c
   tests/test-listen.c
   tests/test-locale.c
   tests/test-localeconv.c
@@ -3768,6 +3799,8 @@ AC_DEFUN([gl_FILE_LIST], [
   tests=lib/binary-io.h
   tests=lib/bind.c
   tests=lib/connect.c
+  tests=lib/gl_array_list.c
+  tests=lib/gl_array_list.h
   tests=lib/glthread/thread.c
   tests=lib/glthread/thread.h
   tests=lib/glthread/yield.h

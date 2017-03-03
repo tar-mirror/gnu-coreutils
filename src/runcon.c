@@ -1,5 +1,5 @@
 /* runcon -- run command with specified security context
-   Copyright (C) 2005-2014 Free Software Foundation, Inc.
+   Copyright (C) 2005-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -102,7 +102,7 @@ With neither CONTEXT nor COMMAND, print the current security context.\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
@@ -177,7 +177,7 @@ main (int argc, char **argv)
         error (EXIT_FAILURE, errno, _("failed to get current context"));
       fputs (cur_context, stdout);
       fputc ('\n', stdout);
-      exit (EXIT_SUCCESS);
+      return EXIT_SUCCESS;
     }
 
   if (!(user || role || type || range || compute_trans))
@@ -258,9 +258,7 @@ main (int argc, char **argv)
 
   execvp (argv[optind], argv + optind);
 
-  {
-    int exit_status = (errno == ENOENT ? EXIT_ENOENT : EXIT_CANNOT_INVOKE);
-    error (0, errno, "%s", argv[optind]);
-    exit (exit_status);
-  }
+  int exit_status = errno == ENOENT ? EXIT_ENOENT : EXIT_CANNOT_INVOKE;
+  error (0, errno, "%s", argv[optind]);
+  return exit_status;
 }

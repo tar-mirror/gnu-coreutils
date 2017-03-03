@@ -1,5 +1,5 @@
 /* join - join lines of two files on a common field
-   Copyright (C) 1991-2014 Free Software Foundation, Inc.
+   Copyright (C) 1991-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -194,8 +194,14 @@ Usage: %s [OPTION]... FILE1 FILE2\n\
               program_name);
       fputs (_("\
 For each pair of input lines with identical join fields, write a line to\n\
-standard output.  The default join field is the first, delimited\n\
-by whitespace.  When FILE1 or FILE2 (not both) is -, read standard input.\n\
+standard output.  The default join field is the first, delimited by whitespace.\
+\n\
+"), stdout);
+      fputs (_("\
+\n\
+When FILE1 or FILE2 (not both) is -, read standard input.\n\
+"), stdout);
+      fputs (_("\
 \n\
   -a FILENUM        also print unpairable lines from file FILENUM, where\n\
                       FILENUM is 1 or 2, corresponding to FILE1 or FILE2\n\
@@ -239,7 +245,7 @@ Note, comparisons honor the rules specified by 'LC_COLLATE'.\n\
 If the input is not sorted and some lines cannot be joined, a\n\
 warning message will be given.\n\
 "), stdout);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
@@ -1191,7 +1197,7 @@ main (int argc, char **argv)
     error (EXIT_FAILURE, errno, "%s", g_names[1]);
 
   if (issued_disorder_warning[0] || issued_disorder_warning[1])
-    exit (EXIT_FAILURE);
+    return EXIT_FAILURE;
   else
-    exit (EXIT_SUCCESS);
+    return EXIT_SUCCESS;
 }

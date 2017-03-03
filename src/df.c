@@ -1,5 +1,5 @@
 /* df - summarize free disk space
-   Copyright (C) 1991-2014 Free Software Foundation, Inc.
+   Copyright (C) 1991-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -605,7 +605,7 @@ excluded_fstype (const char *fstype)
 
 /* Filter mount list by skipping duplicate entries.
    In the case of duplicates - based on the device number - the mount entry
-   with a '/' in its me_devname (i.e. not pseudo name like tmpfs) wins.
+   with a '/' in its me_devname (i.e., not pseudo name like tmpfs) wins.
    If both have a real devname (e.g. bind mounts), then that with the shorter
    me_mountdir wins.  With DEVICES_ONLY == true (set with df -a), only update
    the global device_list, rather than filtering the global mount_list.  */
@@ -622,13 +622,14 @@ filter_mount_list (bool devices_only)
       struct devlist *devlist;
       struct mount_entry *discard_me = NULL;
 
-      /* TODO: On Linux we might avoid this stat() and another in get_dev()
-         by using the device IDs available from /proc/self/mountinfo.
-         read_file_system_list() could populate me_dev from those
-         for efficiency and accuracy.  */
-      if (-1 == stat (me->me_mountdir, &buf))
+      /* Avoid stating remote file systems as that may hang.
+         On Linux we probably have me_dev populated from /proc/self/mountinfo,
+         however we still stat() in case another device was mounted later.  */
+      if ((me->me_remote && show_local_fs)
+          || -1 == stat (me->me_mountdir, &buf))
         {
-          /* Stat failed - add ME to be able to complain about it later.  */
+          /* If remote, and showing just local, add ME for filtering later.
+             If stat failed; add ME to be able to complain about it later.  */
           buf.st_dev = me->me_dev;
         }
       else
@@ -640,13 +641,28 @@ filter_mount_list (bool devices_only)
 
           if (devlist)
             {
-              /* ...let the shorter mountdir win.  */
-              if ((strchr (me->me_devname, '/')
-                   && ! strchr (devlist->me->me_devname, '/'))
-                  || (strlen (devlist->me->me_mountdir)
-                      > strlen (me->me_mountdir))
-                  /* or one overmounted on a different device.  */
-                  || ! STREQ (devlist->me->me_devname, me->me_devname))
+              if (! print_grand_total && me->me_remote && devlist->me->me_remote
+                  && ! STREQ (devlist->me->me_devname, me->me_devname))
+                {
+                  /* Don't discard remote entries with different locations,
+                     as these are more likely to be explicitly mounted.
+                     However avoid this when producing a total to give
+                     a more accurate value in that case.  */
+                }
+              else if ((strchr (me->me_devname, '/')
+                       /* let "real" devices with '/' in the name win.  */
+                        && ! strchr (devlist->me->me_devname, '/'))
+                       /* let a shorter mountdir win.  */
+                       || (strlen (devlist->me->me_mountdir)
+                           > strlen (me->me_mountdir))
+                       /* let an entry overmounted on a new device win...  */
+                       || (! STREQ (devlist->me->me_devname, me->me_devname)
+                           /* ... but only when matching an existing mnt point,
+                              to avoid problematic replacement when given
+                              inaccurate mount lists, seen with some chroot
+                              environments for example.  */
+                           && STREQ (me->me_mountdir,
+                                     devlist->me->me_mountdir)))
                 {
                   /* Discard mount entry for existing device.  */
                   discard_me = devlist->me;
@@ -698,17 +714,17 @@ filter_mount_list (bool devices_only)
 }
 
 /* Search a mount entry list for device id DEV.
-   Return the corresponding device name if found or NULL if not.  */
+   Return the corresponding mount entry if found or NULL if not.  */
 
-static char const * _GL_ATTRIBUTE_PURE
-devname_for_dev (dev_t dev)
+static struct mount_entry const * _GL_ATTRIBUTE_PURE
+me_for_dev (dev_t dev)
 {
   struct devlist *dl = device_list;
 
   while (dl)
     {
       if (dl->dev_num == dev)
-        return dl->me->me_devname;
+        return dl->me;
       dl = dl->next;
     }
 
@@ -910,6 +926,7 @@ get_dev (char const *disk, char const *mount_point, char const* file,
             return;
 
           fstype = "-";
+          fsu.fsu_bavail_top_bit_set = false;
           fsu.fsu_blocksize = fsu.fsu_blocks = fsu.fsu_bfree =
           fsu.fsu_bavail = fsu.fsu_files = fsu.fsu_ffree = UINTMAX_MAX;
         }
@@ -923,14 +940,18 @@ get_dev (char const *disk, char const *mount_point, char const* file,
   else if (process_all && show_all_fs)
     {
       /* Ensure we don't output incorrect stats for over-mounted directories.
-         Discard stats when the device name doesn't match.  */
+         Discard stats when the device name doesn't match.  Though don't
+         discard when used and current mount entries are both remote due
+         to the possibility of aliased host names or exports.  */
       struct stat sb;
       if (stat (stat_file, &sb) == 0)
         {
-          char const * devname = devname_for_dev (sb.st_dev);
-          if (devname && ! STREQ (devname, disk))
+          struct mount_entry const * dev_me = me_for_dev (sb.st_dev);
+          if (dev_me && ! STREQ (dev_me->me_devname, disk)
+              && (! dev_me->me_remote || ! me_remote))
             {
               fstype = "-";
+              fsu.fsu_bavail_top_bit_set = false;
               fsu.fsu_blocksize = fsu.fsu_blocks = fsu.fsu_bfree =
               fsu.fsu_bavail = fsu.fsu_files = fsu.fsu_ffree = UINTMAX_MAX;
             }
@@ -1391,11 +1412,10 @@ or all file systems by default.\n\
       /* TRANSLATORS: The thousands and decimal separators are best
          adjusted to an appropriate default for your locale.  */
       fputs (_("\
-  -a, --all             include dummy file systems\n\
+  -a, --all             include pseudo, duplicate, inaccessible file systems\n\
   -B, --block-size=SIZE  scale sizes by SIZE before printing them; e.g.,\n\
                            '-BM' prints sizes in units of 1,048,576 bytes;\n\
                            see SIZE format below\n\
-      --total           produce a grand total\n\
   -h, --human-readable  print sizes in powers of 1024 (e.g., 1023M)\n\
   -H, --si              print sizes in powers of 1000 (e.g., 1.1G)\n\
 "), stdout);
@@ -1411,6 +1431,12 @@ or all file systems by default.\n\
                                or print all fields if FIELD_LIST is omitted.\n\
   -P, --portability     use the POSIX output format\n\
       --sync            invoke sync before getting usage info\n\
+"), stdout);
+      fputs (_("\
+      --total           elide all entries insignificant to available space,\n\
+                          and produce a grand total\n\
+"), stdout);
+      fputs (_("\
   -t, --type=TYPE       limit listing to file systems of type TYPE\n\
   -T, --print-type      print file system type\n\
   -x, --exclude-type=TYPE   limit listing to file systems not of type TYPE\n\
@@ -1425,7 +1451,7 @@ FIELD_LIST is a comma-separated list of columns to be included.  Valid\n\
 field names are: 'source', 'fstype', 'itotal', 'iused', 'iavail', 'ipcent',\n\
 'size', 'used', 'avail', 'pcent', 'file' and 'target' (see info page).\n\
 "), stdout);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
@@ -1615,7 +1641,7 @@ main (int argc, char **argv)
           }
       }
     if (match)
-      exit (EXIT_FAILURE);
+      return EXIT_FAILURE;
   }
 
   if (optind < argc)
@@ -1686,6 +1712,8 @@ main (int argc, char **argv)
       for (i = optind; i < argc; ++i)
         if (argv[i])
           get_entry (argv[i], &stats[i - optind]);
+
+      IF_LINT (free (stats));
     }
   else
     get_all_entries ();
@@ -1709,5 +1737,5 @@ main (int argc, char **argv)
 
   IF_LINT (free (columns));
 
-  exit (exit_status);
+  return exit_status;
 }

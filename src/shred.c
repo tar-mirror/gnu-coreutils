@@ -1,6 +1,6 @@
 /* shred.c - overwrite files and devices to make it harder to recover data
 
-   Copyright (C) 1999-2014 Free Software Foundation, Inc.
+   Copyright (C) 1999-2015 Free Software Foundation, Inc.
    Copyright (C) 1997, 1998, 1999 Colin Plumb.
 
    This program is free software: you can redistribute it and/or modify
@@ -86,7 +86,7 @@
 
 #include "system.h"
 #include "argmatch.h"
-#include "xstrtol.h"
+#include "xdectoint.h"
 #include "error.h"
 #include "fcntl--.h"
 #include "human.h"
@@ -171,6 +171,10 @@ usage (int status)
 Overwrite the specified FILE(s) repeatedly, in order to make it harder\n\
 for even very expensive hardware probing to recover the data.\n\
 "), stdout);
+      fputs (_("\
+\n\
+If FILE is -, shred standard output.\n\
+"), stdout);
 
       emit_mandatory_arg_note ();
 
@@ -190,8 +194,6 @@ for even very expensive hardware probing to recover the data.\n\
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
       fputs (_("\
-\n\
-If FILE is -, shred standard output.\n\
 \n\
 Delete FILE(s) if --remove (-u) is specified.  The default is not to remove\n\
 the files because it is common to operate on device files like /dev/hda,\n\
@@ -243,7 +245,7 @@ In addition, file system backups and remote mirrors may contain copies\n\
 of the file that cannot be removed, and that will allow a shredded file\n\
 to be recovered later.\n\
 "), stdout);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
@@ -517,7 +519,7 @@ dopass (int fd, struct stat const *st, char const *qname, off_t *sizep,
 
                   /* Retry without direct I/O since this may not be supported
                      at all on some (file) systems, or with the current size.
-                     I.E. a specified --size that is not aligned, or when
+                     I.e., a specified --size that is not aligned, or when
                      dealing with slop at the end of a file with --exact.  */
                   if (! try_without_directio && errno == EINVAL)
                     {
@@ -1228,16 +1230,10 @@ main (int argc, char **argv)
           break;
 
         case 'n':
-          {
-            uintmax_t tmp;
-            if (xstrtoumax (optarg, NULL, 10, &tmp, NULL) != LONGINT_OK
-                || MIN (ULONG_MAX, SIZE_MAX / sizeof (int)) <= tmp)
-              {
-                error (EXIT_FAILURE, 0, _("%s: invalid number of passes"),
-                       quotearg_colon (optarg));
-              }
-            flags.n_iterations = tmp;
-          }
+          flags.n_iterations = xdectoumax (optarg, 0,
+                                           MIN (ULONG_MAX,
+                                                SIZE_MAX / sizeof (int)), "",
+                                           _("invalid number of passes"), 0);
           break;
 
         case RANDOM_SOURCE_OPTION:
@@ -1255,17 +1251,8 @@ main (int argc, char **argv)
           break;
 
         case 's':
-          {
-            uintmax_t tmp;
-            if ((xstrtoumax (optarg, NULL, 0, &tmp, "cbBkKMGTPEZY0")
-                 != LONGINT_OK)
-                || OFF_T_MAX < tmp)
-              {
-                error (EXIT_FAILURE, 0, _("%s: invalid file size"),
-                       quotearg_colon (optarg));
-              }
-            flags.size = tmp;
-          }
+          flags.size = xnumtoumax (optarg, 0, 0, OFF_T_MAX, "cbBkKMGTPEZY0",
+                                   _("invalid file size"), 0);
           break;
 
         case 'v':
@@ -1318,7 +1305,7 @@ main (int argc, char **argv)
       free (qname);
     }
 
-  exit (ok ? EXIT_SUCCESS : EXIT_FAILURE);
+  return ok ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 /*
  * vim:sw=2:sts=2:

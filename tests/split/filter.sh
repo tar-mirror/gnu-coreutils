@@ -1,7 +1,7 @@
 #!/bin/sh
 # Exercise split's new --filter option.
 
-# Copyright (C) 2011-2014 Free Software Foundation, Inc.
+# Copyright (C) 2011-2015 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ split -e -n 10 --filter='xz > $FILE.xz' /dev/null || fail=1
 stat x?? 2>/dev/null && fail=1
 
 # Ensure this invalid combination is flagged
-split -n 1/2 --filter='true' /dev/null 2>/dev/null && fail=1
+returns_ 1 split -n 1/2 --filter='true' /dev/null 2>&1 || fail=1
 
 # Ensure SIGPIPEs sent by the children don't propagate back
 # where they would result in a non zero exit from split.

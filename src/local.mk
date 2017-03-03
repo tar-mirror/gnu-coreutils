@@ -1,7 +1,7 @@
 # Make coreutils programs.                             -*-Makefile-*-
 # This is included by the top-level Makefile.am.
 
-## Copyright (C) 1990-2014 Free Software Foundation, Inc.
+## Copyright (C) 1990-2015 Free Software Foundation, Inc.
 
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -278,7 +278,7 @@ src_uptime_LDADD += $(GETLOADAVG_LIBS)
 
 # for various ACL functions
 copy_ldadd += $(LIB_ACL)
-src_ls_LDADD += $(LIB_ACL)
+src_ls_LDADD += $(LIB_HAS_ACL)
 
 # for various xattr functions
 copy_ldadd += $(LIB_XATTR)
@@ -340,7 +340,14 @@ copy_sources = \
 # confusion with the 'install' target.  The install rule transforms 'ginstall'
 # to install before applying any user-specified name transformations.
 
-transform = s/ginstall/install/; $(program_transform_name)
+# Don't apply prefix transformations to libstdbuf shared lib
+# as that's not generally needed, and we need to reference the
+# name directly in LD_PRELOAD etc.  In general it's surprising
+# that $(transform) is applied to libexec at all given that is
+# for internal package naming, not privy to $(transform).
+
+transform = s/ginstall/install/;/libstdbuf/!$(program_transform_name)
+
 src_ginstall_SOURCES = src/install.c src/prog-fprintf.c $(copy_sources) \
 		       $(selinux_sources)
 
@@ -420,7 +427,8 @@ endif SINGLE_BINARY
 CLEANFILES += src/coreutils_symlinks
 src/coreutils_symlinks: Makefile
 	$(AM_V_GEN)touch $@
-	$(AM_V_at)for i in $(single_binary_progs); do \
+	$(AM_V_at)for i in x $(single_binary_progs); do \
+		test $$i = x && continue; \
 		rm -f src/$$i$(EXEEXT) || exit $$?; \
 		$(LN_S) -s coreutils$(EXEEXT) src/$$i$(EXEEXT) || exit $$?; \
 	done
@@ -428,7 +436,8 @@ src/coreutils_symlinks: Makefile
 CLEANFILES += src/coreutils_shebangs
 src/coreutils_shebangs: Makefile
 	$(AM_V_GEN)touch $@
-	$(AM_V_at)for i in $(single_binary_progs); do \
+	$(AM_V_at)for i in x $(single_binary_progs); do \
+		test $$i = x && continue; \
 		rm -f src/$$i$(EXEEXT) || exit $$?; \
 		printf '#!%s --coreutils-prog-shebang=%s\n' \
 			$(abs_top_builddir)/src/coreutils$(EXEEXT) $$i \
@@ -437,7 +446,8 @@ src/coreutils_shebangs: Makefile
 	done
 
 clean-local:
-	$(AM_V_at)for i in $(single_binary_progs); do \
+	$(AM_V_at)for i in x $(single_binary_progs); do \
+		test $$i = x && continue; \
 		rm -f src/$$i$(EXEEXT) || exit $$?; \
 	done
 
@@ -570,7 +580,8 @@ src/version.h: Makefile
 DISTCLEANFILES += src/coreutils.h
 src/coreutils.h: Makefile
 	$(AM_V_GEN)rm -f $@
-	$(AM_V_at)for prog in $(single_binary_progs); do	\
+	$(AM_V_at)for prog in x $(single_binary_progs); do	\
+	  test $$prog = x && continue;				\
 	  prog=`basename $$prog`;				\
 	  main=`echo $$prog | tr '[' '_'`;			\
 	  echo "SINGLE_BINARY_PROGRAM(\"$$prog\", $$main)";	\

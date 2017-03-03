@@ -1,5 +1,5 @@
 /* mknod -- make special files
-   Copyright (C) 1990-2014 Free Software Foundation, Inc.
+   Copyright (C) 1990-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ otherwise, as decimal.  TYPE may be:\n\
   p      create a FIFO\n\
 "), stdout);
       printf (USAGE_BUILTIN_WARNING, PROGRAM_NAME);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
@@ -94,7 +94,7 @@ main (int argc, char **argv)
   mode_t newmode;
   char const *specified_mode = NULL;
   int optc;
-  int expected_operands;
+  size_t expected_operands;
   mode_t node_type;
   char const *scontext = NULL;
   bool set_security_context = false;
@@ -269,5 +269,5 @@ main (int argc, char **argv)
     error (EXIT_FAILURE, errno, _("cannot set permissions of %s"),
            quote (argv[optind]));
 
-  exit (EXIT_SUCCESS);
+  return EXIT_SUCCESS;
 }

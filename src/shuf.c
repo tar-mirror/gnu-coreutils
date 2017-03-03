@@ -1,6 +1,6 @@
 /* Shuffle lines of text.
 
-   Copyright (C) 2006-2014 Free Software Foundation, Inc.
+   Copyright (C) 2006-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
 #include "randperm.h"
 #include "read-file.h"
 #include "stdio--.h"
+#include "xdectoint.h"
 #include "xstrtol.h"
 
 /* The official name of this program (e.g., no 'g' prefix).  */
@@ -68,6 +69,7 @@ Usage: %s [OPTION]... [FILE]\n\
 Write a random permutation of the input lines to standard output.\n\
 "), stdout);
 
+      emit_stdin_note ();
       emit_mandatory_arg_note ();
 
       fputs (_("\
@@ -83,11 +85,7 @@ Write a random permutation of the input lines to standard output.\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
-      fputs (_("\
-\n\
-With no FILE, or when FILE is -, read standard input.\n\
-"), stdout);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
 
   exit (status);
@@ -272,7 +270,7 @@ read_input (FILE *in, char eolbyte, char ***pline)
   size_t n_lines;
 
   /* TODO: We should limit the amount of data read here,
-     to less than RESERVOIR_MIN_INPUT.  I.E. adjust fread_file() to support
+     to less than RESERVOIR_MIN_INPUT.  I.e., adjust fread_file() to support
      taking a byte limit.  We'd then need to ensure we handle a line spanning
      this boundary.  With that in place we could set use_reservoir_sampling
      when used==RESERVOIR_MIN_INPUT, and have read_input_reservoir_sampling()
@@ -422,7 +420,6 @@ main (int argc, char **argv)
 
       case 'i':
         {
-          unsigned long int argval = 0;
           char *p = strchr (optarg, '-');
           char const *hi_optarg = optarg;
           bool invalid = !p;
@@ -434,22 +431,19 @@ main (int argc, char **argv)
           if (p)
             {
               *p = '\0';
-              invalid = ((xstrtoul (optarg, NULL, 10, &argval, NULL)
-                          != LONGINT_OK)
-                         || SIZE_MAX < argval);
+              lo_input = xdectoumax (optarg, 0, SIZE_MAX, "",
+                                     _("invalid input range"), 0);
               *p = '-';
-              lo_input = argval;
               hi_optarg = p + 1;
             }
 
-          invalid |= ((xstrtoul (hi_optarg, NULL, 10, &argval, NULL)
-                       != LONGINT_OK)
-                      || SIZE_MAX < argval);
-          hi_input = argval;
+          hi_input = xdectoumax (hi_optarg, 0, SIZE_MAX, "",
+                                 _("invalid input range"), 0);
+
           n_lines = hi_input - lo_input + 1;
           invalid |= ((lo_input <= hi_input) == (n_lines == 0));
           if (invalid)
-            error (EXIT_FAILURE, 0, _("invalid input range %s"),
+            error (EXIT_FAILURE, errno, "%s: %s", _("invalid input range"),
                    quote (optarg));
         }
         break;
@@ -462,7 +456,7 @@ main (int argc, char **argv)
           if (e == LONGINT_OK)
             head_lines = MIN (head_lines, argval);
           else if (e != LONGINT_OVERFLOW)
-            error (EXIT_FAILURE, 0, _("invalid line count %s"),
+            error (EXIT_FAILURE, 0, _("invalid line count: %s"),
                    quote (optarg));
         }
         break;
@@ -504,7 +498,7 @@ main (int argc, char **argv)
     }
   if (input_range ? 0 < n_operands : !echo && 1 < n_operands)
     {
-      error (0, 0, _("extra operand %s"), quote (operand[1]));
+      error (0, 0, _("extra operand %s"), quote (operand[!input_range]));
       usage (EXIT_FAILURE);
     }
 
@@ -622,5 +616,5 @@ main (int argc, char **argv)
     }
 #endif
 
-  exit (EXIT_SUCCESS);
+  return EXIT_SUCCESS;
 }

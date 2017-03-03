@@ -1,5 +1,5 @@
 /* GNU's who.
-   Copyright (C) 1992-2014 Free Software Foundation, Inc.
+   Copyright (C) 1992-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -582,8 +582,8 @@ scan_entries (size_t n, const STRUCT_UTMP *utmp_buf)
   while (n--)
     {
       if (!my_line_only
-          || strncmp (ttyname_b, utmp_buf->ut_line,
-                      sizeof (utmp_buf->ut_line)) == 0)
+          || STREQ_LEN (ttyname_b, utmp_buf->ut_line,
+                        sizeof (utmp_buf->ut_line)))
         {
           if (need_users && IS_USER_PROCESS (utmp_buf))
             print_user (utmp_buf, boottime);
@@ -675,7 +675,7 @@ Print information about users who are currently logged in.\n\
 If FILE is not specified, use %s.  %s as FILE is common.\n\
 If ARG1 ARG2 given, -m presumed: 'am i' or 'mom likes' are usual.\n\
 "), UTMP_FILE, WTMP_FILE);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
@@ -828,5 +828,5 @@ main (int argc, char **argv)
       usage (EXIT_FAILURE);
     }
 
-  exit (EXIT_SUCCESS);
+  return EXIT_SUCCESS;
 }

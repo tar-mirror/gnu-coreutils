@@ -1,5 +1,5 @@
 /* csplit - split a file into sections determined by context lines
-   Copyright (C) 1991-2014 Free Software Foundation, Inc.
+   Copyright (C) 1991-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@
 #include "quote.h"
 #include "safe-read.h"
 #include "stdio--.h"
+#include "xdectoint.h"
 #include "xstrtol.h"
 
 /* The official name of this program (e.g., no 'g' prefix).  */
@@ -1332,7 +1333,6 @@ int
 main (int argc, char **argv)
 {
   int optc;
-  unsigned long int val;
 
   initialize_main (&argc, &argv);
   set_program_name (argv[0]);
@@ -1366,10 +1366,8 @@ main (int argc, char **argv)
         break;
 
       case 'n':
-        if (xstrtoul (optarg, NULL, 10, &val, "") != LONGINT_OK
-            || MIN (INT_MAX, SIZE_MAX) < val)
-          error (EXIT_FAILURE, 0, _("%s: invalid number"), optarg);
-        digits = val;
+        digits = xdectoimax (optarg, 0, MIN (INT_MAX, SIZE_MAX), "",
+                             _("invalid number"), 0);
         break;
 
       case 's':
@@ -1466,7 +1464,7 @@ main (int argc, char **argv)
       cleanup_fatal ();
     }
 
-  exit (EXIT_SUCCESS);
+  return EXIT_SUCCESS;
 }
 
 void
@@ -1483,6 +1481,10 @@ Usage: %s [OPTION]... FILE PATTERN...\n\
       fputs (_("\
 Output pieces of FILE separated by PATTERN(s) to files 'xx00', 'xx01', ...,\n\
 and output byte counts of each piece to standard output.\n\
+"), stdout);
+       fputs (_("\
+\n\
+Read standard input if FILE is -\n\
 "), stdout);
 
       emit_mandatory_arg_note ();
@@ -1504,10 +1506,7 @@ and output byte counts of each piece to standard output.\n\
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
       fputs (_("\
 \n\
-Read standard input if FILE is -.  Each PATTERN may be:\n\
-"), stdout);
-      fputs (_("\
-\n\
+Each PATTERN may be:\n\
   INTEGER            copy up to but not including specified line number\n\
   /REGEXP/[OFFSET]   copy up to but not including a matching line\n\
   %REGEXP%[OFFSET]   skip to, but not including a matching line\n\
@@ -1516,7 +1515,7 @@ Read standard input if FILE is -.  Each PATTERN may be:\n\
 \n\
 A line OFFSET is a required '+' or '-' followed by a positive integer.\n\
 "), stdout);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }

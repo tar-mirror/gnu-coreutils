@@ -1,5 +1,5 @@
 /* link utility for GNU.
-   Copyright (C) 2001-2014 Free Software Foundation, Inc.
+   Copyright (C) 2001-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ Usage: %s FILE1 FILE2\n\
              stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
@@ -90,5 +90,5 @@ main (int argc, char **argv)
     error (EXIT_FAILURE, errno, _("cannot create link %s to %s"),
            quote_n (0, argv[optind + 1]), quote_n (1, argv[optind]));
 
-  exit (EXIT_SUCCESS);
+  return EXIT_SUCCESS;
 }

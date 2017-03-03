@@ -1,7 +1,7 @@
 #!/bin/sh
 # Test for sort --compress hang
 
-# Copyright (C) 2010-2014 Free Software Foundation, Inc.
+# Copyright (C) 2010-2015 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 print_ver_ sort
 very_expensive_
 
-cat <<\EOF >compress || framework_failure_
-#!/bin/sh
+cat <<EOF >compress || framework_failure_
+#!$SHELL
 tr 41 14 || exit
 touch ok
 EOF

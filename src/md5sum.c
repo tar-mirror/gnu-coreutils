@@ -1,5 +1,5 @@
 /* Compute checksums of files or strings.
-   Copyright (C) 1995-2014 Free Software Foundation, Inc.
+   Copyright (C) 1995-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -164,18 +164,21 @@ usage (int status)
       printf (_("\
 Usage: %s [OPTION]... [FILE]...\n\
 Print or check %s (%d-bit) checksums.\n\
-With no FILE, or when FILE is -, read standard input.\n\
-\n\
 "),
               program_name,
               DIGEST_TYPE_STRING,
               DIGEST_BITS);
+
+      emit_stdin_note ();
+
       if (O_BINARY)
         fputs (_("\
+\n\
   -b, --binary         read in binary mode (default unless reading tty stdin)\n\
 "), stdout);
       else
         fputs (_("\
+\n\
   -b, --binary         read in binary mode\n\
 "), stdout);
       printf (_("\
@@ -206,11 +209,11 @@ The following four options are useful only when verifying checksums:\n\
       printf (_("\
 \n\
 The sums are computed as described in %s.  When checking, the input\n\
-should be a former output of this program.  The default mode is to print\n\
-a line with checksum, a character indicating input mode ('*' for binary,\n\
-space for text), and name for each FILE.\n"),
+should be a former output of this program.  The default mode is to print a\n\
+line with checksum, a space, a character indicating input mode ('*' for binary,\
+\n' ' for text or where binary is insignificant), and name for each FILE.\n"),
               DIGEST_REFERENCE);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
 
   exit (status);
@@ -874,5 +877,5 @@ main (int argc, char **argv)
   if (have_read_stdin && fclose (stdin) == EOF)
     error (EXIT_FAILURE, errno, _("standard input"));
 
-  exit (ok ? EXIT_SUCCESS : EXIT_FAILURE);
+  return ok ? EXIT_SUCCESS : EXIT_FAILURE;
 }

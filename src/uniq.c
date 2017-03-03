@@ -1,5 +1,5 @@
 /* uniq -- remove duplicate lines from a sorted file
-   Copyright (C) 1986-2014 Free Software Foundation, Inc.
+   Copyright (C) 1986-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -185,15 +185,15 @@ With no options, matching lines are merged to the first occurrence.\n\
   -d, --repeated        only print duplicate lines, one for each group\n\
 "), stdout);
      fputs (_("\
-  -D, --all-repeated[=METHOD]  print all duplicate lines\n\
-                          groups can be delimited with an empty line\n\
+  -D, --all-repeated[=METHOD]  print all duplicate lines;\n\
+                          groups can be delimited with an empty line;\n\
                           METHOD={none(default),prepend,separate}\n\
 "), stdout);
      fputs (_("\
   -f, --skip-fields=N   avoid comparing the first N fields\n\
 "), stdout);
      fputs (_("\
-      --group[=METHOD]  show all items, separating groups with an empty line\n\
+      --group[=METHOD]  show all items, separating groups with an empty line;\n\
                           METHOD={separate(default),prepend,append,both}\n\
 "), stdout);
      fputs (_("\
@@ -220,7 +220,7 @@ Note: 'uniq' does not detect repeated lines unless they are adjacent.\n\
 You may want to sort the input first, or use 'sort -u' without 'uniq'.\n\
 Also, comparisons honor the rules specified by 'LC_COLLATE'.\n\
 "), stdout);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
@@ -662,5 +662,5 @@ main (int argc, char **argv)
 
   check_file (file[0], file[1], delimiter);
 
-  exit (EXIT_SUCCESS);
+  return EXIT_SUCCESS;
 }

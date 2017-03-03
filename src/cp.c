@@ -1,5 +1,5 @@
 /* cp.c  -- file copying (main routines)
-   Copyright (C) 1989-2014 Free Software Foundation, Inc.
+   Copyright (C) 1989-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -268,7 +268,7 @@ As a special case, cp makes a backup of SOURCE when the force and backup\n\
 options are given and SOURCE and DEST are the same name for an existing,\n\
 regular file.\n\
 "), stdout);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
@@ -1191,7 +1191,7 @@ main (int argc, char **argv)
              "without an SELinux-enabled kernel"));
 
   /* FIXME: This handles new files.  But what about existing files?
-     I.E. if updating a tree, new files would have the specified context,
+     I.e., if updating a tree, new files would have the specified context,
      but shouldn't existing files be updated for consistency like this?
        if (scontext)
          restorecon (dst_path, 0, true);
@@ -1214,7 +1214,9 @@ main (int argc, char **argv)
   ok = do_copy (argc - optind, argv + optind,
                 target_directory, no_target_directory, &x);
 
+#ifdef lint
   forget_all ();
+#endif
 
-  exit (ok ? EXIT_SUCCESS : EXIT_FAILURE);
+  return ok ? EXIT_SUCCESS : EXIT_FAILURE;
 }

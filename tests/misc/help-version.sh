@@ -2,7 +2,7 @@
 # Make sure all of these programs work properly
 # when invoked with --help or --version.
 
-# Copyright (C) 2000-2014 Free Software Foundation, Inc.
+# Copyright (C) 2000-2015 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,13 +17,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Ensure that $SHELL is set to *some* value and exported.
-# This is required for dircolors, which would fail e.g., when
-# invoked via debuild (which removes SHELL from the environment).
-test "x$SHELL" = x && SHELL=/bin/sh
-export SHELL
-
 . "${srcdir=.}/tests/init.sh"; path_prepend_ ./src
+
+# Terminate any background processes
+cleanup_() { kill $pid 2>/dev/null && wait $pid; }
 
 expected_failure_status_chroot=125
 expected_failure_status_env=125
@@ -216,8 +213,8 @@ id_setup () { args=-u; }
 
 # Use env to avoid invoking built-in sleep of Solaris 11's /bin/sh.
 kill_setup () {
-  env sleep 31.5 &
-  args=$!
+  env sleep 10m & pid=$!
+  args=$pid
 }
 
 link_setup () { args="$tmp_in link-target"; }

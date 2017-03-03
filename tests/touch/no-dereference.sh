@@ -1,7 +1,7 @@
 #!/bin/sh
 # Ensure that touch -h works.
 
-# Copyright (C) 2009-2014 Free Software Foundation, Inc.
+# Copyright (C) 2009-2015 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,8 +26,8 @@ ln -s file link || framework_failure_
 
 # These first tests should work on every platform.
 # -h does not create files, but it warns.  Use -c to silence warning.
-touch -h no-file 2> err && fail=1
-test -s err || fail=1
+returns_ 1 touch -h no-file 2> err || fail=1
+compare /dev/null err && fail=1
 touch -h -c no-file 2> err || fail=1
 compare /dev/null err || fail=1
 
@@ -75,7 +75,7 @@ touch -h - > file || fail=1
 # If stdout is open, it is not a symlink.
 if env test -w /dev/stdout >/dev/null &&
    env test ! -w /dev/stdout >&-; then
-  touch -h - >&- && fail=1
+  returns_ 1 touch -h - >&- || fail=1
   touch -h -c - >&- || fail=1
 fi
 

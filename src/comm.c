@@ -1,5 +1,5 @@
 /* comm -- compare two sorted files line by line.
-   Copyright (C) 1986-2014 Free Software Foundation, Inc.
+   Copyright (C) 1986-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -109,6 +109,10 @@ Compare sorted files FILE1 and FILE2 line by line.\n\
 "), stdout);
       fputs (_("\
 \n\
+When FILE1 or FILE2 (not both) is -, read standard input.\n\
+"), stdout);
+      fputs (_("\
+\n\
 With no options, produce three-column output.  Column one contains\n\
 lines unique to FILE1, column two contains lines unique to FILE2,\n\
 and column three contains lines common to both files.\n\
@@ -141,7 +145,7 @@ Examples:\n\
   %s -3 file1 file2  Print lines in file1 not in file2, and vice versa.\n\
 "),
               program_name, program_name);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
@@ -443,7 +447,7 @@ main (int argc, char **argv)
   compare_files (argv + optind);
 
   if (issued_disorder_warning[0] || issued_disorder_warning[1])
-    exit (EXIT_FAILURE);
+    return EXIT_FAILURE;
   else
-    exit (EXIT_SUCCESS);
+    return EXIT_SUCCESS;
 }

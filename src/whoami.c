@@ -1,6 +1,6 @@
 /* whoami -- print effective userid
 
-   Copyright (C) 1989-2014 Free Software Foundation, Inc.
+   Copyright (C) 1989-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ Same as id -un.\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
@@ -83,12 +83,9 @@ main (int argc, char **argv)
   errno = 0;
   uid = geteuid ();
   pw = (uid == NO_UID && errno ? NULL : getpwuid (uid));
-  if (pw)
-    {
-      puts (pw->pw_name);
-      exit (EXIT_SUCCESS);
-    }
-  fprintf (stderr, _("%s: cannot find name for user ID %lu\n"),
-           program_name, (unsigned long int) uid);
-  exit (EXIT_FAILURE);
+  if (!pw)
+    error (EXIT_FAILURE, errno, _("cannot find name for user ID %lu"),
+           (unsigned long int) uid);
+  puts (pw->pw_name);
+  return EXIT_SUCCESS;
 }

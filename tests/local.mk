@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in -*-Makefile-*-.
 
-## Copyright (C) 2007-2014 Free Software Foundation, Inc.
+## Copyright (C) 2007-2015 Free Software Foundation, Inc.
 
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ TESTS_ENVIRONMENT =				\
   MAKE=$(MAKE)					\
   PACKAGE_VERSION=$(PACKAGE_VERSION)		\
   PERL='$(PERL)'				\
-  PREFERABLY_POSIX_SHELL='$(PREFERABLY_POSIX_SHELL)' \
+  SHELL='$(PREFERABLY_POSIX_SHELL)'		\
   ; test -d /usr/xpg4/bin && PATH='/usr/xpg4/bin$(PATH_SEPARATOR)'"$$PATH"; \
   PATH='$(abs_top_builddir)/src$(PATH_SEPARATOR)'"$$PATH" \
   ; 9>&2
@@ -117,6 +117,7 @@ all_root_tests =				\
   tests/df/problematic-chars.sh			\
   tests/df/over-mount-device.sh			\
   tests/du/bind-mount-dir-cycle.sh		\
+  tests/du/bind-mount-dir-cycle-v2.sh		\
   tests/id/setgid.sh				\
   tests/install/install-C-root.sh		\
   tests/ls/capability.sh			\
@@ -127,6 +128,7 @@ all_root_tests =				\
   tests/misc/truncate-owned-by-other.sh		\
   tests/mkdir/writable-under-readonly.sh	\
   tests/mkdir/smack-root.sh			\
+  tests/mv/hardlink-case.sh			\
   tests/mv/sticky-to-xpart.sh			\
   tests/rm/fail-2eperm.sh			\
   tests/rm/no-give-up.sh			\
@@ -159,6 +161,7 @@ check-root:
 all_tests =					\
   tests/misc/help-version.sh			\
   tests/tail-2/inotify-race.sh			\
+  tests/tail-2/inotify-race2.sh			\
   tests/misc/invalid-opt.pl			\
   tests/rm/ext3-perf.sh				\
   tests/rm/cycle.sh				\
@@ -169,7 +172,10 @@ all_tests =					\
   tests/tail-2/inotify-hash-abuse2.sh		\
   tests/tail-2/F-vs-missing.sh			\
   tests/tail-2/F-vs-rename.sh			\
+  tests/tail-2/F-headers.sh			\
+  tests/tail-2/descriptor-vs-rename.sh		\
   tests/tail-2/inotify-rotate.sh		\
+  tests/tail-2/inotify-rotate-resources.sh	\
   tests/chmod/no-x.sh				\
   tests/chgrp/basic.sh				\
   tests/rm/dangling-symlink.sh			\
@@ -193,7 +199,6 @@ all_tests =					\
   tests/rm/i-1.sh				\
   tests/rm/i-never.sh				\
   tests/rm/i-no-r.sh				\
-  tests/tail-2/infloop-1.sh			\
   tests/rm/ignorable.sh				\
   tests/rm/inaccessible.sh			\
   tests/rm/interactive-always.sh		\
@@ -231,6 +236,7 @@ all_tests =					\
   tests/misc/test.pl				\
   tests/misc/seq.pl				\
   tests/misc/seq-long-double.sh			\
+  tests/misc/seq-precision.sh			\
   tests/misc/head.pl				\
   tests/misc/head-elide-tail.pl			\
   tests/tail-2/tail-n0f.sh			\
@@ -256,8 +262,10 @@ all_tests =					\
   tests/misc/wc-files0-from.pl			\
   tests/misc/wc-files0.sh			\
   tests/misc/wc-parallel.sh			\
+  tests/misc/wc-proc.sh				\
   tests/misc/cat-proc.sh			\
   tests/misc/cat-buf.sh				\
+  tests/misc/cat-self.sh			\
   tests/misc/base64.pl				\
   tests/misc/basename.pl			\
   tests/misc/close-stdout.sh			\
@@ -274,6 +282,7 @@ all_tests =					\
   tests/misc/expand.pl				\
   tests/misc/expr.pl				\
   tests/misc/factor.pl				\
+  tests/misc/factor-parallel.sh			\
   tests/misc/false-status.sh			\
   tests/misc/fold.pl				\
   tests/misc/groups-dash.sh			\
@@ -294,6 +303,7 @@ all_tests =					\
   tests/misc/nproc-positive.sh			\
   tests/misc/numfmt.pl				\
   tests/misc/od-N.sh				\
+  tests/misc/od-j.sh				\
   tests/misc/od-multiple-t.sh			\
   tests/misc/od-x8.sh				\
   tests/misc/paste.pl				\
@@ -315,9 +325,9 @@ all_tests =					\
   tests/misc/sha384sum.pl			\
   tests/misc/sha512sum.pl			\
   tests/misc/shred-exact.sh			\
-  tests/misc/shred-negative.sh			\
   tests/misc/shred-passes.sh			\
   tests/misc/shred-remove.sh			\
+  tests/misc/shred-size.sh			\
   tests/misc/shuf.sh				\
   tests/misc/shuf-reservoir.sh			\
   tests/misc/sort.pl				\
@@ -353,6 +363,7 @@ all_tests =					\
   tests/split/line-bytes.sh			\
   tests/split/l-chunk.sh			\
   tests/split/r-chunk.sh			\
+  tests/split/record-sep.sh			\
   tests/split/numeric.sh			\
   tests/split/guard-input.sh			\
   tests/misc/stat-birthtime.sh			\
@@ -369,12 +380,12 @@ all_tests =					\
   tests/misc/stty-row-col.sh			\
   tests/misc/sum.pl				\
   tests/misc/sum-sysv.sh			\
+  tests/misc/sync.sh				\
   tests/misc/tac.pl				\
   tests/misc/tac-continue.sh			\
   tests/misc/tac-2-nonseekable.sh		\
   tests/misc/tail.pl				\
   tests/misc/tee.sh				\
-  tests/misc/tee-dash.sh			\
   tests/misc/test-diag.pl			\
   tests/misc/timeout.sh				\
   tests/misc/timeout-blocked.pl			\
@@ -395,9 +406,12 @@ all_tests =					\
   tests/misc/uniq.pl				\
   tests/misc/uniq-perf.sh			\
   tests/misc/xattr.sh				\
+  tests/misc/yes.sh				\
   tests/tail-2/wait.sh				\
   tests/tail-2/retry.sh				\
-  tests/tail-2/symlink.sh				\
+  tests/tail-2/symlink.sh			\
+  tests/tail-2/tail-c.sh			\
+  tests/tail-2/truncate.sh			\
   tests/chmod/c-option.sh			\
   tests/chmod/equal-x.sh			\
   tests/chmod/equals.sh				\
@@ -426,6 +440,7 @@ all_tests =					\
   tests/cp/dir-rm-dest.sh			\
   tests/cp/dir-slash.sh				\
   tests/cp/dir-vs-file.sh			\
+  tests/cp/duplicate-sources.sh			\
   tests/cp/existing-perm-dir.sh			\
   tests/cp/existing-perm-race.sh		\
   tests/cp/fail-perm.sh				\
@@ -476,7 +491,7 @@ all_tests =					\
   tests/dd/ascii.sh				\
   tests/dd/direct.sh				\
   tests/dd/misc.sh				\
-  tests/dd/no-allocate.sh				\
+  tests/dd/no-allocate.sh			\
   tests/dd/nocache.sh				\
   tests/dd/not-rewound.sh			\
   tests/dd/reblock.sh				\
@@ -488,6 +503,7 @@ all_tests =					\
   tests/dd/stderr.sh				\
   tests/dd/unblock.pl				\
   tests/dd/unblock-sync.sh			\
+  tests/dd/stats.sh				\
   tests/df/total-verify.sh			\
   tests/du/2g.sh				\
   tests/du/8gb.sh				\
@@ -549,6 +565,7 @@ all_tests =					\
   tests/ls/file-type.sh				\
   tests/ls/follow-slink.sh			\
   tests/ls/getxattr-speedup.sh			\
+  tests/ls/hex-option.sh			\
   tests/ls/infloop.sh				\
   tests/ls/inode.sh				\
   tests/ls/m-option.sh				\
@@ -599,7 +616,6 @@ all_tests =					\
   tests/mv/hard-3.sh				\
   tests/mv/hard-4.sh				\
   tests/mv/hard-link-1.sh			\
-  tests/mv/hard-verbose.sh			\
   tests/mv/i-1.pl				\
   tests/mv/i-2.sh				\
   tests/mv/i-3.sh				\

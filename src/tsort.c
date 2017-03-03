@@ -1,5 +1,5 @@
 /* tsort - topological sort.
-   Copyright (C) 1998-2014 Free Software Foundation, Inc.
+   Copyright (C) 1998-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -82,12 +82,16 @@ usage (int status)
       printf (_("\
 Usage: %s [OPTION] [FILE]\n\
 Write totally ordered list consistent with the partial ordering in FILE.\n\
-With no FILE, or when FILE is -, read standard input.\n\
-\n\
 "), program_name);
+
+      emit_stdin_note ();
+
+      fputs (_("\
+\n\
+"), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
 
   exit (status);
@@ -557,5 +561,5 @@ main (int argc, char **argv)
 
   ok = tsort (optind == argc ? "-" : argv[optind]);
 
-  exit (ok ? EXIT_SUCCESS : EXIT_FAILURE);
+  return ok ? EXIT_SUCCESS : EXIT_FAILURE;
 }

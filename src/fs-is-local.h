@@ -50,6 +50,7 @@ is_local_fs_type (unsigned long int magic)
       case S_MAGIC_HPFS: return 1;
       case S_MAGIC_HUGETLBFS: return 1;
       case S_MAGIC_MTD_INODE_FS: return 1;
+      case S_MAGIC_IBRIX: return 0;
       case S_MAGIC_INOTIFYFS: return 1;
       case S_MAGIC_ISOFS: return 1;
       case S_MAGIC_ISOFS_R_WIN: return 1;

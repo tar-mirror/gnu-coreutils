@@ -1,6 +1,6 @@
 /* mountlist.c -- return a list of mounted file systems
 
-   Copyright (C) 1991-1992, 1997-2014 Free Software Foundation, Inc.
+   Copyright (C) 1991-1992, 1997-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -58,6 +58,7 @@
 
 #ifdef MOUNTED_GETMNTENT1       /* 4.3BSD, SunOS, HP-UX, Dynix, Irix.  */
 # include <mntent.h>
+# include <sys/types.h>
 # if !defined MOUNTED
 #  if defined _PATH_MOUNTED     /* GNU libc  */
 #   define MOUNTED _PATH_MOUNTED
@@ -151,8 +152,12 @@
 
 /* The results of opendir() in this file are not used with dirfd and fchdir,
    therefore save some unnecessary work in fchdir.c.  */
-#undef opendir
-#undef closedir
+#ifdef GNULIB_defined_opendir
+# undef opendir
+#endif
+#ifdef GNULIB_defined_closedir
+# undef closedir
+#endif
 
 #define ME_DUMMY_0(Fs_name, Fs_type)            \
   (strcmp (Fs_type, "autofs") == 0              \
@@ -177,10 +182,9 @@
    we grant an exception to any with "bind" in its list of mount options.
    I.e., those are *not* dummy entries.  */
 #ifdef MOUNTED_GETMNTENT1
-# define ME_DUMMY(Fs_name, Fs_type, Fs_ent)	\
+# define ME_DUMMY(Fs_name, Fs_type, Bind)	\
   (ME_DUMMY_0 (Fs_name, Fs_type)		\
-   || (strcmp (Fs_type, "none") == 0		\
-       && !hasmntopt (Fs_ent, "bind")))
+   || (strcmp (Fs_type, "none") == 0 && !Bind))
 #else
 # define ME_DUMMY(Fs_name, Fs_type)		\
   (ME_DUMMY_0 (Fs_name, Fs_type) || strcmp (Fs_type, "none") == 0)
@@ -383,6 +387,34 @@ dev_from_mount_options (char const *mount_options)
 
 #endif
 
+#if defined MOUNTED_GETMNTENT1 && defined __linux__
+
+/* Unescape the paths in mount tables.
+   STR is updated in place.  */
+
+static void
+unescape_tab (char *str)
+{
+  size_t i, j = 0;
+  size_t len = strlen (str) + 1;
+  for (i = 0; i < len; i++)
+    {
+      if (str[i] == '\\' && (i + 4 < len)
+          && str[i + 1] >= '0' && str[i + 1] <= '3'
+          && str[i + 2] >= '0' && str[i + 2] <= '7'
+          && str[i + 3] >= '0' && str[i + 3] <= '7')
+        {
+          str[j++] = (str[i + 1] - '0') * 64 +
+                     (str[i + 2] - '0') * 8 +
+                     (str[i + 3] - '0');
+          i += 3;
+        }
+      else
+        str[j++] = str[i];
+    }
+}
+#endif
+
 /* Return a list of the currently mounted file systems, or NULL on error.
    Add each entry to the tail of the list so that they stay in order.
    If NEED_FS_TYPE is true, ensure that the file system type fields in
@@ -429,32 +461,125 @@ read_file_system_list (bool need_fs_type)
 
 #ifdef MOUNTED_GETMNTENT1 /* GNU/Linux, 4.3BSD, SunOS, HP-UX, Dynix, Irix.  */
   {
-    struct mntent *mnt;
-    char const *table = MOUNTED;
     FILE *fp;
 
-    fp = setmntent (table, "r");
-    if (fp == NULL)
-      return NULL;
-
-    while ((mnt = getmntent (fp)))
+#ifdef __linux__
+    /* Try parsing mountinfo first, as that make device IDs available.
+       Note we could use libmount routines to simplify this parsing a little
+       (and that code is in previous versions of this function), however
+       libmount depends on libselinux which pulls in many dependencies.  */
+    char const *mountinfo = "/proc/self/mountinfo";
+    fp = fopen (mountinfo, "r");
+    if (fp != NULL)
       {
-        me = xmalloc (sizeof *me);
-        me->me_devname = xstrdup (mnt->mnt_fsname);
-        me->me_mountdir = xstrdup (mnt->mnt_dir);
-        me->me_type = xstrdup (mnt->mnt_type);
-        me->me_type_malloced = 1;
-        me->me_dummy = ME_DUMMY (me->me_devname, me->me_type, mnt);
-        me->me_remote = ME_REMOTE (me->me_devname, me->me_type);
-        me->me_dev = dev_from_mount_options (mnt->mnt_opts);
+        char *line = NULL;
+        size_t buf_size = 0;
 
-        /* Add to the linked list. */
-        *mtail = me;
-        mtail = &me->me_next;
+        while (getline (&line, &buf_size, fp) != -1)
+          {
+            unsigned int devmaj, devmin;
+            int target_s, target_e, type_s, type_e, source_s, source_e;
+            char test;
+            char *dash;
+            int rc;
+
+            rc = sscanf(line, "%*u "        /* id - discarded  */
+                              "%*u "        /* parent - discarded */
+                              "%u:%u "      /* dev major:minor  */
+                              "%*s "        /* mountroot - discarded  */
+                              "%n%*s%n"     /* target, start and end  */
+                              "%c",         /* more data...  */
+                              &devmaj, &devmin,
+                              &target_s, &target_e,
+                              &test);
+            if (rc != 3 && rc != 5)  /* 5 if %n included in count.  */
+              continue;
+
+            /* skip optional fields, terminated by " - "  */
+            dash = strstr (line + target_e, " - ");
+            if (! dash)
+              continue;
+
+            rc = sscanf(dash, " - "
+                              "%n%*s%n "    /* FS type, start and end  */
+                              "%n%*s%n "    /* source, start and end  */
+                              "%c",         /* more data...  */
+                              &type_s, &type_e,
+                              &source_s, &source_e,
+                              &test);
+            if (rc != 1 && rc != 5)  /* 5 if %n included in count.  */
+              continue;
+
+            /* manipulate the sub-strings in place.  */
+            line[target_e] = '\0';
+            dash[type_e] = '\0';
+            dash[source_e] = '\0';
+            unescape_tab (dash + source_s);
+            unescape_tab (line + target_s);
+
+            me = xmalloc (sizeof *me);
+
+            me->me_devname = xstrdup (dash + source_s);
+            me->me_mountdir = xstrdup (line + target_s);
+            me->me_type = xstrdup (dash + type_s);
+            me->me_type_malloced = 1;
+            me->me_dev = makedev (devmaj, devmin);
+            /* we pass "false" for the "Bind" option as that's only
+               significant when the Fs_type is "none" which will not be
+               the case when parsing "/proc/self/mountinfo", and only
+               applies for static /etc/mtab files.  */
+            me->me_dummy = ME_DUMMY (me->me_devname, me->me_type, false);
+            me->me_remote = ME_REMOTE (me->me_devname, me->me_type);
+
+            /* Add to the linked list. */
+            *mtail = me;
+            mtail = &me->me_next;
+          }
+
+        free (line);
+
+        if (ferror (fp))
+          {
+            int saved_errno = errno;
+            fclose (fp);
+            errno = saved_errno;
+            goto free_then_fail;
+          }
+
+        if (fclose (fp) == EOF)
+          goto free_then_fail;
       }
+    else /* fallback to /proc/self/mounts (/etc/mtab).  */
+#endif /* __linux __ */
+      {
+        struct mntent *mnt;
+        char const *table = MOUNTED;
 
-    if (endmntent (fp) == 0)
-      goto free_then_fail;
+        fp = setmntent (table, "r");
+        if (fp == NULL)
+          return NULL;
+
+        while ((mnt = getmntent (fp)))
+          {
+            bool bind = hasmntopt (mnt, "bind");
+
+            me = xmalloc (sizeof *me);
+            me->me_devname = xstrdup (mnt->mnt_fsname);
+            me->me_mountdir = xstrdup (mnt->mnt_dir);
+            me->me_type = xstrdup (mnt->mnt_type);
+            me->me_type_malloced = 1;
+            me->me_dummy = ME_DUMMY (me->me_devname, me->me_type, bind);
+            me->me_remote = ME_REMOTE (me->me_devname, me->me_type);
+            me->me_dev = dev_from_mount_options (mnt->mnt_opts);
+
+            /* Add to the linked list. */
+            *mtail = me;
+            mtail = &me->me_next;
+          }
+
+        if (endmntent (fp) == 0)
+          goto free_then_fail;
+      }
   }
 #endif /* MOUNTED_GETMNTENT1. */
 
@@ -845,18 +970,20 @@ read_file_system_list (bool need_fs_type)
 #ifdef MOUNTED_VMOUNT           /* AIX.  */
   {
     int bufsize;
-    char *entries, *thisent;
+    void *entries;
+    char *thisent;
     struct vmount *vmp;
     int n_entries;
     int i;
 
     /* Ask how many bytes to allocate for the mounted file system info.  */
-    if (mntctl (MCTL_QUERY, sizeof bufsize, (struct vmount *) &bufsize) != 0)
+    entries = &bufsize;
+    if (mntctl (MCTL_QUERY, sizeof bufsize, entries) != 0)
       return NULL;
     entries = xmalloc (bufsize);
 
     /* Get the list of mounted file systems.  */
-    n_entries = mntctl (MCTL_QUERY, bufsize, (struct vmount *) entries);
+    n_entries = mntctl (MCTL_QUERY, bufsize, entries);
     if (n_entries < 0)
       {
         int saved_errno = errno;
@@ -955,7 +1082,7 @@ read_file_system_list (bool need_fs_type)
   return mount_list;
 
 
- free_then_fail:
+ free_then_fail: _GL_UNUSED_LABEL
   {
     int saved_errno = errno;
     *mtail = NULL;

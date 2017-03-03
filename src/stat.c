@@ -1,5 +1,5 @@
 /* stat.c -- display file or file system status
-   Copyright (C) 2001-2014 Free Software Foundation, Inc.
+   Copyright (C) 2001-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -74,15 +74,16 @@
 #include "xvasprintf.h"
 
 #if USE_STATVFS
-# define STRUCT_STATVFS struct statvfs
 # define STRUCT_STATXFS_F_FSID_IS_INTEGER STRUCT_STATVFS_F_FSID_IS_INTEGER
 # define HAVE_STRUCT_STATXFS_F_TYPE HAVE_STRUCT_STATVFS_F_TYPE
 # if HAVE_STRUCT_STATVFS_F_NAMEMAX
 #  define SB_F_NAMEMAX(S) ((S)->f_namemax)
 # endif
 # if ! STAT_STATVFS && STAT_STATVFS64
+#  define STRUCT_STATVFS struct statvfs64
 #  define STATFS statvfs64
 # else
+#  define STRUCT_STATVFS struct statvfs
 #  define STATFS statvfs
 # endif
 # define STATFS_FRSIZE(S) ((S)->f_frsize)
@@ -336,6 +337,8 @@ human_fstype (STRUCT_STATVFS const *statfsbuf)
       return "hugetlbfs";
     case S_MAGIC_MTD_INODE_FS: /* 0x11307854 local */
       return "inodefs";
+    case S_MAGIC_IBRIX: /* 0x013111A8 remote */
+      return "ibrix";
     case S_MAGIC_INOTIFYFS: /* 0x2BAD1DEA local */
       return "inotifyfs";
     case S_MAGIC_ISOFS: /* 0x9660 local */
@@ -1491,7 +1494,7 @@ Valid format sequences for file systems:\n\
   %T   file system type in human readable form\n\
 "), stdout);
       printf (USAGE_BUILTIN_WARNING, PROGRAM_NAME);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
@@ -1575,5 +1578,5 @@ main (int argc, char *argv[])
            ? do_statfs (argv[i], format)
            : do_stat (argv[i], format, format2));
 
-  exit (ok ? EXIT_SUCCESS : EXIT_FAILURE);
+  return ok ? EXIT_SUCCESS : EXIT_FAILURE;
 }

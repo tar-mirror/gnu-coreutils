@@ -1,7 +1,7 @@
 #! /bin/sh
 # Make sure stty can parse most of its options.
 
-# Copyright (C) 1998-2014 Free Software Foundation, Inc.
+# Copyright (C) 1998-2015 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -34,9 +34,9 @@ stty $(cat $saved_state) || fail=1
 stty erase - || fail=1
 
 # These would improperly ignore invalid options through coreutils 5.2.1.
-stty -F 2>/dev/null && fail=1
-stty -raw -F no/such/file 2>/dev/null && fail=1
-stty -raw -a 2>/dev/null && fail=1
+returns_ 1 stty -F 2>/dev/null || fail=1
+returns_ 1 stty -raw -F no/such/file 2>/dev/null || fail=1
+returns_ 1 stty -raw -a 2>/dev/null || fail=1
 
 # Build a list of all boolean options stty accepts on this system.
 # Don't depend on terminal width.  Put each option on its own line,
@@ -56,6 +56,10 @@ for opt in $options; do
     parenb|parodd|cmspar) continue;;
     cstopb|crtscts|cdtrdsr|icanon) continue;;
   esac
+
+  # This is listed as supported on FreeBSD
+  # but the ioctl returns ENOTTY.
+  test $opt = extproc && continue
 
   stty $opt || fail=1
 

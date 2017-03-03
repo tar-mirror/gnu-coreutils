@@ -1,7 +1,7 @@
 #!/bin/sh
 # test splitting into 3 chunks
 
-# Copyright (C) 2010-2014 Free Software Foundation, Inc.
+# Copyright (C) 2010-2015 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,22 +29,33 @@ rm -f x??
 split -e -n 10 /dev/null || fail=1
 stat x?? 2>/dev/null && fail=1
 
-printf '1\n2\n3\n4\n5\n' > in || framework_failure_
+printf '1\n2\n3\n4\n5\n' > input || framework_failure_
 
-split -n 3 in > out || fail=1
-split -n 1/3 in > b1 || fail=1
-split -n 2/3 in > b2 || fail=1
-split -n 3/3 in > b3 || fail=1
-printf '1\n2' > exp-1
-printf '\n3\n' > exp-2
-printf '4\n5\n' > exp-3
+for file in input /proc/version /sys/kernel/profiling; do
+  test -f $file || continue
 
-compare exp-1 xaa || fail=1
-compare exp-2 xab || fail=1
-compare exp-3 xac || fail=1
-compare exp-1 b1 || fail=1
-compare exp-2 b2 || fail=1
-compare exp-3 b3 || fail=1
-test -f xad && fail=1
+  split -n 3 $file > out || fail=1
+  split -n 1/3 $file > b1 || fail=1
+  split -n 2/3 $file > b2 || fail=1
+  split -n 3/3 $file > b3 || fail=1
+
+  case $file in
+    input)
+      printf '1\n2' > exp-1
+      printf '\n3\n' > exp-2
+      printf '4\n5\n' > exp-3
+
+      compare exp-1 xaa || fail=1
+      compare exp-2 xab || fail=1
+      compare exp-3 xac || fail=1
+      ;;
+  esac
+
+  compare xaa b1 || fail=1
+  compare xab b2 || fail=1
+  compare xac b3 || fail=1
+  cat xaa xab xac | compare - $file || fail=1
+  test -f xad && fail=1
+done
 
 Exit $fail

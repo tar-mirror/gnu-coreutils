@@ -1,5 +1,5 @@
 /* pr -- convert text files for printing.
-   Copyright (C) 1988-2014 Free Software Foundation, Inc.
+   Copyright (C) 1988-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@
       only one POSIX requirement has to be met:
    The default n-separator should be a TAB. The consequence is a
    different width between the number and the text if the output position
-   of the separator changes, i.e. it depends upon the left margin used.
+   of the separator changes, i.e., it depends upon the left margin used.
    That's not nice but easy-to-use together with the defaults of other
    utilities, e.g. sort or cut. - Same as SunOS does.
    -  With multicolumn output
@@ -322,6 +322,7 @@
 #include "stdio--.h"
 #include "strftime.h"
 #include "xstrtol.h"
+#include "xdectoint.h"
 
 /* The official name of this program (e.g., no 'g' prefix).  */
 #define PROGRAM_NAME "pr"
@@ -424,6 +425,8 @@ static bool skip_to_page (uintmax_t page);
 static void print_header (void);
 static void pad_across_to (int position);
 static void add_line_number (COLUMN *p);
+static void getoptnum (const char *n_str, int min, int *num,
+                       const char *errfmt);
 static void getoptarg (char *arg, char switch_char, char *character,
                        int *number);
 static void print_files (int number_of_files, char **av);
@@ -435,7 +438,7 @@ static void init_store_cols (void);
 static void store_columns (void);
 static void balance (int total_stored);
 static void store_char (char c);
-static void pad_down (int lines);
+static void pad_down (unsigned int lines);
 static void read_rest_of_line (COLUMN *p);
 static void skip_read (COLUMN *p, int column_number);
 static void print_char (char c);
@@ -768,12 +771,12 @@ static struct option const long_options[] =
 /* Return the number of columns that have either an open file or
    stored lines. */
 
-static int _GL_ATTRIBUTE_PURE
+static unsigned int _GL_ATTRIBUTE_PURE
 cols_ready_to_print (void)
 {
   COLUMN *q;
-  int i;
-  int n;
+  unsigned int i;
+  unsigned int n;
 
   n = 0;
   for (q = column_vector, i = 0; i < columns; ++q, ++i)
@@ -820,18 +823,12 @@ first_last_page (int oi, char c, char const *pages)
 
 /* Parse column count string S, and if it's valid (1 or larger and
    within range of the type of 'columns') set the global variables
-   columns and explicit_columns and return true.
-   Otherwise, exit with a diagnostic.  */
+   columns and explicit_columns.  Otherwise, exit with a diagnostic.  */
+
 static void
 parse_column_count (char const *s)
 {
-  long int tmp_long;
-  if (xstrtol (s, NULL, 10, &tmp_long, "") != LONGINT_OK
-      || !(1 <= tmp_long && tmp_long <= INT_MAX))
-    error (EXIT_FAILURE, 0,
-           _("invalid number of columns: %s"), quote (s));
-
-  columns = tmp_long;
+  getoptnum (s, 1, &columns, _("invalid number of columns"));
   explicit_columns = true;
 }
 
@@ -966,18 +963,9 @@ main (int argc, char **argv)
           join_lines = true;
           break;
         case 'l':
-          {
-            long int tmp_long;
-            if (xstrtol (optarg, NULL, 10, &tmp_long, "") != LONGINT_OK
-                || tmp_long <= 0 || tmp_long > INT_MAX)
-              {
-                error (EXIT_FAILURE, 0,
-                       _("'-l PAGE_LENGTH' invalid number of lines: %s"),
-                       quote (optarg));
-              }
-            lines_per_page = tmp_long;
-            break;
-          }
+          getoptnum (optarg, 1, &lines_per_page,
+                     _("'-l PAGE_LENGTH' invalid number of lines"));
+          break;
         case 'm':
           parallel_files = true;
           storing_columns = false;
@@ -990,28 +978,13 @@ main (int argc, char **argv)
           break;
         case 'N':
           skip_count = false;
-          {
-            long int tmp_long;
-            if (xstrtol (optarg, NULL, 10, &tmp_long, "") != LONGINT_OK
-                || tmp_long > INT_MAX)
-              {
-                error (EXIT_FAILURE, 0,
-                       _("'-N NUMBER' invalid starting line number: %s"),
-                       quote (optarg));
-              }
-            start_line_num = tmp_long;
-            break;
-          }
+          getoptnum (optarg, INT_MIN, &start_line_num,
+                     _("'-N NUMBER' invalid starting line number"));
+          break;
         case 'o':
-          {
-            long int tmp_long;
-            if (xstrtol (optarg, NULL, 10, &tmp_long, "") != LONGINT_OK
-                || tmp_long < 0 || tmp_long > INT_MAX)
-              error (EXIT_FAILURE, 0,
-                     _("'-o MARGIN' invalid line offset: %s"), quote (optarg));
-            chars_per_margin = tmp_long;
-            break;
-          }
+          getoptnum (optarg, 0, &chars_per_margin,
+                     _("'-o MARGIN' invalid line offset"));
+          break;
         case 'r':
           ignore_failed_opens = true;
           break;
@@ -1045,29 +1018,19 @@ main (int argc, char **argv)
           old_options = true;
           old_w = true;
           {
-            long int tmp_long;
-            if (xstrtol (optarg, NULL, 10, &tmp_long, "") != LONGINT_OK
-                || tmp_long <= 0 || tmp_long > INT_MAX)
-              error (EXIT_FAILURE, 0,
-                     _("'-w PAGE_WIDTH' invalid number of characters: %s"),
-                     quote (optarg));
-            if (!truncate_lines)
-              chars_per_line = tmp_long;
-            break;
+            int tmp_cpl;
+            getoptnum (optarg, 1, &tmp_cpl,
+                       _("'-w PAGE_WIDTH' invalid number of characters"));
+            if (! truncate_lines)
+              chars_per_line = tmp_cpl;
           }
+          break;
         case 'W':
           old_w = false;			/* dominates -w */
           truncate_lines = true;
-          {
-            long int tmp_long;
-            if (xstrtol (optarg, NULL, 10, &tmp_long, "") != LONGINT_OK
-                || tmp_long <= 0 || tmp_long > INT_MAX)
-              error (EXIT_FAILURE, 0,
-                     _("'-W PAGE_WIDTH' invalid number of characters: %s"),
-                     quote (optarg));
-            chars_per_line = tmp_long;
-            break;
-          }
+          getoptnum (optarg, 1, &chars_per_line,
+                     _("'-W PAGE_WIDTH' invalid number of characters"));
+          break;
         case_GETOPT_HELP_CHAR;
         case_GETOPT_VERSION_CHAR (PROGRAM_NAME, AUTHORS);
         default:
@@ -1170,9 +1133,16 @@ main (int argc, char **argv)
 
   if (have_read_stdin && fclose (stdin) == EOF)
     error (EXIT_FAILURE, errno, _("standard input"));
-  if (failed_opens)
-    exit (EXIT_FAILURE);
-  exit (EXIT_SUCCESS);
+  return failed_opens ? EXIT_FAILURE : EXIT_SUCCESS;
+}
+
+/* Parse numeric arguments, ensuring MIN <= number <= INT_MAX.  */
+
+static void
+getoptnum (const char *n_str, int min, int *num, const char *err)
+{
+  intmax_t tnum = xdectoimax (n_str, min, INT_MAX, "", err, 0);
+  *num = tnum;
 }
 
 /* Parse options of the form -scNNN.
@@ -1190,9 +1160,9 @@ getoptarg (char *arg, char switch_char, char *character, int *number)
     {
       long int tmp_long;
       if (xstrtol (arg, NULL, 10, &tmp_long, "") != LONGINT_OK
-          || tmp_long <= 0 || tmp_long > INT_MAX)
+          || tmp_long <= 0 || INT_MAX < tmp_long)
         {
-          error (0, 0,
+          error (0, INT_MAX < tmp_long ?  EOVERFLOW : errno,
              _("'-%c' extra characters or invalid number in the argument: %s"),
                  switch_char, quote (arg));
           usage (EXIT_FAILURE);
@@ -1817,7 +1787,7 @@ print_page (void)
               --p->lines_to_print;
               if (p->lines_to_print <= 0)
                 {
-                  if (cols_ready_to_print () <= 0)
+                  if (cols_ready_to_print () == 0)
                     break;
                 }
 
@@ -1851,7 +1821,7 @@ print_page (void)
           --lines_left_on_page;
         }
 
-      if (cols_ready_to_print () <= 0 && !extremities)
+      if (cols_ready_to_print () == 0 && !extremities)
         break;
 
       if (double_space && pv)
@@ -2082,9 +2052,9 @@ pad_across_to (int position)
    Otherwise, use newlines. */
 
 static void
-pad_down (int lines)
+pad_down (unsigned int lines)
 {
-  int i;
+  unsigned int i;
 
   if (use_form_feed)
     putchar ('\f');
@@ -2758,6 +2728,7 @@ Usage: %s [OPTION]... [FILE]...\n\
 Paginate or columnate FILE(s) for printing.\n\
 "), stdout);
 
+      emit_stdin_note ();
       emit_mandatory_arg_note ();
 
       fputs (_("\
@@ -2798,7 +2769,10 @@ Paginate or columnate FILE(s) for printing.\n\
       fputs (_("\
   -l, --length=PAGE_LENGTH\n\
                     set the page length to PAGE_LENGTH (66) lines\n\
-                    (default number of lines of text 56, and with -F 63)\n\
+                    (default number of lines of text 56, and with -F 63).\n\
+                    implies -t if PAGE_LENGTH <= 10\n\
+"), stdout);
+      fputs (_("\
   -m, --merge       print all files in parallel, one in each column,\n\
                     truncate lines, but join lines of full length with -J\n\
 "), stdout);
@@ -2830,7 +2804,10 @@ Paginate or columnate FILE(s) for printing.\n\
                     separate columns by STRING,\n\
                     without -S: Default separator <TAB> with -J and <space>\n\
                     otherwise (same as -S\" \"), no effect on column options\n\
-  -t, --omit-header  omit page headers and trailers\n\
+"), stdout);
+      fputs (_("\
+  -t, --omit-header  omit page headers and trailers;\n\
+                     implied if PAGE_LENGTH <= 10\n\
 "), stdout);
       fputs (_("\
   -T, --omit-pagination\n\
@@ -2850,12 +2827,7 @@ Paginate or columnate FILE(s) for printing.\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
-      fputs (_("\
-\n\
--t is implied if PAGE_LENGTH <= 10.  With no FILE, or when FILE is -, read\n\
-standard input.\n\
-"), stdout);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }

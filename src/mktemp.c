@@ -1,5 +1,5 @@
 /* Create a temporary file or directory, safely.
-   Copyright (C) 2007-2014 Free Software Foundation, Inc.
+   Copyright (C) 2007-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -96,7 +96,7 @@ Files are created u+rw, and directories u+rwx, minus umask restrictions.\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
 
   exit (status);
@@ -345,5 +345,5 @@ main (int argc, char **argv)
   free (template);
 #endif
 
-  exit (status);
+  return status;
 }

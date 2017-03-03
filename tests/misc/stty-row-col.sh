@@ -1,7 +1,7 @@
 #! /bin/sh
 # Test "stty" with rows and columns.
 
-# Copyright (C) 1998-2014 Free Software Foundation, Inc.
+# Copyright (C) 1998-2015 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -47,6 +47,8 @@ tests='
 7 rows_1 1_1
 8 columns_80 1_80
 9 rows_30 30_80
+10 rows_0x1E 30_80
+11 rows_036 30_80
 NA LAST NA
 '
 set $tests

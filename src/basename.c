@@ -1,5 +1,5 @@
 /* basename -- strip directory and suffix from file names
-   Copyright (C) 1990-2014 Free Software Foundation, Inc.
+   Copyright (C) 1990-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ Examples:\n\
   %s -a any/str1 any/str2   -> \"str1\" followed by \"str2\"\n\
 "),
               program_name, program_name, program_name, program_name);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
@@ -185,5 +185,5 @@ main (int argc, char **argv)
     perform_basename (argv[optind],
                       optind + 2 == argc ? argv[optind + 1] : NULL, use_nuls);
 
-  exit (EXIT_SUCCESS);
+  return EXIT_SUCCESS;
 }

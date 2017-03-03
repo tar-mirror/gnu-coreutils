@@ -1,4 +1,4 @@
-/* Copyright (C) 2014 Free Software Foundation, Inc.
+/* Copyright (C) 2014-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@
    needs to match the one passed as CFLAGS on single-binary.mk (generated
    by gen-single-binary.sh). */
 # define SINGLE_BINARY_PROGRAM(prog_name_str, main_name) \
-  int _single_binary_main_##main_name (int, char**) ATTRIBUTE_NORETURN;
+  int single_binary_main_##main_name (int, char **);
 # include "coreutils.h"
 # undef SINGLE_BINARY_PROGRAM
 #endif
@@ -45,9 +45,6 @@
 
 #define AUTHORS \
   proper_name ("Alex Deymo")
-
-void
-launch_program (const char *prog_name, int prog_argc, char **prog_argv);
 
 static struct option const long_options[] =
 {
@@ -73,29 +70,31 @@ Execute the PROGRAM_NAME built-in program with the given PARAMETERS.\n\
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
 
-      printf ("\n\
-Built-in programs:\n"
 #ifdef SINGLE_BINARY
-/* XXX: Ideally we#d like to present "install" here, not "ginstall".  */
+/* XXX: Ideally we'd like to present "install" here, not "ginstall".  */
+      char const *prog_name_list =
 # define SINGLE_BINARY_PROGRAM(prog_name_str, main_name) " " prog_name_str
 # include "coreutils.h"
 # undef SINGLE_BINARY_PROGRAM
+      ;
+      printf ("\n\
+Built-in programs:\n\
+%s\n", prog_name_list);
 #endif
-  "\n");
 
       printf (_("\
 \n\
 Use: '%s --coreutils-prog=PROGRAM_NAME --help' for individual program help.\n"),
               program_name);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
 
-void
+static void
 launch_program (const char *prog_name, int prog_argc, char **prog_argv)
 {
-  int (*prog_main)(int, char **) = NULL;
+  int (*prog_main) (int, char **) = NULL;
 
   /* Ensure that at least one parameter was passed.  */
   if (!prog_argc || !prog_argv || !prog_argv[0] || !prog_name)
@@ -103,10 +102,10 @@ launch_program (const char *prog_name, int prog_argc, char **prog_argv)
 
 #ifdef SINGLE_BINARY
   if (false);
-  /* Lookup the right main program.  */
+  /* Look up the right main program.  */
 # define SINGLE_BINARY_PROGRAM(prog_name_str, main_name) \
   else if (STREQ (prog_name_str, prog_name)) \
-    prog_main = _single_binary_main_##main_name;
+    prog_main = single_binary_main_##main_name;
 # include "coreutils.h"
 # undef SINGLE_BINARY_PROGRAM
 #endif
@@ -124,7 +123,7 @@ launch_program (const char *prog_name, int prog_argc, char **prog_argv)
   prctl (PR_SET_MM_ARG_START, prog_argv[0]);
 #endif
 
-  exit ((*prog_main) (prog_argc, prog_argv));
+  exit (prog_main (prog_argc, prog_argv));
 }
 
 int

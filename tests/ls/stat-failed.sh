@@ -2,7 +2,7 @@
 # Verify that ls works properly when it fails to stat a file that is
 # not mentioned on the command line.
 
-# Copyright (C) 2006-2014 Free Software Foundation, Inc.
+# Copyright (C) 2006-2015 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,6 +21,8 @@
 print_ver_ ls
 skip_if_root_
 
+LS_MINOR_PROBLEM=1
+
 mkdir d || framework_failure_
 ln -s / d/s || framework_failure_
 chmod 600 d || framework_failure_
@@ -38,7 +40,7 @@ sed 's/^l/?/' out | compare exp - || fail=1
 
 # Ensure that the offsets in --dired output are accurate.
 rm -f out exp
-ls --dired -l d > out && fail=1
+returns_ $LS_MINOR_PROBLEM ls --dired -l d > out || fail=1
 
 cat <<\EOF > exp || fail=1
   total 0

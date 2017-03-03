@@ -1,5 +1,5 @@
 /* GNU's pinky.
-   Copyright (C) 1992-2014 Free Software Foundation, Inc.
+   Copyright (C) 1992-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -445,8 +445,7 @@ scan_entries (size_t n, const STRUCT_UTMP *utmp_buf,
               int i;
 
               for (i = 0; i < argc_names; i++)
-                if (strncmp (UT_USER (utmp_buf), argv_names[i], UT_USER_SIZE)
-                    == 0)
+                if (STREQ_LEN (UT_USER (utmp_buf), argv_names[i], UT_USER_SIZE))
                   {
                     print_entry (utmp_buf);
                     break;
@@ -515,7 +514,7 @@ usage (int status)
 A lightweight 'finger' program;  print user information.\n\
 The utmp file will be %s.\n\
 "), UTMP_FILE);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
@@ -604,5 +603,5 @@ main (int argc, char **argv)
   else
     long_pinky (n_users, argv + optind);
 
-  exit (EXIT_SUCCESS);
+  return EXIT_SUCCESS;
 }

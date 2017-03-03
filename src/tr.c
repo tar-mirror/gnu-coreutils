@@ -1,5 +1,5 @@
 /* tr -- a filter to translate characters
-   Copyright (C) 1991-2014 Free Software Foundation, Inc.
+   Copyright (C) 1991-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -346,7 +346,7 @@ only be used in pairs to specify case conversion.  -s uses SET1 if not\n\
 translating nor deleting; else squeezing uses SET2 and occurs after\n\
 translation or deletion.\n\
 "), stdout);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
@@ -1804,13 +1804,13 @@ main (int argc, char **argv)
 
   spec_init (s1);
   if (!parse_str (argv[optind], s1))
-    exit (EXIT_FAILURE);
+    return EXIT_FAILURE;
 
   if (non_option_args == 2)
     {
       spec_init (s2);
       if (!parse_str (argv[optind + 1], s2))
-        exit (EXIT_FAILURE);
+        return EXIT_FAILURE;
     }
   else
     s2 = NULL;
@@ -1944,5 +1944,5 @@ main (int argc, char **argv)
   if (close (STDIN_FILENO) != 0)
     error (EXIT_FAILURE, errno, _("standard input"));
 
-  exit (EXIT_SUCCESS);
+  return EXIT_SUCCESS;
 }

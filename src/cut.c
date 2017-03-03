@@ -1,5 +1,5 @@
 /* cut - remove parts of lines of files
-   Copyright (C) 1997-2014 Free Software Foundation, Inc.
+   Copyright (C) 1997-2015 Free Software Foundation, Inc.
    Copyright (C) 1984 David M. Ihnat
 
    This program is free software: you can redistribute it and/or modify
@@ -177,6 +177,7 @@ Usage: %s OPTION... [FILE]...\n\
 Print selected parts of lines from each FILE to standard output.\n\
 "), stdout);
 
+      emit_stdin_note ();
       emit_mandatory_arg_note ();
 
       fputs (_("\
@@ -214,10 +215,8 @@ Each range is one of:\n\
   N-    from N'th byte, character or field, to end of line\n\
   N-M   from N'th to M'th (included) byte, character or field\n\
   -M    from first to M'th (included) byte, character or field\n\
-\n\
-With no FILE, or when FILE is -, read standard input.\n\
 "), stdout);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
@@ -425,7 +424,7 @@ set_fields (const char *fieldstr)
   return field_found;
 }
 
-/* Increment *ITEM_IDX (i.e. a field or byte index),
+/* Increment *ITEM_IDX (i.e., a field or byte index),
    and if required CURRENT_RP.  */
 
 static inline void
@@ -827,5 +826,5 @@ main (int argc, char **argv)
       ok = false;
     }
 
-  exit (ok ? EXIT_SUCCESS : EXIT_FAILURE);
+  return ok ? EXIT_SUCCESS : EXIT_FAILURE;
 }

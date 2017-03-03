@@ -1,5 +1,5 @@
 /* mv -- move or rename files
-   Copyright (C) 1986-2014 Free Software Foundation, Inc.
+   Copyright (C) 1986-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -107,7 +107,7 @@ cp_option_init (struct cp_options *x)
 
   cp_options_default (x);
   x->copy_as_regular = false;  /* FIXME: maybe make this an option */
-  x->reflink_mode = REFLINK_NEVER;
+  x->reflink_mode = REFLINK_AUTO;
   x->dereference = DEREF_NEVER;
   x->unlink_dest_before_opening = false;
   x->unlink_dest_after_failed_open = false;
@@ -336,7 +336,7 @@ the VERSION_CONTROL environment variable.  Here are the values:\n\
   existing, nil   numbered if numbered backups exist, simple otherwise\n\
   simple, never   always make simple backups\n\
 "), stdout);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
@@ -508,5 +508,5 @@ main (int argc, char **argv)
   else
     ok = movefile (file[0], file[1], false, &x);
 
-  exit (ok ? EXIT_SUCCESS : EXIT_FAILURE);
+  return ok ? EXIT_SUCCESS : EXIT_FAILURE;
 }

@@ -1,7 +1,7 @@
 #!/bin/sh
 # Detect printf(3) failure even when it doesn't set stream error indicator
 
-# Copyright (C) 2007-2014 Free Software Foundation, Inc.
+# Copyright (C) 2007-2015 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -53,7 +53,10 @@ mkfifo_or_skip_ fifo
 # http://bugs.debian.org/481543#77
 export MALLOC_PERTURB_=0
 
-head -c 10 fifo > out &
+# Terminate any background process
+cleanup_() { kill $pid 2>/dev/null && wait $pid; }
+
+head -c 10 fifo > out & pid=$!
 
 # Choosing the virtual memory limit, 11000 is enough, but 10000 is too
 # little and provokes a "memory exhausted" diagnostic on FreeBSD 9.0-p3.
@@ -63,7 +66,7 @@ exit=$?
 # Map this longer, and rarer, diagnostic to the common one.
 # printf: cannot perform formatted output: Cannot allocate memory" \
 sed 's/cannot perform .*/write error/' err-msg > k && mv k err-msg
-err_msg=$(cat err-msg|tr '\n' :)
+err_msg=$(tr '\n' : < err-msg)
 
 # By some bug, on Solaris 11 (5.11 snv_86), err_msg ends up
 # containing '1> fifo:printf: write error:'.  Recognize that, too.

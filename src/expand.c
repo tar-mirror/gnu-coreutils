@@ -1,5 +1,5 @@
 /* expand - convert tabs to spaces
-   Copyright (C) 1989-2014 Free Software Foundation, Inc.
+   Copyright (C) 1989-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -106,9 +106,9 @@ Usage: %s [OPTION]... [FILE]...\n\
               program_name);
       fputs (_("\
 Convert tabs in each FILE to spaces, writing to standard output.\n\
-With no FILE, or when FILE is -, read standard input.\n\
 "), stdout);
 
+      emit_stdin_note ();
       emit_mandatory_arg_note ();
 
       fputs (_("\
@@ -120,7 +120,7 @@ With no FILE, or when FILE is -, read standard input.\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
@@ -426,5 +426,5 @@ main (int argc, char **argv)
   if (have_read_stdin && fclose (stdin) != 0)
     error (EXIT_FAILURE, errno, "-");
 
-  exit (exit_status);
+  return exit_status;
 }

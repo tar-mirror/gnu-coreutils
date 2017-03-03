@@ -1,5 +1,5 @@
 /* truncate -- truncate or extend the length of files.
-   Copyright (C) 2008-2014 Free Software Foundation, Inc.
+   Copyright (C) 2008-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 #include "error.h"
 #include "quote.h"
 #include "stat-size.h"
-#include "xstrtol.h"
+#include "xdectoint.h"
 
 /* The official name of this program (e.g., no 'g' prefix).  */
 #define PROGRAM_NAME "truncate"
@@ -58,33 +58,6 @@ static struct option const longopts[] =
 
 typedef enum
 { rm_abs = 0, rm_rel, rm_min, rm_max, rm_rdn, rm_rup } rel_mode_t;
-
-/* Set size to the value of STR, interpreted as a decimal integer,
-   optionally multiplied by various values.
-   Return -1 on error, 0 on success.
-
-   This supports dd BLOCK size suffixes + lowercase g,t,m for bsd compat
-   Note we don't support dd's b=512, c=1, w=2 or 21x512MiB formats.  */
-static int
-parse_len (char const *str, off_t *size)
-{
-  enum strtol_error e;
-  intmax_t tmp_size;
-  e = xstrtoimax (str, NULL, 10, &tmp_size, "EgGkKmMPtTYZ0");
-  if (e == LONGINT_OK
-      && !(OFF_T_MIN <= tmp_size && tmp_size <= OFF_T_MAX))
-    e = LONGINT_OVERFLOW;
-
-  if (e == LONGINT_OK)
-    {
-      errno = 0;
-      *size = tmp_size;
-      return 0;
-    }
-
-  errno = (e == LONGINT_OVERFLOW ? EOVERFLOW : 0);
-  return -1;
-}
 
 void
 usage (int status)
@@ -122,7 +95,7 @@ reads as zero bytes.\n\
 SIZE may also be prefixed by one of the following modifying characters:\n\
 '+' extend by, '-' reduce by, '<' at most, '>' at least,\n\
 '/' round down to multiple of, '%' round up to multiple of.\n"), stdout);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
@@ -306,9 +279,10 @@ main (int argc, char **argv)
                 }
               rel_mode = rm_rel;
             }
-          if (parse_len (optarg, &size) == -1)
-            error (EXIT_FAILURE, errno, _("invalid number %s"),
-                   quote (optarg));
+          /* Support dd BLOCK size suffixes + lowercase g,t,m for bsd compat.
+             Note we don't support dd's b=512, c=1, w=2 or 21x512MiB formats. */
+          size = xdectoimax (optarg, OFF_T_MIN, OFF_T_MAX, "EgGkKmMPtTYZ0",
+                             _("Invalid number"), 0);
           /* Rounding to multiple of 0 is nonsensical */
           if ((rel_mode == rm_rup || rel_mode == rm_rdn) && size == 0)
             error (EXIT_FAILURE, 0, _("division by zero"));
@@ -420,5 +394,5 @@ main (int argc, char **argv)
         }
     }
 
-  exit (errors ? EXIT_FAILURE : EXIT_SUCCESS);
+  return errors ? EXIT_FAILURE : EXIT_SUCCESS;
 }

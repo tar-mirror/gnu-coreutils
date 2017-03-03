@@ -1,5 +1,5 @@
 /* sort - sort lines of text (with all kinds of options).
-   Copyright (C) 1988-2014 Free Software Foundation, Inc.
+   Copyright (C) 1988-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -428,6 +428,7 @@ Usage: %s [OPTION]... [FILE]...\n\
 Write sorted concatenation of all FILE(s) to standard output.\n\
 "), stdout);
 
+      emit_stdin_note ();
       emit_mandatory_arg_note ();
 
       fputs (_("\
@@ -524,14 +525,12 @@ SIZE may be followed by the following multiplicative suffixes:\n\
       fputs (_("\
 % 1% of memory, b 1, K 1024 (default), and so on for M, G, T, P, E, Z, Y.\n\
 \n\
-With no FILE, or when FILE is -, read standard input.\n\
-\n\
 *** WARNING ***\n\
 The locale specified by the environment affects sort order.\n\
 Set LC_ALL=C to get the traditional sort order that uses\n\
 native byte values.\n\
 "), stdout );
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
 
   exit (status);
@@ -4708,7 +4707,7 @@ main (int argc, char **argv)
 
       /* POSIX requires that sort return 1 IFF invoked with -c or -C and the
          input is not properly sorted.  */
-      exit (check (files[0], checkonly) ? EXIT_SUCCESS : SORT_OUT_OF_ORDER);
+      return check (files[0], checkonly) ? EXIT_SUCCESS : SORT_OUT_OF_ORDER;
     }
 
   /* Check all inputs are accessible, or exit immediately.  */
@@ -4746,5 +4745,5 @@ main (int argc, char **argv)
   if (have_read_stdin && fclose (stdin) == EOF)
     die (_("close failed"), "-");
 
-  exit (EXIT_SUCCESS);
+  return EXIT_SUCCESS;
 }

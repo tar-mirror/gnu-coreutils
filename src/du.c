@@ -1,5 +1,5 @@
 /* du -- summarize disk usage
-   Copyright (C) 1988-2014 Free Software Foundation, Inc.
+   Copyright (C) 1988-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -283,7 +283,7 @@ Usage: %s [OPTION]... [FILE]...\n\
   or:  %s [OPTION]... --files0-from=F\n\
 "), program_name, program_name);
       fputs (_("\
-Summarize disk usage of each FILE, recursively for directories.\n\
+Summarize disk usage of the set of FILEs, recursively for directories.\n\
 "), stdout);
 
       emit_mandatory_arg_note ();
@@ -351,7 +351,7 @@ Summarize disk usage of each FILE, recursively for directories.\n\
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
       emit_blocksize_note ("DU");
       emit_size_note ();
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
@@ -417,6 +417,27 @@ print_size (const struct duinfo *pdui, const char *string)
     }
   printf ("\t%s%c", string, opt_nul_terminate_output ? '\0' : '\n');
   fflush (stdout);
+}
+
+/* This function checks whether any of the directories in the cycle that
+   fts detected is a mount point.  */
+
+static bool
+mount_point_in_fts_cycle (FTSENT const *ent)
+{
+  FTSENT const *cycle_ent = ent->fts_cycle;
+
+  while (ent && ent != cycle_ent)
+    {
+      if (di_set_lookup (di_mnt, ent->fts_statp->st_dev,
+                         ent->fts_statp->st_ino) > 0)
+        {
+          return true;
+        }
+      ent = ent->fts_parent;
+    }
+
+  return false;
 }
 
 /* This function is called once for every file system object that fts
@@ -516,7 +537,7 @@ process_file (FTS *fts, FTSENT *ent)
         case FTS_DC:
           /* If not following symlinks and not a (bind) mount point.  */
           if (cycle_warning_required (fts, ent)
-              && ! di_set_lookup (di_mnt, sb->st_dev, sb->st_ino))
+              && ! mount_point_in_fts_cycle (ent))
             {
               emit_cycle_warning (file);
               return false;
@@ -947,9 +968,9 @@ main (int argc, char **argv)
             {
               /* Ignore "posix-" prefix, for compatibility with ls.  */
               static char const posix_prefix[] = "posix-";
-              while (strncmp (time_style, posix_prefix, sizeof posix_prefix - 1)
-                     == 0)
-                time_style += sizeof posix_prefix - 1;
+              static const size_t prefix_len = sizeof posix_prefix - 1;
+              while (STREQ_LEN (time_style, posix_prefix, prefix_len))
+                time_style += prefix_len;
             }
         }
 
@@ -1108,5 +1129,5 @@ main (int argc, char **argv)
   if (print_grand_total)
     print_size (&tot_dui, _("total"));
 
-  exit (ok ? EXIT_SUCCESS : EXIT_FAILURE);
+  return ok ? EXIT_SUCCESS : EXIT_FAILURE;
 }

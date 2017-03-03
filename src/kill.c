@@ -1,5 +1,5 @@
 /* kill -- send a signal to a process
-   Copyright (C) 2002-2014 Free Software Foundation, Inc.
+   Copyright (C) 2002-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -99,7 +99,7 @@ or the exit status of a process terminated by a signal.\n\
 PID is an integer; if negative it identifies a process group.\n\
 "), stdout);
       printf (USAGE_BUILTIN_WARNING, PROGRAM_NAME);
-      emit_ancillary_info ();
+      emit_ancillary_info (PROGRAM_NAME);
     }
   exit (status);
 }
@@ -109,8 +109,8 @@ PID is an integer; if negative it identifies a process group.\n\
    maximum name width is NAME_WIDTH, and SIGNAME is the name to print.  */
 
 static void
-print_table_row (unsigned int num_width, int signum,
-                 unsigned int name_width, char const *signame)
+print_table_row (int num_width, int signum,
+                 int name_width, char const *signame)
 {
   char const *description = strsignal (signum);
   printf ("%*d %-*s %s\n", num_width, signum, name_width, signame,
@@ -306,7 +306,7 @@ main (int argc, char **argv)
       usage (EXIT_FAILURE);
     }
 
-  exit (list
-        ? list_signals (table, optind < argc ? argv + optind : NULL)
-        : send_signals (signum, argv + optind));
+  return (list
+          ? list_signals (table, optind < argc ? argv + optind : NULL)
+          : send_signals (signum, argv + optind));
 }
