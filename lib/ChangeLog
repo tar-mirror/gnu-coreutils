@@ -1,3 +1,48 @@
+2005-11-01  Paul Eggert  <eggert@cs.ucla.edu>
+
+	* posixtm.h (PDS_PRE_2000): New macro.
+	* posixtm.c (year): Arg is now syntax_bits rather than allow_century.
+	All usages changed.  Reject dates outside the range 1969-1999 if
+	PDS_PRE_2000 is used.
+
+2005-10-30  Paul Eggert  <eggert@cs.ucla.edu>
+
+	Fix porting problems reported by Theodoros V. Kalamatianos.
+	* fd-reopen.c [defined HAVE_CONFIG_H]: Include <config.h>,
+	so that large files can be opened.
+	* utimens.c (futimens) [HAVE_WORKING_UTIMES && HAVE_FUTIMES]:
+	Don't assume that futimes failing means we must fail.
+
+2005-10-29  Paul Eggert  <eggert@cs.ucla.edu>
+
+	* getcwd.c (__getcwd): Don't assume that system calls after readdir
+	leave errno alone.  Problem reported by Dmitry V. Levin.
+
+2005-10-28  Paul Eggert  <eggert@cs.ucla.edu>
+
+	* savedir.c (savedir): Don't assume that xrealloc etc. leave
+	errno alone.  Problem reported by Frederic Jolliton.
+
+2005-10-24  Jim Meyering  <jim@meyering.net>
+
+	* mkdir-p.c (make_dir_parents): Like the code above, don't rely
+	on mkdir failing with a particular errno value (EEXIST).
+	Based on a patch by Dmitry V. Levin.
+
+	* mkdir-p.c (make_dir_parents): Make the preceding fix a little
+	more robust, e.g., when the final component is created as a non-
+	directory by another process just before `mkdir -p's final mkdir.
+
+	A command like `mkdir -p nonexistent/.' would create the
+	directory but exit nonzero with a diagnostic.  This could also be
+	triggered with a non-`.' component, e.g., in a race with another
+	process running the same `mkdir -p nonexistent/sub' command.
+
+	* mkdir-p.c (make_dir_parents): Handle the case of an
+	existing final component.
+	Reported by Matthias Andree here:
+	http://savannah.gnu.org/bugs/?func=detailitem&item_id=14848
+
 2005-10-20  Jim Meyering  <jim@meyering.net>
 
 	* modechange.c (mode_compile): Reject an invalid mode string

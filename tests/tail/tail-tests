@@ -1404,6 +1404,222 @@ else
   esac
 fi
 test -s minus-2.E || rm -f minus-2.E
+_POSIX2_VERSION=200112 $xx -c 2 $srcdir/c-2.I > c-2.O 2> c-2.E
+code=$?
+if test $code != 0; then
+  $echo "Test c-2(_POSIX2_VERSION=200112:F) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp c-2.O $srcdir/c-2.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed c-2(_POSIX2_VERSION=200112:F)"; fi;;
+    1) $echo "Test c-2(_POSIX2_VERSION=200112:F) failed: files c-2.O and $srcdir/c-2.X differ" 1>&2
+       (diff -c c-2.O $srcdir/c-2.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test c-2(_POSIX2_VERSION=200112:F) may have failed." 1>&2
+       $echo The command "cmp c-2.O $srcdir/c-2.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s c-2.E || rm -f c-2.E
+cat $srcdir/c-2.I | _POSIX2_VERSION=200112 $xx -c 2 > c-2.O 2> c-2.E
+code=$?
+if test $code != 0; then
+  $echo "Test c-2(_POSIX2_VERSION=200112:|) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp c-2.O $srcdir/c-2.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed c-2(_POSIX2_VERSION=200112:|)"; fi;;
+    1) $echo "Test c-2(_POSIX2_VERSION=200112:|) failed: files c-2.O and $srcdir/c-2.X differ" 1>&2
+       (diff -c c-2.O $srcdir/c-2.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test c-2(_POSIX2_VERSION=200112:|) may have failed." 1>&2
+       $echo The command "cmp c-2.O $srcdir/c-2.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s c-2.E || rm -f c-2.E
+_POSIX2_VERSION=200112 $xx -c 2 < $srcdir/c-2.I > c-2.O 2> c-2.E
+code=$?
+if test $code != 0; then
+  $echo "Test c-2(_POSIX2_VERSION=200112:<) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp c-2.O $srcdir/c-2.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed c-2(_POSIX2_VERSION=200112:<)"; fi;;
+    1) $echo "Test c-2(_POSIX2_VERSION=200112:<) failed: files c-2.O and $srcdir/c-2.X differ" 1>&2
+       (diff -c c-2.O $srcdir/c-2.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test c-2(_POSIX2_VERSION=200112:<) may have failed." 1>&2
+       $echo The command "cmp c-2.O $srcdir/c-2.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s c-2.E || rm -f c-2.E
+$xx -c 2 -- $srcdir/c-2-minus.I > c-2-minus.O 2> c-2-minus.E
+code=$?
+if test $code != 0; then
+  $echo "Test c-2-minus(F) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp c-2-minus.O $srcdir/c-2-minus.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed c-2-minus(F)"; fi;;
+    1) $echo "Test c-2-minus(F) failed: files c-2-minus.O and $srcdir/c-2-minus.X differ" 1>&2
+       (diff -c c-2-minus.O $srcdir/c-2-minus.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test c-2-minus(F) may have failed." 1>&2
+       $echo The command "cmp c-2-minus.O $srcdir/c-2-minus.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s c-2-minus.E || rm -f c-2-minus.E
+cat $srcdir/c-2-minus.I | $xx -c 2 -- > c-2-minus.O 2> c-2-minus.E
+code=$?
+if test $code != 0; then
+  $echo "Test c-2-minus(|) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp c-2-minus.O $srcdir/c-2-minus.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed c-2-minus(|)"; fi;;
+    1) $echo "Test c-2-minus(|) failed: files c-2-minus.O and $srcdir/c-2-minus.X differ" 1>&2
+       (diff -c c-2-minus.O $srcdir/c-2-minus.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test c-2-minus(|) may have failed." 1>&2
+       $echo The command "cmp c-2-minus.O $srcdir/c-2-minus.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s c-2-minus.E || rm -f c-2-minus.E
+$xx -c 2 -- < $srcdir/c-2-minus.I > c-2-minus.O 2> c-2-minus.E
+code=$?
+if test $code != 0; then
+  $echo "Test c-2-minus(<) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp c-2-minus.O $srcdir/c-2-minus.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed c-2-minus(<)"; fi;;
+    1) $echo "Test c-2-minus(<) failed: files c-2-minus.O and $srcdir/c-2-minus.X differ" 1>&2
+       (diff -c c-2-minus.O $srcdir/c-2-minus.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test c-2-minus(<) may have failed." 1>&2
+       $echo The command "cmp c-2-minus.O $srcdir/c-2-minus.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s c-2-minus.E || rm -f c-2-minus.E
+$xx -c2 $srcdir/c2.I > c2.O 2> c2.E
+code=$?
+if test $code != 0; then
+  $echo "Test c2(F) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp c2.O $srcdir/c2.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed c2(F)"; fi;;
+    1) $echo "Test c2(F) failed: files c2.O and $srcdir/c2.X differ" 1>&2
+       (diff -c c2.O $srcdir/c2.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test c2(F) may have failed." 1>&2
+       $echo The command "cmp c2.O $srcdir/c2.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s c2.E || rm -f c2.E
+cat $srcdir/c2.I | $xx -c2 > c2.O 2> c2.E
+code=$?
+if test $code != 0; then
+  $echo "Test c2(|) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp c2.O $srcdir/c2.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed c2(|)"; fi;;
+    1) $echo "Test c2(|) failed: files c2.O and $srcdir/c2.X differ" 1>&2
+       (diff -c c2.O $srcdir/c2.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test c2(|) may have failed." 1>&2
+       $echo The command "cmp c2.O $srcdir/c2.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s c2.E || rm -f c2.E
+$xx -c2 < $srcdir/c2.I > c2.O 2> c2.E
+code=$?
+if test $code != 0; then
+  $echo "Test c2(<) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp c2.O $srcdir/c2.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed c2(<)"; fi;;
+    1) $echo "Test c2(<) failed: files c2.O and $srcdir/c2.X differ" 1>&2
+       (diff -c c2.O $srcdir/c2.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test c2(<) may have failed." 1>&2
+       $echo The command "cmp c2.O $srcdir/c2.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s c2.E || rm -f c2.E
+$xx -c2 -- $srcdir/c2-minus.I > c2-minus.O 2> c2-minus.E
+code=$?
+if test $code != 0; then
+  $echo "Test c2-minus(F) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp c2-minus.O $srcdir/c2-minus.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed c2-minus(F)"; fi;;
+    1) $echo "Test c2-minus(F) failed: files c2-minus.O and $srcdir/c2-minus.X differ" 1>&2
+       (diff -c c2-minus.O $srcdir/c2-minus.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test c2-minus(F) may have failed." 1>&2
+       $echo The command "cmp c2-minus.O $srcdir/c2-minus.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s c2-minus.E || rm -f c2-minus.E
+cat $srcdir/c2-minus.I | $xx -c2 -- > c2-minus.O 2> c2-minus.E
+code=$?
+if test $code != 0; then
+  $echo "Test c2-minus(|) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp c2-minus.O $srcdir/c2-minus.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed c2-minus(|)"; fi;;
+    1) $echo "Test c2-minus(|) failed: files c2-minus.O and $srcdir/c2-minus.X differ" 1>&2
+       (diff -c c2-minus.O $srcdir/c2-minus.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test c2-minus(|) may have failed." 1>&2
+       $echo The command "cmp c2-minus.O $srcdir/c2-minus.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s c2-minus.E || rm -f c2-minus.E
+$xx -c2 -- < $srcdir/c2-minus.I > c2-minus.O 2> c2-minus.E
+code=$?
+if test $code != 0; then
+  $echo "Test c2-minus(<) failed: $xx return code $code differs from expected value 0" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp c2-minus.O $srcdir/c2-minus.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed c2-minus(<)"; fi;;
+    1) $echo "Test c2-minus(<) failed: files c2-minus.O and $srcdir/c2-minus.X differ" 1>&2
+       (diff -c c2-minus.O $srcdir/c2-minus.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test c2-minus(<) may have failed." 1>&2
+       $echo The command "cmp c2-minus.O $srcdir/c2-minus.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s c2-minus.E || rm -f c2-minus.E
 $xx -n 10 $srcdir/n-1.I > n-1.O 2> n-1.E
 code=$?
 if test $code != 0; then
@@ -1855,7 +2071,7 @@ else
 fi
 test -s f-1.E || rm -f f-1.E
 if test $errors = 0; then
-  $echo Passed all 102 tests. 1>&2
+  $echo Passed all 114 tests. 1>&2
 else
   $echo Failed $errors tests. 1>&2
 fi

@@ -264,9 +264,18 @@ make_dir_parents (char const *arg,
 	 Create the final component of the file name.  */
       if (retval)
 	{
-	  if (mkdir (basename_dir, mode) != 0)
+	  bool dir_known_to_exist = (mkdir (basename_dir, mode) == 0);
+	  int mkdir_errno = errno;
+	  struct stat sbuf;
+
+	  if ( ! dir_known_to_exist)
+	    dir_known_to_exist = (stat (basename_dir, &sbuf) == 0
+				  && S_ISDIR (sbuf.st_mode));
+
+	  if ( ! dir_known_to_exist)
 	    {
-	      error (0, errno, _("cannot create directory %s"), quote (dir));
+	      error (0, mkdir_errno,
+		     _("cannot create directory %s"), quote (dir));
 	      retval = false;
 	    }
 	  else

@@ -1,3 +1,87 @@
+2005-11-06  Jim Meyering  <jim@meyering.net>
+
+	* Version 5.93.
+
+	Merge this change from the trunk.
+	* src/dircolors.c (ls_codes): Add missing comma.
+	Anonymous report and patch from
+	http://savannah.gnu.org/bugs/?func=detailitem&item_id=14849
+	* src/dircolors.c: Add compile-time assertion that the slack_codes
+	and ls_codes arrays have the same number of elements.  This would
+	have prevented the above-fixed bug.
+
+2005-11-05  Jim Meyering  <jim@meyering.net>
+
+	* configure.ac: Remove -cvs suffix from version string.
+	* NEWS: Add tomorrow's date.
+
+2005-11-04  Jim Meyering  <jim@meyering.net>
+
+	* src/du.c (process_file): Don't overflow for files of size >= 2^31
+	on systems with stat.st_blocks of a signed 32-bit type.
+	This bug causes trouble on some AIX 5.1 systems.
+	Report and trivial patch from Paul Townsend:
+	<http://lists.gnu.org/archive/html/bug-coreutils/2005-11/msg00033.html>
+	* NEWS: Mention this.
+
+2005-11-02  Jim Meyering  <jim@meyering.net>
+
+	* src/remove.c (remove_entry): Emit a better diagnostic when rm
+	(without -r) fails to remove a directory on a non-Linux system.
+	This change affects only newer Solaris systems (with priv_*
+	functions like priv_allocset).  Reported by Keith Thompson.
+
+2005-11-01  Paul Eggert  <eggert@cs.ucla.edu>
+
+	* NEWS: "tail -c 2 FILE" and "touch 0101000000" now operate as
+	POSIX 1002.1-2001 requires.
+	* src/tail.c (parse_obsolete_option): Implement this.
+	Problem reported by Vincent Lefevre.
+	* src/touch.c (main): Pass PDS_PRE_2000 to posixtime.
+	* tests/tail/Test.pm (c-2, c-2-minus, c2, c2-minus): New tests.
+	(test_vector): Add special cases for _POSIX2_VERSION, and
+	regularize the old ones a bit.
+	* tests/touch/obsolescent: Add y2000 test.
+
+2005-10-31  Paul Eggert  <eggert@cs.ucla.edu>
+
+	* src/dd.c (skip): Fix off-by-one error reported by
+	Theodoros V. Kalamatianos.
+
+2005-10-30  Paul Eggert  <eggert@cs.ucla.edu>
+
+	* tests/mkdir/p-3: Require that the test be run as non-root.
+	Problem and trivial fix reported by Theodoros V. Kalamatianos.
+
+2005-10-28  Paul Eggert  <eggert@cs.ucla.edu>
+
+	* src/ln.c (FILE_BASENAME_CONCAT): Omit unnecessary slashes in the
+	boundary between DEST and SOURCE in the result.
+
+2005-10-26  Dmitry V. Levin  <ldv@altlinux.org>
+
+	* src/md5sum.c (main) [!O_BINARY]: Changed default read mode
+	back to text, to sync with documentation and for backwards
+	compatibility.
+
+2005-10-24  Jim Meyering  <jim@meyering.net>
+
+	* src/tac.c (tac_file): When determining whether a file is seekable,
+	also test whether it is a tty.  Using only the lseek-based test would
+	give a false positive on Solaris.  Reported by Peter Fales.
+
+2005-10-24  Dmitry V. Levin  <ldv@altlinux.org>
+
+	* tests/install/d-slashdot: New test, for "install -d" failure.
+	* tests/install/Makefile.am (TESTS): Add d-slashdot.
+	* tests/mkdir/p-slashdot: New test, for "mkdir -p" failure.
+	* tests/mkdir/Makefile.am (TESTS): Add p-slashdot.
+
+2005-10-24  Jim Meyering  <jim@meyering.net>
+
+	* configure.ac: Use 5.93-cvs as the version string.
+	* NEWS: Adjust accordingly.
+
 2005-10-22  Jim Meyering  <jim@meyering.net>
 
 	* Version 5.92.

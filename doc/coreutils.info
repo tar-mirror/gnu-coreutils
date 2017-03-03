@@ -49,7 +49,7 @@ START-INFO-DIR-ENTRY
 * ln: (coreutils)ln invocation.                 Make links between files.
 * logname: (coreutils)logname invocation.       Print current login name.
 * ls: (coreutils)ls invocation.                 List directory contents.
-* md5sum: (coreutils)md5sum invocation.         Print or check message-digests.
+* md5sum: (coreutils)md5sum invocation.         Print or check MD5 digests.
 * mkdir: (coreutils)mkdir invocation.           Create directories.
 * mkfifo: (coreutils)mkfifo invocation.         Create FIFOs (named pipes).
 * mknod: (coreutils)mknod invocation.           Create special files.
@@ -69,6 +69,8 @@ START-INFO-DIR-ENTRY
 * rm: (coreutils)rm invocation.                 Remove files.
 * rmdir: (coreutils)rmdir invocation.           Remove empty directories.
 * seq: (coreutils)seq invocation.               Print numeric sequences
+* sha1sum: (coreutils)sha1sum invocation.       Print or check SHA-1 digests.
+* sha2: (coreutils)sha2 utilities.              Print or check SHA-2 digests.
 * shred: (coreutils)shred invocation.           Remove files more securely.
 * sleep: (coreutils)sleep invocation.           Delay for a specified time.
 * sort: (coreutils)sort invocation.             Sort text files.
@@ -99,7 +101,7 @@ START-INFO-DIR-ENTRY
 * yes: (coreutils)yes invocation.               Print a string indefinitely.
 END-INFO-DIR-ENTRY
 
-   This manual documents version 5.92 of the GNU core utilities,
+   This manual documents version 5.93 of the GNU core utilities,
 including the standard programs for text and file manipulation.
 
    Copyright (C) 1994, 1995, 1996, 2000, 2001, 2002, 2003, 2004, 2005
@@ -118,7 +120,7 @@ File: coreutils.info,  Node: Top,  Next: Introduction,  Up: (dir)
 GNU Coreutils
 *************
 
-This manual documents version 5.92 of the GNU core utilities, including
+This manual documents version 5.93 of the GNU core utilities, including
 the standard programs for text and file manipulation.
 
    Copyright (C) 1994, 1995, 1996, 2000, 2001, 2002, 2003, 2004, 2005
@@ -138,7 +140,7 @@ Free Software Foundation, Inc.
 * Output of entire files::             cat tac nl od
 * Formatting file contents::           fmt pr fold
 * Output of parts of files::           head tail split csplit
-* Summarizing files::                  wc sum cksum md5sum
+* Summarizing files::                  wc sum cksum md5sum sha1sum sha2
 * Operating on sorted files::          sort uniq comm ptx tsort
 * Operating on fields within a line::  cut paste join
 * Operating on characters::            tr expand unexpand
@@ -202,7 +204,9 @@ Summarizing files
 * wc invocation::               Print newline, word, and byte counts.
 * sum invocation::              Print checksum and block counts.
 * cksum invocation::            Print CRC checksum and byte counts.
-* md5sum invocation::           Print or check message-digests.
+* md5sum invocation::           Print or check MD5 digests.
+* sha1sum invocation::          Print or check SHA-1 digests.
+* sha2 utilities::              Print or check SHA-2 digests.
 
 Operating on sorted files
 
@@ -2033,12 +2037,12 @@ options::.
      Always print file name headers.
 
 
-   For compatibility `tail' also supports an obsolete option syntax
-`-COUNT[bcl][f]', which is recognized only if it is specified first and
-does not conflict with the usage described above.  COUNT is an optional
-decimal number optionally followed by a size letter (`b', `c', `l') to
-mean count by 512-byte blocks, bytes, or lines, optionally followed by
-`f' which has the same meaning as `-f'.  New scripts should use `-c
+   For compatibility `tail' also supports an obsolete usage `tail
+-COUNT[bcl][f] [FILE]', which is recognized only if it does not
+conflict with the usage described above.  COUNT is an optional decimal
+number optionally followed by a size letter (`b', `c', `l') to mean
+count by 512-byte blocks, bytes, or lines, optionally followed by `f'
+which has the same meaning as `-f'.  New scripts should use `-c
 COUNT[b]', `-n COUNT', and/or `-f' instead.
 
    On older systems, the leading `-' can be replaced by `+' in the
@@ -2236,7 +2240,9 @@ of files.
 * wc invocation::               Print newline, word, and byte counts.
 * sum invocation::              Print checksum and block counts.
 * cksum invocation::            Print CRC checksum and byte counts.
-* md5sum invocation::           Print or check message-digests.
+* md5sum invocation::           Print or check MD5 digests.
+* sha1sum invocation::          Print or check SHA-1 digests.
+* sha2 utilities::              Print or check SHA-2 digests.
 
 
 File: coreutils.info,  Node: wc invocation,  Next: sum invocation,  Up: Summarizing files
@@ -2373,16 +2379,28 @@ options::.
 indicates failure.
 
 
-File: coreutils.info,  Node: md5sum invocation,  Prev: cksum invocation,  Up: Summarizing files
+File: coreutils.info,  Node: md5sum invocation,  Next: sha1sum invocation,  Prev: cksum invocation,  Up: Summarizing files
 
-6.4 `md5sum': Print or check message-digests
-============================================
+6.4 `md5sum': Print or check MD5 digests
+========================================
 
 `md5sum' computes a 128-bit checksum (or "fingerprint" or
-"message-digest") for each specified FILE.  If a FILE is specified as
-`-' or if no files are given `md5sum' computes the checksum for the
-standard input.  `md5sum' can also determine whether a file and
-checksum are consistent.  Synopsis:
+"message-digest") for each specified FILE.
+
+   Note: The MD5 digest is more reliable than a simple CRC (provided by
+the `cksum' command) for detecting accidental file corruption, as the
+chances of accidentally having two files with indentical MD5 are
+vanishingly small.  However, it should not be considered truly secure
+against malicious tampering: although finding a file with a given MD5
+fingerprint, or modifying a file so as to retain its MD5 are considered
+infeasible at the moment, it is known how to produce different files
+with identical MD5 (a "collision"), something which can be a security
+issue in certain contexts.  For more secure hashes, consider using
+SHA-1 or SHA-2.  *Note sha1sum invocation::, and *Note sha2 utilities::.
+
+   If a FILE is specified as `-' or if no files are given `md5sum'
+computes the checksum for the standard input.  `md5sum' can also
+determine whether a file and checksum are consistent.  Synopsis:
 
      md5sum [OPTION]... [FILE]...
 
@@ -2452,6 +2470,38 @@ options::.
 
    An exit status of zero indicates success, and a nonzero value
 indicates failure.
+
+
+File: coreutils.info,  Node: sha1sum invocation,  Next: sha2 utilities,  Prev: md5sum invocation,  Up: Summarizing files
+
+6.5 `sha1sum': Print or check SHA-1 digests
+===========================================
+
+`sha1sum' computes a 160-bit checksum for each specified FILE.  The
+usage and options of this command are precisely the same as for
+`md5sum'.  *Note md5sum invocation::.
+
+   Note: The SHA-1 digest is more secure than MD5, and no collisions of
+it are known (different files having the same fingerprint).  However,
+it is known that they can be produced with considerable, but not
+unreasonable, resources.  For this reason, it is generally considered
+that SHA-1 should be gradually phased out in favor of the more secure
+SHA-2 hash algorithms.  *Note sha2 utilities::.
+
+
+File: coreutils.info,  Node: sha2 utilities,  Prev: sha1sum invocation,  Up: Summarizing files
+
+6.6 sha2 utilities: Print or check SHA-2 digests
+================================================
+
+The commands `sha224sum', `sha256sum', `sha384sum' and `sha512sum'
+compute checksums of various lengths (respectively 224, 256, 384 and
+512 bits), collectively known as the SHA-2 hashes.  The usage and
+options of these commands are precisely the same as for `md5sum'.
+*Note md5sum invocation::.
+
+   Note: The SHA384 and SHA512 digests are considerably slower to
+compute, especially on 32-bit computers, than SHA224 or SHA256.
 
 
 File: coreutils.info,  Node: Operating on sorted files,  Next: Operating on fields within a line,  Prev: Summarizing files,  Up: Top
@@ -7006,13 +7056,14 @@ options::.
 If no timestamp is given with any of the `-d', `-r', or `-t' options,
 and if there are two or more FILEs and the first FILE is of the form
 `MMDDHHMM[YY]' and this would be a valid argument to the `-t' option
-(if the YY, if any, were moved to the front), that argument is
-interpreted as the time for the other files instead of as a file name.
-This obsolete behavior can be enabled or disabled with the
-`_POSIX2_VERSION' environment variable (*note Standards conformance::),
-but portable scripts should avoid commands whose behavior depends on
-this variable.  For example, use `touch ./12312359 main.c' or `touch -t
-12312359 main.c' rather than the ambiguous `touch 12312359 main.c'.
+(if the YY, if any, were moved to the front), and if the represented
+year is in the range 1969-1999, that argument is interpreted as the time
+for the other files instead of as a file name.  This obsolete behavior
+can be enabled or disabled with the `_POSIX2_VERSION' environment
+variable (*note Standards conformance::), but portable scripts should
+avoid commands whose behavior depends on this variable.  For example,
+use `touch ./12312359 main.c' or `touch -t 12312359 main.c' rather than
+the ambiguous `touch 12312359 main.c'.
 
    An exit status of zero indicates success, and a nonzero value
 indicates failure.
@@ -12537,7 +12588,7 @@ Index
 * --backup <4>:                          cp invocation.       (line  61)
 * --backup:                              Backup options.      (line  13)
 * --before:                              tac invocation.      (line  21)
-* --binary:                              md5sum invocation.   (line  23)
+* --binary:                              md5sum invocation.   (line  35)
 * --block-size <1>:                      du invocation.       (line  45)
 * --block-size <2>:                      df invocation.       (line  40)
 * --block-size:                          Block size.          (line 138)
@@ -12867,7 +12918,7 @@ Index
 * --squeeze-blank:                       cat invocation.      (line  35)
 * --stable:                              sort invocation.     (line 185)
 * --starting-line-number:                nl invocation.       (line 117)
-* --status:                              md5sum invocation.   (line  54)
+* --status:                              md5sum invocation.   (line  66)
 * --strings:                             od invocation.       (line  68)
 * --strip:                               install invocation.  (line  84)
 * --strip-trailing-slashes <1>:          mv invocation.       (line  89)
@@ -12896,7 +12947,7 @@ Index
 * --target-directory:                    Target directory.    (line  31)
 * --temporary-directory:                 sort invocation.     (line 224)
 * --terse:                               stat invocation.     (line  28)
-* --text:                                md5sum invocation.   (line  64)
+* --text:                                md5sum invocation.   (line  76)
 * --time <1>:                            du invocation.       (line 138)
 * --time <2>:                            touch invocation.    (line  50)
 * --time:                                Sorting the output.  (line  13)
@@ -12931,7 +12982,7 @@ Index
 * --verbose <14>:                        tail invocation.     (line 138)
 * --verbose:                             head invocation.     (line  40)
 * --version:                             Common options.      (line  33)
-* --warn:                                md5sum invocation.   (line  73)
+* --warn:                                md5sum invocation.   (line  85)
 * --width <1>:                           General output formatting.
                                                               (line  97)
 * --width <2>:                           fold invocation.     (line  35)
@@ -12988,7 +13039,7 @@ Index
                                                               (line  23)
 * -b <1>:                                cut invocation.      (line  26)
 * -b <2>:                                sort invocation.     (line  70)
-* -b <3>:                                md5sum invocation.   (line  23)
+* -b <3>:                                md5sum invocation.   (line  35)
 * -b <4>:                                csplit invocation.   (line  66)
 * -b <5>:                                split invocation.    (line  37)
 * -b <6>:                                fold invocation.     (line  23)
@@ -13338,7 +13389,7 @@ Index
 * -t:                                    expand invocation.   (line  22)
 * -T:                                    sort invocation.     (line 224)
 * -t <1>:                                sort invocation.     (line 207)
-* -t:                                    md5sum invocation.   (line  64)
+* -t:                                    md5sum invocation.   (line  76)
 * -T:                                    pr invocation.       (line 246)
 * -t <1>:                                pr invocation.       (line 235)
 * -t <2>:                                fmt invocation.      (line  40)
@@ -13386,7 +13437,7 @@ Index
 * -w <3>:                                General output formatting.
                                                               (line  97)
 * -w <4>:                                uniq invocation.     (line 103)
-* -w <5>:                                md5sum invocation.   (line  73)
+* -w <5>:                                md5sum invocation.   (line  85)
 * -w <6>:                                wc invocation.       (line  49)
 * -w:                                    fold invocation.     (line  35)
 * -W:                                    pr invocation.       (line 264)
@@ -13417,7 +13468,12 @@ Index
 * /etc/shells:                           su invocation.       (line  64)
 * 128-bit checksum:                      md5sum invocation.   (line   6)
 * 16-bit checksum:                       sum invocation.      (line   6)
+* 160-bit checksum:                      sha1sum invocation.  (line   6)
+* 224-bit checksum:                      sha2 utilities.      (line   6)
+* 256-bit checksum:                      sha2 utilities.      (line   6)
+* 384-bit checksum:                      sha2 utilities.      (line   6)
 * 4.2 file system type:                  df invocation.       (line 121)
+* 512-bit checksum:                      sha2 utilities.      (line   6)
 * <:                                     Relations for expr.  (line  22)
 * <=:                                    Relations for expr.  (line  22)
 * = <1>:                                 Relations for expr.  (line  22)
@@ -13515,7 +13571,7 @@ Index
 * Berry, K.:                             Introduction.        (line  19)
 * binary:                                dd invocation.       (line 167)
 * binary I/O:                            dd invocation.       (line 167)
-* binary input files:                    md5sum invocation.   (line  23)
+* binary input files:                    md5sum invocation.   (line  35)
 * blank:                                 Character sets.      (line  93)
 * blank lines, numbering:                nl invocation.       (line  87)
 * blanks, ignoring leading:              sort invocation.     (line  70)
@@ -13585,6 +13641,11 @@ Index
 * checking for sortedness:               sort invocation.     (line  17)
 * checksum, 128-bit:                     md5sum invocation.   (line   6)
 * checksum, 16-bit:                      sum invocation.      (line   6)
+* checksum, 160-bit:                     sha1sum invocation.  (line   6)
+* checksum, 224-bit:                     sha2 utilities.      (line   6)
+* checksum, 256-bit:                     sha2 utilities.      (line   6)
+* checksum, 384-bit:                     sha2 utilities.      (line   6)
+* checksum, 512-bit:                     sha2 utilities.      (line   6)
 * chgrp:                                 chgrp invocation.    (line   6)
 * chmod:                                 chmod invocation.    (line   6)
 * chown:                                 chown invocation.    (line   6)
@@ -13904,6 +13965,11 @@ Index
 * files beginning with -, removing:      rm invocation.       (line  65)
 * files, copying:                        cp invocation.       (line   6)
 * fingerprint, 128-bit:                  md5sum invocation.   (line   6)
+* fingerprint, 160-bit:                  sha1sum invocation.  (line   6)
+* fingerprint, 224-bit:                  sha2 utilities.      (line   6)
+* fingerprint, 256-bit:                  sha2 utilities.      (line   6)
+* fingerprint, 384-bit:                  sha2 utilities.      (line   6)
+* fingerprint, 512-bit:                  sha2 utilities.      (line   6)
 * first in date strings:                 General date syntax. (line  26)
 * first part of files, outputting:       head invocation.     (line   6)
 * flow control, hardware:                Control.             (line  36)
@@ -14135,6 +14201,7 @@ Index
                                                               (line   6)
 * match:                                 String expressions.  (line  36)
 * matching patterns:                     String expressions.  (line  11)
+* MD5:                                   md5sum invocation.   (line   6)
 * md5sum:                                md5sum invocation.   (line   6)
 * mebibyte, definition of:               Block size.          (line  92)
 * mebibytes for file sizes:              du invocation.       (line 101)
@@ -14144,6 +14211,11 @@ Index
 * merging sorted files:                  sort invocation.     (line  23)
 * message status:                        who invocation.      (line  86)
 * message-digest, 128-bit:               md5sum invocation.   (line   6)
+* message-digest, 160-bit:               sha1sum invocation.  (line   6)
+* message-digest, 224-bit:               sha2 utilities.      (line   6)
+* message-digest, 256-bit:               sha2 utilities.      (line   6)
+* message-digest, 384-bit:               sha2 utilities.      (line   6)
+* message-digest, 512-bit:               sha2 utilities.      (line   6)
 * Meyering, J.:                          Introduction.        (line  19)
 * Meyering, Jim:                         Authors of get_date. (line   6)
 * midnight in date strings:              Time of day items.   (line  21)
@@ -14506,6 +14578,13 @@ Index
                                                               (line   6)
 * sh syntax for color setup:             dircolors invocation.
                                                               (line  27)
+* SHA-1:                                 sha1sum invocation.  (line   6)
+* SHA-2:                                 sha2 utilities.      (line   6)
+* sha1sum:                               sha1sum invocation.  (line   6)
+* sha224sum:                             sha2 utilities.      (line   6)
+* sha256sum:                             sha2 utilities.      (line   6)
+* sha384sum:                             sha2 utilities.      (line   6)
+* sha512sum:                             sha2 utilities.      (line   6)
 * SHELL:                                 su invocation.       (line  18)
 * SHELL environment variable, and color: dircolors invocation.
                                                               (line  16)
@@ -14672,7 +14751,7 @@ Index
 * text:                                  dd invocation.       (line 171)
 * text I/O:                              dd invocation.       (line 171)
 * text image, saving in swap space:      Mode Structure.      (line  47)
-* text input files:                      md5sum invocation.   (line  64)
+* text input files:                      md5sum invocation.   (line  76)
 * text utilities:                        Top.                 (line  19)
 * text, displaying:                      echo invocation.     (line   6)
 * text, reformatting:                    fmt invocation.      (line   6)
@@ -14766,7 +14845,7 @@ Index
 * vdir:                                  vdir invocation.     (line   6)
 * verbose ls format:                     What information is listed.
                                                               (line 130)
-* verifying MD5 checksums:               md5sum invocation.   (line  54)
+* verifying MD5 checksums:               md5sum invocation.   (line  66)
 * version number, finding:               Common options.      (line  33)
 * version of kernel:                     uname invocation.    (line  76)
 * version, sorting option for ls:        Sorting the output.  (line  56)
@@ -14816,203 +14895,205 @@ Index
 
 
 Tag Table:
-Node: Top7416
-Node: Introduction20024
-Node: Common options21583
-Node: Exit status24229
-Node: Backup options24959
-Node: Block size26883
-Node: Target directory31787
-Node: Trailing slashes35268
-Node: Traversing symlinks36289
-Node: Treating / specially37360
-Ref: Treating / specially-Footnote-138626
-Node: Special built-in utilities38695
-Node: Standards conformance39828
-Node: Output of entire files41342
-Node: cat invocation41875
-Node: tac invocation43603
-Node: nl invocation44865
-Node: od invocation48744
-Node: Formatting file contents54962
-Node: fmt invocation55413
-Node: pr invocation58226
-Node: fold invocation71014
-Node: Output of parts of files72474
-Node: head invocation72982
-Node: tail invocation74511
-Node: split invocation81717
-Node: csplit invocation83803
-Node: Summarizing files87915
-Node: wc invocation88443
-Node: sum invocation90445
-Node: cksum invocation91850
-Node: md5sum invocation92990
-Node: Operating on sorted files96731
-Node: sort invocation97335
-Ref: sort invocation-Footnote-1114592
-Node: uniq invocation115144
-Node: comm invocation119224
-Node: tsort invocation120552
-Node: tsort background123586
-Node: ptx invocation125349
-Node: General options in ptx128153
-Node: Charset selection in ptx128865
-Node: Input processing in ptx129767
-Node: Output formatting in ptx135461
-Node: Compatibility in ptx142027
-Node: Operating on fields within a line145256
-Node: cut invocation145660
-Node: paste invocation148979
-Node: join invocation150307
-Node: Operating on characters154096
-Node: tr invocation154532
-Node: Character sets156250
-Node: Translating160478
-Node: Squeezing162569
-Node: expand invocation165636
-Node: unexpand invocation167118
-Node: Directory listing168937
-Node: ls invocation169423
-Ref: ls invocation-Footnote-1171237
-Node: Which files are listed171459
-Node: What information is listed174824
-Node: Sorting the output182662
-Node: More details about version sort184982
-Node: General output formatting186481
-Node: Formatting file timestamps190057
-Node: Formatting the file names195410
-Node: dir invocation198325
-Node: vdir invocation198736
-Node: dircolors invocation199114
-Node: Basic operations200594
-Node: cp invocation201214
-Node: dd invocation212727
-Node: install invocation220102
-Node: mv invocation223989
-Node: rm invocation228279
-Node: shred invocation231130
-Node: Special file types238473
-Node: link invocation239969
-Node: ln invocation240975
-Node: mkdir invocation246005
-Node: mkfifo invocation247553
-Node: mknod invocation248505
-Node: readlink invocation250216
-Node: rmdir invocation251959
-Node: unlink invocation253233
-Node: Changing file attributes254192
-Node: chown invocation255006
-Node: chgrp invocation261014
-Node: chmod invocation263925
-Node: touch invocation266187
-Node: Disk usage270733
-Node: df invocation271425
-Node: du invocation276722
-Node: stat invocation284712
-Node: sync invocation287896
-Node: Printing text288823
-Node: echo invocation289197
-Node: printf invocation291374
-Node: yes invocation296081
-Node: Conditions296693
-Node: false invocation297284
-Node: true invocation298319
-Node: test invocation299598
-Node: File type tests301558
-Node: Access permission tests302440
-Node: File characteristic tests303325
-Node: String tests304090
-Node: Numeric tests304755
-Node: Connectives for test305552
-Node: expr invocation305905
-Node: String expressions308143
-Node: Numeric expressions310726
-Node: Relations for expr311364
-Node: Examples of expr312564
-Node: Redirection313292
-Node: tee invocation313737
-Node: File name manipulation314802
-Node: basename invocation315250
-Node: dirname invocation316046
-Node: pathchk invocation316791
-Node: Working context318455
-Node: pwd invocation319099
-Node: stty invocation319773
-Node: Control322533
-Node: Input323293
-Node: Output324769
-Node: Local326025
-Node: Combination327607
-Node: Characters329769
-Node: Special331323
-Node: printenv invocation332689
-Node: tty invocation333452
-Node: User information334158
-Node: id invocation334793
-Node: logname invocation336009
-Node: whoami invocation336636
-Node: groups invocation337123
-Node: users invocation337847
-Node: who invocation338794
-Node: System context341563
-Node: date invocation342053
-Node: Time conversion specifiers343712
-Node: Date conversion specifiers346112
-Node: Literal conversion specifiers348996
-Node: Padding and other flags349354
-Node: Setting the time351550
-Node: Options for date352556
-Node: Examples of date355861
-Ref: %s-examples357304
-Node: uname invocation359291
-Node: hostname invocation361864
-Node: hostid invocation362477
-Node: Modified command invocation363164
-Node: chroot invocation363790
-Node: env invocation365909
-Node: nice invocation367988
-Node: nohup invocation371484
-Node: su invocation373321
-Node: Process control377792
-Node: kill invocation378015
-Node: Delaying382381
-Node: sleep invocation382578
-Node: Numeric operations383389
-Node: factor invocation383721
-Node: seq invocation385059
-Node: File permissions388880
-Node: Mode Structure389474
-Node: Symbolic Modes392622
-Node: Setting Permissions393726
-Node: Copying Permissions396286
-Node: Changing Special Permissions397107
-Node: Conditional Executability398658
-Node: Multiple Changes399197
-Node: Umask and Protection400861
-Node: Numeric Modes401966
-Node: Date input formats403665
-Node: General date syntax406018
-Node: Calendar date items408757
-Node: Time of day items410762
-Node: Time zone items412822
-Node: Day of week items414064
-Node: Relative items in date strings415061
-Node: Pure numbers in date strings417871
-Node: Seconds since the Epoch418860
-Node: Specifying time zone rules420493
-Node: Authors of get_date422865
-Node: Opening the software toolbox423625
-Node: Toolbox introduction424297
-Node: I/O redirection427020
-Node: The who command429854
-Node: The cut command430751
-Node: The sort command431814
-Node: The uniq command432518
-Node: Putting the tools together433208
-Ref: Putting the tools together-Footnote-1445165
-Node: GNU Free Documentation License445239
-Node: How to use this License for your documents463753
-Node: Index465160
+Node: Top7568
+Node: Introduction20309
+Node: Common options21868
+Node: Exit status24514
+Node: Backup options25244
+Node: Block size27168
+Node: Target directory32072
+Node: Trailing slashes35553
+Node: Traversing symlinks36574
+Node: Treating / specially37645
+Ref: Treating / specially-Footnote-138911
+Node: Special built-in utilities38980
+Node: Standards conformance40113
+Node: Output of entire files41627
+Node: cat invocation42160
+Node: tac invocation43888
+Node: nl invocation45150
+Node: od invocation49029
+Node: Formatting file contents55247
+Node: fmt invocation55698
+Node: pr invocation58511
+Node: fold invocation71299
+Node: Output of parts of files72759
+Node: head invocation73267
+Node: tail invocation74796
+Node: split invocation81983
+Node: csplit invocation84069
+Node: Summarizing files88181
+Node: wc invocation88829
+Node: sum invocation90831
+Node: cksum invocation92236
+Node: md5sum invocation93376
+Node: sha1sum invocation97838
+Node: sha2 utilities98618
+Node: Operating on sorted files99242
+Node: sort invocation99846
+Ref: sort invocation-Footnote-1117103
+Node: uniq invocation117655
+Node: comm invocation121735
+Node: tsort invocation123063
+Node: tsort background126097
+Node: ptx invocation127860
+Node: General options in ptx130664
+Node: Charset selection in ptx131376
+Node: Input processing in ptx132278
+Node: Output formatting in ptx137972
+Node: Compatibility in ptx144538
+Node: Operating on fields within a line147767
+Node: cut invocation148171
+Node: paste invocation151490
+Node: join invocation152818
+Node: Operating on characters156607
+Node: tr invocation157043
+Node: Character sets158761
+Node: Translating162989
+Node: Squeezing165080
+Node: expand invocation168147
+Node: unexpand invocation169629
+Node: Directory listing171448
+Node: ls invocation171934
+Ref: ls invocation-Footnote-1173748
+Node: Which files are listed173970
+Node: What information is listed177335
+Node: Sorting the output185173
+Node: More details about version sort187493
+Node: General output formatting188992
+Node: Formatting file timestamps192568
+Node: Formatting the file names197921
+Node: dir invocation200836
+Node: vdir invocation201247
+Node: dircolors invocation201625
+Node: Basic operations203105
+Node: cp invocation203725
+Node: dd invocation215238
+Node: install invocation222613
+Node: mv invocation226500
+Node: rm invocation230790
+Node: shred invocation233641
+Node: Special file types240984
+Node: link invocation242480
+Node: ln invocation243486
+Node: mkdir invocation248516
+Node: mkfifo invocation250064
+Node: mknod invocation251016
+Node: readlink invocation252727
+Node: rmdir invocation254470
+Node: unlink invocation255744
+Node: Changing file attributes256703
+Node: chown invocation257517
+Node: chgrp invocation263525
+Node: chmod invocation266436
+Node: touch invocation268698
+Node: Disk usage273300
+Node: df invocation273992
+Node: du invocation279289
+Node: stat invocation287279
+Node: sync invocation290463
+Node: Printing text291390
+Node: echo invocation291764
+Node: printf invocation293941
+Node: yes invocation298648
+Node: Conditions299260
+Node: false invocation299851
+Node: true invocation300886
+Node: test invocation302165
+Node: File type tests304125
+Node: Access permission tests305007
+Node: File characteristic tests305892
+Node: String tests306657
+Node: Numeric tests307322
+Node: Connectives for test308119
+Node: expr invocation308472
+Node: String expressions310710
+Node: Numeric expressions313293
+Node: Relations for expr313931
+Node: Examples of expr315131
+Node: Redirection315859
+Node: tee invocation316304
+Node: File name manipulation317369
+Node: basename invocation317817
+Node: dirname invocation318613
+Node: pathchk invocation319358
+Node: Working context321022
+Node: pwd invocation321666
+Node: stty invocation322340
+Node: Control325100
+Node: Input325860
+Node: Output327336
+Node: Local328592
+Node: Combination330174
+Node: Characters332336
+Node: Special333890
+Node: printenv invocation335256
+Node: tty invocation336019
+Node: User information336725
+Node: id invocation337360
+Node: logname invocation338576
+Node: whoami invocation339203
+Node: groups invocation339690
+Node: users invocation340414
+Node: who invocation341361
+Node: System context344130
+Node: date invocation344620
+Node: Time conversion specifiers346279
+Node: Date conversion specifiers348679
+Node: Literal conversion specifiers351563
+Node: Padding and other flags351921
+Node: Setting the time354117
+Node: Options for date355123
+Node: Examples of date358428
+Ref: %s-examples359871
+Node: uname invocation361858
+Node: hostname invocation364431
+Node: hostid invocation365044
+Node: Modified command invocation365731
+Node: chroot invocation366357
+Node: env invocation368476
+Node: nice invocation370555
+Node: nohup invocation374051
+Node: su invocation375888
+Node: Process control380359
+Node: kill invocation380582
+Node: Delaying384948
+Node: sleep invocation385145
+Node: Numeric operations385956
+Node: factor invocation386288
+Node: seq invocation387626
+Node: File permissions391447
+Node: Mode Structure392041
+Node: Symbolic Modes395189
+Node: Setting Permissions396293
+Node: Copying Permissions398853
+Node: Changing Special Permissions399674
+Node: Conditional Executability401225
+Node: Multiple Changes401764
+Node: Umask and Protection403428
+Node: Numeric Modes404533
+Node: Date input formats406232
+Node: General date syntax408585
+Node: Calendar date items411324
+Node: Time of day items413329
+Node: Time zone items415389
+Node: Day of week items416631
+Node: Relative items in date strings417628
+Node: Pure numbers in date strings420438
+Node: Seconds since the Epoch421427
+Node: Specifying time zone rules423060
+Node: Authors of get_date425432
+Node: Opening the software toolbox426192
+Node: Toolbox introduction426864
+Node: I/O redirection429587
+Node: The who command432421
+Node: The cut command433318
+Node: The sort command434381
+Node: The uniq command435085
+Node: Putting the tools together435775
+Ref: Putting the tools together-Footnote-1447732
+Node: GNU Free Documentation License447806
+Node: How to use this License for your documents466320
+Node: Index467727
 
 End Tag Table
