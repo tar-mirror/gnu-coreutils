@@ -1,5 +1,38 @@
 GNU coreutils NEWS                                    -*- outline -*-
 
+* Noteworthy changes in release 8.7 (2010-11-13) [stable]
+
+** Bug fixes
+
+  cp, install, mv, and touch no longer crash when setting file times
+  on Solaris 10 Update 9 [Solaris PatchID 144488 and newer expose a
+  latent bug introduced in coreutils 8.1, and possibly a second latent
+  bug going at least as far back as coreutils 5.97]
+
+  csplit no longer corrupts heap when writing more than 999 files,
+  nor does it leak memory for every chunk of input processed
+  [the bugs were present in the initial implementation]
+
+  tail -F once again notices changes in a currently unavailable
+  remote directory [bug introduced in coreutils-7.5]
+
+** Changes in behavior
+
+  cp --attributes-only now completely overrides --reflink.
+  Previously a reflink was needlessly attempted.
+
+  stat's %X, %Y, and %Z directives once again print only the integer
+  part of seconds since the epoch.  This reverts a change from
+  coreutils-8.6, that was deemed unnecessarily disruptive.  To obtain
+  a nanosecond-precision floating point time stamp for %X use %.X;
+  if you want (say) just 3 fractional digits, use %.3X.  Likewise
+  for %Y and %Z.
+
+  stat's new %W format directive would print floating point seconds.
+  However, with the above change to %X, %Y and %Z, we've made %W work
+  the same way as the others.
+
+
 * Noteworthy changes in release 8.6 (2010-10-15) [stable]
 
 ** Bug fixes

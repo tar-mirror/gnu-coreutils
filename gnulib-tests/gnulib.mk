@@ -583,7 +583,7 @@ EXTRA_DIST += test-freopen.c signature.h macros.h
 TESTS += test-frexp-nolibm
 check_PROGRAMS += test-frexp-nolibm
 test_frexp_nolibm_SOURCES = test-frexp.c
-EXTRA_DIST += test-frexp.c signature.h macros.h
+EXTRA_DIST += test-frexp.c minus-zero.h nan.h signature.h macros.h
 
 ## end   gnulib module frexp-nolibm-tests
 
@@ -592,7 +592,7 @@ EXTRA_DIST += test-frexp.c signature.h macros.h
 TESTS += test-frexpl-nolibm
 check_PROGRAMS += test-frexpl-nolibm
 test_frexpl_nolibm_SOURCES = test-frexpl.c
-EXTRA_DIST += test-frexpl.c signature.h macros.h
+EXTRA_DIST += test-frexpl.c minus-zero.h nan.h signature.h macros.h
 
 ## end   gnulib module frexpl-nolibm-tests
 
@@ -852,7 +852,7 @@ EXTRA_DIST += test-isblank.c signature.h macros.h
 TESTS += test-isnand-nolibm
 check_PROGRAMS += test-isnand-nolibm
 
-EXTRA_DIST += test-isnand-nolibm.c test-isnand.h nan.h macros.h
+EXTRA_DIST += test-isnand-nolibm.c test-isnand.h minus-zero.h nan.h macros.h
 
 ## end   gnulib module isnand-nolibm-tests
 
@@ -861,7 +861,7 @@ EXTRA_DIST += test-isnand-nolibm.c test-isnand.h nan.h macros.h
 TESTS += test-isnanf-nolibm
 check_PROGRAMS += test-isnanf-nolibm
 
-EXTRA_DIST += test-isnanf-nolibm.c test-isnanf.h nan.h macros.h
+EXTRA_DIST += test-isnanf-nolibm.c test-isnanf.h minus-zero.h nan.h macros.h
 
 ## end   gnulib module isnanf-nolibm-tests
 
@@ -870,7 +870,7 @@ EXTRA_DIST += test-isnanf-nolibm.c test-isnanf.h nan.h macros.h
 TESTS += test-isnanl-nolibm
 check_PROGRAMS += test-isnanl-nolibm
 
-EXTRA_DIST += test-isnanl-nolibm.c test-isnanl.h nan.h macros.h
+EXTRA_DIST += test-isnanl-nolibm.c test-isnanl.h minus-zero.h nan.h macros.h
 
 ## end   gnulib module isnanl-nolibm-tests
 
@@ -1355,7 +1355,7 @@ EXTRA_DIST += test-signal.c
 TESTS += test-signbit
 check_PROGRAMS += test-signbit
 
-EXTRA_DIST += test-signbit.c macros.h
+EXTRA_DIST += test-signbit.c minus-zero.h macros.h
 
 ## end   gnulib module signbit-tests
 
@@ -1506,7 +1506,7 @@ EXTRA_DIST += test-strsignal.c signature.h macros.h
 
 TESTS += test-strtod
 check_PROGRAMS += test-strtod
-EXTRA_DIST += test-strtod.c signature.h macros.h
+EXTRA_DIST += test-strtod.c signature.h minus-zero.h macros.h
 
 ## end   gnulib module strtod-tests
 
@@ -1786,7 +1786,7 @@ EXTRA_DIST += test-vasnprintf.c macros.h
 TESTS += test-vasprintf-posix
 check_PROGRAMS += test-vasprintf-posix
 
-EXTRA_DIST += test-vasprintf-posix.c nan.h macros.h
+EXTRA_DIST += test-vasprintf-posix.c minus-zero.h nan.h macros.h
 
 ## end   gnulib module vasprintf-posix-tests
 

@@ -149,6 +149,16 @@ statfs (char const *filename, struct fs_info *buf)
 #define hextobin(c) ((c) >= 'a' && (c) <= 'f' ? (c) - 'a' + 10 : \
                      (c) >= 'A' && (c) <= 'F' ? (c) - 'A' + 10 : (c) - '0')
 
+static char const digits[] = "0123456789";
+
+/* Flags that are portable for use in printf, for at least one
+   conversion specifier; make_format removes unportable flags as
+   needed for particular specifiers.  The glibc 2.2 extension "I" is
+   listed here; it is removed by make_format because it has undefined
+   behavior elsewhere and because it is incompatible with
+   out_epoch_sec.  */
+static char const printf_flags[] = "'-+ #0I";
+
 #define PROGRAM_NAME "stat"
 
 #define AUTHORS proper_name ("Michael Meskes")
@@ -181,6 +191,10 @@ static bool interpret_backslash_escapes;
 /* The trailing delimiter string:
    "" for --printf=FMT, "\n" for --format=FMT (-c).  */
 static char const *trailing_delim = "";
+
+/* The representation of the decimal point in the current locale.  */
+static char const *decimal_point;
+static size_t decimal_point_len;
 
 /* Return the type of the specified file system.
    Some systems have statfvs.f_basetype[FSTYPSZ] (AIX, HP-UX, and Solaris).
@@ -462,55 +476,167 @@ human_time (struct timespec t)
   return str;
 }
 
-static char * ATTRIBUTE_WARN_UNUSED_RESULT
-epoch_time (struct timespec t)
+/* PFORMAT points to a '%' followed by a prefix of a format, all of
+   size PREFIX_LEN.  The flags allowed for this format are
+   ALLOWED_FLAGS; remove other printf flags from the prefix, then
+   append SUFFIX.  */
+static void
+make_format (char *pformat, size_t prefix_len, char const *allowed_flags,
+             char const *suffix)
 {
-  static char str[INT_STRLEN_BOUND (time_t) + sizeof ".NNNNNNNNN"];
-  /* Note that time_t can technically be a floating point value, such
-     that casting to [u]intmax_t could lose a fractional value or
-     suffer from overflow.  However, most porting targets have an
-     integral time_t; also, we know of no file systems that store
-     valid time values outside the bounds of intmax_t even if that
-     value were represented as a floating point.  Besides, the cost of
-     converting to struct tm just to use nstrftime (str, len, "%s.%N",
-     tm, 0, t.tv_nsec) is pointless, since nstrftime would have to
-     convert back to seconds as time_t.  */
-  if (TYPE_SIGNED (time_t))
-    sprintf (str, "%" PRIdMAX ".%09ld", (intmax_t) t.tv_sec, t.tv_nsec);
-  else
-    sprintf (str, "%" PRIuMAX ".%09ld", (uintmax_t) t.tv_sec, t.tv_nsec);
-  return str;
+  char *dst = pformat + 1;
+  char const *src;
+  char const *srclim = pformat + prefix_len;
+  for (src = dst; src < srclim && strchr (printf_flags, *src); src++)
+    if (strchr (allowed_flags, *src))
+      *dst++ = *src;
+  while (src < srclim)
+    *dst++ = *src++;
+  strcpy (dst, suffix);
 }
 
 static void
 out_string (char *pformat, size_t prefix_len, char const *arg)
 {
-  strcpy (pformat + prefix_len, "s");
+  make_format (pformat, prefix_len, "-", "s");
   printf (pformat, arg);
 }
-static void
+static int
 out_int (char *pformat, size_t prefix_len, intmax_t arg)
 {
-  strcpy (pformat + prefix_len, PRIdMAX);
-  printf (pformat, arg);
+  make_format (pformat, prefix_len, "'-+ 0", PRIdMAX);
+  return printf (pformat, arg);
 }
-static void
+static int
 out_uint (char *pformat, size_t prefix_len, uintmax_t arg)
 {
-  strcpy (pformat + prefix_len, PRIuMAX);
-  printf (pformat, arg);
+  make_format (pformat, prefix_len, "'-0", PRIuMAX);
+  return printf (pformat, arg);
 }
 static void
 out_uint_o (char *pformat, size_t prefix_len, uintmax_t arg)
 {
-  strcpy (pformat + prefix_len, PRIoMAX);
+  make_format (pformat, prefix_len, "-#0", PRIoMAX);
   printf (pformat, arg);
 }
 static void
 out_uint_x (char *pformat, size_t prefix_len, uintmax_t arg)
 {
-  strcpy (pformat + prefix_len, PRIxMAX);
+  make_format (pformat, prefix_len, "-#0", PRIxMAX);
   printf (pformat, arg);
+}
+static int
+out_minus_zero (char *pformat, size_t prefix_len)
+{
+  make_format (pformat, prefix_len, "'-+ 0", ".0f");
+  return printf (pformat, -0.25);
+}
+
+/* Output the number of seconds since the Epoch, using a format that
+   acts like printf's %f format.  */
+static void
+out_epoch_sec (char *pformat, size_t prefix_len, struct stat const *statbuf,
+               struct timespec arg)
+{
+  char *dot = memchr (pformat, '.', prefix_len);
+  size_t sec_prefix_len = prefix_len;
+  int width = 0;
+  int precision = 0;
+  bool frac_left_adjust = false;
+
+  if (dot)
+    {
+      sec_prefix_len = dot - pformat;
+      pformat[prefix_len] = '\0';
+
+      if (ISDIGIT (dot[1]))
+        {
+          long int lprec = strtol (dot + 1, NULL, 10);
+          precision = (lprec <= INT_MAX ? lprec : INT_MAX);
+        }
+      else
+        {
+          precision = 9;
+        }
+
+      if (precision && ISDIGIT (dot[-1]))
+        {
+          /* If a nontrivial width is given, subtract the width of the
+             decimal point and PRECISION digits that will be output
+             later.  */
+          char *p = dot;
+          *dot = '\0';
+
+          do
+            --p;
+          while (ISDIGIT (p[-1]));
+
+          long int lwidth = strtol (p, NULL, 10);
+          width = (lwidth <= INT_MAX ? lwidth : INT_MAX);
+          if (1 < width)
+            {
+              p += (*p == '0');
+              sec_prefix_len = p - pformat;
+              int w_d = (decimal_point_len < width
+                         ? width - decimal_point_len
+                         : 0);
+              if (1 < w_d)
+                {
+                  int w = w_d - precision;
+                  if (1 < w)
+                    {
+                      char *dst = pformat;
+                      for (char const *src = dst; src < p; src++)
+                        {
+                          if (*src == '-')
+                            frac_left_adjust = true;
+                          else
+                            *dst++ = *src;
+                        }
+                      sec_prefix_len =
+                        (dst - pformat
+                         + (frac_left_adjust ? 0 : sprintf (dst, "%d", w)));
+                    }
+                }
+            }
+        }
+    }
+
+  int divisor = 1;
+  for (int i = precision; i < 9; i++)
+    divisor *= 10;
+  int frac_sec = arg.tv_nsec / divisor;
+  int int_len;
+
+  if (TYPE_SIGNED (time_t))
+    {
+      bool minus_zero = false;
+      if (arg.tv_sec < 0 && arg.tv_nsec != 0)
+        {
+          int frac_sec_modulus = 1000000000 / divisor;
+          frac_sec = (frac_sec_modulus - frac_sec
+                      - (arg.tv_nsec % divisor != 0));
+          arg.tv_sec += (frac_sec != 0);
+          minus_zero = (arg.tv_sec == 0);
+        }
+      int_len = (minus_zero
+                 ? out_minus_zero (pformat, sec_prefix_len)
+                 : out_int (pformat, sec_prefix_len, arg.tv_sec));
+    }
+  else
+    int_len = out_uint (pformat, sec_prefix_len, arg.tv_sec);
+
+  if (precision)
+    {
+      int prec = (precision < 9 ? precision : 9);
+      int trailing_prec = precision - prec;
+      int ilen = (int_len < 0 ? 0 : int_len);
+      int trailing_width = (ilen < width && decimal_point_len < width - ilen
+                            ? width - ilen - decimal_point_len - prec
+                            : 0);
+      printf ("%s%.*d%-*.*d", decimal_point, prec, frac_sec,
+              trailing_width, trailing_prec, 0);
+    }
 }
 
 /* Print the context information of FILENAME, and return true iff the
@@ -539,7 +665,8 @@ out_file_context (char *pformat, size_t prefix_len, char const *filename)
 
 /* Print statfs info.  Return zero upon success, nonzero upon failure.  */
 static bool ATTRIBUTE_WARN_UNUSED_RESULT
-print_statfs (char *pformat, size_t prefix_len, char m, char const *filename,
+print_statfs (char *pformat, size_t prefix_len, unsigned int m,
+              char const *filename,
               void const *data)
 {
   STRUCT_STATVFS const *statfsbuf = data;
@@ -711,9 +838,19 @@ print_mount_point:
   return fail;
 }
 
+/* Map a TS with negative TS.tv_nsec to {0,0}.  */
+static inline struct timespec
+neg_to_zero (struct timespec ts)
+{
+  if (0 <= ts.tv_nsec)
+    return ts;
+  struct timespec z = {0, 0};
+  return z;
+}
+
 /* Print stat info.  Return zero upon success, nonzero upon failure.  */
 static bool
-print_stat (char *pformat, size_t prefix_len, char m,
+print_stat (char *pformat, size_t prefix_len, unsigned int m,
             char const *filename, void const *data)
 {
   struct stat *statbuf = (struct stat *) data;
@@ -815,31 +952,26 @@ print_stat (char *pformat, size_t prefix_len, char m,
       }
       break;
     case 'W':
-      {
-        struct timespec t = get_stat_birthtime (statbuf);
-        if (t.tv_nsec < 0)
-          out_string (pformat, prefix_len, "-");
-        else
-          out_string (pformat, prefix_len, epoch_time (t));
-      }
+      out_epoch_sec (pformat, prefix_len, statbuf,
+                     neg_to_zero (get_stat_birthtime (statbuf)));
       break;
     case 'x':
       out_string (pformat, prefix_len, human_time (get_stat_atime (statbuf)));
       break;
     case 'X':
-      out_string (pformat, prefix_len, epoch_time (get_stat_atime (statbuf)));
+      out_epoch_sec (pformat, prefix_len, statbuf, get_stat_atime (statbuf));
       break;
     case 'y':
       out_string (pformat, prefix_len, human_time (get_stat_mtime (statbuf)));
       break;
     case 'Y':
-      out_string (pformat, prefix_len, epoch_time (get_stat_mtime (statbuf)));
+      out_epoch_sec (pformat, prefix_len, statbuf, get_stat_mtime (statbuf));
       break;
     case 'z':
       out_string (pformat, prefix_len, human_time (get_stat_ctime (statbuf)));
       break;
     case 'Z':
-      out_string (pformat, prefix_len, epoch_time (get_stat_ctime (statbuf)));
+      out_epoch_sec (pformat, prefix_len, statbuf, get_stat_ctime (statbuf));
       break;
     case 'C':
       fail |= out_file_context (pformat, prefix_len, filename);
@@ -897,7 +1029,8 @@ print_esc_char (char c)
    Return zero upon success, nonzero upon failure.  */
 static bool ATTRIBUTE_WARN_UNUSED_RESULT
 print_it (char const *format, char const *filename,
-          bool (*print_func) (char *, size_t, char, char const *, void const *),
+          bool (*print_func) (char *, size_t, unsigned int,
+                              char const *, void const *),
           void const *data)
 {
   bool fail = false;
@@ -920,12 +1053,17 @@ print_it (char const *format, char const *filename,
         {
         case '%':
           {
-            size_t len = strspn (b + 1, "#-+.I 0123456789");
+            size_t len = strspn (b + 1, printf_flags);
             char const *fmt_char = b + len + 1;
+            fmt_char += strspn (fmt_char, digits);
+            if (*fmt_char == '.')
+              fmt_char += 1 + strspn (fmt_char + 1, digits);
+            len = fmt_char - (b + 1);
+            unsigned int fmt_code = *fmt_char;
             memcpy (dest, b, len + 1);
 
             b = fmt_char;
-            switch (*fmt_char)
+            switch (fmt_code)
               {
               case '\0':
                 --b;
@@ -941,7 +1079,7 @@ print_it (char const *format, char const *filename,
                 putchar ('%');
                 break;
               default:
-                fail |= print_func (dest, len + 1, *fmt_char, filename, data);
+                fail |= print_func (dest, len + 1, fmt_code, filename, data);
                 break;
               }
             break;
@@ -1215,14 +1353,14 @@ The valid format sequences for files (without --file-system):\n\
       fputs (_("\
   %u   User ID of owner\n\
   %U   User name of owner\n\
-  %w   Time of file birth, or - if unknown\n\
-  %W   Time of file birth as seconds since Epoch, or - if unknown\n\
-  %x   Time of last access\n\
-  %X   Time of last access as seconds since Epoch\n\
-  %y   Time of last modification\n\
-  %Y   Time of last modification as seconds since Epoch\n\
-  %z   Time of last change\n\
-  %Z   Time of last change as seconds since Epoch\n\
+  %w   Time of file birth, human-readable; - if unknown\n\
+  %W   Time of file birth, seconds since Epoch; 0 if unknown\n\
+  %x   Time of last access, human-readable\n\
+  %X   Time of last access, seconds since Epoch\n\
+  %y   Time of last modification, human-readable\n\
+  %Y   Time of last modification, seconds since Epoch\n\
+  %z   Time of last change, human-readable\n\
+  %Z   Time of last change, seconds since Epoch\n\
 \n\
 "), stdout);
 
@@ -1266,6 +1404,10 @@ main (int argc, char *argv[])
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
+
+  struct lconv const *locale = localeconv ();
+  decimal_point = (locale->decimal_point[0] ? locale->decimal_point : ".");
+  decimal_point_len = strlen (decimal_point);
 
   atexit (close_stdout);
 

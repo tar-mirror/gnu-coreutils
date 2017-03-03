@@ -614,6 +614,7 @@ GNULIB_STRCASESTR = @GNULIB_STRCASESTR@
 GNULIB_STRCHRNUL = @GNULIB_STRCHRNUL@
 GNULIB_STRDUP = @GNULIB_STRDUP@
 GNULIB_STRERROR = @GNULIB_STRERROR@
+GNULIB_STRERROR_R = @GNULIB_STRERROR_R@
 GNULIB_STRNCAT = @GNULIB_STRNCAT@
 GNULIB_STRNDUP = @GNULIB_STRNDUP@
 GNULIB_STRNLEN = @GNULIB_STRNLEN@
@@ -721,6 +722,7 @@ HAVE_DECL_SINL = @HAVE_DECL_SINL@
 HAVE_DECL_SNPRINTF = @HAVE_DECL_SNPRINTF@
 HAVE_DECL_SQRTL = @HAVE_DECL_SQRTL@
 HAVE_DECL_STRDUP = @HAVE_DECL_STRDUP@
+HAVE_DECL_STRERROR_R = @HAVE_DECL_STRERROR_R@
 HAVE_DECL_STRNDUP = @HAVE_DECL_STRNDUP@
 HAVE_DECL_STRNLEN = @HAVE_DECL_STRNLEN@
 HAVE_DECL_STRSIGNAL = @HAVE_DECL_STRSIGNAL@
@@ -1165,6 +1167,7 @@ REPLACE_STPNCPY = @REPLACE_STPNCPY@
 REPLACE_STRCASESTR = @REPLACE_STRCASESTR@
 REPLACE_STRDUP = @REPLACE_STRDUP@
 REPLACE_STRERROR = @REPLACE_STRERROR@
+REPLACE_STRERROR_R = @REPLACE_STRERROR_R@
 REPLACE_STRNCAT = @REPLACE_STRNCAT@
 REPLACE_STRNDUP = @REPLACE_STRNDUP@
 REPLACE_STRNLEN = @REPLACE_STRNLEN@
@@ -1431,6 +1434,8 @@ TESTS = \
   misc/chroot-fail				\
   misc/comm					\
   misc/csplit					\
+  misc/csplit-1000				\
+  misc/csplit-heap				\
   misc/date-sec					\
   misc/dircolors				\
   misc/df					\
@@ -1503,6 +1508,7 @@ TESTS = \
   misc/stat-fmt					\
   misc/stat-hyphen				\
   misc/stat-mount				\
+  misc/stat-nanoseconds				\
   misc/stat-printf				\
   misc/stat-slash				\
   misc/stdbuf					\
@@ -1605,6 +1611,7 @@ TESTS = \
   du/2g						\
   du/8gb					\
   du/basic					\
+  du/bigtime					\
   du/deref					\
   du/deref-args					\
   du/exclude					\
@@ -2328,6 +2335,10 @@ misc/comm.log: misc/comm
 	@p='misc/comm'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 misc/csplit.log: misc/csplit
 	@p='misc/csplit'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+misc/csplit-1000.log: misc/csplit-1000
+	@p='misc/csplit-1000'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+misc/csplit-heap.log: misc/csplit-heap
+	@p='misc/csplit-heap'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 misc/date-sec.log: misc/date-sec
 	@p='misc/date-sec'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 misc/dircolors.log: misc/dircolors
@@ -2472,6 +2483,8 @@ misc/stat-hyphen.log: misc/stat-hyphen
 	@p='misc/stat-hyphen'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 misc/stat-mount.log: misc/stat-mount
 	@p='misc/stat-mount'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+misc/stat-nanoseconds.log: misc/stat-nanoseconds
+	@p='misc/stat-nanoseconds'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 misc/stat-printf.log: misc/stat-printf
 	@p='misc/stat-printf'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 misc/stat-slash.log: misc/stat-slash
@@ -2676,6 +2689,8 @@ du/8gb.log: du/8gb
 	@p='du/8gb'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 du/basic.log: du/basic
 	@p='du/basic'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+du/bigtime.log: du/bigtime
+	@p='du/bigtime'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 du/deref.log: du/deref
 	@p='du/deref'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 du/deref-args.log: du/deref-args

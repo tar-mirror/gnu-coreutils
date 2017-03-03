@@ -2735,6 +2735,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/yield.m4
   tests/init.sh
   tests/macros.h
+  tests/minus-zero.h
   tests/nan.h
   tests/nap.h
   tests/signature.h

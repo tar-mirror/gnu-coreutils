@@ -1,4 +1,319 @@
+2010-11-13  Jim Meyering  <meyering@redhat.com>
+
+	version 8.7
+	* NEWS: Record release date.
+
+	build: update gnulib...
+	...to fix the failing update-copyright test,
+	and for the openat portability fix.
+
+	build: update gnulib for linux 2.6.9 nanosleep workaround
+	Also, do the following to avoid "make syntax-check" failure
+	induced by new rules.
+	* .x-sc_bindtextdomain: Exempt files with an #ifdef'd "main".
+	* Makefile.am: Add this file.
+
+	maint: remove fstimeprec (variable precision time stamp) support
+	The implementation of variable-precision time stamps relied
+	on heuristics that made the output subtly nondeterministic,
+	or at least hard to reproduce:
+	http://thread.gmane.org/gmane.comp.gnu.coreutils.bugs/21531/focus=21538
+	So, for now at least, we're removing that feature.
+	* bootstrap.conf (gnulib_modules): Remove fstimeprec.
+	* gl/lib/fstimeprec.c, gl/lib/fstimeprec.h: Remove files.
+	* gl/modules/fstimeprec, gl/modules/fstimeprec-tests: Likewise.
+	* gl/tests/test-fstimeprec.c: Remove file.
+
+	stat: do not provide variable precision time stamps
+	* src/stat.c: Don't include fstimeprec.c.
+	(out_epoch_sec): Don't call fstimeprec.
+	* NEWS: Update description.
+	* doc/coreutils.texi: Likewise.
+
+2010-11-11  Paul Eggert  <eggert@cs.ucla.edu>
+
+	csplit: do not rely on undefined behavior in printf formats
+	* doc/coreutils.texi (csplit invocation): Say that %d and %i are
+	aliases for %u.
+	* src/csplit.c (FLAG_THOUSANDS, FLAG_ALTERNATIVE): New constants.
+	(get_format_flags): Now take char const * and int * and return
+	size_t.  It now stores info about the flags instead of merely
+	scanning them.  Also, it handles '0' correctly.  Drop support for
+	the undocumented '+' and ' ' flags since the value is unsigned.
+	Add support for the (undocumented) "'" flag.  All uses changed.
+	(get_format_width, get_format_prec): Remove.
+	(check_format_conv_type): Renamed from get_format_conv_type, with
+	a different signature.  It now converts the format to one that is
+	compatible with unsigned int, and checks flags.  All uses changed.
+	(max_out): Have snprintf compute the number of bytes needed rather
+	than attempting to do it ourselves (which doesn't work portably
+	with outlandish formats such as %4294967296d).
+	(check_format_conv_type, main): Check for overflow in size
+	calculations.  Don't assume size_t fits in unsigned int.
+	* tests/misc/csplit: Check for proper handling of flags, with
+	%0#6.3x.  Coreutils 8.6 mishandles this somewhat-weird example.
+
+2010-11-11  Pádraig Brady  <P@draigBrady.com>
+
+	csplit: fix a memory leak per input buffer
+	* src/csplit.c (free_buffer): Also free the line offsets buffers
+	(remove_line): Also free the containing structure
+	* tests/misc/csplit-heap: A new test to trigger with leaks of
+	this magnitude.
+	* tests/Makefile.am: Reference the new test
+	* NEWS: Mention the fix
+	Reported by David Hofstee
+
+2010-11-10  Jim Meyering  <meyering@redhat.com>
+
+	tests: fix comments and --version invocation in new test
+	* tests/misc/csplit-1000: Fix comments and --version invocation.
+
+	csplit: avoid buffer overrun when writing more than 999 files
+	Without this fix, seq 1000 | csplit - /./ '{*}' would write
+	the NUL-terminated file name, xx1000, into a buffer of size 6.
+	* src/csplit.c (main): Use properly sized file name buffer.
+	* NEWS (Bug fixes): Mention it.
+	* tests/misc/csplit-1000: New test to trigger the bug.
+	* tests/Makefile.am (TESTS): Add misc/csplit-1000.
+
+2010-11-09  Pádraig Brady  <P@draigBrady.com>
+
+	tests: avoid portability problem with dash vs. symlinked ttys
+	* tests/mv/i-3: Adjust so that the symlink is resolved
+	before redirecting to the background command, as otherwise
+	the stdin descriptor passed to the command will fail the
+	isatty() or ttyname() test.
+
+2010-11-08  Pádraig Brady  <P@draigBrady.com>
+
+	tests: avoid portability problem with dash vs. local v=$splittable_val
+	* tests/init.cfg (retry_delay_): Adjust awk script to print a single
+	floating point value, rather than many.
+
+2010-11-07  Jim Meyering  <meyering@redhat.com>
+
+	tests: don't disqualify FreeBSD 8.1's /bin/sh just yet,
+	because dash-0.5.6-2.fc14.x86_64 would also be disqualified.
+	This reverts part of yesterday's commit 6c058b2d, "tests: avoid
+	failure due to bug in FreeBSD 8.1's /bin/sh".  Note that the offending
+	aspect of those shells is not officially a bug, since "local" is not
+	specified by POSIX.  However, it is very unintuitive that prepending
+	"local" to an existing, standards-compliant assignment would evoke
+	such a fundamental change in semantics.
+	* tests/init.sh: Remove snippet requiring sane "local" support.
+	Upstream dash bug report:
+	http://thread.gmane.org/gmane.comp.shells.dash/419
+
+2010-11-07  Paul Eggert  <eggert@cs.ucla.edu>
+
+	stat: do not rely on undefined behavior in printf formats
+	* src/stat.c (digits, printf_flags): New static vars.
+	(make_format): New function.
+	(out_string, out_int, out_uint, out_uint_o, out_uint_x):
+	(out_minus_zero): Use it to avoid undefined behavior when invoking
+	printf.
+	(print_it): Check for invalid conversion specifications such as
+	%..X and %1-X, which would otherwise rely on undefined behavior
+	when invoking printf.
+	* tests/misc/stat-nanoseconds: Check that the "I" printf flag
+	doesn't mess up in the C locale, as it formerly did on non-GNU
+	hosts.
+
+2010-11-06  Jim Meyering  <meyering@redhat.com>
+
+	tests: avoid failure due to bug in FreeBSD 8.1's /bin/sh
+	* tests/init.sh: Arrange not to accept FreeBSD 8.1's /bin/sh, since
+	it fails this test: /bin/sh -c 'f(){ local s=$IFS; test -n "$s"; }; f'
+	* tests/init.cfg (sanitize_path_): Stop-gap measure to work around
+	a bug in FreeBSD 8.1's /bin/sh.  We'll un-do this change once all
+	300+ tests use init.sh.
+
+	build: update gnulib to latest for strtod and icc fixes
+
+2010-11-06  Paul Eggert  <eggert@cs.ucla.edu>
+
+	stat: use e.g. %.3X instead of %X.%3:X for sub-second precision
+	* NEWS: Document this.
+	* doc/coreutils.texi (stat invocation): Likewise.
+	* gl/lib/fstimeprec.c, gl/lib/fstimeprec.h, gl/modules/fstimeprec:
+	* gl/modules/fstimeprec-tests, gl/tests/test-fstimeprec.c:
+	New files.
+	* bootstrap.conf (gnulib_modules): Add fstimeprec.
+	* src/stat.c: Include fstimeprec.h.  Don't include xstrtol.h.
+	(decimal_point, decimal_point_len): New static vars.
+	(main): Initialize them.
+	(epoch_sec, out_ns): Remove.
+	(out_int, out_uint): Now returns whatever printf returned.
+	(out_minus_zero, out_epoch_secs): New functions.
+	(print_stat): Use out_epoch_sec instead of out_ns and epoch_sec.
+	(print_stat, print_it, usage): Remove the %:X-style formats.
+	* tests/misc/stat-nanoseconds: Set TZ=UTC0 to avoid problems
+	with weird time zones.  Use a time stamp near the Epoch so that we
+	don't have to worry about leap seconds.  Redo test cases to match
+	new behavior.
+	* tests/touch/60-seconds: Change %Y.%:Y to %.9Y, to adjust to
+	new behavior.
+
+2010-11-04  Eric Blake  <eblake@redhat.com>
+
+	cp: NEWS entry for previous fix
+	Resolves bug#7324
+
+	* NEWS: Document the extent of the Solaris crash.
+
+	cp, mv, touch: fix file time manipulation on Solaris 10
+	* gnulib: Update to latest, for futimens fix.
+	* .gitignore: Ignore another recent gnulib-generated file.
+
+2010-11-03  Jim Meyering  <meyering@redhat.com>
+
+	build: update gnulib to latest
+
+	stat: revert %X-%Y-%Z change; use e.g., %:X to print fractional seconds
+	This reverts part of the recent commit 9069af45,
+	"stat: print timestamps to full resolution", which made %X, %Y, %Z
+	print floating point numbers.  We prefer to retain portability of
+	%X, %Y and %Z uses, while still providing access to full-resolution
+	time stamps via modified format strings.  Also make the new
+	%W consistent.
+	* src/stat.c: Include "xstrtol.h".
+	(print_it): Accept a new %...:[XYZ] format directive,
+	e.g., %:X, to print the nanoseconds portion of the corresponding time.
+	For example, %3.3:Y prints the zero-padded, truncated, milliseconds
+	part of the time of last modification.
+	(print_it): Update print_func signature to match.
+	(neg_to_zero): New helper function.
+	(epoch_time): Remove function; replace with...
+	(epoch_sec): New function; use timetostr.
+	(out_ns): New function.  Use "09" only when no other modifier
+	is specified.
+	(print_statfs): Change type of "m" to unsigned int,
+	now that it must accommodate values larger than 255.
+	(print_stat): Likewise.
+	Map :X to a code of 'X' + 256.  Likewise for Y, Z and W.
+	(usage): Update.
+	* tests/touch/60-seconds: Use %Y.%:Y in place of %Y.
+	* tests/misc/stat-nanoseconds: New file.
+	* tests/Makefile.am (TESTS): Add it.
+	* NEWS (Changes in behavior): Mention this.
+	With improvements by Pádraig Brady.
+	Thanks to Andreas Schwab for raising the issue.
+
+2010-11-01  Nix  <nix@esperi.org.uk>
+
+	tests: fix a false positive for 32 bit on 64 bit hosts
+	* tests/ls/stat-free-symlinks: strace currently outputs an
+	informational message about arch difference to stdout.
+	Therefore we need to strip that before comparison.
+
+2010-10-28  Patrick W. Plusnick II  <pwplusnick2@gmail.com>
+
+	maint: remove an unnecessary FIXME comment
+	* src/seq.c (terminator): This does not need to be specifiable
+	via an option.  Remove the FIXME comment.
+
+2010-10-27  Pádraig Brady  <P@draigBrady.com>
+
+	cp: make --attributes-only override --reflink completely
+	* doc/coreutils.texi (cp invocation): Change the description slightly
+	so as users might not immediately discount using this option.
+	Mention that --reflink is overridden by the other linking options and
+	--attributes-only, and give an example where this might be useful.
+	* src/copy.c (copy_internal): Bypass the reflink if
+	--attributes-only is specifed.
+	* tests/cp/reflink-perm: Ensure both --reflink modes are
+	overridden by --attributes-only.
+	* NEWS: Mention the change in behavior.
+	Reported by Jim Meyering.
+
+2010-10-26  Jim Meyering  <meyering@redhat.com>
+
+	tests: mention that btrfs also causes failure of misc/ls-time
+	* tests/misc/ls-time: Mention that this test also fails on btrfs,
+	at least until http://bugzilla.redhat.com/591068 is addressed.
+
+2010-10-25  Eric Blake  <eblake@redhat.com>
+
+	maint: update THANKS
+	* THANKS: Update.
+
+2010-10-25  Tobias Quathamer  <toddy@debian.org>
+
+	date: correct typos in date --help
+	* src/date.c (usage): Use "e.g." correctly.
+
+2010-10-25  Pádraig Brady  <P@draigBrady.com>
+
+	tail: support rechecking currently missing remote dirs
+	src/tail.c (main): As an optimization, don't bother checking
+	for stdin or remote files, when ---disable-inotify is specified.
+	To improve the fix in commit 61b77891, set the disable_inotify
+	flag when we fall back to polling, so that we recheck remote files.
+	NEWS: Mention the fix
+
+2010-10-24  Paul Eggert  <eggert@cs.ucla.edu>
+
+	du: don't print junk when diagnosing out-of-range time stamps
+	* src/du.c (show_date): Fix call to fputs with a buffer that
+	contains some uninitialized data.
+	* tests/Makefile.am (TESTS): Add du/big-timestamp.
+	* tests/du/bigtime: New file, which checks for the bug.
+
+2010-10-20  Rodrigo Campos  <rodrigo@sdfg.com.ar>
+
+	doc: add a cross reference from cat's man page to "tac"
+	* man/cat.x: See also "tac".
+
+2010-10-19  Jim Meyering  <meyering@redhat.com>
+
+	tests: trigger and test for md5sum's new diagnostics
+	* tests/misc/md5sum: Test for new diagnostics.
+
+2010-10-19  Benno Schulenberg  <bensberg@justemail.net>
+
+	md5sum: print a summary warning for improperly formatted lines
+	And remove the now-superfluous totals from the other two warnings,
+	so the plurals will also work in other languages than English.
+
+	* src/md5sum.c (digest_check): Change as above.
+	* tests/misc/md5sum (check-quiet2): Adjust accordingly.
+
+2010-10-18  Jim Meyering  <meyering@redhat.com>
+
+	build: enable -Werror for gnulib-tests, too
+	* gnulib: Update to latest for warning-free tests.
+	* gnulib-tests/Makefile.am (AM_CFLAGS): Uncomment $(WERROR_CFLAGS),
+	now that these tests are warning-free.
+
+2010-10-17  Jim Meyering  <meyering@redhat.com>
+
+	maint: update bootstrap from gnulib
+	* bootstrap: Update from gnulib.
+
+	.gitignore: anchor patterns
+	* .gitignore: Anchor most patterns.  Remove .tarball-version.
+	* doc/.gitignore: Anchor all patterns.
+	Remove getdate.texi and get_date.texi.
+
+	tests: sort-float: avoid spurious test failure on ppc/ppc64
+	* tests/misc/sort-float: On systems with DBL_MIN < LDBL_MIN,
+	this test would fail because the expected output was not sorted.
+	Detect that case, and if needed, reverse those two values.
+
+2010-10-16  Andreas Schwab  <schwab@linux-m68k.org>
+
+	fold: fix fadvise hint
+	* src/fold.c (fold_file): Apply fadvise to istream, not stdin.
+	This bug would have inhibited the fadvise optimization when not
+	reading from standard input.
+
 2010-10-15  Jim Meyering  <meyering@redhat.com>
+
+	post-release administrivia
+	* NEWS: Add header line for next release.
+	* .prev-version: Record previous version.
+	* cfg.mk (old_NEWS_hash): Auto-update.
 
 	version 8.6
 	* NEWS: Record release date.

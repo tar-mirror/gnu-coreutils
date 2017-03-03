@@ -172,6 +172,8 @@ TESTS =						\
   misc/chroot-fail				\
   misc/comm					\
   misc/csplit					\
+  misc/csplit-1000				\
+  misc/csplit-heap				\
   misc/date-sec					\
   misc/dircolors				\
   misc/df					\
@@ -244,6 +246,7 @@ TESTS =						\
   misc/stat-fmt					\
   misc/stat-hyphen				\
   misc/stat-mount				\
+  misc/stat-nanoseconds				\
   misc/stat-printf				\
   misc/stat-slash				\
   misc/stdbuf					\
@@ -346,6 +349,7 @@ TESTS =						\
   du/2g						\
   du/8gb					\
   du/basic					\
+  du/bigtime					\
   du/deref					\
   du/deref-args					\
   du/exclude					\

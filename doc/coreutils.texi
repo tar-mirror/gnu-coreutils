@@ -3082,7 +3082,8 @@ specified, the suffix string must include exactly one
 @code{printf(3)}-style conversion specification, possibly including
 format specification flags, a field width, a precision specifications,
 or all of these kinds of modifiers.  The format letter must convert a
-binary integer argument to readable form; thus, only @samp{d}, @samp{i},
+binary unsigned integer argument to readable form.  The format letters
+@samp{d} and @samp{i} are aliases for @samp{u}, and the
 @samp{u}, @samp{o}, @samp{x}, and @samp{X} conversions are allowed.  The
 entire @var{suffix} is given (with the current output file number) to
 @code{sprintf(3)} to form the file name suffixes for each of the
@@ -7614,12 +7615,11 @@ implementations that dereference symbolic links by default.
 @cindex COW
 @cindex clone
 @cindex copy on write
-Perform a lightweight, copy-on-write (COW) copy.
-Copying with this option can succeed only on some file systems.
-Once it has succeeded, beware that the source and destination files
-share the same disk data blocks as long as they remain unmodified.
+Perform a lightweight, copy-on-write (COW) copy, if supported by the
+file system. Once it has succeeded, beware that the source and destination
+files share the same disk data blocks as long as they remain unmodified.
 Thus, if a disk I/O error affects data blocks of one of the files,
-the other suffers the exact same fate.
+the other suffers the same fate.
 
 The @var{when} value can be one of the following:
 
@@ -7633,6 +7633,15 @@ If the copy-on-write operation is not supported then fall back
 to the standard copy behaviour.
 @end table
 
+This option is overridden by the @option{--link}, @option{--symbolic-link}
+and @option{--attributes-only} options, thus allowing it to be used
+to configure the default data copying behavior for @command{cp}.
+For example, with the following alias, @command{cp} will use the
+minimum amount of space supported by the file system.
+
+@example
+alias cp='cp --reflink=auto --sparse=always'
+@end example
 
 @item --remove-destination
 @opindex --remove-destination
@@ -10698,7 +10707,7 @@ The valid @var{format} directives for files with @option{--format} and
 @item %u - User ID of owner
 @item %U - User name of owner
 @item %w - Time of file birth, or @samp{-} if unknown
-@item %W - Time of file birth as seconds since Epoch, or @samp{-}
+@item %W - Time of file birth as seconds since Epoch, or @samp{0}
 @item %x - Time of last access
 @item %X - Time of last access as seconds since Epoch
 @item %y - Time of last modification
@@ -10706,6 +10715,30 @@ The valid @var{format} directives for files with @option{--format} and
 @item %z - Time of last change
 @item %Z - Time of last change as seconds since Epoch
 @end itemize
+
+The @samp{%W}, @samp{%X}, @samp{%Y}, and @samp{%Z} formats accept a
+precision preceded by a period to specify the number of digits to
+print after the decimal point.  For example, @samp{%.3X} outputs the
+last access time to millisecond precision.  If a period is given but no
+precision, @command{stat} uses 9 digits, so @samp{%.X} is equivalent to
+@samp{%.9X}  When discarding excess precision, time stamps are truncated
+toward minus infinity.
+
+@example
+zero pad:
+  $ stat -c '[%015Y]' /usr
+  [000001288929712]
+space align:
+  $ stat -c '[%15Y]' /usr
+  [     1288929712]
+  $ stat -c '[%-15Y]' /usr
+  [1288929712     ]
+precision:
+  $ stat -c '[%.3Y]' /usr
+  [1288929712.114]
+  $ stat -c '[%.Y]' /usr
+  [1288929712.114951834]
+@end example
 
 The mount point printed by @samp{%m} is similar to that output
 by @command{df}, except that:
