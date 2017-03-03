@@ -1,5 +1,5 @@
 /* fchdir replacement.
-   Copyright (C) 2006-2009 Free Software Foundation, Inc.
+   Copyright (C) 2006-2010 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -168,10 +168,7 @@ _gl_register_fd (int fd, const char *filename)
    and fcntl.  Both arguments must be valid and distinct file
    descriptors.  Close NEWFD and return -1 if OLDFD is tracking a
    directory, but there is insufficient memory to track the same
-   directory in NEWFD; otherwise return NEWFD.
-
-   FIXME: Need to implement rpl_fcntl in gnulib, and have it call
-   this.  */
+   directory in NEWFD; otherwise return NEWFD.  */
 int
 _gl_register_dup (int oldfd, int newfd)
 {

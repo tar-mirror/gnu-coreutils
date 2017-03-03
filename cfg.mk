@@ -1,5 +1,5 @@
 # Customize maint.mk                           -*- makefile -*-
-# Copyright (C) 2003-2009 Free Software Foundation, Inc.
+# Copyright (C) 2003-2010 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,9 +17,6 @@
 # Used in maint.mk's web-manual rule
 manual_title = Core GNU utilities
 
-# The GnuPG ID of the key used to sign the tarballs.
-gpg_key_ID = B9AB9A16
-
 # Tests not to run as part of "make distcheck".
 local-checks-to-skip =
 
@@ -29,7 +26,7 @@ bootstrap-tools = autoconf,automake,gnulib,bison
 # Now that we have better tests, make this the default.
 export VERBOSE = yes
 
-old_NEWS_hash = 2a36ca50a949f959645d9bfac8ec83ce
+old_NEWS_hash = 67237f9a765e6e1af0cb89e428ed2663
 
 # Ensure that the list of O_ symbols used to compute O_FULLBLOCK is complete.
 dd = $(srcdir)/src/dd.c
@@ -246,3 +243,7 @@ sc_prohibit_sleep:
 	  $(_prohibit_regexp)
 
 include $(srcdir)/dist-check.mk
+
+update-copyright-env = \
+  UPDATE_COPYRIGHT_USE_INTERVALS=1 \
+  UPDATE_COPYRIGHT_MAX_LINE_LENGTH=79

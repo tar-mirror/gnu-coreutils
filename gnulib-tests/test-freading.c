@@ -2,7 +2,7 @@
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 #line 1
 /* Test of freading() function.
-   Copyright (C) 2007-2009 Free Software Foundation, Inc.
+   Copyright (C) 2007-2010 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,25 +24,14 @@
 #include "freading.h"
 
 #include <stdio.h>
-#include <stdlib.h>
+
+#include "macros.h"
 
 /* None of the files accessed by this test are large, so disable the
    fseek link warning if we are not using the gnulib fseek module.  */
 #if !GNULIB_FSEEK
 # undef fseek
 #endif
-
-#define ASSERT(expr) \
-  do                                                                         \
-    {                                                                        \
-      if (!(expr))                                                           \
-        {                                                                    \
-          fprintf (stderr, "%s:%d: assertion failed\n", __FILE__, __LINE__); \
-          fflush (stderr);                                                   \
-          abort ();                                                          \
-        }                                                                    \
-    }                                                                        \
-  while (0)
 
 #define TESTFILE "t-freading.tmp"
 

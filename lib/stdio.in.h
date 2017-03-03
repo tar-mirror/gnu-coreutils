@@ -3,7 +3,7 @@
 #line 1
 /* A GNU-like <stdio.h>.
 
-   Copyright (C) 2004, 2007-2009 Free Software Foundation, Inc.
+   Copyright (C) 2004, 2007-2010 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -42,10 +42,8 @@
 #include <stdarg.h>
 #include <stddef.h>
 
-#if (@GNULIB_FSEEKO@ && @REPLACE_FSEEKO@) \
-  || (@GNULIB_FTELLO@ && @REPLACE_FTELLO@) \
-  || (@GNULIB_GETDELIM@ && !@HAVE_DECL_GETDELIM@) \
-  || (@GNULIB_GETLINE@ && (!@HAVE_DECL_GETLINE@ || @REPLACE_GETLINE@))
+#if (@GNULIB_FSEEKO@ || @GNULIB_FTELLO@ || @GNULIB_GETDELIM@ \
+     || @GNULIB_GETLINE@ || defined GNULIB_POSIXCHECK)
 /* Get off_t and ssize_t.  */
 # include <sys/types.h>
 #endif
@@ -66,6 +64,8 @@
 
 /* The definition of GL_LINK_WARNING is copied here.  */
 
+/* The definition of _GL_ARG_NONNULL is copied here.  */
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -77,21 +77,21 @@ extern "C" {
 # endif
 # if @REPLACE_DPRINTF@ || !@HAVE_DPRINTF@
 extern int dprintf (int fd, const char *format, ...)
-       __attribute__ ((__format__ (__printf__, 2, 3)));
+       __attribute__ ((__format__ (__printf__, 2, 3))) _GL_ARG_NONNULL ((2));
 # endif
 #elif defined GNULIB_POSIXCHECK
 # undef dprintf
-# define dprintf(d,f,a) \
+# define dprintf \
     (GL_LINK_WARNING ("dprintf is unportable - " \
                       "use gnulib module dprintf for portability"), \
-     dprintf (d, f, a))
+     dprintf)
 #endif
 
 #if @GNULIB_FCLOSE@
 # if @REPLACE_FCLOSE@
 #  define fclose rpl_fclose
   /* Close STREAM and its underlying file descriptor.  */
-extern int fclose (FILE *stream);
+extern int fclose (FILE *stream) _GL_ARG_NONNULL ((1));
 # endif
 #elif defined GNULIB_POSIXCHECK
 # undef fclose
@@ -126,7 +126,8 @@ extern int fclose (FILE *stream);
 # if @REPLACE_FOPEN@
 #  undef fopen
 #  define fopen rpl_fopen
-extern FILE * fopen (const char *filename, const char *mode);
+extern FILE * fopen (const char *filename, const char *mode)
+     _GL_ARG_NONNULL ((1, 2));
 # endif
 #elif defined GNULIB_POSIXCHECK
 # undef fopen
@@ -140,12 +141,14 @@ extern FILE * fopen (const char *filename, const char *mode);
 # if @REPLACE_FPRINTF@
 #  define fprintf rpl_fprintf
 extern int fprintf (FILE *fp, const char *format, ...)
-       __attribute__ ((__format__ (__printf__, 2, 3)));
+       __attribute__ ((__format__ (__printf__, 2, 3)))
+       _GL_ARG_NONNULL ((1, 2));
 # endif
 #elif @GNULIB_FPRINTF@ && @REPLACE_STDIO_WRITE_FUNCS@ && @GNULIB_STDIO_H_SIGPIPE@
 # define fprintf rpl_fprintf
 extern int fprintf (FILE *fp, const char *format, ...)
-       __attribute__ ((__format__ (__printf__, 2, 3)));
+       __attribute__ ((__format__ (__printf__, 2, 3)))
+       _GL_ARG_NONNULL ((1, 2));
 #elif defined GNULIB_POSIXCHECK
 # undef fprintf
 # define fprintf \
@@ -166,7 +169,7 @@ extern int fprintf (FILE *fp, const char *format, ...)
      was before the write calls.  When discarding pending input, the file
      position is advanced to match the end of the previously read input.
      Return 0 if successful.  Upon error, return -1 and set errno.  */
-  extern int fpurge (FILE *gl_stream);
+  extern int fpurge (FILE *gl_stream) _GL_ARG_NONNULL ((1));
 # endif
 #elif defined GNULIB_POSIXCHECK
 # undef fpurge
@@ -179,20 +182,21 @@ extern int fprintf (FILE *fp, const char *format, ...)
 #if @GNULIB_FPUTC@ && @REPLACE_STDIO_WRITE_FUNCS@ && @GNULIB_STDIO_H_SIGPIPE@
 # undef fputc
 # define fputc rpl_fputc
-extern int fputc (int c, FILE *stream);
+extern int fputc (int c, FILE *stream) _GL_ARG_NONNULL ((2));
 #endif
 
 #if @GNULIB_FPUTS@ && @REPLACE_STDIO_WRITE_FUNCS@ && @GNULIB_STDIO_H_SIGPIPE@
 # undef fputs
 # define fputs rpl_fputs
-extern int fputs (const char *string, FILE *stream);
+extern int fputs (const char *string, FILE *stream) _GL_ARG_NONNULL ((1, 2));
 #endif
 
 #if @GNULIB_FREOPEN@
 # if @REPLACE_FREOPEN@
 #  undef freopen
 #  define freopen rpl_freopen
-extern FILE * freopen (const char *filename, const char *mode, FILE *stream);
+extern FILE * freopen (const char *filename, const char *mode, FILE *stream)
+     _GL_ARG_NONNULL ((2, 3));
 # endif
 #elif defined GNULIB_POSIXCHECK
 # undef freopen
@@ -203,7 +207,7 @@ extern FILE * freopen (const char *filename, const char *mode, FILE *stream);
 #endif
 
 #if @GNULIB_FSEEK@ && @REPLACE_FSEEK@
-extern int rpl_fseek (FILE *fp, long offset, int whence);
+extern int rpl_fseek (FILE *fp, long offset, int whence) _GL_ARG_NONNULL ((1));
 # undef fseek
 # if defined GNULIB_POSIXCHECK
 #  define fseek(f,o,w) \
@@ -229,7 +233,7 @@ extern int rpl_fseek (FILE *fp, long offset, int whence);
 /* Provide fseek, fseeko functions that are aware of a preceding
    fflush(), and which detect pipes.  */
 #  define fseeko rpl_fseeko
-extern int fseeko (FILE *fp, off_t offset, int whence);
+extern int fseeko (FILE *fp, off_t offset, int whence) _GL_ARG_NONNULL ((1));
 #  if !@GNULIB_FSEEK@
 #   undef fseek
 #   define fseek(f,o,w) \
@@ -248,7 +252,7 @@ extern int fseeko (FILE *fp, off_t offset, int whence);
 #endif
 
 #if @GNULIB_FTELL@ && @REPLACE_FTELL@
-extern long rpl_ftell (FILE *fp);
+extern long rpl_ftell (FILE *fp) _GL_ARG_NONNULL ((1));
 # undef ftell
 # if GNULIB_POSIXCHECK
 #  define ftell(f) \
@@ -272,7 +276,7 @@ extern long rpl_ftell (FILE *fp);
 #if @GNULIB_FTELLO@
 # if @REPLACE_FTELLO@
 #  define ftello rpl_ftello
-extern off_t ftello (FILE *fp);
+extern off_t ftello (FILE *fp) _GL_ARG_NONNULL ((1));
 #  if !@GNULIB_FTELL@
 #   undef ftell
 #   define ftell(f) \
@@ -293,7 +297,8 @@ extern off_t ftello (FILE *fp);
 #if @GNULIB_FWRITE@ && @REPLACE_STDIO_WRITE_FUNCS@ && @GNULIB_STDIO_H_SIGPIPE@
 # undef fwrite
 # define fwrite rpl_fwrite
-extern size_t fwrite (const void *ptr, size_t s, size_t n, FILE *stream);
+extern size_t fwrite (const void *ptr, size_t s, size_t n, FILE *stream)
+     _GL_ARG_NONNULL ((1, 4));
 #endif
 
 #if @GNULIB_GETDELIM@
@@ -305,13 +310,14 @@ extern size_t fwrite (const void *ptr, size_t s, size_t n, FILE *stream);
    Return the number of bytes read and stored at *LINEPTR (not including the
    NUL terminator), or -1 on error or EOF.  */
 extern ssize_t getdelim (char **lineptr, size_t *linesize, int delimiter,
-			 FILE *stream);
+                         FILE *stream)
+     _GL_ARG_NONNULL ((1, 2, 4));
 # endif
 #elif defined GNULIB_POSIXCHECK
 # undef getdelim
-# define getdelim(l, s, d, f)					    \
-  (GL_LINK_WARNING ("getdelim is unportable - "			    \
-		    "use gnulib module getdelim for portability"),  \
+# define getdelim(l, s, d, f)                                       \
+  (GL_LINK_WARNING ("getdelim is unportable - "                     \
+                    "use gnulib module getdelim for portability"),  \
    getdelim (l, s, d, f))
 #endif
 
@@ -327,13 +333,14 @@ extern ssize_t getdelim (char **lineptr, size_t *linesize, int delimiter,
    bytes of space.  It is realloc'd as necessary.
    Return the number of bytes read and stored at *LINEPTR (not including the
    NUL terminator), or -1 on error or EOF.  */
-extern ssize_t getline (char **lineptr, size_t *linesize, FILE *stream);
+extern ssize_t getline (char **lineptr, size_t *linesize, FILE *stream)
+     _GL_ARG_NONNULL ((1, 2, 3));
 # endif
 #elif defined GNULIB_POSIXCHECK
 # undef getline
-# define getline(l, s, f)						\
-  (GL_LINK_WARNING ("getline is unportable - "				\
-		    "use gnulib module getline for portability"),	\
+# define getline(l, s, f)                                               \
+  (GL_LINK_WARNING ("getline is unportable - "                          \
+                    "use gnulib module getline for portability"),       \
    getline (l, s, f))
 #endif
 
@@ -350,10 +357,10 @@ extern ssize_t getline (char **lineptr, size_t *linesize, FILE *stream);
      memory allocation error, call obstack_alloc_failed_handler.  Upon
      other error, return -1.  */
   extern int obstack_printf (struct obstack *obs, const char *format, ...)
-    __attribute__ ((__format__ (__printf__, 2, 3)));
+    __attribute__ ((__format__ (__printf__, 2, 3))) _GL_ARG_NONNULL ((1, 2));
   extern int obstack_vprintf (struct obstack *obs, const char *format,
-			      va_list args)
-    __attribute__ ((__format__ (__printf__, 2, 0)));
+                              va_list args)
+    __attribute__ ((__format__ (__printf__, 2, 0))) _GL_ARG_NONNULL ((1, 2));
 # endif
 #endif
 
@@ -377,7 +384,8 @@ extern void perror (const char *string);
 # if @REPLACE_POPEN@
 #  undef popen
 #  define popen rpl_popen
-extern FILE *popen (const char *cmd, const char *mode);
+extern FILE *popen (const char *cmd, const char *mode)
+     _GL_ARG_NONNULL ((1, 2));
 # endif
 #elif defined GNULIB_POSIXCHECK
 # undef popen
@@ -392,13 +400,13 @@ extern FILE *popen (const char *cmd, const char *mode);
 /* Don't break __attribute__((format(printf,M,N))).  */
 #  define printf __printf__
 extern int printf (const char *format, ...)
-       __attribute__ ((__format__ (__printf__, 1, 2)));
+       __attribute__ ((__format__ (__printf__, 1, 2))) _GL_ARG_NONNULL ((1));
 # endif
 #elif @GNULIB_PRINTF@ && @REPLACE_STDIO_WRITE_FUNCS@ && @GNULIB_STDIO_H_SIGPIPE@
 /* Don't break __attribute__((format(printf,M,N))).  */
 # define printf __printf__
 extern int printf (const char *format, ...)
-       __attribute__ ((__format__ (__printf__, 1, 2)));
+       __attribute__ ((__format__ (__printf__, 1, 2))) _GL_ARG_NONNULL ((1));
 #elif defined GNULIB_POSIXCHECK
 # undef printf
 # define printf \
@@ -418,7 +426,7 @@ extern int printf (const char *format, ...)
 #if @GNULIB_PUTC@ && @REPLACE_STDIO_WRITE_FUNCS@ && @GNULIB_STDIO_H_SIGPIPE@
 # undef putc
 # define putc rpl_fputc
-extern int putc (int c, FILE *stream);
+extern int putc (int c, FILE *stream) _GL_ARG_NONNULL ((2));
 #endif
 
 #if @GNULIB_PUTCHAR@ && @REPLACE_STDIO_WRITE_FUNCS@ && @GNULIB_STDIO_H_SIGPIPE@
@@ -430,18 +438,18 @@ extern int putchar (int c);
 #if @GNULIB_PUTS@ && @REPLACE_STDIO_WRITE_FUNCS@ && @GNULIB_STDIO_H_SIGPIPE@
 # undef puts
 # define puts rpl_puts
-extern int puts (const char *string);
+extern int puts (const char *string) _GL_ARG_NONNULL ((1));
 #endif
 
 #if @GNULIB_REMOVE@
 # if @REPLACE_REMOVE@
 #  undef remove
 #  define remove rpl_remove
-extern int remove (const char *name);
+extern int remove (const char *name) _GL_ARG_NONNULL ((1));
 # endif
 #elif defined GNULIB_POSIXCHECK
 # undef remove
-# define remove(n)					   \
+# define remove(n)                                         \
    (GL_LINK_WARNING ("remove cannot handle directories on some platforms - " \
                      "use gnulib module remove for more portability"), \
     remove (n))
@@ -451,11 +459,12 @@ extern int remove (const char *name);
 # if @REPLACE_RENAME@
 #  undef rename
 #  define rename rpl_rename
-extern int rename (const char *old_filename, const char *new_filename);
+extern int rename (const char *old_filename, const char *new_filename)
+     _GL_ARG_NONNULL ((1, 2));
 # endif
 #elif defined GNULIB_POSIXCHECK
 # undef rename
-# define rename(o,n)					   \
+# define rename(o,n)                                       \
    (GL_LINK_WARNING ("rename is buggy on some platforms - " \
                      "use gnulib module rename for more portability"), \
     rename (o, n))
@@ -467,11 +476,12 @@ extern int rename (const char *old_filename, const char *new_filename);
 #  define renameat rpl_renameat
 # endif
 # if !@HAVE_RENAMEAT@ || @REPLACE_RENAMEAT@
-extern int renameat (int fd1, char const *file1, int fd2, char const *file2);
+extern int renameat (int fd1, char const *file1, int fd2, char const *file2)
+     _GL_ARG_NONNULL ((2, 4));
 # endif
 #elif defined GNULIB_POSIXCHECK
 # undef renameat
-# define renameat(d1,f1,d2,f2)		   \
+# define renameat(d1,f1,d2,f2)             \
     (GL_LINK_WARNING ("renameat is not portable - " \
                       "use gnulib module renameat for portability"), \
      renameat (d1, f1, d2, f2))
@@ -483,7 +493,8 @@ extern int renameat (int fd1, char const *file1, int fd2, char const *file2);
 # endif
 # if @REPLACE_SNPRINTF@ || !@HAVE_DECL_SNPRINTF@
 extern int snprintf (char *str, size_t size, const char *format, ...)
-       __attribute__ ((__format__ (__printf__, 3, 4)));
+       __attribute__ ((__format__ (__printf__, 3, 4)))
+       _GL_ARG_NONNULL ((3));
 # endif
 #elif defined GNULIB_POSIXCHECK
 # undef snprintf
@@ -497,7 +508,8 @@ extern int snprintf (char *str, size_t size, const char *format, ...)
 # if @REPLACE_SPRINTF@
 #  define sprintf rpl_sprintf
 extern int sprintf (char *str, const char *format, ...)
-       __attribute__ ((__format__ (__printf__, 2, 3)));
+       __attribute__ ((__format__ (__printf__, 2, 3)))
+       _GL_ARG_NONNULL ((1, 2));
 # endif
 #elif defined GNULIB_POSIXCHECK
 # undef sprintf
@@ -519,9 +531,9 @@ extern int sprintf (char *str, const char *format, ...)
      *RESULT and return the number of resulting bytes, excluding the trailing
      NUL.  Upon memory allocation error, or some other error, return -1.  */
   extern int asprintf (char **result, const char *format, ...)
-    __attribute__ ((__format__ (__printf__, 2, 3)));
+    __attribute__ ((__format__ (__printf__, 2, 3))) _GL_ARG_NONNULL ((1, 2));
   extern int vasprintf (char **result, const char *format, va_list args)
-    __attribute__ ((__format__ (__printf__, 2, 0)));
+    __attribute__ ((__format__ (__printf__, 2, 0))) _GL_ARG_NONNULL ((1, 2));
 # endif
 #endif
 
@@ -531,7 +543,7 @@ extern int sprintf (char *str, const char *format, ...)
 # endif
 # if @REPLACE_VDPRINTF@ || !@HAVE_VDPRINTF@
 extern int vdprintf (int fd, const char *format, va_list args)
-       __attribute__ ((__format__ (__printf__, 2, 0)));
+       __attribute__ ((__format__ (__printf__, 2, 0))) _GL_ARG_NONNULL ((2));
 # endif
 #elif defined GNULIB_POSIXCHECK
 # undef vdprintf
@@ -545,12 +557,14 @@ extern int vdprintf (int fd, const char *format, va_list args)
 # if @REPLACE_VFPRINTF@
 #  define vfprintf rpl_vfprintf
 extern int vfprintf (FILE *fp, const char *format, va_list args)
-       __attribute__ ((__format__ (__printf__, 2, 0)));
+       __attribute__ ((__format__ (__printf__, 2, 0)))
+       _GL_ARG_NONNULL ((1, 2));
 # endif
 #elif @GNULIB_VFPRINTF@ && @REPLACE_STDIO_WRITE_FUNCS@ && @GNULIB_STDIO_H_SIGPIPE@
 # define vfprintf rpl_vfprintf
 extern int vfprintf (FILE *fp, const char *format, va_list args)
-       __attribute__ ((__format__ (__printf__, 2, 0)));
+       __attribute__ ((__format__ (__printf__, 2, 0)))
+       _GL_ARG_NONNULL ((1, 2));
 #elif defined GNULIB_POSIXCHECK
 # undef vfprintf
 # define vfprintf(s,f,a) \
@@ -564,12 +578,12 @@ extern int vfprintf (FILE *fp, const char *format, va_list args)
 # if @REPLACE_VPRINTF@
 #  define vprintf rpl_vprintf
 extern int vprintf (const char *format, va_list args)
-       __attribute__ ((__format__ (__printf__, 1, 0)));
+       __attribute__ ((__format__ (__printf__, 1, 0))) _GL_ARG_NONNULL ((1));
 # endif
 #elif @GNULIB_VPRINTF@ && @REPLACE_STDIO_WRITE_FUNCS@ && @GNULIB_STDIO_H_SIGPIPE@
 # define vprintf rpl_vprintf
 extern int vprintf (const char *format, va_list args)
-       __attribute__ ((__format__ (__printf__, 1, 0)));
+       __attribute__ ((__format__ (__printf__, 1, 0))) _GL_ARG_NONNULL ((1));
 #elif defined GNULIB_POSIXCHECK
 # undef vprintf
 # define vprintf(f,a) \
@@ -585,7 +599,8 @@ extern int vprintf (const char *format, va_list args)
 # endif
 # if @REPLACE_VSNPRINTF@ || !@HAVE_DECL_VSNPRINTF@
 extern int vsnprintf (char *str, size_t size, const char *format, va_list args)
-       __attribute__ ((__format__ (__printf__, 3, 0)));
+       __attribute__ ((__format__ (__printf__, 3, 0)))
+       _GL_ARG_NONNULL ((3));
 # endif
 #elif defined GNULIB_POSIXCHECK
 # undef vsnprintf
@@ -599,7 +614,8 @@ extern int vsnprintf (char *str, size_t size, const char *format, va_list args)
 # if @REPLACE_VSPRINTF@
 #  define vsprintf rpl_vsprintf
 extern int vsprintf (char *str, const char *format, va_list args)
-       __attribute__ ((__format__ (__printf__, 2, 0)));
+       __attribute__ ((__format__ (__printf__, 2, 0)))
+       _GL_ARG_NONNULL ((1, 2));
 # endif
 #elif defined GNULIB_POSIXCHECK
 # undef vsprintf

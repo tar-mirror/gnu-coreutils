@@ -2,7 +2,7 @@
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 #line 1
 /* Test of xvasprintf() and xasprintf() functions.
-   Copyright (C) 2007-2009 Free Software Foundation, Inc.
+   Copyright (C) 2007-2010 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,23 +24,11 @@
 #include "xvasprintf.h"
 
 #include <stdarg.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "progname.h"
-
-#define ASSERT(expr) \
-  do									     \
-    {									     \
-      if (!(expr))							     \
-        {								     \
-          fprintf (stderr, "%s:%d: assertion failed\n", __FILE__, __LINE__); \
-          fflush (stderr);						     \
-          abort ();							     \
-        }								     \
-    }									     \
-  while (0)
+#include "macros.h"
 
 static char *
 my_xasprintf (const char *format, ...)
@@ -133,7 +121,7 @@ test_xasprintf ()
 }
 
 int
-main (int argc _UNUSED_PARAMETER_, char *argv[])
+main (int argc _GL_UNUSED, char *argv[])
 {
   set_program_name (argv[0]);
 

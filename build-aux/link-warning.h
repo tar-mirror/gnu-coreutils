@@ -2,7 +2,7 @@
 /* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 #line 1
 /* A C macro for emitting link time warnings.
-   Copyright (C) 1995, 1997, 2000, 2002-2003, 2007, 2009 Free Software
+   Copyright (C) 1995, 1997, 2000, 2002-2003, 2007, 2009-2010 Free Software
    Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify it
@@ -35,12 +35,12 @@
 #  define GL_LINK_WARNING2(file, line, message) \
      GL_LINK_WARNING3 (file ":" #line ": warning: " message)
 #  define GL_LINK_WARNING3(message) \
-     ({ static const char warning[sizeof (message)]		\
-          __attribute__ ((__unused__,				\
-                          __section__ (".gnu.warning"),		\
-                          __aligned__ (1)))			\
-          = message "\n";					\
-        (void)0;						\
+     ({ static const char warning[sizeof (message)]             \
+          __attribute__ ((__unused__,                           \
+                          __section__ (".gnu.warning"),         \
+                          __aligned__ (1)))                     \
+          = message "\n";                                       \
+        (void)0;                                                \
      })
 # else
 #  define GL_LINK_WARNING(message) ((void) 0)

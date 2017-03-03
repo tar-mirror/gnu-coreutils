@@ -1,6 +1,6 @@
 /* A GNU-like <math.h>.
 
-   Copyright (C) 2002-2003, 2007-2009 Free Software Foundation, Inc.
+   Copyright (C) 2002-2003, 2007-2010 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,6 +29,8 @@
 
 
 /* The definition of GL_LINK_WARNING is copied here.  */
+
+/* The definition of _GL_ARG_NONNULL is copied here.  */
 
 
 #ifdef __cplusplus
@@ -74,7 +76,7 @@ _NaN ()
 #if @GNULIB_FREXP@
 # if @REPLACE_FREXP@
 #  define frexp rpl_frexp
-extern double frexp (double x, int *expptr);
+extern double frexp (double x, int *expptr) _GL_ARG_NONNULL ((2));
 # endif
 #elif defined GNULIB_POSIXCHECK
 # undef frexp
@@ -211,7 +213,7 @@ extern long double floorl (long double x);
 # define frexpl rpl_frexpl
 #endif
 #if (@GNULIB_FREXPL@ && @REPLACE_FREXPL@) || !@HAVE_DECL_FREXPL@
-extern long double frexpl (long double x, int *expptr);
+extern long double frexpl (long double x, int *expptr) _GL_ARG_NONNULL ((2));
 #endif
 #if !@GNULIB_FREXPL@ && defined GNULIB_POSIXCHECK
 # undef frexpl
@@ -409,7 +411,6 @@ extern int gl_isinfl (long double x);
 # if @HAVE_ISNANF@
 /* The original <math.h> included above provides a declaration of isnan macro
    or (older) isnanf function.  */
-#  include <math.h>
 #  if __GNUC__ >= 4
     /* GCC 4.0 and newer provides three built-ins for isnan.  */
 #   undef isnanf
@@ -432,7 +433,6 @@ extern int isnanf (float x);
    to 'double' numbers earlier but now is a type-generic macro.  */
 # if @HAVE_ISNAND@
 /* The original <math.h> included above provides a declaration of isnan macro.  */
-#  include <math.h>
 #  if __GNUC__ >= 4
     /* GCC 4.0 and newer provides three built-ins for isnan.  */
 #   undef isnand
@@ -453,7 +453,6 @@ extern int isnand (double x);
 /* Test for NaN for 'long double' numbers.  */
 # if @HAVE_ISNANL@
 /* The original <math.h> included above provides a declaration of isnan macro or (older) isnanl function.  */
-#  include <math.h>
 #  if __GNUC__ >= 4
     /* GCC 4.0 and newer provides three built-ins for isnan.  */
 #   undef isnanl
@@ -524,31 +523,31 @@ extern int gl_signbitl (long double arg);
 #   if defined FLT_SIGNBIT_WORD && defined FLT_SIGNBIT_BIT && !defined gl_signbitf
 #    define gl_signbitf_OPTIMIZED_MACRO
 #    define gl_signbitf(arg) \
-       ({ union { float _value;						\
+       ({ union { float _value;                                         \
                   unsigned int _word[(sizeof (float) + sizeof (unsigned int) - 1) / sizeof (unsigned int)]; \
-                } _m;							\
-          _m._value = (arg);						\
-          (_m._word[FLT_SIGNBIT_WORD] >> FLT_SIGNBIT_BIT) & 1;		\
+                } _m;                                                   \
+          _m._value = (arg);                                            \
+          (_m._word[FLT_SIGNBIT_WORD] >> FLT_SIGNBIT_BIT) & 1;          \
         })
 #   endif
 #   if defined DBL_SIGNBIT_WORD && defined DBL_SIGNBIT_BIT && !defined gl_signbitd
 #    define gl_signbitd_OPTIMIZED_MACRO
 #    define gl_signbitd(arg) \
-       ({ union { double _value;						\
+       ({ union { double _value;                                                \
                   unsigned int _word[(sizeof (double) + sizeof (unsigned int) - 1) / sizeof (unsigned int)]; \
-                } _m;							\
-          _m._value = (arg);						\
-          (_m._word[DBL_SIGNBIT_WORD] >> DBL_SIGNBIT_BIT) & 1;		\
+                } _m;                                                   \
+          _m._value = (arg);                                            \
+          (_m._word[DBL_SIGNBIT_WORD] >> DBL_SIGNBIT_BIT) & 1;          \
         })
 #   endif
 #   if defined LDBL_SIGNBIT_WORD && defined LDBL_SIGNBIT_BIT && !defined gl_signbitl
 #    define gl_signbitl_OPTIMIZED_MACRO
 #    define gl_signbitl(arg) \
-       ({ union { long double _value;					\
+       ({ union { long double _value;                                   \
                   unsigned int _word[(sizeof (long double) + sizeof (unsigned int) - 1) / sizeof (unsigned int)]; \
-                } _m;							\
-          _m._value = (arg);						\
-          (_m._word[LDBL_SIGNBIT_WORD] >> LDBL_SIGNBIT_BIT) & 1;		\
+                } _m;                                                   \
+          _m._value = (arg);                                            \
+          (_m._word[LDBL_SIGNBIT_WORD] >> LDBL_SIGNBIT_BIT) & 1;                \
         })
 #   endif
 #  endif

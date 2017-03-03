@@ -1,5 +1,6 @@
 /* `dir', `vdir' and `ls' directory listing programs for GNU.
-   Copyright (C) 85, 88, 90, 91, 1995-2009 Free Software Foundation, Inc.
+   Copyright (C) 1985, 1988, 1990-1991, 1995-2010 Free Software Foundation,
+   Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -3272,8 +3273,7 @@ DEFINE_SORT_FUNCTIONS (extension, cmp_extension)
    All the other sort options, in fact, need xstrcoll and strcmp variants,
    because they all use a string comparison (either as the primary or secondary
    sort key), and xstrcoll has the ability to do a longjmp if strcoll fails for
-   locale reasons.  Last, strverscmp is ALWAYS available in coreutils,
-   thanks to the gnulib library. */
+   locale reasons.  Lastly, filevercmp is ALWAYS available with gnulib.  */
 static inline int
 cmp_version (struct fileinfo const *a, struct fileinfo const *b)
 {
@@ -4164,7 +4164,9 @@ print_color_indicator (const struct fileinfo *f, bool symlink_target)
             type = C_STICKY;
         }
       else if (S_ISLNK (mode))
-        type = ((!linkok && color_indicator[C_ORPHAN].string)
+        type = ((!linkok
+                 && (!strncmp (color_indicator[C_LINK].string, "target", 6)
+                     || color_indicator[C_ORPHAN].string))
                 ? C_ORPHAN : C_LINK);
       else if (S_ISFIFO (mode))
         type = C_FIFO;

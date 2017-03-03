@@ -2,7 +2,7 @@
 # DO NOT EDIT! GENERATED AUTOMATICALLY!
 #line 1
 # DO NOT EDIT! GENERATED AUTOMATICALLY!
-# Copyright (C) 2002-2009 Free Software Foundation, Inc.
+# Copyright (C) 2002-2010 Free Software Foundation, Inc.
 #
 # This file is free software, distributed under the terms of the GNU
 # General Public License.  As a special exception to the GNU General
@@ -130,9 +130,12 @@ AC_DEFUN([gl_INIT],
   gl_UNISTD_MODULE_INDICATOR([fchdir])
   gl_FUNC_FCLOSE
   gl_STDIO_MODULE_INDICATOR([fclose])
+  gl_FUNC_FCNTL
+  gl_FCNTL_MODULE_INDICATOR([fcntl])
   gl_FCNTL_H
   gl_FCNTL_SAFER
   gl_MODULE_INDICATOR([fcntl-safer])
+  gl_MODULE_INDICATOR([fd-safer-flag])
   gl_FUNC_FDOPENDIR
   gl_DIRENT_MODULE_INDICATOR([fdopendir])
   gl_FUNC_FFLUSH
@@ -143,6 +146,7 @@ AC_DEFUN([gl_INIT],
   gl_FILE_NAME_CONCAT
   gl_MODULE_INDICATOR([filenamecat])
   gl_FILE_NAME_CONCAT_LGPL
+  AC_REQUIRE([AC_C_INLINE])
   AC_C_FLEXIBLE_ARRAY_MEMBER
   gl_FLOAT_H
   gl_FUNC_FNMATCH_POSIX
@@ -242,6 +246,7 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_ISNAND_NO_LIBM
   gl_FUNC_ISNANF_NO_LIBM
   gl_FUNC_ISNANL_NO_LIBM
+  gl_LANGINFO_H
   gl_FUNC_LCHMOD
   gl_SYS_STAT_MODULE_INDICATOR([lchmod])
   gl_FUNC_LCHOWN
@@ -255,6 +260,7 @@ AC_DEFUN([gl_INIT],
   gl_LOCALCHARSET
   LOCALCHARSET_TESTS_ENVIRONMENT="CHARSETALIASDIR=\"\$(top_builddir)/$gl_source_base\""
   AC_SUBST([LOCALCHARSET_TESTS_ENVIRONMENT])
+  gl_LOCALE_H
   gl_LOCK
   gl_LONG_OPTIONS
   gl_FUNC_LSEEK
@@ -309,6 +315,8 @@ AC_DEFUN([gl_INIT],
   gl_HEADER_NETDB
   gl_HEADER_NETINET_IN
   AC_PROG_MKDIR_P
+  gl_FUNC_NL_LANGINFO
+  gl_LANGINFO_MODULE_INDICATOR([nl_langinfo])
   gl_NPROC
   AC_FUNC_OBSTACK
   dnl Note: AC_FUNC_OBSTACK does AC_LIBSOURCES([obstack.h, obstack.c]).
@@ -436,8 +444,6 @@ AC_DEFUN([gl_INIT],
   gl_STDLIB_MODULE_INDICATOR([strtoull])
   gl_FUNC_STRTOUMAX
   gl_INTTYPES_MODULE_INDICATOR([strtoumax])
-  gl_FUNC_STRVERSCMP
-  gl_STRING_MODULE_INDICATOR([strverscmp])
   gl_FUNC_SYMLINK
   gl_UNISTD_MODULE_INDICATOR([symlink])
   gl_FUNC_SYMLINKAT
@@ -460,12 +466,12 @@ AC_DEFUN([gl_INIT],
   gl_TIMESPEC
   gl_TLS
   gl_FUNC_TZSET_CLOBBER
+  AC_REQUIRE([AC_C_INLINE])
   gl_FUNC_UNAME
   gl_SYS_UTSNAME_MODULE_INDICATOR([uname])
   gl_UNICODEIO
   gl_UNISTD_H
   gl_UNISTD_SAFER
-  gl_MODULE_INDICATOR([unistd-safer])
   gl_MODULE_INDICATOR([unistr/u8-uctomb])
   gl_FUNC_UNLINK
   gl_UNISTD_MODULE_INDICATOR([unlink])
@@ -584,6 +590,8 @@ AC_DEFUN([gl_INIT],
   gl_SYS_SOCKET_MODULE_INDICATOR([connect])
   gl_FUNC_UNGETC_WORKS
   gl_FUNC_UNGETC_WORKS
+  gl_FUNC_GETDTABLESIZE
+  gl_UNISTD_MODULE_INDICATOR([getdtablesize])
   AC_C_BIGENDIAN
   gl_INET_PTON
   gl_ARPA_INET_MODULE_INDICATOR([inet_pton])
@@ -607,6 +615,7 @@ AC_DEFUN([gl_INIT],
     AC_LIBOBJ([listen])
   fi
   gl_SYS_SOCKET_MODULE_INDICATOR([listen])
+  AC_CHECK_FUNCS_ONCE([newlocale])
   gt_LOCALE_FR
   gt_LOCALE_FR_UTF8
   gt_LOCALE_JA
@@ -629,6 +638,8 @@ AC_DEFUN([gl_INIT],
   AC_CHECK_HEADERS_ONCE([sys/mman.h])
   AC_CHECK_FUNCS_ONCE([mprotect])
   AC_CHECK_DECLS_ONCE([alarm])
+  gt_LOCALE_FR
+  gt_LOCALE_FR_UTF8
   AC_CHECK_FUNCS_ONCE([getegid])
   gl_FUNC_PERROR
   gl_STRING_MODULE_INDICATOR([perror])
@@ -777,6 +788,7 @@ AC_DEFUN([gltests_LIBSOURCES], [
 # gnulib-tool and may be removed by future gnulib-tool invocations.
 AC_DEFUN([gl_FILE_LIST], [
   build-aux/announce-gen
+  build-aux/arg-nonnull.h
   build-aux/config.rpath
   build-aux/do-release-commit-and-tag
   build-aux/gendocs.sh
@@ -785,6 +797,7 @@ AC_DEFUN([gl_FILE_LIST], [
   build-aux/gnu-web-doc-update
   build-aux/gnupload
   build-aux/link-warning.h
+  build-aux/unused-parameter.h
   build-aux/update-copyright
   build-aux/useless-if-before-free
   build-aux/vc-list-files
@@ -864,6 +877,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/dirname-lgpl.c
   lib/dirname.c
   lib/dirname.h
+  lib/dup-safer-flag.c
   lib/dup-safer.c
   lib/dup2.c
   lib/errno.in.h
@@ -882,7 +896,9 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/fclose.c
   lib/fcntl--.h
   lib/fcntl-safer.h
+  lib/fcntl.c
   lib/fcntl.in.h
+  lib/fd-safer-flag.c
   lib/fd-safer.c
   lib/fdopendir.c
   lib/fflush.c
@@ -1013,6 +1029,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/isnanf.c
   lib/isnanl-nolibm.h
   lib/isnanl.c
+  lib/langinfo.in.h
   lib/lchown.c
   lib/linebuffer.c
   lib/linebuffer.h
@@ -1020,6 +1037,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/linkat.c
   lib/localcharset.c
   lib/localcharset.h
+  lib/locale.in.h
   lib/long-options.c
   lib/long-options.h
   lib/lseek.c
@@ -1085,6 +1103,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/nanosleep.c
   lib/netdb.in.h
   lib/netinet_in.in.h
+  lib/nl_langinfo.c
   lib/nproc.c
   lib/nproc.h
   lib/obstack.c
@@ -1241,7 +1260,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/strtoul.c
   lib/strtoull.c
   lib/strtoumax.c
-  lib/strverscmp.c
   lib/symlink.c
   lib/symlinkat.c
   lib/sys_select.in.h
@@ -1389,7 +1407,9 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/faccessat.m4
   m4/fchdir.m4
   m4/fclose.m4
+  m4/fcntl-o.m4
   m4/fcntl-safer.m4
+  m4/fcntl.m4
   m4/fcntl_h.m4
   m4/fdopendir.m4
   m4/fflush.m4
@@ -1422,6 +1442,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/getcwd.m4
   m4/getdate.m4
   m4/getdelim.m4
+  m4/getdtablesize.m4
   m4/getgroups.m4
   m4/gethostname.m4
   m4/gethrxtime.m4
@@ -1472,6 +1493,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/isnanl.m4
   m4/jm-winsz1.m4
   m4/jm-winsz2.m4
+  m4/langinfo_h.m4
   m4/lchmod.m4
   m4/lchown.m4
   m4/lcmessage.m4
@@ -1488,6 +1510,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/locale-ja.m4
   m4/locale-tr.m4
   m4/locale-zh.m4
+  m4/locale_h.m4
   m4/lock.m4
   m4/long-options.m4
   m4/longlong.m4
@@ -1531,6 +1554,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/nanosleep.m4
   m4/netdb_h.m4
   m4/netinet_in_h.m4
+  m4/nl_langinfo.m4
   m4/nls.m4
   m4/nocrash.m4
   m4/nproc.m4
@@ -1622,7 +1646,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/strtoul.m4
   m4/strtoull.m4
   m4/strtoumax.m4
-  m4/strverscmp.m4
   m4/symlink.m4
   m4/symlinkat.m4
   m4/sys_ioctl_h.m4
@@ -1687,7 +1710,10 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/init.sh
   tests/locale/fr/LC_MESSAGES/test-quotearg.mo
   tests/locale/fr/LC_MESSAGES/test-quotearg.po
+  tests/macros.h
   tests/nan.h
+  tests/nap.h
+  tests/signature.h
   tests/test-alignof.c
   tests/test-alloca-opt.c
   tests/test-areadlink-with-size.c
@@ -1718,7 +1744,9 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-closein.sh
   tests/test-copy-acl.c
   tests/test-copy-acl.sh
+  tests/test-ctype.c
   tests/test-dirent-safer.c
+  tests/test-dirent.c
   tests/test-dirname.c
   tests/test-dup-safer.c
   tests/test-dup2.c
@@ -1736,6 +1764,7 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-fchownat.c
   tests/test-fcntl-h.c
   tests/test-fcntl-safer.c
+  tests/test-fcntl.c
   tests/test-fdopendir.c
   tests/test-fflush.c
   tests/test-fflush2.c
@@ -1779,6 +1808,7 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-getcwd.c
   tests/test-getdate.c
   tests/test-getdelim.c
+  tests/test-getdtablesize.c
   tests/test-getgroups.c
   tests/test-gethostname.c
   tests/test-getline.c
@@ -1800,11 +1830,13 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-isnanf.h
   tests/test-isnanl-nolibm.c
   tests/test-isnanl.h
+  tests/test-langinfo.c
   tests/test-lchown.c
   tests/test-lchown.h
   tests/test-link.c
   tests/test-link.h
   tests/test-linkat.c
+  tests/test-locale.c
   tests/test-lock.c
   tests/test-lseek.c
   tests/test-lseek.sh
@@ -1843,6 +1875,8 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-nanosleep.c
   tests/test-netdb.c
   tests/test-netinet_in.c
+  tests/test-nl_langinfo.c
+  tests/test-nl_langinfo.sh
   tests/test-open.c
   tests/test-open.h
   tests/test-openat-safer.c
@@ -1894,10 +1928,10 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-string.c
   tests/test-strsignal.c
   tests/test-strtod.c
-  tests/test-strverscmp.c
   tests/test-symlink.c
   tests/test-symlink.h
   tests/test-symlinkat.c
+  tests/test-sys_ioctl.c
   tests/test-sys_select.c
   tests/test-sys_socket.c
   tests/test-sys_stat.c
@@ -1956,6 +1990,7 @@ AC_DEFUN([gl_FILE_LIST], [
   tests=lib/binary-io.h
   tests=lib/bind.c
   tests=lib/connect.c
+  tests=lib/getdtablesize.c
   tests=lib/glthread/thread.c
   tests=lib/glthread/thread.h
   tests=lib/glthread/yield.h
