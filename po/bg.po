@@ -1,17 +1,21 @@
 # translation of coreutils.bg.po to Bulgarian
 # Message catalog for coreutils
-# Copyright (C) 2003, 2004, 2005 Free Software Foundation, Inc.
+# Copyright (C) 2003, 2004, 2005, 2006 Free Software Foundation, Inc.
 # This file is distributed under the same license as the coreutils package.
 # Anton Zinoviev <zinoviev@debian.org>, 2003,2004,2005.
 #
+# Thanks to Alexander Shopov for some bug reports.
+#
+# Look at the CHECK string.
+#
 # This file should be sent to translation@iro.umontreal.ca with the
-# following subject line: TP-Robot coreutils-VERSION.bg.po
+# following subject line: TP-Robot coreutils-5.94.bg.po
 msgid ""
 msgstr ""
-"Project-Id-Version: coreutils 5.93\n"
+"Project-Id-Version: coreutils 5.94\n"
 "Report-Msgid-Bugs-To: bug-coreutils@gnu.org\n"
-"POT-Creation-Date: 2006-05-12 10:23+0200\n"
-"PO-Revision-Date: 2005-11-15 00:24+0200\n"
+"POT-Creation-Date: 2006-05-21 19:53+0200\n"
+"PO-Revision-Date: 2006-03-12 23:10+0200\n"
 "Last-Translator: Anton Zinoviev <zinoviev@debian.org>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
 "MIME-Version: 1.0\n"
@@ -48,55 +52,55 @@ msgstr "Непозната системна грешка"
 
 #: lib/file-type.c:43
 msgid "regular empty file"
-msgstr "обикновеният празен файл"
+msgstr "обикновен празен файл"
 
 #: lib/file-type.c:43
 msgid "regular file"
-msgstr "обикновеният файл"
+msgstr "обикновен файл"
 
 #: lib/file-type.c:46
 msgid "directory"
-msgstr "каталогът"
+msgstr "каталог"
 
 #: lib/file-type.c:49
 msgid "block special file"
-msgstr "специалният блоков файл"
+msgstr "специален блоков файл"
 
 #: lib/file-type.c:52
 msgid "character special file"
-msgstr "специалният символен файл"
+msgstr "специален символен файл"
 
 #: lib/file-type.c:55
 msgid "fifo"
-msgstr "именуваният канал"
+msgstr "именуван канал"
 
 #: lib/file-type.c:58
 msgid "symbolic link"
-msgstr "символната връзка"
+msgstr "символна връзка"
 
 #: lib/file-type.c:61
 msgid "socket"
-msgstr "гнездото"
+msgstr "гнездо"
 
 #: lib/file-type.c:64
 msgid "message queue"
-msgstr "опашката със съобщения"
+msgstr "опашка със съобщения"
 
 #: lib/file-type.c:67
 msgid "semaphore"
-msgstr "семафорът"
+msgstr "семафор"
 
 #: lib/file-type.c:70
 msgid "shared memory object"
-msgstr "споделеният обект в паметта"
+msgstr "споделен обект в паметта"
 
 #: lib/file-type.c:73
 msgid "typed memory object"
-msgstr "типизираният обект в паметта"
+msgstr "типизиран обект в паметта"
 
 #: lib/file-type.c:75
 msgid "weird file"
-msgstr "странният файл"
+msgstr "непознат тип файл"
 
 #: lib/gai_strerror.c:45
 msgid "Address family for hostname not supported"
@@ -1622,10 +1626,10 @@ msgid ""
 "regular file.\n"
 msgstr ""
 "\n"
-"По изключение, cp прави резервно копие на ИЗТОЧНИК, ако са зададени опции --"
-"force\n"
-"и --backup, а ИЗТОЧНИК и ЦЕЛ са едно и също име на съществуващ обикновен "
-"файл.\n"
+"По изключение ако са зададени опции --force и --backup, а ИЗТОЧНИК и ЦЕЛ са "
+"едно\n"
+"и също име на съществуващ обикновен файл, cp прави резервно копие на "
+"ИЗТОЧНИК.\n"
 
 #: src/cp.c:313
 #, c-format
@@ -2100,7 +2104,6 @@ msgstr ""
 "  %e   денят от месеца с пълнеж от интервал; същото като %_d (напр. „ 1“)\n"
 
 #: src/date.c:174
-#, fuzzy
 msgid ""
 "  %F   full date; same as %Y-%m-%d\n"
 "  %g   last two digits of year of ISO week number (see %G)\n"
@@ -2166,7 +2169,6 @@ msgstr ""
 "  %u   денят от седмицата (1-7);  1 означава понеделник\n"
 
 #: src/date.c:206
-#, fuzzy
 msgid ""
 "  %U   week number of year, with Sunday as first day of week (00..53)\n"
 "  %V   ISO week number, with Monday as first day of week (01..53)\n"
@@ -2193,7 +2195,6 @@ msgstr ""
 "  %Y   годината\n"
 
 #: src/date.c:218
-#, fuzzy
 msgid ""
 "  %z   +hhmm numeric timezone (e.g., -0400)\n"
 "  %:z  +hh:mm numeric timezone (e.g., -04:00)\n"
@@ -2219,7 +2220,7 @@ msgstr ""
 "България)\n"
 "\n"
 "По подразбиране date допълва числовите полета с нули.\n"
-"Следните флагове могат да следват %:\n"
+"Следните флагове могат да следват „%“:\n"
 "\n"
 "  - (минус) да не се допълва с нули\n"
 "  _ (знак за подчертаване) да се допълва с интервали\n"
@@ -2701,7 +2702,6 @@ msgstr ""
 "\n"
 
 #: src/df.c:730
-#, fuzzy
 msgid ""
 "  -a, --all             include dummy file systems\n"
 "  -B, --block-size=SIZE use SIZE-byte blocks\n"
@@ -2709,7 +2709,7 @@ msgid ""
 "2G)\n"
 "  -H, --si              likewise, but use powers of 1000 not 1024\n"
 msgstr ""
-"  -a, --all             включително файловите системи с 0 блока\n"
+"  -a, --all             включително празните файлови системи (с 0 блокове)\n"
 "  -B, --block-size=РАЗМ да се ползват блокове с размер РАЗМ байта\n"
 "  -h, --human-readable  извежда размерите като за хора (напр. 1K, 234M, 2G)\n"
 "  -H, --si              подобно, но с множител 1000 вместо 1024\n"
@@ -3781,7 +3781,7 @@ msgid ""
 msgstr ""
 "      --backup[=МЕТОД] прави резервно копие на съществуващите целеви "
 "файлове\n"
-"  -b                  като --backup, но не приема аргумент\n"
+"  -b                  като --backup, но не допуска използването на аргумент\n"
 "  -c                  (игнорира се)\n"
 "  -d, --directory     приема всички аргументи като имена на каталози; "
 "създава\n"
@@ -4091,15 +4091,16 @@ msgstr "създава се символна връзка %s към %s"
 msgid "create hard link %s to %s"
 msgstr "създава се твърда връзка %s към %s"
 
+# CHECK: Да се провери това дали се използва другаде, освен в ln.c:322
 #: src/ln.c:322
 #, c-format
 msgid "creating symbolic link %s to %s"
-msgstr "създава се символна връзка %s към %s"
+msgstr "грешка при създаване на символна връзка %s към %s"
 
 #: src/ln.c:323
 #, c-format
 msgid "creating hard link %s to %s"
-msgstr "създава се твърда връзка %s към %s"
+msgstr "грешка при създаване на твърда връзка %s към %s"
 
 #: src/ln.c:342
 #, c-format
@@ -4900,9 +4901,10 @@ msgid ""
 "  -f, --force                  do not prompt before overwriting\n"
 "  -i, --interactive            prompt before overwrite\n"
 msgstr ""
-"      --backup[=МЕТОД]         прави резервно копие на съществуващи целеви "
+"      --backup[=МЕТОД]       прави резервно копие на съществуващи целеви "
 "файлове\n"
-"  -b                           като --backup, но не приема аргумент\n"
+"  -b                           като --backup, но не допуска използването на "
+"аргумент\n"
 "  -f, --force                  да не се пита преди заместване на файлове\n"
 "  -i, --interactive            да се пита преди заместване на файлове\n"
 
@@ -6295,17 +6297,17 @@ msgstr "%s: да се изтрие ли %s %s? "
 #: src/remove.c:704
 #, c-format
 msgid "removed %s\n"
-msgstr "изтриване на %s\n"
+msgstr "%s е изтрит\n"
 
 #: src/remove.c:719 src/remove.c:1176
 #, c-format
 msgid "removed directory: %s\n"
-msgstr "изтриване на каталога %s\n"
+msgstr "каталогът %s е изтрит\n"
 
 #: src/remove.c:980 src/remove.c:1109
 #, c-format
 msgid "cannot chdir from %s to %s"
-msgstr "не може да се смени каталогът от %s на %s"
+msgstr "каталогът не може да се смени от %s на %s"
 
 #: src/remove.c:988
 #, c-format
@@ -6421,7 +6423,7 @@ msgstr ""
 #: src/rmdir.c:109 src/rmdir.c:207
 #, c-format
 msgid "removing directory, %s"
-msgstr "изтрива се каталогът %s"
+msgstr "каталогът %s се изтрива"
 
 #: src/rmdir.c:139
 #, c-format
@@ -7189,19 +7191,18 @@ msgid "invalid number of lines: 0"
 msgstr "недопустим брой редове: 0"
 
 #: src/stat.c:590
-#, fuzzy, c-format
+#, c-format
 msgid "warning: unrecognized escape `\\%c'"
-msgstr "%s: непозната опция „%c%s“\n"
+msgstr "внимание: неразпозната команда с обратна наклонена черта „\\%c“"
 
 #: src/stat.c:625
-#, fuzzy, c-format
+#, c-format
 msgid "%s%s: invalid directive"
-msgstr "%%%c: неправилна спецификация"
+msgstr "%s%s: неправилна команда"
 
 #: src/stat.c:670
-#, fuzzy
 msgid "warning: backslash at end of format"
-msgstr "неправилна обратно наклонена черта в края на низа"
+msgstr "внимание: обратна наклонена черта в края на форматен низ"
 
 #: src/stat.c:699
 #, c-format
@@ -7220,9 +7221,13 @@ msgid ""
 "  -L, --dereference     follow links\n"
 "  -f, --file-system     display file system status instead of file status\n"
 msgstr ""
+"Извежда състоянието на файл или файлова система.\n"
+"\n"
+"  -L, --dereference     следва символните връзки\n"
+"  -f, --file-system     извежда състоянието на файловата система, вместо на "
+"файла\n"
 
 #: src/stat.c:782
-#, fuzzy
 msgid ""
 "  -c  --format=FORMAT   use the specified FORMAT instead of the default;\n"
 "                          output a newline after each use of FORMAT\n"
@@ -7231,13 +7236,16 @@ msgid ""
 "                          If you want a newline, include \\n in FORMAT.\n"
 "  -t, --terse           print the information in terse form\n"
 msgstr ""
-"Извежда информация за състоянието на файл или файлова система.\n"
-"\n"
-"  -f, --file-system      извежда състоянието на файлова система вместо на "
-"файл\n"
-"  -c  --format=ФОРМАТ   ползва посочения ФОРМАТ вместо стандартния\n"
-"  -L, --dereference     следва символните връзки\n"
-"  -t, --terse           извежда информацията в сбит вид\n"
+"  -c  --format=ФОРМАТ   да се използва посоченият ФОРМАТ, вместо "
+"подразбиращия се;\n"
+"                          да се изведе нов ред след всяко използване на "
+"ФОРМАТ\n"
+"      --printf=ФОРМАТ   като --format, но да се интерпретират обратно "
+"наклонените черти\n"
+"                          и да не се извежда задължителния завършващ нов "
+"ред.\n"
+"                          Ако искате нов ред, вмъкнете \\n във ФОРМАТ.\n"
+"  -t, --terse           информацията да се извежда в сбита форма\n"
 
 #: src/stat.c:793
 msgid ""
@@ -9324,6 +9332,23 @@ msgstr ""
 
 #~ msgid "cannot overwrite directory %s"
 #~ msgstr "не може да бъде заместен каталогът %s"
+
+#~ msgid ""
+#~ "Display file or file system status.\n"
+#~ "\n"
+#~ "  -f, --file-system     display file system status instead of file "
+#~ "status\n"
+#~ "  -c  --format=FORMAT   use the specified FORMAT instead of the default\n"
+#~ "  -L, --dereference     follow links\n"
+#~ "  -t, --terse           print the information in terse form\n"
+#~ msgstr ""
+#~ "Извежда информация за състоянието на файл или файлова система.\n"
+#~ "\n"
+#~ "  -f, --file-system      извежда състоянието на файлова система вместо на "
+#~ "файл\n"
+#~ "  -c  --format=ФОРМАТ   ползва посочения ФОРМАТ вместо стандартния\n"
+#~ "  -L, --dereference     следва символните връзки\n"
+#~ "  -t, --terse           извежда информацията в сбит вид\n"
 
 #~ msgid "Warning: `-l' is deprecated; use `-L' instead"
 #~ msgstr "Внимание: „-l“ е остаряла опция; вместо нея ползвайте „-L“"

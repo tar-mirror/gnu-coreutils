@@ -6,10 +6,10 @@
 # Gabor Kelemen <kelemeng@gnome.hu>, 2005, 2006.
 msgid ""
 msgstr ""
-"Project-Id-Version: coreutils 5.93\n"
+"Project-Id-Version: coreutils 5.94\n"
 "Report-Msgid-Bugs-To: bug-coreutils@gnu.org\n"
-"POT-Creation-Date: 2006-05-12 10:23+0200\n"
-"PO-Revision-Date: 2006-01-16 03:02+0100\n"
+"POT-Creation-Date: 2006-05-21 19:53+0200\n"
+"PO-Revision-Date: 2006-03-07 03:02+0100\n"
 "Last-Translator: Emese Kovacs <emese@instantweb.hu>\n"
 "Language-Team: Hungarian <translation-team-hu@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -2119,15 +2119,14 @@ msgstr ""
 "  %e   a hónap napja, szóközökkel feltöltve; ugyanaz, mint a %_d\n"
 
 #: src/date.c:174
-#, fuzzy
 msgid ""
 "  %F   full date; same as %Y-%m-%d\n"
 "  %g   last two digits of year of ISO week number (see %G)\n"
 "  %G   year of ISO week number (see %V); normally useful only with %V\n"
 msgstr ""
 "  %F   teljes dátum; ugyanaz, mint a %Y-%m-%d\n"
-"  %g   az év utolsó két számjegye a hetek %V szerinti számának megfelelően\n"
-"  %G   az év a hetek %V szerinti számának megfelelően\n"
+"  %g   az ISO hétszám évének utolsó két számjegye (lásd %G)\n"
+"  %G   az ISO hétszám éve (lásd %V); csak %V-vel hasznos\n"
 
 #: src/date.c:179
 msgid ""
@@ -2185,7 +2184,6 @@ msgstr ""
 "  %u   a hét napja (1..7); az 1 a Hétfőt jelenti\n"
 
 #: src/date.c:206
-#, fuzzy
 msgid ""
 "  %U   week number of year, with Sunday as first day of week (00..53)\n"
 "  %V   ISO week number, with Monday as first day of week (01..53)\n"
@@ -2193,7 +2191,7 @@ msgid ""
 "  %W   week number of year, with Monday as first day of week (00..53)\n"
 msgstr ""
 "  %U   az év hetének száma, a hét első napja Vasárnap (00..53)\n"
-"  %V   az év hetének száma, a hét első napja Hétfő (01..53)\n"
+"  %V   az év hetének száma (ISO), a hét első napja Hétfő (01..53)\n"
 "  %w   a hét napja (0..6); a 0 Vasárnapot jelenti\n"
 "  %W   az év hetének száma, a hét első napja Hétfő (00..53)\n"
 
@@ -2210,7 +2208,6 @@ msgstr ""
 "  %Y   év\n"
 
 #: src/date.c:218
-#, fuzzy
 msgid ""
 "  %z   +hhmm numeric timezone (e.g., -0400)\n"
 "  %:z  +hh:mm numeric timezone (e.g., -04:00)\n"
@@ -2713,7 +2710,6 @@ msgstr ""
 "\n"
 
 #: src/df.c:730
-#, fuzzy
 msgid ""
 "  -a, --all             include dummy file systems\n"
 "  -B, --block-size=SIZE use SIZE-byte blocks\n"
@@ -2722,7 +2718,7 @@ msgid ""
 "  -H, --si              likewise, but use powers of 1000 not 1024\n"
 msgstr ""
 "  -a, --all              0 blokkot tartalmazó fájlrendszereket is listázza\n"
-"  -B  --block-size=MÉRET MÉRET bájtos blokkokat használ\n"
+"  -B,  --block-size=MÉRET MÉRET bájtos blokkokat használ\n"
 "  -h, --human-readable   ember által olvasható formátum (például 1K 234M "
 "2G)\n"
 "  -H, --si               ugyanaz mint előbb, de 1000-es szorzó 1024-es "
@@ -7302,18 +7298,18 @@ msgid "invalid number of lines: 0"
 msgstr "érvénytelen sorszám: 0"
 
 #: src/stat.c:590
-#, fuzzy, c-format
+#, c-format
 msgid "warning: unrecognized escape `\\%c'"
-msgstr "%s: a(z) \"%c%s\" kapcsoló ismeretlen\n"
+msgstr "figyelmeztetés: fel nem ismert védés `\\%c'"
 
 #: src/stat.c:625
-#, fuzzy, c-format
+#, c-format
 msgid "%s%s: invalid directive"
-msgstr "%s: érvénytelen fájltípus"
+msgstr "%s%s: érvénytelen direktíva"
 
 #: src/stat.c:670
 msgid "warning: backslash at end of format"
-msgstr ""
+msgstr "figyelmeztetés: visszafelé per a formátum végén"
 
 #: src/stat.c:699
 #, c-format
@@ -7332,6 +7328,11 @@ msgid ""
 "  -L, --dereference     follow links\n"
 "  -f, --file-system     display file system status instead of file status\n"
 msgstr ""
+"Kijelzi a fájl vagy fájlrendszer állapotát.\n"
+"\n"
+"  -L, --dereference     kövesse a linkeket\n"
+"  -f, --file-system     a fájlrendszer állapotát jelzi ki a fájl állapota "
+"helyett\n"
 
 #: src/stat.c:782
 msgid ""
@@ -7342,6 +7343,13 @@ msgid ""
 "                          If you want a newline, include \\n in FORMAT.\n"
 "  -t, --terse           print the information in terse form\n"
 msgstr ""
+"  -c  --format=FORMÁTUM a megadott FORMÁTUMot használja az alapértelmezett "
+"helyett;\n"
+"                          minden FORMÁTUM után új sor\n"
+"      --printf=FORMÁTUM mint a --format, de értelmezi a visszafelé peres,\n"
+"                          védelmet és nem tesz kötelezően befejező új sort.\n"
+"                          Új sorhoz a FORMÁTUMban használd a \\n jelölést.\n"
+"  -t, --terse           rövid információ kiírása\n"
 
 #: src/stat.c:793
 msgid ""

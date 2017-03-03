@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU coreutils 5.93\n"
+"Project-Id-Version: GNU coreutils 5.94\n"
 "Report-Msgid-Bugs-To: bug-coreutils@gnu.org\n"
-"POT-Creation-Date: 2006-05-12 10:23+0200\n"
-"PO-Revision-Date: 2006-01-11 08:00-0500\n"
+"POT-Creation-Date: 2006-05-21 19:53+0200\n"
+"PO-Revision-Date: 2006-03-15 08:00-0500\n"
 "Last-Translator: Michel Robitaille <robitail@IRO.UMontreal.CA>\n"
 "Language-Team: French <traduc@traduc.org>\n"
 "MIME-Version: 1.0\n"
@@ -1121,7 +1121,7 @@ msgstr ""
 #: src/chroot.c:89
 #, c-format
 msgid "cannot change root directory to %s"
-msgstr "ne changer le répertoire racine vers %s"
+msgstr "ne peut changer le répertoire racine vers %s"
 
 #: src/chroot.c:92
 msgid "cannot chdir to root directory"
@@ -2129,16 +2129,16 @@ msgstr ""
 "  %e   le jour du mois précédé d'un blanc identique à %_d\n"
 
 #: src/date.c:174
-#, fuzzy
 msgid ""
 "  %F   full date; same as %Y-%m-%d\n"
 "  %g   last two digits of year of ISO week number (see %G)\n"
 "  %G   year of ISO week number (see %V); normally useful only with %V\n"
 msgstr ""
 "  %F   la date complète, identique à %Y-%m-%d\n"
-"  %g   les 2 derniers chiffres de l'année correspondant à au numéro de "
-"semaine %V\n"
-"  %G   l'année correspondant au numéro de semaine %V\n"
+"  %g   les 2 derniers chiffres de l'année correspondant au numéro de semaine "
+"ISO (voir %G)\n"
+"  %G   l'année correspondant au numéro de semaine ISO (voir %V); normalement "
+"utile seulement avec %V\n"
 
 #: src/date.c:179
 msgid ""
@@ -2195,18 +2195,17 @@ msgstr ""
 "  %u   le jour de la semaine (1..7);  1 représente le lundi\n"
 
 #: src/date.c:206
-#, fuzzy
 msgid ""
 "  %U   week number of year, with Sunday as first day of week (00..53)\n"
 "  %V   ISO week number, with Monday as first day of week (01..53)\n"
 "  %w   day of week (0..6); 0 is Sunday\n"
 "  %W   week number of year, with Monday as first day of week (00..53)\n"
 msgstr ""
-"  %U   le numéro de la semaine dans l'année débutant le dimanche\n"
+"  %U   le numéro de la semaine dans l'année débutant par le dimanche\n"
 "        comme premier jour de la semaine (00..53)\n"
-"  %V   le numéro de la semaine dans l'année débutant par le lundi\n"
+"  %V   le numéro de la semaine ISO dans l'année débutant par le lundi\n"
 "        comme premier jour de la semaine (01..53)\n"
-"  %w   le jour de la semaine (0..6);  0 représente dimanche\n"
+"  %w   le jour de la semaine (0..6);  0 représente le dimanche\n"
 "  %W   le numéro de la semaine dans l'année débutant par le lundi\n"
 "        comme premier jour de la semaine (00..53)\n"
 
@@ -2223,7 +2222,6 @@ msgstr ""
 "  %Y   l'année\n"
 
 #: src/date.c:218
-#, fuzzy
 msgid ""
 "  %z   +hhmm numeric timezone (e.g., -0400)\n"
 "  %:z  +hh:mm numeric timezone (e.g., -04:00)\n"
@@ -2249,9 +2247,9 @@ msgstr ""
 "  %Z    abréviation alphabétique des fuseaux horaires (i.e. EDT)\n"
 "\n"
 "Par défaut les champs de date numériques sont remplis par des zéros.\n"
-"Les fanions des options suivantes peuvent suivre `%':\n"
+"Les paramètres des options suivantes peuvent suivre `%':\n"
 "\n"
-"  - (tirait) ne pas remplir le champ\n"
+"  - (tiret) ne pas remplir le champ\n"
 "  _ (souligné) remplir par des espaces\n"
 "  0 (zéro) remplir par des zéros\n"
 "  ^ utiliser les majuscules si possible\n"
@@ -2730,7 +2728,6 @@ msgstr ""
 "\n"
 
 #: src/df.c:730
-#, fuzzy
 msgid ""
 "  -a, --all             include dummy file systems\n"
 "  -B, --block-size=SIZE use SIZE-byte blocks\n"
@@ -2738,8 +2735,8 @@ msgid ""
 "2G)\n"
 "  -H, --si              likewise, but use powers of 1000 not 1024\n"
 msgstr ""
-"  -a, --all               inclure les systèmes de fichiers ayant 0 bloc\n"
-"  -B, --block-size=TAILLE utiliser la TAILLE de blocs\n"
+"  -a, --all               inclure le système bidon de fichiers\n"
+"  -B, --block-size=TAILLE utiliser la TAILLE en octets de blocs\n"
 "  -h, --human-readable    afficher les tailles dans un format lisible par\n"
 "                          un humain (i.e. 1K 234M 2G)\n"
 "  -H, --si                identique mais utilise un multiple de 1000\n"
@@ -7364,19 +7361,18 @@ msgid "invalid number of lines: 0"
 msgstr "nombre invalide de lignes: 0"
 
 #: src/stat.c:590
-#, fuzzy, c-format
+#, c-format
 msgid "warning: unrecognized escape `\\%c'"
-msgstr "%s: option non reconnue `-%c'\n"
+msgstr "AVERTISSEMENT: séquence d'échappement non reconnue `\\%c'"
 
 #: src/stat.c:625
-#, fuzzy, c-format
+#, c-format
 msgid "%s%s: invalid directive"
-msgstr "%%%c: directive invalide"
+msgstr "%s%s: directive invalide"
 
 #: src/stat.c:670
-#, fuzzy
 msgid "warning: backslash at end of format"
-msgstr "Échappement barre oblique inverse invalide à la fin d'une chaîne."
+msgstr "AVERTISSEMENT: barre oblique inverse invalide à la fin du format"
 
 #: src/stat.c:699
 #, c-format
@@ -7395,6 +7391,11 @@ msgid ""
 "  -L, --dereference     follow links\n"
 "  -f, --file-system     display file system status instead of file status\n"
 msgstr ""
+"Afficher l'état d'un fichier ou d'un système de fichiers.\n"
+"\n"
+"  -L, --dereference     suivre les liens\n"
+"  -f, --file-system     afficher l'état du système de fichiers au lieu de "
+"l'état du fichier\n"
 
 #: src/stat.c:782
 msgid ""
@@ -7405,6 +7406,17 @@ msgid ""
 "                          If you want a newline, include \\n in FORMAT.\n"
 "  -t, --terse           print the information in terse form\n"
 msgstr ""
+"  -c  --format=FORMAT   utiliser le FORMAT spécifié au lieu de celui par "
+"défaut;\n"
+"                          afficher un saut de ligne après l'utilisation du "
+"FORMAT\n"
+"      --printf=FORMAT   identique à --format mais interprète les séquences "
+"d'échappements,\n"
+"                          et ne fait pas l'affichage d'un saut de ligne.\n"
+"                          Si vous désiréz un saut de ligne, inclure \\n dans "
+"le FORMAT.\n"
+"  -t, --terse           afficher l'information dans un format "
+"compréhensible\n"
 
 #: src/stat.c:793
 msgid ""

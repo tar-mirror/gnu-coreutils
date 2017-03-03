@@ -1,14 +1,14 @@
 # -*- mode: po; coding: utf-8; -*- Slovenian message catalog for GNU coreutils.
-# Copyright (C) 1996, 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
-# Primož Peterlin <primoz.peterlin@biofiz.mf.uni-lj.si>, 1996, 1999, 2000, 2001, 2002, 2003, 2005.
-# $Id: sl.po,v 1.214.2.8 2006/05/12 10:31:46 meyering Exp $
+# Copyright (C) 1996, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006 Free Software Foundation, Inc.
+# Primož Peterlin <primoz.peterlin@biofiz.mf.uni-lj.si>, 1996, 1999, 2000, 2001, 2002, 2003, 2005, 2006.
+# $Id: sl.po,v 1.214.2.9 2006/05/21 19:37:38 meyering Exp $
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: GNU coreutils 5.91\n"
+"Project-Id-Version: GNU coreutils 5.94\n"
 "Report-Msgid-Bugs-To: bug-coreutils@gnu.org\n"
-"POT-Creation-Date: 2006-05-12 10:23+0200\n"
-"PO-Revision-Date: 2005-10-17 17:09+0200\n"
+"POT-Creation-Date: 2006-05-21 19:53+0200\n"
+"PO-Revision-Date: 2006-03-17 17:13+0100\n"
 "Last-Translator: Primož Peterlin <primoz.peterlin@biofiz.mf.uni-lj.si>\n"
 "Language-Team: Slovenian <translation-team-sl@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -2089,15 +2089,15 @@ msgstr ""
 "  %e   dan v mesecu, dopolnjen s presledki; isto kot %_d\n"
 
 #: src/date.c:174
-#, fuzzy
 msgid ""
 "  %F   full date; same as %Y-%m-%d\n"
 "  %g   last two digits of year of ISO week number (see %G)\n"
 "  %G   year of ISO week number (see %V); normally useful only with %V\n"
 msgstr ""
 "  %F   poln datum; isto kot %Y-%m-%d\n"
-"  %g   dvoštevilčno leto, ustrezajoče številki tedna %V\n"
-"  %G   štirištevilčno leto, ustrezajoče številki tedna %V\n"
+"  %g   dvoštevilčno leto, ustrezajoče številki tedna ISO (glejte %G)\n"
+"  %G   štirištevilčno leto, ustrezajoče številki tedna ISO (glejte %V);\n"
+"       praviloma uporabno le v kombinaciji z %V\n"
 
 #: src/date.c:179
 msgid ""
@@ -2154,7 +2154,6 @@ msgstr ""
 "  %u   dan v tednu (1..7); 1 je ponedeljek\n"
 
 #: src/date.c:206
-#, fuzzy
 msgid ""
 "  %U   week number of year, with Sunday as first day of week (00..53)\n"
 "  %V   ISO week number, with Monday as first day of week (01..53)\n"
@@ -2162,8 +2161,7 @@ msgid ""
 "  %W   week number of year, with Monday as first day of week (00..53)\n"
 msgstr ""
 "  %U   številka tedna v letu z nedeljo kot prvim dnevom v tednu (00..53)\n"
-"  %V   številka tedna v letu s ponedeljkom kot prvim dnevom v tednu "
-"(01..53)\n"
+"  %V   številka tedna ISO, s ponedeljkom kot prvim dnevom v tednu (01..53)\n"
 "  %w   dan v tednu (0..6);  0 predstavlja nedeljo\n"
 "  %W   številka tedna v letu s ponedeljkom kot prvim dnevom v tednu "
 "(00..53)\n"
@@ -2181,7 +2179,6 @@ msgstr ""
 "  %Y   leto\n"
 
 #: src/date.c:218
-#, fuzzy
 msgid ""
 "  %z   +hhmm numeric timezone (e.g., -0400)\n"
 "  %:z  +hh:mm numeric timezone (e.g., -04:00)\n"
@@ -2204,7 +2201,7 @@ msgstr ""
 "  %::z časovni pas v številčnem zapisu +hh:mm:ss (npr. +01:00:00)\n"
 "  %:::z časovni pas v številčnem zapisu; število dvopičij ustreza zahtevani\n"
 "       natančnosti (npr. +04, +05:30)\n"
-"  %Z   časovni pas v alfanumerični (npr. CET)\n"
+"  %Z   alfanumerična okrajšava časovnega pasu (npr. CET)\n"
 "\n"
 "Privzeto so številčna polja v datumu do polne dolžine polja dopolnjena\n"
 "z ničlami. Naslednja neobvezna določila  lahko sledijo znaku »%«:\n"
@@ -2689,7 +2686,6 @@ msgstr ""
 "\n"
 
 #: src/df.c:730
-#, fuzzy
 msgid ""
 "  -a, --all             include dummy file systems\n"
 "  -B, --block-size=SIZE use SIZE-byte blocks\n"
@@ -7134,19 +7130,18 @@ msgid "invalid number of lines: 0"
 msgstr "neveljavno število vrstic: 0"
 
 #: src/stat.c:590
-#, fuzzy, c-format
+#, c-format
 msgid "warning: unrecognized escape `\\%c'"
-msgstr "%s: neprepoznana izbira »%c%s«\n"
+msgstr "opozorilo: neprepoznana izbira »\\%c«"
 
 #: src/stat.c:625
-#, fuzzy, c-format
+#, c-format
 msgid "%s%s: invalid directive"
-msgstr "%%%c: neveljavna direktiva"
+msgstr "%s%s: neveljavna direktiva"
 
 #: src/stat.c:670
-#, fuzzy
 msgid "warning: backslash at end of format"
-msgstr "neveljavno ubežno zaporedje na koncu niza"
+msgstr "opozorilo: nagibnica na koncu formatnega določila"
 
 #: src/stat.c:699
 #, c-format
@@ -7165,9 +7160,13 @@ msgid ""
 "  -L, --dereference     follow links\n"
 "  -f, --file-system     display file system status instead of file status\n"
 msgstr ""
+"Izpis statusa datoteke ali datotečnega sistema.\n"
+"\n"
+"  -L, --dereference     s sledenjem povezav\n"
+"  -f, --file-system     izpis statusa datotečnega sistema, ne statusa "
+"datoteke\n"
 
 #: src/stat.c:782
-#, fuzzy
 msgid ""
 "  -c  --format=FORMAT   use the specified FORMAT instead of the default;\n"
 "                          output a newline after each use of FORMAT\n"
@@ -7176,12 +7175,11 @@ msgid ""
 "                          If you want a newline, include \\n in FORMAT.\n"
 "  -t, --terse           print the information in terse form\n"
 msgstr ""
-"Izpis statusa datoteke ali datotečnega sistema.\n"
-"\n"
-"  -f, --file-system     izpis statusa datotečnega sistema, ne statusa "
-"datoteke\n"
-"  -c, --format=OBLIKA   namesto privzete uporabi podano OBLIKO\n"
-"  -L, --dereference     s sledenjem povezav\n"
+"  -c, --format=OBLIKA   namesto privzete uporabi podano OBLIKO;\n"
+"                          nova vrstica za vsako uporabo OBLIKE\n"
+"      --printf=OBLIKA   podobno kot --format, vendar s tolmačenjem ubežnih\n"
+"                          zaporedij in brez izpisa obvezne zaključne nove \n"
+"                          verstice; če jo želite, dodajte \\n v OBLIKO.\n"
 "  -t, --terse           izpis podatkov v zgoščeni obliki\n"
 
 #: src/stat.c:793
@@ -9248,6 +9246,23 @@ msgstr ""
 
 #~ msgid "cannot overwrite directory %s"
 #~ msgstr "ni mogoče pisati prek imenika %s"
+
+#~ msgid ""
+#~ "Display file or file system status.\n"
+#~ "\n"
+#~ "  -f, --file-system     display file system status instead of file "
+#~ "status\n"
+#~ "  -c  --format=FORMAT   use the specified FORMAT instead of the default\n"
+#~ "  -L, --dereference     follow links\n"
+#~ "  -t, --terse           print the information in terse form\n"
+#~ msgstr ""
+#~ "Izpis statusa datoteke ali datotečnega sistema.\n"
+#~ "\n"
+#~ "  -f, --file-system     izpis statusa datotečnega sistema, ne statusa "
+#~ "datoteke\n"
+#~ "  -c, --format=OBLIKA   namesto privzete uporabi podano OBLIKO\n"
+#~ "  -L, --dereference     s sledenjem povezav\n"
+#~ "  -t, --terse           izpis podatkov v zgoščeni obliki\n"
 
 #~ msgid "Warning: `-l' is deprecated; use `-L' instead"
 #~ msgstr "Opozorilo: izbira »-l« je odsvetovana; uporabite »-L«"
