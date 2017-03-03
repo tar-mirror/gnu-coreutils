@@ -1,5 +1,5 @@
 /* runcon -- run command with specified security context
-   Copyright (C) 2005-2012 Free Software Foundation, Inc.
+   Copyright (C) 2005-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -87,7 +87,11 @@ Usage: %s CONTEXT COMMAND [args]\n\
       fputs (_("\
 Run a program in a different security context.\n\
 With neither CONTEXT nor COMMAND, print the current security context.\n\
-\n\
+"), stdout);
+
+      emit_mandatory_arg_note ();
+
+      fputs (_("\
   CONTEXT            Complete security context\n\
   -c, --compute      compute process transition context before modifying\n\
   -t, --type=TYPE    type (for same role as parent)\n\

@@ -1,5 +1,5 @@
 /* stdbuf -- setup the standard streams for a command
-   Copyright (C) 2009-2012 Free Software Foundation, Inc.
+   Copyright (C) 2009-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -90,11 +90,10 @@ usage (int status)
       printf (_("Usage: %s OPTION... COMMAND\n"), program_name);
       fputs (_("\
 Run COMMAND, with modified buffering operations for its standard streams.\n\
-\n\
 "), stdout);
-      fputs (_("\
-Mandatory arguments to long options are mandatory for short options too.\n\
-"), stdout);
+
+      emit_mandatory_arg_note ();
+
       fputs (_("\
   -i, --input=MODE   adjust standard input stream buffering\n\
   -o, --output=MODE  adjust standard output stream buffering\n\

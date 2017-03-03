@@ -1,5 +1,5 @@
 /* seq - print sequence of numbers to standard output.
-   Copyright (C) 1994-2012 Free Software Foundation, Inc.
+   Copyright (C) 1994-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -72,7 +72,11 @@ Usage: %s [OPTION]... LAST\n\
 "), program_name, program_name, program_name);
       fputs (_("\
 Print numbers from FIRST to LAST, in steps of INCREMENT.\n\
-\n\
+"), stdout);
+
+      emit_mandatory_arg_note ();
+
+      fputs (_("\
   -f, --format=FORMAT      use printf style floating-point FORMAT\n\
   -s, --separator=STRING   use STRING to separate numbers (default: \\n)\n\
   -w, --equal-width        equalize width by padding with leading zeroes\n\
@@ -166,6 +170,21 @@ scan_arg (const char *arg)
         {
           long exponent = strtol (e + 1, NULL, 10);
           ret.precision += exponent < 0 ? -exponent : 0;
+          /* Don't account for e.... in the width since this is not output.  */
+          ret.width -= strlen (arg) - (e - arg);
+          /* Adjust the width as per the exponent.  */
+          if (exponent < 0)
+            {
+              if (decimal_point)
+                {
+                  if (e == decimal_point + 1) /* undo #. -> # above  */
+                    ret.width++;
+                }
+              else
+                ret.width++;
+              exponent = -exponent;
+            }
+          ret.width += exponent;
         }
     }
 
@@ -317,6 +336,8 @@ get_default_format (operand first, operand step, operand last)
             last_width--;  /* don't include space for '.' */
           if (last.precision == 0 && prec)
             last_width++;  /* include space for '.' */
+          if (first.precision == 0 && prec)
+            first_width++;  /* include space for '.' */
           size_t width = MAX (first_width, last_width);
           if (width <= INT_MAX)
             {
@@ -404,30 +425,36 @@ seq_fast (char const *a, char const *b)
   bool ok = cmp (p, p_len, q, q_len) <= 0;
   if (ok)
     {
-      /* Buffer at least this many output lines per fwrite call.
+      /* Buffer at least this many numbers per fwrite call.
          This gives a speed-up of more than 2x over the unbuffered code
          when printing the first 10^9 integers.  */
       enum {N = 40};
       char *buf = xmalloc (N * (n + 1));
       char const *buf_end = buf + N * (n + 1);
 
-      puts (p);
       char *z = buf;
+
+      /* Write first number to buffer.  */
+      z = mempcpy (z, p, p_len);
+
+      /* Append separator then number.  */
       while (cmp (p, p_len, q, q_len) < 0)
         {
+          *z++ = *separator;
           incr (&p, &p_len);
           z = mempcpy (z, p, p_len);
-          *z++ = *separator;
-          if (buf_end - n - 1 < z)
+          /* If no place for another separator + number then
+             output buffer so far, and reset to start of buffer.  */
+          if (buf_end - (n + 1) < z)
             {
               fwrite (buf, z - buf, 1, stdout);
               z = buf;
             }
         }
 
-      /* Write any remaining, buffered output.  */
-      if (buf < z)
-        fwrite (buf, z - buf, 1, stdout);
+      /* Write any remaining buffered output, and the terminator.  */
+      *z++ = *terminator;
+      fwrite (buf, z - buf, 1, stdout);
 
       IF_LINT (free (buf));
     }
@@ -538,11 +565,12 @@ main (int argc, char **argv)
      then use the much more efficient integer-only code.  */
   if (all_digits_p (argv[optind])
       && (n_args == 1 || all_digits_p (argv[optind + 1]))
-      && (n_args < 3 || STREQ ("1", argv[optind + 2]))
+      && (n_args < 3 || (STREQ ("1", argv[optind + 1])
+                         && all_digits_p (argv[optind + 2])))
       && !equal_width && !format_str && strlen (separator) == 1)
     {
       char const *s1 = n_args == 1 ? "1" : argv[optind];
-      char const *s2 = n_args == 1 ? argv[optind] : argv[optind + 1];
+      char const *s2 = argv[optind + (n_args - 1)];
       if (seq_fast (s1, s2))
         exit (EXIT_SUCCESS);
 

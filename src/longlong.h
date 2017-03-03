@@ -1,7 +1,6 @@
 /* longlong.h -- definitions for mixed size 32/64 bit arithmetic.
 
-Copyright 1991, 1992, 1993, 1994, 1996, 1997, 1999, 2000, 2001, 2002, 2003,
-2004, 2005, 2007, 2008, 2009, 2011, 2012 Free Software Foundation, Inc.
+Copyright 1991-2013 Free Software Foundation, Inc.
 
 This file is free software; you can redistribute it and/or modify it under the
 terms of the GNU Lesser General Public License as published by the Free
@@ -1745,7 +1744,7 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
 #endif /* udiv_qrnnd */
 #endif /* __sparc__ */
 
-#if (defined (__sparc_v9) || defined (__sparc_v9__)) && W_TYPE_SIZE == 64
+#if defined (__sparc__) && W_TYPE_SIZE == 64
 #define add_ssaaaa(sh, sl, ah, al, bh, bl) \
   __asm__ (								\
        "addcc	%r4,%5,%1\n"						\

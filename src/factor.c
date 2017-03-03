@@ -1,5 +1,5 @@
 /* factor -- print prime factors of n.
-   Copyright (C) 1986-2012 Free Software Foundation, Inc.
+   Copyright (C) 1986-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -118,13 +118,29 @@
 #endif
 
 #ifndef USE_LONGLONG_H
-# define USE_LONGLONG_H 1
+/* With the way we use longlong.h, it's only safe to use
+   when UWtype = UHWtype, as there were various cases
+   (as can be seen in the history for longlong.h) where
+   for example, _LP64 was required to enable W_TYPE_SIZE==64 code,
+   to avoid compile time or run time issues.  */
+# if LONG_MAX == INTMAX_MAX
+#  define USE_LONGLONG_H 1
+# endif
 #endif
 
 #if USE_LONGLONG_H
 
 /* Make definitions for longlong.h to make it do what it can do for us */
-# define W_TYPE_SIZE 64          /* bitcount for uintmax_t */
+
+/* bitcount for uintmax_t */
+# if UINTMAX_MAX == UINT32_MAX
+#  define W_TYPE_SIZE 32
+# elif UINTMAX_MAX == UINT64_MAX
+#  define W_TYPE_SIZE 64
+# elif UINTMAX_MAX == UINT128_MAX
+#  define W_TYPE_SIZE 128
+# endif
+
 # define UWtype  uintmax_t
 # define UHWtype unsigned long int
 # undef UDWtype
@@ -138,7 +154,7 @@ typedef unsigned int UDItype    __attribute__ ((mode (DI)));
 typedef unsigned char UQItype;
 typedef          long SItype;
 typedef unsigned long int USItype;
-#  if HAVE_LONG_LONG
+#  if HAVE_LONG_LONG_INT
 typedef long long int DItype;
 typedef unsigned long long int UDItype;
 #  else /* Assume `long' gives us a wide enough type.  Needed for hppa2.0w.  */
@@ -200,12 +216,12 @@ static enum alg_type alg;
 
 enum
 {
-  VERBOSE_OPTION = CHAR_MAX + 1
+  DEV_DEBUG_OPTION = CHAR_MAX + 1
 };
 
 static struct option const long_options[] =
 {
-  {"verbose", no_argument, NULL, VERBOSE_OPTION},
+  {"-debug", no_argument, NULL, DEV_DEBUG_OPTION},
   {GETOPT_HELP_OPTION_DECL},
   {GETOPT_VERSION_OPTION_DECL},
   {NULL, 0, NULL, 0}
@@ -564,8 +580,8 @@ static void mp_factor (mpz_t, struct mp_factors *);
 static void
 mp_factor_init (struct mp_factors *factors)
 {
-  factors->p = xmalloc (1);
-  factors->e = xmalloc (1);
+  factors->p = NULL;
+  factors->e = NULL;
   factors->nfactors = 0;
 }
 
@@ -630,6 +646,12 @@ mp_factor_insert_ui (struct mp_factors *factors, unsigned long int prime)
 #endif /* HAVE_GMP */
 
 
+/* Number of bits in an uintmax_t.  */
+enum { W = sizeof (uintmax_t) * CHAR_BIT };
+
+/* Verify that uintmax_t does not have holes in its representation.  */
+verify (UINTMAX_MAX >> (W - 1) == 1);
+
 #define P(a,b,c,d) a,
 static const unsigned char primes_diff[] = {
 #include "primes.h"
@@ -659,8 +681,29 @@ static const struct primes_dtab primes_dtab[] = {
 };
 #undef P
 
-/* This flag is honored only in the GMP code. */
-static int verbose = 0;
+/* Verify that uintmax_t is not wider than
+   the integers used to generate primes.h.  */
+verify (W <= WIDE_UINT_BITS);
+
+/* debugging for developers.  Enables devmsg().
+   This flag is used only in the GMP code.  */
+static bool dev_debug = false;
+
+/* Like error(0, 0, ...), but without an implicit newline.
+   Also a noop unless the global DEV_DEBUG is set.
+   TODO: Replace with variadic macro in system.h or
+   move to a separate module.  */
+static inline void
+devmsg (char const *fmt, ...)
+{
+  if (dev_debug)
+    {
+      va_list ap;
+      va_start (ap, fmt);
+      vfprintf (stderr, fmt, ap);
+      va_end (ap);
+    }
+}
 
 /* Prove primality or run probabilistic tests.  */
 static bool flag_prove_primality = true;
@@ -675,18 +718,6 @@ static bool flag_prove_primality = true;
 # define LIKELY(cond)    (cond)
 # define UNLIKELY(cond)  (cond)
 #endif
-
-static void
-debug (char const *fmt, ...)
-{
-  if (verbose)
-    {
-      va_list ap;
-      va_start (ap, fmt);
-      vfprintf (stderr, fmt, ap);
-      va_end (ap);
-    }
-}
 
 static void
 factor_insert_refind (struct factors *factors, uintmax_t p, unsigned int i,
@@ -818,7 +849,7 @@ mp_factor_using_division (mpz_t t, struct mp_factors *factors)
   mpz_t q;
   unsigned long int p;
 
-  debug ("[trial division] ");
+  devmsg ("[trial division] ");
 
   mpz_init (q);
 
@@ -1639,7 +1670,7 @@ mp_factor_using_pollard_rho (mpz_t n, unsigned long int a,
   mpz_t x, z, y, P;
   mpz_t t, t2;
 
-  debug ("[pollard-rho (%lu)] ", a);
+  devmsg ("[pollard-rho (%lu)] ", a);
 
   mpz_inits (t, t2, NULL);
   mpz_init_set_si (y, 2);
@@ -1702,7 +1733,7 @@ mp_factor_using_pollard_rho (mpz_t n, unsigned long int a,
 
       if (!mp_prime_p (t))
         {
-          debug ("[composite factor--restarting pollard-rho] ");
+          devmsg ("[composite factor--restarting pollard-rho] ");
           mp_factor_using_pollard_rho (t, a + 1, factors);
         }
       else
@@ -2221,7 +2252,7 @@ mp_factor (mpz_t t, struct mp_factors *factors)
 
       if (mpz_cmp_ui (t, 1) != 0)
         {
-          debug ("[is number prime?] ");
+          devmsg ("[is number prime?] ");
           if (mp_prime_p (t))
             mp_factor_insert (factors, t);
           else
@@ -2313,7 +2344,7 @@ print_uintmaxes (uintmax_t t1, uintmax_t t0)
   uintmax_t q, r;
 
   if (t1 == 0)
-    printf ("%ju", t0);
+    printf ("%"PRIuMAX, t0);
   else
     {
       /* Use very plain code here since it seems hard to write fast code
@@ -2374,7 +2405,7 @@ print_factors (const char *input)
     case LONGINT_OK:
       if (((t1 << 1) >> 1) == t1)
         {
-          debug ("[%s]", _("using single-precision arithmetic"));
+          devmsg ("[using single-precision arithmetic] ");
           print_factors_single (t1, t0);
           return true;
         }
@@ -2390,7 +2421,7 @@ print_factors (const char *input)
     }
 
 #if HAVE_GMP
-  debug ("[%s]", _("using arbitrary-precision arithmetic"));
+  devmsg ("[using arbitrary-precision arithmetic] ");
   mpz_t t;
   struct mp_factors factors;
 
@@ -2476,8 +2507,8 @@ main (int argc, char **argv)
     {
       switch (c)
         {
-        case VERBOSE_OPTION:
-          verbose = 1;
+        case DEV_DEBUG_OPTION:
+          dev_debug = true;
           break;
 
         case 's':

@@ -1,5 +1,5 @@
 /* Skipping input from a FILE stream.
-   Copyright (C) 2007-2012 Free Software Foundation, Inc.
+   Copyright (C) 2007-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 /* Increment the in-memory pointer.  INCREMENT must be at most the buffer size
    returned by freadptr().
    This is very cheap (no system calls).  */
-static inline void
+static void
 freadptrinc (FILE *fp, size_t increment)
 {
   /* Keep this code in sync with freadptr!  */

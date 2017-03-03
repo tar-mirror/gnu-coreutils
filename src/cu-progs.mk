@@ -61,6 +61,7 @@ default__progs += src/mv
 default__progs += src/nl
 default__progs += src/nproc
 default__progs += src/nohup
+default__progs += src/numfmt
 default__progs += src/od
 default__progs += src/paste
 default__progs += src/pathchk

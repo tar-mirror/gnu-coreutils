@@ -1,5 +1,5 @@
 /* copy.c -- core functions for copying files and directories
-   Copyright (C) 1989-2012 Free Software Foundation, Inc.
+   Copyright (C) 1989-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -165,7 +165,7 @@ sparse_copy (int src_fd, int dest_fd, char *buf, size_t buf_size,
         {
           if (errno == EINTR)
             continue;
-          error (0, errno, _("reading %s"), quote (src_name));
+          error (0, errno, _("error reading %s"), quote (src_name));
           return false;
         }
       if (n_read == 0)
@@ -203,7 +203,7 @@ sparse_copy (int src_fd, int dest_fd, char *buf, size_t buf_size,
           size_t n = n_read;
           if (full_write (dest_fd, buf, n) != n)
             {
-              error (0, errno, _("writing %s"), quote (dst_name));
+              error (0, errno, _("error writing %s"), quote (dst_name));
               return false;
             }
 
@@ -1153,8 +1153,8 @@ preserve_metadata:
     }
   else if (x->explicit_no_preserve_mode)
     {
-      set_acl (dst_name, dest_desc, 0666 & ~cached_umask ());
-      return_val = false;
+      if (set_acl (dst_name, dest_desc, 0666 & ~cached_umask ()) != 0)
+        return_val = false;
     }
   else if (omitted_permissions)
     {
@@ -1172,13 +1172,13 @@ preserve_metadata:
 close_src_and_dst_desc:
   if (close (dest_desc) < 0)
     {
-      error (0, errno, _("closing %s"), quote (dst_name));
+      error (0, errno, _("failed to close %s"), quote (dst_name));
       return_val = false;
     }
 close_src_desc:
   if (close (source_desc) < 0)
     {
-      error (0, errno, _("closing %s"), quote (src_name));
+      error (0, errno, _("failed to close %s"), quote (src_name));
       return_val = false;
     }
 
@@ -2394,8 +2394,13 @@ copy_internal (char const *src_name, char const *dst_name,
       /* POSIX says the permission bits of the source file must be
          used as the 3rd argument in the open call.  Historical
          practice passed all the source mode bits to 'open', but the extra
-         bits were ignored, so it should be the same either way.  */
-      if (! copy_reg (src_name, dst_name, x, src_mode & S_IRWXUGO,
+         bits were ignored, so it should be the same either way.
+
+         This call uses DST_MODE_BITS, not SRC_MODE.  These are
+         normally the same, and the exception (where x->set_mode) is
+         used only by 'install', which POSIX does not specify and
+         where DST_MODE_BITS is what's wanted.  */
+      if (! copy_reg (src_name, dst_name, x, dst_mode_bits & S_IRWXUGO,
                       omitted_permissions, &new_dst, &src_sb))
         goto un_backup;
     }

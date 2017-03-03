@@ -1,7 +1,7 @@
 #!/bin/sh
 # Ensure that cp -a --link maintains timestamps if possible
 
-# Copyright (C) 2011-2012 Free Software Foundation, Inc.
+# Copyright (C) 2011-2013 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ esac
 
 # link.cp is probably a hardlink, but may also be a symlink
 # In either case the timestamp should match the original.
-cp -al link link.cp
+cp -al link link.cp || fail=1
 case $(stat --format=%y link.cp) in
   2011-01-01*) ;;
   *) fail=1 ;;

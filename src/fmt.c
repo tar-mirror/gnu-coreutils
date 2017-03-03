@@ -1,5 +1,5 @@
 /* GNU fmt -- simple text formatter.
-   Copyright (C) 1994-2012 Free Software Foundation, Inc.
+   Copyright (C) 1994-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -271,11 +271,10 @@ usage (int status)
       fputs (_("\
 Reformat each paragraph in the FILE(s), writing to standard output.\n\
 The option -WIDTH is an abbreviated form of --width=DIGITS.\n\
-\n\
 "), stdout);
-      fputs (_("\
-Mandatory arguments to long options are mandatory for short options too.\n\
-"), stdout);
+
+      emit_mandatory_arg_note ();
+
       fputs (_("\
   -c, --crown-margin        preserve indentation of first two lines\n\
   -p, --prefix=STRING       reformat only lines beginning with STRING,\n\

@@ -1,7 +1,7 @@
 #!/bin/sh
 # Exercise du's new ability to handle bind-mount-induced dir cycles.
 
-# Copyright (C) 2012 Free Software Foundation, Inc.
+# Copyright (C) 2012-2013 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,13 +20,7 @@
 print_ver_ du
 require_root_
 
-cleanup_()
-{
-  # When you take the undesirable shortcut of making /etc/mtab a link
-  # to /proc/mounts, unmounting "$other_partition_tmpdir" would fail.
-  # So, here we unmount a/b instead.
-  umount a/b
-}
+cleanup_() { umount a/b; }
 
 mkdir -p a/b || framework_failure_
 mount --bind a a/b \

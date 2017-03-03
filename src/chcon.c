@@ -1,5 +1,5 @@
 /* chcon -- change security context of files
-   Copyright (C) 2005-2012 Free Software Foundation, Inc.
+   Copyright (C) 2005-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -357,8 +357,10 @@ Usage: %s [OPTION]... CONTEXT FILE...\n\
       fputs (_("\
 Change the security context of each FILE to CONTEXT.\n\
 With --reference, change the security context of each FILE to that of RFILE.\n\
-\n\
 "), stdout);
+
+      emit_mandatory_arg_note ();
+
       fputs (_("\
       --dereference      affect the referent of each symbolic link (this is\n\
                          the default), rather than the symbolic link itself\n\
@@ -369,6 +371,10 @@ With --reference, change the security context of each FILE to that of RFILE.\n\
   -r, --role=ROLE        set role ROLE in the target security context\n\
   -t, --type=TYPE        set type TYPE in the target security context\n\
   -l, --range=RANGE      set range RANGE in the target security context\n\
+"), stdout);
+      fputs (_("\
+      --no-preserve-root  do not treat '/' specially (the default)\n\
+      --preserve-root    fail to operate recursively on '/'\n\
 "), stdout);
       fputs (_("\
       --reference=RFILE  use RFILE's security context rather than specifying\n\

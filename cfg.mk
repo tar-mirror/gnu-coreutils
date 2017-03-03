@@ -1,5 +1,5 @@
 # Customize maint.mk                           -*- makefile -*-
-# Copyright (C) 2003-2012 Free Software Foundation, Inc.
+# Copyright (C) 2003-2013 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ export VERBOSE = yes
 # 4914152 9e
 export XZ_OPT = -8e
 
-old_NEWS_hash = a99128b9985b2e76bdcabf3e5d95ca1a
+old_NEWS_hash = b93e7e43dd35f32961c354e41211b86e
 
 # Add an exemption for sc_makefile_at_at_check.
 _makefile_at_at_check_exceptions = ' && !/^cu_install_program =/'
@@ -111,7 +111,7 @@ sc_tests_list_consistency:
 	  for t in $(all_tests); do echo $$t; done;			\
 	  cd $(top_srcdir);						\
 	  $(SHELL) build-aux/vc-list-files tests			\
-	    | grep -Ev '^tests/(factor/run|init)\.sh$$'			\
+	    | grep -Ev '^tests/(factor/(run|create-test)|init)\.sh$$'	\
 	    | $(EGREP) "$$test_extensions_rx\$$";			\
 	} | sort | uniq -u | grep . && exit 1; :
 
@@ -180,6 +180,26 @@ sc_check-AUTHORS: $(all_programs)
 	sed -n '/^[^ ][^ ]*:/p' $(srcdir)/AUTHORS > $(au_dotdot) \
 	  && diff $(au_actual) $(au_dotdot) \
 	  && rm -f $(au_actual) $(au_dotdot)
+
+# Each program with a non-ASCII author name must link with LIBICONV.
+sc_check-I18N-AUTHORS:
+	@cd $(srcdir)/src &&						\
+	  for i in $$(git grep -l -w proper_name_utf8 *.c|sed 's/\.c//'); do \
+	    grep -E "^src_$${i}_LDADD"' .?= .*\$$\(LIBICONV\)' local.mk	\
+		> /dev/null						\
+	      || { echo "$(ME): link rules for $$i do not include"	\
+		    '$$(LIBICONV)' 1>&2; exit 1; };			\
+	  done
+
+# Ensure %j is not used for intmax_t as it's not universally supported.
+# There are issues on HPUX for example.  But note that %ju was used between
+# coreutils 8.13 (2011-10) and 8.20 (2012-10) without any reported issue,
+# and the particular issue this check is associated with was for %*jx.
+# So we may be able to relax this restriction soon.
+sc_prohibit-j-printf-format:
+	@cd $(srcdir)/src && GIT_PAGER= git grep -n '%[0*]*j[udx]' *.c	\
+	  && { echo '$(ME): Use PRI*MAX instead of %j' 1>&2; exit 1; }  \
+	  || :
 
 # Look for lines longer than 80 characters, except omit:
 # - program-generated long lines in diff headers,
@@ -501,6 +521,13 @@ sc_THANKS_in_duplicates:
 	    && { echo '$(ME): remove the above names from THANKS.in'	\
 		  1>&2; exit 1; } || :
 
+# Look for developer diagnostics that are marked for translation.
+# This won't find any for which devmsg's format string is on a separate line.
+sc_marked_devdiagnostics:
+	@prohibit='\<devmsg *\(.*_\('                                   \
+	halt='found marked developer diagnostic(s)'                     \
+	  $(_sc_search_regexp)
+
 # Override the default Cc: used in generating an announcement.
 announcement_Cc_ = $(translation_project_), \
   coreutils@gnu.org, coreutils-announce@gnu.org
@@ -534,7 +561,7 @@ exclude_file_name_regexp--sc_prohibit_empty_lines_at_EOF = ^tests/pr/
 exclude_file_name_regexp--sc_program_name = \
   ^(gl/.*|lib/euidaccess-stat|src/make-prime-list)\.c$$
 exclude_file_name_regexp--sc_file_system = \
-  NEWS|^(init\.cfg|src/df\.c|tests/df/df-P\.sh)$$
+  NEWS|^(init\.cfg|src/df\.c|tests/df/df-P\.sh|tests/df/df-output\.sh)$$
 exclude_file_name_regexp--sc_prohibit_always_true_header_tests = \
   ^m4/stat-prog\.m4$$
 exclude_file_name_regexp--sc_prohibit_fail_0 = \
@@ -554,7 +581,7 @@ exclude_file_name_regexp--sc_prohibit_tab_based_indentation = \
   $(tbi_1)|$(tbi_2)|$(tbi_3)
 
 exclude_file_name_regexp--sc_preprocessor_indentation = \
-  ^(gl/lib/rand-isaac\.[ch]|gl/tests/test-rand-isaac\.c)$$|$(__ll)
+  ^(gl/lib/rand-isaac\.[ch]|gl/tests/test-rand-isaac\.c)$$|$(_ll)
 exclude_file_name_regexp--sc_prohibit_stat_st_blocks = \
   ^(src/system\.h|tests/du/2g\.sh)$$
 
@@ -562,7 +589,7 @@ exclude_file_name_regexp--sc_prohibit_continued_string_alpha_in_column_1 = \
   ^src/(system\.h|od\.c|printf\.c)$$
 
 exclude_file_name_regexp--sc_prohibit_test_backticks = \
-  ^tests/(init\.sh|local.mk|misc/stdbuf\.sh)$$
+  ^tests/(local\.mk|(init|misc/stdbuf|factor/create-test)\.sh)$$
 
 # Exempt test.c, since it's nominally shared, and relatively static.
 exclude_file_name_regexp--sc_prohibit_operator_at_end_of_line = \
@@ -584,3 +611,8 @@ export _gl_TS_headers = $(srcdir)/cfg.mk
 _gl_TS_dir = .
 _gl_TS_obj_files = src/*.$(OBJEXT)
 _gl_TS_other_headers = src/*.h
+
+# Tell the tight_scope rule about an exceptional "extern" variable.
+# Normally, the rule would detect its declaration, but that uses a
+# different name, __clz_tab.
+_gl_TS_unmarked_extern_vars = factor_clz_tab

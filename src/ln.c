@@ -1,5 +1,5 @@
 /* 'ln' program to create links between files.
-   Copyright (C) 1986-2012 Free Software Foundation, Inc.
+   Copyright (C) 1986-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -120,7 +120,7 @@ target_directory_operand (char const *file)
   int err = (stat_result == 0 ? 0 : errno);
   bool is_a_dir = !err && S_ISDIR (st.st_mode);
   if (err && err != ENOENT)
-    error (EXIT_FAILURE, err, _("accessing %s"), quote (file));
+    error (EXIT_FAILURE, err, _("failed to access %s"), quote (file));
   if (is_a_dir < looks_like_a_dir)
     error (EXIT_FAILURE, err, _("target %s is not a directory"), quote (file));
   return is_a_dir;
@@ -178,7 +178,7 @@ do_link (const char *source, const char *dest)
            : lstat (source, &source_stats))
           != 0)
         {
-          error (0, errno, _("accessing %s"), quote (source));
+          error (0, errno, _("failed to access %s"), quote (source));
           return false;
         }
 
@@ -199,7 +199,7 @@ do_link (const char *source, const char *dest)
       dest_lstat_ok = (lstat (dest, &dest_stats) == 0);
       if (!dest_lstat_ok && errno != ENOENT)
         {
-          error (0, errno, _("accessing %s"), quote (dest));
+          error (0, errno, _("failed to access %s"), quote (dest));
           return false;
         }
     }
@@ -387,11 +387,10 @@ By default, each destination (name of new link) should not already exist.\n\
 When creating hard links, each TARGET must exist.  Symbolic links\n\
 can hold arbitrary text; if later resolved, a relative link is\n\
 interpreted in relation to its parent directory.\n\
-\n\
 "), stdout);
-      fputs (_("\
-Mandatory arguments to long options are mandatory for short options too.\n\
-"), stdout);
+
+      emit_mandatory_arg_note ();
+
       fputs (_("\
       --backup[=CONTROL]      make a backup of each existing destination file\n\
   -b                          like --backup but does not accept an argument\n\
@@ -430,9 +429,9 @@ the VERSION_CONTROL environment variable.  Here are the values:\n\
   numbered, t     make numbered backups\n\
   existing, nil   numbered if numbered backups exist, simple otherwise\n\
   simple, never   always make simple backups\n\
-\n\
 "), stdout);
       printf (_("\
+\n\
 Using -s ignores -L and -P.  Otherwise, the last option specified controls\n\
 behavior when a TARGET is a symbolic link, defaulting to %s.\n\
 "), LINK_FOLLOWS_SYMLINKS ? "-L" : "-P");
@@ -513,7 +512,8 @@ main (int argc, char **argv)
             {
               struct stat st;
               if (stat (optarg, &st) != 0)
-                error (EXIT_FAILURE, errno, _("accessing %s"), quote (optarg));
+                error (EXIT_FAILURE, errno, _("failed to access %s"),
+                       quote (optarg));
               if (! S_ISDIR (st.st_mode))
                 error (EXIT_FAILURE, 0, _("target %s is not a directory"),
                        quote (optarg));

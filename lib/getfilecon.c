@@ -1,5 +1,5 @@
 /* wrap getfilecon, lgetfilecon, and fgetfilecon
-   Copyright (C) 2009-2012 Free Software Foundation, Inc.
+   Copyright (C) 2009-2013 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ int fgetfilecon (int fd, security_context_t *con);
    "unlabeled" context.  Map both failures to a return value of -1, and
    set errno to ENOTSUP in the first case, and ENODATA in the latter.  */
 
-static inline int
+static int
 map_to_failure (int ret, security_context_t *con)
 {
   if (ret == 0)

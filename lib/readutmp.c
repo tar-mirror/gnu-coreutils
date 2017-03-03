@@ -1,6 +1,6 @@
 /* GNU's read utmp module.
 
-   Copyright (C) 1992-2001, 2003-2006, 2009-2012 Free Software Foundation, Inc.
+   Copyright (C) 1992-2001, 2003-2006, 2009-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ extract_trimmed_name (const STRUCT_UTMP *ut)
 
 /* Is the utmp entry U desired by the user who asked for OPTIONS?  */
 
-static inline bool
+static bool
 desirable_utmp_entry (STRUCT_UTMP const *u, int options)
 {
   bool user_proc = IS_USER_PROCESS (u);

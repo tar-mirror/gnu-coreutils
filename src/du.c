@@ -1,5 +1,5 @@
 /* du -- summarize disk usage
-   Copyright (C) 1988-2012 Free Software Foundation, Inc.
+   Copyright (C) 1988-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -147,6 +147,10 @@ static bool opt_separate_dirs = false;
    is at level 0, so 'du --max-depth=0' is equivalent to 'du -s'.  */
 static size_t max_depth = SIZE_MAX;
 
+/* Only output entries with at least this SIZE if positive,
+   or at most if negative.  See --threshold option.  */
+static intmax_t opt_threshold = 0;
+
 /* Human-readable options for output.  */
 static int human_output_opts;
 
@@ -218,6 +222,7 @@ static struct option const long_options[] =
   {"separate-dirs", no_argument, NULL, 'S'},
   {"summarize", no_argument, NULL, 's'},
   {"total", no_argument, NULL, 'c'},
+  {"threshold", required_argument, NULL, 't'},
   {"time", optional_argument, NULL, TIME_OPTION},
   {"time-style", required_argument, NULL, TIME_STYLE_OPTION},
   {GETOPT_HELP_OPTION_DECL},
@@ -268,12 +273,12 @@ Usage: %s [OPTION]... [FILE]...\n\
 "), program_name, program_name);
       fputs (_("\
 Summarize disk usage of each FILE, recursively for directories.\n\
-\n\
 "), stdout);
+
+      emit_mandatory_arg_note ();
+
       fputs (_("\
-Mandatory arguments to long options are mandatory for short options too.\n\
-"), stdout);
-      fputs (_("\
+  -0, --null            end each output line with 0 byte rather than newline\n\
   -a, --all             write counts for all files, not just directories\n\
       --apparent-size   print apparent sizes, rather than disk usage; although\
 \n\
@@ -289,6 +294,10 @@ Mandatory arguments to long options are mandatory for short options too.\n\
   -c, --total           produce a grand total\n\
   -D, --dereference-args  dereference only symlinks that are listed on the\n\
                           command line\n\
+  -d, --max-depth=N     print the total for a directory (or file, with --all)\n\
+                          only if it is N or fewer levels below the command\n\
+                          line argument;  --max-depth=0 is the same as\n\
+                          --summarize\n\
 "), stdout);
       fputs (_("\
       --files0-from=F   summarize disk usage of the NUL-terminated file\n\
@@ -297,30 +306,22 @@ Mandatory arguments to long options are mandatory for short options too.\n\
   -H                    equivalent to --dereference-args (-D)\n\
   -h, --human-readable  print sizes in human readable format (e.g., 1K 234M 2G)\
 \n\
-      --si              like -h, but use powers of 1000 not 1024\n\
 "), stdout);
       fputs (_("\
   -k                    like --block-size=1K\n\
+  -L, --dereference     dereference all symbolic links\n\
   -l, --count-links     count sizes many times if hard linked\n\
   -m                    like --block-size=1M\n\
 "), stdout);
       fputs (_("\
-  -L, --dereference     dereference all symbolic links\n\
   -P, --no-dereference  don't follow any symbolic links (this is the default)\n\
-  -0, --null            end each output line with 0 byte rather than newline\n\
   -S, --separate-dirs   do not include size of subdirectories\n\
+      --si              like -h, but use powers of 1000 not 1024\n\
   -s, --summarize       display only a total for each argument\n\
 "), stdout);
       fputs (_("\
-  -x, --one-file-system    skip directories on different file systems\n\
-  -X, --exclude-from=FILE  exclude files that match any pattern in FILE\n\
-      --exclude=PATTERN    exclude files that match PATTERN\n\
-  -d, --max-depth=N     print the total for a directory (or file, with --all)\n\
-                          only if it is N or fewer levels below the command\n\
-                          line argument;  --max-depth=0 is the same as\n\
-                          --summarize\n\
-"), stdout);
-      fputs (_("\
+  -t, --threshold=SIZE  exclude entries smaller than SIZE if positive,\n\
+                          or entries greater than SIZE if negative\n\
       --time            show time of the last modification of any file in the\n\
                           directory, or any of its subdirectories\n\
       --time=WORD       show time as WORD instead of modification time:\n\
@@ -328,6 +329,11 @@ Mandatory arguments to long options are mandatory for short options too.\n\
       --time-style=STYLE  show times using style STYLE:\n\
                           full-iso, long-iso, iso, +FORMAT\n\
                           FORMAT is interpreted like 'date'\n\
+"), stdout);
+      fputs (_("\
+  -X, --exclude-from=FILE  exclude files that match any pattern in FILE\n\
+      --exclude=PATTERN    exclude files that match PATTERN\n\
+  -x, --one-file-system    skip directories on different file systems\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
@@ -579,8 +585,15 @@ process_file (FTS *fts, FTSENT *ent)
   duinfo_add (&tot_dui, &dui);
 
   if ((IS_DIR_TYPE (info) && level <= max_depth)
-      || ((opt_all && level <= max_depth) || level == 0))
-    print_size (&dui_to_print, file);
+      || (opt_all && level <= max_depth)
+      || level == 0)
+    {
+      /* Print or elide this entry according to the --threshold option.  */
+      if (opt_threshold < 0
+          ? dui_to_print.size <= -opt_threshold
+          : dui_to_print.size >= opt_threshold)
+        print_size (&dui_to_print, file);
+    }
 
   return ok;
 }
@@ -703,7 +716,7 @@ main (int argc, char **argv)
   while (true)
     {
       int oi = -1;
-      int c = getopt_long (argc, argv, "0abd:chHklmsxB:DLPSX:",
+      int c = getopt_long (argc, argv, "0abd:chHklmst:xB:DLPSX:",
                            long_options, &oi);
       if (c == -1)
         break;
@@ -782,6 +795,20 @@ main (int argc, char **argv)
 
         case 's':
           opt_summarize_only = true;
+          break;
+
+        case 't':
+          {
+            enum strtol_error e;
+            e = xstrtoimax (optarg, NULL, 0, &opt_threshold, "kKmMGTPEZY0");
+            if (e != LONGINT_OK)
+              xstrtol_fatal (e, oi, c, long_options, optarg);
+            if (opt_threshold == 0 && *optarg == '-')
+              {
+                /* Do not allow -0, as this wouldn't make sense anyway.  */
+                error (EXIT_FAILURE, 0, _("invalid --threshold argument '-0'"));
+              }
+          }
           break;
 
         case 'x':

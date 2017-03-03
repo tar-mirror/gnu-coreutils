@@ -1,4 +1,1442 @@
+2013-02-14  Pádraig Brady  <P@draigBrady.com>
+
+	version 8.21
+	* NEWS: Record release date.
+
+	tests: avoid non portable sed use of \t
+	* tests/du/threshold.sh: use `cut` rather than
+	sed to avoid using the non portable \t which
+	fails on sed on openbsd 5 at least.
+	Also remove a redundant call to `tr` and avoid
+	explicit setting of LANG=C which is done globally.
+
+2013-02-14  Pádraig Brady  <P@draigBrady.com>
+
+	build: avoid link failure in devmsg() on older linkers
+	On linkers that don't remove unused functions,
+	there will be a reference to a missing dev_debug symbol
+	in the devmsg() function.  So for now ...
+
+	* src/system.h: ... move devmsg() from here ...
+	* src/numfmt.c: ... to here, and document future cleanup.
+	* src/factor.c: Likewise.
+
+2013-02-13  Assaf Gordon  <assafgordon@gmail.com>
+
+	numfmt: fix strtol() return code handling
+	src/numfmt.c (parse_format_string): On some systems, strtol() returns
+	EINVAL if no conversion was performed.  So only handle ERANGE here,
+	and handle other format errors directly.
+
+2013-02-11  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	maint: avoid running check-root tests in gnulib
+	* tests/local.mk (check-root): Restrict to SUBDIRS=. as traversing
+	into gnulib-tests induces a false failure.
+
+2013-02-11  Pádraig Brady  <P@draigBrady.com>
+
+	doc: improve the numfmt man page format
+	* src/numfmt.c (usage): Keep a single space between the "K = 1000",
+	so that it's not displayed on a separate line.  Also place ','
+	between each unit entry to improve readability.
+
+2013-02-10  Benno Schulenberg  <bensberg@justemail.net>
+
+	doc: standardize helptext of numfmt and slice into single options
+	* src/numfmt.c (usage): Correct synopsis and make command description
+	clearer.  Start option descriptions with lowercase letter; use
+	semicolon instead of period where needed; indent continuation lines;
+	gettextize single options for ease of translation and maintenance;
+	sort options alphabetically.
+	* doc/coreutils.texi (numfmt invocation): Sort numfmt options
+	alphabetically.  Enforce double-blank-after-period style.
+
+	This addresses http://bugs.gnu.org/13681.
+	Improved-by: Bernhard Voelker
+
+2013-02-10  Pádraig Brady  <P@draigBrady.com>
+
+	maint: consolidate developer debug messages
+	Both factor and numfmt recently introduced debug messages
+	for developers, enabled by --verbose and ---devdebug respectively.
+	There were a few issues though:
+	 1. They used different mechanisms to enable these messages.
+	 2. factor used --verbose which might be needed for something else
+	 3. They used different methods to output the messages,
+	    and numfmt used error() which added an unwanted newline
+	 4. numfmt marked all these messages for translation and factor
+	    marked a couple.  We really don't need these translated.
+	So we fix the above issues here while renaming the enabling
+	option for both commands to ---debug (still undocumented).
+
+	* src/factor.c (verbose): Rename to dev_debug and change from int to
+	bool as it's just a toggle flag.
+	(long_options): Rename --verbose to ---debug.
+	* src/system.h (devmsg): A new inline function to output a message
+	if enabled by a global dev_debug variable in the compilation unit.
+	* src/numfmt.c: Use devmsg() rather than error().
+	Also remove the translation tags from these messages.
+	Also change debug flag to bool from int.
+	* tests/misc/numfmt.pl: Adjust for the ---devdebug to ---debug change.
+	* cfg.mk (sc_marked_devdiagnostics): Add a syntax check to ensure
+	translations are not added to devmsg calls.
+
+	Reported by Göran Uddeborg in http://bugs.gnu.org/13665
+
+2013-02-10  Pádraig Brady  <P@draigBrady.com>
+
+	tests: tail-2/inotify-rotate: fix a false failure on NFS
+	* tests/tail-2/inotify-rotate.sh: Avoid a subshell with bash,
+	which in turn causes the `kill` to be ineffective to the tail
+	processes (as the SIGTERM is sent to the subshell which doesn't
+	propagate the signal on to its children).  On NFS the test
+	cleanup will then fail as there will be .nfs files maintained
+	in the directory for the files still opened by the tail processes.
+	Reported by Bernhard Voelker.
+
+	tests: skip numfmt grouping tests on some systems
+	* tests/misc/numfmt.pl: When the system locale grouping doesn't
+	match our expected format for grouping 1234 in the fr_FR locale,
+	reset the locale to 'C' so as to skip all locale tests.
+
+2013-02-07  Jim Meyering  <meyering@fb.com>
+
+	tests: avoid actual/expected mismatch due to changed diagnostic
+	* tests/cp/fail-perm.sh: Adjust expected diagnostic to match
+	just-changed cp diagnostic.
+	* tests/ln/hard-to-sym.sh: Likewise.
+	* .mailmap: Also map my new address.
+
+2013-02-07  Pádraig Brady  <P@draigBrady.com>
+
+	build: update gnulib submodule; also bootstrap to latest
+	Notes tests/init.sh is still in sync with gnulib
+
+	* bootstrap: update to latest
+	* gnulib: update avoiding secure_getenv and subsequent patches
+	as these are reported to fail on FreeBSD at least.
+
+2013-02-06  Benno Schulenberg  <bensberg@justemail.net>
+
+	maint: improve error messages upon failed read, write, access, close
+	Note we use "failed to {access,close}" for those single operations,
+	and "error {read,writ}ing" for those partial operation failures.
+
+	* src/copy.c: Improve error messages for failing read, write and close.
+	* src/cp.c: Improve error messages for failing access.
+	* src/dd.c: Improve error messages for failing read, write and open.
+	* src/head.c: Improve error message for failing close.
+	* src/install.c: Improve error messages for failing access.
+	* src/ln.c: Likewise.
+	* src/mv.c: Likewise.
+	* src/touch.c: Improve error message for failing close.
+	* src/truncate.c: Likewise.
+
+2013-02-05  Assaf Gordon  <assafgordon@gmail.com>
+
+	doc: fix a numfmt help section typo
+	* src/numfmt.c (usage): Change erroneous "G" to "M".
+
+2013-02-05  Ondřej Vašík  <ovasik@redhat.com>
+
+	stty: add support for DTR/DSR hardware control flow
+	Originally requested in Red Hat bugzilla #445213.
+
+	* src/stty.c (mode_info): Add support for DTR/DSR hardware flow control,
+	if available.
+	* doc/coreutils.texi: Document it.
+	* tests/misc/stty.sh: Add it to the list of serial options to avoid.
+	* NEWS: Mention the improvement.
+
+2013-02-05  Pádraig Brady  <P@draigBrady.com>
+
+	numfmt: correct a printf format
+	Prompted by the continuous integration build failure at:
+	http://hydra.nixos.org/build/4010493
+
+	* src/numfmt.c (parse_format_string): Correct both sign and size of
+	a printf format, which only gives a warning on 32 bit builds.
+
+2013-02-04  Assaf Gordon  <assafgordon@gmail.com>
+
+	numfmt: a new command to format numbers
+	* AUTHORS: Add my name.
+	* NEWS: Mention the new program.
+	* README: Reference the new program.
+	* src/numfmt.c: New file.
+	* src/.gitignore: Ignore the new binary.
+	* build-aux/gen-lists-of-programs.sh: Update.
+	* scripts/git-hooks/commit-msg: Allow numfmt: commit prefix.
+	* po/POTFILES.in: Add new c file.
+	* tests/misc/numfmt.pl: A new test file giving >93% coverage.
+	* tests/local.mk: Reference the new test.
+	* man/.gitignore: Ignore the new man page.
+	* man/local.mk: Reference the new man page.
+	* man/numfmt.x: A new template.
+	* doc/coreutils.texi: Document the new command.
+
+2013-02-04  Pádraig Brady  <P@draigBrady.com>
+
+	cut: fix a segfault with disjoint open ended ranges
+	Fixes the issue introduced in unreleased commit v8.20-60-gec48bea.
+
+	* src/cut.c (set_fields): Don't access the bit array if
+	we've an open ended range that's outside any finite range.
+	* tests/misc/cut.pl: Add tests for this case.
+	Reported by Marcel Böhme in http://bugs.gnu.org/13627
+
+2013-02-01  Paul Eggert  <eggert@cs.ucla.edu>
+
+	doc: say how to tac char-by-char
+	This fixes Bug#12115, reported by Reuben Thomas.
+	* doc/coreutils.texi (tac invocation): Document how to reverse a
+	file character by character.  Break out MS-DOS into a separate
+	section, like 'cat' does.
+
+2013-01-28  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	df: do not treat rootfs specially
+	Like any other pseudo file system, df should show rootfs only
+	when the -a option is specified, i.e. specifying -trootfs alone
+	is not sufficient.  As the rootfs entry is now elided by the
+	general deduplication in filter_mount_list (commit v8.20-103-gbb116d3),
+	all other references to rootfs can be removed again.
+
+	* src/df.c (show_rootfs): Remove global variable.
+	(ROOTFS): Remove constant.
+	(filter_mount_list): Remove case to handle rootfs specially.
+	(main): In the case for handling the -t option, remove setting
+	of the show_rootfs variable.
+	* tests/df/skip-rootfs.sh: Adapt the test case "df -t rootfs":
+	the rootfs file system must not be printed (because no -a).
+	* doc/coreutils.texi (df invocation): Correct the documentation
+	about eliding mount entries: it is not the first occurrence of
+	the the device which wins, but now rather the entry with the
+	shortest mount point name.  Also adapt the description about
+	eliding pseudo file system types like rootfs.
+	* NEWS (Changes in behavior): Adapt entry.
+
+2013-01-27  Ondrej Oprala  <ooprala@redhat.com>
+	    Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	df: prefer fullpath entries when deduplicating
+	* src/df.c (struct devlist): Add a new element for storing
+	pointers to mount_entry structures.
+	(devlist_head, dev_examined): Remove.
+	(filter_mount_list): Add new function to filter out the rootfs
+	entry (unless -trootfs is specified), and duplicities. The
+	function favors entries with a '/' character in me_devname
+	or those with the shortest me_mountdir string, if multiple
+	entries fulfill the first condition.
+	Use struct devlist to build up a list of entries already known,
+	and finally rebuild the global mount_list.
+	(get_all_entries): Call the above new function unless the -a
+	option is specified.
+	(get_dev): Remove the code for skipping rootfs and duplicities.
+	* tests/df/skip-duplicates.sh: Add test cases.
+
+2013-01-26  Stephan Krempel  <krempel@par-tec.com>
+
+	timeout: ensure a blocked SIGALRM from the parent is unblocked
+	* src/timeout.c (unblock_signal): A new function to unblock a
+	specified signal, or warn if not possible.
+	(set_timeout): Ensure SIGALRM is unblocked before we setup the timer.
+	* tests/misc/timeout-blocked.pl: A new test for the issue.
+	* tests/local.mk: Reference the new test.
+	* NEWS: Mention the fix.
+	Fixes: http://bugs.gnu.org/13535
+
+2013-01-26  Pádraig Brady  <P@draigBrady.com>
+
+	seq: fix to always honor the step value
+	* src/seq.c (main): With 3 positive integer args we were
+	checking the end value was == "1", rather than the step value.
+	* tests/misc/seq.pl: Add tests for this case.
+	Reported by Marcel Böhme in http://bugs.gnu.org/13525
+
+	seq: fix misaligment with -w when no precision for start value
+	* src/seq.c (get_default_format): Also account for the case where '.'
+	is auto added to the start value, which is significant when the
+	number sequence narrows.
+	* tests/misc/seq.pl: Add two new tests for the failing cases.
+	* NEWS: Mention the fix.
+	Fixes http://bugs.gnu.org/13394
+
+	cut: fix -f to work with the -d$'\n' edge case
+	* src/cut.c (cut_fields): Handle the edge case where '\n' is
+	the delimiter, which could be used for example to suppress
+	the last line if it doesn't contain a '\n'.
+	* test/misc/cut.pl: Add tests for this edge case.
+
+2013-01-26  Pádraig Brady  <P@draigBrady.com>
+
+	cut: with -f, process each line independently
+	Previously line N+1 was inspected before line N was fully output,
+	which causes output ordering issues at the terminal or delays
+	from intermittent sources like tail -f.
+
+	* src/cut.c (cut_fields): Adjust so that we record the
+	previous output character so we can use that info to
+	determine wether to output a '\n' or not.
+	* tests/misc/cut.pl: Add tests to ensure existing
+	functionality isn't broken.
+	* NEWS: Mention the fix.
+	Fixes bug http://bugs.gnu.org/13498
+
+2013-01-24  Paul Eggert  <eggert@cs.ucla.edu>
+
+	build: update gnulib submodule to latest
+	* bootstrap.conf (gnulib_modules): Add statat.
+	The fstatat module was split in two, and we need both halves.
+
+2013-01-24  Pádraig Brady  <P@draigBrady.com>
+
+	doc: fix an example in the od man page
+	* man/od.x: s/-w 16/-w16/ as -w takes an optional
+	parameter and so the space is significant.
+
+2013-01-23  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	doc: fix order of du options in usage and texinfo manual
+	* src/du.c (usage): Bring options into alphabetical order.
+	* doc/coreutils.texi (du invocation): Likewise.
+	Furthermore, use the @itemx macro for the long options
+	--max-depth and --threshold instead of @item.
+
+2013-01-23  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	maint: define usage note about mandatory args centrally
+	Each program with at least one long option which is marked as
+	'required_argument' and which has also a short option for that
+	option, should print a note about mandatory arguments.
+	Define that well-known note centrally and use it rather than
+	literal printf/fputs, and add it where it was missing.
+
+	* src/system.h (emit_mandatory_arg_note): Add new function.
+
+	* src/cp.c (usage): Use it rather than literal printf/fputs.
+	* src/csplit.c, src/cut.c, src/date.c, src/df.c, src/du.c:
+	* src/expand.c, src/fmt.c, src/fold.c, src/head.c, src/install.c:
+	* src/kill.c, src/ln.c, src/ls.c, src/mkdir.c, src/mkfifo.c:
+	* src/mknod.c, src/mv.c, src/nl.c, src/od.c, src/paste.c:
+	* src/pr.c, src/ptx.c, src/shred.c, src/shuf.c, src/sort.c:
+	* src/split.c, src/stdbuf.c, src/tac.c, src/tail.c, src/timeout.c:
+	* src/touch.c, src/truncate.c, src/unexpand.c, src/uniq.c:
+	Likewise.
+
+	* src/base64.c (usage): Add call of the above new function
+	because at least one long option has a required argument.
+	* src/basename.c, src/chcon.c, src/date.c, src/env.c:
+	* src/nice.c, src/runcon.c, src/seq.c, src/stat.c, src/stty.c:
+	Likewise.
+
+2013-01-21  Jakob Truelsen  <jakob@scalgo.com>
+	    Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	du: add -t SIZE, --threshold=SIZE option
+	* src/du.c (opt_threshold): Add variable to hold the value of
+	the --threshold option specified by the user.
+	(long_options): Add a required_argument entry for the new
+	--threshold option.
+	(usage): Add --threshold option.
+	(process_file): Elide printing the entry if its size does not
+	meet the value specified by the --threshold option.
+	(main): In the argument parsing loop, add a case for the new
+	-t option. Convert the given argument by permitting the
+	well-known suffixes for megabyte, gigabytes, etc.
+	Handle the special case "-0": give an error as this value is
+	not permitted.
+	* doc/coreutils.texi (du invocation): Add documentation for the
+	above new option.
+	* tests/du/threshold.sh: Add new test to exercise the new option.
+	* tests/local.mk (all_tests): Mention the above test.
+
+2013-01-20  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	tests: remove test case du/slink
+	This test tried to ensure that not all symlinks (across all
+	file system types) have Zero size and refers to a change
+	in system.h from 2002-08-31 (commit SH-UTILS-2_0_15-55-g62808a7).
+	The test used to do this by working on symlinks to long file
+	names.  This assumption is dependant on the underlying file
+	system, and in some environments like XEN does not even work
+	on file systems known to work otherwise.
+
+	The test for dereferencing and no-dereferencing symlinks is
+	already covered by other tests (du/deref.sh, du/deref-args.sh,
+	and du/no-deref.sh).  Therefore, remove it.
+
+	* tests/du/slink.sh: Remove file.
+	* tests/local.mk (all_tests): Remove the above test.
+
+	Discussed in:
+	http://lists.gnu.org/archive/html/coreutils/2013-01/msg00053.html
+
+2013-01-20  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	maint: fix alphabetical order in .gitignore
+	Since commit v8.20-67-g0f525b6, .gitignore sometimes
+	showed up as changed because the entries "*.gcda" and
+	"*.gcno" had not been in alphabetical order.
+
+	* .gitignore: Exchange the entries "*.gcda" and "*.gcno".
+
+2013-01-12  Benno Schulenberg  <bensberg@justemail.net>
+
+	uptime: gettextize an overlooked string, and normalize another
+	* src/uptime.c: Add calls to gettext() and select_plural().
+
+2013-01-10  Benno Schulenberg  <bensberg@justemail.net>
+
+	doc: make a --help text fragment identical to three others
+	* src/ln.c (usage): Move a newline to the next text fragment, so
+	the preceding fragment about backup methods becomes the same as
+	the ones for cp, mv, and install.  A bit easier for translators.
+
+2013-01-07  Pádraig Brady  <P@draigBrady.com>
+
+	factor: apply a more general fix to enable correct assembly
+	In addition to the previous 64 bit guards we've placed in longlong.h
+	there are additional _LP64 guards required for mips with -mcpu >= 3,
+	to avoid a build failure (http://bugs.gnu.org/13353) and on sparc
+	with -mcpu >= v9 in 32 bit mode where for example,
+	`factor 2123123123123123123123` would go into an infinite loop.
+
+	Since factor.c currently operates on uintmax_t, we restrict the use
+	of the assembly in longlong.h to when 'long' has the same width, to
+	provide a more general guard for this code.
+
+	* src/factor.c: Restrict the use of longlong.h assembly code,
+	to when the width of intmax_t == long.
+	* src/longlong.h: Remove the previous _LP64 guards to avoid
+	divergence from GMP's longlong.h
+	* NEWS: Adjust the info on build and runtime fixes.
+
+2013-01-06  Paul Eggert  <eggert@cs.ucla.edu>
+
+	doc: sync parse-datetime from gnulib
+	* doc/coreutils.texi (Top): Sync from gnulib parse-datetime.texi menu.
+
+2013-01-06  Karl Berry  <karl@gnu.org>
+
+	doc: avoid @sc in texinfo; it is unnecessary
+	* doc/coreutils.texi: avoid @sc and use explicit capitals.
+	* doc/local.mk (sc-use-small-caps-NUL): Remove, as no longer applicable.
+
+2013-01-04  Karl Berry  <karl@gnu.org>
+
+	doc: remove stale pr news in the manual
+	* coreutils.texi (pr invocation): remove list of ancient news
+	items; the main documentation already covers what is needed.
+
+2013-01-01  Jim Meyering  <jim@meyering.net>
+
+	maint: update all copyright year number ranges
+	Run "make update-copyright", but then also run this,
+	  perl -pi -e 's/2\d\d\d-//' tests/sample-test
+	to make that one script use the single most recent year number.
+
+	build: update gnulib submodule to latest
+
+2012-12-31  Jim Meyering  <jim@meyering.net>
+
+	maint: adjust NEWS entry wording
+	* NEWS: Adjust wording in a few entries.
+
+2012-12-27  Pádraig Brady  <P@draigBrady.com>
+
+	doc: improve od --help and man page
+	* src/od.c: Redorder the information output by --help
+	to ease interpretation and so that appropriate sections
+	are generated by help2man.
+	* doc/coreutils.texi (od invocation): Fix an incorrect
+	reference to @var{n}, which should be @var{bytes}.
+	* man/od.x: Add an "Examples" section, and move the
+	default od format to there, and add a commonly required
+	format to generate hexdumps.
+	Reported by Akim Demaille in http://bugs.gnu.org/13280.
+
+2012-12-21  Mike Frysinger  <vapier@gentoo.org>
+
+	factor: disable x86_64 assembly code for x32 builds
+	The current x86_64 asm code does not work for x32 (__ILP32__) ABIs,
+	so disable it.  Note simply deleting the q suffix is not enough.
+
+	* src/longlong.h: Restrict x86_64 assembly to _LP64 targets,
+	which is consistent with other checks in longlong.h and
+	avoids this code on x32.
+	* NEWS: Mention the build fix.
+
+2012-12-21  Pádraig Brady  <P@draigBrady.com>
+
+	tests: avoid false positive valgrind failures
+	* init.cfg (require_valgrind_): Check the `true` program,
+	which will check more valgrind failure cases as now
+	detailed in the function comments.
+
+	dd: fix a printf format mismatch in an error message
+	* src/dd.c (dd_copy): To print an off_t portably we need
+	to use PRIdMAX and cast to intmax_t, otherwise there
+	could be a mismatch between say a 32 bit off_t
+	and uintmax_t.  This was flagged by -Wformat on
+	a 64 bit host when compiling with CFLAGS=-m32.
+
+2012-12-21  Pádraig Brady  <P@draigBrady.com>
+
+	seq: fix newline output when -s specified
+	This regression was introduced in commit v8.19-132-g3786fb6.
+
+	* src/seq.c (seq_fast): Don't use puts() to output the first number,
+	and instead insert it into the buffer as for other numbers.
+	Also output the terminator unconditionally.
+	* tests/misc/seq.pl: Add some basic tests for the -s option.
+	* NEWS: Mention the fix.
+	* THANKS.in: Reported by Philipp Gortan.
+
+2012-12-20  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	tests: add tests for basename's --zero option
+	The -z option has been introduced in commit v8.15-60-ga3eb71a,
+	i.e. in coreutils-8.16.  Time to add some tests for it.
+
+	* tests/misc/basename.pl: Add tests exercising the -z option.
+	In the foreach loop to append a newline to the end of each
+	expected 'OUT' string, skip the -z tests.
+
+2012-12-20  Assaf Gordon  <assafgordon@gmail.com>
+
+	doc: tweak 'lcov' in HACKING
+	* HACKING: In the paragraph about creating coverage statistics,
+	use the correct -b (--base-directory) parameter.
+
+2012-12-19  Pádraig Brady  <P@draigBrady.com>
+
+	maint: rewrap a long line noticed by make syntax-check
+	* configure.ac: Wrap the recently introduced long line.
+
+	doc: clarify when dd iflag=fullblock is useful
+	* doc/coreutils.texi (dd invocation): Explain that iflag=fullblock
+	ensures that count= will count blocks rather than reads, and
+	reference that in both the count= and iflag=fullblock descriptions.
+	Suggested by John Reiser.
+
+	tests: avoid a race in timeout-group.sh
+	* tests/misc/timeout-group.sh: The kernel might possibly delay
+	signal propagation to timeout.cmd long enough, that it exits
+	normally without running the signal handler (as sleep will
+	be in the same process group and so get the signal too).
+	So avoid this by explicitly checking that the signal handler
+	is called, which should always happen under normal circumstances.
+	Reported by Stefano Lattarini on linux-2.6.30-2-686 and bash-4.2.36.
+
+	build: avoid --enable-gcc-warnings on GCC <= 4.5
+	* configure.ac: Only enable warnings automatically when
+	on GCC >= 4.6 (and when building from a git checkout)
+	as that was the first GCC version to support fine-grained
+	control of warnings, allowing them to be adjusted around
+	certain code sections.  gnulib relies on this for certain
+	warnings, so avoid auto enabling this option lest we trigger
+	build failures on now over two year old compilers.
+	Reported by Zartaj Majeed with GCC 4.5.3 on cygwin.
+
+2012-12-19  Zartaj Majeed  <zmajeed@sbcglobal.net>
+
+	build: fix cygwin build issues
+	* doc/local.mk (doc/constants.texi): Ensure the doc directory
+	is present which is needed when doing a non source dir build,
+	when the doc/constants.texi target is built before other doc targets.
+	* src/local.mk: Add $(EXEEXT) to the make-prime-list calls.
+
+2012-12-17  Pádraig Brady  <P@draigBrady.com>
+
+	maint: consistently use @dots{} in coreutils.texi
+	* doc/coreutils.texi: s/\.\.\./@dots{}/ except in code and examples.
+
+2012-12-17  Pádraig Brady  <P@draigBrady.com>
+
+	readlink: support multiple command line arguments
+	This allows efficient processing of multiple files,
+	while also increasing compatibility with BSD's readlink(1).
+	We also add the -z, --zero option to delimit output items
+	with the NUL character which disambiguates output in the
+	presence of '\n' characters.
+
+	* src/readlink.c (usage): Add the --zero description,
+	and also adjust the description of --no-newline accordingly.
+	(main): Handle the -z option and iterate over multiple arguments.
+	Also as in commit v8.15-24-g9d46b25 we use fputs() and putchar()
+	rather than printf() for performance reasons.
+	* doc/coreutils.texi (readlink invocation): Document the
+	new --zero option, adjust the --no-newline description, and
+	tweak the general info to indicate multiple files are supported.
+	* tests/readlink/multi.sh: A new test for the new functionality.
+	* tests/local.mk: Reference the new test.
+	* man/readlink.x: Adjust the summary and also reference realpath.
+	* NEWS: Mention the improvement.
+	* THANKS.in: Suggested by Aaron Davies.
+
+2012-12-15  Assaf Gordon  <assafgordon@gmail.com>
+
+	maint: update gitignore entries
+	* .gitignore: ignore GCC coverage data files.
+
+2012-12-14  Assaf Gordon  <assafgordon@gmail.com>
+
+	doc: mention "git stash" in HACKING
+	* HACKING: In the paragraph about switching branches, mention
+	"git stash" as a way to continue while preserving uncommitted
+	changes.
+
+2012-12-14  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	tail,stat: improve support for the ceph file system
+	Teach tail -f that it must use polling on ceph file systems, and
+	let stat -f --format=%T report the file system type name, "ceph".
+	Website: http://ceph.com/
+
+	* src/stat.c (human_fstype): Add a case: ceph, 0x00C36400, remote.
+	* NEWS (Improvements): Mention it.
+	* THANKS.in: Update.
+	Reported by Konrad Wróblewski in http://bugs.gnu.org/13172.
+
+2012-12-14  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	maint: fix typos found by misspellings
+	* doc/coreutils.texi (df invocation): s/occurence/occurrence/.
+	* tests/df/skip-rootfs.sh: s/supressed/suppressed/
+
+2012-12-09  Jim Meyering  <jim@meyering.net>
+
+	tests: add test case and note that last week's cut change is a bug fix
+	* tests/misc/cut-huge-to-eol-range.sh: New test, showing that
+	the change in v8.20-51-g7d03466 is a bug fix after all.
+	* tests/local.mk (all_tests): Add it.
+	* NEWS (Bug fixes): Mention it.
+
+2012-12-08  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	cp: fix --no-preserve=mode to not exit 1
+	cp --no-preserve=mode exited 1 unconditionally.  Furthermore,
+	the tests which would have detected this error - namely
+	link-preserve.sh and reserve-mode.sh - failed to test
+	cp's exit code.
+
+	* src/copy.c (copy_reg): In the case x->explicit_no_preserve_mode,
+	do only set return_val to false iff the previous set_acl ()
+	failed.
+	* tests/cp/link-preserve.sh: Check cp's exit code.
+	* tests/cp/link-symlink.sh: Likewise.
+	* tests/cp/preserve-mode.sh: Likewise.
+	* NEWS: Mention the fix.
+
+	Bug introduced in commit v8.19-145-g24ebca6.
+
+	Reported by Florian Pritz in http://bugs.gnu.org/13119.
+
+2012-12-07  Ondrej Oprala  <ooprala@redhat.com>
+	    Bernhard Voelker.
+
+	df: do not print duplicate entries and rootfs by default
+	* src/df.c (struct devlist): Add new struct for storing already-
+	examined device numbers.
+	(devlist_head): Add new store of the above type.
+	(show_rootfs): Add new global boolean to not skip rootfs.
+	(dev_examined): Add new function to check if the device has
+	already been traversed.
+	(get_dev): Filter out rootfs unless "-t rootfs" or the -a
+	option is specified. Filter out duplicate entries by calling
+	the above new dev_examined unless the -a option is specified.
+	(main): Set the show_rootfs variable appropriately when the -t
+	option is specified for rootfs. Free device list (guarded by
+	IF_LINT).
+	* tests/df/skip-duplicates.sh: Add test to exercise the skipping
+	of duplicate entries.
+	* tests/df/skip-rootfs.sh: Add test to exercise the skipping
+	of the rootfs pseudo file system.
+	* tests/local.mk: Add the above new tests.
+	* NEWS (Changes in behavior): Mention the changes.
+	* doc/coreutils.texi (df invocation): Document df's behavior about
+	skipping rootfs and duplicate entries.
+
+2012-12-06  Cojocaru Alexandru  <xojoc@gmx.com>
+
+	cut: avoid a redundant heap allocation
+	* src/cut.c (set_fields): Don't allocate memory for
+	`printable_field' if there are no finite ranges.
+	This is achieved by keeping max_range_endpoint as 0 when
+	there are no finite ranges.  max_range_endpoint is then
+	used throughout the code to guard against allocation of,
+	and access to the bit array.
+	The extra allocation was introduced via commit v8.10-3-g2e636af.
+
+2012-12-06  Pádraig Brady  <P@draigBrady.com>
+
+	maint: fix a referenced coreutils version in a test comment
+	* tests/misc/cut.pl: This particular bug existed up to v8.10.
+
+2012-12-06  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	tests: fix regex to match "-" in ipcent field in df/total-verify.sh
+	The regular expression failed to match for file systems that
+	do not provide inode statistics, e.g. VFAT or CIFS (depending
+	on the underlying peer file system).
+
+	* tests/df/total-verify.sh: Fix the regular expression to match
+	a dash in the ipcent field again.
+
+	Reported by Assaf Gordon in http://bugs.gnu.org/13099.
+	Bug introduced in commit v8.20-18-gdae8d22.
+
+2012-12-06  Assaf Gordon  <assafgordon@gmail.com>
+
+	maint: adjust HACKING instructions to run a single test
+	* HACKING: Adjust as per the recent changes introduced
+	when switching to non recursive make.
+
+2012-12-06  Pádraig Brady  <P@draigBrady.com>
+
+	tests: cut.pl: adjust for changed diagnostic
+	* tests/misc/cut.pl: Since we now output the more
+	complete error message irrespective of running
+	in a multi-byte locale or not, adjust the test accordingly.
+
+2012-12-06  Cojocaru Alexandru  <xojoc@gmx.com>
+
+	cut: improve error reporting
+	* src/cut.c (main): Treat a NUL delimiter (-d '') consistently
+	with non NUL delimiters, and disallow such a delimiter option,
+	unless a field is also specified.
+	(set_fields): Provide a more accurate error message when
+	a given list is invalid.
+	* tests/misc/cut.pl: Add a test case.
+
+2012-12-06  Pádraig Brady  <P@draigBrady.com>
+
+	maint: adjust instructions to run a single test
+	* README: Adjust as per the recent changes introduced
+	when switching to non recursive make.
+
+2012-12-05  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	maint: remove now auto-added entry from THANKS.in
+	The syntax-check sc_THANKS_in_duplicates complained about
+	that excess entry.
+
+	* THANKS.in (Colin Watson): Remove entry, now that it will be
+	automatically included in the generated THANKS file.
+
+2012-12-04  Pádraig Brady  <P@draigBrady.com>
+
+	maint: remove a redundant odd sized alloc from factor.c
+	* src/factor.c (mp_factor_init): Init the pointers with NULL,
+	which xrealloc (or realloc) handles fine.
+
+2012-12-04  Colin Watson  <cjwatson@ubuntu.com>
+
+	factor: fix infinite loop on 32 bit powerpc
+	Both Debian and Ubuntu builds of coreutils 8.20 hang while running the
+	test suite on powerpc, which is reproducible using 'factor 122'.
+
+	This turns out to be somewhat related to http://bugs.gnu.org/12754,
+	but not quite the same.  uintmax_t is 64 bits, but the cntlzw
+	instruction takes 32-bit operands, and the cntlzd option is only
+	available on 64-bit hardware.
+
+	* src/longlong.h: Add an _LP64 check around the PPC64 code,
+	so that this falls back to the C implementations.
+	* NEWS: Mention the fix.
+
+2012-11-24  Jim Meyering  <jim@meyering.net>
+
+	cut: do not print extraneous delimiters in some unusual cases
+	When printing output delimiters, and when a to-EOL range subsumes
+	at least one other range, cut would mistakenly print delimiters for
+	the subsumed range.  This bug was probably introduced via commit
+	v5.2.1-639-g847e066.
+	* src/cut.c (set_fields): Ignore any range that is subsumed by a
+	to-EOL range.  Also, move two declarations down.
+	* tests/misc/cut.pl: Add tests to exercise this.
+	* NEWS (Bug fixes): Mention it.
+	Reported by Marcel Böhme in http://bugs.gnu.org/12966
+
+	cut: treat -b2-,3- like -b2-, not like -b3-
+	* src/cut.c (set_fields): When two right-open-ended ranges are
+	specified, don't blindly let the latter one take precedence over
+	the former.  Instead, use the union of the ranges.
+	* tests/misc/cut.pl: Add tests to exercise this.
+	* NEWS (Bug fixes): Mention it.
+	Reported by Marcel Böhme in http://bugs.gnu.org/12966
+	Thanks to Berhard Voelker for catching log and NEWS typos.
+
+2012-11-24  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	doc: cp: clarify behavior of the --preserve=xattr option
+	* doc/coreutils.texi (cp invocation): Enhance documentation
+	of the --preserve=xattr option regarding the preservation
+	of ACLs, SELinux contexts and capabilities: the user may
+	notice this only when not specifying --preserve=mode
+	and --preserve=context, too, i.e., otherwise, these attributes
+	are preserved anyway.
+
+2012-11-24  Pádraig Brady  <P@draigBrady.com>
+
+	doc: update info cross reference to bash
+	* doc/coreutils.texi (tee invocation): Reference
+	the bash manual rather than bashref, as the latter
+	is more likely to work on newer systems.
+
+	tests: use sub-second timeouts to speed up a timeout test
+	* tests/misc/timeout.sh: Take advantage of recent support for
+	sub-second timeouts to decrease runtime from about 6s to 2s.
+
+	doc: clarify that renice is needed to adjust niceness
+	* doc/coreutils.texi (nice invocation): Ensure there is no
+	ambiguity in the summary in relation to nice being able
+	to adjust the niceness of an existing process.
+	Reference the renice command.
+	* man/nice.x: Reference renice (1)
+
+	tests: accept EEXIST from rm -d
+	* tests/rm/d-2.sh: EEXIST is a valid error on some systems.
+	Reported by Michael Felt on AIX 6.1
+
+	tests: don't rely on sed -i being available
+	* tests/df/df-output.sh: sed --in-place is not generally available.
+	Also add a couple of simplifications from Bernhard Voelker.
+	Removing all spaces, rather than just leading spaces, suffices.
+	Searching for ' --output' in unadjusted df --help, suffices.
+
+	seq: ensure correct output width for scientific notation input
+	* src/seq.c (scan_arg): Calculate the width more accurately
+	for numbers specified using scientific notation.
+	* tests/misc/seq.pl: Add tests for cases that were mishandled.
+	* NEWS: Mention the fix.
+	* THANKS.in: Reported by Marcel Böhme.
+	Fixes http://bugs.gnu.org/12959
+
+2012-11-22  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	df: reorder default field list of --output option
+	As the inodes information is usually not so much of interest,
+	and some file systems including btrfs do not even provide it,
+	reading of the full df --output is easier when the block
+	statistic fields come just left of the last field, the mount
+	point.
+
+	* src/df.c (all_args_string): Move the inodes fields before
+	the block fields.
+	(usage): Likewise.
+	* tests/df/df-output.sh: Likewise.
+	* doc/coreutils.texi (df invocation): Likewise.  Additionally,
+	explicitly mention the default order of the --output option.
+
+2012-11-21  Paul Eggert  <eggert@cs.ucla.edu>
+
+	install: fix security race
+	* NEWS: Document this.
+
+2012-11-20  Paul Eggert  <eggert@cs.ucla.edu>
+
+	install: fix security race
+	* src/copy.c (copy_internal): Use DST_MODE_BITS, not SRC_MODE.
+	See Bernhard R. Link in <http://bugs.gnu.org/12947> and in
+	<http://bugs.debian.org/598018>.
+
+2012-11-20  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	nl: remove deprecated --page-increment option
+	The above option has been deprecated since coreutils-7.5
+	by commit v7.4-129-g718b279.
+
+	* src/nl.c (PAGE_INCREMENT_OPTION_DEPRECATED): Remove enum.
+	(longopts): Remove "page-increment" entry.
+	(main): Remove PAGE_INCREMENT_OPTION_DEPRECATED case.
+	* NEWS (Changes in behavior): Mention the change.
+
+	Reported by Marcel Böhme in <http://bugs.gnu.org/12940>.
+
+2012-11-19  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	doc: remove already implemented items from TODO
+	* TODO (renice): The renice program is part of util-linux for
+	years now. Remove entry.
+	(dd): The option status=none has been implemented in commit
+	v8.19-143-g7331ab5. Remove entry.
+
+2012-11-18  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	cut: do not accept the invalid range 0-
+	The command "echo 12345 | cut -b 0-" prints an empty line while
+	it should fail with "fields and positions are numbered from 1".
+
+	* src/cut.c (set_fields): Add a diagnostic for the invalid open
+	range which starts with Zero, i.e., the range 0-.
+	* tests/misc/cut.pl: Add tests to ensure the range 0- fails for
+	fields (-f) and for positions (-b, -c).
+	* NEWS: Mention the fix.
+
+	Reported by Marcel Böhme in <http://bugs.gnu.org/12903>.
+
+2012-11-18  Daniel Schepler  <dschepler@gmail.com>
+
+	build: fix compilation failure on x32
+	* src/factor.c [HAVE_ATTRIBUTE_MODE]: Fix typo in #if test:
+	s/HAVE_LONG_LONG/HAVE_LONG_LONG_INT/.  Otherwise, factor.c would
+	elicit assembler errors on x32: it was incorrectly defining DItype
+	to long instead of long long.  Patch and report in
+	http://bugs.debian.org/693337;  Mike Stone notified upstream.
+
+2012-11-18  Jim Meyering  <jim@meyering.net>
+
+	maint: reenable accidentally-disabled cppi-check syntax-check rule
+	* cfg.mk (exclude_file_name_regexp--sc_preprocessor_indentation): Fix
+	typo that disabled the sc_preprocessor_indentation syntax-check rule
+	by exempting all files.  s/__ll/_ll/  The typo was introduced in
+	commit v8.19-157-g759ebcb.
+
+	maint: correct indentation of W_TYPE_SIZE-defining cpp directives
+	* src/factor.c: Indent cpp directives to reflect their nesting.
+
+	maint: avoid i686-specific syntax-check failure
+	* cfg.mk (_gl_TS_unmarked_extern_vars): Define.
+
+2012-11-17  Paul Eggert  <eggert@cs.ucla.edu>
+
+	doc: explain why dd is called "dd"
+	* doc/coreutils.texi (dd invocation): Mention JCL.
+
+	factor: tidy up primes.h again
+	See Stefano Lattarini in <http://bugs.gnu.org/12899>.
+	* src/local.mk (BUILT_SOURCES): Put $(top_srcdir)/src/primes.h here
+	(MAINTAINERCLEANFILES): ... instead of here.
+
+2012-11-13  Paul Eggert  <eggert@cs.ucla.edu>
+
+	factor: cleanup for primes.h
+	* .gitignore: Add src/primes.h back, since it's no longer
+	in the repository.
+
+2012-11-13  Jim Meyering  <jim@meyering.net>
+
+	maint: avoid unnecessary #include to fix syntax-check failure
+	* src/factor.c: Remove unneeded #inclusion of"verify.h".
+	It's already included via system.h.
+
+2012-11-13  Paul Eggert  <eggert@cs.ucla.edu>
+
+	factor: improve primes.h change
+	This follows suggestions by Jim Meyering in
+	<http://bugs.gnu.org/12841#34>.
+	* src/make-prime-list.c (print_wide_uint): Change "nested" argument
+	to "nesting", and use it to avoid outputting lines that are too long.
+	* src/primes.h: Remove from git.  This can be generated by a
+	maintainer.  It's nicer to do so on a host with at least 128-bit
+	arithmetic.
+
+2012-11-12  Paul Eggert  <eggert@cs.ucla.edu>
+
+	factor: maintainer builds primes.h, not builder
+	With this change, the maintainer builds primes.h and it is part of
+	the tarball.  primes.h's contents are not architecture-specific.
+	* .gitignore: Remove /src/primes.h.
+	* src/factor.c: Include verify.h.
+	(W): New constant.  Verify that uintmax_t lacks holes
+	and that W is no wider than the integers used to generate primes.h.
+	* src/local.mk (EXTRA_DIST): Add src/primes.h.
+	(BUILT_SOURCES, CLEANFILES): Remove src/primes.h.
+	($(top_srcdir)/src/primes.h): Rename from src/primes.h.
+	Do not depend on src/make-prime-list.  Instead, use sub-make to
+	build, so that we build primes.h only if it does not exist.
+	* src/make-prime-list.c: Include <limits.h>, for ULONG_MAX.
+	(wide_uint): Define to uintmax_t or unsigned __int128 if not #defined.
+	(struct prime, binvert, process_prime): Use it instead of uintmax_t.
+	(print_wide_uint): New function.  This generates the proper pinv
+	value regardless of the width of uintmax_t on the target, so long
+	as the width doesn't exceed that of the width of wide_uint on the
+	maintainer host that generated src/primes.h.
+	(output_primes): Use it.  Output WIDE_UINT_BITS, too.  Let the
+	target compute its own lim, since its uintmax_t may be narrower
+	than ours.
+	(SZ): Remove.
+	* src/primes.h: New file, generated with 128-bit integers and usable
+	on any host where uintmax_t's width is no greater than 128 bits.
+
+	factor: port to systems with rpl_malloc
+	* src/make-prime-list.c (malloc): Undef.  This fixes a problem on
+	AIX 8.20 reported by Michael Felt in <http://bugs.gnu.org/12841>.
+
+2012-11-09  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	tests: fix factor's tests to use coreutil's own sha1sum
+	The test used the shasum utility which seems to belong to the
+	perl package. On SLES-10.4, perl doesn't include this yet:
+
+	  + seq 0 10000000
+	  + factor
+	  + shasum -c --status exp
+	  ./tests/factor/t00.sh: line 30: shasum: command not found
+	  + Exit 1
+
+	It is better to use our own stuff anyway.
+
+	* tests/factor/run.sh: s/shasum/sha1sum/. Additionally, add
+	sha1sum to the print_ver_ call.
+
+2012-11-09  Benno Schulenberg  <bensberg@justemail.net>
+
+	doc: chcon: add descriptions for three undocumented options
+	These were missed in this related change v8.14-104-g44e20cd
+
+	* src/chcon.c (usage): Mention the two --preserve-root options.
+	* doc/coreutils.texi (chcon invocation): Plus the --dereferece option.
+
+2012-11-09  Benno Schulenberg  <bensberg@justemail.net>
+
+	doc: with cp -n, option -f is not redundant but ignored
+	* src/cp.c (usage): Replace "redundant" with "ignored".
+	* doc/coreutils.texi (cp invocation): Likewise.
+
+2012-11-09  Paul Eggert  <eggert@cs.ucla.edu>
+
+	df: port the new df test to POSIX sed, larger file systems
+	* tests/df/df-output.sh: For the test "df -B1K --output=size",
+	do not assume that the file system size fits in 9 bytes; it
+	might be larger than that, so omit leading space.  Also, use
+	portable 'sed' commands: POSIX says sed commands inside { } should
+	all end in newline.
+
+2012-11-08  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	df: add a test for the --output option
+	* tests/df/df-output.sh: Add a test case.
+	* tests/local.mk (all_tests): Mention the test.
+	* cfg.mk (sc_file_system): Exempt the test from this syntax-check.
+
+	df: document the new --output option
+	* src/df.c (usage): Add a short description of --output and its
+	available field names for use in the optional argument.
+	* doc/coreutils.texi (df invocation): Add the new option with more
+	details and a few examples.
+	* NEWS (New features): Mention the new option.
+	(Changes in behvaior): Mention the new placeholder for fields
+	in the "total" line.
+
+2012-11-08  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	df: add --output to select which fields to display
+	This supports changing the order of the fields displayed,
+	and also allows the simultaneous display of inode and block fields.
+
+	src/df.c (get_dev): Factor out calling get_header to ...
+	(main): ... here.  Call print_table only if file_systems_processed.
+
+	src/df.c (Displayable fields): Rename DEV_FIELD to SOURCE_FIELD.
+	Rename TYPE_FIELD to FSTYPE_FIELD.  Rename FREE_FIELD to AVAIL_FIELD.
+	Rename MNT_FIELD to TARGET_FIELD.
+
+	* src/df.c (display_field_t): Turn loose enum definition of the
+	displayable fields into a typedef.  Add the inode fields ITOTAL_FIELD,
+	IUSED_FIELD, IAVAIL_FIELD, IPCENT_FIELD.
+	(field_data_t): Define structure to hold the display field, the
+	caption, the width and the alignment for each field of the above
+	type.
+	(field_data): Add array the values of field data for each display
+	field.
+	(headers, alignments, widths): Remove arrays.
+	(columns): Add a pointer to the storage for the array of the actual
+	output columns, i.e., fields.
+	(ncolumns): Add counter for the current output columns.
+	(alloc_table_row): Allocate the dynamic ncolumns value of strings.
+	(print_table): Loop over ncolumns instead of constant NFIELDS.  Rename
+	loop variable 'field' to 'col' to avoid ambiguity with the 'field'
+	element in the columns structure.  Adjust the condition for printing
+	the last column by comparing with the column number instead of the
+	field name (TARGET_FIELD).  Use the width and the alignment stored in
+	the columns data.
+	(alloc_field): Add new function to allocate a field in the columns
+	array.
+	(get_field_list): Add new function to fill the array of output columns
+	for each mode.
+	(get_header): Loop over ncolumns instead of constant NFIELDS.  Rename
+	the loop variable 'field' to 'col' to avoid ambiguity with the 'field'
+	element in the columns structure.  Remove the code for continuing the
+	loop if the current column is the file system type and print_type is not
+	active (which is now impossible).  Store the cell in the columns store
+	along with the new width.
+	(get_dev): Loop over ncolumns instead of the constant NFIELDS.  Rename
+	the loop variable 'field' to 'col' to avoid ambiguity with the 'field'
+	element in the columns structure; move the definition down to where it
+	is used first.  Add cases for the inode fields ITOTAL_FIELD,
+	IUSED_FIELD, IAVAIL_FIELD and IPCENT_FIELD.  Store the cell in the
+	columns store along with the new width.
+	(main): Use new get_field_list function to fill the list of output
+	columns.
+
+	* src/df.c (print_table): Instead of fputs()ing directly, apply
+	ambsalign on the last field, too.  Use the new MBA_NO_RIGHT_PAD flag
+	for this.
+
+	* src/df.c (TOTAL_OPTION): Add new enum value.
+	(long_options): Use it for the "total" option instead of 'c'.
+	(main): Likewise.
+
+	* src/df.c (get_dev): Remove condition to copy the fstype into the
+	FSTYPE_FIELD - based on whether print_type is non-Null.  Since the
+	introduction of get_field_list(), there are only fields added to
+	the columns array which have to be added.
+
+	* src/df.c (get_dev): Guard the summing up of the values for the
+	grand total: only do it if we have to print the total and if the
+	current invocation is not for processing it.
+
+	* src/df.c (main): Pass a hyphen "-" for the mount point name
+	to get_dev.
+	(get_dev): As the mount_point is now always there,
+	remove the condition and the else case for the TARGET_FIELD.
+	Instead, simply copy the mount_point.
+	All cells are now always present.  Therefore, add an assertion
+	statement if one was not.  Furthermore, hide the problematic
+	characters unconditionally.
+	(print_table): Remove the skipping of empty cells.
+	* tests/df/total-verify.sh: Accommodate to the new "-" in the
+	target field of the summary line.
+	* NEWS: Mention the change in behavior.
+
+	* src/df.c (field_type_t): Add new typedef of 3 enums to distinguish
+	between block, inode and other fields.
+	(field_data_t): Add field_type member of the above new type.
+	(field_data): Add default values for the above field_type,
+	indicating whether a field contains block values, inode values
+	or other, generic values.
+	(field_values_t): Add this struct to store the field values, used
+	by and factored out from get_dev to be able to define such a struct
+	for both the inode and the block values.
+	(get_field_values): Add this function to obtain the block values
+	and the inode values from the file system usage, used by and
+	factored out from get_dev.
+	(add_to_grand_total): Add this function to sum the values of the
+	current mount point up for the grand total, used by and factored
+	out from get_dev.
+	(get_dev): Move the definition of the variables fsu, buf, pct and
+	cell down to where they are used first to give them a better scope.
+	Factor out input_units, output_units, total, available,
+	negate_available, available_to_root, used and negate_used into the
+	above struct field_values_t.
+	Factor out the mapping of the fsu values to the above variables
+	into above function get_field_values.
+	Factor out the summing up of the grand total values into the
+	above function add_to_grand_total.
+	Define block_values and inode_values of the new type and call the
+	new get_field_values to fill them from the fsu values.
+	Call the above function add_to_grand_total for summing up the
+	values for the grand total.
+	Inside the loop over all fields, define a variable 'v' to point
+	to either the block_values or the inode_values, depending on the
+	current field's field_type.  Change the code in the cases
+	TOTAL_FIELD/ITOTAL_FIELD, USED_FIELD/IUSED_FIELD, AVAIL_FIELD/
+	IAVAIL_FIELD and PCENT_FIELD/IPCENT_FIELD to use the field values
+	where 'v' is pointing to, i.e., either the block_values or the
+	inode_values.
+
+	* src/df.c (main): Remove setting of grand_fsu.fsu_blocks in the
+	inode_format case as this is no longer needed and would lead to
+	wrong results once when mixed block/inode fields will be used.
+
+	* src/df.c (main): Cleanup the code at the end regarding
+	file_systems_processed to make the code clearer.
+
+	* src/df.c (inode_format): Remove variable.
+	(main): Remove initialization of the above variable.
+	In getopts loop, directly set the header_mode to INODES_MODE
+	instead of using the above variable.  Afterwards, remove the
+	mapping to INODES_MODE as it is already set.
+
+	* src/df.c (posix_format): Move variable ...
+	(main): ... to here.
+
+	* src/df.c (print_table): Enhance the comment about 2-line format
+	in cases where the SOURCE_FIELD exceeds 20 chars, as such
+	behavior has been removed long ago by commit v8.10-40-g99679ff.
+
+	* src/df.c (Display modes): Add OUTPUT_MODE, remove unused NMODES.
+	(display_field_t): Remove unnecessary NFIELDS.
+	(field_data_t): Add member 'arg' for the field name in the --output
+	argument.  Add member 'used' to remember if a field is already used
+	in the columns array.
+	(field_data): Add values for the above new members arg and used.
+	(all_args_string): Add variable which represents the argument for
+	the --output option which includes all fields.
+	(OUTPUT_OPTION): Add enum to identify the long --output option.
+	(long_options): Add optional-argument --output option.
+	(alloc_field): Assert that the field is not already used.
+	Mark the field as used.
+	(decode_output_arg): Add function to parse the comma-separated
+	field list passed to the --output option in order to add the
+	appropriate fields to the columns array.
+	(get_field_list): Add case for the new OUTPUT_MODE to add all
+	available fields to columns in the case the --output option
+	has been passed without any values.  Use the comma-separated
+	field list form to pass to decode_output_arg to keep the field
+	header mapping for the OUTPUT_MODE only on one place.
+	(main): Define format string msg_mut_excl to be used in the
+	following checks whether the use of --output and the other
+	option is mutually exclusive.
+	In the getopt_long loop, add a check to the case for the -i option
+	to issue an error message when it is used together with --output;
+	Likewise for -T and -P.
+	Add a new case for OUTPUT_OPTION, together with similar checks as
+	above and eventually passing the optarg to decode_output_arg.
+	After the getopt_long loop, consider the OUTPUT_MODE case in order
+	not to run into -h or -P mode.
+
+	* src/df.c (get_dev): Also xstrdup the dev_name, and free it
+	afterwards to silence a valgrind warning about definitely lost
+	memory.
+	(main): Free the columns store to silence valgrind, guarded by
+	the IF_LINT macro.
+
+	* src/df.c (main): Pass "total" as the mount point to get_dev if
+	the SOURCE_FIELD is not among the columns to output.
+	* tests/df/df-output.sh: Change the test to ensure the content of
+	the target field of the grand total line: if the source field is
+	present, then the target should be "-", else the target field should
+	be "target".
+	* NEWS (Changes in behavior): Enhance the exiting NEWS entry.
+	* doc/coreutils.texi (df invocation): Document the content of the
+	source and target field in the grand total line.
+
+	* src/df.c (main): Add another condition to the need_fs_type
+	parameter of read_file_system_list whether the FSTYPE_FIELD is
+	used or not.
+
+	* src/df.c (get_header): Indicate the block size used,
+	in the "size" header, when using --output without -h.
+	* tests/df/df-output.sh: Adjust for, and add an extra test for,
+	the new behavior.
+
+2012-11-05  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	maint: fix factor's test file name pattern in .gitignore
+	* .gitignore: Adapt the entry for the files generated during
+	the factor tests (see v8.20-9-g1cace4a).
+
+2012-11-04  Ángel González  <keisial@gmail.com>
+
+	timeout: add --preserve-status to always propagate the exit status
+	It's useful for commands that support running for an indeterminite
+	amount of time, to not return a specific timeout exit status (124),
+	and instead let the command handle the timeout signal and return
+	a status for the work done so far.
+
+	* doc/coreutils.texi (timeout invocation): Describe the new option.
+	* src/timeout.c (preserve_status): A new global boolean to
+	enable the --preserve-status behavior.
+	(usage): Describe the new option.
+	(main): Don't return EXIT_TIMEOUT of preserve_status is set.
+	* tests/misc/timeout.sh: Add a test for the new option.
+
+2012-11-04  Pádraig Brady  <P@draigBrady.com>
+
+	maint: fix the error message from sc_check-I18N-AUTHORS
+	* cfk.mk (sc_check-I18N-AUTHORS): Fix the quoting so
+	you don't get a 'command not found' error.
+
+	build: avoid build failure on some HPPA systems
+	* src/longlong.h: Restrict some HPPA assembly variants to PA RISC V2.0.
+	Note we also avoid this assembly for ilp32 runtimes, since even though
+	the assembly is accepted there, it's not safe as the context can get
+	clobbered between the 'add' and 'add,dc'.
+	This fixes a compile failure with newer HPPA systems with default
+	GCC CPU options.
+	Reported by John David Anglin
+
+2012-11-04  Pádraig Brady  <P@draigBrady.com>
+
+	build: don't assume uintmax_t is 64 bits
+	This was not seen to be an issue in practise,
+	but to make the code more robust, don't assume
+	uintmax_t is 64 bits.
+
+	* src/factor.c (W_TYPE_SIZE): Define based on integer limits.
+	* src/make-prime-list.c (output_primes): Define format width
+	based on integer limits.
+
+2012-11-04  Pádraig Brady  <P@draigBrady.com>
+
+	build: don't rely on support for '%j' printf format
+	* src/factor.c (print_uintmaxes): Replace with PRIuMAX.
+	* src/join.c (check_order): Likewise.
+	* cfg.mk (sc_check-j-printf-format): Add a syntax-check rule
+	to flag new cases of this.
+
+	build: don't rely on support for '%*j' printf format
+	* src/make-prime-list.c: Hardcode the uintmax_t width
+	to 16 hex digits (64 bit), to avoid this compile issue
+	on HPUS systems at least.
+
+2012-11-01  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	tests: fix syntax error in setuidgid_has_perm_
+	An invalid sed expression lead to the following error:
+	  + sed -n 'ls/.* //p'
+	  sed: -e expression #1, char 2: extra characters after command
+	Use "one" instead of "el".
+	Bug introduced in v8.19-111-g51a4b04.
+
+	* init.cfg (setuidgid_has_perm_): s/ls/1s/.
+	* NEWS (Build-related): Mention the fix.
+
+2012-10-27  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	tests: shorten factor's inordinately-long test file names
+	Besides what the subject says, this commit moves the test data
+	for the factor tests from tests/local.mk into the directory
+	tests/factor/ where it belongs.
+
+	* tests/local.mk (EXTRA_DIST): Add new tests/factor/create-test.sh.
+	(p,q,t1,t2) Factor out the factor-related magic numbers.
+	(factor_tests): Rename the test names to t{00..36}.sh. Factor out
+	the triples of test data.
+	($(factor_tests)): Add dependency to new
+	tests/factor/create-factor.sh.
+	Call that script to generate the test scripts.
+	* tests/factor/run.sh: Turn this script into a template, and
+	therefore remove it's executable permission bit.
+	Add template variables START, END and CKSUM, replacing the code
+	to split the test data from the test script's file name.
+	Use the new template variables in the call to seq and for
+	creating the exp file.
+	* tests/factor/create-test.sh: Add new script to create the
+	test scripts from the template tests/factor/run.sh.
+	Use test data and magic numbers factored out from the above
+	files. Let the script also change the __TEMPLATE__ line in
+	run.sh to make clear that the test scripts are generated.
+	* cfg.mk (sc_tests_list_consistency): Exempt the new test.
+	(exclude_file_name_regexp--sc_prohibit_test_backticks):
+	Likewise.
+
+	Improved-by: Stefano Lattarini
+	Improved by: Jim Meyering
+
+2012-10-26  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	build: man page generation: degrade gracefully when perl is lacking
+	Since commit v8.19-118-g57da212, our 'dist-hook' rule tweaked the
+	distributed Makefile.in to make each man page 'man/foo.1' depend
+	on the corresponding source 'src/foo.c' rather than the corresponding
+	program 'src/foo'.  That was done to accommodate systems without
+	perl, which cannot run help2man to regenerate the manpage after
+	its corresponding program has been built.
+
+	This seems a right and proper graceful degradation, in that the
+	man pages dependencies are still 100% correct in a git checkout,
+	while being more lax but "more portable" in a distribution tarball.
+	Alas, that is not the case in practice, as it turns out the tweaked
+	Makefile makes the building of man pages unreliable and potentially
+	incorrect!
+
+	In fact, assume that instead of the correct a dependency:
+
+	    man/ls.1: src/ls
+
+	we have the laxer one:
+
+	    man/ls.1: src/ls.c
+
+	and think of what happens if a user modifies, say, 'src/ls.c', and then
+	runs "make -j4" to rebuild everything.  The make process will see that
+	it has to rebuild the man page 'man/ls.1' (because its prerequisite
+	'src/ls.c' has changed), but won't see that it has to rebuild 'src/ls'
+	*before* re-running 'help2man' to generate that man page; so, if
+	'man/ls.1' is rebuilt before 'src/ls' (which can happen with concurrent
+	make), our user will get either a build error (if 'src/ls' did non
+	exist) or, worse, a man page with an up-to-date timestamp but an
+	out-of-date content.  And what's even worse in all of this is that
+	this problem will be present also for users who have perl installed:
+	this is not a "graceful degradation" at all!
+
+	In our situation, the best and simplest way to implement a graceful
+	degradation it to keep the correct dependencies for man pages (that
+	is, "man/ls.1: src/ls"), and if perl is not present, just generate
+	dummy man pages reporting that built-time issue and redirecting the
+	user back to either the info documentation or the '--help' output.
+
+	As a consequence of this change, we also stop distributing man pages,
+	since they will now be generated unconditionally.
+
+	* Makefile.am (do-not-require-help2man): Remove.
+	(dist-hook): Don't depend on it.
+	* man/local.mk: Remove an obsolete comment.
+	(EXTRA_DIST): Stop distributing generated man pages.
+	($(EXTRA_MANS)): This no longer needs to depend on $(all_programs).
+	(MAINTAINERCLEANFILES): $(ALL_MANS) Do not list it here, and ...
+	(CLEANFILES): ... list it here, instead.
+	(.x.1): Instead of warning if perl is missing, but then trying to run
+	'help2man' unconditionally, simply run ...
+	(run_help2man): ... the command referenced by this new variable, that
+	expands to a proper invocation of 'help2man' if perl is present, and
+	to an invocation of a shell script generating a dummy manpage if it
+	is not.
+	(EXTRA_DIST): Distribute that shell script.
+	* man/dummy-man: New shell script.
+	* NEWS (Build-related): Mention this.
+	Fixes coreutils http://bugs.gnu.org/12715.
+
+2012-10-25  Jim Meyering  <jim@meyering.net>
+
+	maint: tweak sc_check-I18N-AUTHORS
+	* cfg.mk (sc_check-I18N-AUTHORS): Remove unnecessary subshell;
+	add a self-explanatory diagnostic.
+
+	maint: remove an obsolete test comment
+	* tests/du/bind-mount-dir-cycle.sh: Remove obsolete comment
+	spotted by Gilles Espinasse.
+
+2012-10-25  Pádraig Brady  <P@draigBrady.com>
+
+	pr: fix -n to pad consistently and not crash
+	* src/pr.c: Replace the code to truncate the most significant
+	digits of line numbers, with much simpler string manipulation
+	that supports arbitrary widths.  Before this, specifying a
+	width >= 32 to -n would result in a divide by zero error.
+	Also remove the inconsistent padding with zeros and spaces, which
+	would result in zero padding for widths 12 and 15.
+	* tests/pr/pr-tests.pl: Added a test to ensure no zero padding,
+	and also a test for the divide by zero case.
+	* NEWS: Mentioned the fix
+	Reported by Ondrej Oprala
+
+	build: ensure factor links the iconv library
+	* src/local.mk (src_factor_LDADD): Append $(LIBICONV).
+	* crg.mk (sc_check-I18N-AUTHORS): A new syntax check rule
+	to ensure we add LIBICONV where appropriate.
+	* THANKS.in: Add the reporter.
+	Reported by Christian Jullien
+	Syntax check suggested by Jim Meyering
+
+	maint: refactor tests/misc/pr.pl into tests/pr/pr-tests.pl
+	* tests/misc/pr.pl: Refactor this test into ...
+	* tests/pr/pr-tests.pl: ... here.
+	* tests/local.mk: Remove the reference to the removed test
+	Improved by Jim Meyering
+
+2012-10-24  Mike Frysinger  <vapier@gentoo.org>
+
+	build: do not redefine _FORTIFY_SOURCE
+	When _FORTIFY_SOURCE is defined by the compiler or via flags, as
+	it is on Gentoo, do not override it.  Otherwise we get many
+	redefinition warnings.
+
+	* configure.ac (FORTIFY_SOURCE): Check if _FORTIFY_SOURCE is defined.
+	This addresses http://bugs.gnu.org/12714
+
 2012-10-23  Pádraig Brady  <P@draigBrady.com>
+
+	maint: post-release administrivia
+	* NEWS: Add header line for next release.
+	* .prev-version: Record previous version.
+	* cfg.mk (old_NEWS_hash): Auto-update.
 
 	version 8.20
 	* NEWS: Record release date.

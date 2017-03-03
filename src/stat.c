@@ -1,5 +1,5 @@
 /* stat.c -- display file or file system status
-   Copyright (C) 2001-2012 Free Software Foundation, Inc.
+   Copyright (C) 2001-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -266,6 +266,8 @@ human_fstype (STRUCT_STATVFS const *statfsbuf)
       return "binfmt_misc";
     case S_MAGIC_BTRFS: /* 0x9123683E local */
       return "btrfs";
+    case S_MAGIC_CEPH: /* 0x00C36400 remote */
+      return "ceph";
     case S_MAGIC_CGROUP: /* 0x0027E0EB local */
       return "cgroupfs";
     case S_MAGIC_CIFS: /* 0xFF534D42 remote */
@@ -1347,7 +1349,11 @@ usage (int status)
       printf (_("Usage: %s [OPTION]... FILE...\n"), program_name);
       fputs (_("\
 Display file or file system status.\n\
-\n\
+"), stdout);
+
+      emit_mandatory_arg_note ();
+
+      fputs (_("\
   -L, --dereference     follow links\n\
   -f, --file-system     display file system status instead of file status\n\
 "), stdout);

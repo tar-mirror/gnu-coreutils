@@ -1,5 +1,5 @@
 /* tail -- output the last part of file(s)
-   Copyright (C) 1989-2012 Free Software Foundation, Inc.
+   Copyright (C) 1989-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -263,11 +263,10 @@ Usage: %s [OPTION]... [FILE]...\n\
 Print the last %d lines of each FILE to standard output.\n\
 With more than one FILE, precede each with a header giving the file name.\n\
 With no FILE, or when FILE is -, read standard input.\n\
-\n\
 "), DEFAULT_N_LINES);
-     fputs (_("\
-Mandatory arguments to long options are mandatory for short options too.\n\
-"), stdout);
+
+      emit_mandatory_arg_note ();
+
      fputs (_("\
   -c, --bytes=K            output the last K bytes; alternatively, use -c +K\n\
                            to output bytes starting with the Kth of each file\n\

@@ -1,5 +1,5 @@
 /* GNU's uptime.
-   Copyright (C) 1992-2012 Free Software Foundation, Inc.
+   Copyright (C) 1992-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -146,9 +146,9 @@ print_uptime (size_t n, const STRUCT_UTMP *this)
                           select_plural (updays)),
                 updays, uphours, upmins);
       else
-        printf ("up  %2d:%02d,  ", uphours, upmins);
+        printf (_("up  %2d:%02d,  "), uphours, upmins);
     }
-  printf (ngettext ("%lu user", "%lu users", entries),
+  printf (ngettext ("%lu user", "%lu users", select_plural (entries)),
           (unsigned long int) entries);
 
   loads = getloadavg (avg, 3);

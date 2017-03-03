@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # Test "seq".
 
-# Copyright (C) 1999-2012 Free Software Foundation, Inc.
+# Copyright (C) 1999-2013 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -70,6 +70,17 @@ my @Tests =
    ['eq-wid-6',	qw(-w +1 2),  {OUT => [qw(1 2)]}],
    ['eq-wid-7',	qw(-w "    .1"  "    .1"),  {OUT => [qw(0.1)]}],
    ['eq-wid-8',	qw(-w 9 0.5 10),  {OUT => [qw(09.0 09.5 10.0)]}],
+   # Prior to 8.21, these tests involving numbers in scentific notation
+   # would fail with misalignment or wrong widths.
+   ['eq-wid-9',	qw(-w -1e-3 1),  {OUT => [qw(-0.001 00.999)]}],
+   ['eq-wid-10',qw(-w -1e-003 1),  {OUT => [qw(-0.001 00.999)]}],
+   ['eq-wid-11',qw(-w -1.e-3 1),  {OUT => [qw(-0.001 00.999)]}],
+   ['eq-wid-12',qw(-w -1.0e-4 1),  {OUT => [qw(-0.00010 00.99990)]}],
+   ['eq-wid-13',qw(-w 999 1e3),  {OUT => [qw(0999 1000)]}],
+   # Prior to 8.21, if the start value hadn't a precision, while step did,
+   # then misalignment would occur if the sequence narrowed.
+   ['eq-wid-14',qw(-w -1 1.0 0),  {OUT => [qw(-1.0 00.0)]}],
+   ['eq-wid-15',qw(-w 10 -.1 9.9),  {OUT => [qw(10.0 09.9)]}],
 
    # Prior to coreutils-4.5.11, some of these were not accepted.
    ['fmt-1',	qw(-f %2.1f 1.5 .5 2),{OUT => [qw(1.5 2.0)]}],
@@ -121,6 +132,22 @@ my @Tests =
    ['long-leading-zeros2', qw(000 02), {OUT => [qw(0 1 2)]}],
    ['long-leading-zeros3', qw(00 02), {OUT => [qw(0 1 2)]}],
    ['long-leading-zeros4', qw(0 02), {OUT => [qw(0 1 2)]}],
+
+   # Exercise the -s option, which was broken in 8.20
+   ['sep-1', qw(-s, 1 3), {OUT => [qw(1,2,3)]}],
+   ['sep-2', qw(-s, 1 1), {OUT => [qw(1)]}],
+   ['sep-3', qw(-s,, 1 3), {OUT => [qw(1,,2,,3)]}],
+
+   # Exercise fast path avoidance logic.
+   # In 8.20 a step value != 1, with positive integer start and end was broken
+   ['not-fast-1', qw(1 3 1), {OUT => [qw(1)]}],
+   ['not-fast-2', qw(1 1 4.2), {OUT => [qw(1 2 3 4)]}],
+   ['not-fast-3', qw(1 1 0)],
+
+   # Ensure the correct parameters are passed to the fast path
+   ['fast-1', qw(4), {OUT => [qw(1 2 3 4)]}],
+   ['fast-2', qw(1 4), {OUT => [qw(1 2 3 4)]}],
+   ['fast-3', qw(1 1 4), {OUT => [qw(1 2 3 4)]}],
   );
 
 # Append a newline to each entry in the OUT array.

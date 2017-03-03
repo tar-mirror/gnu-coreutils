@@ -1,5 +1,5 @@
 /* stty -- change and print terminal line settings
-   Copyright (C) 1990-2012 Free Software Foundation, Inc.
+   Copyright (C) 1990-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -216,6 +216,9 @@ static struct mode_info const mode_info[] =
   {"clocal", control, REV, CLOCAL, 0},
 #ifdef CRTSCTS
   {"crtscts", control, REV, CRTSCTS, 0},
+#endif
+#ifdef CDTRDSR
+  {"cdtrdsr", control, REV, CDTRDSR, 0},
 #endif
 
   {"ignbrk", input, SANE_UNSET | REV, IGNBRK, 0},
@@ -515,7 +518,11 @@ Usage: %s [-F DEVICE | --file=DEVICE] [SETTING]...\n\
               program_name, program_name, program_name);
       fputs (_("\
 Print or change terminal characteristics.\n\
-\n\
+"), stdout);
+
+      emit_mandatory_arg_note ();
+
+      fputs (_("\
   -a, --all          print all current settings in human-readable form\n\
   -g, --save         print all current settings in a stty-readable form\n\
   -F, --file=DEVICE  open and use the specified DEVICE instead of stdin\n\
@@ -577,6 +584,7 @@ Control settings:\n\
    [-]clocal     disable modem control signals\n\
    [-]cread      allow input to be received\n\
  * [-]crtscts    enable RTS/CTS handshaking\n\
+ * [-]cdtrdsr    enable DTR/DSR handshaking\n\
    csN           set character size to N bits, N in [5..8]\n\
 "), stdout);
       fputs (_("\

@@ -1,5 +1,5 @@
 /* nl -- number lines of files
-   Copyright (C) 1989-2012 Free Software Foundation, Inc.
+   Copyright (C) 1989-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -145,11 +145,6 @@ static intmax_t line_no;
 /* True if we have ever read standard input.  */
 static bool have_read_stdin;
 
-enum
-{
-  PAGE_INCREMENT_OPTION_DEPRECATED = CHAR_MAX + 1
-};
-
 static struct option const longopts[] =
 {
   {"header-numbering", required_argument, NULL, 'h'},
@@ -157,8 +152,6 @@ static struct option const longopts[] =
   {"footer-numbering", required_argument, NULL, 'f'},
   {"starting-line-number", required_argument, NULL, 'v'},
   {"line-increment", required_argument, NULL, 'i'},
-  /* FIXME: page-increment is deprecated, remove in dec-2011.  */
-  {"page-increment", required_argument, NULL, PAGE_INCREMENT_OPTION_DEPRECATED},
   {"no-renumber", no_argument, NULL, 'p'},
   {"join-blank-lines", required_argument, NULL, 'l'},
   {"number-separator", required_argument, NULL, 's'},
@@ -186,11 +179,10 @@ Usage: %s [OPTION]... [FILE]...\n\
       fputs (_("\
 Write each FILE to standard output, with line numbers added.\n\
 With no FILE, or when FILE is -, read standard input.\n\
-\n\
 "), stdout);
-      fputs (_("\
-Mandatory arguments to long options are mandatory for short options too.\n\
-"), stdout);
+
+      emit_mandatory_arg_note ();
+
       fputs (_("\
   -b, --body-numbering=STYLE      use STYLE for numbering body lines\n\
   -d, --section-delimiter=CC      use CC for separating logical pages\n\
@@ -513,10 +505,6 @@ main (int argc, char **argv)
               ok = false;
             }
           break;
-  case PAGE_INCREMENT_OPTION_DEPRECATED:
-    error (0, 0, _("WARNING: --page-increment is deprecated; "
-                   "use --line-increment instead"));
-    /* fall through */
         case 'i':
           if (! (xstrtoimax (optarg, NULL, 10, &page_incr, "") == LONGINT_OK
                  && 0 < page_incr))

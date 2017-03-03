@@ -1,7 +1,7 @@
 #!/bin/sh
 # Tests for ln -L/-P.
 
-# Copyright (C) 2009-2012 Free Software Foundation, Inc.
+# Copyright (C) 2009-2013 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ esac
 ln -s /no-such-dir || framework_failure_
 ln -L no-such-dir hard-to-dangle 2>err && fail=1
 case $(cat err) in
-  *" accessing 'no-such-dir'":*) ;;
+  *" failed to access 'no-such-dir'":*) ;;
   *) fail=1 ;;
 esac
 ln -P no-such-dir hard-to-dangle || fail=1

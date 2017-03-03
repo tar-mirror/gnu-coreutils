@@ -1,7 +1,7 @@
 # Make coreutils programs.                             -*-Makefile-*-
 # This is included by the top-level Makefile.am.
 
-## Copyright (C) 1990-2012 Free Software Foundation, Inc.
+## Copyright (C) 1990-2013 Free Software Foundation, Inc.
 
 ## This program is free software: you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -62,6 +62,7 @@ noinst_HEADERS =		\
 EXTRA_DIST +=		\
   src/dcgen		\
   src/dircolors.hin	\
+  src/primes.h		\
   src/tac-pipe.c	\
   src/extract-magic	\
   src/c99-to-c89.diff
@@ -277,6 +278,7 @@ src_cat_LDADD += $(LIBICONV)
 src_cp_LDADD += $(LIBICONV)
 src_df_LDADD += $(LIBICONV)
 src_du_LDADD += $(LIBICONV)
+src_factor_LDADD += $(LIBICONV)
 src_getlimits_LDADD += $(LIBICONV)
 src_printf_LDADD += $(LIBICONV)
 src_ptx_LDADD += $(LIBICONV)
@@ -378,11 +380,16 @@ src/dircolors.h: src/dcgen src/dircolors.hin
 	$(AM_V_at)chmod a-w $@-t
 	$(AM_V_at)mv $@-t $@
 
-BUILT_SOURCES += src/primes.h
-CLEANFILES += src/primes.h
-src/primes.h: src/make-prime-list
+# This file is built by maintainers.  It's architecture-independent,
+# and it needs to be built on a widest-known-int architecture, so it's
+# built only if absent.  It is not cleaned because we don't want to
+# insist that maintainers must build on hosts that support the widest
+# known ints (currently 128-bit).
+BUILT_SOURCES += $(top_srcdir)/src/primes.h
+$(top_srcdir)/src/primes.h:
+	$(MAKE) src/make-prime-list$(EXEEXT)
 	$(AM_V_GEN)rm -f $@ $@-t
-	$(AM_V_at)src/make-prime-list 5000 > $@-t
+	$(AM_V_at)src/make-prime-list$(EXEEXT) 5000 > $@-t
 	$(AM_V_at)chmod a-w $@-t
 	$(AM_V_at)mv $@-t $@
 

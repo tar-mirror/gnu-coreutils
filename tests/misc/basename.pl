@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # Test basename.
-# Copyright (C) 2006-2012 Free Software Foundation, Inc.
+# Copyright (C) 2006-2013 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -61,9 +61,17 @@ my @Tests =
      ['8', qw(fs x),       {OUT => 'fs'}],
      ['9', qw(fs ''),      {OUT => 'fs'}],
      ['10', qw(fs/ s/),    {OUT => 'fs'}],
+
+     # Exercise -z option.
+     ['z0', qw(-z a),       {OUT => "a\0"}],
+     ['z1', qw(--zero a),   {OUT => "a\0"}],
+     ['z2', qw(-za a b),    {OUT => "a\0b\0"}],
+     ['z3', qw(-z ba a),    {OUT => "b\0"}],
+     ['z4', qw(-z -s a ba), {OUT => "b\0"}],
    );
 
 # Append a newline to end of each expected 'OUT' string.
+# Skip -z tests, i.e. those whose 'OUT' string has a trailing '\0'.
 my $t;
 foreach $t (@Tests)
   {
@@ -72,7 +80,8 @@ foreach $t (@Tests)
     foreach $e (@$t)
       {
         $e->{OUT} = "$e->{OUT}\n"
-          if ref $e eq 'HASH' and exists $e->{OUT};
+          if ref $e eq 'HASH' and exists $e->{OUT}
+            and not $e->{OUT} =~ /\0$/;
       }
   }
 

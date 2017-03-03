@@ -1,5 +1,5 @@
 /* split.c -- split a file into pieces.
-   Copyright (C) 1988-2012 Free Software Foundation, Inc.
+   Copyright (C) 1988-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -209,11 +209,10 @@ Usage: %s [OPTION]... [INPUT [PREFIX]]\n\
 Output fixed-size pieces of INPUT to PREFIXaa, PREFIXab, ...; default\n\
 size is 1000 lines, and default PREFIX is 'x'.  With no INPUT, or when INPUT\n\
 is -, read standard input.\n\
-\n\
 "), stdout);
-      fputs (_("\
-Mandatory arguments to long options are mandatory for short options too.\n\
-"), stdout);
+
+      emit_mandatory_arg_note ();
+
       fprintf (stdout, _("\
   -a, --suffix-length=N   generate suffixes of length N (default %d)\n\
       --additional-suffix=SUFFIX  append an additional SUFFIX to file names.\n\

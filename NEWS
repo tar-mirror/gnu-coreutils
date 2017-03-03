@@ -1,5 +1,119 @@
 GNU coreutils NEWS                                    -*- outline -*-
 
+* Noteworthy changes in release 8.21 (2013-02-14) [stable]
+
+** New programs
+
+  numfmt: reformat numbers
+
+** New features
+
+  df now accepts the --output[=FIELD_LIST] option to define the list of columns
+  to include in the output, or all available columns if the FIELD_LIST is
+  omitted.  Note this enables df to output both block and inode fields together.
+
+  du now accepts the --threshold=SIZE option to restrict the output to entries
+  with such a minimum SIZE (or a maximum SIZE if it is negative).
+  du recognizes -t SIZE as equivalent, for compatibility with FreeBSD.
+
+** Bug fixes
+
+  cp --no-preserve=mode now no longer exits non-zero.
+  [bug introduced in coreutils-8.20]
+
+  cut with a range like "N-" no longer allocates N/8 bytes.  That buffer
+  would never be used, and allocation failure could cause cut to fail.
+  [bug introduced in coreutils-8.10]
+
+  cut no longer accepts the invalid range 0-, which made it print empty lines.
+  Instead, cut now fails and emits an appropriate diagnostic.
+  [This bug was present in "the beginning".]
+
+  cut now handles overlapping to-EOL ranges properly.  Before, it would
+  interpret "-b2-,3-" like "-b3-".  Now it's treated like "-b2-".
+  [This bug was present in "the beginning".]
+
+  cut no longer prints extraneous delimiters when a to-EOL range subsumes
+  another range.  Before, "echo 123|cut --output-delim=: -b2-,3" would print
+  "2:3".  Now it prints "23".  [bug introduced in 5.3.0]
+
+  cut -f no longer inspects input line N+1 before fully outputting line N,
+  which avoids delayed output for intermittent input.
+  [bug introduced in TEXTUTILS-1_8b]
+
+  factor no longer loops infinitely on 32 bit powerpc or sparc systems.
+  [bug introduced in coreutils-8.20]
+
+  install -m M SOURCE DEST no longer has a race condition where DEST's
+  permissions are temporarily derived from SOURCE instead of from M.
+
+  pr -n no longer crashes when passed values >= 32.  Also, line numbers are
+  consistently padded with spaces, rather than with zeros for certain widths.
+  [bug introduced in TEXTUTILS-1_22i]
+
+  seq -w ensures that for numbers input in scientific notation,
+  the output numbers are properly aligned and of the correct width.
+  [This bug was present in "the beginning".]
+
+  seq -w ensures correct alignment when the step value includes a precision
+  while the start value does not, and the number sequence narrows.
+  [This bug was present in "the beginning".]
+
+  seq -s no longer prints an erroneous newline after the first number, and
+  outputs a newline after the last number rather than a trailing separator.
+  Also seq no longer ignores a specified step value when the end value is 1.
+  [bugs introduced in coreutils-8.20]
+
+  timeout now ensures that blocking of ALRM signals is not inherited from
+  its parent, which would cause timeouts to be ignored.
+  [the bug dates back to the initial implementation]
+
+** Changes in behavior
+
+  df --total now prints '-' into the target column (mount point) of the
+  summary line, accommodating the --output option where the target field
+  can be in any column.  If there is no source column, then df prints
+  'total' in the target column.
+
+  df now properly outputs file system information with bind mounts present on
+  the system by skipping duplicate entries (identified by the device number).
+  Consequently, df also elides the early-boot pseudo file system type "rootfs".
+
+  nl no longer supports the --page-increment option, which has been
+  deprecated since coreutils-7.5.  Use --line-increment instead.
+
+** Improvements
+
+  readlink now supports multiple arguments, and a complementary
+  -z, --zero option to delimit output items with the NUL character.
+
+  stat and tail now know about CEPH.  stat -f --format=%T now reports the file
+  system type, and tail -f uses polling for files on CEPH file systems.
+
+  stty now supports configuring DTR/DSR hardware flow control where available.
+
+** Build-related
+
+  Perl is now more of a prerequisite.  It has long been required in order
+  to run (not skip) a significant percentage of the tests.  Now, it is
+  also required in order to generate proper man pages, via help2man.  The
+  generated man/*.1 man pages are no longer distributed.  Building without
+  perl, you would create stub man pages.  Thus, while perl is not an
+  official prerequisite (build and "make check" will still succeed), any
+  resulting man pages would be inferior.  In addition, this fixes a bug
+  in distributed (not from clone) Makefile.in that could cause parallel
+  build failure when building from modified sources, as is common practice
+  for a patched distribution package.
+
+  factor now builds on x86_64 with x32 ABI, 32 bit MIPS, and all HPPA systems,
+  by avoiding incompatible asm.  [bug introduced in coreutils-8.20]
+
+  A root-only test predicate would always fail.  Its job was to determine
+  whether our dummy user, $NON_ROOT_USERNAME, was able to run binaries from
+  the build directory.  As a result, all dependent tests were always skipped.
+  Now, those tests may be run once again.  [bug introduced in coreutils-8.20]
+
+
 * Noteworthy changes in release 8.20 (2012-10-23) [stable]
 
 ** New features
@@ -3777,7 +3891,7 @@ packages, see ./old/*/NEWS.
 
 ========================================================================
 
-Copyright (C) 2001-2012 Free Software Foundation, Inc.
+Copyright (C) 2001-2013 Free Software Foundation, Inc.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or

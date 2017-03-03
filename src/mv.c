@@ -1,5 +1,5 @@
 /* mv -- move or rename files
-   Copyright (C) 1986-2012 Free Software Foundation, Inc.
+   Copyright (C) 1986-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -151,7 +151,7 @@ target_directory_operand (char const *file)
   int err = (stat (file, &st) == 0 ? 0 : errno);
   bool is_a_dir = !err && S_ISDIR (st.st_mode);
   if (err && err != ENOENT)
-    error (EXIT_FAILURE, err, _("accessing %s"), quote (file));
+    error (EXIT_FAILURE, err, _("failed to access %s"), quote (file));
   return is_a_dir;
 }
 
@@ -291,11 +291,10 @@ Usage: %s [OPTION]... [-T] SOURCE DEST\n\
               program_name, program_name, program_name);
       fputs (_("\
 Rename SOURCE to DEST, or move SOURCE(s) to DIRECTORY.\n\
-\n\
 "), stdout);
-      fputs (_("\
-Mandatory arguments to long options are mandatory for short options too.\n\
-"), stdout);
+
+      emit_mandatory_arg_note ();
+
       fputs (_("\
       --backup[=CONTROL]       make a backup of each existing destination file\
 \n\
@@ -398,7 +397,8 @@ main (int argc, char **argv)
             {
               struct stat st;
               if (stat (optarg, &st) != 0)
-                error (EXIT_FAILURE, errno, _("accessing %s"), quote (optarg));
+                error (EXIT_FAILURE, errno, _("failed to access %s"),
+                       quote (optarg));
               if (! S_ISDIR (st.st_mode))
                 error (EXIT_FAILURE, 0, _("target %s is not a directory"),
                        quote (optarg));

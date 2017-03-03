@@ -1,5 +1,5 @@
 /* join - join lines of two files on a common field
-   Copyright (C) 1991-2012 Free Software Foundation, Inc.
+   Copyright (C) 1991-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -400,7 +400,7 @@ check_order (const struct line *prev,
 
               error ((check_input_order == CHECK_ORDER_ENABLED
                       ? EXIT_FAILURE : 0),
-                     0, _("%s:%ju: is not sorted: %.*s"),
+                     0, _("%s:%"PRIuMAX": is not sorted: %.*s"),
                      g_names[whatfile - 1], line_no[whatfile - 1],
                      (int) len, current->buf.buffer);
 

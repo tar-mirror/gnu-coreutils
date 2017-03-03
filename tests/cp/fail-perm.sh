@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (C) 2000-2012 Free Software Foundation, Inc.
+# Copyright (C) 2000-2013 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ chmod 0 D
 ln -s D/D symlink
 touch F
 cat > exp <<\EOF
-cp: accessing 'symlink': Permission denied
+cp: failed to access 'symlink': Permission denied
 EOF
 
 cp F symlink 2> out && fail=1

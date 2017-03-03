@@ -1,5 +1,5 @@
 /* date - print or set the system date and time
-   Copyright (C) 1989-2012 Free Software Foundation, Inc.
+   Copyright (C) 1989-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -127,7 +127,11 @@ Usage: %s [OPTION]... [+FORMAT]\n\
               program_name, program_name);
       fputs (_("\
 Display the current time in the given FORMAT, or set the system date.\n\
-\n\
+"), stdout);
+
+      emit_mandatory_arg_note ();
+
+      fputs (_("\
   -d, --date=STRING         display time described by STRING, not 'now'\n\
   -f, --file=DATEFILE       like --date once for each line of DATEFILE\n\
   -I[TIMESPEC], --iso-8601[=TIMESPEC]  output date/time in ISO 8601 format.\n\

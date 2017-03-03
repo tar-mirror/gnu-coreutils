@@ -1,5 +1,5 @@
 /* system-dependent definitions for coreutils
-   Copyright (C) 1989-2012 Free Software Foundation, Inc.
+   Copyright (C) 1989-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -537,6 +537,14 @@ is_nul (const char *buf, size_t bufsize)
      || (Type) ((Accum) * 10 + (Digit_val)) < (Accum))			\
     ? false : (((Accum) = (Accum) * 10 + (Digit_val)), true))		\
   )
+
+static inline void
+emit_mandatory_arg_note (void)
+{
+  fputs (_("\n\
+Mandatory arguments to long options are mandatory for short options too.\n\
+"), stdout);
+}
 
 static inline void
 emit_size_note (void)

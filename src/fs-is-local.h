@@ -17,6 +17,7 @@ is_local_fs_type (unsigned long int magic)
       case S_MAGIC_BFS: return 1;
       case S_MAGIC_BINFMTFS: return 1;
       case S_MAGIC_BTRFS: return 1;
+      case S_MAGIC_CEPH: return 0;
       case S_MAGIC_CGROUP: return 1;
       case S_MAGIC_CIFS: return 0;
       case S_MAGIC_CODA: return 0;

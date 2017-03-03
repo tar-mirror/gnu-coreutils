@@ -1,5 +1,5 @@
 /* cp.c  -- file copying (main routines)
-   Copyright (C) 1989-2012 Free Software Foundation, Inc.
+   Copyright (C) 1989-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -161,11 +161,10 @@ Usage: %s [OPTION]... [-T] SOURCE DEST\n\
               program_name, program_name, program_name);
       fputs (_("\
 Copy SOURCE to DEST, or multiple SOURCE(s) to DIRECTORY.\n\
-\n\
 "), stdout);
-      fputs (_("\
-Mandatory arguments to long options are mandatory for short options too.\n\
-"), stdout);
+
+      emit_mandatory_arg_note ();
+
       fputs (_("\
   -a, --archive                same as -dR --preserve=all\n\
       --attributes-only        don't copy the file data, just the attributes\n\
@@ -177,9 +176,8 @@ Mandatory arguments to long options are mandatory for short options too.\n\
 "), stdout);
       fputs (_("\
   -f, --force                  if an existing destination file cannot be\n\
-                                 opened, remove it and try again (redundant if\
-\n\
-                                 the -n option is used)\n\
+                                 opened, remove it and try again (this option\n\
+                                 is ignored when the -n option is also used)\n\
   -i, --interactive            prompt before overwrite (overrides a previous -n\
 \n\
                                   option)\n\
@@ -569,7 +567,7 @@ target_directory_operand (char const *file, struct stat *st, bool *new_dst)
   if (err)
     {
       if (err != ENOENT)
-        error (EXIT_FAILURE, err, _("accessing %s"), quote (file));
+        error (EXIT_FAILURE, err, _("failed to access %s"), quote (file));
       *new_dst = true;
     }
   return is_a_dir;
@@ -1068,7 +1066,8 @@ main (int argc, char **argv)
             {
               struct stat st;
               if (stat (optarg, &st) != 0)
-                error (EXIT_FAILURE, errno, _("accessing %s"), quote (optarg));
+                error (EXIT_FAILURE, errno, _("failed to access %s"),
+                       quote (optarg));
               if (! S_ISDIR (st.st_mode))
                 error (EXIT_FAILURE, 0, _("target %s is not a directory"),
                        quote (optarg));

@@ -1,7 +1,7 @@
 #!/bin/sh
 # ensure that cp's --no-preserve=mode works correctly
 
-# Copyright (C) 2002-2012 Free Software Foundation, Inc.
+# Copyright (C) 2002-2013 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ touch b
 chmod 600 b
 
 #regular file test
-cp --no-preserve=mode b c
+cp --no-preserve=mode b c || fail=1
 mode_a=$(ls -l a | gawk '{print $1}')
 mode_c=$(ls -l c | gawk '{print $1}')
 test "$mode_a" = "$mode_c" || fail=1
@@ -36,7 +36,7 @@ mkdir d1 d2
 chmod 705 d2
 
 #directory test
-cp --no-preserve=mode -r d2 d3
+cp --no-preserve=mode -r d2 d3 || fail=1
 mode_d1=$(ls -l d1 | gawk '{print $1}')
 mode_d3=$(ls -l d3 | gawk '{print $1}')
 test "$mode_d1" = "$mode_d3" || fail=1
@@ -46,7 +46,7 @@ touch a
 chmod 600 a
 
 #contradicting options test
-cp --no-preserve=mode --preserve=all a b
+cp --no-preserve=mode --preserve=all a b || fail=1
 mode_a=$(ls -l a | gawk '{print $1}')
 mode_b=$(ls -l b | gawk '{print $1}')
 test "$mode_a" = "$mode_b" || fail=1

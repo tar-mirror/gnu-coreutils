@@ -1,5 +1,5 @@
 /* truncate -- truncate or extend the length of files.
-   Copyright (C) 2008-2012 Free Software Foundation, Inc.
+   Copyright (C) 2008-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -102,11 +102,10 @@ A FILE argument that does not exist is created.\n\
 If a FILE is larger than the specified size, the extra data is lost.\n\
 If a FILE is shorter, it is extended and the extended part (hole)\n\
 reads as zero bytes.\n\
-\n\
 "), stdout);
-      fputs (_("\
-Mandatory arguments to long options are mandatory for short options too.\n\
-"), stdout);
+
+      emit_mandatory_arg_note ();
+
       fputs (_("\
   -c, --no-create        do not create any files\n\
 "), stdout);
@@ -415,7 +414,7 @@ main (int argc, char **argv)
           errors |= !do_ftruncate (fd, fname, size, rsize, rel_mode);
           if (close (fd) != 0)
             {
-              error (0, errno, _("closing %s"), quote (fname));
+              error (0, errno, _("failed to close %s"), quote (fname));
               errors = true;
             }
         }

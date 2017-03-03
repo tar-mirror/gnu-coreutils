@@ -1,6 +1,6 @@
 ## DO NOT EDIT! GENERATED AUTOMATICALLY!
 ## Process this file with automake to produce Makefile.in.
-# Copyright (C) 2002-2012 Free Software Foundation, Inc.
+# Copyright (C) 2002-2013 Free Software Foundation, Inc.
 #
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -780,7 +780,7 @@ EXTRA_DIST += test-ftruncate.c test-ftruncate.sh signature.h macros.h
 
 TESTS += test-futimens
 check_PROGRAMS += test-futimens
-test_futimens_LDADD = $(LDADD) $(LIB_CLOCK_GETTIME)
+test_futimens_LDADD = $(LDADD) $(LIB_CLOCK_GETTIME) @LIBINTL@
 EXTRA_DIST += nap.h test-futimens.h test-utimens-common.h test-futimens.c signature.h macros.h
 
 ## end   gnulib module futimens-tests
@@ -897,6 +897,22 @@ test_getopt_LDADD = $(LDADD) $(LIBINTL)
 EXTRA_DIST += macros.h signature.h test-getopt.c test-getopt.h test-getopt_long.h
 
 ## end   gnulib module getopt-posix-tests
+
+## begin gnulib module gettext
+
+# This is for those projects which use "gettextize --intl" to put a source-code
+# copy of libintl into their package. In such projects, every Makefile.am needs
+# -I$(top_builddir)/intl, so that <libintl.h> can be found in this directory.
+# For the Makefile.ams in other directories it is the maintainer's
+# responsibility; for the one from gnulib we do it here.
+# This option has no effect when the user disables NLS (because then the intl
+# directory contains no libintl.h file) or when the project does not use
+# "gettextize --intl".
+AM_CPPFLAGS += -I$(top_builddir)/intl
+
+EXTRA_DIST += $(top_srcdir)/build-aux/config.rpath
+
+## end   gnulib module gettext
 
 ## begin gnulib module gettimeofday-tests
 
@@ -1615,6 +1631,7 @@ EXTRA_DIST += test-readlink.h test-readlinkat.c signature.h macros.h
 
 TESTS += test-readtokens.sh
 check_PROGRAMS += test-readtokens
+test_readtokens_LDADD = $(LDADD) @LIBINTL@
 EXTRA_DIST += macros.h test-readtokens.c test-readtokens.sh
 
 ## end   gnulib module readtokens-tests
@@ -1626,6 +1643,15 @@ check_PROGRAMS += test-realloc-gnu
 EXTRA_DIST += test-realloc-gnu.c
 
 ## end   gnulib module realloc-gnu-tests
+
+## begin gnulib module regex-tests
+
+TESTS += test-regex
+check_PROGRAMS += test-regex
+test_regex_LDADD = $(LDADD) @LIBINTL@
+EXTRA_DIST += test-regex.c macros.h
+
+## end   gnulib module regex-tests
 
 ## begin gnulib module remove-tests
 
@@ -1940,6 +1966,15 @@ check_PROGRAMS += test-stat-time
 EXTRA_DIST += test-stat-time.c macros.h
 
 ## end   gnulib module stat-time-tests
+
+## begin gnulib module statat-tests
+
+TESTS += test-statat
+check_PROGRAMS += test-statat
+test_statat_LDADD = $(LDADD) @LIBINTL@
+EXTRA_DIST += test-statat.c
+
+## end   gnulib module statat-tests
 
 ## begin gnulib module stdalign-tests
 
@@ -2405,7 +2440,7 @@ EXTRA_DIST += test-usleep.c signature.h macros.h
 
 TESTS += test-utimens
 check_PROGRAMS += test-utimens
-test_utimens_LDADD = $(LDADD) $(LIB_CLOCK_GETTIME)
+test_utimens_LDADD = $(LDADD) $(LIB_CLOCK_GETTIME) @LIBINTL@
 EXTRA_DIST += nap.h test-futimens.h test-lutimens.h test-utimens.h test-utimens-common.h test-utimens.c macros.h
 
 ## end   gnulib module utimens-tests

@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # Test "cut".
 
-# Copyright (C) 2006-2012 Free Software Foundation, Inc.
+# Copyright (C) 2006-2013 Free Software Foundation, Inc.
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,8 +30,10 @@ my $mb_locale = $ENV{LOCALE_FR_UTF8};
 my $prog = 'cut';
 my $try = "Try '$prog --help' for more information.\n";
 my $from_1 = "$prog: fields and positions are numbered from 1\n$try";
-my $inval = "$prog: invalid byte or field list\n$try";
+my $inval = "$prog: invalid byte, character or field list\n$try";
 my $no_endpoint = "$prog: invalid range with no endpoint: -\n$try";
+my $nofield = "$prog: an input delimiter may be specified only when " .
+              "operating on fields\n$try";
 
 my @Tests =
  (
@@ -45,6 +47,11 @@ my @Tests =
   # Up to coreutils-6.9, specifying a range of 0-2 was not an error.
   # It was treated just like "-2".
   ['zero-2', '-f0-2', {ERR=>$from_1}, {EXIT => 1} ],
+
+  # Up to coreutils-8.20, specifying a range of 0- was not an error.
+  ['zero-3b', '-b0-', {ERR=>$from_1}, {EXIT => 1} ],
+  ['zero-3c', '-c0-', {ERR=>$from_1}, {EXIT => 1} ],
+  ['zero-3f', '-f0-', {ERR=>$from_1}, {EXIT => 1} ],
 
   ['1', '-d:', '-f1,3-', {IN=>"a:b:c\n"}, {OUT=>"a:c\n"}],
   ['2', '-d:', '-f1,3-', {IN=>"a:b:c\n"}, {OUT=>"a:c\n"}],
@@ -113,9 +120,39 @@ my @Tests =
   ['multichar-od', qw(-d: --out=_._), '-f2,3', {IN=>"a:b:c\n"},
    {OUT=>"b_._c\n"}],
 
+  # Ensure delim is not allowed without a field
+  # Prior to 8.21, a NUL delim was allowed without a field
+  ['delim-no-field1', qw(-d ''), '-b1', {EXIT=>1}, {ERR=>$nofield}],
+  ['delim-no-field2', qw(-d:), '-b1', {EXIT=>1}, {ERR=>$nofield}],
+
   # Prior to 1.22i, you couldn't use a delimiter that would sign-extend.
   ['8bit-delim', '-d', "\255", '--out=_', '-f2,3', {IN=>"a\255b\255c\n"},
    {OUT=>"b_c\n"}],
+
+  # newline processing for fields
+  ['newline-1', '-f1-', {IN=>"a\nb"}, {OUT=>"a\nb\n"}],
+  ['newline-2', '-f1-', {IN=>""}, {OUT=>""}],
+  ['newline-3', '-d:', '-f1', {IN=>"a:1\nb:2\n"}, {OUT=>"a\nb\n"}],
+  ['newline-4', '-d:', '-f1', {IN=>"a:1\nb:2"}, {OUT=>"a\nb\n"}],
+  ['newline-5', '-d:', '-f2', {IN=>"a:1\nb:2\n"}, {OUT=>"1\n2\n"}],
+  ['newline-6', '-d:', '-f2', {IN=>"a:1\nb:2"}, {OUT=>"1\n2\n"}],
+  ['newline-7', '-s', '-d:', '-f1', {IN=>"a:1\nb:2"}, {OUT=>"a\nb\n"}],
+  ['newline-8', '-s', '-d:', '-f1', {IN=>"a:1\nb:2\n"}, {OUT=>"a\nb\n"}],
+  ['newline-9', '-s', '-d:', '-f1', {IN=>"a1\nb2"}, {OUT=>""}],
+  ['newline-10', '-s', '-d:', '-f1,2', {IN=>"a:1\nb:2"}, {OUT=>"a:1\nb:2\n"}],
+  ['newline-11', '-s', '-d:', '-f1,2', {IN=>"a:1\nb:2\n"}, {OUT=>"a:1\nb:2\n"}],
+  ['newline-12', '-s', '-d:', '-f1', {IN=>"a:1\nb:"}, {OUT=>"a\nb\n"}],
+  ['newline-13', '-d:', '-f1-', {IN=>"a1:\n:"}, {OUT=>"a1:\n:\n"}],
+  # newline processing for fields when -d == '\n'
+  ['newline-14', "-d'\n'", '-f1', {IN=>"a:1\nb:"}, {OUT=>"a:1\nb:\n"}],
+  ['newline-15', '-s', "-d'\n'", '-f1', {IN=>"a:1\nb:"}, {OUT=>"a:1\n"}],
+  ['newline-16', '-s', "-d'\n'", '-f2', {IN=>"\nb"}, {OUT=>""}],
+  ['newline-17', '-s', "-d'\n'", '-f1', {IN=>"\nb"}, {OUT=>"\n"}],
+  ['newline-18', "-d'\n'", '-f2', {IN=>"\nb"}, {OUT=>"\nb\n"}],
+  ['newline-19', "-d'\n'", '-f1', {IN=>"\nb"}, {OUT=>"\nb\n"}],
+  ['newline-20', '-s', "-d'\n'", '-f1-', {IN=>"\n"}, {OUT=>"\n"}],
+  ['newline-21', '-s', "-d'\n'", '-f1-', {IN=>"\nb"}, {OUT=>"\n"}],
+  ['newline-22', "-d'\n'", '-f1-', {IN=>"\nb"}, {OUT=>"\nb\n"}],
 
   # New functionality:
   ['out-delim1', '-c1-3,5-', '--output-d=:', {IN=>"abcdefg\n"},
@@ -154,10 +191,25 @@ my @Tests =
    {ERR=>$no_endpoint}],
   ['inval5', '-f', '1-,-', {IN=>''}, {OUT=>''}, {EXIT=>1}, {ERR=>$no_endpoint}],
   ['inval6', '-f', '-1,-', {IN=>''}, {OUT=>''}, {EXIT=>1}, {ERR=>$no_endpoint}],
-  # This would evoke a segfault from 5.3.0..6.10
+  # This would evoke a segfault from 5.3.0..8.10
   ['big-unbounded-b', '--output-d=:', '-b1234567890-', {IN=>''}, {OUT=>''}],
+  ['big-unbounded-b2a', '--output-d=:', '-b1,9-',      {IN=>'123456789'},
+    {OUT=>"1:9\n"}],
+  ['big-unbounded-b2b', '--output-d=:', '-b1,1234567890-', {IN=>''}, {OUT=>''}],
   ['big-unbounded-c', '--output-d=:', '-c1234567890-', {IN=>''}, {OUT=>''}],
   ['big-unbounded-f', '--output-d=:', '-f1234567890-', {IN=>''}, {OUT=>''}],
+
+  ['overlapping-unbounded-1', '-b3-,2-', {IN=>"1234\n"}, {OUT=>"234\n"}],
+  ['overlapping-unbounded-2', '-b2-,3-', {IN=>"1234\n"}, {OUT=>"234\n"}],
+
+  # When printing output delimiters, and with one or more ranges subsumed
+  # by a to-EOL range, cut 8.20 and earlier would print extraneous delimiters.
+  ['EOL-subsumed-1', '--output-d=: -b2-,3,4-4,5',
+                                         {IN=>"123456\n"}, {OUT=>"23456\n"}],
+  ['EOL-subsumed-2', '--output-d=: -b3,4-4,5,2-',
+                                         {IN=>"123456\n"}, {OUT=>"23456\n"}],
+  ['EOL-subsumed-3', '--complement -b3,4-4,5,2-',
+                                         {IN=>"123456\n"}, {OUT=>"1\n"}],
  );
 
 if ($mb_locale ne 'C')
@@ -171,18 +223,6 @@ if ($mb_locale ne 'C')
         my @new_t = @$t;
         my $test_name = shift @new_t;
 
-        # Depending on whether cut is multi-byte-patched,
-        # it emits different diagnostics:
-        #   non-MB: invalid byte or field list
-        #   MB:     invalid byte, character or field list
-        # Adjust the expected error output accordingly.
-        if (grep {ref $_ eq 'HASH' && exists $_->{ERR} && $_->{ERR} eq $inval}
-            (@new_t))
-          {
-            my $sub = {ERR_SUBST => 's/, character//'};
-            push @new_t, $sub;
-            push @$t, $sub;
-          }
         push @new, ["$test_name-mb", @new_t, {ENV => "LC_ALL=$mb_locale"}];
       }
     push @Tests, @new;

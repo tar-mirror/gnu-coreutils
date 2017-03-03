@@ -1,5 +1,5 @@
 /* nice -- run a program with modified niceness
-   Copyright (C) 1990-2012 Free Software Foundation, Inc.
+   Copyright (C) 1990-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -74,10 +74,14 @@ usage (int status)
 Run COMMAND with an adjusted niceness, which affects process scheduling.\n\
 With no COMMAND, print the current niceness.  Niceness values range from\n\
 %d (most favorable to the process) to %d (least favorable to the process).\n\
-\n\
-  -n, --adjustment=N   add integer N to the niceness (default 10)\n\
 "),
               - NZERO, NZERO - 1);
+
+      emit_mandatory_arg_note ();
+
+      fputs (_("\
+  -n, --adjustment=N   add integer N to the niceness (default 10)\n\
+"), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
       fputs (VERSION_OPTION_DESCRIPTION, stdout);
       printf (USAGE_BUILTIN_WARNING, PROGRAM_NAME);

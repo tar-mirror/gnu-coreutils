@@ -1,5 +1,5 @@
 /* timeout -- run a command with bounded time
-   Copyright (C) 2008-2012 Free Software Foundation, Inc.
+   Copyright (C) 2008-2013 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -81,12 +81,14 @@ static int timed_out;
 static int term_signal = SIGTERM;  /* same default as kill command.  */
 static int monitored_pid;
 static double kill_after;
-static bool foreground;            /* whether to use another program group.  */
+static bool foreground;      /* whether to use another program group.  */
+static bool preserve_status; /* whether to use a timeout status or not.  */
 
 /* for long options with no corresponding short option, use enum */
 enum
 {
-      FOREGROUND_OPTION = CHAR_MAX + 1
+      FOREGROUND_OPTION = CHAR_MAX + 1,
+      PRESERVE_STATUS_OPTION
 };
 
 static struct option const long_options[] =
@@ -94,10 +96,21 @@ static struct option const long_options[] =
   {"kill-after", required_argument, NULL, 'k'},
   {"signal", required_argument, NULL, 's'},
   {"foreground", no_argument, NULL, FOREGROUND_OPTION},
+  {"preserve-status", no_argument, NULL, PRESERVE_STATUS_OPTION},
   {GETOPT_HELP_OPTION_DECL},
   {GETOPT_VERSION_OPTION_DECL},
   {NULL, 0, NULL, 0}
 };
+
+static void
+unblock_signal (int sig)
+{
+  sigset_t unblock_set;
+  sigemptyset (&unblock_set);
+  sigaddset (&unblock_set, sig);
+  if (sigprocmask (SIG_UNBLOCK, &unblock_set, NULL) != 0)
+    error (0, errno, _("warning: sigprocmask"));
+}
 
 /* Start the timeout after which we'll receive a SIGALRM.
    Round DURATION up to the next representable value.
@@ -107,6 +120,11 @@ static struct option const long_options[] =
 static void
 settimeout (double duration)
 {
+
+  /* We configure timers below so that SIGALRM is sent on expiry.
+     Therefore ensure we don't inherit a mask blocking SIGALRM.  */
+  unblock_signal (SIGALRM);
+
 /* timer_settime() provides potentially nanosecond resolution.
    setitimer() is more portable (to Darwin for example),
    but only provides microsecond resolution and thus is
@@ -210,10 +228,14 @@ Usage: %s [OPTION] DURATION COMMAND [ARG]...\n\
 
       fputs (_("\
 Start COMMAND, and kill it if still running after DURATION.\n\
-\n\
-Mandatory arguments to long options are mandatory for short options too.\n\
 "), stdout);
+
+      emit_mandatory_arg_note ();
+
       fputs (_("\
+      --preserve-status\n\
+                 exit with the same status as COMMAND, even when the\n\
+                 command times out\n\
       --foreground\n\
                  When not running timeout directly from a shell prompt,\n\
                  allow COMMAND to read from the TTY and receive TTY signals.\n\
@@ -235,12 +257,12 @@ DURATION is a floating point number with an optional suffix:\n\
 or 'd' for days.\n"), stdout);
 
       fputs (_("\n\
-If the command times out, then exit with status 124.  Otherwise, exit\n\
-with the status of COMMAND.  If no signal is specified, send the TERM\n\
-signal upon timeout.  The TERM signal kills any process that does not\n\
-block or catch that signal.  For other processes, it may be necessary to\n\
-use the KILL (9) signal, since this signal cannot be caught.  If the\n\
-KILL (9) signal is sent, the exit status is 128+9 rather than 124.\n"), stdout);
+If the command times out, and --preserve-status is not set, then exit with\n\
+status 124.  Otherwise, exit with the status of COMMAND.  If no signal\n\
+is specified, send the TERM signal upon timeout.  The TERM signal kills\n\
+any process that does not block or catch that signal.  It may be necessary\n\
+to use the KILL (9) signal, since this signal cannot be caught, in which\n\
+case the exit status is 128+9 rather than 124.\n"), stdout);
       emit_ancillary_info ();
     }
   exit (status);
@@ -376,6 +398,10 @@ main (int argc, char **argv)
           foreground = true;
           break;
 
+        case PRESERVE_STATUS_OPTION:
+          preserve_status = true;
+          break;
+
         case_GETOPT_HELP_CHAR;
 
         case_GETOPT_VERSION_CHAR (PROGRAM_NAME, AUTHORS);
@@ -470,7 +496,7 @@ main (int argc, char **argv)
             }
         }
 
-      if (timed_out)
+      if (timed_out && !preserve_status)
         return EXIT_TIMEDOUT;
       else
         return status;
