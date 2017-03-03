@@ -3604,8 +3604,7 @@ quote_name (FILE *out, const char *name, struct quoting_options const *options,
 		     reach its end, replacing each non-printable multibyte
 		     character with a single question mark.  */
 		  {
-		    mbstate_t mbstate;
-		    memset (&mbstate, 0, sizeof mbstate);
+		    mbstate_t mbstate = { 0, };
 		    do
 		      {
 			wchar_t wc;
@@ -4313,7 +4312,7 @@ Mandatory arguments to long options are mandatory for short options too.\n\
       fputs (_("\
   -r, --reverse              reverse order while sorting\n\
   -R, --recursive            list subdirectories recursively\n\
-  -s, --size                 with -l, print size of each file, in blocks\n\
+  -s, --size                 print the size of each file, in blocks\n\
 "), stdout);
       fputs (_("\
   -S                         sort by file size\n\

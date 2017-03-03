@@ -1,3 +1,4 @@
+## DO NOT EDIT! GENERATED AUTOMATICALLY!
 ## Process this file with automake to produce Makefile.in.
 # Copyright (C) 2004-2006 Free Software Foundation, Inc.
 #
@@ -15,7 +16,8 @@ AUTOMAKE_OPTIONS = 1.5 gnits
 noinst_LIBRARIES = libcoreutils.a
 
 libcoreutils_a_SOURCES =
-libcoreutils_a_LIBADD = $(LIBOBJS)
+libcoreutils_a_LIBADD = $(gl_LIBOBJS)
+libcoreutils_a_DEPENDENCIES = $(gl_LIBOBJS)
 noinst_HEADERS =
 EXTRA_DIST =
 BUILT_SOURCES =
@@ -30,40 +32,49 @@ AM_CPPFLAGS =
 
 ## begin gnulib module acl
 
-EXTRA_DIST += acl.h
+
+EXTRA_DIST += acl.c acl.h
 
 ## end   gnulib module acl
 
 ## begin gnulib module alloca
 
 
+EXTRA_DIST += alloca.c
+
 libcoreutils_a_LIBADD += @ALLOCA@
+libcoreutils_a_DEPENDENCIES += @ALLOCA@
 ## end   gnulib module alloca
 
 ## begin gnulib module alloca-opt
 
 BUILT_SOURCES += $(ALLOCA_H)
-EXTRA_DIST += alloca_.h
 
 # We need the following in order to create <alloca.h> when the system
 # doesn't have one that works with the given compiler.
 alloca.h: alloca_.h
-	cp -f $(srcdir)/alloca_.h $@-t
+	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
+	  cat $(srcdir)/alloca_.h; \
+	} > $@-t
 	mv -f $@-t $@
 MOSTLYCLEANFILES += alloca.h alloca.h-t
+
+EXTRA_DIST += alloca_.h
 
 ## end   gnulib module alloca-opt
 
 ## begin gnulib module allocsa
 
 libcoreutils_a_SOURCES += allocsa.h allocsa.c
+
 EXTRA_DIST += allocsa.valgrind
 
 ## end   gnulib module allocsa
 
 ## begin gnulib module argmatch
 
-EXTRA_DIST += argmatch.h
+
+EXTRA_DIST += argmatch.c argmatch.h
 
 ## end   gnulib module argmatch
 
@@ -76,16 +87,26 @@ BUILT_SOURCES += $(ARPA_INET_H)
 arpa/inet.h:
 	test -d arpa || mkdir arpa
 	rm -f $@-t $@
-	echo '#include <sys/socket.h>' >$@-t
+	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
+	  echo '#include <sys/socket.h>'; \
+	} > $@-t
 	mv $@-t $@
 MOSTLYCLEANFILES += arpa/inet.h arpa/inet.h-t
 MOSTLYCLEANDIRS += arpa
 
 ## end   gnulib module arpa_inet
 
+## begin gnulib module atexit
+
+
+EXTRA_DIST += atexit.c
+
+## end   gnulib module atexit
+
 ## begin gnulib module backupfile
 
-EXTRA_DIST += backupfile.h
+
+EXTRA_DIST += backupfile.c backupfile.h
 
 ## end   gnulib module backupfile
 
@@ -97,49 +118,71 @@ libcoreutils_a_SOURCES += base64.h base64.c
 
 ## begin gnulib module c-strtod
 
-EXTRA_DIST += c-strtod.h
+
+EXTRA_DIST += c-strtod.c c-strtod.h
 
 ## end   gnulib module c-strtod
 
 ## begin gnulib module c-strtold
 
-EXTRA_DIST += c-strtod.c c-strtod.h
+
+EXTRA_DIST += c-strtod.c c-strtod.h c-strtold.c
 
 ## end   gnulib module c-strtold
 
+## begin gnulib module calloc
+
+
+EXTRA_DIST += calloc.c
+
+## end   gnulib module calloc
+
 ## begin gnulib module canon-host
 
-EXTRA_DIST += canon-host.h
+
+EXTRA_DIST += canon-host.c canon-host.h
 
 ## end   gnulib module canon-host
 
 ## begin gnulib module canonicalize
 
-EXTRA_DIST += canonicalize.h
+
+EXTRA_DIST += canonicalize.c canonicalize.h pathmax.h
 
 ## end   gnulib module canonicalize
 
 ## begin gnulib module chdir-long
 
-EXTRA_DIST += chdir-long.h
+
+EXTRA_DIST += chdir-long.c chdir-long.h
 
 ## end   gnulib module chdir-long
 
+## begin gnulib module chown
+
+
+EXTRA_DIST += chown.c fchown-stub.c
+
+## end   gnulib module chown
+
 ## begin gnulib module cloexec
 
-EXTRA_DIST += cloexec.h
+
+EXTRA_DIST += cloexec.c cloexec.h
 
 ## end   gnulib module cloexec
 
 ## begin gnulib module close-stream
 
-EXTRA_DIST += close-stream.h
+
+EXTRA_DIST += close-stream.c close-stream.h
 
 ## end   gnulib module close-stream
 
 ## begin gnulib module closeout
 
-EXTRA_DIST += closeout.h
+
+EXTRA_DIST += closeout.c closeout.h
 
 ## end   gnulib module closeout
 
@@ -161,10 +204,10 @@ EXTRA_DIST += closeout.h
 #
 # Listed in the same order as the GNU makefile conventions.
 # The Automake-defined pkg* macros are appended, in the order
-# listed in the Automake documentation.
+# listed in the Automake 1.10a+ documentation.
 configmake.h: Makefile
 	rm -f $@-t $@
-	( \
+	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
 	  echo '#define PREFIX "$(prefix)"'; \
 	  echo '#define EXEC_PREFIX "$(exec_prefix)"'; \
 	  echo '#define BINDIR "$(bindir)"'; \
@@ -188,10 +231,11 @@ configmake.h: Makefile
 	  echo '#define LOCALEDIR "$(localedir)"'; \
 	  echo '#define MANDIR "$(mandir)"'; \
 	  echo '#define MANEXT "$(manext)"'; \
-	  echo '#define PKGLIBDIR "$(pkglibdir)"'; \
-	  echo '#define PKGINCLUDEDIR "$(pkgincludedir)"'; \
 	  echo '#define PKGDATADIR "$(pkgdatadir)"'; \
-	:) | sed '/""/d' >$@-t
+	  echo '#define PKGINCLUDEDIR "$(pkgincludedir)"'; \
+	  echo '#define PKGLIBDIR "$(pkglibdir)"'; \
+	  echo '#define PKGLIBEXECDIR "$(pkglibexecdir)"'; \
+	} | sed '/""/d' > $@-t
 	mv $@-t $@
 BUILT_SOURCES += configmake.h
 CLEANFILES += configmake.h configmake.h-t
@@ -200,11 +244,13 @@ CLEANFILES += configmake.h configmake.h-t
 
 ## begin gnulib module cycle-check
 
-EXTRA_DIST += cycle-check.h
+
+EXTRA_DIST += cycle-check.c cycle-check.h
 
 ## end   gnulib module cycle-check
 
 ## begin gnulib module dev-ino
+
 
 EXTRA_DIST += dev-ino.h
 
@@ -218,25 +264,43 @@ libcoreutils_a_SOURCES += diacrit.h diacrit.c
 
 ## begin gnulib module dirfd
 
-EXTRA_DIST += dirfd.h
+
+EXTRA_DIST += dirfd.c dirfd.h
 
 ## end   gnulib module dirfd
 
 ## begin gnulib module dirname
 
-EXTRA_DIST += dirname.h
+
+EXTRA_DIST += basename.c dirname.c dirname.h stripslash.c
 
 ## end   gnulib module dirname
 
+## begin gnulib module dup2
+
+
+EXTRA_DIST += dup2.c
+
+## end   gnulib module dup2
+
+## begin gnulib module error
+
+
+EXTRA_DIST += error.c error.h
+
+## end   gnulib module error
+
 ## begin gnulib module euidaccess
 
-libcoreutils_a_SOURCES += euidaccess.h
+
+EXTRA_DIST += euidaccess.c euidaccess.h
 
 ## end   gnulib module euidaccess
 
 ## begin gnulib module exclude
 
-EXTRA_DIST += exclude.h
+
+EXTRA_DIST += exclude.c exclude.h
 
 ## end   gnulib module exclude
 
@@ -248,91 +312,128 @@ libcoreutils_a_SOURCES += exit.h
 
 ## begin gnulib module exitfail
 
-EXTRA_DIST += exitfail.h
+
+EXTRA_DIST += exitfail.c exitfail.h
 
 ## end   gnulib module exitfail
 
 ## begin gnulib module fcntl
 
 BUILT_SOURCES += $(FCNTL_H)
-EXTRA_DIST += fcntl_.h
 
 # We need the following in order to create <fcntl.h> when the system
 # doesn't have one that works with the given compiler.
 fcntl.h: fcntl_.h
 	rm -f $@-t $@
-	sed -e 's|@''ABSOLUTE_FCNTL_H''@|$(ABSOLUTE_FCNTL_H)|g' \
-	    < $(srcdir)/fcntl_.h > $@-t
+	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
+	  sed -e 's|@''ABSOLUTE_FCNTL_H''@|$(ABSOLUTE_FCNTL_H)|g' \
+	      < $(srcdir)/fcntl_.h; \
+	} > $@-t
 	mv $@-t $@
 MOSTLYCLEANFILES += fcntl.h fcntl.h-t
+
+EXTRA_DIST += fcntl_.h
 
 ## end   gnulib module fcntl
 
 ## begin gnulib module fcntl-safer
 
-EXTRA_DIST += fcntl-safer.h fcntl--.h
+
+EXTRA_DIST += creat-safer.c fcntl--.h fcntl-safer.h open-safer.c
 
 ## end   gnulib module fcntl-safer
 
 ## begin gnulib module file-type
 
-EXTRA_DIST += file-type.h
+
+EXTRA_DIST += file-type.c file-type.h
 
 ## end   gnulib module file-type
 
+## begin gnulib module fileblocks
+
+
+EXTRA_DIST += fileblocks.c
+
+## end   gnulib module fileblocks
+
 ## begin gnulib module filemode
 
-EXTRA_DIST += filemode.h
+
+EXTRA_DIST += filemode.c filemode.h
 
 ## end   gnulib module filemode
 
 ## begin gnulib module filenamecat
 
-EXTRA_DIST += filenamecat.h
+
+EXTRA_DIST += filenamecat.c filenamecat.h
 
 ## end   gnulib module filenamecat
 
 ## begin gnulib module fnmatch
 
 BUILT_SOURCES += $(FNMATCH_H)
-EXTRA_DIST += fnmatch_.h fnmatch_loop.c
 
 # We need the following in order to create <fnmatch.h> when the system
 # doesn't have one that supports the required API.
 fnmatch.h: fnmatch_.h
-	cp -f $(srcdir)/fnmatch_.h $@-t
+	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
+	  cat $(srcdir)/fnmatch_.h; \
+	} > $@-t
 	mv -f $@-t $@
 MOSTLYCLEANFILES += fnmatch.h fnmatch.h-t
+
+EXTRA_DIST += fnmatch.c fnmatch_.h fnmatch_loop.c
 
 ## end   gnulib module fnmatch
 
 ## begin gnulib module fopen-safer
 
-EXTRA_DIST += stdio-safer.h stdio--.h
+
+EXTRA_DIST += fopen-safer.c stdio--.h stdio-safer.h
 
 ## end   gnulib module fopen-safer
 
 ## begin gnulib module fpending
 
-EXTRA_DIST += __fpending.h
+
+EXTRA_DIST += __fpending.c __fpending.h
 
 ## end   gnulib module fpending
 
 ## begin gnulib module fprintftime
 
-EXTRA_DIST += fprintftime.h
+
+EXTRA_DIST += fprintftime.c fprintftime.h
 
 ## end   gnulib module fprintftime
 
+## begin gnulib module free
+
+
+EXTRA_DIST += free.c
+
+## end   gnulib module free
+
 ## begin gnulib module fsusage
 
-EXTRA_DIST += fsusage.h
+
+EXTRA_DIST += fsusage.c fsusage.h
 
 ## end   gnulib module fsusage
 
+## begin gnulib module ftruncate
+
+
+EXTRA_DIST += ftruncate.c
+
+## end   gnulib module ftruncate
+
 ## begin gnulib module fts
 
-EXTRA_DIST += fts_.h fts-cycle.c
+
+EXTRA_DIST += fts-cycle.c fts.c fts_.h
 
 ## end   gnulib module fts
 
@@ -350,13 +451,15 @@ libcoreutils_a_SOURCES += full-write.h full-write.c
 
 ## begin gnulib module getaddrinfo
 
-libcoreutils_a_SOURCES += getaddrinfo.h
+
+EXTRA_DIST += gai_strerror.c getaddrinfo.c getaddrinfo.h
 
 ## end   gnulib module getaddrinfo
 
 ## begin gnulib module getcwd
 
-EXTRA_DIST += getcwd.h
+
+EXTRA_DIST += getcwd.c getcwd.h
 
 ## end   gnulib module getcwd
 
@@ -365,49 +468,80 @@ EXTRA_DIST += getcwd.h
 libcoreutils_a_SOURCES += getdate.y
 BUILT_SOURCES += getdate.c
 MAINTAINERCLEANFILES += getdate.c
-EXTRA_DIST += getdate.c getdate.h
+EXTRA_DIST += getdate.c
+
+EXTRA_DIST += getdate.h
 
 ## end   gnulib module getdate
 
 ## begin gnulib module getdelim
 
-EXTRA_DIST += getdelim.h
+
+EXTRA_DIST += getdelim.c getdelim.h
 
 ## end   gnulib module getdelim
 
+## begin gnulib module getgroups
+
+
+EXTRA_DIST += getgroups.c
+
+## end   gnulib module getgroups
+
+## begin gnulib module gethostname
+
+
+EXTRA_DIST += gethostname.c
+
+## end   gnulib module gethostname
+
 ## begin gnulib module gethrxtime
 
-EXTRA_DIST += gethrxtime.h xtime.h
+
+EXTRA_DIST += gethrxtime.c gethrxtime.h xtime.h
 
 ## end   gnulib module gethrxtime
 
 ## begin gnulib module getline
 
-EXTRA_DIST += getline.h
+
+EXTRA_DIST += getline.c getline.h
 
 ## end   gnulib module getline
 
+## begin gnulib module getloadavg
+
+
+EXTRA_DIST += getloadavg.c
+
+## end   gnulib module getloadavg
+
 ## begin gnulib module getndelim2
 
-EXTRA_DIST += getndelim2.h getndelim2.c
+
+EXTRA_DIST += getndelim2.c getndelim2.h
 
 ## end   gnulib module getndelim2
 
 ## begin gnulib module getopt
 
 BUILT_SOURCES += $(GETOPT_H)
-EXTRA_DIST += getopt_.h getopt_int.h
 
 # We need the following in order to create <getopt.h> when the system
 # doesn't have one that works with the given compiler.
 getopt.h: getopt_.h
-	cp -f $(srcdir)/getopt_.h $@-t
+	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
+	  cat $(srcdir)/getopt_.h; \
+	} > $@-t
 	mv -f $@-t $@
 MOSTLYCLEANFILES += getopt.h getopt.h-t
+
+EXTRA_DIST += getopt.c getopt1.c getopt_.h getopt_int.h
 
 ## end   gnulib module getopt
 
 ## begin gnulib module getpagesize
+
 
 EXTRA_DIST += getpagesize.h
 
@@ -415,7 +549,8 @@ EXTRA_DIST += getpagesize.h
 
 ## begin gnulib module getpass-gnu
 
-EXTRA_DIST += getpass.h
+
+EXTRA_DIST += getpass.c getpass.h
 
 ## end   gnulib module getpass-gnu
 
@@ -439,21 +574,52 @@ libcoreutils_a_SOURCES += gettext.h
 
 ## end   gnulib module gettext-h
 
+## begin gnulib module gettime
+
+
+EXTRA_DIST += gettime.c
+
+## end   gnulib module gettime
+
+## begin gnulib module gettimeofday
+
+
+EXTRA_DIST += gettimeofday.c
+
+## end   gnulib module gettimeofday
+
+## begin gnulib module getugroups
+
+
+EXTRA_DIST += getugroups.c
+
+## end   gnulib module getugroups
+
+## begin gnulib module getusershell
+
+
+EXTRA_DIST += getusershell.c
+
+## end   gnulib module getusershell
+
 ## begin gnulib module group-member
 
-EXTRA_DIST += group-member.h
+
+EXTRA_DIST += group-member.c group-member.h
 
 ## end   gnulib module group-member
 
 ## begin gnulib module hard-locale
 
-EXTRA_DIST += hard-locale.h
+
+EXTRA_DIST += hard-locale.c hard-locale.h
 
 ## end   gnulib module hard-locale
 
 ## begin gnulib module hash
 
-EXTRA_DIST += hash.h
+
+EXTRA_DIST += hash.c hash.h
 
 ## end   gnulib module hash
 
@@ -465,17 +631,27 @@ libcoreutils_a_SOURCES += hash-pjw.h hash-pjw.c
 
 ## begin gnulib module human
 
-EXTRA_DIST += human.h
+
+EXTRA_DIST += human.c human.h
 
 ## end   gnulib module human
 
+## begin gnulib module idcache
+
+
+EXTRA_DIST += idcache.c
+
+## end   gnulib module idcache
+
 ## begin gnulib module inet_ntop
 
-libcoreutils_a_SOURCES += inet_ntop.h
+
+EXTRA_DIST += inet_ntop.c inet_ntop.h
 
 ## end   gnulib module inet_ntop
 
 ## begin gnulib module intprops
+
 
 EXTRA_DIST += intprops.h
 
@@ -483,41 +659,48 @@ EXTRA_DIST += intprops.h
 
 ## begin gnulib module inttostr
 
-EXTRA_DIST += inttostr.c inttostr.h
+
+EXTRA_DIST += imaxtostr.c inttostr.c inttostr.h offtostr.c umaxtostr.c
 
 ## end   gnulib module inttostr
 
 ## begin gnulib module inttypes
 
 BUILT_SOURCES += $(INTTYPES_H)
-EXTRA_DIST += inttypes_.h
 
 # We need the following in order to create <inttypes.h> when the system
 # doesn't have one that works with the given compiler.
 inttypes.h: inttypes_.h
 	rm -f $@-t $@
-	sed -e 's/@''HAVE_INTTYPES_H''@/$(HAVE_INTTYPES_H)/g' \
-	    -e 's|@''ABSOLUTE_INTTYPES_H''@|$(ABSOLUTE_INTTYPES_H)|g' \
-	    -e 's/@''PRI_MACROS_BROKEN''@/$(PRI_MACROS_BROKEN)/g' \
-	    -e 's/@''HAVE_LONG_LONG_INT''@/$(HAVE_LONG_LONG_INT)/g' \
-	    -e 's/@''PRIPTR_PREFIX''@/$(PRIPTR_PREFIX)/g' \
-	    -e 's/@''HAVE_DECL_IMAXABS''@/$(HAVE_DECL_IMAXABS)/g' \
-	    -e 's/@''HAVE_DECL_IMAXDIV''@/$(HAVE_DECL_IMAXDIV)/g' \
-	    -e 's/@''HAVE_DECL_STRTOIMAX''@/$(HAVE_DECL_STRTOIMAX)/g' \
-	    -e 's/@''HAVE_DECL_STRTOUMAX''@/$(HAVE_DECL_STRTOUMAX)/g' \
-	    < $(srcdir)/inttypes_.h > $@-t
+	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
+	  sed -e 's/@''HAVE_INTTYPES_H''@/$(HAVE_INTTYPES_H)/g' \
+	      -e 's|@''ABSOLUTE_INTTYPES_H''@|$(ABSOLUTE_INTTYPES_H)|g' \
+	      -e 's/@''PRI_MACROS_BROKEN''@/$(PRI_MACROS_BROKEN)/g' \
+	      -e 's/@''HAVE_LONG_LONG_INT''@/$(HAVE_LONG_LONG_INT)/g' \
+	      -e 's/@''HAVE_UNSIGNED_LONG_LONG_INT''@/$(HAVE_UNSIGNED_LONG_LONG_INT)/g' \
+	      -e 's/@''PRIPTR_PREFIX''@/$(PRIPTR_PREFIX)/g' \
+	      -e 's/@''HAVE_DECL_IMAXABS''@/$(HAVE_DECL_IMAXABS)/g' \
+	      -e 's/@''HAVE_DECL_IMAXDIV''@/$(HAVE_DECL_IMAXDIV)/g' \
+	      -e 's/@''HAVE_DECL_STRTOIMAX''@/$(HAVE_DECL_STRTOIMAX)/g' \
+	      -e 's/@''HAVE_DECL_STRTOUMAX''@/$(HAVE_DECL_STRTOUMAX)/g' \
+	      < $(srcdir)/inttypes_.h; \
+	} > $@-t
 	mv $@-t $@
 MOSTLYCLEANFILES += inttypes.h inttypes.h-t
+
+EXTRA_DIST += inttypes_.h
 
 ## end   gnulib module inttypes
 
 ## begin gnulib module isapipe
 
-EXTRA_DIST += isapipe.h
+
+EXTRA_DIST += isapipe.c isapipe.h
 
 ## end   gnulib module isapipe
 
 ## begin gnulib module lchmod
+
 
 EXTRA_DIST += lchmod.h
 
@@ -525,7 +708,8 @@ EXTRA_DIST += lchmod.h
 
 ## begin gnulib module lchown
 
-EXTRA_DIST += lchown.h
+
+EXTRA_DIST += lchown.c lchown.h
 
 ## end   gnulib module lchown
 
@@ -538,7 +722,6 @@ libcoreutils_a_SOURCES += linebuffer.h linebuffer.c
 ## begin gnulib module localcharset
 
 libcoreutils_a_SOURCES += localcharset.h localcharset.c
-EXTRA_DIST += config.charset ref-add.sin ref-del.sin
 
 # We need the following in order to install a simple file in $(libdir)
 # which is shared with other installed packages. We use a list of referencing
@@ -590,23 +773,35 @@ SUFFIXES += .sed .sin
 
 CLEANFILES += charset.alias ref-add.sed ref-del.sed
 
+EXTRA_DIST += config.charset ref-add.sin ref-del.sin
+
 ## end   gnulib module localcharset
 
 ## begin gnulib module long-options
 
-EXTRA_DIST += long-options.h
+
+EXTRA_DIST += long-options.c long-options.h
 
 ## end   gnulib module long-options
 
 ## begin gnulib module lstat
 
-EXTRA_DIST += lstat.h
+
+EXTRA_DIST += lstat.c lstat.h
 
 ## end   gnulib module lstat
 
+## begin gnulib module malloc
+
+
+EXTRA_DIST += malloc.c
+
+## end   gnulib module malloc
+
 ## begin gnulib module mbchar
 
-libcoreutils_a_SOURCES += mbchar.h
+
+EXTRA_DIST += mbchar.c mbchar.h
 
 ## end   gnulib module mbchar
 
@@ -624,63 +819,129 @@ libcoreutils_a_SOURCES += mbuiter.h
 
 ## begin gnulib module md5
 
-libcoreutils_a_SOURCES += md5.h
+
+EXTRA_DIST += md5.c md5.h
 
 ## end   gnulib module md5
 
 ## begin gnulib module memcasecmp
 
-EXTRA_DIST += memcasecmp.h
+
+EXTRA_DIST += memcasecmp.c memcasecmp.h
 
 ## end   gnulib module memcasecmp
 
+## begin gnulib module memchr
+
+
+EXTRA_DIST += memchr.c
+
+## end   gnulib module memchr
+
+## begin gnulib module memcmp
+
+
+EXTRA_DIST += memcmp.c
+
+## end   gnulib module memcmp
+
 ## begin gnulib module memcoll
 
-EXTRA_DIST += memcoll.h
+
+EXTRA_DIST += memcoll.c memcoll.h
 
 ## end   gnulib module memcoll
 
+## begin gnulib module memcpy
+
+
+EXTRA_DIST += memcpy.c
+
+## end   gnulib module memcpy
+
+## begin gnulib module memmove
+
+
+EXTRA_DIST += memmove.c
+
+## end   gnulib module memmove
+
 ## begin gnulib module mempcpy
 
-EXTRA_DIST += mempcpy.h
+
+EXTRA_DIST += mempcpy.c mempcpy.h
 
 ## end   gnulib module mempcpy
 
 ## begin gnulib module memrchr
 
-EXTRA_DIST += memrchr.h
+
+EXTRA_DIST += memrchr.c memrchr.h
 
 ## end   gnulib module memrchr
 
+## begin gnulib module memset
+
+
+EXTRA_DIST += memset.c
+
+## end   gnulib module memset
+
 ## begin gnulib module mkancesdirs
 
-EXTRA_DIST += mkancesdirs.h
+
+EXTRA_DIST += mkancesdirs.c mkancesdirs.h
 
 ## end   gnulib module mkancesdirs
 
+## begin gnulib module mkdir
+
+
+EXTRA_DIST += mkdir.c
+
+## end   gnulib module mkdir
+
 ## begin gnulib module mkdir-p
 
-libcoreutils_a_SOURCES += dirchownmod.h mkdir-p.h
+
+EXTRA_DIST += dirchownmod.c dirchownmod.h mkdir-p.c mkdir-p.h
 
 ## end   gnulib module mkdir-p
 
 ## begin gnulib module mkstemp
 
-EXTRA_DIST += mkstemp.h
+
+EXTRA_DIST += mkstemp.c mkstemp.h tempname.c
 
 ## end   gnulib module mkstemp
 
+## begin gnulib module mktime
+
+
+EXTRA_DIST += mktime.c
+
+## end   gnulib module mktime
+
 ## begin gnulib module modechange
 
-EXTRA_DIST += modechange.h
+
+EXTRA_DIST += modechange.c modechange.h
 
 ## end   gnulib module modechange
 
 ## begin gnulib module mountlist
 
-EXTRA_DIST += mountlist.h
+
+EXTRA_DIST += mountlist.c mountlist.h
 
 ## end   gnulib module mountlist
+
+## begin gnulib module nanosleep
+
+
+EXTRA_DIST += nanosleep.c
+
+## end   gnulib module nanosleep
 
 ## begin gnulib module netinet_in
 
@@ -691,20 +952,31 @@ BUILT_SOURCES += $(NETINET_IN_H)
 netinet/in.h:
 	test -d netinet || mkdir netinet
 	rm -f $@-t $@
-	echo '#include <sys/socket.h>' >$@-t
+	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
+	  echo '#include <sys/socket.h>'; \
+	} > $@-t
 	mv $@-t $@
 MOSTLYCLEANFILES += netinet/in.h netinet/in.h-t
 MOSTLYCLEANDIRS += netinet
 
 ## end   gnulib module netinet_in
 
+## begin gnulib module obstack
+
+
+EXTRA_DIST += obstack.c obstack.h
+
+## end   gnulib module obstack
+
 ## begin gnulib module openat
 
-EXTRA_DIST += at-func.c openat.h openat-priv.h
+
+EXTRA_DIST += at-func.c fchmodat.c mkdirat.c openat-die.c openat-priv.h openat-proc.c openat.c openat.h
 
 ## end   gnulib module openat
 
 ## begin gnulib module pathmax
+
 
 EXTRA_DIST += pathmax.h
 
@@ -712,37 +984,64 @@ EXTRA_DIST += pathmax.h
 
 ## begin gnulib module physmem
 
-EXTRA_DIST += physmem.h
+
+EXTRA_DIST += physmem.c physmem.h
 
 ## end   gnulib module physmem
 
 ## begin gnulib module posixtm
 
-EXTRA_DIST += posixtm.h
+
+EXTRA_DIST += posixtm.c posixtm.h
 
 ## end   gnulib module posixtm
 
 ## begin gnulib module posixver
 
-EXTRA_DIST += posixver.h
+
+EXTRA_DIST += posixver.c posixver.h
 
 ## end   gnulib module posixver
 
+## begin gnulib module putenv
+
+
+EXTRA_DIST += putenv.c
+
+## end   gnulib module putenv
+
 ## begin gnulib module quote
 
-EXTRA_DIST += quote.h
+
+EXTRA_DIST += quote.c quote.h
 
 ## end   gnulib module quote
 
 ## begin gnulib module quotearg
 
-EXTRA_DIST += quotearg.h
+
+EXTRA_DIST += quotearg.c quotearg.h
 
 ## end   gnulib module quotearg
 
+## begin gnulib module raise
+
+
+EXTRA_DIST += raise.c
+
+## end   gnulib module raise
+
+## begin gnulib module readlink
+
+
+EXTRA_DIST += readlink.c
+
+## end   gnulib module readlink
+
 ## begin gnulib module readtokens
 
-EXTRA_DIST += readtokens.h
+
+EXTRA_DIST += readtokens.c readtokens.h
 
 ## end   gnulib module readtokens
 
@@ -754,35 +1053,76 @@ libcoreutils_a_SOURCES += readtokens0.h readtokens0.c
 
 ## begin gnulib module readutmp
 
-EXTRA_DIST += readutmp.h
+
+EXTRA_DIST += readutmp.c readutmp.h
 
 ## end   gnulib module readutmp
 
+## begin gnulib module realloc
+
+
+EXTRA_DIST += realloc.c
+
+## end   gnulib module realloc
+
 ## begin gnulib module regex
 
-EXTRA_DIST += regcomp.c regex.h regex_internal.c regex_internal.h regexec.c
+
+EXTRA_DIST += regcomp.c regex.c regex.h regex_internal.c regex_internal.h regexec.c
 
 ## end   gnulib module regex
 
+## begin gnulib module rename
+
+
+EXTRA_DIST += rename.c
+
+## end   gnulib module rename
+
+## begin gnulib module rename-dest-slash
+
+
+EXTRA_DIST += rename-dest-slash.c
+
+## end   gnulib module rename-dest-slash
+
+## begin gnulib module rmdir
+
+
+EXTRA_DIST += rmdir.c
+
+## end   gnulib module rmdir
+
+## begin gnulib module rpmatch
+
+
+EXTRA_DIST += rpmatch.c
+
+## end   gnulib module rpmatch
+
 ## begin gnulib module safe-read
 
-EXTRA_DIST += safe-read.h
+
+EXTRA_DIST += safe-read.c safe-read.h
 
 ## end   gnulib module safe-read
 
 ## begin gnulib module safe-write
 
-EXTRA_DIST += safe-write.h
+
+EXTRA_DIST += safe-write.c safe-write.h
 
 ## end   gnulib module safe-write
 
 ## begin gnulib module same
 
-EXTRA_DIST += same.h
+
+EXTRA_DIST += same.c same.h
 
 ## end   gnulib module same
 
 ## begin gnulib module same-inode
+
 
 EXTRA_DIST += same-inode.h
 
@@ -790,13 +1130,15 @@ EXTRA_DIST += same-inode.h
 
 ## begin gnulib module save-cwd
 
-EXTRA_DIST += save-cwd.h
+
+EXTRA_DIST += save-cwd.c save-cwd.h
 
 ## end   gnulib module save-cwd
 
 ## begin gnulib module savedir
 
-EXTRA_DIST += savedir.h
+
+EXTRA_DIST += savedir.c savedir.h
 
 ## end   gnulib module savedir
 
@@ -808,35 +1150,48 @@ libcoreutils_a_SOURCES += savewd.h savewd.c
 
 ## begin gnulib module setenv
 
-libcoreutils_a_SOURCES += setenv.h
+
+EXTRA_DIST += setenv.c setenv.h unsetenv.c
 
 ## end   gnulib module setenv
 
+## begin gnulib module settime
+
+
+EXTRA_DIST += settime.c
+
+## end   gnulib module settime
+
 ## begin gnulib module sha1
 
-EXTRA_DIST += sha1.h
+
+EXTRA_DIST += sha1.c sha1.h
 
 ## end   gnulib module sha1
 
 ## begin gnulib module sig2str
 
-EXTRA_DIST += sig2str.h
+
+EXTRA_DIST += sig2str.c sig2str.h
 
 ## end   gnulib module sig2str
 
 ## begin gnulib module snprintf
 
-libcoreutils_a_SOURCES += snprintf.h
+
+EXTRA_DIST += snprintf.c snprintf.h
 
 ## end   gnulib module snprintf
 
 ## begin gnulib module stat-macros
+
 
 EXTRA_DIST += stat-macros.h
 
 ## end   gnulib module stat-macros
 
 ## begin gnulib module stat-time
+
 
 EXTRA_DIST += stat-time.h
 
@@ -845,93 +1200,114 @@ EXTRA_DIST += stat-time.h
 ## begin gnulib module stdbool
 
 BUILT_SOURCES += $(STDBOOL_H)
-EXTRA_DIST += stdbool_.h
 
 # We need the following in order to create <stdbool.h> when the system
 # doesn't have one that works.
 stdbool.h: stdbool_.h
 	rm -f $@-t $@
-	sed -e 's/@''HAVE__BOOL''@/$(HAVE__BOOL)/g' < $(srcdir)/stdbool_.h > $@-t
+	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
+	  sed -e 's/@''HAVE__BOOL''@/$(HAVE__BOOL)/g' < $(srcdir)/stdbool_.h; \
+	} > $@-t
 	mv $@-t $@
 MOSTLYCLEANFILES += stdbool.h stdbool.h-t
+
+EXTRA_DIST += stdbool_.h
 
 ## end   gnulib module stdbool
 
 ## begin gnulib module stdint
 
 BUILT_SOURCES += $(STDINT_H)
-EXTRA_DIST += stdint_.h
 
 # We need the following in order to create <stdint.h> when the system
 # doesn't have one that works with the given compiler.
 stdint.h: stdint_.h
 	rm -f $@-t $@
-	sed -e 's/@''HAVE_WCHAR_H''@/$(HAVE_WCHAR_H)/g' \
-	    -e 's/@''HAVE_STDINT_H''@/$(HAVE_STDINT_H)/g' \
-	    -e 's|@''ABSOLUTE_STDINT_H''@|$(ABSOLUTE_STDINT_H)|g' \
-	    -e 's/@''HAVE_SYS_TYPES_H''@/$(HAVE_SYS_TYPES_H)/g' \
-	    -e 's/@''HAVE_INTTYPES_H''@/$(HAVE_INTTYPES_H)/g' \
-	    -e 's/@''HAVE_SYS_INTTYPES_H''@/$(HAVE_SYS_INTTYPES_H)/g' \
-	    -e 's/@''HAVE_SYS_BITYPES_H''@/$(HAVE_SYS_BITYPES_H)/g' \
-	    -e 's/@''HAVE_LONG_LONG_INT''@/$(HAVE_LONG_LONG_INT)/g' \
-	    -e 's/@''BITSIZEOF_PTRDIFF_T''@/$(BITSIZEOF_PTRDIFF_T)/g' \
-	    -e 's/@''PTRDIFF_T_SUFFIX''@/$(PTRDIFF_T_SUFFIX)/g' \
-	    -e 's/@''BITSIZEOF_SIG_ATOMIC_T''@/$(BITSIZEOF_SIG_ATOMIC_T)/g' \
-	    -e 's/@''HAVE_SIGNED_SIG_ATOMIC_T''@/$(HAVE_SIGNED_SIG_ATOMIC_T)/g' \
-	    -e 's/@''SIG_ATOMIC_T_SUFFIX''@/$(SIG_ATOMIC_T_SUFFIX)/g' \
-	    -e 's/@''BITSIZEOF_SIZE_T''@/$(BITSIZEOF_SIZE_T)/g' \
-	    -e 's/@''SIZE_T_SUFFIX''@/$(SIZE_T_SUFFIX)/g' \
-	    -e 's/@''BITSIZEOF_WCHAR_T''@/$(BITSIZEOF_WCHAR_T)/g' \
-	    -e 's/@''HAVE_SIGNED_WCHAR_T''@/$(HAVE_SIGNED_WCHAR_T)/g' \
-	    -e 's/@''WCHAR_T_SUFFIX''@/$(WCHAR_T_SUFFIX)/g' \
-	    -e 's/@''BITSIZEOF_WINT_T''@/$(BITSIZEOF_WINT_T)/g' \
-	    -e 's/@''HAVE_SIGNED_WINT_T''@/$(HAVE_SIGNED_WINT_T)/g' \
-	    -e 's/@''WINT_T_SUFFIX''@/$(WINT_T_SUFFIX)/g' \
-	    < $(srcdir)/stdint_.h > $@-t
+	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
+	  sed -e 's/@''HAVE_WCHAR_H''@/$(HAVE_WCHAR_H)/g' \
+	      -e 's/@''HAVE_STDINT_H''@/$(HAVE_STDINT_H)/g' \
+	      -e 's|@''ABSOLUTE_STDINT_H''@|$(ABSOLUTE_STDINT_H)|g' \
+	      -e 's/@''HAVE_SYS_TYPES_H''@/$(HAVE_SYS_TYPES_H)/g' \
+	      -e 's/@''HAVE_INTTYPES_H''@/$(HAVE_INTTYPES_H)/g' \
+	      -e 's/@''HAVE_SYS_INTTYPES_H''@/$(HAVE_SYS_INTTYPES_H)/g' \
+	      -e 's/@''HAVE_SYS_BITYPES_H''@/$(HAVE_SYS_BITYPES_H)/g' \
+	      -e 's/@''HAVE_LONG_LONG_INT''@/$(HAVE_LONG_LONG_INT)/g' \
+	      -e 's/@''HAVE_UNSIGNED_LONG_LONG_INT''@/$(HAVE_UNSIGNED_LONG_LONG_INT)/g' \
+	      -e 's/@''BITSIZEOF_PTRDIFF_T''@/$(BITSIZEOF_PTRDIFF_T)/g' \
+	      -e 's/@''PTRDIFF_T_SUFFIX''@/$(PTRDIFF_T_SUFFIX)/g' \
+	      -e 's/@''BITSIZEOF_SIG_ATOMIC_T''@/$(BITSIZEOF_SIG_ATOMIC_T)/g' \
+	      -e 's/@''HAVE_SIGNED_SIG_ATOMIC_T''@/$(HAVE_SIGNED_SIG_ATOMIC_T)/g' \
+	      -e 's/@''SIG_ATOMIC_T_SUFFIX''@/$(SIG_ATOMIC_T_SUFFIX)/g' \
+	      -e 's/@''BITSIZEOF_SIZE_T''@/$(BITSIZEOF_SIZE_T)/g' \
+	      -e 's/@''SIZE_T_SUFFIX''@/$(SIZE_T_SUFFIX)/g' \
+	      -e 's/@''BITSIZEOF_WCHAR_T''@/$(BITSIZEOF_WCHAR_T)/g' \
+	      -e 's/@''HAVE_SIGNED_WCHAR_T''@/$(HAVE_SIGNED_WCHAR_T)/g' \
+	      -e 's/@''WCHAR_T_SUFFIX''@/$(WCHAR_T_SUFFIX)/g' \
+	      -e 's/@''BITSIZEOF_WINT_T''@/$(BITSIZEOF_WINT_T)/g' \
+	      -e 's/@''HAVE_SIGNED_WINT_T''@/$(HAVE_SIGNED_WINT_T)/g' \
+	      -e 's/@''WINT_T_SUFFIX''@/$(WINT_T_SUFFIX)/g' \
+	      < $(srcdir)/stdint_.h; \
+	} > $@-t
 	mv $@-t $@
 MOSTLYCLEANFILES += stdint.h stdint.h-t
+
+EXTRA_DIST += stdint_.h
 
 ## end   gnulib module stdint
 
 ## begin gnulib module stdlib-safer
 
-EXTRA_DIST += stdlib-safer.h stdlib--.h
+
+EXTRA_DIST += mkstemp-safer.c stdlib--.h stdlib-safer.h
 
 ## end   gnulib module stdlib-safer
 
 ## begin gnulib module stpcpy
 
-libcoreutils_a_SOURCES += stpcpy.h
+
+EXTRA_DIST += stpcpy.c stpcpy.h
 
 ## end   gnulib module stpcpy
 
 ## begin gnulib module strcase
 
-libcoreutils_a_SOURCES += strcase.h
+
+EXTRA_DIST += strcase.h strcasecmp.c strncasecmp.c
 
 ## end   gnulib module strcase
 
+## begin gnulib module strcspn
+
+
+EXTRA_DIST += strcspn.c
+
+## end   gnulib module strcspn
+
 ## begin gnulib module strdup
 
-EXTRA_DIST += strdup.h
+
+EXTRA_DIST += strdup.c strdup.h
 
 ## end   gnulib module strdup
 
 ## begin gnulib module strftime
 
-EXTRA_DIST += strftime.h
+
+EXTRA_DIST += strftime.c strftime.h
 
 ## end   gnulib module strftime
 
 ## begin gnulib module strndup
 
-EXTRA_DIST += strndup.h
+
+EXTRA_DIST += strndup.c strndup.h
 
 ## end   gnulib module strndup
 
 ## begin gnulib module strnlen
 
-EXTRA_DIST += strnlen.h
+
+EXTRA_DIST += strnlen.c strnlen.h
 
 ## end   gnulib module strnlen
 
@@ -943,7 +1319,8 @@ libcoreutils_a_SOURCES += strnlen1.h strnlen1.c
 
 ## begin gnulib module strpbrk
 
-libcoreutils_a_SOURCES += strpbrk.h
+
+EXTRA_DIST += strpbrk.c strpbrk.h
 
 ## end   gnulib module strpbrk
 
@@ -951,55 +1328,108 @@ libcoreutils_a_SOURCES += strpbrk.h
 
 LIBS += $(POW_LIB)
 
+EXTRA_DIST += strtod.c
+
 ## end   gnulib module strtod
+
+## begin gnulib module strtoimax
+
+
+EXTRA_DIST += strtoimax.c
+
+## end   gnulib module strtoimax
+
+## begin gnulib module strtol
+
+
+EXTRA_DIST += strtol.c
+
+## end   gnulib module strtol
+
+## begin gnulib module strtoll
+
+
+EXTRA_DIST += strtoll.c
+
+## end   gnulib module strtoll
+
+## begin gnulib module strtoul
+
+
+EXTRA_DIST += strtoul.c
+
+## end   gnulib module strtoul
+
+## begin gnulib module strtoull
+
+
+EXTRA_DIST += strtoull.c
+
+## end   gnulib module strtoull
+
+## begin gnulib module strtoumax
+
+
+EXTRA_DIST += strtoumax.c
+
+## end   gnulib module strtoumax
 
 ## begin gnulib module strverscmp
 
-EXTRA_DIST += strverscmp.h
+
+EXTRA_DIST += strverscmp.c strverscmp.h
 
 ## end   gnulib module strverscmp
 
 ## begin gnulib module sys_socket
 
 BUILT_SOURCES += $(SYS_SOCKET_H)
-EXTRA_DIST += socket_.h
 
 # We need the following in order to create <sys/socket.h> when the system
 # doesn't have one that works with the given compiler.
 sys/socket.h: socket_.h
 	test -d sys || mkdir sys
-	cp -f $(srcdir)/socket_.h $@-t
+	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
+	  cat $(srcdir)/socket_.h; \
+	} > $@-t
 	mv -f $@-t $@
 MOSTLYCLEANFILES += sys/socket.h sys/socket.h-t
 MOSTLYCLEANDIRS += sys
+
+EXTRA_DIST += socket_.h
 
 ## end   gnulib module sys_socket
 
 ## begin gnulib module sys_stat
 
 BUILT_SOURCES += $(SYS_STAT_H)
-EXTRA_DIST += stat_.h
 
 # We need the following in order to create <sys/stat.h> when the system
 # has one that is incomplete.
 sys/stat.h: stat_.h
 	test -d sys || mkdir sys
 	rm -f $@-t $@
-	sed -e 's|@''ABSOLUTE_SYS_STAT_H''@|$(ABSOLUTE_SYS_STAT_H)|g' \
-	    < $(srcdir)/stat_.h > $@-t
+	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
+	  sed -e 's|@''ABSOLUTE_SYS_STAT_H''@|$(ABSOLUTE_SYS_STAT_H)|g' \
+	      < $(srcdir)/stat_.h; \
+	} > $@-t
 	mv $@-t $@
 MOSTLYCLEANFILES += sys/stat.h sys/stat.h-t
 MOSTLYCLEANDIRS += sys
+
+EXTRA_DIST += stat_.h
 
 ## end   gnulib module sys_stat
 
 ## begin gnulib module time_r
 
-EXTRA_DIST += time_r.h
+
+EXTRA_DIST += time_r.c time_r.h
 
 ## end   gnulib module time_r
 
 ## begin gnulib module timespec
+
 
 EXTRA_DIST += timespec.h
 
@@ -1018,24 +1448,29 @@ BUILT_SOURCES += $(UNISTD_H)
 # We need the following in order to create an empty placeholder for
 # <unistd.h> when the system doesn't have one.
 unistd.h:
-	echo '/* Empty placeholder for $@.  */' >$@
+	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
+	  echo '/* Empty placeholder for $@.  */'; \
+	} > $@
 MOSTLYCLEANFILES += unistd.h
 
 ## end   gnulib module unistd
 
 ## begin gnulib module unistd-safer
 
-EXTRA_DIST += unistd-safer.h unistd--.h
+
+EXTRA_DIST += dup-safer.c fd-safer.c pipe-safer.c unistd--.h unistd-safer.h
 
 ## end   gnulib module unistd-safer
 
 ## begin gnulib module unlinkdir
 
-EXTRA_DIST += unlinkdir.h
+
+EXTRA_DIST += unlinkdir.c unlinkdir.h
 
 ## end   gnulib module unlinkdir
 
 ## begin gnulib module unlocked-io
+
 
 EXTRA_DIST += unlocked-io.h
 
@@ -1043,31 +1478,43 @@ EXTRA_DIST += unlocked-io.h
 
 ## begin gnulib module userspec
 
-EXTRA_DIST += userspec.h
+
+EXTRA_DIST += inttostr.h userspec.c userspec.h
 
 ## end   gnulib module userspec
 
+## begin gnulib module utime
+
+
+EXTRA_DIST += utime.c
+
+## end   gnulib module utime
+
 ## begin gnulib module utimecmp
 
-EXTRA_DIST += utimecmp.h
+
+EXTRA_DIST += utimecmp.c utimecmp.h
 
 ## end   gnulib module utimecmp
 
 ## begin gnulib module utimens
 
-EXTRA_DIST += utimens.h
+
+EXTRA_DIST += utimens.c utimens.h
 
 ## end   gnulib module utimens
 
 ## begin gnulib module vasnprintf
 
-libcoreutils_a_SOURCES += printf-args.h printf-parse.h vasnprintf.h
+
+EXTRA_DIST += asnprintf.c printf-args.c printf-args.h printf-parse.c printf-parse.h vasnprintf.c vasnprintf.h
 
 ## end   gnulib module vasnprintf
 
 ## begin gnulib module vasprintf
 
-libcoreutils_a_SOURCES += vasprintf.h
+
+EXTRA_DIST += asprintf.c vasprintf.c vasprintf.h
 
 ## end   gnulib module vasprintf
 
@@ -1097,7 +1544,8 @@ libcoreutils_a_SOURCES += wcwidth.h
 
 ## begin gnulib module xalloc
 
-EXTRA_DIST += xalloc.h
+
+EXTRA_DIST += xalloc.h xmalloc.c
 
 ## end   gnulib module xalloc
 
@@ -1109,7 +1557,8 @@ libcoreutils_a_SOURCES += xalloc-die.c
 
 ## begin gnulib module xgetcwd
 
-EXTRA_DIST += xgetcwd.h
+
+EXTRA_DIST += xgetcwd.c xgetcwd.h
 
 ## end   gnulib module xgetcwd
 
@@ -1127,13 +1576,15 @@ libcoreutils_a_SOURCES += xmemcoll.h xmemcoll.c
 
 ## begin gnulib module xnanosleep
 
-EXTRA_DIST += xnanosleep.h
+
+EXTRA_DIST += xnanosleep.c xnanosleep.h
 
 ## end   gnulib module xnanosleep
 
 ## begin gnulib module xreadlink
 
-EXTRA_DIST += xreadlink.h
+
+EXTRA_DIST += xreadlink.c xreadlink.h
 
 ## end   gnulib module xreadlink
 
@@ -1145,7 +1596,8 @@ libcoreutils_a_SOURCES += xstrndup.h xstrndup.c
 
 ## begin gnulib module xstrtod
 
-EXTRA_DIST += xstrtod.h
+
+EXTRA_DIST += xstrtod.c xstrtod.h
 
 ## end   gnulib module xstrtod
 
@@ -1157,13 +1609,15 @@ libcoreutils_a_SOURCES += xstrtoimax.c
 
 ## begin gnulib module xstrtol
 
-EXTRA_DIST += xstrtol.h
+
+EXTRA_DIST += xstrtol.c xstrtol.h xstrtoul.c
 
 ## end   gnulib module xstrtol
 
 ## begin gnulib module xstrtold
 
-EXTRA_DIST += xstrtod.c xstrtod.h
+
+EXTRA_DIST += xstrtod.c xstrtod.h xstrtold.c
 
 ## end   gnulib module xstrtold
 
@@ -1175,7 +1629,8 @@ libcoreutils_a_SOURCES += xstrtoumax.c
 
 ## begin gnulib module yesno
 
-EXTRA_DIST += yesno.h
+
+EXTRA_DIST += yesno.c yesno.h
 
 ## end   gnulib module yesno
 

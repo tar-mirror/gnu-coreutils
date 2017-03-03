@@ -1,3 +1,19 @@
+2006-10-14  Paul Eggert  <eggert@cs.ucla.edu>
+
+	* sha512.m4 (gl_SHA512): Add u64.h to AC_LIBSOURCES.
+
+2006-10-12  Jim Meyering  <jim@meyering.net>
+
+	* jm-macros.m4 (coreutils_MACROS): Rename from gl_MACROS, now that
+	most of the gnulib macros have migrated into gnulib.
+	Don't call gl_INIT here (now it's called from configure.ac, directly).
+
+2006-10-07  Jim Meyering  <jim@meyering.net>
+
+	* jm-macros.m4 (gl_MACROS): Remove use of AC_CONFIG_LIBOBJ_DIR(lib).
+	It is no longer needed, and was causing dependencies to appear
+	in lib/lib/.deps, which provoked a "make distcheck" failure.
+
 2006-09-29  Jim Meyering  <jim@meyering.net>
 
 	* readdir.m4: Remove file once again.

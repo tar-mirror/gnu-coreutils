@@ -260,7 +260,7 @@ copy_reg (char const *src_name, char const *dst_name,
       return false;
     }
 
-  if (fstat (source_desc, &src_open_sb))
+  if (fstat (source_desc, &src_open_sb) != 0)
     {
       error (0, errno, _("cannot fstat %s"), quote (src_name));
       return_val = false;
@@ -280,11 +280,7 @@ copy_reg (char const *src_name, char const *dst_name,
 
   /* These semantics are required for cp.
      The if-block will be taken in move_mode.  */
-  if (*new_dst)
-    {
-      dest_desc = open (dst_name, O_WRONLY | O_CREAT | O_BINARY, dst_mode);
-    }
-  else
+  if (! *new_dst)
     {
       dest_desc = open (dst_name, O_WRONLY | O_TRUNC | O_BINARY, dst_mode);
 
@@ -301,11 +297,11 @@ copy_reg (char const *src_name, char const *dst_name,
 
 	  /* Tell caller that the destination file was unlinked.  */
 	  *new_dst = true;
-
-	  /* Try the open again, but this time with different flags.  */
-	  dest_desc = open (dst_name, O_WRONLY | O_CREAT | O_BINARY, dst_mode);
 	}
     }
+
+  if (*new_dst)
+    dest_desc = open (dst_name, O_WRONLY | O_CREAT | O_BINARY, dst_mode);
 
   if (dest_desc < 0)
     {
@@ -314,7 +310,7 @@ copy_reg (char const *src_name, char const *dst_name,
       goto close_src_desc;
     }
 
-  if (fstat (dest_desc, &sb))
+  if (fstat (dest_desc, &sb) != 0)
     {
       error (0, errno, _("cannot fstat %s"), quote (dst_name));
       return_val = false;
@@ -970,7 +966,6 @@ copy_internal (char const *src_name, char const *dst_name,
   struct stat src_sb;
   struct stat dst_sb;
   mode_t src_mode;
-  mode_t src_type;
   mode_t dst_mode IF_LINT (= 0);
   bool restore_dst_mode = false;
   char *earlier_file = NULL;
@@ -991,11 +986,9 @@ copy_internal (char const *src_name, char const *dst_name,
       return false;
     }
 
-  src_type = src_sb.st_mode;
-
   src_mode = src_sb.st_mode;
 
-  if (S_ISDIR (src_type) && !x->recursive)
+  if (S_ISDIR (src_mode) && !x->recursive)
     {
       error (0, 0, _("omitting directory %s"), quote (src_name));
       return false;
@@ -1088,7 +1081,7 @@ copy_internal (char const *src_name, char const *dst_name,
 
 	  if (!S_ISDIR (dst_sb.st_mode))
 	    {
-	      if (S_ISDIR (src_type))
+	      if (S_ISDIR (src_mode))
 		{
 		  if (x->move_mode && x->backup_type != no_backups)
 		    {
@@ -1122,7 +1115,7 @@ copy_internal (char const *src_name, char const *dst_name,
 		}
 	    }
 
-	  if (!S_ISDIR (src_type))
+	  if (!S_ISDIR (src_mode))
 	    {
 	      if (S_ISDIR (dst_sb.st_mode))
 		{
@@ -1181,7 +1174,13 @@ copy_internal (char const *src_name, char const *dst_name,
 	  if (x->backup_type != no_backups
 	      /* Don't try to back up a destination if the last
 		 component of src_name is "." or "..".  */
-	      && ! dot_or_dotdot (last_component (src_name)))
+	      && ! dot_or_dotdot (last_component (src_name))
+	      /* Create a backup of each destination directory in move mode,
+		 but not in copy mode.  FIXME: it might make sense to add an
+		 option to suppress backup creation also for move mode.
+		 That would let one use mv to merge new content into an
+		 existing hierarchy.  */
+	      && (x->move_mode || ! S_ISDIR (dst_sb.st_mode)))
 	    {
 	      char *tmp_backup = find_backup_file_name (dst_name,
 							x->backup_type);
@@ -1253,7 +1252,7 @@ copy_internal (char const *src_name, char const *dst_name,
   /* If the source is a directory, we don't always create the destination
      directory.  So --verbose should not announce anything until we're
      sure we'll create a directory. */
-  if (x->verbose && !S_ISDIR (src_type))
+  if (x->verbose && !S_ISDIR (src_mode))
     emit_verbose (src_name, dst_name, backup_succeeded ? dst_backup : NULL);
 
   /* Associate the destination file name with the source device and inode
@@ -1296,7 +1295,7 @@ copy_internal (char const *src_name, char const *dst_name,
 		|| (command_line_arg
 		    && x->dereference == DEREF_COMMAND_LINE_ARGUMENTS)
 		|| x->dereference == DEREF_ALWAYS))
-	   || (x->recursive && S_ISDIR (src_type)))
+	   || (x->recursive && S_ISDIR (src_mode)))
     {
       earlier_file = remember_copied (dst_name, src_sb.st_ino, src_sb.st_dev);
     }
@@ -1309,7 +1308,7 @@ copy_internal (char const *src_name, char const *dst_name,
       /* Avoid damaging the destination file system by refusing to preserve
 	 hard-linked directories (which are found at least in Netapp snapshot
 	 directories).  */
-      if (S_ISDIR (src_type))
+      if (S_ISDIR (src_mode))
 	{
 	  /* If src_name and earlier_file refer to the same directory entry,
 	     then warn about copying a directory into itself.  */
@@ -1370,7 +1369,7 @@ copy_internal (char const *src_name, char const *dst_name,
     {
       if (rename (src_name, dst_name) == 0)
 	{
-	  if (x->verbose && S_ISDIR (src_type))
+	  if (x->verbose && S_ISDIR (src_mode))
 	    emit_verbose (src_name, dst_name,
 			  backup_succeeded ? dst_backup : NULL);
 
@@ -1474,7 +1473,7 @@ copy_internal (char const *src_name, char const *dst_name,
      In such cases, set this variable to zero.  */
   preserve_metadata = true;
 
-  if (S_ISDIR (src_type))
+  if (S_ISDIR (src_mode))
     {
       struct dir_list *dir;
 
@@ -1499,7 +1498,11 @@ copy_internal (char const *src_name, char const *dst_name,
 
       if (new_dst || !S_ISDIR (dst_sb.st_mode))
 	{
-	  if (mkdir (dst_name, src_mode) != 0)
+	  /* POSIX says mkdir's behavior is implementation-defined when
+	     (src_mode & ~S_IRWXUGO) != 0.  However, common practice is
+	     to ask mkdir to copy all the CHMOD_MODE_BITS, letting mkdir
+	     decide what to do with S_ISUID | S_ISGID | S_ISVTX.  */
+	  if (mkdir (dst_name, src_mode & CHMOD_MODE_BITS) != 0)
 	    {
 	      error (0, errno, _("cannot create directory %s"),
 		     quote (dst_name));
@@ -1573,8 +1576,8 @@ copy_internal (char const *src_name, char const *dst_name,
 			    /* If either stat call fails, it's ok not to report
 			       the failure and say dst_name is in the current
 			       directory.  Other things will fail later.  */
-			    || stat (".", &dot_sb)
-			    || stat (dst_parent, &dst_parent_sb)
+			    || stat (".", &dot_sb) != 0
+			    || stat (dst_parent, &dst_parent_sb) != 0
 			    || SAME_INODE (dot_sb, dst_parent_sb));
 	  free (dst_parent);
 
@@ -1617,34 +1620,39 @@ copy_internal (char const *src_name, char const *dst_name,
 	  goto un_backup;
 	}
     }
-  else if (S_ISREG (src_type)
-	   || (x->copy_as_regular && !S_ISLNK (src_type)))
+  else if (S_ISREG (src_mode)
+	   || (x->copy_as_regular && !S_ISLNK (src_mode)))
     {
       copied_as_regular = true;
       /* POSIX says the permission bits of the source file must be
-	 used as the 3rd argument in the open call, but that's not consistent
-	 with historical practice.  */
-      if (! copy_reg (src_name, dst_name, x, src_mode, &new_dst, &src_sb))
+	 used as the 3rd argument in the open call.  Historical
+	 practice passed all the source mode bits to 'open', but the extra
+	 bits were ignored, so it should be the same either way.  */
+      if (! copy_reg (src_name, dst_name, x, src_mode & S_IRWXUGO,
+		      &new_dst, &src_sb))
 	goto un_backup;
     }
-  else if (S_ISFIFO (src_type))
+  else if (S_ISFIFO (src_mode))
     {
-      if (mkfifo (dst_name, src_mode))
+      /* Use mknod, rather than mkfifo, because the former preserves
+	 the special mode bits of a fifo on Solaris 10, while mkfifo
+	 does not.  */
+      if (mknod (dst_name, src_mode, 0) != 0)
 	{
 	  error (0, errno, _("cannot create fifo %s"), quote (dst_name));
 	  goto un_backup;
 	}
     }
-  else if (S_ISBLK (src_type) || S_ISCHR (src_type) || S_ISSOCK (src_type))
+  else if (S_ISBLK (src_mode) || S_ISCHR (src_mode) || S_ISSOCK (src_mode))
     {
-      if (mknod (dst_name, src_mode, src_sb.st_rdev))
+      if (mknod (dst_name, src_mode, src_sb.st_rdev) != 0)
 	{
 	  error (0, errno, _("cannot create special file %s"),
 		 quote (dst_name));
 	  goto un_backup;
 	}
     }
-  else if (S_ISLNK (src_type))
+  else if (S_ISLNK (src_mode))
     {
       char *src_link_val = xreadlink (src_name, src_sb.st_size);
       if (src_link_val == NULL)

@@ -621,7 +621,7 @@ AD_push (int fd_cwd, Dirstack_state *ds, char const *dir,
 
   /* If our uses of openat are guaranteed not to
      follow a symlink, then we can skip this check.  */
-  if ( ! O_NOFOLLOW)
+  if (! HAVE_WORKING_O_NOFOLLOW)
     {
       struct stat sb;
       if (fstat (fd_cwd, &sb) != 0)
@@ -899,7 +899,7 @@ is_dir_lstat (char const *filename, struct stat *st)
 	  return RM_OK;							\
 	}								\
 									\
-      if (errno == ENOENT && (X)->ignore_missing_files)			\
+      if (ignorable_missing (X, errno))					\
 	return RM_OK;							\
     }									\
   while (0)
@@ -915,13 +915,42 @@ is_dir_lstat (char const *filename, struct stat *st)
 	  return RM_OK;					\
 	}						\
 							\
-      if (errno == ENOENT && (X)->ignore_missing_files)	\
+      if (ignorable_missing (X, errno))			\
 	return RM_OK;					\
 							\
       if (errno == ENOTEMPTY || errno == EEXIST)	\
 	return RM_NONEMPTY_DIR;				\
     }							\
   while (0)
+
+/* When a function like unlink, rmdir, or fstatat fails with an errno
+   value of ERRNUM, return true if the specified file system object
+   is guaranteed not to exist;  otherwise, return false.  */
+static inline bool
+nonexistent_file_errno (int errnum)
+{
+  /* Do not include ELOOP here, since the specified file may indeed
+     exist, but be (in)accessible only via too long a symlink chain.
+     Likewise for ENAMETOOLONG, since rm -f ./././.../foo may fail
+     if the "..." part expands to a long enough sequence of "./"s,
+     even though ./foo does indeed exist.  */
+
+  switch (errnum)
+    {
+    case ENOENT:
+    case ENOTDIR:
+      return true;
+    default:
+      return false;
+    }
+}
+
+/* Encapsulate the test for whether the errno value, ERRNUM, is ignorable.  */
+static inline bool
+ignorable_missing (struct rm_options const *x, int errnum)
+{
+  return x->ignore_missing_files && nonexistent_file_errno (errnum);
+}
 
 /* Remove the file or directory specified by FILENAME.
    Return RM_OK if it is removed, and RM_ERROR or RM_USER_DECLINED if not.
@@ -990,6 +1019,9 @@ remove_entry (int fd_cwd, Dirstack_state const *ds, char const *filename,
 	  || errno == ENOENT || errno == ENOTDIR
 	  || errno == ELOOP || errno == ENAMETOOLONG)
 	{
+	  if (ignorable_missing (x, errno))
+	    return RM_OK;
+
 	  /* Either --recursive is not in effect, or the file cannot be a
 	     directory.  Report the unlink problem and fail.  */
 	  error (0, errno, _("cannot remove %s"),
@@ -1014,7 +1046,7 @@ remove_entry (int fd_cwd, Dirstack_state const *ds, char const *filename,
 	    {
 	      if (fstatat (fd_cwd, filename, st, AT_SYMLINK_NOFOLLOW))
 		{
-		  if (errno == ENOENT && x->ignore_missing_files)
+		  if (ignorable_missing (x, errno))
 		    return RM_OK;
 
 		  error (0, errno, _("cannot remove %s"),
@@ -1195,7 +1227,7 @@ remove_cwd_entries (DIR **dirp,
 
 		/* CAUTION: this test and diagnostic are identical to
 		   those following the other use of fd_to_subdirp.  */
-		if (errno == ENOENT && x->ignore_missing_files)
+		if (ignorable_missing (x, errno))
 		  {
 		    /* With -f, don't report "file not found".  */
 		  }
@@ -1281,7 +1313,7 @@ remove_dir (int fd_cwd, Dirstack_state *ds, char const *dir,
     {
       /* CAUTION: this test and diagnostic are identical to
 	 those following the other use of fd_to_subdirp.  */
-      if (errno == ENOENT && x->ignore_missing_files)
+      if (ignorable_missing (x, errno))
 	{
 	  /* With -f, don't report "file not found".  */
 	}
@@ -1426,7 +1458,7 @@ rm_1 (Dirstack_state *ds, char const *filename,
     {
       if (cache_fstatat (AT_FDCWD, filename, &st, AT_SYMLINK_NOFOLLOW) != 0)
 	{
-	  if (errno == ENOENT && x->ignore_missing_files)
+	  if (ignorable_missing (x, errno))
 	    return RM_OK;
 	  error (0, errno, _("cannot remove %s"), quote (filename));
 	  return RM_ERROR;

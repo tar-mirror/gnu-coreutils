@@ -81,7 +81,7 @@ struct mkdir_options
 {
   /* Function to make an ancestor, or NULL if ancestors should not be
      made.  */
-  int (*make_ancestor_function) (char const *, void *);
+  int (*make_ancestor_function) (char const *, char const *, void *);
 
   /* Mode for ancestor directory.  */
   mode_t ancestor_mode;
@@ -105,15 +105,16 @@ announce_mkdir (char const *dir, void *options)
     error (0, 0, o->created_directory_format, quote (dir));
 }
 
-/* Make ancestor directory DIR, with options OPTIONS.  Return 0 if
-   successful and the resulting directory is readable, 1 if successful
-   but the resulting directory is not readable, -1 (setting errno)
-   otherwise.  */
+/* Make ancestor directory DIR, whose last component is COMPONENT,
+   with options OPTIONS.  Assume the working directory is COMPONENT's
+   parent.  Return 0 if successful and the resulting directory is
+   readable, 1 if successful but the resulting directory is not
+   readable, -1 (setting errno) otherwise.  */
 static int
-make_ancestor (char const *dir, void *options)
+make_ancestor (char const *dir, char const *component, void *options)
 {
   struct mkdir_options const *o = options;
-  int r = mkdir (dir, o->ancestor_mode);
+  int r = mkdir (component, o->ancestor_mode);
   if (r == 0)
     {
       r = ! (o->ancestor_mode & S_IRUSR);

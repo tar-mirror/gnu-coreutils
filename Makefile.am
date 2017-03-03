@@ -35,6 +35,7 @@ EXTRA_DIST = Makefile.cfg Makefile.maint GNUmakefile \
   ChangeLog-2005 \
   announce-gen \
   bootstrap \
+  bootstrap.conf \
   build-aux/cvsu \
   build-aux/vc-list-files \
   gl/modules/getloadavg.diff \
@@ -73,16 +74,17 @@ distcheck-hook:
 
 rm_subst = \
   s!(rm -f (rm|\$$\(bin_PROGRAMS\)))$$!$$1 > /dev/null 2>&1 || /bin/$$1!
+MAINTAINERCLEANFILES = .kludge-stamp
 .kludge-stamp: $(srcdir)/src/Makefile.in
 	perl -pi -e '$(rm_subst)' $(srcdir)/src/Makefile.in
 	touch $@
 
 
-MAINTAINERCLEANFILES = THANKS-to-translators
+MAINTAINERCLEANFILES += THANKS-to-translators
 THANKS-to-translators: po/LINGUAS THANKStt.in
 	(								\
 	  cat $(srcdir)/THANKStt.in;					\
-	  for lang in `cat po/LINGUAS`; do				\
+	  for lang in `cat $(srcdir)/po/LINGUAS`; do				\
 	    echo http://www.iro.umontreal.ca/contrib/po/HTML/team-$$lang.html; \
 	  done;								\
 	) > $@-tmp && mv $@-tmp $@

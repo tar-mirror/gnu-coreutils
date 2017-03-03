@@ -81,6 +81,22 @@ static char sccsid[] = "@(#)fts.c	8.6 (Berkeley) 8/14/94";
 # define _D_EXACT_NAMLEN(dirent) strlen ((dirent)->d_name)
 #endif
 
+#if HAVE_STRUCT_DIRENT_D_TYPE
+/* True if the type of the directory entry D is known.  */
+# define DT_IS_KNOWN(d) ((d)->d_type != DT_UNKNOWN)
+/* True if the type of the directory entry D must be T.  */
+# define DT_MUST_BE(d, t) ((d)->d_type == (t))
+#else
+# define DT_IS_KNOWN(d) false
+# define DT_MUST_BE(d, t) false
+#endif
+
+enum
+{
+  FTS_NO_STAT_REQUIRED = 1,
+  FTS_STAT_REQUIRED = 2
+};
+
 #ifdef _LIBC
 # undef close
 # define close __close
@@ -195,6 +211,19 @@ bool fts_debug = false;
     }								\
   while (false)
 
+/* Overload the fts_statp->st_size member (otherwise unused, when
+   fts_info is FTS_NSOK) to indicate whether fts_read should stat
+   this entry or not.  */
+static void
+fts_set_stat_required (FTSENT *p, bool required)
+{
+  if (p->fts_info != FTS_NSOK)
+    abort ();
+  p->fts_statp->st_size = (required
+			   ? FTS_STAT_REQUIRED
+			   : FTS_NO_STAT_REQUIRED);
+}
+
 /* file-descriptor-relative opendir.  */
 /* FIXME: if others need this function, move it into lib/openat.c */
 static inline DIR *
@@ -258,6 +287,7 @@ fts_open (char * const *argv,
 	FTSENT *parent = NULL;
 	FTSENT *tmp = NULL;	/* pacify gcc */
 	size_t len;
+	bool defer_stat;
 
 	/* Options check. */
 	if (options & ~FTS_OPTIONMASK) {
@@ -303,7 +333,7 @@ fts_open (char * const *argv,
 		   openat via /proc, this technique can still fail, but
 		   only in extreme conditions, e.g., when the working
 		   directory cannot be saved (i.e. save_cwd fails) --
-		   and that happens only on Linux only when "." is unreadable
+		   and that happens on Linux only when "." is unreadable
 		   and the CWD would be longer than PATH_MAX.
 		   FIXME: once Linux kernel openat support is well established,
 		   replace the above open call and this entire if/else block
@@ -340,6 +370,19 @@ fts_open (char * const *argv,
 		parent->fts_level = FTS_ROOTPARENTLEVEL;
 	  }
 
+	/* The classic fts implementation would call fts_stat with
+	   a new entry for each iteration of the loop below.
+	   If the comparison function is not specified or if the
+	   FTS_DEFER_STAT option is in effect, don't stat any entry
+	   in this loop.  This is an attempt to minimize the interval
+	   between the initial stat/lstat/fstatat and the point at which
+	   a directory argument is first opened.  This matters for any
+	   directory command line argument that resides on a file system
+	   without genuine i-nodes.  If you specify FTS_DEFER_STAT along
+	   with a comparison function, that function must not access any
+	   data via the fts_statp pointer.  */
+	defer_stat = (compar == NULL || ISSET(FTS_DEFER_STAT));
+
 	/* Allocate/initialize root(s). */
 	for (root = NULL, nitems = 0; *argv != NULL; ++argv, ++nitems) {
 		/* Don't allow zero-length file names. */
@@ -353,11 +396,15 @@ fts_open (char * const *argv,
 		p->fts_level = FTS_ROOTLEVEL;
 		p->fts_parent = parent;
 		p->fts_accpath = p->fts_name;
-		p->fts_info = fts_stat(sp, p, ISSET(FTS_COMFOLLOW) != 0);
-
-		/* Command-line "." and ".." are real directories. */
-		if (p->fts_info == FTS_DOT)
-			p->fts_info = FTS_D;
+		/* Even when defer_stat is true, be sure to stat the first
+		   command line argument, since fts_read (at least with
+		   FTS_XDEV) requires that.  */
+		if (defer_stat && root != NULL) {
+			p->fts_info = FTS_NSOK;
+			fts_set_stat_required(p, true);
+		} else {
+			p->fts_info = fts_stat(sp, p, false);
+		}
 
 		/*
 		 * If comparison routine supplied, traverse in sorted
@@ -389,7 +436,7 @@ fts_open (char * const *argv,
 	sp->fts_cur->fts_link = root;
 	sp->fts_cur->fts_info = FTS_INIT;
 	if (! setup_dir (sp))
-	  goto mem3;
+		goto mem3;
 
 	/*
 	 * If using chdir(2), grab a file descriptor pointing to dot to ensure
@@ -459,8 +506,7 @@ fts_close (FTS *sp)
 	/* Free up child linked list, sort array, file name buffer. */
 	if (sp->fts_child)
 		fts_lfree(sp->fts_child);
-	if (sp->fts_array)
-		free(sp->fts_array);
+	free(sp->fts_array);
 	free(sp->fts_path);
 
 	if (ISSET(FTS_CWDFD))
@@ -646,6 +692,19 @@ name:		t = sp->fts_path + NAPPEND(p->fts_parent);
 		*t++ = '/';
 		memmove(t, p->fts_name, p->fts_namelen + 1);
 check_for_dir:
+		if (p->fts_info == FTS_NSOK)
+		  {
+		    switch (p->fts_statp->st_size)
+		      {
+		      case FTS_STAT_REQUIRED:
+			p->fts_info = fts_stat(sp, p, false);
+			break;
+		      case FTS_NO_STAT_REQUIRED:
+			break;
+		      default:
+			abort ();
+		      }
+		  }
 		sp->fts_cur = p;
 		if (p->fts_info == FTS_D)
 		  {
@@ -672,6 +731,9 @@ check_for_dir:
 		__set_errno (0);
 		return (sp->fts_cur = NULL);
 	}
+
+	if (p->fts_info == FTS_NSOK)
+	  abort ();
 
 	/* NUL terminate the file name.  */
 	sp->fts_path[p->fts_pathlen] = '\0';
@@ -863,6 +925,11 @@ fts_build (register FTS *sp, int type)
 		}
 		return (NULL);
 	}
+       /* Rather than calling fts_stat for each and every entry encountered
+	  in the readdir loop (below), stat each directory only right after
+	  opening it.  */
+       if (cur->fts_info == FTS_NSOK)
+	 cur->fts_info = fts_stat(sp, cur, false);
 
 	/*
 	 * Nlinks is the number of possible entries of type directory in the
@@ -957,8 +1024,7 @@ fts_build (register FTS *sp, int type)
 				 * structures already allocated.
 				 */
 mem1:				saved_errno = errno;
-				if (p)
-					free(p);
+				free(p);
 				fts_lfree(head);
 				closedir(dirp);
 				cur->fts_info = FTS_ERR;
@@ -1006,12 +1072,38 @@ mem1:				saved_errno = errno;
 			memmove(cp, p->fts_name, p->fts_namelen + 1);
 		} else
 			p->fts_accpath = p->fts_name;
-		/* Stat it. */
-		p->fts_info = fts_stat(sp, p, false);
+
+		bool is_dir;
+		if (sp->fts_compar == NULL || ISSET(FTS_DEFER_STAT)) {
+			/* Record what fts_read will have to do with this
+			   entry. In many cases, it will simply fts_stat it,
+			   but we can take advantage of any d_type information
+			   to optimize away the unnecessary stat calls.  I.e.,
+			   if FTS_NOSTAT is in effect and we're not following
+			   symlinks (FTS_PHYSICAL) and d_type indicates this
+			   is *not* a directory, then we won't have to stat it
+			   at all.  If it *is* a directory, then (currently)
+			   we stat it regardless, in order to get device and
+			   inode numbers.  Some day we might optimize that
+			   away, too, for directories where d_ino is known to
+			   be valid.  */
+			bool skip_stat = (ISSET(FTS_PHYSICAL)
+					  && ISSET(FTS_NOSTAT)
+					  && DT_IS_KNOWN(dp)
+					  && ! DT_MUST_BE(dp, DT_DIR));
+			p->fts_info = FTS_NSOK;
+			fts_set_stat_required(p, !skip_stat);
+			is_dir = (ISSET(FTS_PHYSICAL) && ISSET(FTS_NOSTAT)
+				  && DT_MUST_BE(dp, DT_DIR));
+		} else {
+			p->fts_info = fts_stat(sp, p, false);
+			is_dir = (p->fts_info == FTS_D
+				  || p->fts_info == FTS_DC
+				  || p->fts_info == FTS_DOT);
+		}
 
 		/* Decrement link count if applicable. */
-		if (nlinks > 0 && (p->fts_info == FTS_D ||
-		    p->fts_info == FTS_DC || p->fts_info == FTS_DOT))
+		if (nlinks > 0 && is_dir)
 			nlinks -= nostat;
 
 		/* We walk in directory order so "ls -f" doesn't get upset. */
@@ -1145,6 +1237,9 @@ fts_stat(FTS *sp, register FTSENT *p, bool follow)
 	struct stat *sbp = p->fts_statp;
 	int saved_errno;
 
+	if (p->fts_level == FTS_ROOTLEVEL && ISSET(FTS_COMFOLLOW))
+		follow = true;
+
 #if defined FTS_WHITEOUT && 0
 	/* check for whiteout */
 	if (p->fts_flags & FTS_ISW) {
@@ -1178,8 +1273,10 @@ err:		memset(sbp, 0, sizeof(struct stat));
 	}
 
 	if (S_ISDIR(sbp->st_mode)) {
-		if (ISDOT(p->fts_name))
-			return (FTS_DOT);
+		if (ISDOT(p->fts_name)) {
+			/* Command-line "." and ".." are real directories. */
+			return (p->fts_level == FTS_ROOTLEVEL ? FTS_D : FTS_DOT);
+		}
 
 #if _LGPL_PACKAGE
 		{
@@ -1335,10 +1432,7 @@ fts_palloc (FTS *sp, size_t more)
 	 * See if fts_pathlen would overflow.
 	 */
 	if (new_len < sp->fts_pathlen) {
-		if (sp->fts_path) {
-			free(sp->fts_path);
-			sp->fts_path = NULL;
-		}
+		free(sp->fts_path);
 		sp->fts_path = NULL;
 		__set_errno (ENAMETOOLONG);
 		return false;
@@ -1426,7 +1520,7 @@ fts_safe_changedir (FTS *sp, FTSENT *p, int fd, char const *dir)
 	   general (when the target is not ".."), diropen's use of
 	   O_NOFOLLOW ensures we don't mistakenly follow a symlink,
 	   so we can avoid the expense of this fstat.  */
-	if (ISSET(FTS_LOGICAL) || O_NOFOLLOW == 0
+	if (ISSET(FTS_LOGICAL) || ! HAVE_WORKING_O_NOFOLLOW
 	    || (dir && STREQ (dir, "..")))
 	  {
 	    struct stat sb;

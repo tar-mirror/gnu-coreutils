@@ -20,7 +20,7 @@
 dnl Written by Jim Meyering.
 
 AC_PREREQ(2.60)
-AC_INIT([GNU coreutils],[6.3],[bug-coreutils@gnu.org])
+AC_INIT([GNU coreutils],[6.4],[bug-coreutils@gnu.org])
 AC_CONFIG_SRCDIR(src/ls.c)
 
 AC_CONFIG_AUX_DIR(build-aux)
@@ -36,7 +36,8 @@ AC_PROG_GCC_TRADITIONAL
 AC_PROG_RANLIB
 AC_PROG_LN_S
 gl_EARLY
-gl_MACROS
+gl_INIT
+coreutils_MACROS
 
 AC_CHECK_FUNCS(uname,
 	OPTIONAL_BIN_PROGS="$OPTIONAL_BIN_PROGS uname\$(EXEEXT)"
@@ -58,14 +59,14 @@ AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <time.h>
 # include <stdlib.h>
 #endif
 extern char **environ;
-unset_TZ ()
+void unset_TZ (void)
 {
   char **from, **to;
   for (to = from = environ; (*to = *from); from++)
     if (! (to[0][0] == 'T' && to[0][1] == 'Z' && to[0][2] == '='))
       to++;
 }
-main()
+int main()
 {
   time_t now = time ((time_t *) 0);
   int hour_GMT0, hour_unset;
@@ -146,7 +147,7 @@ coreutils_DUMMY_1
 AC_MSG_CHECKING(ut_host in struct utmp)
 AC_CACHE_VAL(su_cv_func_ut_host_in_utmp,
 [AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
-#include <utmp.h>]], [[struct utmp ut; ut.ut_host;]])],
+#include <utmp.h>]], [[struct utmp ut; return !sizeof ut.ut_host;]])],
   [su_cv_func_ut_host_in_utmp=yes],
   [su_cv_func_ut_host_in_utmp=no])])
 AC_MSG_RESULT($su_cv_func_ut_host_in_utmp)
@@ -159,7 +160,7 @@ if test -z "$have_ut_host"; then
   AC_MSG_CHECKING(ut_host in struct utmpx)
   AC_CACHE_VAL(su_cv_func_ut_host_in_utmpx,
   [AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
-#include <utmpx.h>]], [[struct utmpx ut; ut.ut_host;]])],
+#include <utmpx.h>]], [[struct utmpx ut; return !sizeof ut.ut_host;]])],
     [su_cv_func_ut_host_in_utmpx=yes],
     [su_cv_func_ut_host_in_utmpx=no])])
   AC_MSG_RESULT($su_cv_func_ut_host_in_utmpx)
@@ -201,7 +202,7 @@ yes
 #define _XOPEN_SOURCE
 #endif
 #include <sys/types.h>
-#include <termios.h>]], [[struct termios t; t.c_line;]])],
+#include <termios.h>]], [[struct termios t; return !sizeof t.c_line;]])],
     [su_cv_sys_c_line_in_termios=yes],
     [su_cv_sys_c_line_in_termios=no])])
   AC_MSG_RESULT($su_cv_sys_c_line_in_termios)

@@ -40,10 +40,6 @@
 # define MAXHOSTNAMELEN 64
 #endif
 
-#ifndef S_IWGRP
-# define S_IWGRP 020
-#endif
-
 char *ttyname ();
 
 /* The name this program was run with. */

@@ -79,7 +79,8 @@ static bool install_file_in_file (const char *from, const char *to,
 static void get_ids (void);
 static void strip (char const *name);
 static void announce_mkdir (char const *dir, void *options);
-static int make_ancestor (char const *dir, void *options);
+static int make_ancestor (char const *dir, char const *component,
+			  void *options);
 void usage (int status);
 
 /* The name this program was run with, for error messages. */
@@ -629,11 +630,13 @@ announce_mkdir (char const *dir, void *options)
     error (0, 0, _("creating directory %s"), quote (dir));
 }
 
-/* Make ancestor directory DIR, with options OPTIONS.  */
+/* Make ancestor directory DIR, whose last file name component is
+   COMPONENT, with options OPTIONS.  Assume the working directory is
+   COMPONENT's parent.  */
 static int
-make_ancestor (char const *dir, void *options)
+make_ancestor (char const *dir, char const *component, void *options)
 {
-  int r = mkdir (dir, DEFAULT_MODE);
+  int r = mkdir (component, DEFAULT_MODE);
   if (r == 0)
     announce_mkdir (dir, options);
   return r;

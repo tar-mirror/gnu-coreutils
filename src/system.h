@@ -117,18 +117,7 @@ you must include <sys/types.h> before including this file
 
 #include <stdbool.h>
 #include <stdlib.h>
-
-/* The following test is to work around the gross typo in
-   systems like Sony NEWS-OS Release 4.0C, whereby EXIT_FAILURE
-   is defined to 0, not 1.  */
-#if !EXIT_FAILURE
-# undef EXIT_FAILURE
-# define EXIT_FAILURE 1
-#endif
-
-#ifndef EXIT_SUCCESS
-# define EXIT_SUCCESS 0
-#endif
+#include <exit.h>
 
 /* Exit statuses for programs like 'env' that exec other programs.
    EXIT_FAILURE might not be 1, so use EXIT_FAIL in such programs.  */
@@ -206,11 +195,14 @@ enum
 /* Some systems, like Sequents, return st_blksize of 0 on pipes.
    Also, when running `rsh hpux11-system cat any-file', cat would
    determine that the output stream had an st_blksize of 2147421096.
-   So here we arbitrarily limit the `optimal' block size to 4MB.
-   If anyone knows of a system for which the legitimate value for
-   st_blksize can exceed 4MB, please report it as a bug in this code.  */
+   Conversely st_blksize can be 2 GiB (or maybe even larger) with XFS
+   on 64-bit hosts.  Somewhat arbitrarily, limit the `optimal' block
+   size to SIZE_MAX / 8 + 1.  (Dividing SIZE_MAX by only 4 wouldn't
+   suffice, since "cat" sometimes multiplies the result by 4.)  If
+   anyone knows of a system for which this limit is too small, please
+   report it as a bug in this code.  */
 # define ST_BLKSIZE(statbuf) ((0 < (statbuf).st_blksize \
-			       && (statbuf).st_blksize <= (1 << 22)) /* 4MB */ \
+			       && (statbuf).st_blksize <= SIZE_MAX / 8 + 1) \
 			      ? (statbuf).st_blksize : DEV_BSIZE)
 # if defined hpux || defined __hpux__ || defined __hpux
 /* HP-UX counts st_blocks in 1024-byte units.

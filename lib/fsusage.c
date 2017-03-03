@@ -56,10 +56,6 @@
 # include "full-read.h"
 #endif
 
-#ifndef UINTMAX_MAX
-# define UINTMAX_MAX ((uintmax_t) -1)
-#endif
-
 /* Many space usage primitives use all 1 bits to denote a value that is
    not applicable or unknown.  Propagate this information by returning
    a uintmax_t value that is all 1 bits if X is all 1 bits, even if X
@@ -69,7 +65,7 @@
     && (~ (x) == (sizeof (x) < sizeof (int) \
 		  ? - (1 << (sizeof (x) * CHAR_BIT)) \
 		  : 0))) \
-   ? UINTMAX_MAX : (x))
+   ? UINTMAX_MAX : (uintmax_t) (x))
 
 /* Extract the top bit of X as an uintmax_t value.  */
 #define EXTRACT_TOP_BIT(x) ((x) \

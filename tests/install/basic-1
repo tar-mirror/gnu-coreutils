@@ -24,6 +24,14 @@ if test "$VERBOSE" = yes; then
   ginstall --version
 fi
 
+# Make sure we get English translations.
+LANGUAGE=C
+export LANGUAGE
+LC_ALL=C
+export LC_ALL
+LANG=C
+export LANG
+
 . $srcdir/../envvar-check
 PRIV_CHECK_ARG=require-non-root . $srcdir/../priv-check
 
@@ -32,7 +40,7 @@ file=file
 
 pwd=`pwd`
 t0=`echo "$0"|sed 's,.*/,,'`.tmp; tmp=$t0/$$
-trap 'status=$?; cd $pwd; chmod -R u+rwx $t0; rm -rf $t0 && exit $status' 0
+trap 'status=$?; cd "$pwd" && chmod -R u+rwx $t0 && rm -rf $t0 && exit $status' 0
 trap '(exit $?); exit $?' 1 2 13 15
 
 framework_failure=0
@@ -58,7 +66,20 @@ test -f $dir/$file || fail=1
 # Make sure strip works.
 dd=dd$EXEEXT
 dd2=dd2$EXEEXT
-cp $pwd/../../src/$dd . || fail=1
+
+just_built_dd=$pwd/../../src/$dd
+
+test -r "$just_built_dd" || \
+  {
+    cat 1>&2 <<EOF
+$0: WARNING!!!
+Your just-built dd binary, $just_built_dd
+is not readable, so skipping the remaining tests in this file.
+EOF
+    exit 77
+  }
+
+cp "$just_built_dd" . || fail=1
 cp $dd $dd2 || fail=1
 
 strip $dd2 || \
@@ -96,7 +117,7 @@ test -d newdir3 || fail=1
 # hence cannot do anything meaningful with the following relative-named dirs.
 abs=$pwd/$tmp
 mkdir sub || fail=1
-(cd sub && chmod 0 . && ginstall -d $abs/xx/yy rel/sub1 rel/sub2 2> /dev/null) && fail=1
+(cd sub && chmod 0 . && ginstall -d "$abs"/xx/yy rel/sub1 rel/sub2 2> /dev/null) && fail=1
 chmod 755 sub
 
 # Ensure that the first argument-dir has been created.
@@ -111,10 +132,20 @@ test -d xx/rel && fail=1
 # inaccessible parent.  coreutils 5.97 fails this test.
 mkdir -p sub1/d || fail=1
 (cd sub1/d && chmod a-rx .. && chmod a-r . &&
- ginstall -d $abs/xx/zz rel/a rel/b 2> /dev/null) || fail=1
+ ginstall -d "$abs"/xx/zz rel/a rel/b 2> /dev/null) || fail=1
 chmod 755 sub1 sub1/d || fail=1
 test -d xx/zz || fail=1
 test -d sub1/d/rel/a || fail=1
 test -d sub1/d/rel/b || fail=1
+
+touch file || fail=1
+ginstall -Dv file sub3/a/b/c/file >out 2>&1 || fail=1
+diff - out <<\EOF || fail=1
+ginstall: creating directory `sub3'
+ginstall: creating directory `sub3/a'
+ginstall: creating directory `sub3/a/b'
+ginstall: creating directory `sub3/a/b/c'
+`file' -> `sub3/a/b/c/file'
+EOF
 
 (exit $fail); exit $fail

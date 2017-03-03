@@ -21,6 +21,7 @@
 AUTOMAKE_OPTIONS = 1.1 gnits
 
 TESTS = \
+  ignorable \
   readdir-bug \
   empty-inacc \
   dir-nonrecur \
