@@ -787,6 +787,14 @@ EXTRA_DIST += test-iconv.c signature.h macros.h
 
 ## end   gnulib module iconv-tests
 
+## begin gnulib module ignore-value-tests
+
+TESTS += test-ignore-value
+check_PROGRAMS += test-ignore-value
+EXTRA_DIST += test-ignore-value.c
+
+## end   gnulib module ignore-value-tests
+
 ## begin gnulib module inet_ntop-tests
 
 TESTS += test-inet_ntop
@@ -1254,15 +1262,6 @@ check_PROGRAMS += test-rand-isaac
 EXTRA_DIST += test-rand-isaac.c
 
 ## end   gnulib module randread-tests
-
-## begin gnulib module read-file
-
-
-EXTRA_DIST += read-file.c read-file.h
-
-EXTRA_libtests_a_SOURCES += read-file.c
-
-## end   gnulib module read-file
 
 ## begin gnulib module read-file-tests
 

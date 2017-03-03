@@ -2,7 +2,7 @@
 # @configure_input@
 
 # Copyright (C) 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002,
-# 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010  Free Software
+# 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Free Software
 # Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
@@ -144,21 +144,20 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/00gnulib.m4 \
 	$(top_srcdir)/m4/lstat.m4 $(top_srcdir)/m4/malloc.m4 \
 	$(top_srcdir)/m4/malloca.m4 $(top_srcdir)/m4/manywarnings.m4 \
 	$(top_srcdir)/m4/math_h.m4 $(top_srcdir)/m4/mbchar.m4 \
-	$(top_srcdir)/m4/mbiter.m4 $(top_srcdir)/m4/mbrlen.m4 \
-	$(top_srcdir)/m4/mbrtowc.m4 $(top_srcdir)/m4/mbsinit.m4 \
-	$(top_srcdir)/m4/mbslen.m4 $(top_srcdir)/m4/mbsrtowcs.m4 \
-	$(top_srcdir)/m4/mbstate_t.m4 $(top_srcdir)/m4/mbswidth.m4 \
-	$(top_srcdir)/m4/md5.m4 $(top_srcdir)/m4/memcasecmp.m4 \
-	$(top_srcdir)/m4/memchr.m4 $(top_srcdir)/m4/memcoll.m4 \
-	$(top_srcdir)/m4/mempcpy.m4 $(top_srcdir)/m4/memrchr.m4 \
-	$(top_srcdir)/m4/mgetgroups.m4 $(top_srcdir)/m4/mkancesdirs.m4 \
-	$(top_srcdir)/m4/mkdir-p.m4 $(top_srcdir)/m4/mkdir.m4 \
-	$(top_srcdir)/m4/mkstemp.m4 $(top_srcdir)/m4/mktime.m4 \
-	$(top_srcdir)/m4/mmap-anon.m4 $(top_srcdir)/m4/mode_t.m4 \
-	$(top_srcdir)/m4/modechange.m4 $(top_srcdir)/m4/mountlist.m4 \
-	$(top_srcdir)/m4/mpsort.m4 $(top_srcdir)/m4/multiarch.m4 \
-	$(top_srcdir)/m4/nanosleep.m4 $(top_srcdir)/m4/netdb_h.m4 \
-	$(top_srcdir)/m4/netinet_in_h.m4 \
+	$(top_srcdir)/m4/mbiter.m4 $(top_srcdir)/m4/mbrtowc.m4 \
+	$(top_srcdir)/m4/mbsinit.m4 $(top_srcdir)/m4/mbslen.m4 \
+	$(top_srcdir)/m4/mbsrtowcs.m4 $(top_srcdir)/m4/mbstate_t.m4 \
+	$(top_srcdir)/m4/mbswidth.m4 $(top_srcdir)/m4/md5.m4 \
+	$(top_srcdir)/m4/memcasecmp.m4 $(top_srcdir)/m4/memchr.m4 \
+	$(top_srcdir)/m4/memcoll.m4 $(top_srcdir)/m4/mempcpy.m4 \
+	$(top_srcdir)/m4/memrchr.m4 $(top_srcdir)/m4/mgetgroups.m4 \
+	$(top_srcdir)/m4/mkancesdirs.m4 $(top_srcdir)/m4/mkdir-p.m4 \
+	$(top_srcdir)/m4/mkdir.m4 $(top_srcdir)/m4/mkstemp.m4 \
+	$(top_srcdir)/m4/mktime.m4 $(top_srcdir)/m4/mmap-anon.m4 \
+	$(top_srcdir)/m4/mode_t.m4 $(top_srcdir)/m4/modechange.m4 \
+	$(top_srcdir)/m4/mountlist.m4 $(top_srcdir)/m4/mpsort.m4 \
+	$(top_srcdir)/m4/multiarch.m4 $(top_srcdir)/m4/nanosleep.m4 \
+	$(top_srcdir)/m4/netdb_h.m4 $(top_srcdir)/m4/netinet_in_h.m4 \
 	$(top_srcdir)/m4/nl_langinfo.m4 $(top_srcdir)/m4/nls.m4 \
 	$(top_srcdir)/m4/nocrash.m4 $(top_srcdir)/m4/nproc.m4 \
 	$(top_srcdir)/m4/open.m4 $(top_srcdir)/m4/openat.m4 \
@@ -1313,9 +1312,9 @@ top_srcdir = @top_srcdir@
 # otherwise we may get into trouble with distinct strings that the
 # current locale considers to be equal.
 ASSORT = LC_ALL=C sort
-EXTRA_DIST = Coreutils.pm CuTmpdir.pm check.mk envvar-check init.cfg \
-	init.sh lang-default other-fs-tmpdir require-perl sample-test \
-	$(pr_data) $(TESTS)
+EXTRA_DIST = Coreutils.pm CuTmpdir.pm check.mk envvar-check \
+	filefrag-extent-compare init.cfg init.sh lang-default \
+	other-fs-tmpdir require-perl sample-test $(pr_data) $(TESTS)
 root_tests = \
   chown/basic					\
   cp/cp-a-selinux				\
@@ -1323,6 +1322,7 @@ root_tests = \
   cp/special-bits				\
   cp/cp-mv-enotsup-xattr			\
   cp/capability					\
+  cp/sparse-fiemap                              \
   dd/skip-seek-past-dev				\
   install/install-C-root			\
   ls/capability					\
@@ -1568,6 +1568,7 @@ TESTS = \
   misc/tty-eof					\
   misc/unexpand					\
   misc/uniq					\
+  misc/uniq-perf				\
   misc/xattr					\
   tail-2/wait					\
   chmod/c-option				\
@@ -1599,6 +1600,8 @@ TESTS = \
   cp/dir-vs-file				\
   cp/existing-perm-race				\
   cp/fail-perm					\
+  cp/fiemap-perf                                \
+  cp/fiemap-2                                   \
   cp/file-perm-race				\
   cp/into-self					\
   cp/link					\
@@ -1620,6 +1623,7 @@ TESTS = \
   cp/same-file					\
   cp/slink-2-slink				\
   cp/sparse					\
+  cp/sparse-to-pipe				\
   cp/special-f					\
   cp/src-base-dot				\
   cp/symlink-slash				\
@@ -1652,6 +1656,7 @@ TESTS = \
   du/long-from-unreadable			\
   du/long-sloop					\
   du/max-depth					\
+  du/move-dir-while-traversing			\
   du/no-deref					\
   du/no-x					\
   du/one-file-system				\
@@ -2053,7 +2058,8 @@ $(TEST_SUITE_LOG): $(TEST_LOGS)
 	@$(am__sh_e_setup);						\
 	list='$(TEST_LOGS)';						\
 	results=`for f in $$list; do					\
-		   read line < $$f && echo "$$line" || echo FAIL;	\
+		   test -r $$f && read line < $$f && echo "$$line"	\
+		     || echo FAIL;					\
 		 done`;							\
 	all=`echo "$$results" | sed '/^$$/d' | wc -l | sed -e 's/^[	 ]*//'`; \
 	fail=`echo "$$results" | grep -c '^FAIL'`;			\
@@ -2102,7 +2108,7 @@ $(TEST_SUITE_LOG): $(TEST_LOGS)
 	  echo ".. contents:: :depth: 2";				\
 	  echo;								\
 	  for f in $$list; do						\
-	    read line < $$f;						\
+	    test -r $$f && read line < $$f || line=;			\
 	    case $$line in						\
 	      PASS:*|XFAIL:*);;						\
 	      *) echo; cat $$f;;					\
@@ -2166,7 +2172,7 @@ recheck recheck-html:
 	list='$(TEST_LOGS)';						\
 	list=`for f in $$list; do					\
 	        test -f $$f || continue;				\
-	        if read line < $$f; then				\
+	        if test -r $$f && read line < $$f; then			\
 	          case $$line in FAIL*|XPASS*) echo $$f;; esac;		\
 	        else echo $$f; fi;					\
 	      done | tr '\012\015' '  '`;				\
@@ -2594,6 +2600,8 @@ misc/unexpand.log: misc/unexpand
 	@p='misc/unexpand'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 misc/uniq.log: misc/uniq
 	@p='misc/uniq'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+misc/uniq-perf.log: misc/uniq-perf
+	@p='misc/uniq-perf'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 misc/xattr.log: misc/xattr
 	@p='misc/xattr'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 tail-2/wait.log: tail-2/wait
@@ -2656,6 +2664,10 @@ cp/existing-perm-race.log: cp/existing-perm-race
 	@p='cp/existing-perm-race'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 cp/fail-perm.log: cp/fail-perm
 	@p='cp/fail-perm'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+cp/fiemap-perf.log: cp/fiemap-perf
+	@p='cp/fiemap-perf'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+cp/fiemap-2.log: cp/fiemap-2
+	@p='cp/fiemap-2'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 cp/file-perm-race.log: cp/file-perm-race
 	@p='cp/file-perm-race'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 cp/into-self.log: cp/into-self
@@ -2698,6 +2710,8 @@ cp/slink-2-slink.log: cp/slink-2-slink
 	@p='cp/slink-2-slink'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 cp/sparse.log: cp/sparse
 	@p='cp/sparse'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+cp/sparse-to-pipe.log: cp/sparse-to-pipe
+	@p='cp/sparse-to-pipe'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 cp/special-f.log: cp/special-f
 	@p='cp/special-f'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 cp/src-base-dot.log: cp/src-base-dot
@@ -2762,6 +2776,8 @@ du/long-sloop.log: du/long-sloop
 	@p='du/long-sloop'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 du/max-depth.log: du/max-depth
 	@p='du/max-depth'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+du/move-dir-while-traversing.log: du/move-dir-while-traversing
+	@p='du/move-dir-while-traversing'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 du/no-deref.log: du/no-deref
 	@p='du/no-deref'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 du/no-x.log: du/no-x
@@ -3024,6 +3040,8 @@ cp/cp-mv-enotsup-xattr.log: cp/cp-mv-enotsup-xattr
 	@p='cp/cp-mv-enotsup-xattr'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 cp/capability.log: cp/capability
 	@p='cp/capability'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+cp/sparse-fiemap.log: cp/sparse-fiemap
+	@p='cp/sparse-fiemap'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 dd/skip-seek-past-dev.log: dd/skip-seek-past-dev
 	@p='dd/skip-seek-past-dev'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 install/install-C-root.log: install/install-C-root
@@ -3225,8 +3243,8 @@ root-hint:
 	@echo "  See the 'Running tests as root' section in README."
 	@echo '***********************************************************'
 vc_exe_in_TESTS: Makefile
-	@rm -f t1 t2
-	@if test -d $(top_srcdir)/.git && test $(srcdir) = .; then	\
+	$(AM_V_GEN)rm -f t1 t2;						\
+	if test -d $(top_srcdir)/.git && test $(srcdir) = .; then	\
 	  { sed -n '/^$(_v) =[	 ]*\\$$/,/[^\]$$/p'			\
 		$(srcdir)/Makefile.am					\
 	    | sed 's/^  *//;/^\$$.*/d;/^$(_v) =/d';			\

@@ -1,7 +1,8 @@
 # generated automatically by aclocal 1.11a -*- Autoconf -*-
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004,
-# 2005, 2006, 2007, 2008, 2009, 2010  Free Software Foundation, Inc.
+# 2005, 2006, 2007, 2008, 2009, 2010, 2011 Free Software Foundation,
+# Inc.
 # This file is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
@@ -13,8 +14,8 @@
 
 m4_ifndef([AC_AUTOCONF_VERSION],
   [m4_copy([m4_PACKAGE_VERSION], [AC_AUTOCONF_VERSION])])dnl
-m4_if(m4_defn([AC_AUTOCONF_VERSION]), [2.68.11-45b92],,
-[m4_warning([this file was generated for autoconf 2.68.11-45b92.
+m4_if(m4_defn([AC_AUTOCONF_VERSION]), [2.68.24-5f61],,
+[m4_warning([this file was generated for autoconf 2.68.24-5f61.
 You have another version of autoconf.  It may work, but is not guaranteed to.
 If you have problems, you may need to regenerate the build system entirely.
 To do so, use the procedure documented by the package, typically `autoreconf'.])])
@@ -145,13 +146,13 @@ Usually this means the macro was only invoked conditionally.]])
 fi])])
 
 # Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2009,
-# 2010  Free Software Foundation, Inc.
+# 2010, 2011 Free Software Foundation, Inc.
 #
 # This file is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
 
-# serial 11
+# serial 13
 
 # There are a few dirty hacks below to avoid letting `AC_PROG_CC' be
 # written in clear, in which case automake, when reading aclocal.m4,
@@ -191,6 +192,7 @@ AC_CACHE_CHECK([dependency style of $depcc],
   # instance it was reported that on HP-UX the gcc test will end up
   # making a dummy file named `D' -- because `-MD' means `put the output
   # in D'.
+  rm -rf conftest.dir
   mkdir conftest.dir
   # Copy depcomp to subdir because otherwise we won't find it if we're
   # using a relative directory.
@@ -314,9 +316,13 @@ AC_SUBST([DEPDIR], ["${am__leading_dot}deps"])dnl
 # AM_DEP_TRACK
 # ------------
 AC_DEFUN([AM_DEP_TRACK],
-[AC_ARG_ENABLE(dependency-tracking,
-[  --disable-dependency-tracking  speeds up one-time build
-  --enable-dependency-tracking   do not reject slow dependency extractors])
+[AC_ARG_ENABLE([dependency-tracking], [dnl
+AS_HELP_STRING(
+  [--enable-dependency-tracking],
+  [do not reject slow dependency extractors])
+AS_HELP_STRING(
+  [--disable-dependency-tracking],
+  [speeds up one-time build])])
 if test "x$enable_dependency_tracking" != xno; then
   am_depcomp="$ac_aux_dir/depcomp"
   AMDEPBACKSLASH='\'
@@ -808,14 +814,14 @@ AU_DEFUN([fp_C_PROTOTYPES], [AM_C_PROTOTYPES])
 
 # Check to make sure that the build environment is sane.    -*- Autoconf -*-
 
-# Copyright (C) 1996, 1997, 2000, 2001, 2003, 2005, 2008, 2009, 2010
-# Free Software Foundation, Inc.
+# Copyright (C) 1996, 1997, 2000, 2001, 2003, 2005, 2008, 2009, 2010,
+# 2011 Free Software Foundation, Inc.
 #
 # This file is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
 
-# serial 7
+# serial 8
 
 # AM_SANITY_CHECK
 # ---------------
@@ -885,7 +891,8 @@ fi
 AC_CONFIG_COMMANDS_PRE(
   [AC_MSG_CHECKING([that generated files are newer than configure])
    if test -n "$am_sleep_pid"; then
-     wait $am_sleep_pid
+     # Hide warnings about reused PIDs.
+     wait $am_sleep_pid 2>/dev/null
    fi
    AC_MSG_RESULT([done])])
 rm -f conftest.file
@@ -1239,7 +1246,6 @@ m4_include([m4/manywarnings.m4])
 m4_include([m4/math_h.m4])
 m4_include([m4/mbchar.m4])
 m4_include([m4/mbiter.m4])
-m4_include([m4/mbrlen.m4])
 m4_include([m4/mbrtowc.m4])
 m4_include([m4/mbsinit.m4])
 m4_include([m4/mbslen.m4])

@@ -2214,7 +2214,9 @@ debug_key (struct line const *line, struct keyfield const *key)
 
           char *tighter_lim = beg;
 
-          if (key->month)
+          if (lim < beg)
+            tighter_lim = lim;
+          else if (key->month)
             getmonth (beg, &tighter_lim);
           else if (key->general_numeric)
             ignore_value (strtold (beg, &tighter_lim));
@@ -2341,10 +2343,10 @@ key_warnings (struct keyfield const *gkey, bool gkey_only)
           pn = stpcpy (stpcpy (pn, "-k "), umaxtostr (sword + 1, tmp));
           if (key->eword != SIZE_MAX)
             {
-              po = stpcpy (stpcpy (po, " -"), umaxtostr (eword + 1, tmp));
-              pn = stpcpy (stpcpy (pn, ","),
-                           umaxtostr (eword + 1
-                                      + (key->echar == SIZE_MAX), tmp));
+              stpcpy (stpcpy (po, " -"), umaxtostr (eword + 1, tmp));
+              stpcpy (stpcpy (pn, ","),
+                      umaxtostr (eword + 1
+                                 + (key->echar == SIZE_MAX), tmp));
             }
           error (0, 0, _("obsolescent key `%s' used; consider `%s' instead"),
                  obuf, nbuf);
@@ -3770,6 +3772,7 @@ sort (char *const *files, size_t nfiles, char const *output_file,
       size_t nthreads)
 {
   struct buffer buf;
+  IF_LINT (buf.buf = NULL);
   size_t ntemps = 0;
   bool output_file_created = false;
 

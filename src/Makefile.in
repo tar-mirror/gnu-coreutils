@@ -2,7 +2,7 @@
 # @configure_input@
 
 # Copyright (C) 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002,
-# 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010  Free Software
+# 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Free Software
 # Foundation, Inc.
 # This Makefile.in is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
@@ -155,21 +155,20 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/00gnulib.m4 \
 	$(top_srcdir)/m4/lstat.m4 $(top_srcdir)/m4/malloc.m4 \
 	$(top_srcdir)/m4/malloca.m4 $(top_srcdir)/m4/manywarnings.m4 \
 	$(top_srcdir)/m4/math_h.m4 $(top_srcdir)/m4/mbchar.m4 \
-	$(top_srcdir)/m4/mbiter.m4 $(top_srcdir)/m4/mbrlen.m4 \
-	$(top_srcdir)/m4/mbrtowc.m4 $(top_srcdir)/m4/mbsinit.m4 \
-	$(top_srcdir)/m4/mbslen.m4 $(top_srcdir)/m4/mbsrtowcs.m4 \
-	$(top_srcdir)/m4/mbstate_t.m4 $(top_srcdir)/m4/mbswidth.m4 \
-	$(top_srcdir)/m4/md5.m4 $(top_srcdir)/m4/memcasecmp.m4 \
-	$(top_srcdir)/m4/memchr.m4 $(top_srcdir)/m4/memcoll.m4 \
-	$(top_srcdir)/m4/mempcpy.m4 $(top_srcdir)/m4/memrchr.m4 \
-	$(top_srcdir)/m4/mgetgroups.m4 $(top_srcdir)/m4/mkancesdirs.m4 \
-	$(top_srcdir)/m4/mkdir-p.m4 $(top_srcdir)/m4/mkdir.m4 \
-	$(top_srcdir)/m4/mkstemp.m4 $(top_srcdir)/m4/mktime.m4 \
-	$(top_srcdir)/m4/mmap-anon.m4 $(top_srcdir)/m4/mode_t.m4 \
-	$(top_srcdir)/m4/modechange.m4 $(top_srcdir)/m4/mountlist.m4 \
-	$(top_srcdir)/m4/mpsort.m4 $(top_srcdir)/m4/multiarch.m4 \
-	$(top_srcdir)/m4/nanosleep.m4 $(top_srcdir)/m4/netdb_h.m4 \
-	$(top_srcdir)/m4/netinet_in_h.m4 \
+	$(top_srcdir)/m4/mbiter.m4 $(top_srcdir)/m4/mbrtowc.m4 \
+	$(top_srcdir)/m4/mbsinit.m4 $(top_srcdir)/m4/mbslen.m4 \
+	$(top_srcdir)/m4/mbsrtowcs.m4 $(top_srcdir)/m4/mbstate_t.m4 \
+	$(top_srcdir)/m4/mbswidth.m4 $(top_srcdir)/m4/md5.m4 \
+	$(top_srcdir)/m4/memcasecmp.m4 $(top_srcdir)/m4/memchr.m4 \
+	$(top_srcdir)/m4/memcoll.m4 $(top_srcdir)/m4/mempcpy.m4 \
+	$(top_srcdir)/m4/memrchr.m4 $(top_srcdir)/m4/mgetgroups.m4 \
+	$(top_srcdir)/m4/mkancesdirs.m4 $(top_srcdir)/m4/mkdir-p.m4 \
+	$(top_srcdir)/m4/mkdir.m4 $(top_srcdir)/m4/mkstemp.m4 \
+	$(top_srcdir)/m4/mktime.m4 $(top_srcdir)/m4/mmap-anon.m4 \
+	$(top_srcdir)/m4/mode_t.m4 $(top_srcdir)/m4/modechange.m4 \
+	$(top_srcdir)/m4/mountlist.m4 $(top_srcdir)/m4/mpsort.m4 \
+	$(top_srcdir)/m4/multiarch.m4 $(top_srcdir)/m4/nanosleep.m4 \
+	$(top_srcdir)/m4/netdb_h.m4 $(top_srcdir)/m4/netinet_in_h.m4 \
 	$(top_srcdir)/m4/nl_langinfo.m4 $(top_srcdir)/m4/nls.m4 \
 	$(top_srcdir)/m4/nocrash.m4 $(top_srcdir)/m4/nproc.m4 \
 	$(top_srcdir)/m4/open.m4 $(top_srcdir)/m4/openat.m4 \
@@ -323,7 +322,7 @@ cksum_DEPENDENCIES = $(am__DEPENDENCIES_2)
 comm_SOURCES = comm.c
 comm_OBJECTS = comm.$(OBJEXT)
 comm_DEPENDENCIES = $(am__DEPENDENCIES_2)
-am__objects_1 = copy.$(OBJEXT) cp-hash.$(OBJEXT)
+am__objects_1 = copy.$(OBJEXT) cp-hash.$(OBJEXT) extent-scan.$(OBJEXT)
 am_cp_OBJECTS = cp.$(OBJEXT) $(am__objects_1)
 cp_OBJECTS = $(am_cp_OBJECTS)
 am__DEPENDENCIES_4 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -389,7 +388,8 @@ fold_DEPENDENCIES = $(am__DEPENDENCIES_2)
 getlimits_SOURCES = getlimits.c
 getlimits_OBJECTS = getlimits.$(OBJEXT)
 getlimits_DEPENDENCIES = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1)
-am__objects_2 = ginstall-copy.$(OBJEXT) ginstall-cp-hash.$(OBJEXT)
+am__objects_2 = ginstall-copy.$(OBJEXT) ginstall-cp-hash.$(OBJEXT) \
+	ginstall-extent-scan.$(OBJEXT)
 am_ginstall_OBJECTS = ginstall-install.$(OBJEXT) \
 	ginstall-prog-fprintf.$(OBJEXT) $(am__objects_2)
 ginstall_OBJECTS = $(am_ginstall_OBJECTS)
@@ -1657,6 +1657,7 @@ noinst_HEADERS = \
   copy.h		\
   cp-hash.h		\
   dircolors.h		\
+  fiemap.h		\
   find-mount-point.h	\
   fs.h			\
   group-list.h		\
@@ -1867,7 +1868,7 @@ install_su = \
     :;							\
   fi
 
-copy_sources = copy.c cp-hash.c
+copy_sources = copy.c cp-hash.c extent-scan.c extent-scan.h
 ginstall_SOURCES = install.c prog-fprintf.c $(copy_sources)
 
 # This is for the '[' program.  Automake transliterates '[' to '_'.
@@ -2442,6 +2443,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/env.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/expand.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/expr.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/extent-scan.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/factor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/false.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/find-mount-point.Po@am__quote@
@@ -2450,6 +2452,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getlimits.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ginstall-copy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ginstall-cp-hash.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ginstall-extent-scan.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ginstall-install.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ginstall-prog-fprintf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/group-list.Po@am__quote@
@@ -2607,6 +2610,20 @@ ginstall-cp-hash.obj: cp-hash.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='cp-hash.c' object='ginstall-cp-hash.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ginstall_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ginstall-cp-hash.obj `if test -f 'cp-hash.c'; then $(CYGPATH_W) 'cp-hash.c'; else $(CYGPATH_W) '$(srcdir)/cp-hash.c'; fi`
+
+ginstall-extent-scan.o: extent-scan.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ginstall_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ginstall-extent-scan.o -MD -MP -MF $(DEPDIR)/ginstall-extent-scan.Tpo -c -o ginstall-extent-scan.o `test -f 'extent-scan.c' || echo '$(srcdir)/'`extent-scan.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ginstall-extent-scan.Tpo $(DEPDIR)/ginstall-extent-scan.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='extent-scan.c' object='ginstall-extent-scan.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ginstall_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ginstall-extent-scan.o `test -f 'extent-scan.c' || echo '$(srcdir)/'`extent-scan.c
+
+ginstall-extent-scan.obj: extent-scan.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ginstall_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT ginstall-extent-scan.obj -MD -MP -MF $(DEPDIR)/ginstall-extent-scan.Tpo -c -o ginstall-extent-scan.obj `if test -f 'extent-scan.c'; then $(CYGPATH_W) 'extent-scan.c'; else $(CYGPATH_W) '$(srcdir)/extent-scan.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ginstall-extent-scan.Tpo $(DEPDIR)/ginstall-extent-scan.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='extent-scan.c' object='ginstall-extent-scan.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(ginstall_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o ginstall-extent-scan.obj `if test -f 'extent-scan.c'; then $(CYGPATH_W) 'extent-scan.c'; else $(CYGPATH_W) '$(srcdir)/extent-scan.c'; fi`
 
 libstdbuf_so-libstdbuf.o: libstdbuf.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libstdbuf_so_CFLAGS) $(CFLAGS) -MT libstdbuf_so-libstdbuf.o -MD -MP -MF $(DEPDIR)/libstdbuf_so-libstdbuf.Tpo -c -o libstdbuf_so-libstdbuf.o `test -f 'libstdbuf.c' || echo '$(srcdir)/'`libstdbuf.c

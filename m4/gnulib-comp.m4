@@ -117,6 +117,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module dirname-tests:
   # Code from module do-release-commit-and-tag:
   # Code from module double-slash-root:
+  # Code from module dtoastr:
   # Code from module dup2:
   # Code from module dup2-tests:
   # Code from module environ:
@@ -269,6 +270,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module iconv_open:
   # Code from module idcache:
   # Code from module ignore-value:
+  # Code from module ignore-value-tests:
   # Code from module include_next:
   # Code from module inet_ntop:
   # Code from module inet_ntop-tests:
@@ -297,6 +299,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module lchmod:
   # Code from module lchown:
   # Code from module lchown-tests:
+  # Code from module ldtoastr:
   # Code from module lib-ignore:
   # Code from module linebuffer:
   # Code from module link:
@@ -326,7 +329,6 @@ AC_DEFUN([gl_EARLY],
   # Code from module math-tests:
   # Code from module mbchar:
   # Code from module mbiter:
-  # Code from module mbrlen:
   # Code from module mbrtowc:
   # Code from module mbrtowc-tests:
   # Code from module mbsalign:
@@ -779,6 +781,8 @@ AC_DEFUN([gl_INIT],
   # Code from module do-release-commit-and-tag:
   # Code from module double-slash-root:
   gl_DOUBLE_SLASH_ROOT
+  # Code from module dtoastr:
+  AC_REQUIRE([gl_C99_STRTOLD])
   # Code from module dup2:
   gl_FUNC_DUP2
   gl_UNISTD_MODULE_INDICATOR([dup2])
@@ -1039,6 +1043,8 @@ AC_DEFUN([gl_INIT],
   # Code from module lchown:
   gl_FUNC_LCHOWN
   gl_UNISTD_MODULE_INDICATOR([lchown])
+  # Code from module ldtoastr:
+  AC_REQUIRE([gl_C99_STRTOLD])
   # Code from module lib-ignore:
   gl_IGNORE_UNUSED_LIBRARIES
   # Code from module linebuffer:
@@ -1084,9 +1090,6 @@ AC_DEFUN([gl_INIT],
   gl_MBCHAR
   # Code from module mbiter:
   gl_MBITER
-  # Code from module mbrlen:
-  gl_FUNC_MBRLEN
-  gl_WCHAR_MODULE_INDICATOR([mbrlen])
   # Code from module mbrtowc:
   gl_FUNC_MBRTOWC
   gl_WCHAR_MODULE_INDICATOR([mbrtowc])
@@ -1213,6 +1216,8 @@ AC_DEFUN([gl_INIT],
   # Code from module randint:
   # Code from module randperm:
   # Code from module randread:
+  # Code from module read-file:
+  gl_FUNC_READ_FILE
   # Code from module readlink:
   gl_FUNC_READLINK
   gl_UNISTD_MODULE_INDICATOR([readlink])
@@ -1446,7 +1451,7 @@ AC_DEFUN([gl_INIT],
   # Code from module uniwidth/base:
   gl_LIBUNISTRING_LIBHEADER([0.9], [uniwidth.h])
   # Code from module uniwidth/width:
-  gl_LIBUNISTRING_MODULE([0.9], [uniwidth/width])
+  gl_LIBUNISTRING_MODULE([0.9.4], [uniwidth/width])
   # Code from module unlink:
   gl_FUNC_UNLINK
   gl_UNISTD_MODULE_INDICATOR([unlink])
@@ -1677,7 +1682,6 @@ changequote([, ])dnl
   gl_STRING_MODULE_INDICATOR([perror])
   gl_FUNC_PIPE
   gl_UNISTD_MODULE_INDICATOR([pipe])
-  gl_FUNC_READ_FILE
   AC_CHECK_HEADERS_ONCE([sys/wait.h])
   AC_REQUIRE([gl_HEADER_SYS_SOCKET])
   if test "$ac_cv_header_winsock2_h" = yes; then
@@ -2099,7 +2103,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/mbchar.c
   lib/mbchar.h
   lib/mbiter.h
-  lib/mbrlen.c
   lib/mbrtowc.c
   lib/mbsalign.c
   lib/mbsalign.h
@@ -2201,6 +2204,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/randperm.h
   lib/randread.c
   lib/randread.h
+  lib/read-file.c
+  lib/read-file.h
   lib/readlink.c
   lib/readlinkat.c
   lib/readtokens.c
@@ -2569,7 +2574,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/math_h.m4
   m4/mbchar.m4
   m4/mbiter.m4
-  m4/mbrlen.m4
   m4/mbrtowc.m4
   m4/mbsinit.m4
   m4/mbslen.m4
@@ -2873,6 +2877,7 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-i-ring.c
   tests/test-iconv-h.c
   tests/test-iconv.c
+  tests/test-ignore-value.c
   tests/test-inet_ntop.c
   tests/test-inet_pton.c
   tests/test-ino-map.c
@@ -3072,8 +3077,6 @@ AC_DEFUN([gl_FILE_LIST], [
   tests=lib/listen.c
   tests=lib/perror.c
   tests=lib/pipe.c
-  tests=lib/read-file.c
-  tests=lib/read-file.h
   tests=lib/setsockopt.c
   tests=lib/sleep.c
   tests=lib/socket.c

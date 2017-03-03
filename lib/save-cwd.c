@@ -30,7 +30,6 @@
 
 #include "chdir-long.h"
 #include "unistd--.h"
-#include "xgetcwd.h"
 #include "cloexec.h"
 
 #if GNULIB_FCNTL_SAFER
@@ -39,22 +38,10 @@
 # define GNULIB_FCNTL_SAFER 0
 #endif
 
-/* On systems without the fchdir function (WOE), pretend that open
-   always returns -1 so that save_cwd resorts to using xgetcwd.
-   Since chdir_long requires fchdir, use chdir instead.  */
-#if !HAVE_FCHDIR
-# undef open
-# define open(File, Flags) (-1)
-# undef fchdir
-# define fchdir(Fd) (abort (), -1)
-# undef chdir_long
-# define chdir_long(Dir) chdir (Dir)
-#endif
-
 /* Record the location of the current working directory in CWD so that
    the program may change to other directories and later use restore_cwd
    to return to the recorded location.  This function may allocate
-   space using malloc (via xgetcwd) or leave a file descriptor open;
+   space using malloc (via getcwd) or leave a file descriptor open;
    use free_cwd to perform the necessary free or close.  Upon failure,
    no memory is allocated, any locally opened file descriptors are
    closed;  return non-zero -- in that case, free_cwd need not be
@@ -81,7 +68,7 @@ save_cwd (struct saved_cwd *cwd)
     cwd->desc = fd_safer (cwd->desc);
   if (cwd->desc < 0)
     {
-      cwd->name = xgetcwd ();
+      cwd->name = getcwd (NULL, 0);
       return cwd->name ? 0 : -1;
     }
 

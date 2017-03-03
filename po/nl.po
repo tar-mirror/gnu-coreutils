@@ -1,17 +1,17 @@
 # Dutch translations for GNU coreutils.
-# Copyright (C) 2010 Free Software Foundation, Inc.
+# Copyright (C) 2011 Free Software Foundation, Inc.
 # This file is distributed under the same license as the coreutils package.
 #
-# Benno Schulenberg <benno@vertaalt.nl>, 2008, 2010.
+# Benno Schulenberg <benno@vertaalt.nl>, 2008, 2010, 2011.
 # Freek de Kruijf <f.de.kruijf@gmail.com>, 2004, 2005, 2006, 2007, 2008, 2009, 2010.
 # Ivo Timmermans <ivo@o2w.nl>, 2000.
 # Erick Branderhorst <branderh@debian.org>, 1996.
 msgid ""
 msgstr ""
-"Project-Id-Version: coreutils 8.8\n"
+"Project-Id-Version: coreutils 8.10-pre1\n"
 "Report-Msgid-Bugs-To: bug-coreutils@gnu.org\n"
-"POT-Creation-Date: 2011-01-04 12:29+0100\n"
-"PO-Revision-Date: 2010-12-27 14:34+0100\n"
+"POT-Creation-Date: 2011-02-04 18:11+0100\n"
+"PO-Revision-Date: 2011-02-03 21:35+0100\n"
 "Last-Translator: Benno Schulenberg <benno@vertaalt.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
 "Language: nl\n"
@@ -44,15 +44,15 @@ msgstr "fout bij sluiten van bestand"
 #: src/base64.c:169 src/base64.c:225 src/cat.c:186 src/cat.c:202 src/cat.c:286
 #: src/cksum.c:251 src/expand.c:332 src/expand.c:357 src/head.c:300
 #: src/head.c:350 src/head.c:758 src/head.c:799 src/mktemp.c:348 src/od.c:915
-#: src/paste.c:160 src/shuf.c:408 src/split.c:505 src/split.c:719
-#: src/split.c:724 src/tail.c:349 src/tail.c:1196 src/tail.c:1302
-#: src/tail.c:2188 src/tr.c:1621 src/tr.c:1846 src/tr.c:1940
+#: src/paste.c:160 src/shuf.c:370 src/split.c:505 src/split.c:719
+#: src/split.c:724 src/tail.c:349 src/tail.c:1199 src/tail.c:1305
+#: src/tail.c:2191 src/tr.c:1621 src/tr.c:1846 src/tr.c:1940
 #: src/unexpand.c:429 src/unexpand.c:445
 #, c-format
 msgid "write error"
 msgstr "fout bij schrijven"
 
-#: lib/copy-acl.c:610 src/copy.c:878 src/copy.c:2213
+#: lib/copy-acl.c:610 src/copy.c:1081 src/copy.c:2416
 #, c-format
 msgid "preserving permissions for %s"
 msgstr "behouden van toegangsrechten van %s"
@@ -61,8 +61,8 @@ msgstr "behouden van toegangsrechten van %s"
 msgid "Unknown system error"
 msgstr "Onbekende systeemfout"
 
-#: lib/euidaccess-stat.c:129 src/copy.c:1262 src/copy.c:1314 src/copy.c:1897
-#: src/copy.c:2200 src/find-mount-point.c:84 src/install.c:736 src/stat.c:1191
+#: lib/euidaccess-stat.c:129 src/copy.c:1465 src/copy.c:1517 src/copy.c:2100
+#: src/copy.c:2403 src/find-mount-point.c:84 src/install.c:735 src/stat.c:1191
 #: src/truncate.c:353
 #, c-format
 msgid "cannot stat %s"
@@ -251,12 +251,12 @@ msgstr "%s: optie '-W %s' staat geen argument toe\n"
 msgid "%s: option '-W %s' requires an argument\n"
 msgstr "%s: optie '-W %s' vereist een argument\n"
 
-#: lib/mkdir-p.c:196 src/install.c:807
+#: lib/mkdir-p.c:196 src/install.c:806
 #, c-format
 msgid "cannot change permissions of %s"
 msgstr "kan de toegangsrechten van %s niet veranderen"
 
-#: lib/mkdir-p.c:206 src/copy.c:1886 src/install.c:704 src/install.c:717
+#: lib/mkdir-p.c:206 src/copy.c:2089 src/install.c:703 src/install.c:716
 #, c-format
 msgid "cannot create directory %s"
 msgstr "kan map %s niet aanmaken"
@@ -416,147 +416,147 @@ msgstr "^[jJyY]"
 msgid "^[nN]"
 msgstr "^[nN]"
 
-#: lib/set-mode-acl.c:636 src/copy.c:1909 src/cp.c:519
+#: lib/set-mode-acl.c:636 src/copy.c:2112 src/cp.c:519
 #, c-format
 msgid "setting permissions for %s"
 msgstr "instellen van toegangsrechten van %s"
 
 # Vroeger ging dit over het afsluiten van een modemverbinding,
 # tegenwoordig over het afsluiten van een pseudoterminal.
-#: lib/siglist.h:28
+#: lib/siglist.h:31
 msgid "Hangup"
 msgstr "Opgehangen"
 
-#: lib/siglist.h:31
+#: lib/siglist.h:34
 msgid "Interrupt"
 msgstr "Onderbroken"
 
 # Verleden tijd, "Afgesloten", net als de andere actiesignaalnamen.
-#: lib/siglist.h:34
+#: lib/siglist.h:37
 msgid "Quit"
 msgstr "Afgesloten"
 
-#: lib/siglist.h:37
+#: lib/siglist.h:40
 msgid "Illegal instruction"
 msgstr "Ongeldige instructie"
 
-#: lib/siglist.h:40
+#: lib/siglist.h:43
 msgid "Trace/breakpoint trap"
 msgstr "Traceer-/breekpunt-instructie"
 
-#: lib/siglist.h:43
+#: lib/siglist.h:46
 msgid "Aborted"
 msgstr "Afgebroken"
 
-#: lib/siglist.h:46
+#: lib/siglist.h:49
 msgid "Floating point exception"
 msgstr "Drijvendekomma-berekeningsfout"
 
-#: lib/siglist.h:49
+#: lib/siglist.h:52
 msgid "Killed"
 msgstr "Geëlimineerd"
 
-#: lib/siglist.h:52
+#: lib/siglist.h:55
 msgid "Bus error"
 msgstr "Busfout"
 
-#: lib/siglist.h:55
+#: lib/siglist.h:58
 msgid "Segmentation fault"
 msgstr "Segmentatiefout"
 
-#: lib/siglist.h:58
+#: lib/siglist.h:61
 msgid "Broken pipe"
 msgstr "Gebroken pijp"
 
-#: lib/siglist.h:61
+#: lib/siglist.h:64
 msgid "Alarm clock"
 msgstr "Wekker"
 
-#: lib/siglist.h:64
+#: lib/siglist.h:67
 msgid "Terminated"
 msgstr "Beëindigd"
 
-#: lib/siglist.h:67
+#: lib/siglist.h:70
 msgid "Urgent I/O condition"
 msgstr "Urgente in-/uitvoertoestand"
 
-#: lib/siglist.h:70
+#: lib/siglist.h:73
 msgid "Stopped (signal)"
 msgstr "Gepauzeerd (signaal)"
 
-#: lib/siglist.h:73
+#: lib/siglist.h:76
 msgid "Stopped"
 msgstr "Gepauzeerd"
 
-#: lib/siglist.h:76
+#: lib/siglist.h:79
 msgid "Continued"
 msgstr "Doorgegaan"
 
-#: lib/siglist.h:79
+#: lib/siglist.h:82
 msgid "Child exited"
 msgstr "Dochterproces is afgesloten"
 
-#: lib/siglist.h:82
+#: lib/siglist.h:85
 msgid "Stopped (tty input)"
 msgstr "Gepauzeerd (terminalinvoer)"
 
-#: lib/siglist.h:85
+#: lib/siglist.h:88
 msgid "Stopped (tty output)"
 msgstr "Gepauzeerd (terminaluitvoer)"
 
-#: lib/siglist.h:88
+#: lib/siglist.h:91
 msgid "I/O possible"
 msgstr "In-/uitvoer is mogelijk"
 
-#: lib/siglist.h:91
+#: lib/siglist.h:94
 msgid "CPU time limit exceeded"
 msgstr "Limiet op processortijd is overschreden"
 
-#: lib/siglist.h:94
+#: lib/siglist.h:97
 msgid "File size limit exceeded"
 msgstr "Limiet op bestandsgrootte is overschreden"
 
-#: lib/siglist.h:97
+#: lib/siglist.h:100
 msgid "Virtual timer expired"
 msgstr "Virtuele timer is afgelopen"
 
-#: lib/siglist.h:100
+#: lib/siglist.h:103
 msgid "Profiling timer expired"
 msgstr "Timer voor profilering is afgelopen"
 
-#: lib/siglist.h:103
+#: lib/siglist.h:106
 msgid "Window changed"
 msgstr "Venster is veranderd"
 
-#: lib/siglist.h:106
+#: lib/siglist.h:109
 msgid "User defined signal 1"
 msgstr "Gebruikergedefinieerd signaal 1"
 
-#: lib/siglist.h:109
+#: lib/siglist.h:112
 msgid "User defined signal 2"
 msgstr "Gebruikergedefinieerd signaal 2"
 
-#: lib/siglist.h:114
+#: lib/siglist.h:117
 msgid "EMT trap"
 msgstr "EMT-instructie"
 
-#: lib/siglist.h:117
+#: lib/siglist.h:120
 msgid "Bad system call"
 msgstr "Onjuiste systeemaanroep"
 
-#: lib/siglist.h:120
+#: lib/siglist.h:123
 msgid "Stack fault"
 msgstr "Stack-fout"
 
-#: lib/siglist.h:123
+#: lib/siglist.h:126
 msgid "Information request"
 msgstr "Verzoek om informatie"
 
-#: lib/siglist.h:125
+#: lib/siglist.h:128
 msgid "Power failure"
 msgstr "Stroomstoring"
 
-#: lib/siglist.h:128
+#: lib/siglist.h:131
 msgid "Resource lost"
 msgstr "Hulpbron verloren"
 
@@ -777,12 +777,12 @@ msgstr ""
 msgid "%s home page: <%s>\n"
 msgstr "Webpagina van %s: <%s>\n"
 
-#: lib/version-etc.c:253 src/system.h:599
+#: lib/version-etc.c:253 src/system.h:603
 #, c-format
 msgid "%s home page: <http://www.gnu.org/software/%s/>\n"
 msgstr "Webpagina van %s: <http://www.gnu.org/software/%s/>\n"
 
-#: lib/version-etc.c:256 src/system.h:601
+#: lib/version-etc.c:256 src/system.h:605
 msgid "General help using GNU software: <http://www.gnu.org/gethelp/>\n"
 msgstr ""
 "Algemene hulp bij gebruik van GNU-software: <http://www.gnu.org/gethelp/>\n"
@@ -852,18 +852,18 @@ msgstr "Simon Josefsson"
 #: src/chgrp.c:106 src/chmod.c:360 src/chown.c:76 src/chroot.c:118
 #: src/cksum.c:260 src/comm.c:101 src/cp.c:153 src/csplit.c:1446 src/cut.c:186
 #: src/date.c:120 src/dd.c:458 src/df.c:699 src/dircolors.c:94
-#: src/dirname.c:41 src/du.c:253 src/echo.c:39 src/env.c:49 src/expand.c:101
+#: src/dirname.c:41 src/du.c:256 src/echo.c:39 src/env.c:49 src/expand.c:101
 #: src/expr.c:200 src/factor.c:490 src/fmt.c:266 src/fold.c:63
 #: src/getlimits.c:62 src/groups.c:50 src/head.c:103 src/hostid.c:39
-#: src/hostname.c:53 src/id.c:78 src/install.c:935 src/join.c:171
+#: src/hostname.c:53 src/id.c:78 src/install.c:934 src/join.c:178
 #: src/kill.c:74 src/link.c:42 src/ln.c:332 src/logname.c:36 src/ls.c:4566
 #: src/md5sum.c:150 src/mkdir.c:53 src/mkfifo.c:48 src/mknod.c:49
 #: src/mktemp.c:65 src/mv.c:281 src/nice.c:69 src/nl.c:179 src/nohup.c:50
 #: src/nproc.c:53 src/od.c:291 src/paste.c:432 src/pathchk.c:91
 #: src/pinky.c:499 src/pr.c:2766 src/printenv.c:59 src/printf.c:85
-#: src/ptx.c:1884 src/pwd.c:53 src/readlink.c:59 src/rm.c:131 src/rmdir.c:161
+#: src/ptx.c:1814 src/pwd.c:53 src/readlink.c:59 src/rm.c:131 src/rmdir.c:161
 #: src/runcon.c:80 src/seq.c:65 src/setuidgid.c:46 src/shred.c:154
-#: src/shuf.c:44 src/sleep.c:42 src/sort.c:381 src/split.c:150 src/stat.c:1303
+#: src/shuf.c:45 src/sleep.c:42 src/sort.c:381 src/split.c:150 src/stat.c:1303
 #: src/stdbuf.c:88 src/stty.c:506 src/su.c:365 src/sum.c:56 src/sync.c:37
 #: src/tac.c:129 src/tail.c:254 src/tee.c:59 src/test.c:681 src/timeout.c:124
 #: src/touch.c:213 src/tr.c:283 src/truncate.c:93 src/tsort.c:79 src/tty.c:61
@@ -904,7 +904,7 @@ msgstr ""
 "regel\n"
 "\n"
 
-#: src/base64.c:74 src/cat.c:110 src/fmt.c:293 src/shuf.c:71 src/sum.c:72
+#: src/base64.c:74 src/cat.c:110 src/fmt.c:293 src/shuf.c:72 src/sum.c:72
 msgid ""
 "\n"
 "With no FILE, or when FILE is -, read standard input.\n"
@@ -930,7 +930,8 @@ msgstr ""
 "stappen.\n"
 
 #: src/base64.c:172 src/base64.c:209 src/csplit.c:263 src/csplit.c:1435
-#: src/join.c:428 src/shuf.c:400 src/tac-pipe.c:75 src/tee.c:207 src/tr.c:1645
+#: src/join.c:436 src/shuf.c:158 src/shuf.c:362 src/tac-pipe.c:75
+#: src/tee.c:205 src/tr.c:1645
 #, c-format
 msgid "read error"
 msgstr "fout bij lezen"
@@ -946,13 +947,13 @@ msgid "invalid wrap size: %s"
 msgstr "ongeldige waarde van optie '-w'/'--wrap': %s"
 
 #: src/base64.c:284 src/basename.c:119 src/comm.c:437 src/cp.c:608
-#: src/date.c:426 src/dircolors.c:448 src/dirname.c:97 src/du.c:874
-#: src/hostid.c:75 src/hostname.c:112 src/id.c:169 src/install.c:611
-#: src/join.c:918 src/link.c:86 src/ln.c:520 src/logname.c:72 src/mknod.c:158
-#: src/mv.c:448 src/od.c:1799 src/ptx.c:2152 src/readlink.c:155 src/seq.c:409
-#: src/shuf.c:359 src/shuf.c:378 src/sort.c:4454 src/split.c:1008
-#: src/tr.c:1798 src/tsort.c:556 src/tty.c:113 src/uname.c:253 src/uniq.c:456
-#: src/uniq.c:473 src/unlink.c:82 src/uptime.c:255 src/users.c:147
+#: src/date.c:426 src/dircolors.c:448 src/dirname.c:97 src/du.c:881
+#: src/hostid.c:75 src/hostname.c:112 src/id.c:169 src/install.c:610
+#: src/join.c:945 src/link.c:86 src/ln.c:520 src/logname.c:72 src/mknod.c:158
+#: src/mv.c:448 src/od.c:1799 src/ptx.c:2082 src/readlink.c:155 src/seq.c:409
+#: src/shuf.c:321 src/shuf.c:340 src/sort.c:4457 src/split.c:1008
+#: src/tr.c:1798 src/tsort.c:556 src/tty.c:113 src/uname.c:253 src/uniq.c:455
+#: src/uniq.c:472 src/unlink.c:82 src/uptime.c:255 src/users.c:147
 #: src/wc.c:665 src/who.c:837 src/whoami.c:80
 #, c-format
 msgid "extra operand %s"
@@ -968,7 +969,7 @@ msgstr "sluiten van standaardinvoer"
 #: src/comm.c:39 src/cp.c:57 src/csplit.c:42 src/cut.c:45 src/date.c:39
 #: src/dd.c:47 src/df.c:39 src/dirname.c:34 src/du.c:53 src/env.c:33
 #: src/expand.c:50 src/fold.c:36 src/groups.c:35 src/head.c:46 src/id.c:39
-#: src/install.c:49 src/ln.c:40 src/ls.c:118 src/mkdir.c:36 src/mkfifo.c:33
+#: src/install.c:50 src/ln.c:40 src/ls.c:118 src/mkdir.c:36 src/mkfifo.c:33
 #: src/mknod.c:34 src/mv.c:42 src/nice.c:39 src/nl.c:41 src/paste.c:53
 #: src/pathchk.c:38 src/pinky.c:37 src/printenv.c:44 src/printf.c:63
 #: src/rm.c:42 src/rmdir.c:38 src/stty.c:65 src/su.c:88 src/sum.c:39
@@ -1013,7 +1014,7 @@ msgstr ""
 
 #: src/basename.c:113 src/chcon.c:524 src/chgrp.c:273 src/chmod.c:511
 #: src/chown.c:275 src/chroot.c:187 src/comm.c:429 src/csplit.c:1369
-#: src/dirname.c:91 src/expr.c:325 src/join.c:1100 src/link.c:78
+#: src/dirname.c:91 src/expr.c:325 src/join.c:1132 src/link.c:78
 #: src/mkdir.c:184 src/mkfifo.c:109 src/mknod.c:147 src/nohup.c:112
 #: src/pathchk.c:154 src/printf.c:675 src/readlink.c:147 src/rm.c:315
 #: src/rmdir.c:224 src/seq.c:403 src/setuidgid.c:138 src/sleep.c:121
@@ -1131,7 +1132,7 @@ msgstr "kan beveiligingscontext %s niet aanmaken"
 msgid "failed to set %s security context component to %s"
 msgstr "kan component %s van beveiligingscontext niet instellen op %s"
 
-#: src/chcon.c:156 src/chcon.c:533 src/copy.c:1847 src/runcon.c:218
+#: src/chcon.c:156 src/chcon.c:533 src/copy.c:2050 src/runcon.c:218
 #: src/stat.c:654
 #, c-format
 msgid "failed to get security context of %s"
@@ -1147,13 +1148,13 @@ msgstr "kan gedeeltelijke context niet toepassen op ongelabeld bestand %s"
 msgid "failed to change context of %s to %s"
 msgstr "kan de context van %s niet veranderen naar %s"
 
-#: src/chcon.c:255 src/chmod.c:208 src/chown-core.c:301 src/copy.c:281
-#: src/du.c:441 src/ls.c:2829
+#: src/chcon.c:255 src/chmod.c:208 src/chown-core.c:301 src/copy.c:555
+#: src/du.c:443 src/ls.c:2829
 #, c-format
 msgid "cannot access %s"
 msgstr "kan geen toegang krijgen tot %s"
 
-#: src/chcon.c:265 src/chmod.c:221 src/chown-core.c:314 src/du.c:421
+#: src/chcon.c:265 src/chmod.c:221 src/chown-core.c:314 src/du.c:423
 #, c-format
 msgid "cannot read directory %s"
 msgstr "kan map %s niet lezen"
@@ -1163,14 +1164,13 @@ msgstr "kan map %s niet lezen"
 msgid "changing security context of %s\n"
 msgstr "veranderen van beveiligingscontext van %s\n"
 
-#: src/chcon.c:326 src/chmod.c:338 src/chown-core.c:510 src/du.c:586
-#: src/remove.c:617
+#: src/chcon.c:326 src/chmod.c:338 src/chown-core.c:510 src/remove.c:626
 #, c-format
 msgid "fts_read failed"
 msgstr "fts_read() is mislukt"
 
-#: src/chcon.c:337 src/chmod.c:349 src/chown-core.c:522 src/du.c:598
-#: src/remove.c:631
+#: src/chcon.c:337 src/chmod.c:349 src/chown-core.c:522 src/du.c:605
+#: src/remove.c:640
 #, c-format
 msgid "fts_close failed"
 msgstr "fts_close() is mislukt"
@@ -1268,7 +1268,7 @@ msgid "-R -h requires -P"
 msgstr "de combinatie '-R -h' vereist '-P'"
 
 #: src/chcon.c:526 src/chgrp.c:275 src/chmod.c:513 src/chown.c:277
-#: src/comm.c:431 src/csplit.c:1371 src/join.c:1102 src/link.c:80
+#: src/comm.c:431 src/csplit.c:1371 src/join.c:1134 src/link.c:80
 #: src/mknod.c:149 src/setuidgid.c:140 src/tr.c:1786
 #, c-format
 msgid "missing operand after %s"
@@ -1635,7 +1635,7 @@ msgstr ""
 msgid "Roland McGrath"
 msgstr "Roland McGrath"
 
-#: src/chroot.c:86 src/install.c:899 src/setuidgid.c:111 src/setuidgid.c:121
+#: src/chroot.c:86 src/install.c:898 src/setuidgid.c:111 src/setuidgid.c:121
 #, c-format
 msgid "invalid group %s"
 msgstr "ongeldige groep: %s"
@@ -1738,7 +1738,7 @@ msgstr ""
 "De CRC-controlesom en het aantal bytes tonen van elk gegeven BESTAND.\n"
 "\n"
 
-#: src/comm.c:105 src/join.c:175
+#: src/comm.c:105 src/join.c:182
 #, c-format
 msgid "Usage: %s [OPTION]... FILE1 FILE2\n"
 msgstr ""
@@ -1817,7 +1817,7 @@ msgstr ""
 "  %s -3  bestand1 bestand2   Regels die alleen in één van de bestanden "
 "staan.\n"
 
-#: src/comm.c:224 src/join.c:381
+#: src/comm.c:224 src/join.c:389
 #, c-format
 msgid "file %d is not in sorted order"
 msgstr "bestand %d is niet gesorteerd"
@@ -1832,278 +1832,293 @@ msgstr "meer dan één scheiding gegeven"
 msgid "empty %s not allowed"
 msgstr "een lege %s is niet toegestaan"
 
-#: src/copy.c:357
+#: src/copy.c:164 src/dd.c:1349 src/dd.c:1693
+#, c-format
+msgid "reading %s"
+msgstr "lezen van %s"
+
+#: src/copy.c:209 src/copy.c:355 src/copy.c:365 src/head.c:428
+#, c-format
+msgid "cannot lseek %s"
+msgstr "kan geen 'lseek' doen op %s"
+
+#: src/copy.c:221 src/dd.c:1750 src/dd.c:1813
+#, c-format
+msgid "writing %s"
+msgstr "schrijven van %s"
+
+#: src/copy.c:244
+#, c-format
+msgid "truncating %s"
+msgstr "afkorten van %s"
+
+#: src/copy.c:342
+#, c-format
+msgid "%s: failed to get extents info"
+msgstr "%s: kan 'extents'-informatie niet verkrijgen"
+
+#: src/copy.c:381
+#, c-format
+msgid "%s: write failed"
+msgstr "%s: schrijven is mislukt"
+
+#: src/copy.c:419
+#, c-format
+msgid "failed to extend %s"
+msgstr "kan %s niet uitbreiden"
+
+#: src/copy.c:631
 #, c-format
 msgid "clearing permissions for %s"
 msgstr "wissen van toegangsrechten van %s"
 
-#: src/copy.c:392 src/copy.c:2083 src/cp.c:332
+#: src/copy.c:666 src/copy.c:2286 src/cp.c:332
 #, c-format
 msgid "failed to preserve ownership for %s"
 msgstr "behouden van eigenaar van %s is mislukt"
 
-#: src/copy.c:418
+#: src/copy.c:692
 #, c-format
 msgid "failed to lookup file %s"
 msgstr "kan bestand %s niet vinden"
 
-#: src/copy.c:423
+#: src/copy.c:697
 #, c-format
 msgid "failed to preserve authorship for %s"
 msgstr "behouden van het auteurschap van %s is mislukt"
 
-#: src/copy.c:482 src/csplit.c:638 src/du.c:881 src/fmt.c:428 src/head.c:849
-#: src/sort.c:4466 src/split.c:1015 src/tac.c:544 src/tail.c:1740 src/wc.c:677
+#: src/copy.c:756 src/csplit.c:638 src/du.c:888 src/fmt.c:428 src/head.c:849
+#: src/sort.c:4469 src/split.c:1015 src/tac.c:544 src/tail.c:1743 src/wc.c:677
 #, c-format
 msgid "cannot open %s for reading"
 msgstr "kan %s niet openen om te lezen"
 
-#: src/copy.c:488 src/copy.c:627 src/dd.c:1289 src/dd.c:1936 src/tail.c:1576
-#: src/tail.c:1642 src/truncate.c:142
+#: src/copy.c:762 src/copy.c:901 src/dd.c:1289 src/dd.c:1936 src/tail.c:1579
+#: src/tail.c:1645 src/truncate.c:142
 #, c-format
 msgid "cannot fstat %s"
 msgstr "kan status van %s niet opvragen"
 
-#: src/copy.c:498
+#: src/copy.c:772
 #, c-format
 msgid "skipping file %s, as it was replaced while being copied"
 msgstr ""
 "bestand %s wordt overgeslagen, omdat het werd vervangen tijdens het kopiëren"
 
-#: src/copy.c:526
+#: src/copy.c:800
 #, c-format
 msgid "failed to get file system create context"
 msgstr "kan de aanmaakcontext van het bestandssysteem niet verkrijgen"
 
-#: src/copy.c:540
+#: src/copy.c:814
 #, c-format
 msgid "failed to set the security context of %s to %s"
 msgstr "kan de beveiligingscontext van %s niet naar %s veranderen"
 
-#: src/copy.c:557 src/copy.c:1383 src/copy.c:1537 src/copy.c:1687 src/ln.c:277
-#: src/remove.c:293 src/remove.c:319 src/remove.c:462 src/remove.c:483
+#: src/copy.c:831 src/copy.c:1586 src/copy.c:1740 src/copy.c:1890 src/ln.c:277
+#: src/remove.c:294 src/remove.c:320 src/remove.c:471 src/remove.c:492
 #, c-format
 msgid "cannot remove %s"
 msgstr "kan %s niet verwijderen"
 
-#: src/copy.c:562 src/copy.c:1378 src/copy.c:1542 src/copy.c:1691
-#: src/remove.c:436
+#: src/copy.c:836 src/copy.c:1581 src/copy.c:1745 src/copy.c:1894
+#: src/remove.c:445
 #, c-format
 msgid "removed %s\n"
 msgstr "%s is verwijderd\n"
 
-#: src/copy.c:600
+#: src/copy.c:874
 #, c-format
 msgid "not writing through dangling symlink %s"
-msgstr "kan niet schrijven via loze symbolische koppeling %s"
+msgstr "zal niet schrijven via loze symbolische koppeling %s"
 
-#: src/copy.c:619
+#: src/copy.c:893
 #, c-format
 msgid "cannot create regular file %s"
 msgstr "kan het normale bestand %s niet aanmaken"
 
-#: src/copy.c:640
+#: src/copy.c:914
 #, c-format
 msgid "failed to clone %s"
 msgstr "kan %s niet klonen"
 
-#: src/copy.c:719 src/dd.c:1349 src/dd.c:1693
-#, c-format
-msgid "reading %s"
-msgstr "lezen van %s"
-
-#: src/copy.c:765 src/head.c:428
-#, c-format
-msgid "cannot lseek %s"
-msgstr "kan geen 'lseek' doen op %s"
-
-#: src/copy.c:778 src/dd.c:1750 src/dd.c:1813
-#, c-format
-msgid "writing %s"
-msgstr "schrijven van %s"
-
-#: src/copy.c:801
-#, c-format
-msgid "truncating %s"
-msgstr "afkorten van %s"
-
-#: src/copy.c:816 src/copy.c:2142
+#: src/copy.c:1019 src/copy.c:2345
 #, c-format
 msgid "preserving times for %s"
 msgstr "behouden van tijdsstempels van %s"
 
-#: src/copy.c:888 src/copy.c:894 src/head.c:857 src/touch.c:176
+#: src/copy.c:1091 src/copy.c:1097 src/head.c:857 src/touch.c:176
 #: src/truncate.c:389
 #, c-format
 msgid "closing %s"
 msgstr "sluiten van %s"
 
-#: src/copy.c:1128
+#: src/copy.c:1331
 #, c-format
 msgid "%s: try to overwrite %s, overriding mode %04lo (%s)? "
 msgstr "%s: toch proberen om %s te overschrijven, modus %04lo (%s) negeren? "
 
-#: src/copy.c:1135
+#: src/copy.c:1338
 #, c-format
 msgid "%s: overwrite %s? "
 msgstr "%s: %s overschrijven? "
 
-#: src/copy.c:1204
+#: src/copy.c:1407
 #, c-format
 msgid " (backup: %s)"
 msgstr " (reservekopie: %s)"
 
-#: src/copy.c:1214
+#: src/copy.c:1417
 #, c-format
 msgid "failed to restore the default file creation context"
 msgstr "kan de standaard aanmaakcontext niet herstellen"
 
-#: src/copy.c:1270
+#: src/copy.c:1473
 #, c-format
 msgid "omitting directory %s"
 msgstr "map %s wordt overgeslagen"
 
-#: src/copy.c:1284
+#: src/copy.c:1487
 #, c-format
 msgid "warning: source file %s specified more than once"
 msgstr "waarschuwing: bronbestand %s is meerdere keren opgegeven"
 
-#: src/copy.c:1332 src/ln.c:212
+#: src/copy.c:1535 src/ln.c:212
 #, c-format
 msgid "%s and %s are the same file"
 msgstr "%s en %s zijn hetzelfde bestand"
 
-#: src/copy.c:1412
+#: src/copy.c:1615
 #, c-format
 msgid "cannot overwrite non-directory %s with directory %s"
 msgstr "kan niet-map %s niet overschrijven met map %s"
 
-#: src/copy.c:1430 src/ln.c:180
+#: src/copy.c:1633 src/ln.c:180
 #, c-format
 msgid "will not overwrite just-created %s with %s"
 msgstr "zal zojuist aangemaakte %s niet overschrijven met %s"
 
-#: src/copy.c:1448
+#: src/copy.c:1651
 #, c-format
 msgid "cannot overwrite directory %s with non-directory"
 msgstr "kan map %s niet overschrijven met een niet-map"
 
-#: src/copy.c:1462
+#: src/copy.c:1665
 #, c-format
 msgid "cannot move directory onto non-directory: %s -> %s"
 msgstr "kan een map niet verplaatsen naar een niet-map: %s -> %s"
 
-#: src/copy.c:1492
+#: src/copy.c:1695
 #, c-format
 msgid "backing up %s would destroy source;  %s not moved"
 msgstr ""
 "een reservekopie van %s zou de bron vernietigen;  %s is niet verplaatst"
 
-#: src/copy.c:1493
+#: src/copy.c:1696
 #, c-format
 msgid "backing up %s would destroy source;  %s not copied"
 msgstr ""
 "een reservekopie van %s zou de bron vernietigen;  %s is niet gekopieerd"
 
-#: src/copy.c:1512 src/ln.c:242
+#: src/copy.c:1715 src/ln.c:242
 #, c-format
 msgid "cannot backup %s"
 msgstr "kan geen reservekopie maken van %s"
 
-#: src/copy.c:1576
+#: src/copy.c:1779
 #, c-format
 msgid "will not copy %s through just-created symlink %s"
 msgstr "zal %s niet kopiëren via zojuist gemaakte symbolische koppeling %s"
 
-#: src/copy.c:1653
+#: src/copy.c:1856
 #, c-format
 msgid "cannot copy a directory, %s, into itself, %s"
 msgstr "kan map %s niet kopiëren naar binnen zichzelf (%s)"
 
-#: src/copy.c:1670
+#: src/copy.c:1873
 #, c-format
 msgid "will not create hard link %s to directory %s"
 msgstr "zal geen harde koppeling %s maken naar map %s"
 
-#: src/copy.c:1698
+#: src/copy.c:1901
 #, c-format
 msgid "cannot create hard link %s to %s"
 msgstr "kan geen harde koppeling %s maken naar %s"
 
-#: src/copy.c:1743
+#: src/copy.c:1946
 #, c-format
 msgid "cannot move %s to a subdirectory of itself, %s"
 msgstr "kan %s niet verplaatsen naar een submap van zichzelf, %s"
 
-#: src/copy.c:1786
+#: src/copy.c:1989
 #, c-format
 msgid "cannot move %s to %s"
 msgstr "kan %s niet verplaatsen naar %s"
 
-#: src/copy.c:1798
+#: src/copy.c:2001
 #, c-format
 msgid "inter-device move failed: %s to %s; unable to remove target"
 msgstr ""
 "verplaatsing tussen apparaten is mislukt: %s naar %s; kan het doel niet "
 "verwijderen"
 
-#: src/copy.c:1832 src/install.c:587 src/mkdir.c:190 src/mkfifo.c:115
+#: src/copy.c:2035 src/install.c:586 src/mkdir.c:190 src/mkfifo.c:115
 #: src/mknod.c:168
 #, c-format
 msgid "failed to set default file creation context to %s"
 msgstr "kan de standaard aanmaakcontext niet instellen op %s"
 
-#: src/copy.c:1866
+#: src/copy.c:2069
 #, c-format
 msgid "cannot copy cyclic symbolic link %s"
 msgstr "kan cyclische symbolische koppeling %s niet kopiëren"
 
-#: src/copy.c:1971
+#: src/copy.c:2174
 #, c-format
 msgid "%s: can make relative symbolic links only in current directory"
 msgstr "%s: kan relatieve symbolische koppelingen alleen in huidige map maken"
 
-#: src/copy.c:1978
+#: src/copy.c:2181
 #, c-format
 msgid "cannot create symbolic link %s to %s"
 msgstr "kan symbolische koppeling %s naar %s niet aanmaken"
 
-#: src/copy.c:1994
+#: src/copy.c:2197
 #, c-format
 msgid "cannot create link %s"
 msgstr "kan koppeling %s niet aanmaken"
 
-#: src/copy.c:2019 src/mkfifo.c:134
+#: src/copy.c:2222 src/mkfifo.c:134
 #, c-format
 msgid "cannot create fifo %s"
 msgstr "kan fifo %s niet aanmaken"
 
-#: src/copy.c:2028
+#: src/copy.c:2231
 #, c-format
 msgid "cannot create special file %s"
 msgstr "kan speciaal bestand %s niet aanmaken"
 
-#: src/copy.c:2039 src/ls.c:3041 src/stat.c:873
+#: src/copy.c:2242 src/ls.c:3041 src/stat.c:873
 #, c-format
 msgid "cannot read symbolic link %s"
 msgstr "kan symbolische koppeling %s niet lezen"
 
-#: src/copy.c:2066
+#: src/copy.c:2269
 #, c-format
 msgid "cannot create symbolic link %s"
 msgstr "kan symbolische koppeling %s niet aanmaken"
 
-#: src/copy.c:2098
+#: src/copy.c:2301
 #, c-format
 msgid "%s has unknown file type"
 msgstr "%s heeft onbekend bestandstype"
 
-#: src/copy.c:2240 src/ln.c:320
+#: src/copy.c:2443 src/ln.c:320
 #, c-format
 msgid "cannot un-backup %s"
 msgstr "kan %s niet uit reservekopie herstellen"
 
-#: src/copy.c:2244
+#: src/copy.c:2447
 #, c-format
 msgid "%s -> %s (unbackup)\n"
 msgstr "%s -> %s (uit reservekopie hersteld)\n"
@@ -2128,11 +2143,11 @@ msgstr ""
 "Een BRON naar een BESTEMMING kopiëren, of BRON(nen) naar een MAP.\n"
 "\n"
 
-#: src/cp.c:167 src/csplit.c:1459 src/cut.c:198 src/df.c:709 src/du.c:265
+#: src/cp.c:167 src/csplit.c:1459 src/cut.c:198 src/df.c:709 src/du.c:268
 #: src/expand.c:114 src/fmt.c:276 src/fold.c:76 src/head.c:117
-#: src/install.c:958 src/kill.c:88 src/ln.c:353 src/ls.c:4576 src/mkdir.c:62
+#: src/install.c:957 src/kill.c:88 src/ln.c:353 src/ls.c:4576 src/mkdir.c:62
 #: src/mkfifo.c:57 src/mknod.c:59 src/mv.c:295 src/nl.c:192 src/paste.c:446
-#: src/pr.c:2779 src/ptx.c:1896 src/shred.c:164 src/shuf.c:58 src/sort.c:394
+#: src/pr.c:2779 src/ptx.c:1826 src/shred.c:164 src/shuf.c:59 src/sort.c:394
 #: src/split.c:164 src/stdbuf.c:97 src/tac.c:142 src/tail.c:268
 #: src/touch.c:228 src/truncate.c:108 src/unexpand.c:124 src/uniq.c:146
 msgid ""
@@ -2321,7 +2336,7 @@ msgstr ""
 "gespecificeerd, wordt\n"
 "teruggevallen op standaard kopiëren.\n"
 
-#: src/cp.c:248 src/install.c:995 src/ln.c:381 src/mv.c:322
+#: src/cp.c:248 src/install.c:994 src/ln.c:381 src/mv.c:322
 msgid ""
 "\n"
 "The backup suffix is `~', unless set with --suffix or SIMPLE_BACKUP_SUFFIX.\n"
@@ -2339,7 +2354,7 @@ msgstr ""
 "dit zijn de mogelijke waarden (methodes):\n"
 "\n"
 
-#: src/cp.c:255 src/install.c:1002 src/ln.c:393 src/mv.c:329
+#: src/cp.c:255 src/install.c:1001 src/ln.c:393 src/mv.c:329
 msgid ""
 "  none, off       never make backups (even if --backup is given)\n"
 "  numbered, t     make numbered backups\n"
@@ -2383,32 +2398,32 @@ msgstr "kan map %s niet aanmaken"
 msgid "%s exists but is not a directory"
 msgstr "%s bestaat maar is geen map"
 
-#: src/cp.c:573 src/cp.c:1069 src/install.c:405 src/install.c:522 src/ln.c:117
+#: src/cp.c:573 src/cp.c:1069 src/install.c:404 src/install.c:521 src/ln.c:117
 #: src/ln.c:147 src/ln.c:168 src/ln.c:473 src/mv.c:152 src/mv.c:400
 #, c-format
 msgid "accessing %s"
 msgstr "zoeken van toegang tot %s"
 
-#: src/cp.c:593 src/install.c:596 src/ln.c:503 src/mv.c:433 src/shred.c:1189
+#: src/cp.c:593 src/install.c:595 src/ln.c:503 src/mv.c:433 src/shred.c:1189
 #: src/touch.c:429 src/truncate.c:344
 #, c-format
 msgid "missing file operand"
 msgstr "geen bestand opgegeven"
 
-#: src/cp.c:595 src/install.c:598 src/ln.c:517 src/mv.c:435
+#: src/cp.c:595 src/install.c:597 src/ln.c:517 src/mv.c:435
 #, c-format
 msgid "missing destination file operand after %s"
 msgstr "ontbrekende bestemming na %s"
 
-#: src/cp.c:604 src/install.c:607 src/mv.c:444
+#: src/cp.c:604 src/install.c:606 src/mv.c:444
 #, c-format
 msgid "cannot combine --target-directory (-t) and --no-target-directory (-T)"
 msgstr ""
 "opties '--target-directory' (-t) en '--no-target-directory' (-T) gaan niet "
 "samen"
 
-#: src/cp.c:620 src/cp.c:1071 src/install.c:407 src/install.c:524
-#: src/install.c:620 src/ln.c:119 src/ln.c:475 src/ln.c:531 src/mv.c:402
+#: src/cp.c:620 src/cp.c:1071 src/install.c:406 src/install.c:523
+#: src/install.c:619 src/ln.c:119 src/ln.c:475 src/ln.c:531 src/mv.c:402
 #: src/mv.c:458
 #, c-format
 msgid "target %s is not a directory"
@@ -2419,7 +2434,7 @@ msgstr "doel %s is geen map"
 msgid "with --parents, the destination must be a directory"
 msgstr "met '--parents' moet de bestemming een map zijn"
 
-#: src/cp.c:1064 src/install.c:517 src/ln.c:468 src/mv.c:395
+#: src/cp.c:1064 src/install.c:516 src/ln.c:468 src/mv.c:395
 #, c-format
 msgid "multiple target directories specified"
 msgstr "meer dan één bestemmingsmap opgegeven"
@@ -2439,7 +2454,7 @@ msgstr "de opties '--backup' en '--no-clobber' sluiten elkaar uit"
 msgid "--reflink can be used only with --sparse=auto"
 msgstr "optie '--reflink' kan alleen worden gebruikt met '--sparse=auto'"
 
-#: src/cp.c:1130 src/install.c:581 src/ln.c:539 src/mv.c:473
+#: src/cp.c:1130 src/install.c:580 src/ln.c:539 src/mv.c:473
 msgid "backup type"
 msgstr "reservekopiemethode"
 
@@ -3091,7 +3106,7 @@ msgstr ""
 msgid "cannot set date"
 msgstr "kan datum niet instellen"
 
-#: src/date.c:539 src/du.c:357
+#: src/date.c:539 src/du.c:360
 #, c-format
 msgid "time %s is out of range"
 msgstr "tijd %s valt buiten bereik"
@@ -3508,7 +3523,7 @@ msgstr "afkorten op %<PRIuMAX> bytes van uitvoerbestand %s is mislukt"
 
 #. This is a proper name. See the gettext manual, section Names.
 #: src/df.c:40 src/du.c:54 src/expr.c:153 src/kill.c:34 src/pathchk.c:37
-#: src/shuf.c:38 src/sleep.c:36 src/sort.c:68
+#: src/shuf.c:39 src/sleep.c:36 src/sort.c:68
 msgid "Paul Eggert"
 msgstr "Paul Eggert"
 
@@ -3745,7 +3760,7 @@ msgstr ""
 "  %s /usr/bin/      Uitvoer is \"/usr\".\n"
 "  %s stdio.h        Uitvoer is \".\".\n"
 
-#: src/du.c:257 src/sort.c:385 src/wc.c:113
+#: src/du.c:260 src/sort.c:385 src/wc.c:113
 #, c-format
 msgid ""
 "Usage: %s [OPTION]... [FILE]...\n"
@@ -3755,7 +3770,7 @@ msgstr ""
 "     of:  %s [OPTIE...] --files0-from=LIJSTBESTAND\n"
 "\n"
 
-#: src/du.c:261
+#: src/du.c:264
 msgid ""
 "Summarize disk usage of each FILE, recursively for directories.\n"
 "\n"
@@ -3764,7 +3779,7 @@ msgstr ""
 "mappen.\n"
 "\n"
 
-#: src/du.c:268
+#: src/du.c:271
 msgid ""
 "  -a, --all             write counts for all files, not just directories\n"
 "      --apparent-size   print apparent sizes, rather than disk usage; "
@@ -3783,7 +3798,7 @@ msgstr ""
 "bij\n"
 "                          luchtige bestanden (met onopgeslagen gaten)\n"
 
-#: src/du.c:276
+#: src/du.c:279
 msgid ""
 "  -B, --block-size=SIZE  scale sizes by SIZE before printing them.  E.g.,\n"
 "                           `-BM' prints sizes in units of 1,048,576 bytes.\n"
@@ -3803,7 +3818,7 @@ msgstr ""
 "  -D, --dereference-args  alleen direct gegeven symbolische koppelingen "
 "volgen\n"
 
-#: src/du.c:285
+#: src/du.c:288
 msgid ""
 "      --files0-from=F   summarize disk usage of the NUL-terminated file\n"
 "                          names specified in file F;\n"
@@ -3824,7 +3839,7 @@ msgstr ""
 "2G)\n"
 "      --si                idem, maar machten van 1000 i.p.v. 1024 gebruiken\n"
 
-#: src/du.c:294
+#: src/du.c:297
 msgid ""
 "  -k                    like --block-size=1K\n"
 "  -l, --count-links     count sizes many times if hard linked\n"
@@ -3834,7 +3849,7 @@ msgstr ""
 "  -l, --count-links       de grootte tellen voor elke harde koppeling\n"
 "  -m                      hetzelfde als '--block-size=1M'\n"
 
-#: src/du.c:299
+#: src/du.c:302
 msgid ""
 "  -L, --dereference     dereference all symbolic links\n"
 "  -P, --no-dereference  don't follow any symbolic links (this is the "
@@ -3850,7 +3865,7 @@ msgstr ""
 "  -S, --separate-dirs     de grootte van submappen niet meetellen\n"
 "  -s, --summarize         voor elk gegeven argument alleen een totaal tonen\n"
 
-#: src/du.c:306
+#: src/du.c:309
 msgid ""
 "  -x, --one-file-system    skip directories on different file systems\n"
 "  -X, --exclude-from=FILE  exclude files that match any pattern in FILE\n"
@@ -3871,7 +3886,7 @@ msgstr ""
 "ligt;\n"
 "                          '--max-depth=0' is hetzelfde als '--summarize'\n"
 
-#: src/du.c:315
+#: src/du.c:318
 msgid ""
 "      --time            show time of the last modification of any file in "
 "the\n"
@@ -3891,56 +3906,61 @@ msgstr ""
 "                          '+OPMAAK' (zie bij 'date' voor de mogelijkheden)\n"
 "\n"
 
-#: src/du.c:704
+#: src/du.c:587
+#, c-format
+msgid "fts_read failed: %s"
+msgstr "fts_read() is mislukt: %s"
+
+#: src/du.c:711
 #, c-format
 msgid "invalid maximum depth %s"
 msgstr "ongeldige maximum diepte %s"
 
-#: src/du.c:797
+#: src/du.c:804
 #, c-format
 msgid "cannot both summarize and show all entries"
 msgstr "kan niet zowel alleen totalen tonen als alle items tonen"
 
-#: src/du.c:804
+#: src/du.c:811
 #, c-format
 msgid "warning: summarizing is the same as using --max-depth=0"
 msgstr "opmerking: totalen tonen is hetzelfde als '--max-depth=0'"
 
-#: src/du.c:810
+#: src/du.c:817
 #, c-format
 msgid "warning: summarizing conflicts with --max-depth=%lu"
 msgstr "fout: totalen tonen gaat niet samen met '--max-depth=%lu'"
 
-#: src/du.c:876 src/sort.c:4456 src/wc.c:667
+#: src/du.c:883 src/sort.c:4459 src/wc.c:667
 msgid "file operands cannot be combined with --files0-from"
 msgstr "bestandsargumenten gaan niet samen met de optie '--files0-from'"
 
-#: src/du.c:929 src/md5sum.c:558 src/od.c:899 src/tac.c:239 src/tac.c:350
+#: src/du.c:936 src/md5sum.c:558 src/od.c:899 src/tac.c:239 src/tac.c:350
 #: src/tac.c:481 src/tac.c:557 src/wc.c:729
 #, c-format
 msgid "%s: read error"
 msgstr "%s: fout bij lezen"
 
-#: src/du.c:943 src/sort.c:4485 src/wc.c:742
+#: src/du.c:950 src/sort.c:4488 src/wc.c:742
 #, c-format
 msgid "when reading file names from stdin, no file name of %s allowed"
 msgstr ""
 "bij het lezen van bestandsnamen van standaardinvoer is bestandsnaam %s niet "
 "toegestaan"
 
-#: src/du.c:960 src/du.c:968 src/wc.c:755 src/wc.c:763
+#: src/du.c:967 src/du.c:975 src/wc.c:755 src/wc.c:763
 msgid "invalid zero-length file name"
 msgstr "ongeldige bestandsnaam (lengte nul)"
 
-#: src/du.c:986 src/head.c:151 src/head.c:264 src/head.c:336 src/head.c:540
+#: src/du.c:993 src/head.c:151 src/head.c:264 src/head.c:336 src/head.c:540
 #: src/head.c:622 src/head.c:694 src/head.c:752 src/head.c:776 src/tail.c:411
 #: src/tail.c:499 src/tail.c:548 src/tail.c:641 src/tail.c:769 src/tail.c:817
-#: src/tail.c:856 src/tail.c:1766 src/tail.c:1796 src/uniq.c:397
+#: src/tail.c:856 src/tail.c:1769 src/tail.c:1799 src/uniq.c:396
 #, c-format
 msgid "error reading %s"
 msgstr "fout bij lezen van %s"
 
-#: src/du.c:989 src/ls.c:2586 src/wc.c:785
+#: src/du.c:996 src/ls.c:2586 src/wc.c:785
 msgid "total"
 msgstr "totaal"
 
@@ -4288,7 +4308,7 @@ msgstr ""
 msgid "syntax error"
 msgstr "syntaxfout"
 
-#: src/expr.c:598 src/ptx.c:286
+#: src/expr.c:598 src/ptx.c:283
 #, c-format
 msgid "error in regular expression matcher"
 msgstr "fout in zoeken met reguliere expressie"
@@ -4603,11 +4623,11 @@ msgstr "aantal regels"
 msgid "number of bytes"
 msgstr "aantal bytes"
 
-#: src/head.c:888 src/tail.c:1931
+#: src/head.c:888 src/tail.c:1934
 msgid "invalid number of lines"
 msgstr "ongeldig aantal regels"
 
-#: src/head.c:889 src/tail.c:1932
+#: src/head.c:889 src/tail.c:1935
 msgid "invalid number of bytes"
 msgstr "ongeldig aantal bytes"
 
@@ -4765,12 +4785,12 @@ msgstr " groepen="
 msgid " context=%s"
 msgstr " context=%s"
 
-#: src/install.c:376
+#: src/install.c:375
 #, c-format
 msgid "warning: %s: failed to change context to %s"
 msgstr "waarschuwing: %s: kan beveiligingscontext niet veranderen naar %s"
 
-#: src/install.c:534
+#: src/install.c:533
 #, c-format
 msgid ""
 "WARNING: --preserve_context is deprecated; use --preserve-context instead"
@@ -4778,7 +4798,7 @@ msgstr ""
 "WAARSCHUWING: optie '--preserve_context' is verouderd;\n"
 "gebruik in plaats daarvan '--preserve-context'"
 
-#: src/install.c:540
+#: src/install.c:539
 #, c-format
 msgid ""
 "WARNING: ignoring --preserve-context; this kernel is not SELinux-enabled"
@@ -4786,53 +4806,53 @@ msgstr ""
 "Waarschuwing: optie '--preserve-context' wordt genegeerd;\n"
 "deze kernel heeft geen SELinux."
 
-#: src/install.c:550
+#: src/install.c:549
 #, c-format
 msgid "WARNING: ignoring --context (-Z); this kernel is not SELinux-enabled"
 msgstr ""
 "Waarschuwing: optie '--context' (-Z) wordt genegeerd;\n"
 "deze kernel heeft geen SELinux."
 
-#: src/install.c:567
+#: src/install.c:566
 #, c-format
 msgid "the strip option may not be used when installing a directory"
 msgstr ""
 "de strip-optie mag niet gebruikt worden bij het installeren van een map"
 
-#: src/install.c:570
+#: src/install.c:569
 #, c-format
 msgid "target directory not allowed when installing a directory"
 msgstr "een doelmap is niet toegestaan bij het installeren van een map"
 
-#: src/install.c:574
+#: src/install.c:573
 #, c-format
 msgid "cannot force target context to %s and preserve it"
 msgstr "kan doelcontext niet zowel behouden als op %s instellen"
 
-#: src/install.c:628 src/mkdir.c:203 src/stdbuf.c:327
+#: src/install.c:627 src/mkdir.c:203 src/stdbuf.c:327
 #, c-format
 msgid "invalid mode %s"
 msgstr "ongeldige modus %s"
 
-#: src/install.c:635
+#: src/install.c:634
 #, c-format
 msgid "WARNING: ignoring --strip-program option as -s option was not specified"
 msgstr ""
 "Waarschuwing: optie '--strip-program' wordt genegeerd\n"
 "want optie '-s' is niet gegeven"
 
-#: src/install.c:640
+#: src/install.c:639
 #, c-format
 msgid "options --compare (-C) and --preserve-timestamps are mutually exclusive"
 msgstr ""
 "de opties '--compare' (-C) en '--preserve-timestamps' sluiten elkaar uit"
 
-#: src/install.c:647
+#: src/install.c:646
 #, c-format
 msgid "options --compare (-C) and --strip are mutually exclusive"
 msgstr "de opties '--compare' (-C) en '--strip' sluiten elkaar uit"
 
-#: src/install.c:653
+#: src/install.c:652
 #, c-format
 msgid ""
 "the --compare (-C) option is ignored when you specify a mode with non-"
@@ -4841,47 +4861,47 @@ msgstr ""
 "de optie '--compare' (-C) wordt genegeerd bij een modus met non-"
 "toegangsrechten"
 
-#: src/install.c:805
+#: src/install.c:804
 #, c-format
 msgid "cannot change ownership of %s"
 msgstr "kan de eigenaar van %s niet veranderen"
 
-#: src/install.c:829
+#: src/install.c:828
 #, c-format
 msgid "cannot set time stamps for %s"
 msgstr "kan de tijdsstempels van %s niet instellen"
 
-#: src/install.c:850 src/timeout.c:303
+#: src/install.c:849 src/timeout.c:303
 #, c-format
 msgid "fork system call failed"
 msgstr "kan geen nieuw proces starten"
 
-#: src/install.c:854
+#: src/install.c:853
 #, c-format
 msgid "cannot run %s"
 msgstr "kan %s niet uitvoeren"
 
-#: src/install.c:858
+#: src/install.c:857
 #, c-format
 msgid "waiting for strip"
 msgstr "wachten op 'strip'"
 
-#: src/install.c:860
+#: src/install.c:859
 #, c-format
 msgid "strip process terminated abnormally"
 msgstr "het proces 'strip' is abnormaal afgesloten"
 
-#: src/install.c:881
+#: src/install.c:880
 #, c-format
 msgid "invalid user %s"
 msgstr "ongeldige gebruiker: %s"
 
-#: src/install.c:916
+#: src/install.c:915
 #, c-format
 msgid "creating directory %s"
 msgstr "aanmaken van map %s"
 
-#: src/install.c:939
+#: src/install.c:938
 #, c-format
 msgid ""
 "Usage: %s [OPTION]... [-T] SOURCE DEST\n"
@@ -4895,7 +4915,7 @@ msgstr ""
 "     of:  %s [OPTIE...] -d MAP...\n"
 "\n"
 
-#: src/install.c:946
+#: src/install.c:945
 msgid ""
 "\n"
 "This install program copies files (often just compiled) into destination\n"
@@ -4923,7 +4943,7 @@ msgstr ""
 "aangemaakt.\n"
 "\n"
 
-#: src/install.c:961
+#: src/install.c:960
 msgid ""
 "      --backup[=CONTROL]  make a backup of each existing destination file\n"
 "  -b                  like --backup but does not accept an argument\n"
@@ -4943,7 +4963,7 @@ msgstr ""
 "  -d, --directory         alle argumenten als mapnamen behandelen;\n"
 "                            van de gegeven mappen alle componenten aanmaken\n"
 
-#: src/install.c:970
+#: src/install.c:969
 msgid ""
 "  -D                  create all leading components of DEST except the "
 "last,\n"
@@ -4963,7 +4983,7 @@ msgstr ""
 "  -o, --owner=GEBRUIKER   deze eigenaar instellen (alleen voor "
 "systeembeheerder)\n"
 
-#: src/install.c:977
+#: src/install.c:976
 msgid ""
 "  -p, --preserve-timestamps   apply access/modification times of SOURCE "
 "files\n"
@@ -4987,7 +5007,7 @@ msgstr ""
 "  -T, --no-target-directory   DOEL als een normaal bestand behandelen\n"
 "  -v, --verbose               de naam van elke aangemaakte map tonen\n"
 
-#: src/install.c:987
+#: src/install.c:986
 msgid ""
 "      --preserve-context  preserve SELinux security context\n"
 "  -Z, --context=CONTEXT  set SELinux security context of files and "
@@ -5003,7 +5023,7 @@ msgstr ""
 msgid "Mike Haertel"
 msgstr "Mike Haertel"
 
-#: src/join.c:179
+#: src/join.c:186
 msgid ""
 "For each pair of input lines with identical join fields, write a line to\n"
 "standard output.  The default join field is the first, delimited\n"
@@ -5023,7 +5043,7 @@ msgstr ""
 "                       1 of 2 is, overeenkomend met BESTAND1 of BESTAND2\n"
 "  -e TEKST           ontbrekende invoervelden vervangen door \"TEKST\"\n"
 
-#: src/join.c:188
+#: src/join.c:195
 msgid ""
 "  -i, --ignore-case  ignore differences in case when comparing fields\n"
 "  -j FIELD          equivalent to `-1 FIELD -2 FIELD'\n"
@@ -5036,7 +5056,7 @@ msgstr ""
 "  -t TEKEN           te gebruiken veldscheidingsteken voor invoer en "
 "uitvoer\n"
 
-#: src/join.c:194
+#: src/join.c:201
 msgid ""
 "  -v FILENUM        like -a FILENUM, but suppress joined output lines\n"
 "  -1 FIELD          join on this FIELD of file 1\n"
@@ -5059,7 +5079,7 @@ msgstr ""
 "behandelen;\n"
 "                       deze samenvoegen zonder proberen ze te paren\n"
 
-#: src/join.c:206
+#: src/join.c:213
 msgid ""
 "\n"
 "Unless -t CHAR is given, leading blanks separate fields and are ignored,\n"
@@ -5067,7 +5087,8 @@ msgid ""
 "from 1.  FORMAT is one or more comma or blank separated specifications,\n"
 "each being `FILENUM.FIELD' or `0'.  Default FORMAT outputs the join field,\n"
 "the remaining fields from FILE1, the remaining fields from FILE2, all\n"
-"separated by CHAR.\n"
+"separated by CHAR.  If FORMAT is the keyword 'auto', then the first\n"
+"line of each file determines the number of fields output for each line.\n"
 "\n"
 "Important: FILE1 and FILE2 must be sorted on the join fields.\n"
 "E.g., use ` sort -k 1b,1 ' if `join' has no options,\n"
@@ -5089,6 +5110,8 @@ msgstr ""
 "van\n"
 "BESTAND1, en dan de overige velden van BESTAND2, alles gescheiden door "
 "TEKEN.\n"
+"Als OPMAAK het sleutelwoord 'auto' is, dan bepaalt de eerste regel van elk\n"
+"bestand hoeveel velden er voor elke regel uitgevoerd worden.\n"
 "\n"
 "Belangrijk: BESTAND1 en BESTAND2 moeten gesorteerd zijn op de "
 "samenvoegvelden.\n"
@@ -5101,42 +5124,42 @@ msgstr ""
 "Als de invoer niet gesorteerd is en sommige regels niet samengevoegd kunnen\n"
 "worden, dan wordt er een waarschuwing gegeven.\n"
 
-#: src/join.c:797 src/join.c:996
+#: src/join.c:824 src/join.c:1023
 #, c-format
 msgid "invalid field number: %s"
 msgstr "ongeldig veldnummer: %s"
 
-#: src/join.c:818 src/join.c:827
+#: src/join.c:845 src/join.c:854
 #, c-format
 msgid "invalid field specifier: %s"
 msgstr "ongeldige veldspecificatie: %s"
 
-#: src/join.c:834
+#: src/join.c:861
 #, c-format
 msgid "invalid file number in field spec: %s"
 msgstr "ongeldig bestandsnummer in veldspecificatie: %s"
 
-#: src/join.c:877
+#: src/join.c:904
 #, c-format
 msgid "incompatible join fields %lu, %lu"
 msgstr "incompatibele join-velden: %lu, %lu"
 
-#: src/join.c:1007
+#: src/join.c:1034
 #, c-format
 msgid "conflicting empty-field replacement strings"
 msgstr "conflicterende vervangingstekenreeksen voor lege velden"
 
-#: src/join.c:1054 src/sort.c:4391
+#: src/join.c:1086 src/sort.c:4394
 #, c-format
 msgid "multi-character tab %s"
 msgstr "meerdere tekens in scheidingsteken %s"
 
-#: src/join.c:1058 src/sort.c:4396
+#: src/join.c:1090 src/sort.c:4399
 #, c-format
 msgid "incompatible tabs"
 msgstr "incompatibele scheidingstekens"
 
-#: src/join.c:1127
+#: src/join.c:1159
 #, c-format
 msgid "both files cannot be standard input"
 msgstr "niet beide bestanden mogen de standaardinvoer zijn"
@@ -5480,7 +5503,7 @@ msgstr "genegeerd: ongeldige breedte %s in omgevingsvariabele COLUMNS"
 msgid "ignoring invalid tab size in environment variable TABSIZE: %s"
 msgstr "genegeerd: ongeldige tab-grootte %s in omgevingsvariabele TABSIZE"
 
-#: src/ls.c:1751 src/ptx.c:2047
+#: src/ls.c:1751 src/ptx.c:1977
 #, c-format
 msgid "invalid line width: %s"
 msgstr "ongeldige regelbreedte: %s"
@@ -5924,7 +5947,6 @@ msgstr ""
 "\n"
 
 #: src/md5sum.c:164
-#, fuzzy
 msgid ""
 "  -b, --binary         read in binary mode (default unless reading tty "
 "stdin)\n"
@@ -5933,18 +5955,16 @@ msgstr ""
 "standaardinvoer)\n"
 
 #: src/md5sum.c:168
-#, fuzzy
 msgid "  -b, --binary         read in binary mode\n"
 msgstr "  -b, --binary    in binaire modus lezen\n"
 
 #: src/md5sum.c:171
-#, fuzzy, c-format
+#, c-format
 msgid "  -c, --check          read %s sums from the FILEs and check them\n"
 msgstr ""
 "  -c, --check     %s-controlesommen uit BESTAND(en) lezen en controleren\n"
 
 #: src/md5sum.c:175
-#, fuzzy
 msgid ""
 "  -t, --text           read in text mode (default if reading tty stdin)\n"
 msgstr ""
@@ -5952,12 +5972,10 @@ msgstr ""
 "standaardinvoer)\n"
 
 #: src/md5sum.c:179
-#, fuzzy
 msgid "  -t, --text           read in text mode (default)\n"
 msgstr "  -t, --text      in tekstmodus lezen (standaard)\n"
 
 #: src/md5sum.c:182
-#, fuzzy
 msgid ""
 "\n"
 "The following three options are useful only when verifying checksums:\n"
@@ -7653,16 +7671,16 @@ msgstr "waarschuwing: overbodige argumenten worden genegeerd, beginnend bij %s"
 #. if "ç" (c-with-cedilla) is available in the translation's character
 #. set and encoding.
 #. This is a proper name. See the gettext manual, section Names.
-#: src/ptx.c:41
+#: src/ptx.c:42
 msgid "F. Pinard"
 msgstr "François Pinard"
 
-#: src/ptx.c:422
+#: src/ptx.c:419
 #, c-format
 msgid "%s (for regexp %s)"
 msgstr "%s (voor reguliere expressie %s)"
 
-#: src/ptx.c:1888
+#: src/ptx.c:1818
 #, c-format
 msgid ""
 "Usage: %s [OPTION]... [INPUT]...   (without -G)\n"
@@ -7672,7 +7690,7 @@ msgstr ""
 "     of:  %s -G [OPTIE...] [INVOER [UITVOER]]\n"
 "\n"
 
-#: src/ptx.c:1892
+#: src/ptx.c:1822
 msgid ""
 "Output a permuted index, including context, of the words in the input "
 "files.\n"
@@ -7682,7 +7700,7 @@ msgstr ""
 "van de woorden in de invoerbestanden.\n"
 "\n"
 
-#: src/ptx.c:1899
+#: src/ptx.c:1829
 msgid ""
 "  -A, --auto-reference           output automatically generated references\n"
 "  -G, --traditional              behave more like System V `ptx'\n"
@@ -7692,7 +7710,7 @@ msgstr ""
 "  -G, --traditional              meer zoals de oude 'ptx' van System V\n"
 "  -F, --flag-truncation=TEKST    tekenreeks die zinsafbrekingen aangeeft\n"
 
-#: src/ptx.c:1904
+#: src/ptx.c:1834
 msgid ""
 "  -M, --macro-name=STRING        macro name to use instead of `xx'\n"
 "  -O, --format=roff              generate output as roff directives\n"
@@ -7707,7 +7725,7 @@ msgstr ""
 "zinnen\n"
 "  -T, --format=tex               als uitvoer 'TeX'-directieven produceren\n"
 
-#: src/ptx.c:1911
+#: src/ptx.c:1841
 msgid ""
 "  -W, --word-regexp=REGEXP       use REGEXP to match each keyword\n"
 "  -b, --break-file=FILE          word break characters in this FILE\n"
@@ -7723,7 +7741,7 @@ msgstr ""
 "  -i, --ignore-file=BESTAND      BESTAND met woorden die niet meedoen\n"
 "  -o, --only-file=BESTAND        BESTAND met woorden die alleen meedoen\n"
 
-#: src/ptx.c:1919
+#: src/ptx.c:1849
 msgid ""
 "  -r, --references               first field of each line is a reference\n"
 "  -t, --typeset-mode               - not implemented -\n"
@@ -7737,7 +7755,7 @@ msgstr ""
 "referentie\n"
 "\n"
 
-#: src/ptx.c:1926
+#: src/ptx.c:1856
 msgid ""
 "\n"
 "With no FILE or if FILE is -, read Standard Input.  `-F /' by default.\n"
@@ -7746,7 +7764,7 @@ msgstr ""
 "Zonder BESTAND, of wanneer BESTAND - is, wordt standaardinvoer gelezen.\n"
 "Optie '-F /' is standaard.\n"
 
-#: src/ptx.c:2020
+#: src/ptx.c:1950
 #, c-format
 msgid "invalid gap width: %s"
 msgstr "ongeldige breedte van tussenruimte: %s"
@@ -7849,12 +7867,12 @@ msgstr ""
 "  -v, --verbose      meer foutmeldingen tonen\n"
 "\n"
 
-#: src/remove.c:312
+#: src/remove.c:313
 #, c-format
 msgid "%s: descend into write-protected directory %s? "
 msgstr "%s: afdalen in voor schrijven beschermde map %s? "
 
-#: src/remove.c:313
+#: src/remove.c:314
 #, c-format
 msgid "%s: descend into directory %s? "
 msgstr "%s: afdalen in map %s? "
@@ -7863,37 +7881,37 @@ msgstr "%s: afdalen in map %s? "
 #. translate "%s: remove %s (write-protected) %s? "
 #. instead.  It should avoid grammatical problems
 #. with the output of file_type.
-#: src/remove.c:329
+#: src/remove.c:330
 #, c-format
 msgid "%s: remove write-protected %s %s? "
 msgstr "%s: %s %s (schrijfbeveiligd) verwijderen? "
 
-#: src/remove.c:330
+#: src/remove.c:331
 #, c-format
 msgid "%s: remove %s %s? "
 msgstr "%s: %s %s verwijderen? "
 
-#: src/remove.c:435
+#: src/remove.c:444
 #, c-format
 msgid "removed directory: %s\n"
 msgstr "map %s is verwijderd\n"
 
-#: src/remove.c:499
+#: src/remove.c:508
 #, c-format
 msgid "cannot remove directory: %s"
 msgstr "kan map %s niet verwijderen"
 
-#: src/remove.c:555
+#: src/remove.c:564
 #, c-format
 msgid "skipping %s, since it's on a different device"
 msgstr "%s wordt overgeslagen, omdat deze zich op een ander apparaat bevindt"
 
-#: src/remove.c:575
+#: src/remove.c:584
 #, c-format
 msgid "traversal failed: %s"
 msgstr "doorlopen is mislukt: %s"
 
-#: src/remove.c:581
+#: src/remove.c:590
 #, c-format
 msgid ""
 "unexpected failure: fts_info=%d: %s\n"
@@ -8592,7 +8610,7 @@ msgstr "openen voor schrijven van %s is mislukt"
 msgid "%s: invalid number of passes"
 msgstr "ongeldig aantal doorlopen: %s"
 
-#: src/shred.c:1142 src/shuf.c:330 src/sort.c:4364
+#: src/shred.c:1142 src/shuf.c:292 src/sort.c:4367
 #, c-format
 msgid "multiple random sources specified"
 msgstr "meer dan één bron van willekeurige bytes gegeven"
@@ -8602,7 +8620,7 @@ msgstr "meer dan één bron van willekeurige bytes gegeven"
 msgid "%s: invalid file size"
 msgstr "ongeldige bestandsgrootte: %s"
 
-#: src/shuf.c:48
+#: src/shuf.c:49
 #, c-format
 msgid ""
 "Usage: %s [OPTION]... [FILE]\n"
@@ -8614,7 +8632,7 @@ msgstr ""
 "     of:  %s -i LAAG-HOOG [OPTIE...]\n"
 "\n"
 
-#: src/shuf.c:54
+#: src/shuf.c:55
 msgid ""
 "Write a random permutation of the input lines to standard output.\n"
 "\n"
@@ -8623,7 +8641,7 @@ msgstr ""
 "sturen.\n"
 "\n"
 
-#: src/shuf.c:61
+#: src/shuf.c:62
 msgid ""
 "  -e, --echo                treat each ARG as an input line\n"
 "  -i, --input-range=LO-HI   treat each number LO through HI as an input "
@@ -8643,27 +8661,27 @@ msgstr ""
 "  -z, --zero-terminated      regels afsluiten met 0-byte, niet met "
 "nieuweregel\n"
 
-#: src/shuf.c:284
+#: src/shuf.c:246
 #, c-format
 msgid "multiple -i options specified"
 msgstr "meer dan één optie '-i' gegeven"
 
-#: src/shuf.c:304
+#: src/shuf.c:266
 #, c-format
 msgid "invalid input range %s"
 msgstr "ongeldig invoerbereik: %s"
 
-#: src/shuf.c:317
+#: src/shuf.c:279
 #, c-format
 msgid "invalid line count %s"
 msgstr "ongeldig aantal regels: %s"
 
-#: src/shuf.c:324 src/sort.c:4358
+#: src/shuf.c:286 src/sort.c:4361
 #, c-format
 msgid "multiple output files specified"
 msgstr "meer dan één uitvoerbestand gegeven"
 
-#: src/shuf.c:350
+#: src/shuf.c:312
 #, c-format
 msgid "cannot combine -e and -i options"
 msgstr "opties '-e' en '-i' gaan niet samen"
@@ -8697,7 +8715,7 @@ msgstr ""
 msgid "invalid time interval %s"
 msgstr "ongeldig tijdsinterval: %s"
 
-#: src/sleep.c:148 src/tail.c:1214
+#: src/sleep.c:148 src/tail.c:1217
 #, c-format
 msgid "cannot read realtime clock"
 msgstr "kan de realtime-klok niet lezen"
@@ -8944,8 +8962,8 @@ msgstr "%s [-d] is niet normaal geëindigd"
 msgid "cannot create temporary file in %s"
 msgstr "kan tijdelijk bestand %s niet aanmaken"
 
-#: src/sort.c:934 src/sort.c:1987 src/sort.c:3031 src/sort.c:3733
-#: src/sort.c:3736
+#: src/sort.c:934 src/sort.c:1987 src/sort.c:3033 src/sort.c:3735
+#: src/sort.c:3738
 msgid "open failed"
 msgstr "openen is mislukt"
 
@@ -8953,7 +8971,7 @@ msgstr "openen is mislukt"
 msgid "fflush failed"
 msgstr "alles naar schijf wegschrijven (fflush) is mislukt"
 
-#: src/sort.c:959 src/sort.c:1990 src/sort.c:4623
+#: src/sort.c:959 src/sort.c:1990 src/sort.c:4626
 msgid "close failed"
 msgstr "sluiten is mislukt"
 
@@ -9034,131 +9052,131 @@ msgstr "de niet-getransformeerde tekenreeks was %s"
 msgid "^ no match for key\n"
 msgstr "^ geen overeenkomst voor sleutel\n"
 
-#: src/sort.c:2349
+#: src/sort.c:2351
 #, c-format
 msgid "obsolescent key `%s' used; consider `%s' instead"
 msgstr "verouderde sleutel '%s' is gebruikt; gebruik liever '%s'"
 
-#: src/sort.c:2355
+#: src/sort.c:2357
 #, c-format
 msgid "key %lu has zero width and will be ignored"
 msgstr "sleutel %lu heeft breedte nul en wordt genegeerd"
 
-#: src/sort.c:2366
+#: src/sort.c:2368
 #, c-format
 msgid "leading blanks are significant in key %lu; consider also specifying `b'"
 msgstr ""
 "leidende witruimte is significant in sleutel %lu; misschien ook '-b' opgeven?"
 
-#: src/sort.c:2379
+#: src/sort.c:2381
 #, c-format
 msgid "key %lu is numeric and spans multiple fields"
 msgstr "sleutel %lu is numeriek en beslaat meerdere velden"
 
-#: src/sort.c:2411
+#: src/sort.c:2413
 #, c-format
 msgid "option `-%s' is ignored"
 msgid_plural "options `-%s' are ignored"
 msgstr[0] "optie '-%s' wordt genegeerd"
 msgstr[1] "opties '-%s' worden genegeerd"
 
-#: src/sort.c:2417
+#: src/sort.c:2419
 #, c-format
 msgid "option `-r' only applies to last-resort comparison"
 msgstr "optie '-r' betreft alleen de noodvergelijking"
 
-#: src/sort.c:2691 src/sort.c:2700
+#: src/sort.c:2693 src/sort.c:2702
 msgid "write failed"
 msgstr "schrijven is mislukt"
 
-#: src/sort.c:2743
+#: src/sort.c:2745
 #, c-format
 msgid "%s: %s:%s: disorder: "
 msgstr "%s: %s:%s: wanorde: "
 
-#: src/sort.c:2746
+#: src/sort.c:2748
 msgid "standard error"
 msgstr "standaardfoutuitvoer"
 
-#: src/sort.c:3903
+#: src/sort.c:3906
 #, c-format
 msgid "%s: invalid field specification %s"
 msgstr "%s: ongeldige veldspecificatie %s"
 
-#: src/sort.c:3914
+#: src/sort.c:3917
 #, c-format
 msgid "options `-%s' are incompatible"
 msgstr "opties '-%s' gaan niet samen"
 
-#: src/sort.c:3965
+#: src/sort.c:3968
 #, c-format
 msgid "%s: invalid count at start of %s"
 msgstr "%s: ongeldig aantal bij het begin van %s"
 
-#: src/sort.c:4222
+#: src/sort.c:4225
 msgid "invalid number after `-'"
 msgstr "ongeldig getal na '-'"
 
-#: src/sort.c:4225 src/sort.c:4311 src/sort.c:4339
+#: src/sort.c:4228 src/sort.c:4314 src/sort.c:4342
 msgid "invalid number after `.'"
 msgstr "ongeldig getal na '.'"
 
-#: src/sort.c:4238 src/sort.c:4344
+#: src/sort.c:4241 src/sort.c:4347
 msgid "stray character in field spec"
 msgstr "verdwaald teken in veldspecificatie"
 
-#: src/sort.c:4285
+#: src/sort.c:4288
 #, c-format
 msgid "multiple compress programs specified"
 msgstr "meer dan één compressieprogramma opgegeven"
 
-#: src/sort.c:4302
+#: src/sort.c:4305
 msgid "invalid number at field start"
 msgstr "ongeldig getal aan het begin van een veld"
 
-#: src/sort.c:4306 src/sort.c:4334
+#: src/sort.c:4309 src/sort.c:4337
 msgid "field number is zero"
 msgstr "veldnummer is nul"
 
-#: src/sort.c:4315
+#: src/sort.c:4318
 msgid "character offset is zero"
 msgstr "tekenpositie is nul"
 
-#: src/sort.c:4330
+#: src/sort.c:4333
 msgid "invalid number after `,'"
 msgstr "ongeldig getal na ','"
 
-#: src/sort.c:4380
+#: src/sort.c:4383
 #, c-format
 msgid "empty tab"
 msgstr "lege tab"
 
-#: src/sort.c:4473 src/wc.c:691
+#: src/sort.c:4476 src/wc.c:691
 #, c-format
 msgid "cannot read file names from %s"
 msgstr "kan geen bestandsnamen uit %s lezen"
 
-#: src/sort.c:4495
+#: src/sort.c:4498
 #, c-format
 msgid "%s:%lu: invalid zero-length file name"
 msgstr "%s:%lu: ongeldige bestandsnaam (lengte nul)"
 
-#: src/sort.c:4501
+#: src/sort.c:4504
 #, c-format
 msgid "no input from %s"
 msgstr "geen invoer van %s"
 
-#: src/sort.c:4547
+#: src/sort.c:4550
 #, c-format
 msgid "using %s sorting rules"
 msgstr "sorteerregels van %s worden gebruikt"
 
-#: src/sort.c:4550
+#: src/sort.c:4553
 #, c-format
 msgid "using simple byte comparison"
 msgstr "eenvoudige byte-vergelijking wordt gebruikt"
 
-#: src/sort.c:4581
+#: src/sort.c:4584
 #, c-format
 msgid "extra operand %s not allowed with -%c"
 msgstr "extra argument %s is niet toegestaan bij optie '-%c'"
@@ -10257,7 +10275,7 @@ msgstr ""
 msgid "ignoring all arguments"
 msgstr "alle argumenten worden genegeerd"
 
-#: src/system.h:384
+#: src/system.h:388
 #, c-format
 msgid ""
 "\n"
@@ -10270,15 +10288,15 @@ msgstr ""
 "prevaleert boven de hier beschreven versie.  Kijk in de documentatie van\n"
 "uw shell voor details over de ondersteunde opties.\n"
 
-#: src/system.h:390
+#: src/system.h:394
 msgid "      --help     display this help and exit\n"
 msgstr "      --help      deze hulptekst tonen en stoppen\n"
 
-#: src/system.h:392
+#: src/system.h:396
 msgid "      --version  output version information and exit\n"
 msgstr "      --version   programmaversie tonen en stoppen\n"
 
-#: src/system.h:577
+#: src/system.h:581
 msgid ""
 "\n"
 "SIZE may be (or may be an integer optionally followed by) one of following:\n"
@@ -10289,7 +10307,7 @@ msgstr ""
 "zijn:\n"
 "KB 1000, K 1024, MB 1000*1000, M 1024*1024, enz. voor G, T, P, E, Z en Y.\n"
 
-#: src/system.h:586
+#: src/system.h:590
 #, c-format
 msgid ""
 "\n"
@@ -10303,7 +10321,7 @@ msgstr ""
 "BLOCKSIZE.  Anders is de eenheid standaard 1024 bytes (of 512 als\n"
 "POSIXLY_CORRECT gezet is).\n"
 
-#: src/system.h:596
+#: src/system.h:600
 #, c-format
 msgid ""
 "\n"
@@ -10316,18 +10334,18 @@ msgstr ""
 #. <http://translationproject.org/team/LANG_CODE.html> to form one of
 #. the URLs at http://translationproject.org/team/.  Otherwise, replace
 #. the entire URL with your translation team's email address.
-#: src/system.h:612
+#: src/system.h:616
 #, c-format
 msgid "Report %s translation bugs to <http://translationproject.org/team/>\n"
 msgstr "Meld vertalingsfouten in '%s' aan <vertaling@vrijschrift.org>.\n"
 
-#: src/system.h:616
+#: src/system.h:620
 #, c-format
 msgid "For complete documentation, run: info coreutils '%s invocation'\n"
 msgstr ""
 "Voor volledige documentatie, gebruik:  info coreutils '%s invocation'\n"
 
-#: src/system.h:686
+#: src/system.h:690
 #, c-format
 msgid ""
 "WARNING: Circular directory structure.\n"
@@ -10548,145 +10566,145 @@ msgstr "%s: kan niet naar relatieve positie %s springen"
 msgid "%s: cannot seek to end-relative offset %s"
 msgstr "%s: kan niet naar eind-relatieve positie %s springen"
 
-#: src/tail.c:890
+#: src/tail.c:893
 #, c-format
 msgid "cannot determine location of %s. reverting to polling"
 msgstr "kan de locatie van '%s' niet bepalen; teruggevallen op polsen"
 
-#: src/tail.c:959
+#: src/tail.c:962
 #, c-format
 msgid "%s has become inaccessible"
 msgstr "%s is ontoegankelijk geworden"
 
-#: src/tail.c:976
+#: src/tail.c:979
 #, c-format
 msgid "%s has been replaced with an untailable file; giving up on this name"
 msgstr ""
 "%s is vervangen door een bestand dat niet gevolgd kan worden;\n"
 "gestopt met volgen van deze naam"
 
-#: src/tail.c:985
+#: src/tail.c:988
 #, c-format
 msgid "%s has been replaced with a remote file. giving up on this name"
 msgstr ""
 "%s is vervangen door een bestand op afstand;\n"
 "gestopt met volgen van deze naam"
 
-#: src/tail.c:1006
+#: src/tail.c:1009
 #, c-format
 msgid "%s has become accessible"
 msgstr "%s is toegankelijk geworden"
 
-#: src/tail.c:1014
+#: src/tail.c:1017
 #, c-format
 msgid "%s has appeared;  following end of new file"
 msgstr "%s is verschenen;  het einde van het nieuwe bestand wordt gevolgd"
 
-#: src/tail.c:1025
+#: src/tail.c:1028
 #, c-format
 msgid "%s has been replaced;  following end of new file"
 msgstr "%s is vervangen;  het einde van het nieuwe bestand wordt gevolgd"
 
-#: src/tail.c:1126
+#: src/tail.c:1129
 #, c-format
 msgid "%s: cannot change nonblocking mode"
 msgstr "%s: kan niet-blokkerende modus niet wijzigen"
 
-#: src/tail.c:1167 src/tail.c:1282
+#: src/tail.c:1170 src/tail.c:1285
 #, c-format
 msgid "%s: file truncated"
 msgstr "%s: bestand is ingekort"
 
-#: src/tail.c:1191
+#: src/tail.c:1194
 #, c-format
 msgid "no files remaining"
 msgstr "geen bestanden meer over"
 
-#: src/tail.c:1364
+#: src/tail.c:1367
 #, c-format
 msgid "cannot watch parent directory of %s"
 msgstr "kan de bovenliggende map van %s niet monitoren"
 
-#: src/tail.c:1367 src/tail.c:1382
+#: src/tail.c:1370 src/tail.c:1385
 #, c-format
 msgid "inotify resources exhausted"
 msgstr "onvoldoende hulpbronnen beschikbaar voor 'inotify'"
 
-#: src/tail.c:1385 src/tail.c:1503
+#: src/tail.c:1388 src/tail.c:1506
 #, c-format
 msgid "cannot watch %s"
 msgstr "kan %s niet monitoren"
 
-#: src/tail.c:1457
+#: src/tail.c:1460
 #, c-format
 msgid "error monitoring inotify event"
 msgstr "fout bij monitoren van 'inotify'-gebeurtenis"
 
-#: src/tail.c:1477
+#: src/tail.c:1480
 #, c-format
 msgid "error reading inotify event"
 msgstr "fout bij lezen van 'inotify'-gebeurtenis"
 
-#: src/tail.c:1770
+#: src/tail.c:1773
 #, c-format
 msgid "%s: cannot follow end of this type of file; giving up on this name"
 msgstr ""
 "%s: kan het einde van dit type bestand niet volgen;\n"
 "gestopt met volgen van deze naam"
 
-#: src/tail.c:1887
+#: src/tail.c:1890
 #, c-format
 msgid "number in %s is too large"
 msgstr "getal in %s is te groot"
 
-#: src/tail.c:1959
+#: src/tail.c:1962
 #, c-format
 msgid "%s: invalid maximum number of unchanged stats between opens"
 msgstr "ongeldig maximum aantal onveranderde statusopvragingen: %s"
 
-#: src/tail.c:1975
+#: src/tail.c:1978
 #, c-format
 msgid "%s: invalid PID"
 msgstr "ongeldig procesnummer: %s"
 
-#: src/tail.c:1994
+#: src/tail.c:1997
 #, c-format
 msgid "%s: invalid number of seconds"
 msgstr "ongeldig aantal seconden: %s"
 
-#: src/tail.c:2010
+#: src/tail.c:2013
 #, c-format
 msgid "option used in invalid context -- %c"
 msgstr "optie is gebruikt in een ongeldige context -- %c"
 
-#: src/tail.c:2018
+#: src/tail.c:2021
 #, c-format
 msgid "warning: --retry is useful mainly when following by name"
 msgstr "waarschuwing: '--retry' is gewoonlijk alleen nuttig bij volgen op naam"
 
-#: src/tail.c:2022
+#: src/tail.c:2025
 #, c-format
 msgid "warning: PID ignored; --pid=PID is useful only when following"
 msgstr ""
 "waarschuwing: procesnummer is genegeerd;\n"
 "'--pid=PID' is alleen zinvol bij volgen"
 
-#: src/tail.c:2025
+#: src/tail.c:2028
 #, c-format
 msgid "warning: --pid=PID is not supported on this system"
 msgstr "waarschuwing: '--pid=PID' wordt niet ondersteund op dit systeem"
 
-#: src/tail.c:2126
+#: src/tail.c:2129
 #, c-format
 msgid "cannot follow %s by name"
 msgstr "kan %s niet op naam volgen"
 
-#: src/tail.c:2132
+#: src/tail.c:2135
 #, c-format
 msgid "warning: following standard input indefinitely is ineffective"
 msgstr "waarschuwing: het onbeperkt volgen van standaardinvoer is ineffectief"
 
-#: src/tail.c:2193
+#: src/tail.c:2196
 #, c-format
 msgid "inotify cannot be used, reverting to polling"
 msgstr "'inotify' kan niet worden gebruikt; teruggevallen op polsen"
@@ -11740,24 +11758,24 @@ msgstr ""
 "'uniq'.\n"
 "Verder volgt de vergelijking de regels gespecificeerd door 'LC_COLLATE'.\n"
 
-#: src/uniq.c:361
+#: src/uniq.c:360
 #, c-format
 msgid "too many repeated lines"
 msgstr "te veel herhaalde regels"
 
-#: src/uniq.c:524
+#: src/uniq.c:523
 msgid "invalid number of fields to skip"
 msgstr "ongeldig aantal velden om over te slaan"
 
-#: src/uniq.c:533
+#: src/uniq.c:532
 msgid "invalid number of bytes to skip"
 msgstr "ongeldig aantal bytes om over te slaan"
 
-#: src/uniq.c:542
+#: src/uniq.c:541
 msgid "invalid number of bytes to compare"
 msgstr "ongeldig aantal bytes om te vergelijken"
 
-#: src/uniq.c:561
+#: src/uniq.c:560
 #, c-format
 msgid "printing all duplicated lines and repeat counts is meaningless"
 msgstr "alle herhaalde regels én de herhalingsaantallen tonen is onzin"

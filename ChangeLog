@@ -1,4 +1,517 @@
+2011-02-04  Jim Meyering  <meyering@redhat.com>
+
+	version 8.10
+	* NEWS: Record release date.
+
+	cp: avoid spurious failure on any non-linux kernel
+	* src/extent-scan.c (extent_scan_read) [!linux]: Always set
+	scan->initial_scan_failed so caller knows not to report the failure.
+
+	tests: skip mv/i-3 on FreeBSD to avoid spurious failure
+	* tests/mv/i-3: Skip when uname -s reports FreeBSD.
+
+2011-02-03  Pádraig Brady  <P@draigBrady.com>
+
+	sort: fix --debug key highlighting when key start after key end
+	This case was overlooked in commit bdde34f9, 2010-08-05,
+	"sort: tune and refactor --debug code, and fix minor underlining bug"
+
+	* src/sort.c (debug_key):  Don't adjust the key end when
+	it's before the key start.
+	* tests/misc/sort-debug-keys: Add a test case.
+
+2011-02-02  Jim Meyering  <meyering@redhat.com>
+
+	tests: correct part of fiemap-perf
+	* tests/cp/fiemap-perf: Correct erroneous added test.
+	Since nonexistent names were used, the final test ended up
+	being "test =", which would always "succeed".
+
+	build: update gnulib submodule to latest
+
+2011-02-01  Pádraig Brady  <P@draigBrady.com>
+
+	cp: fix the buffer size used when writing zeros
+	* src/copy.c (write_zeros): This bug caused 4 or 8 bytes to
+	be written at a time which is very inefficient.  One could
+	trigger the issue with `cp --sparse=never sparse non-sparse`
+	on a file system that supports fiemap.
+
+2011-01-31  Jim Meyering  <meyering@redhat.com>
+
+	cp: always initialize extent_copy's output parameter
+	* src/copy.c (extent_copy): Otherwise it would be used uninitialized.
+
+	tests: exercise a rarely-used corner of copy.c
+	* tests/cp/sparse-to-pipe: New test.
+	* tests/Makefile.am (TESTS): Add it.
+
+	cp: fix copying a sparse file to a pipe
+	The recent FIEMAP-related changes made it so the unusual case of
+	copying a sparse file to a non-regular destination (e.g., a pipe)
+	would erroneously write one byte too many to that destination.
+	That happened because extent_copy assumed that it could use lseek
+	to obtain the number of bytes written to the output file descriptor.
+	That was valid only for regular files.
+	* src/copy.c (sparse_copy): Add a parameter, to be used by extent_copy,
+	but not by reg_copy.  Adjust callers.
+	(extent_copy): Maintain new local, dest_pos, using new arg, n_read.
+	Don't call lseek on dest_fd; use new var, dest_pos, instead.
+	(copy_reg): Add unused arg.
+
+	tests: gfs2 also supports FIEMAP
+	* tests/init.cfg (fiemap_capable_): Add gfs2.
+	Clarify comment.
+
+	maint: remove unused inclusion of "fiemap.h"
+	* src/copy.c: Don't include "fiemap.h".
+
+	tests: factor fiemap-related predicate into init.cfg
+	* tests/init.cfg (fiemap_capable_): New function.
+	* tests/cp/fiemap-perf: Use it.
+	* tests/cp/sparse-fiemap: Likewise.
+	* tests/cp/fiemap-2: Likewise.
+
+	maint: update copyright year lists in new files
+	* src/extent-scan.h: Update copyright year list.
+	* src/extent-scan.c: Likewise.
+	* tests/cp/sparse-fiemap: Likewise.
+
+	tests: modernize sparse-fiemap test
+	* tests/cp/sparse-fiemap: Use print_ver_, not open-coded VERBOSE test.
+
+	tests: remove duplicate fiemap-perf test
+	* tests/cp/fiemap-perf: Copy block-comparing code from sparse-fiemap.
+	* tests/cp/sparse-fiemap: The same test was here, alongside a much
+	more involved test.  Remove it, now that it is in its own file.
+
+2011-01-30  Jim Meyering  <meyering@redhat.com>
+
+	doc: NEWS: mention cp's improvement
+	* NEWS (New Features): cp now copies sparse files efficiently.
+
+	build: update gnulib submodule to latest
+
+	copy, tee: assume EINTR is always defined: remove #ifdefs
+	Don't use "#ifdef EINTR".  dd.c has been doing that since 2004.
+	* src/copy.c (sparse_copy): Remove #ifdef...#endif around EINTR use.
+	* src/tee.c (tee_files): Remove #ifdef...#endif around EINTR use.
+	If we need it, add something like this in system.h:
+	/* When EINTR is not defined, define it to an improbable value
+	   so that each use does not have to be #ifdef'd.  */
+	 #ifndef EINTR
+	 # define EINTR 999988
+	 #endif
+
+	tests: cp/fiemap: exercise previously-failing parts
+	* tests/cp/fiemap-2: New test.
+	* tests/Makefile.am (TESTS): Add it.
+
+	copy: make extent_copy use sparse_copy, rather than its own code
+	* src/copy.c (extent_copy): Before this change, extent_copy would fail
+	to create holes, thus breaking --sparse=auto and --sparse=always.
+	I.e., copying a large enough file of all zeros, cp --sparse=always
+	should introduce a hole, but with extent_copy, it would not.
+
+	copy: remove obsolete comment
+	* src/copy.c (sparse_copy): Remove now-obsolete comment about
+	how we used to work around lack of ftruncate.  Combine nested
+	if conditions into one.
+
+	copy: factor sparse-copying code into its own function, because
+	we're going to have to use it from within extent_copy, too.
+	* src/copy.c (sparse_copy): New function, factored out of...
+	(copy_reg): ...here.
+	Remove now-unused locals.
+
+	fiemap copy: avoid leak-on-error
+	* src/copy.c (extent_copy): Don't leak an extent_scan buffer on
+	failed lseek, read, or write.
+
+	fiemap copy: avoid a performance hit due to very small buffer
+	* src/copy.c (extent_copy): Don't let what should have been a
+	temporary reduction of buf_size (to handle a short ext_len) become
+	permanent and thus impact the performance of all further iterations.
+
+	fiemap copy: simplify post-loop logic; improve comments
+	* src/copy.c (extent_copy): Avoid duplication in post-loop
+	extend-to-desired-length code.
+
+	fiemap copy: rename some locals
+	(extent_copy): Rename locals: s/*ext_logical/*ext_start/
+
+	tests: ensure that FIEMAP-enabled cp copies a sparse file efficiently
+	* tests/cp/fiemap-perf: New file.
+	* tests/Makefile.am (TESTS): Add it.
+
+	copy: don't allocate a separate buffer just for extent-based copy
+	* src/copy.c (copy_reg): Move use of extent_scan to just *after*
+	we allocate the main copying buffer, so we can...
+	(extent_scan): Take a new parameter, BUF, and use that rather
+	than allocating a private buffer.  Update caller.
+
+	copy: tweak variable name; improve a comment
+	* src/copy.c (copy_reg): Rename a variable to make more sense from
+	caller's perspective: s/require_normal_copy/normal_copy_required/.
+	This is an output-only variable, and the original name could make
+	it look like an input (or i&o) variable.
+
+	copy: call extent_copy also when make_holes is false, ...
+	so that we benefit from using extents also when reading a sparse
+	input file with --sparse=never.
+	* src/copy.c (copy_reg): Remove erroneous test of "make_holes"
+	so that we call extent_copy also when make_holes is false.
+	Otherwise, what's the point of that parameter?
+
+	copy: remove else-after-goto and adjust indentation
+	* src/copy.c (copy_reg): Remove useless else-after-goto.
+
+	extent-scan: adjust naming and formatting
+	* src/extent-scan.h [struct extent_scan]: Rename member:
+	s/hit_last_extent/hit_final_extent/.  "final" is clearer,
+	since "last" can be interpreted as "preceding".
+	Rename extent-scan functions to start with extent_scan_.
+	* src/Makefile.am (copy_sources): Also distribute extent-scan.h.
+	* src/extent-scan.c: Don't include error.h or quote.h.  Neither is used.
+	* src/copy.c: shorten a comment to fit in 80 columns
+	* src/extent-scan.c, src/extent-scan.h: Correct formatting.
+
+	fiemap copy: don't let write failure go unreported; adjust style, etc.
+	* src/copy.c (write_zeros): Add comments.
+	(extent_copy): Move decls of "ok" and "i" down to scope where used.
+	Adjust comments.
+	Rename local: s/holes_len/hole_size/
+	Print a diagnostic upon failure to write zeros.
+
+2011-01-30  jeff.liu  <jeff.liu@oracle.com>
+
+	fiemap copy: add extent-scan.[ch], avoid a double-free and reorganize
+	Changes:
+	========
+	1. fix write_zeros() per Jim's comments.
+	2. remove char const *fname from struct extent_scan.
+	3. change the signature of open_extent_scan() from
+	"void open_extent_scan(struct extent_scan **scan)" to
+	"void open_extent_scan(struct extent_scan *scan)" to avoid having
+	to malloc the extent_scan variable; instead save it on the stack.
+	4. move close_extent_scan() from a function defined in extent-scan.c
+	to extent-scan.h as a macro definition, but it does nothing for now,
+	since initial extent scan defined at stack.
+	5. add a macro "free_extents_info()" defined at extent-scan.h to
+	release the memory allocated to extent info which should be called
+	combine with get_extents_info(), it just one line, so IMHO, define
+	it as macro should be ok.
+
+	* src/extent-scan.c: New file; functions to read "extents".
+	* src/extent-scan.h: Header file of extent-scan.c.
+	* src/Makefile.am: Reference it and link it to copy_source.
+	* src/copy.c: Use the new functions and avoid double-free.
+
+2011-01-30  Jim Meyering  <meyering@redhat.com>
+
+	build: distribute new test script, filefrag-extent-compare
+	* tests/Makefile.am (EXTRA_DIST): Add filefrag-extent-compare.
+
+	build: distribute new file, fiemap.h
+	* src/Makefile.am (noinst_HEADERS): Add fiemap.h.
+
+2011-01-30  Jie Liu  <jeff.liu@oracle.com>
+
+	copy.c: add FIEMAP_FLAG_SYNC to fiemap ioctl
+	* src/copy.c (fiemap_copy): Force kernel to sync the source
+	file before mapping.
+
+2011-01-30  Jim Meyering  <meyering@redhat.com>
+
+	fiemap.h: include <stdint.h>, not <linux/types.h>
+	* src/fiemap.h: Include stdint.h, not linux/types.h,
+	now that this file uses only portable type names.
+
+2011-01-30  Paul Eggert  <eggert@cs.ucla.edu>
+
+	copy.c: ensure proper alignment of fiemap buffer
+	* src/copy.c (fiemap_copy): Ensure that our fiemap buffer
+	is large enough and well-aligned.
+	Replace "0LL" with equivalent "0" as 3rd argument to lseek.
+
+2011-01-30  Jim Meyering  <meyering@redhat.com>
+
+	copy.c: adjust comments, tweak semantics
+	* src/copy.c (fiemap_copy): Rename from fiemap_copy_ok.
+	Add/improve comments.
+	Remove local, "fail".
+	(fiemap_copy): Do not require caller to set
+	"normal_copy_required" before calling fiemap_copy.
+	Report ioctl failure if it's the 2nd or subsequent call.
+
+	tests: relax the root-tests cross-check
+	* cfg.mk (sc_root_tests): Allow spaces before "require_root_",
+	now that tests/cp/sparse-fiemap has a conditional use.
+
+	tests: accommodate varying filefrag -v "flags" output
+	* tests/cp/sparse-fiemap: Accommodate values other than "eof"
+	in the "flags" column of filefrag -v output
+
+	tests: exercise more of the new FIEMAP copying code
+	* tests/cp/sparse-fiemap: Ensure that a file with many extents
+	(more than fit in copy.c's internal buffer) is copied properly.
+	Don't require root access if current partition is btrfs or xfs.
+	Use init.sh, not test-lib.sh.
+	* tests/filefrag-extent-compare: New file.
+
+2011-01-30  Jie Liu  <jeff.liu@oracle.com>
+
+	tests: add a new test for FIEMAP-copy
+	* tests/cp/sparse-fiemap: Add a new test for FIEMAP-copy against a
+	loopbacked ext4 partition.
+	* tests/Makefile.am (sparse-fiemap): Reference the new test.
+
+	cp: copy sparse files efficiently using the FIEMAP ioctl
+	* src/fiemap.h: Add fiemap.h for fiemap ioctl(2) support.  Copied
+	from linux's include/linux/fiemap.h, with minor formatting changes.
+	* src/copy.c (copy_reg): Now, when `cp' is invoked with --sparse=[WHEN],
+	we will try to do FIEMAP-copy if the underlying file system
+	supports it, and fall back to a normal copy if it fails.
+
+2011-01-30  Pádraig Brady  <P@draigBrady.com>
+
+	doc: add alternatives for field processing not supported by cut
+	* doc/coreutils.texi (cut invocation): Remove the tr -s '[:blank:]'
+	example, as it doesn't handle leading and trailing blanks.  Add `awk`
+	examples for common field processing operations often asked about.
+	Also document a `join` hack, to achieve the same thing.  Note the
+	join options are ordered so as to be compatible with other systems.
+
+	join: don't report disorder against an empty file
+	This allows one to use join as a field extractor like:
+	  join -a1 -o 1.3,1.1 - /dev/null
+
+	* src/join.c (join): Don't flag unpairable lines when
+	one of the files is empty.
+	* tests/misc/join: Add a new test for empty input, and adjust
+	a previous test that was only checking against empty input.
+	* doc/coreutils.texi (join invocation): Document the change.
+	* NEWS: Likewise.
+
+	join: ensure --header skips the order check with empty files
+	* src/join.c: Skip the header even if one of the files is empty.
+	* tests/misc/join: Add a test case.
+	* NEWS: Mention the fix
+
+	join: add -o 'auto' to output a constant number of fields per line
+	Lines with a different number of fields than the first line,
+	will be truncated or padded.
+
+	* src/join.c (prfields): A new function refactored from prjoin(),
+	to output all but the join field.
+	(prjoin): Don't swap line1 and line2 when line1 is blank
+	so that the padding is applied to the right place.
+	(main): Handle the -o 'auto' option.
+	* tests/misc/join: Add 6 new cases to test the auto format.
+	* NEWS: Mention the change in behavior.
+	Suggestion from Assaf Gordon
+
+2011-01-28  Jim Meyering  <meyering@redhat.com>
+
+	tests: remove obsolete uses of "$$" in temporary file names
+	Those were useful when tests might have been run in the same
+	directory and in parallel.  Now, each test is run in a newly-
+	created empty directory.
+	* tests/cp/backup-1: Remove obsolete uses of "$$".
+	* tests/cp/same-file: Likewise.
+	* tests/dd/misc: Likewise.
+	* tests/mv/part-symlink: Likewise.
+	* tests/mv/to-symlink: Likewise.
+	* tests/touch/fail-diag: Likewise.
+
+2011-01-26  Jim Meyering  <meyering@redhat.com>
+
+	tests: don't hide all trace of the vc_exe_in_TESTS test
+	There was a non-negligible delay after running a single test.
+	Now, you'll know why when you see this test's name.
+	* tests/check.mk (vc_exe_in_TESTS): Don't @-hide commands.
+	Use $(AM_V_GEN) instead.
+
+2011-01-25  Andreas Schwab  <schwab@linux-m68k.org>
+
+	tests: minor correction
+	* tests/du/move-dir-while-traversing: Ignoring SIGTSTP is enough;
+	don't also attempt to ignore SIGSTOP, it cannot be handled or ignored.
+	Spotted by Andreas Schwab.
+
+2011-01-25  Jim Meyering  <meyering@redhat.com>
+
+	tests: avoid FP failure due to suspension
+	* tests/du/move-dir-while-traversing: Prohibit suspension,
+	to avoid false-positive failure.
+
+	tests: avoid rare FP failure in new du test
+	* tests/du/move-dir-while-traversing: Create an even larger tree
+	to avoid a false-positive failure due to du terminating before
+	the rename is triggered.
+
+2011-01-24  Jim Meyering  <meyering@redhat.com>
+
+	split: avoid a new, spurious warning from gcc-4.6.0
+	* src/split.c (lines_rr) [IF_LINT]: Initialize files, now that
+	rawhide's gcc-4.6.0 would otherwise warn about use-uninitialized.
+
+	tail: avoid new diagnostic when applying -f to a pipe on linux-2.3.38
+	* src/tail.c (fremote): Do not print a diagnostic when
+	fstatfs (pipe_FD, &buf) fails, as it now does on linux-2.3.38.
+	This avoids the spurious failure of tests/misc/tail's f-pipe-1
+	test, when running in input-from-pipe mode.
+
+2011-01-21  Jim Meyering  <meyering@redhat.com>
+
+	doc: fix wording in warning about potential conflict with built-in
+	* doc/coreutils.texi (mayConflictWithShellBuiltIn): Fix wording.
+
+2011-01-21  Paul Eggert  <eggert@cs.ucla.edu>
+
+	manual: document floating point better
+	* doc/coreutils.texi (Floating point): New section.
+	(od invocation, tail invocation, sort invocation, printf invocation):
+	(sleep invocation, seq invocation): Refer and defer to it.  See
+	<http://lists.gnu.org/archive/html/bug-coreutils/2011-01/msg00031.html>.
+
+2011-01-20  Jim Meyering  <meyering@redhat.com>
+
+	build: update gnulib submodule to latest
+	The previous gnulib submodule reference was *still* to a
+	non-public commit.  My submodule had a stray commit, so
+	the reference was always to a local merge commit.
+	Reported by Rob Vermaas.
+
+	build: update gnulib submodule to latest
+	The previous gnulib submodule reference was to a non-public commit.
+	Reported by Rob Vermaas.
+
+2011-01-19  Jim Meyering  <meyering@redhat.com>
+
+	maint: use slightly more efficient process in README-release
+	* README-release: Run cheaper root-only tests first.
+	Use half of processing units (not just 1) for the expensive tests.
+
+2011-01-18  Jim Meyering  <meyering@redhat.com>
+
+	tests: avoid FP failure in new du test
+	* tests/du/move-dir-while-traversing: Create a larger tree to
+	avoid a false-positive failure due to du terminating before
+	the rename is triggered.
+
+	build: update gnulib submodule to latest
+
+	doc: update NEWS
+	* NEWS: Note when the uniq bug was introduced.
+	It was mine, commit 1d9b3de9, "uniq: remove redundant test".
+
+2011-01-17  Jim Meyering  <meyering@redhat.com>
+
+	doc: show how to shred more efficiently
+	* doc/coreutils.texi (shred invocation): Give an example showing how
+	to invoke shred in single-pass mode, and warn that -n0 --zero may
+	be inadequate.
+
+	uniq: replace a wasteful loop with simple calculation
+	* src/uniq.c (find_field): Remove the byte-skipping loop altogether.
+	Instead, perform the simple calculation.  This results in a 10%
+	performance improvement for large byte offsets.
+
+	tests: add a test for today's uniq bug
+	* tests/misc/uniq-perf: New file.
+	* tests/Makefile.am (TESTS): Add it.
+
+2011-01-17  Sami Kerola  <kerolasa@iki.fi>
+
+	uniq: don't continue field processing after end of line
+	* NEWS (Bug fixes): Mention it.
+	* src/uniq.c (find_field): Stop processing loop when end of line
+	is reached.  Before this fix, 'uniq -f 10000000000 /etc/passwd'
+	would run for a very long time.
+
+2011-01-15  Ondřej Vašík  <ovasik@redhat.com>
+
+	doc: specify how tr, echo, printf treat octal numbers
+	* doc/coreutils.texi (tr's Character sets): Document how a 9-bit
+	octal value is interpreted.  tr does not ignore the ninth bit.
+	(echo invocation, printf invocation): Document that any ninth
+	bit in \OOO is ignored. (http://debbugs.gnu.org/7574)
+
+2011-01-14  Pádraig Brady  <P@draigBrady.com>
+
+	maint: refactor to use read-file from gnulib
+	* bootstrap.conf: Add the read-file module
+	* src/ptx.c: Replace the original code which would
+	needlessly read SIZE_MAX bytes of files larger than this.
+	* src/shuf.c: Replace the original code.
+
+2011-01-13  Pádraig Brady  <P@draigBrady.com>
+
+	maint: trivial system header file cleanups
+	* src/system.h: Note where it should be included, and
+	make ordering check portable to GLIBC > 2
+	* src/copy.c: Move <sys/ioctl.h> along with other system headers
+	as is done elsewhere.
+	* src/install.c: Move <sys/wait.h> along with other system headers
+	as is done elsewhere.
+	* src/ptx.c: Include <regex.h> rather than "regex.h" as
+	is done elsewhere.  Note <regex.h> is kept after "system.h"
+	as per commit dba300a0.
+
+2011-01-12  Jim Meyering  <meyering@redhat.com>
+
+	doc: clean up HACKING guidelines
+	* HACKING: Remove mention of "indent-tabs-mode: nil", since
+	we've remove all of those directives.  No longer needed.
+	Remove dated (pre-emacs-23) reference regarding WhiteSpace mode.
+
+2011-01-12  Paul Eggert  <eggert@cs.ucla.edu>
+
+	gnulib: Also use dtoastr and ldtoastr modules. This adjusts to the recent splitting of the ftoastr module into 3 <http://lists.gnu.org/archive/html/bug-gnulib/2011-01/msg00199.html>. * bootstrap.conf (gnulib_modules): Add dtoastr, ldtoastr, as coreutils needs all 3 modules now.
+
+	build: update gnulib submodule to latest
+
+2011-01-11  Nadav Har'El  <nyh@math.technion.ac.il>
+
+	rm: ignore errno related to invalid file names
+	* src/remove.c (nonexistent_file_errno): Also skip EINVAL and
+	EILSEQ, for at least smbfs rejection of '*' in file names.
+	* NEWS: Mention the fix.
+
+2011-01-10  Jim Meyering  <meyering@redhat.com>
+
+	build: update gnulib submodule to latest
+
+	du: don't abort when a subdir is renamed during traversal
+	* NEWS (Bug fixes): Mention it.
+	* src/du.c (prev_level): Move declaration "up" to file-scope global.
+	(du_files): Reset prev_level to 0 upon abnormal fts_read termination.
+	Reported by Johathan Nieder in http://bugs.debian.org/609049
+	Also, improve a diagnostic.
+	* tests/du/move-dir-while-traversing: Test for the above.
+	* tests/Makefile.am (TESTS): Add it.
+
+2011-01-07  Pádraig Brady  <P@draigBrady.com>
+
+	maint: suppress some clang scan-build warnings
+	* src/pr.c (char_to_clump): Remove a dead store.
+	* src/remove.c (fts_skip_tree): Likewise.
+	* src/sort.c (key_warnings): Likewise.
+	(sort): Suppress an uninitialized pointer warning.
+
+	maint: replace uses of ignore_ptr with ignore_value
+	* gnulib: Update for enhanced ignore_value()
+	* src/chcon.c (process_file): Don't use the deprecated ignore_ptr.
+	* src/chmod.c (process_file): Likewise.
+	* src/chown-core.c (change_file_owner): Likewise.
+
 2011-01-04  Jim Meyering  <meyering@redhat.com>
+
+	post-release administrivia
+	* NEWS: Add header line for next release.
+	* .prev-version: Record previous version.
+	* cfg.mk (old_NEWS_hash): Auto-update.
 
 	version 8.9
 	* NEWS: Record release date.
