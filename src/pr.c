@@ -773,7 +773,7 @@ static struct option const long_options[] =
 /* Return the number of columns that have either an open file or
    stored lines. */
 
-static int
+static int _GL_ATTRIBUTE_PURE
 cols_ready_to_print (void)
 {
   COLUMN *q;
@@ -1165,7 +1165,7 @@ main (int argc, char **argv)
         print_files (n_files, file_names);
       else
         {
-          int i;
+          unsigned int i;
           for (i = 0; i < n_files; i++)
             print_files (1, &file_names[i]);
         }
@@ -1887,7 +1887,7 @@ print_page (void)
       print_a_FF = false;
     }
 
-  if (last_page_number < page_number)
+  if (last_page_number < ++page_number)
     return false;		/* Stop printing with LAST_PAGE */
 
   reset_status ();		/* Change ON_HOLD to OPEN. */
@@ -2399,7 +2399,7 @@ print_header (void)
   /* The translator must ensure that formatting the translation of
      "Page %"PRIuMAX does not generate more than (sizeof page_text - 1)
      bytes.  */
-  sprintf (page_text, _("Page %"PRIuMAX), page_number++);
+  sprintf (page_text, _("Page %"PRIuMAX), page_number);
   available_width = header_width_available - mbswidth (page_text, 0);
   available_width = MAX (0, available_width);
   lhs_spaces = available_width >> 1;

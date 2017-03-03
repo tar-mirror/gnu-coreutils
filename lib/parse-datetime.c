@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 2.4.588-2f658-dirty.  */
+/* A Bison parser, made by GNU Bison 2.4.609-f3bd.  */
 
 /* Bison implementation for Yacc-like parsers in C
 
@@ -44,7 +44,7 @@
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "2.4.588-2f658-dirty"
+#define YYBISON_VERSION "2.4.609-f3bd"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -577,7 +577,7 @@ YYID (yyi)
 #  endif
 #  if (defined __cplusplus && ! defined EXIT_SUCCESS \
        && ! ((defined YYMALLOC || defined malloc) \
-	     && (defined YYFREE || defined free)))
+             && (defined YYFREE || defined free)))
 #   include <stdlib.h> /* INFRINGES ON USER NAME SPACE */
 #   ifndef EXIT_SUCCESS
 #    define EXIT_SUCCESS 0
@@ -603,7 +603,7 @@ void free (void *); /* INFRINGES ON USER NAME SPACE */
 
 #if (! defined yyoverflow \
      && (! defined __cplusplus \
-	 || (defined YYSTYPE_IS_TRIVIAL && YYSTYPE_IS_TRIVIAL)))
+         || (defined YYSTYPE_IS_TRIVIAL && YYSTYPE_IS_TRIVIAL)))
 
 /* A type that is properly aligned for any stack member.  */
 union yyalloc
@@ -628,15 +628,15 @@ union yyalloc
    elements in the stack, and YYPTR gives the new location of the
    stack.  Advance YYPTR to a properly aligned location for the next
    stack.  */
-# define YYSTACK_RELOCATE(Stack_alloc, Stack)				\
-    do									\
-      {									\
-	YYSIZE_T yynewbytes;						\
-	YYCOPY (&yyptr->Stack_alloc, Stack, yysize);			\
-	Stack = &yyptr->Stack_alloc;					\
-	yynewbytes = yystacksize * sizeof (*Stack) + YYSTACK_GAP_MAXIMUM; \
-	yyptr += yynewbytes / sizeof (*yyptr);				\
-      }									\
+# define YYSTACK_RELOCATE(Stack_alloc, Stack)                           \
+    do                                                                  \
+      {                                                                 \
+        YYSIZE_T yynewbytes;                                            \
+        YYCOPY (&yyptr->Stack_alloc, Stack, yysize);                    \
+        Stack = &yyptr->Stack_alloc;                                    \
+        yynewbytes = yystacksize * sizeof (*Stack) + YYSTACK_GAP_MAXIMUM; \
+        yyptr += yynewbytes / sizeof (*yyptr);                          \
+      }                                                                 \
     while (YYID (0))
 
 #endif
@@ -649,13 +649,13 @@ union yyalloc
 #   define YYCOPY(To, From, Count) \
       __builtin_memcpy (To, From, (Count) * sizeof (*(From)))
 #  else
-#   define YYCOPY(To, From, Count)		\
-      do					\
-	{					\
-	  YYSIZE_T yyi;				\
-	  for (yyi = 0; yyi < (Count); yyi++)	\
-	    (To)[yyi] = (From)[yyi];		\
-	}					\
+#   define YYCOPY(To, From, Count)              \
+      do                                        \
+        {                                       \
+          YYSIZE_T yyi;                         \
+          for (yyi = 0; yyi < (Count); yyi++)   \
+            (To)[yyi] = (From)[yyi];            \
+        }                                       \
       while (YYID (0))
 #  endif
 # endif
@@ -664,23 +664,23 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  12
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   98
+#define YYLAST   112
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  27
+#define YYNTOKENS  28
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  21
+#define YYNNTS  26
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  82
+#define YYNRULES  91
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  100
+#define YYNSTATES  114
 
 /* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
    by yylex, with out-of-bounds checking.  */
 #define YYUNDEFTOK  2
 #define YYMAXUTOK   277
 
-#define YYTRANSLATE(YYX)						\
+#define YYTRANSLATE(YYX)                                                \
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
 
 /* YYTRANSLATE[TOKEN-NUM] -- Symbol number corresponding to TOKEN-NUM
@@ -691,11 +691,11 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,    25,     2,     2,    26,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,    24,     2,
+       2,     2,     2,     2,    26,     2,     2,    27,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,    25,     2,
        2,     2,     2,     2,    23,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,    24,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -722,14 +722,15 @@ static const yytype_uint8 yytranslate[] =
 static const yytype_uint16 yyrline[] =
 {
        0,   318,   318,   319,   323,   330,   332,   336,   338,   340,
-     342,   344,   346,   347,   348,   352,   357,   362,   369,   374,
-     384,   389,   397,   399,   402,   404,   406,   411,   416,   421,
-     426,   434,   439,   459,   466,   474,   482,   487,   493,   498,
-     507,   509,   511,   516,   518,   520,   522,   524,   526,   528,
-     530,   532,   534,   536,   538,   540,   542,   544,   546,   548,
-     550,   552,   554,   556,   560,   562,   564,   566,   568,   570,
-     575,   579,   579,   582,   583,   588,   589,   594,   599,   610,
-     611,   617,   618
+     342,   344,   346,   348,   349,   350,   354,   358,   362,   367,
+     372,   377,   381,   386,   391,   398,   400,   404,   412,   417,
+     427,   429,   431,   434,   437,   439,   441,   446,   451,   456,
+     461,   469,   474,   494,   502,   510,   515,   521,   526,   532,
+     536,   546,   548,   550,   555,   557,   559,   561,   563,   565,
+     567,   569,   571,   573,   575,   577,   579,   581,   583,   585,
+     587,   589,   591,   593,   595,   599,   601,   603,   605,   607,
+     609,   614,   618,   618,   621,   622,   627,   628,   633,   638,
+     649,   650
 };
 #endif
 
@@ -742,11 +743,12 @@ static const char *const yytname[] =
   "tMONTH_UNIT", "tHOUR_UNIT", "tMINUTE_UNIT", "tSEC_UNIT", "tDAY_UNIT",
   "tDAY_SHIFT", "tDAY", "tDAYZONE", "tLOCAL_ZONE", "tMERIDIAN", "tMONTH",
   "tORDINAL", "tZONE", "tSNUMBER", "tUNUMBER", "tSDECIMAL_NUMBER",
-  "tUDECIMAL_NUMBER", "'@'", "':'", "','", "'/'", "$accept", "spec",
-  "timespec", "items", "item", "time", "local_zone", "zone", "day", "date",
-  "rel", "relunit", "relunit_snumber", "dayshift", "seconds",
-  "signed_seconds", "unsigned_seconds", "number", "hybrid",
-  "o_colon_minutes", "o_merid", 0
+  "tUDECIMAL_NUMBER", "'@'", "'T'", "':'", "','", "'/'", "$accept", "spec",
+  "timespec", "items", "item", "datetime", "iso_8601_datetime", "time",
+  "iso_8601_time", "o_zone_offset", "zone_offset", "local_zone", "zone",
+  "day", "date", "iso_8601_date", "rel", "relunit", "relunit_snumber",
+  "dayshift", "seconds", "signed_seconds", "unsigned_seconds", "number",
+  "hybrid", "o_colon_minutes", 0
 };
 #endif
 
@@ -757,14 +759,14 @@ static const yytype_uint16 yytoknum[] =
 {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
      265,   266,   267,   268,   269,   270,   271,   272,   273,   274,
-     275,   276,   277,    64,    58,    44,    47
+     275,   276,   277,    64,    84,    58,    44,    47
 };
 # endif
 
-#define YYPACT_NINF -82
+#define YYPACT_NINF -93
 
 #define yypact_value_is_default(yystate) \
-  ((yystate) == (-82))
+  ((yystate) == (-93))
 
 #define YYTABLE_NINF -1
 
@@ -775,16 +777,18 @@ static const yytype_uint16 yytoknum[] =
      STATE-NUM.    */
 static const yytype_int8 yypact[] =
 {
-     -17,    56,    15,   -82,    26,   -82,   -82,   -82,   -82,   -82,
-     -82,   -82,   -82,   -82,   -82,   -82,   -82,   -82,   -82,   -82,
-      36,   -82,    68,    10,    50,     9,    59,    -5,    72,    73,
-     -82,   -82,   -82,   -82,   -82,   -82,   -82,    80,   -82,   -82,
-     -82,   -82,   -82,   -82,    65,    61,   -82,   -82,   -82,   -82,
-     -82,   -82,   -82,   -82,    17,   -82,   -82,   -82,   -82,   -82,
-     -82,   -82,   -82,   -82,   -82,   -82,   -82,   -82,   -82,   -82,
-      60,    44,    67,    69,   -82,   -82,   -82,   -82,   -82,    70,
-      71,   -82,   -82,   -82,   -82,    -7,    62,   -82,   -82,   -82,
-      74,    -2,   -82,    75,   -82,    55,   -82,    74,   -82,   -82
+      38,    27,    77,   -93,    46,   -93,   -93,   -93,   -93,   -93,
+     -93,   -93,   -93,   -93,   -93,   -93,   -93,   -93,   -93,   -93,
+      62,   -93,    82,    -3,    66,     3,    74,    -4,    83,    84,
+      75,   -93,   -93,   -93,   -93,   -93,   -93,   -93,   -93,   -93,
+      71,   -93,    93,   -93,   -93,   -93,   -93,   -93,   -93,    78,
+      72,   -93,   -93,   -93,   -93,   -93,   -93,   -93,   -93,    25,
+     -93,   -93,   -93,   -93,   -93,   -93,   -93,   -93,   -93,   -93,
+     -93,   -93,   -93,   -93,   -93,    21,    19,    79,    80,   -93,
+     -93,   -93,   -93,   -93,    81,   -93,   -93,    85,    86,   -93,
+     -93,   -93,   -93,   -93,    -6,    76,    17,   -93,   -93,   -93,
+     -93,    87,    69,   -93,   -93,    88,    89,    -1,   -93,    18,
+     -93,   -93,    69,    91
 };
 
   /* YYDEFACT[S] -- default reduction number in state S.  Performed when
@@ -792,32 +796,34 @@ static const yytype_int8 yypact[] =
      is an error.    */
 static const yytype_uint8 yydefact[] =
 {
-       5,     0,     0,     2,     3,    74,    76,    73,    75,     4,
-      71,    72,     1,    45,    48,    54,    57,    62,    51,    70,
-      27,    25,    20,     0,     0,    22,     0,    77,     0,     0,
-       6,     7,     8,     9,    11,    10,    12,    41,    63,    42,
-      13,    14,    28,    21,     0,    36,    43,    46,    52,    55,
-      58,    49,    29,    26,    79,    23,    64,    65,    67,    68,
-      69,    66,    44,    47,    53,    56,    59,    50,    30,    15,
-      38,     0,     0,     0,    78,    60,    61,    40,    35,     0,
-       0,    24,    34,    39,    33,    81,    31,    37,    80,    82,
-      79,     0,    16,     0,    17,    81,    32,    79,    18,    19
+       5,     0,     0,     2,     3,    85,    87,    84,    86,     4,
+      82,    83,     1,    56,    59,    65,    68,    73,    62,    81,
+      37,    35,    28,     0,     0,    30,     0,    88,     0,     0,
+      31,     6,     7,    16,     8,    21,     9,    10,    12,    11,
+      49,    13,    52,    74,    53,    14,    15,    38,    29,     0,
+      45,    54,    57,    63,    66,    69,    60,    39,    36,    90,
+      32,    75,    76,    78,    79,    80,    77,    55,    58,    64,
+      67,    70,    61,    40,    18,    47,    90,     0,     0,    22,
+      89,    71,    72,    33,     0,    51,    44,     0,     0,    34,
+      43,    48,    50,    27,    25,    41,     0,    17,    46,    91,
+      19,    90,     0,    23,    26,     0,     0,    25,    42,    25,
+      20,    24,     0,    25
 };
 
   /* YYPGOTO[NTERM-NUM].    */
 static const yytype_int8 yypgoto[] =
 {
-     -82,   -82,   -82,   -82,   -82,   -82,   -82,   -82,   -82,   -82,
-     -82,   -82,    46,   -82,   -82,   -82,    -6,   -82,   -82,   -81,
-      -3
+     -93,   -93,   -93,   -93,   -93,   -93,   -93,   -93,    20,   -68,
+     -27,   -93,   -93,   -93,   -93,   -93,   -93,   -93,    60,   -93,
+     -93,   -93,   -92,   -93,   -93,    43
 };
 
   /* YYDEFGOTO[NTERM-NUM].    */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     2,     3,     4,    30,    31,    32,    33,    34,    35,
-      36,    37,    38,    39,     9,    10,    11,    40,    41,    81,
-      92
+      -1,     2,     3,     4,    31,    32,    33,    34,    35,   103,
+     104,    36,    37,    38,    39,    40,    41,    42,    43,    44,
+       9,    10,    11,    45,    46,    93
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -825,85 +831,93 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.    */
 static const yytype_uint8 yytable[] =
 {
-      62,    63,    64,    65,    66,    67,     1,    68,    89,    94,
-      69,    70,    90,    53,    71,    12,    99,    91,     6,    72,
-       8,    73,    56,    57,    58,    59,    60,    61,    54,    44,
-      45,    13,    14,    15,    16,    17,    18,    19,    20,    21,
-      22,    80,    23,    24,    25,    26,    27,    28,    29,    56,
-      57,    58,    59,    60,    61,    46,    47,    48,    49,    50,
-      51,    42,    52,    84,    56,    57,    58,    59,    60,    61,
-      89,    55,    43,    74,    97,     5,     6,     7,     8,    82,
-      83,    75,    76,    77,    78,    95,    79,    85,    93,    86,
-      87,    88,    98,     0,     0,    96,     0,     0,    80
+      79,    67,    68,    69,    70,    71,    72,    58,    73,   100,
+     107,    74,    75,   101,   110,    76,    49,    50,   101,   102,
+     113,    77,    59,    78,    61,    62,    63,    64,    65,    66,
+      61,    62,    63,    64,    65,    66,   101,   101,    92,   111,
+      90,    91,   106,   112,    88,   111,     5,     6,     7,     8,
+      88,    13,    14,    15,    16,    17,    18,    19,    20,    21,
+      22,     1,    23,    24,    25,    26,    27,    28,    29,    79,
+      30,    51,    52,    53,    54,    55,    56,    12,    57,    61,
+      62,    63,    64,    65,    66,    60,    48,    80,    47,     6,
+      83,     8,    81,    82,    26,    84,    85,    86,    87,    94,
+      95,    96,    89,   105,    97,    98,    99,     0,   108,   109,
+     101,     0,    88
 };
 
 static const yytype_int8 yycheck[] =
 {
-       5,     6,     7,     8,     9,    10,    23,    12,    15,    90,
-      15,    16,    19,     4,    19,     0,    97,    24,    20,    24,
-      22,    26,     5,     6,     7,     8,     9,    10,    19,    19,
-      20,     5,     6,     7,     8,     9,    10,    11,    12,    13,
-      14,    24,    16,    17,    18,    19,    20,    21,    22,     5,
-       6,     7,     8,     9,    10,     5,     6,     7,     8,     9,
-      10,    25,    12,    19,     5,     6,     7,     8,     9,    10,
-      15,    25,     4,    27,    19,    19,    20,    21,    22,    19,
-      20,     9,     9,     3,    19,    91,    25,    20,    26,    20,
-      20,    20,    95,    -1,    -1,    20,    -1,    -1,    24
+      27,     5,     6,     7,     8,     9,    10,     4,    12,    15,
+     102,    15,    16,    19,    15,    19,    19,    20,    19,    25,
+     112,    25,    19,    27,     5,     6,     7,     8,     9,    10,
+       5,     6,     7,     8,     9,    10,    19,    19,    19,   107,
+      19,    20,    25,    25,    25,   113,    19,    20,    21,    22,
+      25,     5,     6,     7,     8,     9,    10,    11,    12,    13,
+      14,    23,    16,    17,    18,    19,    20,    21,    22,    96,
+      24,     5,     6,     7,     8,     9,    10,     0,    12,     5,
+       6,     7,     8,     9,    10,    25,     4,    27,    26,    20,
+      30,    22,     9,     9,    19,    24,     3,    19,    26,    20,
+      20,    20,    59,    27,    84,    20,    20,    -1,    20,    20,
+      19,    -1,    25
 };
 
   /* STOS_[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.    */
 static const yytype_uint8 yystos[] =
 {
-       0,    23,    28,    29,    30,    19,    20,    21,    22,    41,
-      42,    43,     0,     5,     6,     7,     8,     9,    10,    11,
+       0,    23,    29,    30,    31,    19,    20,    21,    22,    48,
+      49,    50,     0,     5,     6,     7,     8,     9,    10,    11,
       12,    13,    14,    16,    17,    18,    19,    20,    21,    22,
-      31,    32,    33,    34,    35,    36,    37,    38,    39,    40,
-      44,    45,    25,     4,    19,    20,     5,     6,     7,     8,
-       9,    10,    12,     4,    19,    39,     5,     6,     7,     8,
-       9,    10,     5,     6,     7,     8,     9,    10,    12,    15,
-      16,    19,    24,    26,    39,     9,     9,     3,    19,    25,
-      24,    46,    19,    20,    19,    20,    20,    20,    20,    15,
-      19,    24,    47,    26,    46,    43,    20,    19,    47,    46
+      24,    32,    33,    34,    35,    36,    39,    40,    41,    42,
+      43,    44,    45,    46,    47,    51,    52,    26,     4,    19,
+      20,     5,     6,     7,     8,     9,    10,    12,     4,    19,
+      46,     5,     6,     7,     8,     9,    10,     5,     6,     7,
+       8,     9,    10,    12,    15,    16,    19,    25,    27,    38,
+      46,     9,     9,    46,    24,     3,    19,    26,    25,    53,
+      19,    20,    19,    53,    20,    20,    20,    36,    20,    20,
+      15,    19,    25,    37,    38,    27,    25,    50,    20,    20,
+      15,    37,    25,    50
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.    */
 static const yytype_uint8 yyr1[] =
 {
-       0,    27,    28,    28,    29,    30,    30,    31,    31,    31,
-      31,    31,    31,    31,    31,    32,    32,    32,    32,    32,
-      33,    33,    34,    34,    34,    34,    34,    35,    35,    35,
-      35,    36,    36,    36,    36,    36,    36,    36,    36,    36,
-      37,    37,    37,    38,    38,    38,    38,    38,    38,    38,
-      38,    38,    38,    38,    38,    38,    38,    38,    38,    38,
-      38,    38,    38,    38,    39,    39,    39,    39,    39,    39,
-      40,    41,    41,    42,    42,    43,    43,    44,    45,    46,
-      46,    47,    47
+       0,    28,    29,    29,    30,    31,    31,    32,    32,    32,
+      32,    32,    32,    32,    32,    32,    33,    34,    35,    35,
+      35,    35,    36,    36,    36,    37,    37,    38,    39,    39,
+      40,    40,    40,    40,    40,    40,    40,    41,    41,    41,
+      41,    42,    42,    42,    42,    42,    42,    42,    42,    42,
+      43,    44,    44,    44,    45,    45,    45,    45,    45,    45,
+      45,    45,    45,    45,    45,    45,    45,    45,    45,    45,
+      45,    45,    45,    45,    45,    46,    46,    46,    46,    46,
+      46,    47,    48,    48,    49,    49,    50,    50,    51,    52,
+      53,    53
 };
 
   /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.    */
 static const yytype_uint8 yyr2[] =
 {
        0,     2,     1,     1,     2,     0,     2,     1,     1,     1,
-       1,     1,     1,     1,     1,     2,     4,     5,     6,     7,
-       1,     2,     1,     2,     3,     1,     2,     1,     2,     2,
-       2,     3,     5,     3,     3,     3,     2,     4,     2,     3,
-       2,     1,     1,     2,     2,     1,     2,     2,     1,     2,
-       2,     1,     2,     2,     1,     2,     2,     1,     2,     2,
-       2,     2,     1,     1,     2,     2,     2,     2,     2,     2,
-       1,     1,     1,     1,     1,     1,     1,     1,     2,     0,
-       2,     0,     1
+       1,     1,     1,     1,     1,     1,     1,     3,     2,     4,
+       6,     1,     2,     4,     6,     0,     1,     2,     1,     2,
+       1,     1,     2,     2,     3,     1,     2,     1,     2,     2,
+       2,     3,     5,     3,     3,     2,     4,     2,     3,     1,
+       3,     2,     1,     1,     2,     2,     1,     2,     2,     1,
+       2,     2,     1,     2,     2,     1,     2,     2,     1,     2,
+       2,     2,     2,     1,     1,     2,     2,     2,     2,     2,
+       2,     1,     1,     1,     1,     1,     1,     1,     1,     2,
+       0,     2
 };
 
 
-#define yyerrok		(yyerrstatus = 0)
-#define yyclearin	(yychar = YYEMPTY)
-#define YYEMPTY		(-2)
-#define YYEOF		0
+#define yyerrok         (yyerrstatus = 0)
+#define yyclearin       (yychar = YYEMPTY)
+#define YYEMPTY         (-2)
+#define YYEOF           0
 
-#define YYACCEPT	goto yyacceptlab
-#define YYABORT		goto yyabortlab
-#define YYERROR		goto yyerrorlab
+#define YYACCEPT        goto yyacceptlab
+#define YYABORT         goto yyabortlab
+#define YYERROR         goto yyerrorlab
 
 
 /* Like YYERROR except do call yyerror.  This remains here temporarily
@@ -913,7 +927,7 @@ static const yytype_uint8 yyr2[] =
    in Bison 2.4.2's NEWS entry, where a plan to phase it out is
    discussed.  */
 
-#define YYFAIL		goto yyerrlab
+#define YYFAIL          goto yyerrlab
 #if defined YYFAIL
   /* This is here to suppress warnings from the GCC cpp's
      -Wunused-macros.  Normally we don't worry about that warning, but
@@ -923,25 +937,25 @@ static const yytype_uint8 yyr2[] =
 
 #define YYRECOVERING()  (!!yyerrstatus)
 
-#define YYBACKUP(Token, Value)					\
-do								\
-  if (yychar == YYEMPTY && yylen == 1)				\
-    {								\
-      yychar = (Token);						\
-      yylval = (Value);						\
-      YYPOPSTACK (1);						\
-      goto yybackup;						\
-    }								\
-  else								\
-    {								\
+#define YYBACKUP(Token, Value)                                  \
+do                                                              \
+  if (yychar == YYEMPTY && yylen == 1)                          \
+    {                                                           \
+      yychar = (Token);                                         \
+      yylval = (Value);                                         \
+      YYPOPSTACK (1);                                           \
+      goto yybackup;                                            \
+    }                                                           \
+  else                                                          \
+    {                                                           \
       yyerror (pc, YY_("syntax error: cannot back up")); \
-      YYERROR;							\
-    }								\
+      YYERROR;                                                  \
+    }                                                           \
 while (YYID (0))
 
 
-#define YYTERROR	1
-#define YYERRCODE	256
+#define YYTERROR        1
+#define YYERRCODE       256
 
 
 /* YYLLOC_DEFAULT -- Set CURRENT to span from RHS[1] to RHS[N].
@@ -950,22 +964,22 @@ while (YYID (0))
 
 #define YYRHSLOC(Rhs, K) ((Rhs)[K])
 #ifndef YYLLOC_DEFAULT
-# define YYLLOC_DEFAULT(Current, Rhs, N)				\
-    do									\
+# define YYLLOC_DEFAULT(Current, Rhs, N)                                \
+    do                                                                  \
       if (YYID (N))                                                    \
-	{								\
-	  (Current).first_line   = YYRHSLOC (Rhs, 1).first_line;	\
-	  (Current).first_column = YYRHSLOC (Rhs, 1).first_column;	\
-	  (Current).last_line    = YYRHSLOC (Rhs, N).last_line;		\
-	  (Current).last_column  = YYRHSLOC (Rhs, N).last_column;	\
-	}								\
-      else								\
-	{								\
-	  (Current).first_line   = (Current).last_line   =		\
-	    YYRHSLOC (Rhs, 0).last_line;				\
-	  (Current).first_column = (Current).last_column =		\
-	    YYRHSLOC (Rhs, 0).last_column;				\
-	}								\
+        {                                                               \
+          (Current).first_line   = YYRHSLOC (Rhs, 1).first_line;        \
+          (Current).first_column = YYRHSLOC (Rhs, 1).first_column;      \
+          (Current).last_line    = YYRHSLOC (Rhs, N).last_line;         \
+          (Current).last_column  = YYRHSLOC (Rhs, N).last_column;       \
+        }                                                               \
+      else                                                              \
+        {                                                               \
+          (Current).first_line   = (Current).last_line   =              \
+            YYRHSLOC (Rhs, 0).last_line;                                \
+          (Current).first_column = (Current).last_column =              \
+            YYRHSLOC (Rhs, 0).last_column;                              \
+        }                                                               \
     while (YYID (0))
 #endif
 
@@ -993,21 +1007,21 @@ while (YYID (0))
 #  define YYFPRINTF fprintf
 # endif
 
-# define YYDPRINTF(Args)			\
-do {						\
-  if (yydebug)					\
-    YYFPRINTF Args;				\
+# define YYDPRINTF(Args)                        \
+do {                                            \
+  if (yydebug)                                  \
+    YYFPRINTF Args;                             \
 } while (YYID (0))
 
-# define YY_SYMBOL_PRINT(Title, Type, Value, Location)			  \
-do {									  \
-  if (yydebug)								  \
-    {									  \
-      YYFPRINTF (stderr, "%s ", Title);					  \
-      yy_symbol_print (stderr,						  \
-		  Type, Value, pc); \
-      YYFPRINTF (stderr, "\n");						  \
-    }									  \
+# define YY_SYMBOL_PRINT(Title, Type, Value, Location)                    \
+do {                                                                      \
+  if (yydebug)                                                            \
+    {                                                                     \
+      YYFPRINTF (stderr, "%s ", Title);                                   \
+      yy_symbol_print (stderr,                                            \
+                  Type, Value, pc); \
+      YYFPRINTF (stderr, "\n");                                           \
+    }                                                                     \
 } while (YYID (0))
 
 
@@ -1041,7 +1055,7 @@ yy_symbol_value_print (yyoutput, yytype, yyvaluep, pc)
   switch (yytype)
     {
       default:
-	break;
+        break;
     }
 }
 
@@ -1097,10 +1111,10 @@ yy_stack_print (yybottom, yytop)
   YYFPRINTF (stderr, "\n");
 }
 
-# define YY_STACK_PRINT(Bottom, Top)				\
-do {								\
-  if (yydebug)							\
-    yy_stack_print ((Bottom), (Top));				\
+# define YY_STACK_PRINT(Bottom, Top)                            \
+do {                                                            \
+  if (yydebug)                                                  \
+    yy_stack_print ((Bottom), (Top));                           \
 } while (YYID (0))
 
 
@@ -1138,9 +1152,9 @@ yy_reduce_print (yyssp, yyvsp, yyrule, pc)
     }
 }
 
-# define YY_REDUCE_PRINT(Rule)		\
-do {					\
-  if (yydebug)				\
+# define YY_REDUCE_PRINT(Rule)          \
+do {                                    \
+  if (yydebug)                          \
     yy_reduce_print (yyssp, yyvsp, Rule, pc); \
 } while (YYID (0))
 
@@ -1156,7 +1170,7 @@ int yydebug;
 
 
 /* YYINITDEPTH -- initial size of the parser's stacks.  */
-#ifndef	YYINITDEPTH
+#ifndef YYINITDEPTH
 # define YYINITDEPTH 200
 #endif
 
@@ -1242,27 +1256,27 @@ yytnamerr (char *yyres, const char *yystr)
       char const *yyp = yystr;
 
       for (;;)
-	switch (*++yyp)
-	  {
-	  case '\'':
-	  case ',':
-	    goto do_not_strip_quotes;
+        switch (*++yyp)
+          {
+          case '\'':
+          case ',':
+            goto do_not_strip_quotes;
 
-	  case '\\':
-	    if (*++yyp != '\\')
-	      goto do_not_strip_quotes;
-	    /* Fall through.  */
-	  default:
-	    if (yyres)
-	      yyres[yyn] = *yyp;
-	    yyn++;
-	    break;
+          case '\\':
+            if (*++yyp != '\\')
+              goto do_not_strip_quotes;
+            /* Fall through.  */
+          default:
+            if (yyres)
+              yyres[yyn] = *yyp;
+            yyn++;
+            break;
 
-	  case '"':
-	    if (yyres)
-	      yyres[yyn] = '\0';
-	    return yyn;
-	  }
+          case '"':
+            if (yyres)
+              yyres[yyn] = '\0';
+            return yyn;
+          }
     do_not_strip_quotes: ;
     }
 
@@ -1438,7 +1452,7 @@ yydestruct (yymsg, yytype, yyvaluep, pc)
   switch (yytype)
     {
       default:
-	break;
+        break;
     }
 }
 
@@ -1579,23 +1593,23 @@ YYSTYPE yylval;
 
 #ifdef yyoverflow
       {
-	/* Give user a chance to reallocate the stack.  Use copies of
-	   these so that the &'s don't force the real ones into
-	   memory.  */
-	YYSTYPE *yyvs1 = yyvs;
-	yytype_int16 *yyss1 = yyss;
+        /* Give user a chance to reallocate the stack.  Use copies of
+           these so that the &'s don't force the real ones into
+           memory.  */
+        YYSTYPE *yyvs1 = yyvs;
+        yytype_int16 *yyss1 = yyss;
 
-	/* Each stack pointer address is followed by the size of the
-	   data in use in that stack, in bytes.  This used to be a
-	   conditional around just the two extra args, but that might
-	   be undefined if yyoverflow is a macro.  */
-	yyoverflow (YY_("memory exhausted"),
-		    &yyss1, yysize * sizeof (*yyssp),
-		    &yyvs1, yysize * sizeof (*yyvsp),
-		    &yystacksize);
+        /* Each stack pointer address is followed by the size of the
+           data in use in that stack, in bytes.  This used to be a
+           conditional around just the two extra args, but that might
+           be undefined if yyoverflow is a macro.  */
+        yyoverflow (YY_("memory exhausted"),
+                    &yyss1, yysize * sizeof (*yyssp),
+                    &yyvs1, yysize * sizeof (*yyvsp),
+                    &yystacksize);
 
-	yyss = yyss1;
-	yyvs = yyvs1;
+        yyss = yyss1;
+        yyvs = yyvs1;
       }
 #else /* no yyoverflow */
 # ifndef YYSTACK_RELOCATE
@@ -1603,22 +1617,22 @@ YYSTYPE yylval;
 # else
       /* Extend the stack our own way.  */
       if (YYMAXDEPTH <= yystacksize)
-	goto yyexhaustedlab;
+        goto yyexhaustedlab;
       yystacksize *= 2;
       if (YYMAXDEPTH < yystacksize)
-	yystacksize = YYMAXDEPTH;
+        yystacksize = YYMAXDEPTH;
 
       {
-	yytype_int16 *yyss1 = yyss;
-	union yyalloc *yyptr =
-	  (union yyalloc *) YYSTACK_ALLOC (YYSTACK_BYTES (yystacksize));
-	if (! yyptr)
-	  goto yyexhaustedlab;
-	YYSTACK_RELOCATE (yyss_alloc, yyss);
-	YYSTACK_RELOCATE (yyvs_alloc, yyvs);
+        yytype_int16 *yyss1 = yyss;
+        union yyalloc *yyptr =
+          (union yyalloc *) YYSTACK_ALLOC (YYSTACK_BYTES (yystacksize));
+        if (! yyptr)
+          goto yyexhaustedlab;
+        YYSTACK_RELOCATE (yyss_alloc, yyss);
+        YYSTACK_RELOCATE (yyvs_alloc, yyvs);
 #  undef YYSTACK_RELOCATE
-	if (yyss1 != yyssa)
-	  YYSTACK_FREE (yyss1);
+        if (yyss1 != yyssa)
+          YYSTACK_FREE (yyss1);
       }
 # endif
 #endif /* no yyoverflow */
@@ -1627,10 +1641,10 @@ YYSTYPE yylval;
       yyvsp = yyvs + yysize - 1;
 
       YYDPRINTF ((stderr, "Stack size increased to %lu\n",
-		  (unsigned long int) yystacksize));
+                  (unsigned long int) yystacksize));
 
       if (yyss + yystacksize - 1 <= yyssp)
-	YYABORT;
+        YYABORT;
     }
 
   YYDPRINTF ((stderr, "Entering state %d\n", yystate));
@@ -1743,229 +1757,272 @@ yyreduce:
         pc->timespec_seen = true;
       }
 /* Line 1740 of yacc.c  */
-#line 1747 "parse-datetime.c"
+#line 1761 "parse-datetime.c"
     break;
 
   case 7:
 /* Line 1740 of yacc.c  */
 #line 337 "parse-datetime.y"
-    { pc->times_seen++; }
+    { pc->times_seen++; pc->dates_seen++; }
 /* Line 1740 of yacc.c  */
-#line 1755 "parse-datetime.c"
+#line 1769 "parse-datetime.c"
     break;
 
   case 8:
 /* Line 1740 of yacc.c  */
 #line 339 "parse-datetime.y"
-    { pc->local_zones_seen++; }
+    { pc->times_seen++; }
 /* Line 1740 of yacc.c  */
-#line 1763 "parse-datetime.c"
+#line 1777 "parse-datetime.c"
     break;
 
   case 9:
 /* Line 1740 of yacc.c  */
 #line 341 "parse-datetime.y"
-    { pc->zones_seen++; }
+    { pc->local_zones_seen++; }
 /* Line 1740 of yacc.c  */
-#line 1771 "parse-datetime.c"
+#line 1785 "parse-datetime.c"
     break;
 
   case 10:
 /* Line 1740 of yacc.c  */
 #line 343 "parse-datetime.y"
-    { pc->dates_seen++; }
+    { pc->zones_seen++; }
 /* Line 1740 of yacc.c  */
-#line 1779 "parse-datetime.c"
+#line 1793 "parse-datetime.c"
     break;
 
   case 11:
 /* Line 1740 of yacc.c  */
 #line 345 "parse-datetime.y"
-    { pc->days_seen++; }
+    { pc->dates_seen++; }
 /* Line 1740 of yacc.c  */
-#line 1787 "parse-datetime.c"
+#line 1801 "parse-datetime.c"
     break;
 
-  case 15:
+  case 12:
 /* Line 1740 of yacc.c  */
-#line 353 "parse-datetime.y"
+#line 347 "parse-datetime.y"
+    { pc->days_seen++; }
+/* Line 1740 of yacc.c  */
+#line 1809 "parse-datetime.c"
+    break;
+
+  case 18:
+/* Line 1740 of yacc.c  */
+#line 363 "parse-datetime.y"
     {
         set_hhmmss (pc, (yyvsp[-1].textintval).value, 0, 0, 0);
         pc->meridian = (yyvsp[0].intval);
       }
 /* Line 1740 of yacc.c  */
-#line 1798 "parse-datetime.c"
+#line 1820 "parse-datetime.c"
     break;
 
-  case 16:
+  case 19:
 /* Line 1740 of yacc.c  */
-#line 358 "parse-datetime.y"
+#line 368 "parse-datetime.y"
     {
         set_hhmmss (pc, (yyvsp[-3].textintval).value, (yyvsp[-1].textintval).value, 0, 0);
         pc->meridian = (yyvsp[0].intval);
       }
 /* Line 1740 of yacc.c  */
-#line 1809 "parse-datetime.c"
+#line 1831 "parse-datetime.c"
     break;
 
-  case 17:
+  case 20:
 /* Line 1740 of yacc.c  */
-#line 363 "parse-datetime.y"
-    {
-        set_hhmmss (pc, (yyvsp[-4].textintval).value, (yyvsp[-2].textintval).value, 0, 0);
-        pc->meridian = MER24;
-        pc->zones_seen++;
-        pc->time_zone = time_zone_hhmm (pc, (yyvsp[-1].textintval), (yyvsp[0].intval));
-      }
-/* Line 1740 of yacc.c  */
-#line 1822 "parse-datetime.c"
-    break;
-
-  case 18:
-/* Line 1740 of yacc.c  */
-#line 370 "parse-datetime.y"
+#line 373 "parse-datetime.y"
     {
         set_hhmmss (pc, (yyvsp[-5].textintval).value, (yyvsp[-3].textintval).value, (yyvsp[-1].timespec).tv_sec, (yyvsp[-1].timespec).tv_nsec);
         pc->meridian = (yyvsp[0].intval);
       }
 /* Line 1740 of yacc.c  */
-#line 1833 "parse-datetime.c"
+#line 1842 "parse-datetime.c"
     break;
 
-  case 19:
+  case 22:
 /* Line 1740 of yacc.c  */
-#line 375 "parse-datetime.y"
+#line 382 "parse-datetime.y"
     {
-        set_hhmmss (pc, (yyvsp[-6].textintval).value, (yyvsp[-4].textintval).value, (yyvsp[-2].timespec).tv_sec, (yyvsp[-2].timespec).tv_nsec);
+        set_hhmmss (pc, (yyvsp[-1].textintval).value, 0, 0, 0);
         pc->meridian = MER24;
+      }
+/* Line 1740 of yacc.c  */
+#line 1853 "parse-datetime.c"
+    break;
+
+  case 23:
+/* Line 1740 of yacc.c  */
+#line 387 "parse-datetime.y"
+    {
+        set_hhmmss (pc, (yyvsp[-3].textintval).value, (yyvsp[-1].textintval).value, 0, 0);
+        pc->meridian = MER24;
+      }
+/* Line 1740 of yacc.c  */
+#line 1864 "parse-datetime.c"
+    break;
+
+  case 24:
+/* Line 1740 of yacc.c  */
+#line 392 "parse-datetime.y"
+    {
+        set_hhmmss (pc, (yyvsp[-5].textintval).value, (yyvsp[-3].textintval).value, (yyvsp[-1].timespec).tv_sec, (yyvsp[-1].timespec).tv_nsec);
+        pc->meridian = MER24;
+      }
+/* Line 1740 of yacc.c  */
+#line 1875 "parse-datetime.c"
+    break;
+
+  case 27:
+/* Line 1740 of yacc.c  */
+#line 405 "parse-datetime.y"
+    {
         pc->zones_seen++;
         pc->time_zone = time_zone_hhmm (pc, (yyvsp[-1].textintval), (yyvsp[0].intval));
       }
 /* Line 1740 of yacc.c  */
-#line 1846 "parse-datetime.c"
+#line 1886 "parse-datetime.c"
     break;
 
-  case 20:
+  case 28:
 /* Line 1740 of yacc.c  */
-#line 385 "parse-datetime.y"
+#line 413 "parse-datetime.y"
     {
         pc->local_isdst = (yyvsp[0].intval);
         pc->dsts_seen += (0 < (yyvsp[0].intval));
       }
 /* Line 1740 of yacc.c  */
-#line 1857 "parse-datetime.c"
+#line 1897 "parse-datetime.c"
     break;
 
-  case 21:
+  case 29:
 /* Line 1740 of yacc.c  */
-#line 390 "parse-datetime.y"
+#line 418 "parse-datetime.y"
     {
         pc->local_isdst = 1;
         pc->dsts_seen += (0 < (yyvsp[-1].intval)) + 1;
       }
 /* Line 1740 of yacc.c  */
-#line 1868 "parse-datetime.c"
+#line 1908 "parse-datetime.c"
     break;
 
-  case 22:
+  case 30:
 /* Line 1740 of yacc.c  */
-#line 398 "parse-datetime.y"
+#line 428 "parse-datetime.y"
     { pc->time_zone = (yyvsp[0].intval); }
 /* Line 1740 of yacc.c  */
-#line 1876 "parse-datetime.c"
+#line 1916 "parse-datetime.c"
     break;
 
-  case 23:
+  case 31:
 /* Line 1740 of yacc.c  */
-#line 400 "parse-datetime.y"
+#line 430 "parse-datetime.y"
+    { pc->time_zone = HOUR(7); }
+/* Line 1740 of yacc.c  */
+#line 1924 "parse-datetime.c"
+    break;
+
+  case 32:
+/* Line 1740 of yacc.c  */
+#line 432 "parse-datetime.y"
     { pc->time_zone = (yyvsp[-1].intval);
         apply_relative_time (pc, (yyvsp[0].rel), 1); }
 /* Line 1740 of yacc.c  */
-#line 1885 "parse-datetime.c"
+#line 1933 "parse-datetime.c"
     break;
 
-  case 24:
+  case 33:
 /* Line 1740 of yacc.c  */
-#line 403 "parse-datetime.y"
+#line 435 "parse-datetime.y"
+    { pc->time_zone = HOUR(7);
+        apply_relative_time (pc, (yyvsp[0].rel), 1); }
+/* Line 1740 of yacc.c  */
+#line 1942 "parse-datetime.c"
+    break;
+
+  case 34:
+/* Line 1740 of yacc.c  */
+#line 438 "parse-datetime.y"
     { pc->time_zone = (yyvsp[-2].intval) + time_zone_hhmm (pc, (yyvsp[-1].textintval), (yyvsp[0].intval)); }
 /* Line 1740 of yacc.c  */
-#line 1893 "parse-datetime.c"
+#line 1950 "parse-datetime.c"
     break;
 
-  case 25:
+  case 35:
 /* Line 1740 of yacc.c  */
-#line 405 "parse-datetime.y"
+#line 440 "parse-datetime.y"
     { pc->time_zone = (yyvsp[0].intval) + 60; }
 /* Line 1740 of yacc.c  */
-#line 1901 "parse-datetime.c"
+#line 1958 "parse-datetime.c"
     break;
 
-  case 26:
+  case 36:
 /* Line 1740 of yacc.c  */
-#line 407 "parse-datetime.y"
+#line 442 "parse-datetime.y"
     { pc->time_zone = (yyvsp[-1].intval) + 60; }
 /* Line 1740 of yacc.c  */
-#line 1909 "parse-datetime.c"
+#line 1966 "parse-datetime.c"
     break;
 
-  case 27:
+  case 37:
 /* Line 1740 of yacc.c  */
-#line 412 "parse-datetime.y"
+#line 447 "parse-datetime.y"
     {
         pc->day_ordinal = 0;
         pc->day_number = (yyvsp[0].intval);
       }
 /* Line 1740 of yacc.c  */
-#line 1920 "parse-datetime.c"
+#line 1977 "parse-datetime.c"
     break;
 
-  case 28:
+  case 38:
 /* Line 1740 of yacc.c  */
-#line 417 "parse-datetime.y"
+#line 452 "parse-datetime.y"
     {
         pc->day_ordinal = 0;
         pc->day_number = (yyvsp[-1].intval);
       }
 /* Line 1740 of yacc.c  */
-#line 1931 "parse-datetime.c"
+#line 1988 "parse-datetime.c"
     break;
 
-  case 29:
+  case 39:
 /* Line 1740 of yacc.c  */
-#line 422 "parse-datetime.y"
+#line 457 "parse-datetime.y"
     {
         pc->day_ordinal = (yyvsp[-1].intval);
         pc->day_number = (yyvsp[0].intval);
       }
 /* Line 1740 of yacc.c  */
-#line 1942 "parse-datetime.c"
+#line 1999 "parse-datetime.c"
     break;
 
-  case 30:
+  case 40:
 /* Line 1740 of yacc.c  */
-#line 427 "parse-datetime.y"
+#line 462 "parse-datetime.y"
     {
         pc->day_ordinal = (yyvsp[-1].textintval).value;
         pc->day_number = (yyvsp[0].intval);
       }
 /* Line 1740 of yacc.c  */
-#line 1953 "parse-datetime.c"
+#line 2010 "parse-datetime.c"
     break;
 
-  case 31:
+  case 41:
 /* Line 1740 of yacc.c  */
-#line 435 "parse-datetime.y"
+#line 470 "parse-datetime.y"
     {
         pc->month = (yyvsp[-2].textintval).value;
         pc->day = (yyvsp[0].textintval).value;
       }
 /* Line 1740 of yacc.c  */
-#line 1964 "parse-datetime.c"
+#line 2021 "parse-datetime.c"
     break;
 
-  case 32:
+  case 42:
 /* Line 1740 of yacc.c  */
-#line 440 "parse-datetime.y"
+#line 475 "parse-datetime.y"
     {
         /* Interpret as YYYY/MM/DD if the first value has 4 or more digits,
            otherwise as MM/DD/YY.
@@ -1986,25 +2043,12 @@ yyreduce:
           }
       }
 /* Line 1740 of yacc.c  */
-#line 1990 "parse-datetime.c"
+#line 2047 "parse-datetime.c"
     break;
 
-  case 33:
+  case 43:
 /* Line 1740 of yacc.c  */
-#line 460 "parse-datetime.y"
-    {
-        /* ISO 8601 format.  YYYY-MM-DD.  */
-        pc->year = (yyvsp[-2].textintval);
-        pc->month = -(yyvsp[-1].textintval).value;
-        pc->day = -(yyvsp[0].textintval).value;
-      }
-/* Line 1740 of yacc.c  */
-#line 2003 "parse-datetime.c"
-    break;
-
-  case 34:
-/* Line 1740 of yacc.c  */
-#line 467 "parse-datetime.y"
+#line 495 "parse-datetime.y"
     {
         /* e.g. 17-JUN-1992.  */
         pc->day = (yyvsp[-2].textintval).value;
@@ -2013,12 +2057,12 @@ yyreduce:
         pc->year.digits = (yyvsp[0].textintval).digits;
       }
 /* Line 1740 of yacc.c  */
-#line 2017 "parse-datetime.c"
+#line 2061 "parse-datetime.c"
     break;
 
-  case 35:
+  case 44:
 /* Line 1740 of yacc.c  */
-#line 475 "parse-datetime.y"
+#line 503 "parse-datetime.y"
     {
         /* e.g. JUN-17-1992.  */
         pc->month = (yyvsp[-2].intval);
@@ -2027,322 +2071,335 @@ yyreduce:
         pc->year.digits = (yyvsp[0].textintval).digits;
       }
 /* Line 1740 of yacc.c  */
-#line 2031 "parse-datetime.c"
+#line 2075 "parse-datetime.c"
     break;
 
-  case 36:
+  case 45:
 /* Line 1740 of yacc.c  */
-#line 483 "parse-datetime.y"
+#line 511 "parse-datetime.y"
     {
         pc->month = (yyvsp[-1].intval);
         pc->day = (yyvsp[0].textintval).value;
       }
 /* Line 1740 of yacc.c  */
-#line 2042 "parse-datetime.c"
+#line 2086 "parse-datetime.c"
     break;
 
-  case 37:
+  case 46:
 /* Line 1740 of yacc.c  */
-#line 488 "parse-datetime.y"
+#line 516 "parse-datetime.y"
     {
         pc->month = (yyvsp[-3].intval);
         pc->day = (yyvsp[-2].textintval).value;
         pc->year = (yyvsp[0].textintval);
       }
 /* Line 1740 of yacc.c  */
-#line 2054 "parse-datetime.c"
+#line 2098 "parse-datetime.c"
     break;
 
-  case 38:
+  case 47:
 /* Line 1740 of yacc.c  */
-#line 494 "parse-datetime.y"
+#line 522 "parse-datetime.y"
     {
         pc->day = (yyvsp[-1].textintval).value;
         pc->month = (yyvsp[0].intval);
       }
 /* Line 1740 of yacc.c  */
-#line 2065 "parse-datetime.c"
+#line 2109 "parse-datetime.c"
     break;
 
-  case 39:
+  case 48:
 /* Line 1740 of yacc.c  */
-#line 499 "parse-datetime.y"
+#line 527 "parse-datetime.y"
     {
         pc->day = (yyvsp[-2].textintval).value;
         pc->month = (yyvsp[-1].intval);
         pc->year = (yyvsp[0].textintval);
       }
 /* Line 1740 of yacc.c  */
-#line 2077 "parse-datetime.c"
-    break;
-
-  case 40:
-/* Line 1740 of yacc.c  */
-#line 508 "parse-datetime.y"
-    { apply_relative_time (pc, (yyvsp[-1].rel), -1); }
-/* Line 1740 of yacc.c  */
-#line 2085 "parse-datetime.c"
-    break;
-
-  case 41:
-/* Line 1740 of yacc.c  */
-#line 510 "parse-datetime.y"
-    { apply_relative_time (pc, (yyvsp[0].rel), 1); }
-/* Line 1740 of yacc.c  */
-#line 2093 "parse-datetime.c"
-    break;
-
-  case 42:
-/* Line 1740 of yacc.c  */
-#line 512 "parse-datetime.y"
-    { apply_relative_time (pc, (yyvsp[0].rel), 1); }
-/* Line 1740 of yacc.c  */
-#line 2101 "parse-datetime.c"
-    break;
-
-  case 43:
-/* Line 1740 of yacc.c  */
-#line 517 "parse-datetime.y"
-    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).year = (yyvsp[-1].intval); }
-/* Line 1740 of yacc.c  */
-#line 2109 "parse-datetime.c"
-    break;
-
-  case 44:
-/* Line 1740 of yacc.c  */
-#line 519 "parse-datetime.y"
-    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).year = (yyvsp[-1].textintval).value; }
-/* Line 1740 of yacc.c  */
-#line 2117 "parse-datetime.c"
-    break;
-
-  case 45:
-/* Line 1740 of yacc.c  */
-#line 521 "parse-datetime.y"
-    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).year = 1; }
-/* Line 1740 of yacc.c  */
-#line 2125 "parse-datetime.c"
-    break;
-
-  case 46:
-/* Line 1740 of yacc.c  */
-#line 523 "parse-datetime.y"
-    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).month = (yyvsp[-1].intval); }
-/* Line 1740 of yacc.c  */
-#line 2133 "parse-datetime.c"
-    break;
-
-  case 47:
-/* Line 1740 of yacc.c  */
-#line 525 "parse-datetime.y"
-    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).month = (yyvsp[-1].textintval).value; }
-/* Line 1740 of yacc.c  */
-#line 2141 "parse-datetime.c"
-    break;
-
-  case 48:
-/* Line 1740 of yacc.c  */
-#line 527 "parse-datetime.y"
-    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).month = 1; }
-/* Line 1740 of yacc.c  */
-#line 2149 "parse-datetime.c"
-    break;
-
-  case 49:
-/* Line 1740 of yacc.c  */
-#line 529 "parse-datetime.y"
-    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).day = (yyvsp[-1].intval) * (yyvsp[0].intval); }
-/* Line 1740 of yacc.c  */
-#line 2157 "parse-datetime.c"
+#line 2121 "parse-datetime.c"
     break;
 
   case 50:
 /* Line 1740 of yacc.c  */
-#line 531 "parse-datetime.y"
-    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).day = (yyvsp[-1].textintval).value * (yyvsp[0].intval); }
+#line 537 "parse-datetime.y"
+    {
+        /* ISO 8601 format.  YYYY-MM-DD.  */
+        pc->year = (yyvsp[-2].textintval);
+        pc->month = -(yyvsp[-1].textintval).value;
+        pc->day = -(yyvsp[0].textintval).value;
+      }
 /* Line 1740 of yacc.c  */
-#line 2165 "parse-datetime.c"
+#line 2134 "parse-datetime.c"
     break;
 
   case 51:
 /* Line 1740 of yacc.c  */
-#line 533 "parse-datetime.y"
-    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).day = (yyvsp[0].intval); }
+#line 547 "parse-datetime.y"
+    { apply_relative_time (pc, (yyvsp[-1].rel), -1); }
 /* Line 1740 of yacc.c  */
-#line 2173 "parse-datetime.c"
+#line 2142 "parse-datetime.c"
     break;
 
   case 52:
 /* Line 1740 of yacc.c  */
-#line 535 "parse-datetime.y"
-    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).hour = (yyvsp[-1].intval); }
+#line 549 "parse-datetime.y"
+    { apply_relative_time (pc, (yyvsp[0].rel), 1); }
 /* Line 1740 of yacc.c  */
-#line 2181 "parse-datetime.c"
+#line 2150 "parse-datetime.c"
     break;
 
   case 53:
 /* Line 1740 of yacc.c  */
-#line 537 "parse-datetime.y"
-    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).hour = (yyvsp[-1].textintval).value; }
+#line 551 "parse-datetime.y"
+    { apply_relative_time (pc, (yyvsp[0].rel), 1); }
 /* Line 1740 of yacc.c  */
-#line 2189 "parse-datetime.c"
+#line 2158 "parse-datetime.c"
     break;
 
   case 54:
 /* Line 1740 of yacc.c  */
-#line 539 "parse-datetime.y"
-    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).hour = 1; }
+#line 556 "parse-datetime.y"
+    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).year = (yyvsp[-1].intval); }
 /* Line 1740 of yacc.c  */
-#line 2197 "parse-datetime.c"
+#line 2166 "parse-datetime.c"
     break;
 
   case 55:
 /* Line 1740 of yacc.c  */
-#line 541 "parse-datetime.y"
-    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).minutes = (yyvsp[-1].intval); }
+#line 558 "parse-datetime.y"
+    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).year = (yyvsp[-1].textintval).value; }
 /* Line 1740 of yacc.c  */
-#line 2205 "parse-datetime.c"
+#line 2174 "parse-datetime.c"
     break;
 
   case 56:
 /* Line 1740 of yacc.c  */
-#line 543 "parse-datetime.y"
-    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).minutes = (yyvsp[-1].textintval).value; }
+#line 560 "parse-datetime.y"
+    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).year = 1; }
 /* Line 1740 of yacc.c  */
-#line 2213 "parse-datetime.c"
+#line 2182 "parse-datetime.c"
     break;
 
   case 57:
 /* Line 1740 of yacc.c  */
-#line 545 "parse-datetime.y"
-    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).minutes = 1; }
+#line 562 "parse-datetime.y"
+    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).month = (yyvsp[-1].intval); }
 /* Line 1740 of yacc.c  */
-#line 2221 "parse-datetime.c"
+#line 2190 "parse-datetime.c"
     break;
 
   case 58:
 /* Line 1740 of yacc.c  */
-#line 547 "parse-datetime.y"
-    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).seconds = (yyvsp[-1].intval); }
+#line 564 "parse-datetime.y"
+    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).month = (yyvsp[-1].textintval).value; }
 /* Line 1740 of yacc.c  */
-#line 2229 "parse-datetime.c"
+#line 2198 "parse-datetime.c"
     break;
 
   case 59:
 /* Line 1740 of yacc.c  */
-#line 549 "parse-datetime.y"
-    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).seconds = (yyvsp[-1].textintval).value; }
+#line 566 "parse-datetime.y"
+    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).month = 1; }
 /* Line 1740 of yacc.c  */
-#line 2237 "parse-datetime.c"
+#line 2206 "parse-datetime.c"
     break;
 
   case 60:
 /* Line 1740 of yacc.c  */
-#line 551 "parse-datetime.y"
-    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).seconds = (yyvsp[-1].timespec).tv_sec; (yyval.rel).ns = (yyvsp[-1].timespec).tv_nsec; }
+#line 568 "parse-datetime.y"
+    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).day = (yyvsp[-1].intval) * (yyvsp[0].intval); }
 /* Line 1740 of yacc.c  */
-#line 2245 "parse-datetime.c"
+#line 2214 "parse-datetime.c"
     break;
 
   case 61:
 /* Line 1740 of yacc.c  */
-#line 553 "parse-datetime.y"
-    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).seconds = (yyvsp[-1].timespec).tv_sec; (yyval.rel).ns = (yyvsp[-1].timespec).tv_nsec; }
+#line 570 "parse-datetime.y"
+    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).day = (yyvsp[-1].textintval).value * (yyvsp[0].intval); }
 /* Line 1740 of yacc.c  */
-#line 2253 "parse-datetime.c"
+#line 2222 "parse-datetime.c"
     break;
 
   case 62:
 /* Line 1740 of yacc.c  */
-#line 555 "parse-datetime.y"
-    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).seconds = 1; }
+#line 572 "parse-datetime.y"
+    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).day = (yyvsp[0].intval); }
 /* Line 1740 of yacc.c  */
-#line 2261 "parse-datetime.c"
+#line 2230 "parse-datetime.c"
+    break;
+
+  case 63:
+/* Line 1740 of yacc.c  */
+#line 574 "parse-datetime.y"
+    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).hour = (yyvsp[-1].intval); }
+/* Line 1740 of yacc.c  */
+#line 2238 "parse-datetime.c"
     break;
 
   case 64:
 /* Line 1740 of yacc.c  */
-#line 561 "parse-datetime.y"
-    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).year = (yyvsp[-1].textintval).value; }
+#line 576 "parse-datetime.y"
+    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).hour = (yyvsp[-1].textintval).value; }
 /* Line 1740 of yacc.c  */
-#line 2269 "parse-datetime.c"
+#line 2246 "parse-datetime.c"
     break;
 
   case 65:
 /* Line 1740 of yacc.c  */
-#line 563 "parse-datetime.y"
-    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).month = (yyvsp[-1].textintval).value; }
+#line 578 "parse-datetime.y"
+    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).hour = 1; }
 /* Line 1740 of yacc.c  */
-#line 2277 "parse-datetime.c"
+#line 2254 "parse-datetime.c"
     break;
 
   case 66:
 /* Line 1740 of yacc.c  */
-#line 565 "parse-datetime.y"
-    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).day = (yyvsp[-1].textintval).value * (yyvsp[0].intval); }
+#line 580 "parse-datetime.y"
+    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).minutes = (yyvsp[-1].intval); }
 /* Line 1740 of yacc.c  */
-#line 2285 "parse-datetime.c"
+#line 2262 "parse-datetime.c"
     break;
 
   case 67:
 /* Line 1740 of yacc.c  */
-#line 567 "parse-datetime.y"
-    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).hour = (yyvsp[-1].textintval).value; }
+#line 582 "parse-datetime.y"
+    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).minutes = (yyvsp[-1].textintval).value; }
 /* Line 1740 of yacc.c  */
-#line 2293 "parse-datetime.c"
+#line 2270 "parse-datetime.c"
     break;
 
   case 68:
 /* Line 1740 of yacc.c  */
-#line 569 "parse-datetime.y"
-    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).minutes = (yyvsp[-1].textintval).value; }
+#line 584 "parse-datetime.y"
+    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).minutes = 1; }
 /* Line 1740 of yacc.c  */
-#line 2301 "parse-datetime.c"
+#line 2278 "parse-datetime.c"
     break;
 
   case 69:
 /* Line 1740 of yacc.c  */
-#line 571 "parse-datetime.y"
-    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).seconds = (yyvsp[-1].textintval).value; }
+#line 586 "parse-datetime.y"
+    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).seconds = (yyvsp[-1].intval); }
 /* Line 1740 of yacc.c  */
-#line 2309 "parse-datetime.c"
+#line 2286 "parse-datetime.c"
     break;
 
   case 70:
 /* Line 1740 of yacc.c  */
-#line 576 "parse-datetime.y"
-    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).day = (yyvsp[0].intval); }
+#line 588 "parse-datetime.y"
+    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).seconds = (yyvsp[-1].textintval).value; }
 /* Line 1740 of yacc.c  */
-#line 2317 "parse-datetime.c"
+#line 2294 "parse-datetime.c"
     break;
 
-  case 74:
+  case 71:
 /* Line 1740 of yacc.c  */
-#line 584 "parse-datetime.y"
-    { (yyval.timespec).tv_sec = (yyvsp[0].textintval).value; (yyval.timespec).tv_nsec = 0; }
+#line 590 "parse-datetime.y"
+    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).seconds = (yyvsp[-1].timespec).tv_sec; (yyval.rel).ns = (yyvsp[-1].timespec).tv_nsec; }
 /* Line 1740 of yacc.c  */
-#line 2325 "parse-datetime.c"
+#line 2302 "parse-datetime.c"
+    break;
+
+  case 72:
+/* Line 1740 of yacc.c  */
+#line 592 "parse-datetime.y"
+    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).seconds = (yyvsp[-1].timespec).tv_sec; (yyval.rel).ns = (yyvsp[-1].timespec).tv_nsec; }
+/* Line 1740 of yacc.c  */
+#line 2310 "parse-datetime.c"
+    break;
+
+  case 73:
+/* Line 1740 of yacc.c  */
+#line 594 "parse-datetime.y"
+    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).seconds = 1; }
+/* Line 1740 of yacc.c  */
+#line 2318 "parse-datetime.c"
+    break;
+
+  case 75:
+/* Line 1740 of yacc.c  */
+#line 600 "parse-datetime.y"
+    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).year = (yyvsp[-1].textintval).value; }
+/* Line 1740 of yacc.c  */
+#line 2326 "parse-datetime.c"
     break;
 
   case 76:
 /* Line 1740 of yacc.c  */
-#line 590 "parse-datetime.y"
-    { (yyval.timespec).tv_sec = (yyvsp[0].textintval).value; (yyval.timespec).tv_nsec = 0; }
+#line 602 "parse-datetime.y"
+    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).month = (yyvsp[-1].textintval).value; }
 /* Line 1740 of yacc.c  */
-#line 2333 "parse-datetime.c"
+#line 2334 "parse-datetime.c"
     break;
 
   case 77:
 /* Line 1740 of yacc.c  */
-#line 595 "parse-datetime.y"
-    { digits_to_date_time (pc, (yyvsp[0].textintval)); }
+#line 604 "parse-datetime.y"
+    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).day = (yyvsp[-1].textintval).value * (yyvsp[0].intval); }
 /* Line 1740 of yacc.c  */
-#line 2341 "parse-datetime.c"
+#line 2342 "parse-datetime.c"
     break;
 
   case 78:
 /* Line 1740 of yacc.c  */
-#line 600 "parse-datetime.y"
+#line 606 "parse-datetime.y"
+    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).hour = (yyvsp[-1].textintval).value; }
+/* Line 1740 of yacc.c  */
+#line 2350 "parse-datetime.c"
+    break;
+
+  case 79:
+/* Line 1740 of yacc.c  */
+#line 608 "parse-datetime.y"
+    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).minutes = (yyvsp[-1].textintval).value; }
+/* Line 1740 of yacc.c  */
+#line 2358 "parse-datetime.c"
+    break;
+
+  case 80:
+/* Line 1740 of yacc.c  */
+#line 610 "parse-datetime.y"
+    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).seconds = (yyvsp[-1].textintval).value; }
+/* Line 1740 of yacc.c  */
+#line 2366 "parse-datetime.c"
+    break;
+
+  case 81:
+/* Line 1740 of yacc.c  */
+#line 615 "parse-datetime.y"
+    { (yyval.rel) = RELATIVE_TIME_0; (yyval.rel).day = (yyvsp[0].intval); }
+/* Line 1740 of yacc.c  */
+#line 2374 "parse-datetime.c"
+    break;
+
+  case 85:
+/* Line 1740 of yacc.c  */
+#line 623 "parse-datetime.y"
+    { (yyval.timespec).tv_sec = (yyvsp[0].textintval).value; (yyval.timespec).tv_nsec = 0; }
+/* Line 1740 of yacc.c  */
+#line 2382 "parse-datetime.c"
+    break;
+
+  case 87:
+/* Line 1740 of yacc.c  */
+#line 629 "parse-datetime.y"
+    { (yyval.timespec).tv_sec = (yyvsp[0].textintval).value; (yyval.timespec).tv_nsec = 0; }
+/* Line 1740 of yacc.c  */
+#line 2390 "parse-datetime.c"
+    break;
+
+  case 88:
+/* Line 1740 of yacc.c  */
+#line 634 "parse-datetime.y"
+    { digits_to_date_time (pc, (yyvsp[0].textintval)); }
+/* Line 1740 of yacc.c  */
+#line 2398 "parse-datetime.c"
+    break;
+
+  case 89:
+/* Line 1740 of yacc.c  */
+#line 639 "parse-datetime.y"
     {
         /* Hybrid all-digit and relative offset, so that we accept e.g.,
            "YYYYMMDD +N days" as well as "YYYYMMDD N days".  */
@@ -2350,44 +2407,28 @@ yyreduce:
         apply_relative_time (pc, (yyvsp[0].rel), 1);
       }
 /* Line 1740 of yacc.c  */
-#line 2354 "parse-datetime.c"
+#line 2411 "parse-datetime.c"
     break;
 
-  case 79:
+  case 90:
 /* Line 1740 of yacc.c  */
-#line 610 "parse-datetime.y"
+#line 649 "parse-datetime.y"
     { (yyval.intval) = -1; }
 /* Line 1740 of yacc.c  */
-#line 2362 "parse-datetime.c"
+#line 2419 "parse-datetime.c"
     break;
 
-  case 80:
+  case 91:
 /* Line 1740 of yacc.c  */
-#line 612 "parse-datetime.y"
+#line 651 "parse-datetime.y"
     { (yyval.intval) = (yyvsp[0].textintval).value; }
 /* Line 1740 of yacc.c  */
-#line 2370 "parse-datetime.c"
-    break;
-
-  case 81:
-/* Line 1740 of yacc.c  */
-#line 617 "parse-datetime.y"
-    { (yyval.intval) = MER24; }
-/* Line 1740 of yacc.c  */
-#line 2378 "parse-datetime.c"
-    break;
-
-  case 82:
-/* Line 1740 of yacc.c  */
-#line 619 "parse-datetime.y"
-    { (yyval.intval) = (yyvsp[0].intval); }
-/* Line 1740 of yacc.c  */
-#line 2386 "parse-datetime.c"
+#line 2427 "parse-datetime.c"
     break;
 
 
 /* Line 1740 of yacc.c  */
-#line 2391 "parse-datetime.c"
+#line 2432 "parse-datetime.c"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2477,20 +2518,20 @@ yyerrlab:
   if (yyerrstatus == 3)
     {
       /* If just tried and failed to reuse lookahead token after an
-	 error, discard it.  */
+         error, discard it.  */
 
       if (yychar <= YYEOF)
-	{
-	  /* Return failure if at end of input.  */
-	  if (yychar == YYEOF)
-	    YYABORT;
-	}
+        {
+          /* Return failure if at end of input.  */
+          if (yychar == YYEOF)
+            YYABORT;
+        }
       else
-	{
-	  yydestruct ("Error: discarding",
-		      yytoken, &yylval, pc);
-	  yychar = YYEMPTY;
-	}
+        {
+          yydestruct ("Error: discarding",
+                      yytoken, &yylval, pc);
+          yychar = YYEMPTY;
+        }
     }
 
   /* Else will try to reuse lookahead token after shifting the error
@@ -2522,29 +2563,29 @@ yyerrorlab:
 | yyerrlab1 -- common code for both syntax error and YYERROR.  |
 `-------------------------------------------------------------*/
 yyerrlab1:
-  yyerrstatus = 3;	/* Each real token shifted decrements this.  */
+  yyerrstatus = 3;      /* Each real token shifted decrements this.  */
 
   for (;;)
     {
       yyn = yypact[yystate];
       if (!yypact_value_is_default (yyn))
-	{
-	  yyn += YYTERROR;
-	  if (0 <= yyn && yyn <= YYLAST && yycheck[yyn] == YYTERROR)
-	    {
-	      yyn = yytable[yyn];
-	      if (0 < yyn)
-		break;
-	    }
-	}
+        {
+          yyn += YYTERROR;
+          if (0 <= yyn && yyn <= YYLAST && yycheck[yyn] == YYTERROR)
+            {
+              yyn = yytable[yyn];
+              if (0 < yyn)
+                break;
+            }
+        }
 
       /* Pop the current state because it cannot handle the error token.  */
       if (yyssp == yyss)
-	YYABORT;
+        YYABORT;
 
 
       yydestruct ("Error: popping",
-		  yystos[yystate], yyvsp, pc);
+                  yystos[yystate], yyvsp, pc);
       YYPOPSTACK (1);
       yystate = *yyssp;
       YY_STACK_PRINT (yyss, yyssp);
@@ -2600,7 +2641,7 @@ yyreturn:
   while (yyssp != yyss)
     {
       yydestruct ("Cleanup: popping",
-		  yystos[*yyssp], yyvsp, pc);
+                  yystos[*yyssp], yyvsp, pc);
       YYPOPSTACK (1);
     }
 #ifndef yyoverflow
@@ -2616,7 +2657,7 @@ yyreturn:
 }
 
 /* Line 2000 of yacc.c  */
-#line 622 "parse-datetime.y"
+#line 654 "parse-datetime.y"
 
 
 static table const meridian_table[] =
@@ -2771,7 +2812,10 @@ static table const time_zone_table[] =
   { NULL, 0, 0 }
 };
 
-/* Military time zone table. */
+/* Military time zone table.
+
+   Note 'T' is a special case, as it is used as the separator in ISO
+   8601 date and time of day representation. */
 static table const military_table[] =
 {
   { "A", tZONE, -HOUR ( 1) },
@@ -2792,7 +2836,7 @@ static table const military_table[] =
   { "Q", tZONE,  HOUR ( 4) },
   { "R", tZONE,  HOUR ( 5) },
   { "S", tZONE,  HOUR ( 6) },
-  { "T", tZONE,  HOUR ( 7) },
+  { "T", 'T',    0 },
   { "U", tZONE,  HOUR ( 8) },
   { "V", tZONE,  HOUR ( 9) },
   { "W", tZONE,  HOUR (10) },
@@ -3117,7 +3161,7 @@ yylex (YYSTYPE *lvalp, parser_control *pc)
 
           do
             {
-              if (p < buff + sizeof buff - 1)
+              if (p - buff < sizeof buff - 1)
                 *p++ = c;
               c = *++pc->input;
             }

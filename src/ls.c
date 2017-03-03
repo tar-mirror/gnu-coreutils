@@ -53,7 +53,6 @@
 #include <stdio.h>
 #include <assert.h>
 #include <setjmp.h>
-#include <grp.h>
 #include <pwd.h>
 #include <getopt.h>
 #include <signal.h>
@@ -73,6 +72,14 @@
 # if ! HAVE_SIGINTERRUPT
 #  define siginterrupt(sig, flag) /* empty */
 # endif
+#endif
+
+/* NonStop circa 2011 lacks both SA_RESTART and siginterrupt, so don't
+   restart syscalls after a signal handler fires.  This may cause
+   colors to get messed up on the screen if 'ls' is interrupted, but
+   that's the best we can do on such a platform.  */
+#ifndef SA_RESTART
+# define SA_RESTART 0
 #endif
 
 #include "system.h"
@@ -95,7 +102,7 @@
 #include "obstack.h"
 #include "quote.h"
 #include "quotearg.h"
-#include "same.h"
+#include "stat-size.h"
 #include "stat-time.h"
 #include "strftime.h"
 #include "xstrtol.h"
@@ -2265,12 +2272,21 @@ get_funky_string (char **dest, const char **src, bool equals_end,
   return state != ST_ERROR;
 }
 
+enum parse_state
+  {
+    PS_START = 1,
+    PS_2,
+    PS_3,
+    PS_4,
+    PS_DONE,
+    PS_FAIL
+  };
+
 static void
 parse_ls_color (void)
 {
   const char *p;		/* Pointer to character being parsed */
   char *buf;			/* color_buf buffer pointer */
-  int state;			/* State of parser */
   int ind_no;			/* Indicator number */
   char label[3];		/* Indicator label */
   struct color_ext_type *ext;	/* Extension we are working on */
@@ -2287,12 +2303,12 @@ parse_ls_color (void)
      advance.  */
   buf = color_buf = xstrdup (p);
 
-  state = 1;
-  while (state > 0)
+  enum parse_state state = PS_START;
+  while (true)
     {
       switch (state)
         {
-        case 1:		/* First label character */
+        case PS_START:		/* First label character */
           switch (*p)
             {
             case ':':
@@ -2313,32 +2329,32 @@ parse_ls_color (void)
               ext->ext.string = buf;
 
               state = (get_funky_string (&buf, &p, true, &ext->ext.len)
-                       ? 4 : -1);
+                       ? PS_4 : PS_FAIL);
               break;
 
             case '\0':
-              state = 0;	/* Done! */
-              break;
+              state = PS_DONE;	/* Done! */
+              goto done;
 
             default:	/* Assume it is file type label */
               label[0] = *(p++);
-              state = 2;
+              state = PS_2;
               break;
             }
           break;
 
-        case 2:		/* Second label character */
+        case PS_2:		/* Second label character */
           if (*p)
             {
               label[1] = *(p++);
-              state = 3;
+              state = PS_3;
             }
           else
-            state = -1;	/* Error */
+            state = PS_FAIL;	/* Error */
           break;
 
-        case 3:		/* Equal sign after indicator label */
-          state = -1;	/* Assume failure...  */
+        case PS_3:		/* Equal sign after indicator label */
+          state = PS_FAIL;	/* Assume failure...  */
           if (*(p++) == '=')/* It *should* be...  */
             {
               for (ind_no = 0; indicator_name[ind_no] != NULL; ++ind_no)
@@ -2348,29 +2364,36 @@ parse_ls_color (void)
                       color_indicator[ind_no].string = buf;
                       state = (get_funky_string (&buf, &p, false,
                                                  &color_indicator[ind_no].len)
-                               ? 1 : -1);
+                               ? PS_START : PS_FAIL);
                       break;
                     }
                 }
-              if (state == -1)
+              if (state == PS_FAIL)
                 error (0, 0, _("unrecognized prefix: %s"), quotearg (label));
             }
           break;
 
-        case 4:		/* Equal sign after *.ext */
+        case PS_4:		/* Equal sign after *.ext */
           if (*(p++) == '=')
             {
               ext->seq.string = buf;
               state = (get_funky_string (&buf, &p, false, &ext->seq.len)
-                       ? 1 : -1);
+                       ? PS_START : PS_FAIL);
             }
           else
-            state = -1;
+            state = PS_FAIL;
           break;
+
+        case PS_FAIL:
+          goto done;
+
+        default:
+          abort ();
         }
     }
+ done:
 
-  if (state < 0)
+  if (state == PS_FAIL)
     {
       struct color_ext_type *e;
       struct color_ext_type *e2;
@@ -2740,7 +2763,10 @@ gobble_file (char const *name, enum filetype type, ino_t inode,
       /* When coloring a directory (we may know the type from
          direct.d_type), we have to stat it in order to indicate
          sticky and/or other-writable attributes.  */
-      || (type == directory && print_with_color)
+      || (type == directory && print_with_color
+          && (is_colored (C_OTHER_WRITABLE)
+              || is_colored (C_STICKY)
+              || is_colored (C_STICKY_OTHER_WRITABLE)))
       /* When dereferencing symlinks, the inode and type must come from
          stat, but readdir provides the inode and type of lstat.  */
       || ((print_inode || format_needs_type)
@@ -3891,7 +3917,7 @@ quote_name (FILE *out, const char *name, struct quoting_options const *options,
                      reach its end, replacing each non-printable multibyte
                      character with a single question mark.  */
                   {
-                    DECLARE_ZEROED_AGGREGATE (mbstate_t, mbstate);
+                    mbstate_t mbstate = { 0, };
                     do
                       {
                         wchar_t wc;
@@ -4129,7 +4155,7 @@ print_color_indicator (const struct fileinfo *f, bool symlink_target)
     {
       name = f->linkname;
       mode = f->linkmode;
-      linkok = f->linkok - 1;
+      linkok = f->linkok ? 0 : -1;
     }
   else
     {
@@ -4570,7 +4596,7 @@ usage (int status)
       printf (_("Usage: %s [OPTION]... [FILE]...\n"), program_name);
       fputs (_("\
 List information about the FILEs (the current directory by default).\n\
-Sort entries alphabetically if none of -cftuvSUX nor --sort.\n\
+Sort entries alphabetically if none of -cftuvSUX nor --sort is specified.\n\
 \n\
 "), stdout);
       fputs (_("\
@@ -4590,7 +4616,7 @@ Mandatory arguments to long options are mandatory for short options too.\n\
   -c                         with -lt: sort by, and show, ctime (time of last\n\
                                modification of file status information)\n\
                                with -l: show ctime and sort by name\n\
-                               otherwise: sort by ctime\n\
+                               otherwise: sort by ctime, newest first\n\
 "), stdout);
       fputs (_("\
   -C                         list entries by columns\n\
@@ -4693,7 +4719,7 @@ Mandatory arguments to long options are mandatory for short options too.\n\
                              takes effect only outside the POSIX locale\n\
 "), stdout);
       fputs (_("\
-  -t                         sort by modification time\n\
+  -t                         sort by modification time, newest first\n\
   -T, --tabsize=COLS         assume tab stops at each COLS instead of 8\n\
 "), stdout);
       fputs (_("\

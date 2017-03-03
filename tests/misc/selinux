@@ -24,16 +24,16 @@ require_selinux_
 skip_if_mcstransd_is_running_
 
 # Create a regular file, dir, fifo.
-touch f || framework_failure
-mkdir d s1 s2 || framework_failure
-mkfifo p || framework_failure
+touch f || framework_failure_
+mkdir d s1 s2 || framework_failure_
+mkfifo_or_skip_ p
 
 
 # special context that works both with and without mcstransd
 ctx=root:object_r:tmp_t:s0
 
 chcon $ctx f d p ||
-  skip_test_ '"chcon '$ctx' ..." failed'
+  skip_ '"chcon '$ctx' ..." failed'
 
 # inspect that context with both ls -Z and stat.
 for i in d f p; do

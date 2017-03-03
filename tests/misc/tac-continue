@@ -23,7 +23,7 @@ print_ver_ tac
 
 # See if the envvar is defined.
 if test x = "x$FULL_PARTITION_TMPDIR"; then
-  skip_test_ "FULL_PARTITION_TMPDIR not defined"
+  skip_ "FULL_PARTITION_TMPDIR not defined"
 fi
 
 if ! test -d "$FULL_PARTITION_TMPDIR"; then
@@ -53,7 +53,7 @@ seq 5 > in
 
 # Give tac a fifo command line argument.
 # This makes it try to create a temporary file in $TMPDIR.
-mkfifo fifo
+mkfifo_or_skip_ fifo
 seq 1000 > fifo &
 TMPDIR=$FULL_PARTITION_TMPDIR tac fifo in >out 2>err && fail=1
 

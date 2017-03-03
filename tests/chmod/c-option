@@ -21,8 +21,8 @@ print_ver_ chmod
 
 umask 0
 file=f
-touch $file || framework_failure
-chmod 444 $file || framework_failure
+touch $file || framework_failure_
+chmod 444 $file || framework_failure_
 
 skip_if_setgid_
 
@@ -33,8 +33,8 @@ chmod -c g=rwx $file > empty || fail=1
 
 test -s empty && fail=1
 case "`cat out`" in
-  "mode of \`f' changed to 0774 "?rwxrwxr--?) ;;
-  *) fail=1 ;;
+  "mode of \`f' changed from 0744 "?rwxr--r--?" to 0774 "?rwxrwxr--?) ;;
+  *) cat out; fail=1 ;;
 esac
 
 Exit $fail

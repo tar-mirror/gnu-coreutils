@@ -27,7 +27,6 @@
 #include "system.h"
 #include "close-stream.h"
 #include "error.h"
-#include "fadvise.h"
 #include "fd-reopen.h"
 #include "gethrxtime.h"
 #include "human.h"
@@ -46,7 +45,7 @@
   proper_name ("Stuart Kemp")
 
 /* Use SA_NOCLDSTOP as a proxy for whether the sigaction machinery is
-   present.  SA_NODEFER and SA_RESETHAND are XSI extensions.  */
+   present.  */
 #ifndef SA_NOCLDSTOP
 # define SA_NOCLDSTOP 0
 # define sigprocmask(How, Set, Oset) /* empty */
@@ -54,6 +53,11 @@
 # if ! HAVE_SIGINTERRUPT
 #  define siginterrupt(sig, flag) /* empty */
 # endif
+#endif
+
+/* NonStop circa 2011 lacks SA_RESETHAND; see Bug#9076.  */
+#ifndef SA_RESETHAND
+# define SA_RESETHAND 0
 #endif
 
 #ifndef SIGINFO
@@ -727,9 +731,6 @@ install_signal_handlers (void)
 
   if (sigismember (&caught_signals, SIGINT))
     {
-      /* POSIX 1003.1-2001 says SA_RESETHAND implies SA_NODEFER,
-         but this is not true on Solaris 8 at least.  It doesn't
-         hurt to use SA_NODEFER here, so leave it in.  */
       act.sa_handler = interrupt_handler;
       act.sa_flags = SA_NODEFER | SA_RESETHAND;
       sigaction (SIGINT, &act, NULL);
@@ -1029,7 +1030,7 @@ write_output (void)
 
 /* Return true if STR is of the form "PATTERN" or "PATTERNDELIM...".  */
 
-static bool
+static bool _GL_ATTRIBUTE_PURE
 operand_matches (char const *str, char const *pattern, char delim)
 {
   while (*pattern)
@@ -1109,7 +1110,7 @@ parse_integer (const char *str, bool *invalid)
 
 /* OPERAND is of the form "X=...".  Return true if X is NAME.  */
 
-static bool
+static bool _GL_ATTRIBUTE_PURE
 operand_is (char const *operand, char const *name)
 {
   return operand_matches (operand, name, '=');

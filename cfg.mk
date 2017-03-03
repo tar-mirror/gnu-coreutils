@@ -27,7 +27,7 @@ bootstrap-tools = autoconf,automake,gnulib,bison
 # Now that we have better tests, make this the default.
 export VERBOSE = yes
 
-old_NEWS_hash = 656dc592d4ed57c83662be60caa1af9e
+old_NEWS_hash = d491296a7e0e2269b2b96dc4bd5f77a8
 
 # Add an exemption for sc_makefile_at_at_check.
 _makefile_at_at_check_exceptions = ' && !/^cu_install_program =/'
@@ -128,13 +128,9 @@ sc_sun_os_names:
 	  { echo '$(ME): found misuse of Sun OS version numbers' 1>&2;	\
 	    exit 1; } || :
 
-ALL_RECURSIVE_TARGETS += sc_tight_scope
-sc_tight_scope:
-	@$(MAKE) -s -C src $@
-
 ALL_RECURSIVE_TARGETS += sc_check-AUTHORS
 sc_check-AUTHORS:
-	@$(MAKE) -s -C src $@
+	@$(MAKE) -s -C src _sc_check-AUTHORS
 
 # Look for lines longer than 80 characters, except omit:
 # - program-generated long lines in diff headers,
@@ -209,7 +205,11 @@ sc_strftime_check:
 	  { echo N;							\
 	    info libc date calendar format 2>/dev/null|grep '^    `%.'\'\
 	      | $(extract_char); } | sort > $@-info;			\
-	  diff -u $@-src $@-info || exit 1;				\
+	  if test $$(stat --format %s $@-info) != 2; then		\
+	    diff -u $@-src $@-info || exit 1;				\
+	  else								\
+	    echo '$(ME): skipping $@: libc info not installed' 1>&2;	\
+	  fi;								\
 	  rm -f $@-src $@-info;						\
 	fi
 
@@ -218,6 +218,14 @@ sc_prohibit_tab_based_indentation:
 	@prohibit='^ *	'						\
 	halt='TAB in indentation; use only spaces'			\
 	  $(_sc_search_regexp)
+
+# The SEE ALSO section of a man page should not be terminated with
+# a period.  Check the first line after each "SEE ALSO" line in man/*.x:
+sc_prohibit_man_see_also_period:
+	@grep -nB1 '\.$$' $$($(VC_LIST_EXCEPT) | grep 'man/.*\.x$$')	\
+	    | grep -A1 -e '-\[SEE ALSO\]' | grep '\.$$' &&		\
+	  { echo '$(ME): do not end "SEE ALSO" section with a period'	\
+	      1>&2; exit 1; } || :
 
 # Don't use "indent-tabs-mode: nil" anymore.  No longer needed.
 sc_prohibit_emacs__indent_tabs_mode__setting:
@@ -260,6 +268,12 @@ sc_prohibit_sleep:
 sc_prohibit_verbose_version:
 	@prohibit='test "\$$VERBOSE" = yes && .* --version'		\
 	halt='use the print_ver_ function instead...'			\
+	  $(_sc_search_regexp)
+
+# Use framework_failure_, not the old name without the trailing underscore.
+sc_prohibit_framework_failure:
+	@prohibit='\<framework_''failure\>'				\
+	halt='use framework_failure_ instead'				\
 	  $(_sc_search_regexp)
 
 ###########################################################
@@ -324,11 +338,21 @@ sc_prohibit_strncmp:
 	  { echo '$(ME): use STREQ_LEN or STRPREFIX instead of str''ncmp' \
 		1>&2; exit 1; } || :
 
+# Enforce recommended preprocessor indentation style.
+sc_preprocessor_indentation:
+	@if cppi --version >/dev/null 2>&1; then			\
+	  $(VC_LIST_EXCEPT) | grep '\.[ch]$$' | xargs cppi -a -c	\
+	    || { echo '$(ME): incorrect preprocessor indentation' 1>&2;	\
+		exit 1; };						\
+	else								\
+	  echo '$(ME): skipping test $@: cppi not installed' 1>&2;	\
+	fi
+
 # Override the default Cc: used in generating an announcement.
 announcement_Cc_ = $(translation_project_), \
   coreutils@gnu.org, coreutils-announce@gnu.org
 
-include $(srcdir)/dist-check.mk
+-include $(srcdir)/dist-check.mk
 
 update-copyright-env = \
   UPDATE_COPYRIGHT_USE_INTERVALS=1 \
@@ -363,6 +387,9 @@ exclude_file_name_regexp--sc_prohibit_fail_0 = \
 exclude_file_name_regexp--sc_prohibit_atoi_atof = ^lib/euidaccess-stat\.c$$
 exclude_file_name_regexp--sc_prohibit_tab_based_indentation = \
   ^tests/pr/|(^gl/lib/reg.*\.c\.diff|Makefile(\.am)?|\.mk|^man/help2man)$$
+exclude_file_name_regexp--sc_preprocessor_indentation = \
+  ^(gl/lib/rand-isaac\.[ch]|gl/tests/test-rand-isaac\.c)$$
+
 
 exclude_file_name_regexp--sc_prohibit_stat_st_blocks = \
   ^(src/system\.h|tests/du/2g)$$

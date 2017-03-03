@@ -1883,7 +1883,7 @@ Output at most @var{bytes} bytes of the input.  Prefixes and suffixes on
 Instead of the normal output, output only @dfn{string constants}: at
 least @var{bytes} consecutive @acronym{ASCII} graphic characters,
 followed by a zero byte (@acronym{ASCII} @sc{nul}).
-Prefixes and suffixes on @code{bytes} are interpreted as for the
+Prefixes and suffixes on @var{bytes} are interpreted as for the
 @option{-j} option.
 
 If @var{n} is omitted with @option{--strings}, the default is 3.
@@ -2830,6 +2830,18 @@ no @var{file} operand is specified and standard input is a FIFO or a pipe.
 Likewise, the @option{-f} option has no effect for any
 operand specified as @samp{-}, when standard input is a FIFO or a pipe.
 
+With kernel inotify support, output is triggered by file changes
+and is generally very prompt.
+Otherwise, @command{tail} sleeps for one second between checks---
+use @option{--sleep-interval=@var{n}} to change that default---which can
+make the output appear slightly less responsive or bursty.
+When using tail without inotify support, you can make it more responsive
+by using a sub-second sleep interval, e.g., via an alias like this:
+
+@example
+alias tail='tail -s.1'
+@end example
+
 @item -F
 @opindex -F
 This option is the same as @option{--follow=name --retry}.  That is, tail
@@ -2992,8 +3004,8 @@ The program accepts the following options.  Also see @ref{Common options}.
 Put @var{lines} lines of @var{input} into each output file.
 
 For compatibility @command{split} also supports an obsolete
-option syntax @option{-@var{lines}}.  New scripts should use @option{-l
-@var{lines}} instead.
+option syntax @option{-@var{lines}}.  New scripts should use
+@option{-l @var{lines}} instead.
 
 @item -b @var{size}
 @itemx --bytes=@var{size}
@@ -3010,6 +3022,25 @@ Put into each output file as many complete lines of @var{input} as
 possible without exceeding @var{size} bytes.  Individual lines longer than
 @var{size} bytes are broken into multiple files.
 @var{size} has the same format as for the @option{--bytes} option.
+
+@itemx --filter=@var{command}
+@opindex --filter
+With this option, rather than simply writing to each output file,
+write through a pipe to the specified shell @var{command} for each output file.
+@var{command} should use the $FILE environment variable, which is set
+to a different output file name for each invocation of the command.
+For example, imagine that you have a 1TiB compressed file
+that, if uncompressed, would be too large to reside on disk,
+yet you must split it into individually-compressed pieces
+of a more manageable size.
+To do that, you might run this command:
+
+@example
+xz -dc BIG.xz | split -b200G --filter='xz > $FILE.xz' - big-
+@end example
+
+Assuming a 10:1 compression ratio, that would create about fifty 20GiB files
+with names @file{big-xaa.xz}, @file{big-xab.xz}, @file{big-xac.xz}, etc.
 
 @item -n @var{chunks}
 @itemx --number=@var{chunks}
@@ -3671,6 +3702,13 @@ When verifying checksums, warn about improperly formatted MD5 checksum lines.
 This option is useful only if all but a few lines in the checked input
 are valid.
 
+@itemx --strict
+@opindex --strict
+@cindex verifying MD5 checksums
+When verifying checksums,
+if one or more input line is invalid,
+exit nonzero after all warnings have been issued.
+
 @end table
 
 @exitstatus
@@ -4109,8 +4147,8 @@ a temporary file, which is then used as an input in a subsequent merge.
 
 A large value of @var{nmerge} may improve merge performance and decrease
 temporary storage utilization at the expense of increased memory usage
-and I/0.  Conversely a small value of @var{nmerge} may reduce memory
-requirements and I/0 at the expense of temporary storage consumption and
+and I/O.  Conversely a small value of @var{nmerge} may reduce memory
+requirements and I/O at the expense of temporary storage consumption and
 merge performance.
 
 The value of @var{nmerge} must be at least 2.  The default value is
@@ -7023,6 +7061,23 @@ Piping a colorized listing through a pager like @command{more} or
 @command{less} usually produces unreadable results.  However, using
 @code{more -f} does seem to work.
 
+@vindex LS_COLORS
+@vindex SHELL @r{environment variable, and color}
+Note that using the @option{--color} option may incur a noticeable
+performance penalty when run in a directory with very many entries,
+because the default settings require that @command{ls} @code{stat} every
+single file it lists.
+However, if you would like most of the file-type coloring
+but can live without the other coloring options (e.g.,
+executable, orphan, sticky, other-writable, capability), use
+@command{dircolors} to set the @env{LS_COLORS} environment variable like this,
+@example
+eval $(dircolors -p | perl -pe \
+  's/^((CAP|S[ET]|O[TR]|M|E)\w+).*/$1 00/' | dircolors -)
+@end example
+and on a @code{dirent.d_type}-capable file system, @command{ls}
+will perform only one @code{stat} call per command line argument.
+
 @item -F
 @itemx --classify
 @itemx --indicator-style=classify
@@ -7899,8 +7954,11 @@ same or newer modification time.  If time stamps are being preserved,
 the comparison is to the source time stamp truncated to the
 resolutions of the destination file system and of the system calls
 used to update time stamps; this avoids duplicate work if several
-@samp{cp -pu} commands are executed with the same source and
-destination.
+@samp{cp -pu} commands are executed with the same source and destination.
+If @option{--preserve=links} is also specified (like with @samp{cp -au}
+for example), that will take precedence.  Consequently, depending on the
+order that files are processed from the source, newer files in the destination
+may be replaced, to mirror hard links in the source.
 
 @item -v
 @itemx --verbose
@@ -13873,10 +13931,10 @@ hour (@samp{00}@dots{}@samp{23})
 @item %I
 hour (@samp{01}@dots{}@samp{12})
 @item %k
-hour (@samp{ 0}@dots{}@samp{23}).
+hour, space padded (@samp{ 0}@dots{}@samp{23}); equivalent to @samp{%_H}.
 This is a @acronym{GNU} extension.
 @item %l
-hour (@samp{ 1}@dots{}@samp{12}).
+hour, space padded (@samp{ 1}@dots{}@samp{12}); equivalent to @samp{%_I}.
 This is a @acronym{GNU} extension.
 @item %M
 minute (@samp{00}@dots{}@samp{59})
@@ -15350,6 +15408,17 @@ three standard I/O streams associated with a program.  Synopsis:
 stdbuf @var{option}@dots{} @var{command}
 @end example
 
+@var{command} must start with the name of a program that
+@enumerate
+@item
+uses the ISO C @code{FILE} streams for input/output (note the
+programs @command{dd} and @command{cat} don't do that),
+
+@item
+does not adjust the buffering of its standard streams (note the
+program @command{tee} is not in this category).
+@end enumerate
+
 Any additional @var{arg}s are passed as additional arguments to the
 @var{command}.
 
@@ -15389,20 +15458,19 @@ This option is invalid with standard input.
 
 @item 0
 Disable buffering of the selected stream.
-In this mode data is output immediately and only the
+In this mode, data is output immediately and only the
 amount of data requested is read from input.
+Note the difference in function for input and output.
+Disabling buffering for input will not influence the responsiveness
+or blocking behavior of the stream input functions.
+For example @code{fread} will still block until @code{EOF} or error,
+even if the underlying @code{read} returns less data than requested.
 
 @item @var{size}
 Specify the size of the buffer to use in fully buffered mode.
 @multiplierSuffixesNoBlocks{size}
 
 @end table
-
-NOTE: If @var{command} adjusts the buffering of its standard streams
-(@command{tee} does for e.g.) then that will override corresponding settings
-changed by @command{stdbuf}.  Also some filters (like @command{dd} and
-@command{cat} etc.) don't use streams for I/O, and are thus unaffected
-by @command{stdbuf} settings.
 
 @cindex exit status of @command{stdbuf}
 Exit status:
@@ -15593,6 +15661,23 @@ The program accepts the following options.  Also see @ref{Common options}.
 Options must precede operands.
 
 @table @samp
+@itemx --foreground
+@opindex --foreground
+Don't create a separate background program group, so that
+the managed @var{command} can use the foreground TTY normally.
+This is needed to support timing out commands not started
+directly from an interactive shell, in two situations.
+@enumerate
+@item
+@var{command} is interactive and needs to read from the terminal for example
+@item
+the user wants to support sending signals directly to @var{command}
+from the terminal (like Ctrl-C for example)
+@end enumerate
+
+Note in this mode of operation, any children of @var{command}
+will not be timed out.
+
 @item -k @var{duration}
 @itemx --kill-after=@var{duration}
 @opindex -k
@@ -15612,7 +15697,7 @@ or a number. Also see @xref{Signal specifications}.
 @end table
 
 @cindex time units
-@var{duration} is an integer followed by an optional unit:
+@var{duration} is a floating point number followed by an optional unit:
 @display
 @samp{s} for seconds (the default)
 @samp{m} for minutes
@@ -15620,6 +15705,8 @@ or a number. Also see @xref{Signal specifications}.
 @samp{d} for days
 @end display
 A duration of 0 disables the associated timeout.
+Note that the actual timeout duration is dependent on system conditions,
+which should be especially considered when specifying sub-second timeouts.
 
 @cindex exit status of @command{timeout}
 Exit status:

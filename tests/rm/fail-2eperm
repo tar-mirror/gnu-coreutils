@@ -24,9 +24,9 @@ require_root_
 # The containing directory must be owned by the user who eventually runs rm.
 chown $NON_ROOT_USERNAME .
 
-mkdir a || framework_failure
-chmod 1777 a || framework_failure
-touch a/b || framework_failure
+mkdir a || framework_failure_
+chmod 1777 a || framework_failure_
+touch a/b || framework_failure_
 
 
 # Try to ensure that $NON_ROOT_USERNAME can access
@@ -37,7 +37,7 @@ rm_version=`
 `
 case $rm_version in
   $PACKAGE_VERSION) ;;
-  *) skip_test_ "cannot access just-built rm as user $NON_ROOT_USERNAME";;
+  *) skip_ "cannot access just-built rm as user $NON_ROOT_USERNAME";;
 esac
 setuidgid $NON_ROOT_USERNAME env PATH="$PATH" rm -rf a 2> out-t && fail=1
 

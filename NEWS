@@ -1,5 +1,110 @@
 GNU coreutils NEWS                                    -*- outline -*-
 
+* Noteworthy changes in release 8.13 (2011-09-08) [stable]
+
+** Bug fixes
+
+  chown and chgrp with the -v --from= options, now output the correct owner.
+  I.E. for skipped files, the original ownership is output, not the new one.
+  [bug introduced in sh-utils-2.0g]
+
+  cp -r could mistakenly change the permissions of an existing destination
+  directory.  [bug introduced in coreutils-6.8]
+
+  cp -u -p would fail to preserve one hard link for each up-to-date copy
+  of a src-hard-linked name in the destination tree.  I.e., if s/a and s/b
+  are hard-linked and dst/s/a is up to date, "cp -up s dst" would copy s/b
+  to dst/s/b rather than simply linking dst/s/b to dst/s/a.
+  [This bug appears to have been present in "the beginning".]
+
+  fts-using tools (rm, du, chmod, chgrp, chown, chcon) no longer use memory
+  proportional to the number of entries in each directory they process.
+  Before, rm -rf 4-million-entry-directory would consume about 1GiB of memory.
+  Now, it uses less than 30MB, no matter how many entries there are.
+  [this bug was inherent in the use of fts: thus, for rm the bug was
+  introduced in coreutils-8.0.  The prior implementation of rm did not use
+  as much memory.  du, chmod, chgrp and chown started using fts in 6.0.
+  chcon was added in coreutils-6.9.91 with fts support.  ]
+
+  pr -T no longer ignores a specified LAST_PAGE to stop at.
+  [bug introduced in textutils-1.19q]
+
+  printf '%d' '"' no longer accesses out-of-bounds memory in the diagnostic.
+  [bug introduced in sh-utils-1.16]
+
+  split --number l/... no longer creates extraneous files in certain cases.
+  [bug introduced in coreutils-8.8]
+
+  timeout now sends signals to commands that create their own process group.
+  timeout is no longer confused when starting off with a child process.
+  [bugs introduced in coreutils-7.0]
+
+  unexpand -a now aligns correctly when there are spaces spanning a tabstop,
+  followed by a tab.  In that case a space was dropped, causing misalignment.
+  We also now ensure that a space never precedes a tab.
+  [bug introduced in coreutils-5.3.0]
+
+** Changes in behavior
+
+  chmod, chown and chgrp now output the original attributes in messages,
+  when -v or -c specified.
+
+  cp -au (where --preserve=links is implicit) may now replace newer
+  files in the destination, to mirror hard links from the source.
+
+** New features
+
+  date now accepts ISO 8601 date-time strings with "T" as the
+  separator.  It has long parsed dates like "2004-02-29 16:21:42"
+  with a space between the date and time strings.  Now it also parses
+  "2004-02-29T16:21:42" and fractional-second and time-zone-annotated
+  variants like "2004-02-29T16:21:42.333-07:00"
+
+  md5sum accepts the new --strict option.  With --check, it makes the
+  tool exit non-zero for any invalid input line, rather than just warning.
+  This also affects sha1sum, sha224sum, sha384sum and sha512sum.
+
+  split accepts a new --filter=CMD option.  With it, split filters output
+  through CMD.  CMD may use the $FILE environment variable, which is set to
+  the nominal output file name for each invocation of CMD.  For example, to
+  split a file into 3 approximately equal parts, which are then compressed:
+    split -n3 --filter='xz > $FILE.xz' big
+  Note the use of single quotes, not double quotes.
+  That creates files named xaa.xz, xab.xz and xac.xz.
+
+  timeout accepts a new --foreground option, to support commands not started
+  directly from a shell prompt, where the command is interactive or needs to
+  receive signals initiated from the terminal.
+
+** Improvements
+
+  cp -p now copies trivial NSFv4 ACLs on Solaris 10.  Before, it would
+  mistakenly apply a non-trivial ACL to the destination file.
+
+  cp and ls now support HP-UX 11.11's ACLs, thanks to improved support
+  in gnulib.
+
+  df now supports disk partitions larger than 4 TiB on MacOS X 10.5
+  or newer and on AIX 5.2 or newer.
+
+  join --check-order now prints "join: FILE:LINE_NUMBER: bad_line" for an
+  unsorted input, rather than e.g., "join: file 1 is not in sorted order".
+
+  shuf outputs small subsets of large permutations much more efficiently.
+  For example `shuf -i1-$((2**32-1)) -n2` no longer exhausts memory.
+
+  stat -f now recognizes the GPFS, MQUEUE and PSTOREFS file system types.
+
+  timeout now supports sub-second timeouts.
+
+** Build-related
+
+  Changes inherited from gnulib address a build failure on HP-UX 11.11
+  when using /opt/ansic/bin/cc.
+
+  Numerous portability and build improvements inherited via gnulib.
+
+
 * Noteworthy changes in release 8.12 (2011-04-26) [stable]
 
 ** Bug fixes
@@ -1039,7 +1144,8 @@ GNU coreutils NEWS                                    -*- outline -*-
   join has significantly better performance due to better memory management
 
   ls now uses constant memory when not sorting and using one_per_line format,
-  no matter how many files are in a given directory
+  no matter how many files are in a given directory.  I.e., to list a directory
+  with very many files, ls -1U is much more efficient.
 
   od now aligns fields across lines when printing multiple -t
   specifiers, and no longer prints fields that resulted entirely from
@@ -1052,6 +1158,12 @@ GNU coreutils NEWS                                    -*- outline -*-
 
 
 * Noteworthy changes in release 6.12 (2008-05-31) [stable]
+
+** New features
+
+  cp, install, mv, and touch now preserve nanosecond resolution on
+  file timestamps, on platforms that have the 'utimensat' and
+  'futimens' system calls.
 
 ** Bug fixes
 
@@ -1465,7 +1577,7 @@ GNU coreutils NEWS                                    -*- outline -*-
 
   "rm --interactive=never F" no longer prompts for an unwritable F
 
-  "rm -rf D" would emit an misleading diagnostic when failing to
+  "rm -rf D" would emit a misleading diagnostic when failing to
   remove a symbolic link within the unwritable directory, D.
   Introduced in coreutils-6.0.  Similarly, when a cross-partition
   "mv" fails because the source directory is unwritable, it now gives

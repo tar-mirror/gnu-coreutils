@@ -21,7 +21,6 @@
 #include <getopt.h>
 #include <sys/types.h>
 #include <signal.h>
-#include <sys/wait.h>
 
 #include "system.h"
 #include "error.h"
@@ -293,7 +292,7 @@ main (int argc, char **argv)
       default:
         usage (EXIT_FAILURE);
       }
- no_more_options:;
+ no_more_options:
 
   if (signum < 0)
     signum = SIGTERM;

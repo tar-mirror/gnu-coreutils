@@ -16,24 +16,22 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-: ${srcdir=.}
-. $srcdir/require-perl
-
 . "${srcdir=.}/init.sh"; path_prepend_ ../src
 print_ver_ ls
 
 require_root_
+require_perl_
 
 nameless_uid=`$PERL -e '
   foreach my $i (1000..16*1024) { getpwuid $i or (print "$i\n"), exit }
 '`
 
 if test x$nameless_uid = x; then
-  skip_test_ "couldn't find a nameless UID"
+  skip_ "couldn't find a nameless UID"
 fi
 
-touch f || framework_failure
-chown $nameless_uid f || framework_failure
+touch f || framework_failure_
+chown $nameless_uid f || framework_failure_
 
 
 set -- `ls -o f` || fail=1

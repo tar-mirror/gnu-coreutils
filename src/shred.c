@@ -100,6 +100,7 @@
 #include "quotearg.h"		/* For quotearg_colon */
 #include "randint.h"
 #include "randread.h"
+#include "stat-size.h"
 
 /* Default number of times to overwrite.  */
 enum { DEFAULT_PASSES = 3 };
@@ -781,7 +782,7 @@ do_wipefd (int fd, char const *qname, struct randint_source *s,
     }
 
   /* If we know that we can't possibly shred the file, give up now.
-     Otherwise, we may go into a infinite loop writing data before we
+     Otherwise, we may go into an infinite loop writing data before we
      find that we can't rewind the device.  */
   if ((S_ISCHR (st.st_mode) && isatty (fd))
       || S_ISFIFO (st.st_mode)
@@ -907,9 +908,9 @@ static char const nameset[] =
 "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_.";
 
 /* Increment NAME (with LEN bytes).  NAME must be a big-endian base N
-   number with the digits taken from nameset.  Return true if
-   successful if not (because NAME already has the greatest possible
-   value.  */
+   number with the digits taken from nameset.  Return true if successful.
+   Otherwise, (because NAME already has the greatest possible value)
+   return false.  */
 
 static bool
 incname (char *name, size_t len)
@@ -917,6 +918,10 @@ incname (char *name, size_t len)
   while (len--)
     {
       char const *p = strchr (nameset, name[len]);
+
+      /* Given that NAME is composed of bytes from NAMESET,
+         P will never be NULL here.  */
+      assert (p);
 
       /* If this character has a successor, use it.  */
       if (p[1])
@@ -1098,7 +1103,7 @@ int
 main (int argc, char **argv)
 {
   bool ok = true;
-  DECLARE_ZEROED_AGGREGATE (struct Options, flags);
+  struct Options flags = { 0, };
   char **file;
   int n_files;
   int c;

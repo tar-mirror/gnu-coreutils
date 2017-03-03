@@ -215,7 +215,7 @@ print_table (void)
         {
           size_t width = widths[field];
           char *cell = table[row][field];
-          if (!cell)
+          if (!cell) /* Missing type column, or mount point etc. */
             continue;
 
           /* Note the DEV_FIELD used to be displayed on it's own line
@@ -227,9 +227,9 @@ print_table (void)
             fputs (cell, stdout);
           else
             {
-              cell = ambsalign (table[row][field], &width,
-                                alignments[field], MBA_UNIBYTE_FALLBACK);
-              fputs (cell, stdout);
+              cell = ambsalign (cell, &width, alignments[field], 0);
+              /* When ambsalign fails, output unaligned data.  */
+              fputs (cell ? cell : table[row][field], stdout);
               free (cell);
             }
           IF_LINT (free (table[row][field]));
@@ -241,7 +241,7 @@ print_table (void)
   IF_LINT (free (table));
 }
 
-/* Optain the appropriate header entries.  */
+/* Obtain the appropriate header entries.  */
 
 static void
 get_header (void)
@@ -321,7 +321,7 @@ get_header (void)
 
 /* Is FSTYPE a type of file system that should be listed?  */
 
-static bool
+static bool _GL_ATTRIBUTE_PURE
 selected_fstype (const char *fstype)
 {
   const struct fs_type_list *fsp;
@@ -336,7 +336,7 @@ selected_fstype (const char *fstype)
 
 /* Is FSTYPE a type of file system that should be omitted?  */
 
-static bool
+static bool _GL_ATTRIBUTE_PURE
 excluded_fstype (const char *fstype)
 {
   const struct fs_type_list *fsp;
@@ -417,7 +417,7 @@ add_uint_with_neg_flag (uintmax_t *dest, bool *dest_neg,
     *dest = -*dest;
 }
 
-/* Optain a space listing for the disk device with absolute file name DISK.
+/* Obtain a space listing for the disk device with absolute file name DISK.
    If MOUNT_POINT is non-NULL, it is the name of the root of the
    file system on DISK.
    If STAT_FILE is non-null, it is the name of a file within the file

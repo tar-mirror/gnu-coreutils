@@ -22,6 +22,7 @@
 print_ver_ cp mv
 
 require_root_
+require_mkfs_PATH_
 
 cwd=`pwd`
 cleanup_() { cd /; umount "$cwd/noxattr"; umount "$cwd/xattr"; }
@@ -39,13 +40,13 @@ make_fs() {
                                                  || skip=1
   mkdir "$where"                                 || skip=1
   mkfs -t ext2 -F "$fs" ||
-    skip_test_ "failed to create ext2 file system"
+    skip_ "failed to create ext2 file system"
   mount -oloop,$opts "$fs" "$where"              || skip=1
   echo test > "$where"/f                         || skip=1
   test -s "$where"/f                             || skip=1
 
   test $skip = 1 &&
-    skip_test_ "insufficient mount/ext2 support"
+    skip_ "insufficient mount/ext2 support"
 }
 
 make_fs noxattr nouser_xattr
@@ -56,14 +57,14 @@ xattr_name="user.foo"
 xattr_value="bar"
 xattr_pair="$xattr_name=\"$xattr_value\""
 
-echo test > xattr/a || framework_failure
-getfattr -d xattr/a >out_a || skip_test_ "failed to get xattr of file"
-grep -F "$xattr_pair" out_a >/dev/null && framework_failure
+echo test > xattr/a || framework_failure_
+getfattr -d xattr/a >out_a || skip_ "failed to get xattr of file"
+grep -F "$xattr_pair" out_a >/dev/null && framework_failure_
 setfattr -n "$xattr_name" -v "$xattr_value" xattr/a >out_a \
-  || skip_test_ "failed to set xattr of file"
-getfattr -d xattr/a >out_a || skip_test_ "failed to get xattr of file"
+  || skip_ "failed to set xattr of file"
+getfattr -d xattr/a >out_a || skip_ "failed to get xattr of file"
 grep -F "$xattr_pair" out_a >/dev/null \
-  || skip_test_ "failed to set xattr of file"
+  || skip_ "failed to set xattr of file"
 
 
 # This should pass without diagnostics

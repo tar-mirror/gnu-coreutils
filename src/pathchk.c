@@ -25,11 +25,6 @@
 #include "quote.h"
 #include "quotearg.h"
 
-#if ! (HAVE_MBRLEN && HAVE_MBSTATE_T)
-# define mbrlen(s, n, ps) 1
-# define mbstate_t int
-#endif
-
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "pathchk"
 
@@ -196,7 +191,7 @@ portable_chars_only (char const *file, size_t filelen)
 
   if (*invalid)
     {
-      DECLARE_ZEROED_AGGREGATE (mbstate_t, mbstate);
+      mbstate_t mbstate = { 0, };
       size_t charlen = mbrlen (invalid, filelen - validlen, &mbstate);
       error (0, 0,
              _("nonportable character %s in file name %s"),
@@ -211,7 +206,7 @@ portable_chars_only (char const *file, size_t filelen)
 
 /* Return the address of the start of the next file name component in F.  */
 
-static char *
+static char * _GL_ATTRIBUTE_PURE
 component_start (char *f)
 {
   while (*f == '/')
@@ -221,7 +216,7 @@ component_start (char *f)
 
 /* Return the size of the file name component F.  F must be nonempty.  */
 
-static size_t
+static size_t _GL_ATTRIBUTE_PURE
 component_len (char const *f)
 {
   size_t len;

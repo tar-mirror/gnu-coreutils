@@ -595,7 +595,7 @@ compare_occurs (const void *void_first, const void *void_second)
 | Return !0 if WORD appears in TABLE.  Uses a binary search.  |
 `------------------------------------------------------------*/
 
-static int
+static int _GL_ATTRIBUTE_PURE
 search_table (WORD *word, WORD_TABLE *table)
 {
   int lowest;			/* current lowest possible index */
@@ -797,7 +797,7 @@ find_occurs_in_text (void)
 
       context_start = cursor;
 
-      /* If a end of line or end of sentence sequence is defined and
+      /* If an end of line or end of sentence sequence is defined and
          non-empty, `next_context_start' will be recomputed to be the end of
          each line or sentence, before each one is processed.  If no such
          sequence, then `next_context_start' is set at the end of the whole

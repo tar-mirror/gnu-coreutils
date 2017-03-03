@@ -120,6 +120,8 @@ Print newline, word, and byte counts for each FILE, and a total line if\n\
 more than one FILE is specified.  With no FILE, or when FILE is -,\n\
 read standard input.  A word is a non-zero-length sequence of characters\n\
 delimited by white space.\n\
+The options below may be used to select which counts are printed, always in\n\
+the following order: newline, word, character, byte, maximum line length.\n\
   -c, --bytes            print the byte counts\n\
   -m, --chars            print the character counts\n\
   -l, --lines            print the newline counts\n\
@@ -234,8 +236,8 @@ wc (int fd, char const *file_x, struct fstatus *fstatus)
         fstatus->failed = fstat (fd, &fstatus->st);
 
       if (! fstatus->failed && S_ISREG (fstatus->st.st_mode)
-          && (current_pos = lseek (fd, (off_t) 0, SEEK_CUR)) != -1
-          && (end_pos = lseek (fd, (off_t) 0, SEEK_END)) != -1)
+          && (current_pos = lseek (fd, 0, SEEK_CUR)) != -1
+          && (end_pos = lseek (fd, 0, SEEK_END)) != -1)
         {
           /* Be careful here.  The current position may actually be
              beyond the end of the file.  As in the example above.  */
@@ -285,7 +287,7 @@ wc (int fd, char const *file_x, struct fstatus *fstatus)
     {
       bool in_word = false;
       uintmax_t linepos = 0;
-      DECLARE_ZEROED_AGGREGATE (mbstate_t, state);
+      mbstate_t state = { 0, };
       bool in_shift = false;
 # if SUPPORT_OLD_MBRTOWC
       /* Back-up the state before each multibyte character conversion and
@@ -556,7 +558,7 @@ get_input_fstatus (int nfiles, char *const *file)
    recorded in FSTATUS.  Optimize the same special case that
    get_input_fstatus optimizes.  */
 
-static int
+static int _GL_ATTRIBUTE_PURE
 compute_number_width (int nfiles, struct fstatus const *fstatus)
 {
   int width = 1;

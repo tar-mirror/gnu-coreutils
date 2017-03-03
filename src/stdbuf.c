@@ -25,7 +25,6 @@
 #include "system.h"
 #include "error.h"
 #include "filenamecat.h"
-#include "posixver.h"
 #include "quote.h"
 #include "xreadlink.h"
 #include "xstrtol.h"
@@ -194,15 +193,14 @@ set_LD_PRELOAD (void)
   char *LD_PRELOAD;
 
   /* Note this would auto add the appropriate search path for "libstdbuf.so":
-     gcc stdbuf.c -Wl,-rpath,'$ORIGIN' -Wl,-rpath,$PKGLIBDIR
+     gcc stdbuf.c -Wl,-rpath,'$ORIGIN' -Wl,-rpath,$PKGLIBEXECDIR
      However we want the lookup done for the exec'd command not stdbuf.
 
-     Since we don't link against libstdbuf.so add it to LIBDIR rather than
-     LIBEXECDIR, as we'll search for it in the "sys default" case below.  */
+     Since we don't link against libstdbuf.so add it to PKGLIBEXECDIR
+     rather than to LIBDIR.  */
   char const *const search_path[] = {
     program_path,
-    PKGLIBDIR,
-    "",                         /* sys default */
+    PKGLIBEXECDIR,
     NULL
   };
 
@@ -257,7 +255,7 @@ set_LD_PRELOAD (void)
 static void
 set_libstdbuf_options (void)
 {
-  int i;
+  unsigned int i;
 
   for (i = 0; i < ARRAY_CARDINALITY (stdbuf); i++)
     {
@@ -356,7 +354,7 @@ main (int argc, char **argv)
 
   /* Try to preload libstdbuf first from the same path as
      stdbuf is running from.  */
-  set_program_path (argv[0]);
+  set_program_path (program_name);
   if (!program_path)
     program_path = xstrdup (PKGLIBDIR);  /* Need to init to non NULL.  */
   set_LD_PRELOAD ();

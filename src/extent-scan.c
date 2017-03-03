@@ -24,11 +24,9 @@
 
 #include "system.h"
 #include "extent-scan.h"
+#include "fiemap.h"
 #include "xstrtol.h"
 
-#ifndef HAVE_FIEMAP
-# include "fiemap.h"
-#endif
 
 /* Work around Linux kernel issues on BTRFS and EXT4 before 2.6.39.
    FIXME: remove in 2013, or whenever we're pretty confident
@@ -50,7 +48,7 @@ extent_need_sync (void)
       struct utsname name;
       need_sync = 0; /* No workaround by default.  */
 
-#ifdef __linux__
+# ifdef __linux__
       if (uname (&name) != -1 && STRNCMP_LIT (name.release, "2.6.") == 0)
         {
            unsigned long val;
@@ -60,7 +58,7 @@ extent_need_sync (void)
                  need_sync = 1;
              }
         }
-#endif
+# endif
     }
 
   return need_sync;

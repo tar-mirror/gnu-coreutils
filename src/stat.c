@@ -20,7 +20,7 @@
 
 /* Keep this conditional in sync with the similar conditional in
    ../m4/stat-prog.m4.  */
-#if (STAT_STATVFS \
+#if ((STAT_STATVFS || STAT_STATVFS64)                                       \
      && (HAVE_STRUCT_STATVFS_F_BASETYPE || HAVE_STRUCT_STATVFS_F_FSTYPENAME \
          || (! HAVE_STRUCT_STATFS_F_FSTYPENAME && HAVE_STRUCT_STATVFS_F_TYPE)))
 # define USE_STATVFS 1
@@ -67,6 +67,7 @@
 #include "mountlist.h"
 #include "quote.h"
 #include "quotearg.h"
+#include "stat-size.h"
 #include "stat-time.h"
 #include "strftime.h"
 #include "find-mount-point.h"
@@ -79,7 +80,11 @@
 # if HAVE_STRUCT_STATVFS_F_NAMEMAX
 #  define SB_F_NAMEMAX(S) ((S)->f_namemax)
 # endif
-# define STATFS statvfs
+# if ! STAT_STATVFS && STAT_STATVFS64
+#  define STATFS statvfs64
+# else
+#  define STATFS statvfs
+# endif
 # define STATFS_FRSIZE(S) ((S)->f_frsize)
 #else
 # define HAVE_STRUCT_STATXFS_F_TYPE HAVE_STRUCT_STATFS_F_TYPE
@@ -288,6 +293,8 @@ human_fstype (STRUCT_STATVFS const *statfsbuf)
       return "futexfs";
     case S_MAGIC_GFS: /* 0x1161970 */
       return "gfs/gfs2";
+    case S_MAGIC_GPFS: /* 0x47504653 */
+      return "gpfs";
     case S_MAGIC_HFS: /* 0x4244 */
       return "hfs";
     case S_MAGIC_HPFS: /* 0xF995E849 */
@@ -322,6 +329,8 @@ human_fstype (STRUCT_STATVFS const *statfsbuf)
       return "minix v2 (30 char.)";
     case S_MAGIC_MINIX_V3: /* 0x4D5A */
       return "minix3";
+    case S_MAGIC_MQUEUE: /* 0x19800202 */
+      return "mqueue";
     case S_MAGIC_MSDOS: /* 0x4D44 */
       return "msdos";
     case S_MAGIC_NCP: /* 0x564C */
@@ -340,6 +349,8 @@ human_fstype (STRUCT_STATVFS const *statfsbuf)
       return "ocfs2";
     case S_MAGIC_PROC: /* 0x9FA0 */
       return "proc";
+    case S_MAGIC_PSTOREFS: /* 0x6165676C */
+      return "pstorefs";
     case S_MAGIC_QNX4: /* 0x002F */
       return "qnx4";
     case S_MAGIC_RAMFS: /* 0x858458F6 */
@@ -944,7 +955,7 @@ print_stat (char *pformat, size_t prefix_len, unsigned int m,
       out_uint (pformat, prefix_len, ST_NBLOCKS (*statbuf));
       break;
     case 'o':
-      out_uint (pformat, prefix_len, statbuf->st_blksize);
+      out_uint (pformat, prefix_len, ST_BLKSIZE (*statbuf));
       break;
     case 'w':
       {

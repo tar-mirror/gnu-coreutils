@@ -47,9 +47,11 @@
 #include "hash.h"
 #include "hash-triple.h"
 #include "ignore-value.h"
+#include "ioblksize.h"
 #include "quote.h"
 #include "same.h"
 #include "savedir.h"
+#include "stat-size.h"
 #include "stat-time.h"
 #include "utimecmp.h"
 #include "utimens.h"
@@ -466,7 +468,7 @@ extent_copy (int src_fd, int dest_fd, char *buf, size_t buf_size,
    performance hit that's probably noticeable only on trees deeper
    than a few hundred levels.  See use of active_dir_map in remove.c  */
 
-static bool
+static bool _GL_ATTRIBUTE_PURE
 is_ancestor (const struct stat *sb, const struct dir_list *ancestors)
 {
   while (ancestors != 0)
@@ -949,7 +951,9 @@ copy_reg (char const *src_name, char const *dst_name,
         dest_errno = ENOTDIR;
     }
   else
-    omitted_permissions = 0;
+    {
+      omitted_permissions = 0;
+    }
 
   if (dest_desc < 0)
     {
@@ -975,7 +979,7 @@ copy_reg (char const *src_name, char const *dst_name,
           if (!clone_ok)
             {
               error (0, errno, _("failed to clone %s from %s"),
-                     quote (dst_name), quote (src_name));
+                     quote_n (0, dst_name), quote_n (1, src_name));
               return_val = false;
               goto close_src_and_dst_desc;
             }
@@ -1486,6 +1490,43 @@ restore_default_fscreatecon_or_die (void)
            _("failed to restore the default file creation context"));
 }
 
+/* Create a hard link DST_NAME to SRC_NAME, honoring the REPLACE and
+   VERBOSE settings.  Return true upon success.  Otherwise, diagnose
+   the failure and return false.
+   If SRC_NAME is a symbolic link it will not be followed.  If the system
+   doesn't support hard links to symbolic links, then DST_NAME will
+   be created as a symbolic link to SRC_NAME.  */
+static bool
+create_hard_link (char const *src_name, char const *dst_name,
+                  bool replace, bool verbose)
+{
+  /* We want to guarantee that symlinks are not followed.  */
+  bool link_failed = (linkat (AT_FDCWD, src_name, AT_FDCWD, dst_name, 0) != 0);
+
+  /* If the link failed because of an existing destination,
+     remove that file and then call link again.  */
+  if (link_failed && replace && errno == EEXIST)
+    {
+      if (unlink (dst_name) != 0)
+        {
+          error (0, errno, _("cannot remove %s"), quote (dst_name));
+          return false;
+        }
+      if (verbose)
+        printf (_("removed %s\n"), quote (dst_name));
+      link_failed = (linkat (AT_FDCWD, src_name, AT_FDCWD, dst_name, 0) != 0);
+    }
+
+  if (link_failed)
+    {
+      error (0, errno, _("cannot create hard link %s to %s"),
+             quote_n (0, dst_name), quote_n (1, src_name));
+      return false;
+    }
+
+  return true;
+}
+
 /* Copy the file SRC_NAME to the file DST_NAME.  The files may be of
    any type.  NEW_DST should be true if the file DST_NAME cannot
    exist because its parent directory was just created; NEW_DST should
@@ -1626,6 +1667,25 @@ copy_internal (char const *src_name, char const *dst_name,
                      end up removing the source file.  */
                   if (rename_succeeded)
                     *rename_succeeded = true;
+
+                  /* However, we still must record that we've processed
+                     this src/dest pair, in case this source file is
+                     hard-linked to another one.  In that case, we'll use
+                     the mapping information to link the corresponding
+                     destination names.  */
+                  earlier_file = remember_copied (dst_name, src_sb.st_ino,
+                                                  src_sb.st_dev);
+                  if (earlier_file)
+                    {
+                      /* Note we currently replace DST_NAME unconditionally,
+                         even if it was a newer separate file.  */
+                      if (! create_hard_link (earlier_file, dst_name, true,
+                                              x->verbose))
+                        {
+                          goto un_backup;
+                        }
+                    }
+
                   return true;
                 }
             }
@@ -1946,31 +2006,8 @@ copy_internal (char const *src_name, char const *dst_name,
         }
       else
         {
-          /* We want to guarantee that symlinks are not followed.  */
-          bool link_failed = (linkat (AT_FDCWD, earlier_file, AT_FDCWD,
-                                      dst_name, 0) != 0);
-
-          /* If the link failed because of an existing destination,
-             remove that file and then call link again.  */
-          if (link_failed && errno == EEXIST)
-            {
-              if (unlink (dst_name) != 0)
-                {
-                  error (0, errno, _("cannot remove %s"), quote (dst_name));
-                  goto un_backup;
-                }
-              if (x->verbose)
-                printf (_("removed %s\n"), quote (dst_name));
-              link_failed = (linkat (AT_FDCWD, earlier_file, AT_FDCWD,
-                                     dst_name, 0) != 0);
-            }
-
-          if (link_failed)
-            {
-              error (0, errno, _("cannot create hard link %s to %s"),
-                     quote_n (0, dst_name), quote_n (1, earlier_file));
-              goto un_backup;
-            }
+          if (! create_hard_link (earlier_file, dst_name, true, x->verbose))
+            goto un_backup;
 
           return true;
         }
@@ -2197,6 +2234,10 @@ copy_internal (char const *src_name, char const *dst_name,
           if (x->verbose)
             emit_verbose (src_name, dst_name, NULL);
         }
+      else
+        {
+          omitted_permissions = 0;
+        }
 
       /* Decide whether to copy the contents of the directory.  */
       if (x->one_file_system && device != 0 && device != src_sb.st_dev)
@@ -2272,11 +2313,8 @@ copy_internal (char const *src_name, char const *dst_name,
            && !(LINK_FOLLOWS_SYMLINKS && S_ISLNK (src_mode)
                 && x->dereference == DEREF_NEVER))
     {
-       if (linkat (AT_FDCWD, src_name, AT_FDCWD, dst_name, 0))
-        {
-          error (0, errno, _("cannot create link %s"), quote (dst_name));
-          goto un_backup;
-        }
+      if (! create_hard_link (src_name, dst_name, false, false))
+        goto un_backup;
     }
   else if (S_ISREG (src_mode)
            || (x->copy_as_regular && !S_ISLNK (src_mode)))
@@ -2533,7 +2571,7 @@ un_backup:
   return false;
 }
 
-static bool
+static bool _GL_ATTRIBUTE_PURE
 valid_options (const struct cp_options *co)
 {
   assert (co != NULL);

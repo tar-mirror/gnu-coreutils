@@ -27,8 +27,8 @@
 
 #include "system.h"
 #include "error.h"
-#include "posixver.h"
 #include "quote.h"
+#include "stat-size.h"
 #include "xstrtol.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */

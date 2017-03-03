@@ -32,7 +32,6 @@
 #include "system.h"
 
 #include "error.h"
-#include "full-write.h"
 #include "full-read.h"
 #include "quote.h"
 #include "safe-read.h"
@@ -390,7 +389,7 @@ elide_tail_bytes_pipe (const char *filename, int fd, uintmax_t n_elide_0)
             }
         }
 
-    free_mem:;
+    free_mem:
       for (i = 0; i < n_bufs; i++)
         free (b[i]);
       free (b);
@@ -422,8 +421,8 @@ elide_tail_bytes_file (const char *filename, int fd, uintmax_t n_elide)
       off_t diff;
       enum Copy_fd_status err;
 
-      if ((current_pos = lseek (fd, (off_t) 0, SEEK_CUR)) == -1
-          || (end_pos = lseek (fd, (off_t) 0, SEEK_END)) == -1)
+      if ((current_pos = lseek (fd, 0, SEEK_CUR)) == -1
+          || (end_pos = lseek (fd, 0, SEEK_END)) == -1)
         {
           error (0, errno, _("cannot lseek %s"), quote (filename));
           return false;
@@ -438,7 +437,7 @@ elide_tail_bytes_file (const char *filename, int fd, uintmax_t n_elide)
 
       /* Seek back to `current' position, then copy the required
          number of bytes from fd.  */
-      if (lseek (fd, (off_t) 0, current_pos) == -1)
+      if (lseek (fd, 0, current_pos) == -1)
         {
           error (0, errno, _("%s: cannot lseek back to original position"),
                  quote (filename));
@@ -716,8 +715,8 @@ elide_tail_lines_file (const char *filename, int fd, uintmax_t n_elide)
          If found, write from current position to OFF, inclusive.
          Otherwise, just return true.  */
 
-      off_t start_pos = lseek (fd, (off_t) 0, SEEK_CUR);
-      off_t end_pos = lseek (fd, (off_t) 0, SEEK_END);
+      off_t start_pos = lseek (fd, 0, SEEK_CUR);
+      off_t end_pos = lseek (fd, 0, SEEK_END);
       if (0 <= start_pos && start_pos < end_pos)
         {
           /* If the file is empty, we're done.  */

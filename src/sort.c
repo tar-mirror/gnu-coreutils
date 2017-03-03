@@ -112,7 +112,7 @@ struct rlimit { size_t rlim_cur; };
 /* Heuristic value for the number of lines for which it is worth creating
    a subthread, during an internal merge sort.  I.e., it is a small number
    of "average" lines for which sorting via two threads is faster than
-   sorting via one on an "average" system.  On an dual-core 2.0 GHz i686
+   sorting via one on an "average" system.  On a dual-core 2.0 GHz i686
    system with 3GB of RAM and 2MB of L2 cache, a file containing 128K
    lines of gensort -a output is sorted slightly faster with --parallel=2
    than with --parallel=1.  By contrast, using --parallel=1 is about 10%
@@ -1846,7 +1846,7 @@ static char const unit_order[UCHAR_LIM] =
    separators and a decimal point, but it may not contain leading blanks.
    Negative numbers get negative orders; zero numbers have a zero order.  */
 
-static int
+static int _GL_ATTRIBUTE_PURE
 find_unit_order (char const *number)
 {
   bool minus_sign = (*number == '-');
@@ -2029,7 +2029,7 @@ compare_random (char *restrict texta, size_t lena,
                 char *restrict textb, size_t lenb)
 {
   /* XFRM_DIFF records the equivalent of memcmp on the transformed
-     data.  This is used to break ties if there is an checksum
+     data.  This is used to break ties if there is a checksum
      collision, and this is good enough given the astronomically low
      probability of a collision.  */
   int xfrm_diff = 0;
@@ -2385,7 +2385,7 @@ key_warnings (struct keyfield const *gkey, bool gkey_only)
           size_t eword = key->eword + 1;
           if (!sword)
             sword++;
-          if (sword != eword)
+          if (!eword || sword < eword)
             error (0, 0, _("key %lu is numeric and spans multiple fields"),
                    keynum);
         }

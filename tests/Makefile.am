@@ -7,8 +7,10 @@ ASSORT = LC_ALL=C sort
 
 EXTRA_DIST =		\
   Coreutils.pm		\
+  CuSkip.pm		\
   CuTmpdir.pm		\
   check.mk		\
+  d_type-check		\
   envvar-check		\
   filefrag-extent-compare \
   fiemap-capable	\
@@ -16,8 +18,8 @@ EXTRA_DIST =		\
   init.sh		\
   lang-default		\
   other-fs-tmpdir	\
-  require-perl		\
   sample-test		\
+  shell-or-perl		\
   $(pr_data)
 
 root_tests =					\
@@ -132,6 +134,7 @@ TESTS =						\
   rm/unread3					\
   rm/unreadable					\
   rm/v-slash					\
+  rm/many-dir-entries-vs-OOM			\
   chgrp/default-no-deref			\
   chgrp/deref					\
   chgrp/no-x					\
@@ -160,7 +163,6 @@ TESTS =						\
   pr/pr-tests					\
   misc/df-P					\
   misc/pwd-option				\
-  misc/pwd-unreadable-parent			\
   misc/chcon-fail				\
   misc/cut					\
   misc/wc					\
@@ -247,12 +249,13 @@ TESTS =						\
   misc/sort-unique				\
   misc/sort-unique-segv				\
   misc/sort-version				\
-  misc/split-a					\
-  misc/split-bchunk				\
-  misc/split-fail				\
-  misc/split-l					\
-  misc/split-lchunk				\
-  misc/split-rchunk				\
+  split/filter					\
+  split/suffix-length				\
+  split/b-chunk					\
+  split/fail					\
+  split/lines					\
+  split/l-chunk					\
+  split/r-chunk					\
   misc/stat-birthtime				\
   misc/stat-fmt					\
   misc/stat-hyphen				\
@@ -274,6 +277,7 @@ TESTS =						\
   misc/tee-dash					\
   misc/test-diag				\
   misc/timeout					\
+  misc/timeout-group				\
   misc/timeout-parameters			\
   misc/tr					\
   misc/tr-case-class				\
@@ -319,6 +323,7 @@ TESTS =						\
   cp/dir-rm-dest				\
   cp/dir-slash					\
   cp/dir-vs-file				\
+  cp/existing-perm-dir				\
   cp/existing-perm-race				\
   cp/fail-perm					\
   cp/fiemap-empty                               \
@@ -337,6 +342,7 @@ TESTS =						\
   cp/parent-perm-race				\
   cp/perm					\
   cp/preserve-2					\
+  cp/preserve-link				\
   cp/preserve-slink-time			\
   cp/proc-short-read				\
   cp/proc-zero-len				\
@@ -425,6 +431,7 @@ TESTS =						\
   ls/rt-1					\
   ls/stat-dtype					\
   ls/stat-failed				\
+  ls/stat-free-color				\
   ls/stat-free-symlinks				\
   ls/stat-vs-dirent				\
   ls/symlink-slash				\

@@ -18,7 +18,7 @@
 
 dnl Written by Jim Meyering.
 
-AC_PREREQ([2.62])
+AC_PREREQ([2.64])
 
 # Make inter-release version strings look like, e.g., v6.9-219-g58ddd, which
 # indicates that it is built from the 219th delta (in _some_ repository)
@@ -88,17 +88,22 @@ if test "$gl_gcc_warnings" = yes; then
   nw="$nw -Wmissing-format-attribute" # copy.c
   nw="$nw -Wunsafe-loop-optimizations" # a few src/*.c
   nw="$nw -Winline"                 # system.h's readdir_ignoring_dot_and_dotdot
-  nw="$nw -Wstrict-overflow"        # expr.c, pr.c, tr.c, factor.c
-  # ?? -Wstrict-overflow
+
+  # Using -Wstrict-overflow is a pain, but the alternative is worse.
+  # For an example, see the code that provoked this report:
+  # http://gcc.gnu.org/bugzilla/show_bug.cgi?id=33498
+  # Code like that still infloops with gcc-4.6.0 and -O2.  Scary indeed.
 
   gl_MANYWARN_ALL_GCC([ws])
   gl_MANYWARN_COMPLEMENT([ws], [$ws], [$nw])
   for w in $ws; do
     gl_WARN_ADD([$w])
   done
-  gl_WARN_ADD([-Wno-missing-field-initializers]) # We need this one
   gl_WARN_ADD([-Wno-sign-compare])     # Too many warnings for now
   gl_WARN_ADD([-Wno-unused-parameter]) # Too many warnings for now
+  gl_WARN_ADD([-Wsuggest-attribute=const])
+  gl_WARN_ADD([-Wsuggest-attribute=pure])
+  gl_WARN_ADD([-Wsuggest-attribute=noreturn])
 
   # In spite of excluding -Wlogical-op above, it is enabled, as of
   # gcc 4.5.0 20090517, and it provokes warnings in cat.c, dd.c, truncate.c
@@ -117,10 +122,14 @@ if test "$gl_gcc_warnings" = yes; then
   # We use a slightly smaller set of warning options for lib/.
   # Remove the following and save the result in GNULIB_WARN_CFLAGS.
   nw=
+  nw="$nw -Wstrict-overflow"
   nw="$nw -Wuninitialized"
   nw="$nw -Wunused-macros"
   nw="$nw -Wmissing-prototypes"
   nw="$nw -Wold-style-definition"
+  # FIXME: remove/reenable the following two, once gnulib is adjusted.
+  nw="$nw -Wsuggest-attribute=const"
+  nw="$nw -Wsuggest-attribute=pure"
   gl_MANYWARN_COMPLEMENT([GNULIB_WARN_CFLAGS], [$WARN_CFLAGS], [$nw])
   AC_SUBST([GNULIB_WARN_CFLAGS])
 
@@ -416,7 +425,7 @@ esac
 
 MAN=`echo "$optional_bin_progs "|sed 's/ /.1 /g;s/ $//'|tr -d '\\015\\012'`
 
-# Change ginstall.1 to "install.h" in $MAN.
+# Change "ginstall.1" to "install.1" in $MAN.
 MAN=`for m in $MAN; do test $m = ginstall.1 && m=install.1; echo $m; done \
   | tr '\015\012' '  '; echo`
 
@@ -443,7 +452,7 @@ AC_SUBST([CONFIG_STATUS_DEPENDENCIES])
 # As long as "grep 'PRI[diouxX]' po/*.pot" reports matches in
 # translatable strings, we must use need-formatstring-macros here.
 AM_GNU_GETTEXT([external], [need-formatstring-macros])
-AM_GNU_GETTEXT_VERSION([0.17])
+AM_GNU_GETTEXT_VERSION([0.18.1])
 
 # For a test of uniq: it uses the $LOCALE_FR envvar.
 gt_LOCALE_FR
