@@ -105,6 +105,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/00gnulib.m4 \
 	$(top_srcdir)/m4/error.m4 $(top_srcdir)/m4/euidaccess.m4 \
 	$(top_srcdir)/m4/exponentd.m4 $(top_srcdir)/m4/exponentf.m4 \
 	$(top_srcdir)/m4/exponentl.m4 $(top_srcdir)/m4/extensions.m4 \
+	$(top_srcdir)/m4/extern-inline.m4 \
 	$(top_srcdir)/m4/faccessat.m4 $(top_srcdir)/m4/fatal-signal.m4 \
 	$(top_srcdir)/m4/fchdir.m4 $(top_srcdir)/m4/fchmodat.m4 \
 	$(top_srcdir)/m4/fchownat.m4 $(top_srcdir)/m4/fclose.m4 \
@@ -117,10 +118,12 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/00gnulib.m4 \
 	$(top_srcdir)/m4/flexmember.m4 $(top_srcdir)/m4/float_h.m4 \
 	$(top_srcdir)/m4/fnmatch.m4 $(top_srcdir)/m4/fopen.m4 \
 	$(top_srcdir)/m4/fpending.m4 $(top_srcdir)/m4/fpieee.m4 \
-	$(top_srcdir)/m4/fpurge.m4 $(top_srcdir)/m4/freading.m4 \
-	$(top_srcdir)/m4/freopen.m4 $(top_srcdir)/m4/frexp.m4 \
-	$(top_srcdir)/m4/frexpl.m4 $(top_srcdir)/m4/fseek.m4 \
-	$(top_srcdir)/m4/fseeko.m4 $(top_srcdir)/m4/fstat.m4 \
+	$(top_srcdir)/m4/fpurge.m4 $(top_srcdir)/m4/freadahead.m4 \
+	$(top_srcdir)/m4/freading.m4 $(top_srcdir)/m4/freadptr.m4 \
+	$(top_srcdir)/m4/freadseek.m4 $(top_srcdir)/m4/freopen.m4 \
+	$(top_srcdir)/m4/frexp.m4 $(top_srcdir)/m4/frexpl.m4 \
+	$(top_srcdir)/m4/fseek.m4 $(top_srcdir)/m4/fseeko.m4 \
+	$(top_srcdir)/m4/fseterr.m4 $(top_srcdir)/m4/fstat.m4 \
 	$(top_srcdir)/m4/fstatat.m4 $(top_srcdir)/m4/fstypename.m4 \
 	$(top_srcdir)/m4/fsusage.m4 $(top_srcdir)/m4/fsync.m4 \
 	$(top_srcdir)/m4/ftell.m4 $(top_srcdir)/m4/ftello.m4 \
@@ -162,9 +165,8 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/00gnulib.m4 \
 	$(top_srcdir)/m4/largefile.m4 $(top_srcdir)/m4/lchmod.m4 \
 	$(top_srcdir)/m4/lchown.m4 $(top_srcdir)/m4/lcmessage.m4 \
 	$(top_srcdir)/m4/ldexp.m4 $(top_srcdir)/m4/ldexpl.m4 \
-	$(top_srcdir)/m4/lib-check.m4 $(top_srcdir)/m4/lib-ignore.m4 \
-	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
-	$(top_srcdir)/m4/lib-prefix.m4 \
+	$(top_srcdir)/m4/lib-ignore.m4 $(top_srcdir)/m4/lib-ld.m4 \
+	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
 	$(top_srcdir)/m4/libunistring-base.m4 \
 	$(top_srcdir)/m4/link-follow.m4 $(top_srcdir)/m4/link.m4 \
 	$(top_srcdir)/m4/linkat.m4 $(top_srcdir)/m4/localcharset.m4 \
@@ -244,11 +246,10 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/00gnulib.m4 \
 	$(top_srcdir)/m4/stddef_h.m4 $(top_srcdir)/m4/stdint.m4 \
 	$(top_srcdir)/m4/stdint_h.m4 $(top_srcdir)/m4/stdio_h.m4 \
 	$(top_srcdir)/m4/stdlib_h.m4 $(top_srcdir)/m4/stpcpy.m4 \
-	$(top_srcdir)/m4/stpncpy.m4 $(top_srcdir)/m4/strcase.m4 \
-	$(top_srcdir)/m4/strchrnul.m4 $(top_srcdir)/m4/strdup.m4 \
-	$(top_srcdir)/m4/strerror.m4 $(top_srcdir)/m4/strerror_r.m4 \
-	$(top_srcdir)/m4/strftime.m4 $(top_srcdir)/m4/string_h.m4 \
-	$(top_srcdir)/m4/strings_h.m4 $(top_srcdir)/m4/strncat.m4 \
+	$(top_srcdir)/m4/stpncpy.m4 $(top_srcdir)/m4/strchrnul.m4 \
+	$(top_srcdir)/m4/strdup.m4 $(top_srcdir)/m4/strerror.m4 \
+	$(top_srcdir)/m4/strerror_r.m4 $(top_srcdir)/m4/strftime.m4 \
+	$(top_srcdir)/m4/string_h.m4 $(top_srcdir)/m4/strncat.m4 \
 	$(top_srcdir)/m4/strndup.m4 $(top_srcdir)/m4/strnlen.m4 \
 	$(top_srcdir)/m4/strnumcmp.m4 $(top_srcdir)/m4/strpbrk.m4 \
 	$(top_srcdir)/m4/strsignal.m4 $(top_srcdir)/m4/strstr.m4 \
@@ -304,12 +305,18 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/lib/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
+AM_V_P = $(am__v_P_@AM_V@)
+am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
+am__v_P_0 = false
+am__v_P_1 = :
 AM_V_GEN = $(am__v_GEN_@AM_V@)
 am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
 am__v_GEN_0 = @echo "  GEN     " $@;
+am__v_GEN_1 = 
 AM_V_at = $(am__v_at_@AM_V@)
 am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
 am__v_at_0 = @
+am__v_at_1 = 
 SOURCES =
 DIST_SOURCES =
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
@@ -326,9 +333,13 @@ am__can_run_installinfo = \
   esac
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
-AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
-	$(RECURSIVE_CLEAN_TARGETS:-recursive=) tags TAGS ctags CTAGS \
-	cscope distdir dist dist-all distcheck
+am__recursive_targets = \
+  $(RECURSIVE_TARGETS) \
+  $(RECURSIVE_CLEAN_TARGETS) \
+  $(am__extra_recursive_targets)
+AM_RECURSIVE_TARGETS = $(am__recursive_targets:-recursive=) tags TAGS \
+	ctags CTAGS cscope distdir dist dist-all distcheck
+am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 ETAGS = etags
 CTAGS = ctags
 CSCOPE = cscope
@@ -486,7 +497,6 @@ GNULIB_FDATASYNC = @GNULIB_FDATASYNC@
 GNULIB_FDOPEN = @GNULIB_FDOPEN@
 GNULIB_FDOPENDIR = @GNULIB_FDOPENDIR@
 GNULIB_FFLUSH = @GNULIB_FFLUSH@
-GNULIB_FFS = @GNULIB_FFS@
 GNULIB_FFSL = @GNULIB_FFSL@
 GNULIB_FFSLL = @GNULIB_FFSLL@
 GNULIB_FGETC = @GNULIB_FGETC@
@@ -918,7 +928,6 @@ HAVE_DECL_SNPRINTF = @HAVE_DECL_SNPRINTF@
 HAVE_DECL_SQRTL = @HAVE_DECL_SQRTL@
 HAVE_DECL_STRDUP = @HAVE_DECL_STRDUP@
 HAVE_DECL_STRERROR_R = @HAVE_DECL_STRERROR_R@
-HAVE_DECL_STRNCASECMP = @HAVE_DECL_STRNCASECMP@
 HAVE_DECL_STRNDUP = @HAVE_DECL_STRNDUP@
 HAVE_DECL_STRNLEN = @HAVE_DECL_STRNLEN@
 HAVE_DECL_STRSIGNAL = @HAVE_DECL_STRSIGNAL@
@@ -955,7 +964,6 @@ HAVE_FCNTL = @HAVE_FCNTL@
 HAVE_FDATASYNC = @HAVE_FDATASYNC@
 HAVE_FDOPENDIR = @HAVE_FDOPENDIR@
 HAVE_FEATURES_H = @HAVE_FEATURES_H@
-HAVE_FFS = @HAVE_FFS@
 HAVE_FFSL = @HAVE_FFSL@
 HAVE_FFSLL = @HAVE_FFSLL@
 HAVE_FMA = @HAVE_FMA@
@@ -1100,10 +1108,8 @@ HAVE_SQRTL = @HAVE_SQRTL@
 HAVE_STDINT_H = @HAVE_STDINT_H@
 HAVE_STPCPY = @HAVE_STPCPY@
 HAVE_STPNCPY = @HAVE_STPNCPY@
-HAVE_STRCASECMP = @HAVE_STRCASECMP@
 HAVE_STRCASESTR = @HAVE_STRCASESTR@
 HAVE_STRCHRNUL = @HAVE_STRCHRNUL@
-HAVE_STRINGS_H = @HAVE_STRINGS_H@
 HAVE_STRPBRK = @HAVE_STRPBRK@
 HAVE_STRPTIME = @HAVE_STRPTIME@
 HAVE_STRSEP = @HAVE_STRSEP@
@@ -1204,7 +1210,6 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
-INSTALL_SU = @INSTALL_SU@
 INT32_MAX_LT_INTMAX_MAX = @INT32_MAX_LT_INTMAX_MAX@
 INT64_MAX_EQ_LONG_MAX = @INT64_MAX_EQ_LONG_MAX@
 INTLLIBS = @INTLLIBS@
@@ -1228,7 +1233,6 @@ LIBUNISTRING_UNIWIDTH_H = @LIBUNISTRING_UNIWIDTH_H@
 LIB_ACL = @LIB_ACL@
 LIB_CAP = @LIB_CAP@
 LIB_CLOCK_GETTIME = @LIB_CLOCK_GETTIME@
-LIB_CRYPT = @LIB_CRYPT@
 LIB_EACCESS = @LIB_EACCESS@
 LIB_FDATASYNC = @LIB_FDATASYNC@
 LIB_GETHRXTIME = @LIB_GETHRXTIME@
@@ -1284,7 +1288,6 @@ NEXT_AS_FIRST_DIRECTIVE_STDDEF_H = @NEXT_AS_FIRST_DIRECTIVE_STDDEF_H@
 NEXT_AS_FIRST_DIRECTIVE_STDINT_H = @NEXT_AS_FIRST_DIRECTIVE_STDINT_H@
 NEXT_AS_FIRST_DIRECTIVE_STDIO_H = @NEXT_AS_FIRST_DIRECTIVE_STDIO_H@
 NEXT_AS_FIRST_DIRECTIVE_STDLIB_H = @NEXT_AS_FIRST_DIRECTIVE_STDLIB_H@
-NEXT_AS_FIRST_DIRECTIVE_STRINGS_H = @NEXT_AS_FIRST_DIRECTIVE_STRINGS_H@
 NEXT_AS_FIRST_DIRECTIVE_STRING_H = @NEXT_AS_FIRST_DIRECTIVE_STRING_H@
 NEXT_AS_FIRST_DIRECTIVE_SYS_IOCTL_H = @NEXT_AS_FIRST_DIRECTIVE_SYS_IOCTL_H@
 NEXT_AS_FIRST_DIRECTIVE_SYS_RESOURCE_H = @NEXT_AS_FIRST_DIRECTIVE_SYS_RESOURCE_H@
@@ -1324,7 +1327,6 @@ NEXT_STDDEF_H = @NEXT_STDDEF_H@
 NEXT_STDINT_H = @NEXT_STDINT_H@
 NEXT_STDIO_H = @NEXT_STDIO_H@
 NEXT_STDLIB_H = @NEXT_STDLIB_H@
-NEXT_STRINGS_H = @NEXT_STRINGS_H@
 NEXT_STRING_H = @NEXT_STRING_H@
 NEXT_SYS_IOCTL_H = @NEXT_SYS_IOCTL_H@
 NEXT_SYS_RESOURCE_H = @NEXT_SYS_RESOURCE_H@
@@ -1781,7 +1783,7 @@ $(am__aclocal_m4_deps):
 # (1) if the variable is set in 'config.status', edit 'config.status'
 #     (which will cause the Makefiles to be regenerated when you run 'make');
 # (2) otherwise, pass the desired values on the 'make' command line.
-$(RECURSIVE_TARGETS):
+$(am__recursive_targets):
 	@fail= failcom='exit 1'; \
 	for f in x $$MAKEFLAGS; do \
 	  case $$f in \
@@ -1791,7 +1793,11 @@ $(RECURSIVE_TARGETS):
 	done; \
 	dot_seen=no; \
 	target=`echo $@ | sed s/-recursive//`; \
-	list='$(SUBDIRS)'; for subdir in $$list; do \
+	case "$@" in \
+	  distclean-* | maintainer-clean-*) list='$(DIST_SUBDIRS)' ;; \
+	  *) list='$(SUBDIRS)' ;; \
+	esac; \
+	for subdir in $$list; do \
 	  echo "Making $$target in $$subdir"; \
 	  if test "$$subdir" = "."; then \
 	    dot_seen=yes; \
@@ -1805,37 +1811,6 @@ $(RECURSIVE_TARGETS):
 	if test "$$dot_seen" = "no"; then \
 	  $(MAKE) $(AM_MAKEFLAGS) "$$target-am" || exit 1; \
 	fi; test -z "$$fail"
-
-$(RECURSIVE_CLEAN_TARGETS):
-	@fail= failcom='exit 1'; \
-	for f in x $$MAKEFLAGS; do \
-	  case $$f in \
-	    *=* | --[!k]*);; \
-	    *k*) failcom='fail=yes';; \
-	  esac; \
-	done; \
-	dot_seen=no; \
-	case "$@" in \
-	  distclean-* | maintainer-clean-*) list='$(DIST_SUBDIRS)' ;; \
-	  *) list='$(SUBDIRS)' ;; \
-	esac; \
-	rev=''; for subdir in $$list; do \
-	  if test "$$subdir" = "."; then :; else \
-	    rev="$$subdir $$rev"; \
-	  fi; \
-	done; \
-	rev="$$rev ."; \
-	target=`echo $@ | sed s/-recursive//`; \
-	for subdir in $$rev; do \
-	  echo "Making $$target in $$subdir"; \
-	  if test "$$subdir" = "."; then \
-	    local_target="$$target-am"; \
-	  else \
-	    local_target="$$target"; \
-	  fi; \
-	  ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
-	  || eval $$failcom; \
-	done && test -z "$$fail"
 tags-recursive:
 	list='$(SUBDIRS)'; for subdir in $$list; do \
 	  test "$$subdir" = . || ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) tags); \
@@ -1849,8 +1824,8 @@ cscopelist-recursive:
 	  test "$$subdir" = . || ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) cscopelist); \
 	done
 
-ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
-	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
+ID: $(am__tagged_files)
+	list='$(am__tagged_files)'; \
 	unique=`for i in $$list; do \
 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
 	  done | \
@@ -1859,8 +1834,7 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	mkid -fID $$unique
 tags: TAGS
 
-TAGS: tags-recursive $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
-		$(TAGS_FILES) $(LISP)
+TAGS: tags-recursive $(TAGS_DEPENDENCIES) $(am__tagged_files)
 	set x; \
 	here=`pwd`; \
 	if ($(ETAGS) --etags-include --version) >/dev/null 2>&1; then \
@@ -1876,7 +1850,7 @@ TAGS: tags-recursive $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 	      set "$$@" "$$include_option=$$here/$$subdir/TAGS"; \
 	  fi; \
 	done; \
-	list='$(SOURCES) $(HEADERS)  $(LISP) $(TAGS_FILES)'; \
+	list='$(am__tagged_files)'; \
 	unique=`for i in $$list; do \
 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
 	  done | \
@@ -1894,9 +1868,8 @@ TAGS: tags-recursive $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 	  fi; \
 	fi
 ctags: CTAGS
-CTAGS: ctags-recursive $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
-		$(TAGS_FILES) $(LISP)
-	list='$(SOURCES) $(HEADERS)  $(LISP) $(TAGS_FILES)'; \
+CTAGS: ctags-recursive $(TAGS_DEPENDENCIES) $(am__tagged_files)
+	list='$(am__tagged_files)'; \
 	unique=`for i in $$list; do \
 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
 	  done | \
@@ -1920,8 +1893,8 @@ clean-cscope:
 
 cscope.files: clean-cscope cscopelist-recursive cscopelist
 
-cscopelist: cscopelist-recursive $(HEADERS) $(SOURCES) $(LISP)
-	list='$(SOURCES) $(HEADERS) $(LISP)'; \
+cscopelist: cscopelist-recursive $(am__tagged_files)
+	list='$(am__tagged_files)'; \
 	case "$(srcdir)" in \
 	  [\\/]* | ?:[\\/]*) sdir="$(srcdir)" ;; \
 	  *) sdir=$(subdir)/$(srcdir) ;; \
@@ -2057,7 +2030,7 @@ distcheck: dist
 	*.zip*) \
 	  unzip $(distdir).zip ;;\
 	esac
-	chmod -R a-w $(distdir); chmod a+w $(distdir)
+	chmod -R a-w $(distdir); chmod u+w $(distdir)
 	mkdir $(distdir)/_build
 	mkdir $(distdir)/_inst
 	chmod a-w $(distdir)
@@ -2231,25 +2204,25 @@ ps-am:
 
 uninstall-am:
 
-.MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) all check \
-	cscopelist-recursive ctags-recursive install install-am \
-	install-strip tags-recursive
+.MAKE: $(am__recursive_targets) all check cscopelist-recursive \
+	ctags-recursive install install-am install-strip \
+	tags-recursive
 
-.PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
-	all all-am am--refresh check check-am clean clean-cscope \
-	clean-generic cscope cscopelist cscopelist-recursive ctags \
-	ctags-recursive dist dist-all dist-bzip2 dist-gzip dist-hook \
-	dist-lzip dist-shar dist-tarZ dist-xz dist-zip distcheck \
-	distclean distclean-generic distclean-tags distcleancheck \
-	distdir distuninstallcheck dvi dvi-am html html-am info \
-	info-am install install-am install-data install-data-am \
-	install-dvi install-dvi-am install-exec install-exec-am \
-	install-html install-html-am install-info install-info-am \
-	install-man install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs installdirs-am maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
-	pdf-am ps ps-am tags tags-recursive uninstall uninstall-am
+.PHONY: $(am__recursive_targets) CTAGS GTAGS all all-am am--refresh \
+	check check-am clean clean-cscope clean-generic cscope \
+	cscopelist cscopelist-recursive ctags ctags-recursive dist \
+	dist-all dist-bzip2 dist-gzip dist-hook dist-lzip dist-shar \
+	dist-tarZ dist-xz dist-zip distcheck distclean \
+	distclean-generic distclean-tags distcleancheck distdir \
+	distuninstallcheck dvi dvi-am html html-am info info-am \
+	install install-am install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	installdirs-am maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-generic pdf pdf-am ps ps-am tags \
+	tags-recursive uninstall uninstall-am
 
 install-root:
 	cd src && $(MAKE) $@

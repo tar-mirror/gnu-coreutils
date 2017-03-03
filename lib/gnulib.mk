@@ -1033,9 +1033,10 @@ EXTRA_libcoreutils_a_SOURCES += fpurge.c
 
 ## begin gnulib module freadahead
 
-libcoreutils_a_SOURCES += freadahead.c
 
-EXTRA_DIST += freadahead.h stdio-impl.h
+EXTRA_DIST += freadahead.c freadahead.h stdio-impl.h
+
+EXTRA_libcoreutils_a_SOURCES += freadahead.c
 
 ## end   gnulib module freadahead
 
@@ -1049,9 +1050,10 @@ EXTRA_DIST += freading.h stdio-impl.h
 
 ## begin gnulib module freadptr
 
-libcoreutils_a_SOURCES += freadptr.c
 
-EXTRA_DIST += freadptr.h stdio-impl.h
+EXTRA_DIST += freadptr.c freadptr.h stdio-impl.h
+
+EXTRA_libcoreutils_a_SOURCES += freadptr.c
 
 ## end   gnulib module freadptr
 
@@ -1118,9 +1120,10 @@ EXTRA_libcoreutils_a_SOURCES += fseeko.c
 
 ## begin gnulib module fseterr
 
-libcoreutils_a_SOURCES += fseterr.c
 
-EXTRA_DIST += fseterr.h stdio-impl.h
+EXTRA_DIST += fseterr.c fseterr.h stdio-impl.h
+
+EXTRA_libcoreutils_a_SOURCES += fseterr.c
 
 ## end   gnulib module fseterr
 
@@ -1464,7 +1467,7 @@ EXTRA_DIST += $(top_srcdir)/build-aux/gnu-web-doc-update
 
 distclean-local: clean-GNUmakefile
 clean-GNUmakefile:
-	test x'$(VPATH)' != x && rm -f $(top_builddir)/GNUmakefile || :
+	test '$(srcdir)' = . || rm -f $(top_builddir)/GNUmakefile
 
 EXTRA_DIST += $(top_srcdir)/GNUmakefile
 
@@ -3186,6 +3189,13 @@ EXTRA_libcoreutils_a_SOURCES += root-dev-ino.c
 
 ## end   gnulib module root-dev-ino
 
+## begin gnulib module root-uid
+
+
+EXTRA_DIST += root-uid.h
+
+## end   gnulib module root-uid
+
 ## begin gnulib module rpmatch
 
 
@@ -3651,6 +3661,7 @@ EXTRA_DIST += stat-size.h
 
 ## begin gnulib module stat-time
 
+libcoreutils_a_SOURCES += stat-time.c
 
 EXTRA_DIST += stat-time.h
 
@@ -4064,15 +4075,6 @@ EXTRA_libcoreutils_a_SOURCES += stpncpy.c
 
 ## end   gnulib module stpncpy
 
-## begin gnulib module strcase
-
-
-EXTRA_DIST += strcasecmp.c strncasecmp.c
-
-EXTRA_libcoreutils_a_SOURCES += strcasecmp.c strncasecmp.c
-
-## end   gnulib module strcase
-
 ## begin gnulib module strchrnul
 
 
@@ -4231,37 +4233,6 @@ MOSTLYCLEANFILES += string.h string.h-t
 EXTRA_DIST += string.in.h
 
 ## end   gnulib module string
-
-## begin gnulib module strings
-
-BUILT_SOURCES += strings.h
-
-# We need the following in order to create <strings.h> when the system
-# doesn't have one that works with the given compiler.
-strings.h: strings.in.h $(top_builddir)/config.status $(CXXDEFS_H) $(WARN_ON_USE_H) $(ARG_NONNULL_H)
-	$(AM_V_GEN)rm -f $@-t $@ && \
-	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */' && \
-	  sed -e 's|@''GUARD_PREFIX''@|GL|g' \
-	      -e 's|@''HAVE_STRINGS_H''@|$(HAVE_STRINGS_H)|g' \
-	      -e 's|@''INCLUDE_NEXT''@|$(INCLUDE_NEXT)|g' \
-	      -e 's|@''PRAGMA_SYSTEM_HEADER''@|@PRAGMA_SYSTEM_HEADER@|g' \
-	      -e 's|@''PRAGMA_COLUMNS''@|@PRAGMA_COLUMNS@|g' \
-	      -e 's|@''NEXT_STRINGS_H''@|$(NEXT_STRINGS_H)|g' \
-	      -e 's|@''GNULIB_FFS''@|$(GNULIB_FFS)|g' \
-	      -e 's|@''HAVE_FFS''@|$(HAVE_FFS)|g' \
-	      -e 's|@''HAVE_STRCASECMP''@|$(HAVE_STRCASECMP)|g' \
-	      -e 's|@''HAVE_DECL_STRNCASECMP''@|$(HAVE_DECL_STRNCASECMP)|g' \
-	      -e '/definitions of _GL_FUNCDECL_RPL/r $(CXXDEFS_H)' \
-	      -e '/definition of _GL_ARG_NONNULL/r $(ARG_NONNULL_H)' \
-	      -e '/definition of _GL_WARN_ON_USE/r $(WARN_ON_USE_H)' \
-	      < $(srcdir)/strings.in.h; \
-	} > $@-t && \
-	mv $@-t $@
-MOSTLYCLEANFILES += strings.h strings.h-t
-
-EXTRA_DIST += strings.in.h
-
-## end   gnulib module strings
 
 ## begin gnulib module strncat
 
@@ -4828,6 +4799,7 @@ EXTRA_libcoreutils_a_SOURCES += time_r.c
 
 ## begin gnulib module timespec
 
+libcoreutils_a_SOURCES += timespec.c
 
 EXTRA_DIST += timespec.h
 
@@ -4849,6 +4821,7 @@ EXTRA_DIST += trim.h
 
 ## begin gnulib module u64
 
+libcoreutils_a_SOURCES += u64.c
 
 EXTRA_DIST += u64.h
 

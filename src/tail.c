@@ -1141,6 +1141,7 @@ tail_forever (struct File_spec *f, size_t n_files, double sleep_interval)
                   f[i].fd = -1;
                   f[i].errnum = errno;
                   error (0, errno, "%s", name);
+                  close (fd); /* ignore failure */
                   continue;
                 }
 
@@ -1276,9 +1277,9 @@ check_fspec (struct File_spec *fspec, int wd, int *prev_wd)
 
   if (fstat (fspec->fd, &stats) != 0)
     {
+      fspec->errnum = errno;
       close_fd (fspec->fd, name);
       fspec->fd = -1;
-      fspec->errnum = errno;
       return;
     }
 

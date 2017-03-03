@@ -167,7 +167,8 @@ static size_t nrows;
 enum
 {
   NO_SYNC_OPTION = CHAR_MAX + 1,
-  SYNC_OPTION
+  SYNC_OPTION,
+  MEGABYTES_OPTION  /* FIXME: remove long opt in Aug 2013 */
 };
 
 static struct option const long_options[] =
@@ -178,7 +179,7 @@ static struct option const long_options[] =
   {"human-readable", no_argument, NULL, 'h'},
   {"si", no_argument, NULL, 'H'},
   {"local", no_argument, NULL, 'l'},
-  {"megabytes", no_argument, NULL, 'm'}, /* obsolescent */
+  {"megabytes", no_argument, NULL, MEGABYTES_OPTION}, /* obsolescent,  */
   {"portability", no_argument, NULL, 'P'},
   {"print-type", no_argument, NULL, 'T'},
   {"sync", no_argument, NULL, SYNC_OPTION},
@@ -190,6 +191,23 @@ static struct option const long_options[] =
   {GETOPT_VERSION_OPTION_DECL},
   {NULL, 0, NULL, 0}
 };
+
+/* Replace problematic chars with '?'.
+   Since only control characters are currently considered,
+   this should work in all encodings.  */
+
+static char*
+hide_problematic_chars (char *cell)
+{
+  char *p = cell;
+  while (*p)
+    {
+      if (iscntrl (to_uchar (*p)))
+        *p = '?';
+      p++;
+    }
+  return cell;
+}
 
 /* Dynamically allocate a row of pointers in TABLE, which
    can then be accessed with standard 2D array notation.  */
@@ -313,6 +331,8 @@ get_header (void)
 
       if (!cell)
         xalloc_die ();
+
+      hide_problematic_chars (cell);
 
       table[nrows-1][field] = cell;
 
@@ -495,7 +515,8 @@ get_dev (char const *disk, char const *mount_point,
 
   if (! file_systems_processed)
     {
-      file_systems_processed = true;
+      if (! force_fsu)
+        file_systems_processed = true;
       get_header ();
     }
 
@@ -660,7 +681,10 @@ get_dev (char const *disk, char const *mount_point,
         }
 
       if (cell)
-        widths[field] = MAX (widths[field], mbswidth (cell, 0));
+        {
+          hide_problematic_chars (cell);
+          widths[field] = MAX (widths[field], mbswidth (cell, 0));
+        }
       table[nrows-1][field] = cell;
     }
 }
@@ -951,7 +975,14 @@ main (int argc, char **argv)
         case 'l':
           show_local_fs = true;
           break;
-        case 'm': /* obsolescent */
+        case MEGABYTES_OPTION:
+          /* Distinguish between the long and the short option.
+             As we want to remove the long option soon,
+             give a warning when the long form is used.  */
+          error (0, 0, "%s%s", _("warning: "),
+            _("long option '--megabytes' is deprecated"
+              " and will soon be removed"));
+        case 'm': /* obsolescent, exists for BSD compatibility */
           human_output_opts = 0;
           output_block_size = 1024 * 1024;
           break;
@@ -1094,7 +1125,7 @@ main (int argc, char **argv)
   else
     get_all_entries ();
 
-  if (print_grand_total)
+  if (print_grand_total && file_systems_processed)
     {
       if (inode_format)
         grand_fsu.fsu_blocks = 1;
@@ -1103,7 +1134,9 @@ main (int argc, char **argv)
 
   print_table ();
 
-  if (! file_systems_processed)
+  /* Print the "no FS processed" diagnostic only if there was no preceding
+     diagnostic, e.g., if all have been excluded.  */
+  if (exit_status == EXIT_SUCCESS && ! file_systems_processed)
     error (EXIT_FAILURE, 0, _("no file systems processed"));
 
   exit (exit_status);

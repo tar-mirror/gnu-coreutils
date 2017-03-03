@@ -52,6 +52,7 @@
 #endif
 #include <getopt.h>
 #include <stdarg.h>
+#include <assert.h>
 
 #include "system.h"
 #include "error.h"
@@ -583,7 +584,7 @@ Control settings:\n\
    [-]hup        send a hangup signal when the last process closes the tty\n\
    [-]hupcl      same as [-]hup\n\
    [-]parenb     generate parity bit in output and expect parity bit in input\n\
-   [-]parodd     set odd parity (even with '-')\n\
+   [-]parodd     set odd parity (or even parity with '-')\n\
 "), stdout);
       fputs (_("\
 \n\
@@ -729,14 +730,14 @@ main (int argc, char **argv)
 {
   /* Initialize to all zeroes so there is no risk memcmp will report a
      spurious difference in an uninitialized portion of the structure.  */
-  struct termios mode = { 0, };
+  static struct termios mode;
 
   enum output_type output_type;
   int optc;
   int argi = 0;
   int opti = 1;
   bool require_set_attr;
-  bool speed_was_set;
+  bool speed_was_set ATTRIBUTE_UNUSED;
   bool verbose_output;
   bool recoverable_output;
   int k;
@@ -1002,7 +1003,7 @@ main (int argc, char **argv)
     {
       /* Initialize to all zeroes so there is no risk memcmp will report a
          spurious difference in an uninitialized portion of the structure.  */
-      struct termios new_mode = { 0, };
+      static struct termios new_mode;
 
       if (tcsetattr (STDIN_FILENO, TCSADRAIN, &mode))
         error (EXIT_FAILURE, errno, "%s", device_name);
@@ -1538,6 +1539,12 @@ display_changed (struct termios *mode)
 
       bitsp = mode_type_flag (mode_info[i].type, mode);
       mask = mode_info[i].mask ? mode_info[i].mask : mode_info[i].bits;
+
+      /* bitsp would be NULL only for "combination" modes, yet those
+         are filtered out above via the OMIT flag.  Tell static analysis
+         tools that it's ok to dereference bitsp here.  */
+      assert (bitsp);
+
       if ((*bitsp & mask) == mode_info[i].bits)
         {
           if (mode_info[i].flags & SANE_UNSET)
@@ -1615,6 +1622,7 @@ display_all (struct termios *mode, char const *device_name)
 
       bitsp = mode_type_flag (mode_info[i].type, mode);
       mask = mode_info[i].mask ? mode_info[i].mask : mode_info[i].bits;
+      assert (bitsp); /* See the identical assertion and comment above.  */
       if ((*bitsp & mask) == mode_info[i].bits)
         wrapf ("%s", mode_info[i].name);
       else if (mode_info[i].flags & REV)

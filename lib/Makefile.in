@@ -109,6 +109,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/00gnulib.m4 \
 	$(top_srcdir)/m4/error.m4 $(top_srcdir)/m4/euidaccess.m4 \
 	$(top_srcdir)/m4/exponentd.m4 $(top_srcdir)/m4/exponentf.m4 \
 	$(top_srcdir)/m4/exponentl.m4 $(top_srcdir)/m4/extensions.m4 \
+	$(top_srcdir)/m4/extern-inline.m4 \
 	$(top_srcdir)/m4/faccessat.m4 $(top_srcdir)/m4/fatal-signal.m4 \
 	$(top_srcdir)/m4/fchdir.m4 $(top_srcdir)/m4/fchmodat.m4 \
 	$(top_srcdir)/m4/fchownat.m4 $(top_srcdir)/m4/fclose.m4 \
@@ -121,10 +122,12 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/00gnulib.m4 \
 	$(top_srcdir)/m4/flexmember.m4 $(top_srcdir)/m4/float_h.m4 \
 	$(top_srcdir)/m4/fnmatch.m4 $(top_srcdir)/m4/fopen.m4 \
 	$(top_srcdir)/m4/fpending.m4 $(top_srcdir)/m4/fpieee.m4 \
-	$(top_srcdir)/m4/fpurge.m4 $(top_srcdir)/m4/freading.m4 \
-	$(top_srcdir)/m4/freopen.m4 $(top_srcdir)/m4/frexp.m4 \
-	$(top_srcdir)/m4/frexpl.m4 $(top_srcdir)/m4/fseek.m4 \
-	$(top_srcdir)/m4/fseeko.m4 $(top_srcdir)/m4/fstat.m4 \
+	$(top_srcdir)/m4/fpurge.m4 $(top_srcdir)/m4/freadahead.m4 \
+	$(top_srcdir)/m4/freading.m4 $(top_srcdir)/m4/freadptr.m4 \
+	$(top_srcdir)/m4/freadseek.m4 $(top_srcdir)/m4/freopen.m4 \
+	$(top_srcdir)/m4/frexp.m4 $(top_srcdir)/m4/frexpl.m4 \
+	$(top_srcdir)/m4/fseek.m4 $(top_srcdir)/m4/fseeko.m4 \
+	$(top_srcdir)/m4/fseterr.m4 $(top_srcdir)/m4/fstat.m4 \
 	$(top_srcdir)/m4/fstatat.m4 $(top_srcdir)/m4/fstypename.m4 \
 	$(top_srcdir)/m4/fsusage.m4 $(top_srcdir)/m4/fsync.m4 \
 	$(top_srcdir)/m4/ftell.m4 $(top_srcdir)/m4/ftello.m4 \
@@ -166,9 +169,8 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/00gnulib.m4 \
 	$(top_srcdir)/m4/largefile.m4 $(top_srcdir)/m4/lchmod.m4 \
 	$(top_srcdir)/m4/lchown.m4 $(top_srcdir)/m4/lcmessage.m4 \
 	$(top_srcdir)/m4/ldexp.m4 $(top_srcdir)/m4/ldexpl.m4 \
-	$(top_srcdir)/m4/lib-check.m4 $(top_srcdir)/m4/lib-ignore.m4 \
-	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
-	$(top_srcdir)/m4/lib-prefix.m4 \
+	$(top_srcdir)/m4/lib-ignore.m4 $(top_srcdir)/m4/lib-ld.m4 \
+	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
 	$(top_srcdir)/m4/libunistring-base.m4 \
 	$(top_srcdir)/m4/link-follow.m4 $(top_srcdir)/m4/link.m4 \
 	$(top_srcdir)/m4/linkat.m4 $(top_srcdir)/m4/localcharset.m4 \
@@ -248,11 +250,10 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/00gnulib.m4 \
 	$(top_srcdir)/m4/stddef_h.m4 $(top_srcdir)/m4/stdint.m4 \
 	$(top_srcdir)/m4/stdint_h.m4 $(top_srcdir)/m4/stdio_h.m4 \
 	$(top_srcdir)/m4/stdlib_h.m4 $(top_srcdir)/m4/stpcpy.m4 \
-	$(top_srcdir)/m4/stpncpy.m4 $(top_srcdir)/m4/strcase.m4 \
-	$(top_srcdir)/m4/strchrnul.m4 $(top_srcdir)/m4/strdup.m4 \
-	$(top_srcdir)/m4/strerror.m4 $(top_srcdir)/m4/strerror_r.m4 \
-	$(top_srcdir)/m4/strftime.m4 $(top_srcdir)/m4/string_h.m4 \
-	$(top_srcdir)/m4/strings_h.m4 $(top_srcdir)/m4/strncat.m4 \
+	$(top_srcdir)/m4/stpncpy.m4 $(top_srcdir)/m4/strchrnul.m4 \
+	$(top_srcdir)/m4/strdup.m4 $(top_srcdir)/m4/strerror.m4 \
+	$(top_srcdir)/m4/strerror_r.m4 $(top_srcdir)/m4/strftime.m4 \
+	$(top_srcdir)/m4/string_h.m4 $(top_srcdir)/m4/strncat.m4 \
 	$(top_srcdir)/m4/strndup.m4 $(top_srcdir)/m4/strnlen.m4 \
 	$(top_srcdir)/m4/strnumcmp.m4 $(top_srcdir)/m4/strpbrk.m4 \
 	$(top_srcdir)/m4/strsignal.m4 $(top_srcdir)/m4/strstr.m4 \
@@ -310,9 +311,7 @@ LIBRARIES = $(noinst_LIBRARIES)
 AM_V_AR = $(am__v_AR_@AM_V@)
 am__v_AR_ = $(am__v_AR_@AM_DEFAULT_V@)
 am__v_AR_0 = @echo "  AR      " $@;
-AM_V_at = $(am__v_at_@AM_V@)
-am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
-am__v_at_0 = @
+am__v_AR_1 = 
 libcoreutils_a_AR = $(AR) $(ARFLAGS)
 am__DEPENDENCIES_1 =
 am__libcoreutils_a_SOURCES_DIST = set-mode-acl.c copy-acl.c \
@@ -329,21 +328,20 @@ am__libcoreutils_a_SOURCES_DIST = set-mode-acl.c copy-acl.c \
 	creat-safer.c open-safer.c fd-hook.c fd-safer-flag.c \
 	dup-safer-flag.c fdutimensat.c file-set.c file-type.c \
 	filemode.c filenamecat.c filenamecat-lgpl.c filevercmp.c \
-	fopen-safer.c fprintftime.c freadahead.c freading.c freadptr.c \
-	freadseek.c freopen-safer.c fseterr.c ftoastr.c full-read.h \
-	full-read.c full-write.h full-write.c getndelim2.c gettext.h \
-	gettime.c getugroups.c hard-locale.c hash.c hash-pjw.h \
-	hash-pjw.c hash-triple.c heap.c heap.h human.c i-ring.c \
-	idcache.c ino-map.c ino-map.h imaxtostr.c inttostr.c \
-	offtostr.c uinttostr.c umaxtostr.c ldtoastr.c linebuffer.h \
-	linebuffer.c localcharset.h localcharset.c glthread/lock.h \
-	glthread/lock.c long-options.c malloca.c mbchar.c mbiter.h \
-	mbsalign.c mbsalign.h mbscasecmp.c mbslen.c mbsstr.c \
-	mbswidth.h mbswidth.c mbuiter.h memcasecmp.c memchr2.h \
-	memchr2.c memcmp2.c memcoll.c mgetgroups.c mkancesdirs.c \
-	dirchownmod.c mkdir-p.c modechange.c mpsort.c nproc.c \
-	openat-die.c openat-safer.c parse-datetime.y physmem.c pipe2.c \
-	pipe2-safer.c posixtm.c posixver.c printf-frexp.c \
+	fopen-safer.c fprintftime.c freading.c freadseek.c \
+	freopen-safer.c ftoastr.c full-read.h full-read.c full-write.h \
+	full-write.c getndelim2.c gettext.h gettime.c getugroups.c \
+	hard-locale.c hash.c hash-pjw.h hash-pjw.c hash-triple.c \
+	heap.c heap.h human.c i-ring.c idcache.c ino-map.c ino-map.h \
+	imaxtostr.c inttostr.c offtostr.c uinttostr.c umaxtostr.c \
+	ldtoastr.c linebuffer.h linebuffer.c localcharset.h \
+	localcharset.c glthread/lock.h glthread/lock.c long-options.c \
+	malloca.c mbchar.c mbiter.h mbsalign.c mbsalign.h mbscasecmp.c \
+	mbslen.c mbsstr.c mbswidth.h mbswidth.c mbuiter.h memcasecmp.c \
+	memchr2.h memchr2.c memcmp2.c memcoll.c mgetgroups.c \
+	mkancesdirs.c dirchownmod.c mkdir-p.c modechange.c mpsort.c \
+	nproc.c openat-die.c openat-safer.c parse-datetime.y physmem.c \
+	pipe2.c pipe2-safer.c posixtm.c posixver.c printf-frexp.c \
 	printf-frexpl.c priv-set.c progname.h progname.c propername.h \
 	propername.c quotearg.c randint.c randint.h randperm.c \
 	randperm.h randread.c randread.h rand-isaac.c rand-isaac.h \
@@ -351,20 +349,21 @@ am__libcoreutils_a_SOURCES_DIST = set-mode-acl.c copy-acl.c \
 	safe-read.c safe-write.c same.c save-cwd.c savedir.c savewd.h \
 	savewd.c se-context.in.h se-selinux.in.h settime.c size_max.h \
 	sockets.h sockets.c spawn-pipe.h spawn-pipe.c w32spawn.h \
-	mkstemp-safer.c strftime.c striconv.h striconv.c strnlen1.h \
-	strnlen1.c tempname.c glthread/threadlib.c glthread/tls.h \
-	glthread/tls.c trim.c unicodeio.h unicodeio.c dup-safer.c \
-	fd-safer.c pipe-safer.c unistr/u8-mbtoucr.c unistr/u8-uctomb.c \
-	unistr/u8-uctomb-aux.c uniwidth/width.c userspec.c utimecmp.c \
-	utimens.c verror.h verror.c version-etc.h version-etc.c \
-	version-etc-fsf.c wait-process.h wait-process.c \
-	write-any-file.c xmalloc.c xalloc-die.c xfreopen.c xfreopen.h \
-	xgetcwd.c xgetgroups.c xgethostname.h xgethostname.c \
-	xmemcoll.h xmemcoll.c xnanosleep.c xprintf.h xprintf.c \
-	xreadlink.c xsize.h xstriconv.h xstriconv.c xstrndup.h \
-	xstrndup.c xstrtod.c xstrtoimax.c xstrtol.c xstrtoul.c \
-	xstrtol-error.c xstrtold.c xstrtoumax.c xvasprintf.h \
-	xvasprintf.c xasprintf.c yesno.c buffer-lcm.c buffer-lcm.h
+	stat-time.c mkstemp-safer.c strftime.c striconv.h striconv.c \
+	strnlen1.h strnlen1.c tempname.c glthread/threadlib.c \
+	timespec.c glthread/tls.h glthread/tls.c trim.c u64.c \
+	unicodeio.h unicodeio.c dup-safer.c fd-safer.c pipe-safer.c \
+	unistr/u8-mbtoucr.c unistr/u8-uctomb.c unistr/u8-uctomb-aux.c \
+	uniwidth/width.c userspec.c utimecmp.c utimens.c verror.h \
+	verror.c version-etc.h version-etc.c version-etc-fsf.c \
+	wait-process.h wait-process.c write-any-file.c xmalloc.c \
+	xalloc-die.c xfreopen.c xfreopen.h xgetcwd.c xgetgroups.c \
+	xgethostname.h xgethostname.c xmemcoll.h xmemcoll.c \
+	xnanosleep.c xprintf.h xprintf.c xreadlink.c xsize.h \
+	xstriconv.h xstriconv.c xstrndup.h xstrndup.c xstrtod.c \
+	xstrtoimax.c xstrtol.c xstrtoul.c xstrtol-error.c xstrtold.c \
+	xstrtoumax.c xvasprintf.h xvasprintf.c xasprintf.c yesno.c \
+	buffer-lcm.c buffer-lcm.h
 @LIBUNISTRING_COMPILE_UNISTR_U8_MBTOUCR_TRUE@am__objects_1 = u8-mbtoucr.$(OBJEXT)
 @LIBUNISTRING_COMPILE_UNISTR_U8_UCTOMB_TRUE@am__objects_2 = u8-uctomb.$(OBJEXT) \
 @LIBUNISTRING_COMPILE_UNISTR_U8_UCTOMB_TRUE@	u8-uctomb-aux.$(OBJEXT)
@@ -391,9 +390,8 @@ am_libcoreutils_a_OBJECTS = set-mode-acl.$(OBJEXT) copy-acl.$(OBJEXT) \
 	file-set.$(OBJEXT) file-type.$(OBJEXT) filemode.$(OBJEXT) \
 	filenamecat.$(OBJEXT) filenamecat-lgpl.$(OBJEXT) \
 	filevercmp.$(OBJEXT) fopen-safer.$(OBJEXT) \
-	fprintftime.$(OBJEXT) freadahead.$(OBJEXT) freading.$(OBJEXT) \
-	freadptr.$(OBJEXT) freadseek.$(OBJEXT) freopen-safer.$(OBJEXT) \
-	fseterr.$(OBJEXT) ftoastr.$(OBJEXT) full-read.$(OBJEXT) \
+	fprintftime.$(OBJEXT) freading.$(OBJEXT) freadseek.$(OBJEXT) \
+	freopen-safer.$(OBJEXT) ftoastr.$(OBJEXT) full-read.$(OBJEXT) \
 	full-write.$(OBJEXT) getndelim2.$(OBJEXT) gettime.$(OBJEXT) \
 	getugroups.$(OBJEXT) hard-locale.$(OBJEXT) hash.$(OBJEXT) \
 	hash-pjw.$(OBJEXT) hash-triple.$(OBJEXT) heap.$(OBJEXT) \
@@ -418,9 +416,10 @@ am_libcoreutils_a_OBJECTS = set-mode-acl.$(OBJEXT) copy-acl.$(OBJEXT) \
 	safe-read.$(OBJEXT) safe-write.$(OBJEXT) same.$(OBJEXT) \
 	save-cwd.$(OBJEXT) savedir.$(OBJEXT) savewd.$(OBJEXT) \
 	settime.$(OBJEXT) sockets.$(OBJEXT) spawn-pipe.$(OBJEXT) \
-	mkstemp-safer.$(OBJEXT) strftime.$(OBJEXT) striconv.$(OBJEXT) \
-	strnlen1.$(OBJEXT) tempname.$(OBJEXT) threadlib.$(OBJEXT) \
-	tls.$(OBJEXT) trim.$(OBJEXT) unicodeio.$(OBJEXT) \
+	stat-time.$(OBJEXT) mkstemp-safer.$(OBJEXT) strftime.$(OBJEXT) \
+	striconv.$(OBJEXT) strnlen1.$(OBJEXT) tempname.$(OBJEXT) \
+	threadlib.$(OBJEXT) timespec.$(OBJEXT) tls.$(OBJEXT) \
+	trim.$(OBJEXT) u64.$(OBJEXT) unicodeio.$(OBJEXT) \
 	dup-safer.$(OBJEXT) fd-safer.$(OBJEXT) pipe-safer.$(OBJEXT) \
 	$(am__objects_1) $(am__objects_2) $(am__objects_3) \
 	userspec.$(OBJEXT) utimecmp.$(OBJEXT) utimens.$(OBJEXT) \
@@ -436,6 +435,18 @@ am_libcoreutils_a_OBJECTS = set-mode-acl.$(OBJEXT) copy-acl.$(OBJEXT) \
 	xstrtoumax.$(OBJEXT) xvasprintf.$(OBJEXT) xasprintf.$(OBJEXT) \
 	yesno.$(OBJEXT) buffer-lcm.$(OBJEXT)
 libcoreutils_a_OBJECTS = $(am_libcoreutils_a_OBJECTS)
+AM_V_P = $(am__v_P_@AM_V@)
+am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
+am__v_P_0 = false
+am__v_P_1 = :
+AM_V_GEN = $(am__v_GEN_@AM_V@)
+am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
+am__v_GEN_0 = @echo "  GEN     " $@;
+am__v_GEN_1 = 
+AM_V_at = $(am__v_at_@AM_V@)
+am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
+am__v_at_0 = @
+am__v_at_1 = 
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -443,26 +454,27 @@ am__mv = mv -f
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
+am__v_lt_1 = 
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 AM_V_CC = $(am__v_CC_@AM_V@)
 am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
 am__v_CC_0 = @echo "  CC      " $@;
+am__v_CC_1 = 
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
+am__v_CCLD_1 = 
 am__yacc_c2h = sed -e s/cc$$/hh/ -e s/cpp$$/hpp/ -e s/cxx$$/hxx/ \
 		   -e s/c++$$/h++/ -e s/c$$/h/
 YACCCOMPILE = $(YACC) $(AM_YFLAGS) $(YFLAGS)
 AM_V_YACC = $(am__v_YACC_@AM_V@)
 am__v_YACC_ = $(am__v_YACC_@AM_DEFAULT_V@)
 am__v_YACC_0 = @echo "  YACC    " $@;
+am__v_YACC_1 = 
 YLWRAP = $(top_srcdir)/build-aux/ylwrap
-AM_V_GEN = $(am__v_GEN_@AM_V@)
-am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
-am__v_GEN_0 = @echo "  GEN     " $@;
 SOURCES = $(libcoreutils_a_SOURCES) $(EXTRA_libcoreutils_a_SOURCES)
 DIST_SOURCES = $(am__libcoreutils_a_SOURCES_DIST) \
 	$(EXTRA_libcoreutils_a_SOURCES)
@@ -471,6 +483,8 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
+am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) \
+	$(LISP)config.hin
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -585,7 +599,6 @@ GNULIB_FDATASYNC = @GNULIB_FDATASYNC@
 GNULIB_FDOPEN = @GNULIB_FDOPEN@
 GNULIB_FDOPENDIR = @GNULIB_FDOPENDIR@
 GNULIB_FFLUSH = @GNULIB_FFLUSH@
-GNULIB_FFS = @GNULIB_FFS@
 GNULIB_FFSL = @GNULIB_FFSL@
 GNULIB_FFSLL = @GNULIB_FFSLL@
 GNULIB_FGETC = @GNULIB_FGETC@
@@ -1017,7 +1030,6 @@ HAVE_DECL_SNPRINTF = @HAVE_DECL_SNPRINTF@
 HAVE_DECL_SQRTL = @HAVE_DECL_SQRTL@
 HAVE_DECL_STRDUP = @HAVE_DECL_STRDUP@
 HAVE_DECL_STRERROR_R = @HAVE_DECL_STRERROR_R@
-HAVE_DECL_STRNCASECMP = @HAVE_DECL_STRNCASECMP@
 HAVE_DECL_STRNDUP = @HAVE_DECL_STRNDUP@
 HAVE_DECL_STRNLEN = @HAVE_DECL_STRNLEN@
 HAVE_DECL_STRSIGNAL = @HAVE_DECL_STRSIGNAL@
@@ -1054,7 +1066,6 @@ HAVE_FCNTL = @HAVE_FCNTL@
 HAVE_FDATASYNC = @HAVE_FDATASYNC@
 HAVE_FDOPENDIR = @HAVE_FDOPENDIR@
 HAVE_FEATURES_H = @HAVE_FEATURES_H@
-HAVE_FFS = @HAVE_FFS@
 HAVE_FFSL = @HAVE_FFSL@
 HAVE_FFSLL = @HAVE_FFSLL@
 HAVE_FMA = @HAVE_FMA@
@@ -1199,10 +1210,8 @@ HAVE_SQRTL = @HAVE_SQRTL@
 HAVE_STDINT_H = @HAVE_STDINT_H@
 HAVE_STPCPY = @HAVE_STPCPY@
 HAVE_STPNCPY = @HAVE_STPNCPY@
-HAVE_STRCASECMP = @HAVE_STRCASECMP@
 HAVE_STRCASESTR = @HAVE_STRCASESTR@
 HAVE_STRCHRNUL = @HAVE_STRCHRNUL@
-HAVE_STRINGS_H = @HAVE_STRINGS_H@
 HAVE_STRPBRK = @HAVE_STRPBRK@
 HAVE_STRPTIME = @HAVE_STRPTIME@
 HAVE_STRSEP = @HAVE_STRSEP@
@@ -1303,7 +1312,6 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
-INSTALL_SU = @INSTALL_SU@
 INT32_MAX_LT_INTMAX_MAX = @INT32_MAX_LT_INTMAX_MAX@
 INT64_MAX_EQ_LONG_MAX = @INT64_MAX_EQ_LONG_MAX@
 INTLLIBS = @INTLLIBS@
@@ -1327,7 +1335,6 @@ LIBUNISTRING_UNIWIDTH_H = @LIBUNISTRING_UNIWIDTH_H@
 LIB_ACL = @LIB_ACL@
 LIB_CAP = @LIB_CAP@
 LIB_CLOCK_GETTIME = @LIB_CLOCK_GETTIME@
-LIB_CRYPT = @LIB_CRYPT@
 LIB_EACCESS = @LIB_EACCESS@
 LIB_FDATASYNC = @LIB_FDATASYNC@
 LIB_GETHRXTIME = @LIB_GETHRXTIME@
@@ -1383,7 +1390,6 @@ NEXT_AS_FIRST_DIRECTIVE_STDDEF_H = @NEXT_AS_FIRST_DIRECTIVE_STDDEF_H@
 NEXT_AS_FIRST_DIRECTIVE_STDINT_H = @NEXT_AS_FIRST_DIRECTIVE_STDINT_H@
 NEXT_AS_FIRST_DIRECTIVE_STDIO_H = @NEXT_AS_FIRST_DIRECTIVE_STDIO_H@
 NEXT_AS_FIRST_DIRECTIVE_STDLIB_H = @NEXT_AS_FIRST_DIRECTIVE_STDLIB_H@
-NEXT_AS_FIRST_DIRECTIVE_STRINGS_H = @NEXT_AS_FIRST_DIRECTIVE_STRINGS_H@
 NEXT_AS_FIRST_DIRECTIVE_STRING_H = @NEXT_AS_FIRST_DIRECTIVE_STRING_H@
 NEXT_AS_FIRST_DIRECTIVE_SYS_IOCTL_H = @NEXT_AS_FIRST_DIRECTIVE_SYS_IOCTL_H@
 NEXT_AS_FIRST_DIRECTIVE_SYS_RESOURCE_H = @NEXT_AS_FIRST_DIRECTIVE_SYS_RESOURCE_H@
@@ -1423,7 +1429,6 @@ NEXT_STDDEF_H = @NEXT_STDDEF_H@
 NEXT_STDINT_H = @NEXT_STDINT_H@
 NEXT_STDIO_H = @NEXT_STDIO_H@
 NEXT_STDLIB_H = @NEXT_STDLIB_H@
-NEXT_STRINGS_H = @NEXT_STRINGS_H@
 NEXT_STRING_H = @NEXT_STRING_H@
 NEXT_SYS_IOCTL_H = @NEXT_SYS_IOCTL_H@
 NEXT_SYS_RESOURCE_H = @NEXT_SYS_RESOURCE_H@
@@ -1797,9 +1802,9 @@ BUILT_SOURCES = $(ALLOCA_H) arpa/inet.h configmake.h ctype.h dirent.h \
 	$(SELINUX_CONTEXT_H) signal.h arg-nonnull.h c++defs.h \
 	unused-parameter.h warn-on-use.h spawn.h $(STDALIGN_H) \
 	$(STDARG_H) $(STDBOOL_H) $(STDDEF_H) $(STDINT_H) stdio.h \
-	stdlib.h string.h strings.h sys/ioctl.h sys/resource.h \
-	sys/select.h sys/socket.h sys/stat.h sys/time.h sys/types.h \
-	sys/uio.h sys/utsname.h sys/wait.h termios.h time.h unistd.h \
+	stdlib.h string.h sys/ioctl.h sys/resource.h sys/select.h \
+	sys/socket.h sys/stat.h sys/time.h sys/types.h sys/uio.h \
+	sys/utsname.h sys/wait.h termios.h time.h unistd.h \
 	$(LIBUNISTRING_UNISTR_H) $(LIBUNISTRING_UNITYPES_H) \
 	$(LIBUNISTRING_UNIWIDTH_H) wchar.h wctype.h
 CLEANFILES = configmake.h configmake.h-t charset.alias ref-add.sed \
@@ -1844,13 +1849,13 @@ EXTRA_DIST = acl-internal.h acl.h acl_entries.c alignof.h alloca.c \
 	filevercmp.h float.c float.in.h itold.c fnmatch.c fnmatch.in.h \
 	fnmatch_loop.c fopen.c stdio--.h stdio-safer.h fpending.c \
 	fpending.h fprintftime.h fpucw.h fpurge.c stdio-impl.h \
-	freadahead.h stdio-impl.h freading.h stdio-impl.h freadptr.h \
-	stdio-impl.h freadseek.h stdio-impl.h freopen.c stdio--.h \
-	stdio-safer.h frexp.c frexp.c frexpl.c fseek.c fseeko.c \
-	stdio-impl.h fseterr.h stdio-impl.h fstat.c at-func.c \
-	fstatat.c openat-priv.h fsusage.c fsusage.h fsync.c ftell.c \
-	ftello.c stdio-impl.h ftoastr.h ftruncate.c fts-cycle.c fts.c \
-	fts_.h full-write.c futimens.c \
+	freadahead.c freadahead.h stdio-impl.h freading.h stdio-impl.h \
+	freadptr.c freadptr.h stdio-impl.h freadseek.h stdio-impl.h \
+	freopen.c stdio--.h stdio-safer.h frexp.c frexp.c frexpl.c \
+	fseek.c fseeko.c stdio-impl.h fseterr.c fseterr.h stdio-impl.h \
+	fstat.c at-func.c fstatat.c openat-priv.h fsusage.c fsusage.h \
+	fsync.c ftell.c ftello.c stdio-impl.h ftoastr.h ftruncate.c \
+	fts-cycle.c fts.c fts_.h full-write.c futimens.c \
 	$(top_srcdir)/build-aux/gendocs.sh gai_strerror.c \
 	getaddrinfo.c getcwd.c getcwd-lgpl.c getdelim.c \
 	getdtablesize.c getgroups.c gethostname.c w32sock.h \
@@ -1901,12 +1906,12 @@ EXTRA_DIST = acl-internal.h acl.h acl_entries.c alignof.h alloca.c \
 	at-func.c readlinkat.c readtokens.h readutmp.c readutmp.h \
 	realloc.c realloc.c regcomp.c regex.c regex.h regex_internal.c \
 	regex_internal.h regexec.c remove.c rename.c dirent-private.h \
-	rewinddir.c rmdir.c root-dev-ino.c root-dev-ino.h rpmatch.c \
-	safe-read.h safe-read.c safe-write.h same.h same-inode.h \
-	save-cwd.h savedir.h sched.in.h select.c at-func.c \
-	selinux-at.c selinux-at.h getfilecon.c setenv.c sig2str.c \
-	sig2str.h sig-handler.h sigaction.c signal.in.h float+.h \
-	signbitd.c signbitf.c signbitl.c sigprocmask.c \
+	rewinddir.c rmdir.c root-dev-ino.c root-dev-ino.h root-uid.h \
+	rpmatch.c safe-read.h safe-read.c safe-write.h same.h \
+	same-inode.h save-cwd.h savedir.h sched.in.h select.c \
+	at-func.c selinux-at.c selinux-at.h getfilecon.c setenv.c \
+	sig2str.c sig2str.h sig-handler.h sigaction.c signal.in.h \
+	float+.h signbitd.c signbitf.c signbitl.c sigprocmask.c \
 	$(top_srcdir)/build-aux/snippet/_Noreturn.h \
 	$(top_srcdir)/build-aux/snippet/arg-nonnull.h \
 	$(top_srcdir)/build-aux/snippet/c++defs.h \
@@ -1915,20 +1920,20 @@ EXTRA_DIST = acl-internal.h acl.h acl_entries.c alignof.h alloca.c \
 	w32sock.h spawn.in.h stat.c stat-macros.h stat-size.h \
 	stat-time.h stdalign.in.h stdarg.in.h stdbool.in.h stddef.in.h \
 	stdint.in.h stdio.in.h stdlib.in.h stdlib--.h stdlib-safer.h \
-	stpcpy.c stpncpy.c strcasecmp.c strncasecmp.c strchrnul.c \
-	strchrnul.valgrind strdup.c streq.h strerror.c \
-	strerror-override.c strerror-override.h strftime.h string.in.h \
-	strings.in.h strncat.c strndup.c strnlen.c strpbrk.c siglist.h \
-	strsignal.c str-two-way.h strstr.c strtod.c strtoimax.c \
-	strtol.c strtoll.c strtol.c strtoul.c strtoull.c strtoimax.c \
-	strtoumax.c symlink.c sys_ioctl.in.h sys_resource.in.h \
-	sys_select.in.h sys_socket.in.h sys_stat.in.h sys_time.in.h \
-	sys_types.in.h sys_uio.in.h sys_utsname.in.h sys_wait.in.h \
-	tempname.h termios.in.h $(top_srcdir)/build-aux/config.rpath \
-	time.in.h time_r.c timespec.h trim.h u64.h uname.c unistd.in.h \
-	unistd--.h unistd-safer.h unistr.in.h unitypes.in.h \
-	localcharset.h uniwidth.in.h uniwidth/cjk.h unlink.c at-func.c \
-	openat-priv.h unlinkat.c unlocked-io.h unsetenv.c \
+	stpcpy.c stpncpy.c strchrnul.c strchrnul.valgrind strdup.c \
+	streq.h strerror.c strerror-override.c strerror-override.h \
+	strftime.h string.in.h strncat.c strndup.c strnlen.c strpbrk.c \
+	siglist.h strsignal.c str-two-way.h strstr.c strtod.c \
+	strtoimax.c strtol.c strtoll.c strtol.c strtoul.c strtoull.c \
+	strtoimax.c strtoumax.c symlink.c sys_ioctl.in.h \
+	sys_resource.in.h sys_select.in.h sys_socket.in.h \
+	sys_stat.in.h sys_time.in.h sys_types.in.h sys_uio.in.h \
+	sys_utsname.in.h sys_wait.in.h tempname.h termios.in.h \
+	$(top_srcdir)/build-aux/config.rpath time.in.h time_r.c \
+	timespec.h trim.h u64.h uname.c unistd.in.h unistd--.h \
+	unistd-safer.h unistr.in.h unitypes.in.h localcharset.h \
+	uniwidth.in.h uniwidth/cjk.h unlink.c at-func.c openat-priv.h \
+	unlinkat.c unlocked-io.h unsetenv.c \
 	$(top_srcdir)/build-aux/update-copyright \
 	$(top_srcdir)/build-aux/useless-if-before-free userspec.h \
 	utimecmp.h utimens.h at-func.c utimensat.c asnprintf.c \
@@ -1960,10 +1965,10 @@ MOSTLYCLEANFILES = core *.stackdump alloca.h alloca.h-t arpa/inet.h \
 	spawn.h-t stdalign.h stdalign.h-t stdarg.h stdarg.h-t \
 	stdbool.h stdbool.h-t stddef.h stddef.h-t stdint.h stdint.h-t \
 	stdio.h stdio.h-t stdlib.h stdlib.h-t string.h string.h-t \
-	strings.h strings.h-t sys/ioctl.h sys/ioctl.h-t sys/resource.h \
-	sys/resource.h-t sys/select.h sys/select.h-t sys/socket.h \
-	sys/socket.h-t sys/stat.h sys/stat.h-t sys/time.h sys/time.h-t \
-	sys/types.h sys/types.h-t sys/uio.h sys/uio.h-t sys/utsname.h \
+	sys/ioctl.h sys/ioctl.h-t sys/resource.h sys/resource.h-t \
+	sys/select.h sys/select.h-t sys/socket.h sys/socket.h-t \
+	sys/stat.h sys/stat.h-t sys/time.h sys/time.h-t sys/types.h \
+	sys/types.h-t sys/uio.h sys/uio.h-t sys/utsname.h \
 	sys/utsname.h-t sys/wait.h sys/wait.h-t termios.h termios.h-t \
 	time.h time.h-t unistd.h unistd.h-t unistr.h unistr.h-t \
 	unitypes.h unitypes.h-t uniwidth.h uniwidth.h-t wchar.h \
@@ -1984,21 +1989,20 @@ libcoreutils_a_SOURCES = set-mode-acl.c copy-acl.c file-has-acl.c \
 	creat-safer.c open-safer.c fd-hook.c fd-safer-flag.c \
 	dup-safer-flag.c fdutimensat.c file-set.c file-type.c \
 	filemode.c filenamecat.c filenamecat-lgpl.c filevercmp.c \
-	fopen-safer.c fprintftime.c freadahead.c freading.c freadptr.c \
-	freadseek.c freopen-safer.c fseterr.c ftoastr.c full-read.h \
-	full-read.c full-write.h full-write.c getndelim2.c gettext.h \
-	gettime.c getugroups.c hard-locale.c hash.c hash-pjw.h \
-	hash-pjw.c hash-triple.c heap.c heap.h human.c i-ring.c \
-	idcache.c ino-map.c ino-map.h imaxtostr.c inttostr.c \
-	offtostr.c uinttostr.c umaxtostr.c ldtoastr.c linebuffer.h \
-	linebuffer.c localcharset.h localcharset.c glthread/lock.h \
-	glthread/lock.c long-options.c malloca.c mbchar.c mbiter.h \
-	mbsalign.c mbsalign.h mbscasecmp.c mbslen.c mbsstr.c \
-	mbswidth.h mbswidth.c mbuiter.h memcasecmp.c memchr2.h \
-	memchr2.c memcmp2.c memcoll.c mgetgroups.c mkancesdirs.c \
-	dirchownmod.c mkdir-p.c modechange.c mpsort.c nproc.c \
-	openat-die.c openat-safer.c parse-datetime.y physmem.c pipe2.c \
-	pipe2-safer.c posixtm.c posixver.c printf-frexp.c \
+	fopen-safer.c fprintftime.c freading.c freadseek.c \
+	freopen-safer.c ftoastr.c full-read.h full-read.c full-write.h \
+	full-write.c getndelim2.c gettext.h gettime.c getugroups.c \
+	hard-locale.c hash.c hash-pjw.h hash-pjw.c hash-triple.c \
+	heap.c heap.h human.c i-ring.c idcache.c ino-map.c ino-map.h \
+	imaxtostr.c inttostr.c offtostr.c uinttostr.c umaxtostr.c \
+	ldtoastr.c linebuffer.h linebuffer.c localcharset.h \
+	localcharset.c glthread/lock.h glthread/lock.c long-options.c \
+	malloca.c mbchar.c mbiter.h mbsalign.c mbsalign.h mbscasecmp.c \
+	mbslen.c mbsstr.c mbswidth.h mbswidth.c mbuiter.h memcasecmp.c \
+	memchr2.h memchr2.c memcmp2.c memcoll.c mgetgroups.c \
+	mkancesdirs.c dirchownmod.c mkdir-p.c modechange.c mpsort.c \
+	nproc.c openat-die.c openat-safer.c parse-datetime.y physmem.c \
+	pipe2.c pipe2-safer.c posixtm.c posixver.c printf-frexp.c \
 	printf-frexpl.c priv-set.c progname.h progname.c propername.h \
 	propername.c quotearg.c randint.c randint.h randperm.c \
 	randperm.h randread.c randread.h rand-isaac.c rand-isaac.h \
@@ -2006,20 +2010,20 @@ libcoreutils_a_SOURCES = set-mode-acl.c copy-acl.c file-has-acl.c \
 	safe-read.c safe-write.c same.c save-cwd.c savedir.c savewd.h \
 	savewd.c se-context.in.h se-selinux.in.h settime.c size_max.h \
 	sockets.h sockets.c spawn-pipe.h spawn-pipe.c w32spawn.h \
-	mkstemp-safer.c strftime.c striconv.h striconv.c strnlen1.h \
-	strnlen1.c tempname.c glthread/threadlib.c glthread/tls.h \
-	glthread/tls.c trim.c unicodeio.h unicodeio.c dup-safer.c \
-	fd-safer.c pipe-safer.c $(am__append_1) $(am__append_2) \
-	$(am__append_3) userspec.c utimecmp.c utimens.c verror.h \
-	verror.c version-etc.h version-etc.c version-etc-fsf.c \
-	wait-process.h wait-process.c write-any-file.c xmalloc.c \
-	xalloc-die.c xfreopen.c xfreopen.h xgetcwd.c xgetgroups.c \
-	xgethostname.h xgethostname.c xmemcoll.h xmemcoll.c \
-	xnanosleep.c xprintf.h xprintf.c xreadlink.c xsize.h \
-	xstriconv.h xstriconv.c xstrndup.h xstrndup.c xstrtod.c \
-	xstrtoimax.c xstrtol.c xstrtoul.c xstrtol-error.c xstrtold.c \
-	xstrtoumax.c xvasprintf.h xvasprintf.c xasprintf.c yesno.c \
-	buffer-lcm.c buffer-lcm.h
+	stat-time.c mkstemp-safer.c strftime.c striconv.h striconv.c \
+	strnlen1.h strnlen1.c tempname.c glthread/threadlib.c \
+	timespec.c glthread/tls.h glthread/tls.c trim.c u64.c \
+	unicodeio.h unicodeio.c dup-safer.c fd-safer.c pipe-safer.c \
+	$(am__append_1) $(am__append_2) $(am__append_3) userspec.c \
+	utimecmp.c utimens.c verror.h verror.c version-etc.h \
+	version-etc.c version-etc-fsf.c wait-process.h wait-process.c \
+	write-any-file.c xmalloc.c xalloc-die.c xfreopen.c xfreopen.h \
+	xgetcwd.c xgetgroups.c xgethostname.h xgethostname.c \
+	xmemcoll.h xmemcoll.c xnanosleep.c xprintf.h xprintf.c \
+	xreadlink.c xsize.h xstriconv.h xstriconv.c xstrndup.h \
+	xstrndup.c xstrtod.c xstrtoimax.c xstrtol.c xstrtoul.c \
+	xstrtol-error.c xstrtold.c xstrtoumax.c xvasprintf.h \
+	xvasprintf.c xasprintf.c yesno.c buffer-lcm.c buffer-lcm.h
 libcoreutils_a_LIBADD = $(gl_LIBOBJS) @ALLOCA@ $(LIBOBJS)
 libcoreutils_a_DEPENDENCIES = $(gl_LIBOBJS) @ALLOCA@ $(LIBOBJS)
 EXTRA_libcoreutils_a_SOURCES = acl_entries.c alloca.c at-func.c \
@@ -2029,23 +2033,24 @@ EXTRA_libcoreutils_a_SOURCES = acl_entries.c alloca.c at-func.c \
 	at-func.c faccessat.c fchdir.c at-func.c fchmodat.c at-func.c \
 	fchownat.c fclose.c fcntl.c fdatasync.c fdopen.c fdopendir.c \
 	fflush.c fileblocks.c float.c itold.c fnmatch.c fnmatch_loop.c \
-	fopen.c fpending.c fpurge.c freopen.c frexp.c frexp.c frexpl.c \
-	fseek.c fseeko.c fstat.c at-func.c fstatat.c fsusage.c fsync.c \
-	ftell.c ftello.c ftruncate.c fts-cycle.c fts.c full-write.c \
-	futimens.c gai_strerror.c getaddrinfo.c getcwd.c getcwd-lgpl.c \
-	getdelim.c getdtablesize.c getgroups.c gethostname.c \
-	gethrxtime.c getline.c getloadavg.c getlogin.c getopt.c \
-	getopt1.c getpagesize.c getpass.c gettimeofday.c \
-	getusershell.c group-member.c iconv.c iconv_close.c \
-	iconv_open.c inet_ntop.c anytostr.c isapipe.c isatty.c \
-	isblank.c isnan.c isnand.c isnan.c isnanf.c isnan.c isnanl.c \
-	iswblank.c lchown.c ftoastr.c link.c at-func2.c linkat.c \
-	localeconv.c lseek.c lstat.c malloc.c malloc.c mbrlen.c \
-	mbrtowc.c mbsinit.c mbsrtowcs-state.c mbsrtowcs.c mbtowc.c \
-	memchr.c mempcpy.c memrchr.c mkdir.c mkfifo.c mknod.c \
-	mkstemp.c mktime.c mountlist.c msvc-inval.c msvc-nothrow.c \
-	nanosleep.c nl_langinfo.c obstack.c open.c openat.c opendir.c \
-	spawni.c spawn_faction_addclose.c spawn_faction_adddup2.c \
+	fopen.c fpending.c fpurge.c freadahead.c freadptr.c freopen.c \
+	frexp.c frexp.c frexpl.c fseek.c fseeko.c fseterr.c fstat.c \
+	at-func.c fstatat.c fsusage.c fsync.c ftell.c ftello.c \
+	ftruncate.c fts-cycle.c fts.c full-write.c futimens.c \
+	gai_strerror.c getaddrinfo.c getcwd.c getcwd-lgpl.c getdelim.c \
+	getdtablesize.c getgroups.c gethostname.c gethrxtime.c \
+	getline.c getloadavg.c getlogin.c getopt.c getopt1.c \
+	getpagesize.c getpass.c gettimeofday.c getusershell.c \
+	group-member.c iconv.c iconv_close.c iconv_open.c inet_ntop.c \
+	anytostr.c isapipe.c isatty.c isblank.c isnan.c isnand.c \
+	isnan.c isnanf.c isnan.c isnanl.c iswblank.c lchown.c \
+	ftoastr.c link.c at-func2.c linkat.c localeconv.c lseek.c \
+	lstat.c malloc.c malloc.c mbrlen.c mbrtowc.c mbsinit.c \
+	mbsrtowcs-state.c mbsrtowcs.c mbtowc.c memchr.c mempcpy.c \
+	memrchr.c mkdir.c mkfifo.c mknod.c mkstemp.c mktime.c \
+	mountlist.c msvc-inval.c msvc-nothrow.c nanosleep.c \
+	nl_langinfo.c obstack.c open.c openat.c opendir.c spawni.c \
+	spawn_faction_addclose.c spawn_faction_adddup2.c \
 	spawn_faction_addopen.c spawn_faction_destroy.c \
 	spawn_faction_init.c spawnattr_destroy.c spawnattr_init.c \
 	spawnattr_setflags.c spawnattr_setsigmask.c spawnp.c \
@@ -2056,15 +2061,14 @@ EXTRA_libcoreutils_a_SOURCES = acl_entries.c alloca.c at-func.c \
 	safe-read.c select.c at-func.c selinux-at.c getfilecon.c \
 	setenv.c sig2str.c sigaction.c signbitd.c signbitf.c \
 	signbitl.c sigprocmask.c snprintf.c stat.c stpcpy.c stpncpy.c \
-	strcasecmp.c strncasecmp.c strchrnul.c strdup.c strerror.c \
-	strerror-override.c strncat.c strndup.c strnlen.c strpbrk.c \
-	strsignal.c strstr.c strtod.c strtoimax.c strtol.c strtoll.c \
-	strtol.c strtoul.c strtoull.c strtoimax.c strtoumax.c \
-	symlink.c time_r.c uname.c unlink.c at-func.c unlinkat.c \
-	unsetenv.c at-func.c utimensat.c asnprintf.c printf-args.c \
-	printf-parse.c vasnprintf.c asprintf.c vasprintf.c vfprintf.c \
-	vprintf.c waitpid.c wcrtomb.c wcswidth.c wcwidth.c write.c \
-	xstrtod.c
+	strchrnul.c strdup.c strerror.c strerror-override.c strncat.c \
+	strndup.c strnlen.c strpbrk.c strsignal.c strstr.c strtod.c \
+	strtoimax.c strtol.c strtoll.c strtol.c strtoul.c strtoull.c \
+	strtoimax.c strtoumax.c symlink.c time_r.c uname.c unlink.c \
+	at-func.c unlinkat.c unsetenv.c at-func.c utimensat.c \
+	asnprintf.c printf-args.c printf-parse.c vasnprintf.c \
+	asprintf.c vasprintf.c vfprintf.c vprintf.c waitpid.c \
+	wcrtomb.c wcswidth.c wcwidth.c write.c xstrtod.c
 GPERF = gperf
 charset_alias = $(DESTDIR)$(libdir)/charset.alias
 charset_tmp = $(DESTDIR)$(libdir)/charset.tmp
@@ -2441,10 +2445,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spawnattr_setsigmask.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spawni.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spawnp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stat-time.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stpcpy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stpncpy.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strcasecmp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strchrnul.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strdup.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strerror-override.Po@am__quote@
@@ -2452,7 +2456,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strftime.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/striconv.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stripslash.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strncasecmp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strncat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strndup.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strnlen.Po@am__quote@
@@ -2471,8 +2474,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tempname.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/threadlib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/time_r.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timespec.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tls.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/trim.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/u64.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/u8-mbtoucr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/u8-uctomb-aux.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/u8-uctomb.Po@am__quote@
@@ -2640,8 +2645,8 @@ width.obj: uniwidth/width.c
 .y.c:
 	$(AM_V_YACC)$(am__skipyacc) $(SHELL) $(YLWRAP) $< y.tab.c $@ y.tab.h `echo $@ | $(am__yacc_c2h)` y.output $*.output -- $(YACCCOMPILE)
 
-ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
-	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
+ID: $(am__tagged_files)
+	list='$(am__tagged_files)'; \
 	unique=`for i in $$list; do \
 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
 	  done | \
@@ -2650,11 +2655,10 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	mkid -fID $$unique
 tags: TAGS
 
-TAGS:  $(HEADERS) $(SOURCES) config.hin $(TAGS_DEPENDENCIES) \
-		$(TAGS_FILES) $(LISP)
+TAGS:  $(TAGS_DEPENDENCIES) $(am__tagged_files)
 	set x; \
 	here=`pwd`; \
-	list='$(SOURCES) $(HEADERS) config.hin $(LISP) $(TAGS_FILES)'; \
+	list='$(am__tagged_files)'; \
 	unique=`for i in $$list; do \
 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
 	  done | \
@@ -2672,9 +2676,8 @@ TAGS:  $(HEADERS) $(SOURCES) config.hin $(TAGS_DEPENDENCIES) \
 	  fi; \
 	fi
 ctags: CTAGS
-CTAGS:  $(HEADERS) $(SOURCES) config.hin $(TAGS_DEPENDENCIES) \
-		$(TAGS_FILES) $(LISP)
-	list='$(SOURCES) $(HEADERS) config.hin $(LISP) $(TAGS_FILES)'; \
+CTAGS:  $(TAGS_DEPENDENCIES) $(am__tagged_files)
+	list='$(am__tagged_files)'; \
 	unique=`for i in $$list; do \
 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
 	  done | \
@@ -2689,8 +2692,8 @@ GTAGS:
 	  && $(am__cd) $(top_srcdir) \
 	  && gtags -i $(GTAGS_ARGS) "$$here"
 
-cscopelist:  $(HEADERS) $(SOURCES) $(LISP)
-	list='$(SOURCES) $(HEADERS) $(LISP)'; \
+cscopelist:  $(am__tagged_files)
+	list='$(am__tagged_files)'; \
 	case "$(srcdir)" in \
 	  [\\/]* | ?:[\\/]*) sdir="$(srcdir)" ;; \
 	  *) sdir=$(subdir)/$(srcdir) ;; \
@@ -3090,7 +3093,7 @@ getopt.h: getopt.in.h $(top_builddir)/config.status $(ARG_NONNULL_H)
 
 distclean-local: clean-GNUmakefile
 clean-GNUmakefile:
-	test x'$(VPATH)' != x && rm -f $(top_builddir)/GNUmakefile || :
+	test '$(srcdir)' = . || rm -f $(top_builddir)/GNUmakefile
 
 # We need the following in order to create <iconv.h> when the system
 # doesn't have one that works with the given compiler.
@@ -4173,28 +4176,6 @@ string.h: string.in.h $(top_builddir)/config.status $(CXXDEFS_H) $(ARG_NONNULL_H
 	      -e '/definition of _GL_ARG_NONNULL/r $(ARG_NONNULL_H)' \
 	      -e '/definition of _GL_WARN_ON_USE/r $(WARN_ON_USE_H)'; \
 	      < $(srcdir)/string.in.h; \
-	} > $@-t && \
-	mv $@-t $@
-
-# We need the following in order to create <strings.h> when the system
-# doesn't have one that works with the given compiler.
-strings.h: strings.in.h $(top_builddir)/config.status $(CXXDEFS_H) $(WARN_ON_USE_H) $(ARG_NONNULL_H)
-	$(AM_V_GEN)rm -f $@-t $@ && \
-	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */' && \
-	  sed -e 's|@''GUARD_PREFIX''@|GL|g' \
-	      -e 's|@''HAVE_STRINGS_H''@|$(HAVE_STRINGS_H)|g' \
-	      -e 's|@''INCLUDE_NEXT''@|$(INCLUDE_NEXT)|g' \
-	      -e 's|@''PRAGMA_SYSTEM_HEADER''@|@PRAGMA_SYSTEM_HEADER@|g' \
-	      -e 's|@''PRAGMA_COLUMNS''@|@PRAGMA_COLUMNS@|g' \
-	      -e 's|@''NEXT_STRINGS_H''@|$(NEXT_STRINGS_H)|g' \
-	      -e 's|@''GNULIB_FFS''@|$(GNULIB_FFS)|g' \
-	      -e 's|@''HAVE_FFS''@|$(HAVE_FFS)|g' \
-	      -e 's|@''HAVE_STRCASECMP''@|$(HAVE_STRCASECMP)|g' \
-	      -e 's|@''HAVE_DECL_STRNCASECMP''@|$(HAVE_DECL_STRNCASECMP)|g' \
-	      -e '/definitions of _GL_FUNCDECL_RPL/r $(CXXDEFS_H)' \
-	      -e '/definition of _GL_ARG_NONNULL/r $(ARG_NONNULL_H)' \
-	      -e '/definition of _GL_WARN_ON_USE/r $(WARN_ON_USE_H)' \
-	      < $(srcdir)/strings.in.h; \
 	} > $@-t && \
 	mv $@-t $@
 

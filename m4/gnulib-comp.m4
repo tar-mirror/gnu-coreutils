@@ -153,6 +153,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module exitfail:
   # Code from module extensions:
   AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
+  # Code from module extern-inline:
   # Code from module faccessat:
   # Code from module faccessat-tests:
   # Code from module fadvise:
@@ -543,6 +544,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module rmdir:
   # Code from module rmdir-tests:
   # Code from module root-dev-ino:
+  # Code from module root-uid:
   # Code from module rpmatch:
   # Code from module safe-read:
   # Code from module safe-write:
@@ -621,7 +623,6 @@ AC_DEFUN([gl_EARLY],
   # Code from module stdlib-tests:
   # Code from module stpcpy:
   # Code from module stpncpy:
-  # Code from module strcase:
   # Code from module strchrnul:
   # Code from module strchrnul-tests:
   # Code from module strdup-posix:
@@ -637,8 +638,6 @@ AC_DEFUN([gl_EARLY],
   # Code from module striconv-tests:
   # Code from module string:
   # Code from module string-tests:
-  # Code from module strings:
-  # Code from module strings-tests:
   # Code from module strncat:
   # Code from module strncat-tests:
   # Code from module strndup:
@@ -836,6 +835,7 @@ AC_LIBOBJ([openat-proc])
 gl_BACKUPFILE
 gl_FUNC_BASE64
 AC_REQUIRE([AC_C_INLINE])
+AC_REQUIRE([AC_C_INLINE])
 gl_FUNC_BTOWC
 if test $HAVE_BTOWC = 0 || test $REPLACE_BTOWC = 1; then
   AC_LIBOBJ([btowc])
@@ -943,6 +943,7 @@ if test $HAVE_EUIDACCESS = 0; then
   gl_PREREQ_EUIDACCESS
 fi
 gl_UNISTD_MODULE_INDICATOR([euidaccess])
+AC_REQUIRE([gl_EXTERN_INLINE])
 gl_FUNC_FACCESSAT
 if test $HAVE_FACCESSAT = 0; then
   AC_LIBOBJ([faccessat])
@@ -1053,8 +1054,16 @@ if test $HAVE_FPURGE = 0 || test $REPLACE_FPURGE = 1; then
   AC_LIBOBJ([fpurge])
 fi
 gl_STDIO_MODULE_INDICATOR([fpurge])
+gl_FUNC_FREADAHEAD
+if test $ac_cv_func___freadahead = no; then
+  AC_LIBOBJ([freadahead])
+fi
 gl_FUNC_FREADING
-AC_REQUIRE([AC_C_INLINE])
+gl_FUNC_FREADPTR
+if test $ac_cv_func___freadptr = no; then
+  AC_LIBOBJ([freadptr])
+fi
+gl_FUNC_FREADSEEK
 gl_FUNC_FREOPEN
 if test $REPLACE_FREOPEN = 1; then
   AC_LIBOBJ([freopen])
@@ -1083,6 +1092,10 @@ if test $HAVE_FSEEKO = 0 || test $REPLACE_FSEEKO = 1; then
   gl_PREREQ_FSEEKO
 fi
 gl_STDIO_MODULE_INDICATOR([fseeko])
+gl_FUNC_FSETERR
+if test $ac_cv_func___fseterr = no; then
+  AC_LIBOBJ([fseterr])
+fi
 gl_FUNC_FSTAT
 if test $REPLACE_FSTAT = 1; then
   AC_LIBOBJ([fstat])
@@ -1784,15 +1797,6 @@ if test $HAVE_STPNCPY = 0 || test $REPLACE_STPNCPY = 1; then
   gl_PREREQ_STPNCPY
 fi
 gl_STRING_MODULE_INDICATOR([stpncpy])
-gl_STRCASE
-if test $HAVE_STRCASECMP = 0; then
-  AC_LIBOBJ([strcasecmp])
-  gl_PREREQ_STRCASECMP
-fi
-if test $HAVE_STRNCASECMP = 0; then
-  AC_LIBOBJ([strncasecmp])
-  gl_PREREQ_STRNCASECMP
-fi
 gl_FUNC_STRCHRNUL
 if test $HAVE_STRCHRNUL = 0 || test $REPLACE_STRCHRNUL = 1; then
   AC_LIBOBJ([strchrnul])
@@ -1823,7 +1827,6 @@ if test $gl_cond_libtool = false; then
   gl_libdeps="$gl_libdeps $LIBICONV"
 fi
 gl_HEADER_STRING_H
-gl_HEADER_STRINGS_H
 gl_FUNC_STRNCAT
 if test $REPLACE_STRNCAT = 1; then
   AC_LIBOBJ([strncat])
@@ -1927,7 +1930,6 @@ gl_TIMER_TIME
 gl_TIMESPEC
 gl_TLS
 gl_FUNC_TZSET
-AC_REQUIRE([AC_C_INLINE])
 gl_FUNC_UNAME
 if test $HAVE_UNAME = 0; then
   AC_LIBOBJ([uname])
@@ -1993,7 +1995,6 @@ if test $HAVE_WAITPID = 0; then
   AC_LIBOBJ([waitpid])
 fi
 gl_SYS_WAIT_MODULE_INDICATOR([waitpid])
-AC_SUBST([WARN_CFLAGS])
 gl_WCHAR_H
 gl_FUNC_WCRTOMB
 if test $HAVE_WCRTOMB = 0 || test $REPLACE_WCRTOMB = 1; then
@@ -2825,6 +2826,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/rmdir.c
   lib/root-dev-ino.c
   lib/root-dev-ino.h
+  lib/root-uid.h
   lib/rpmatch.c
   lib/safe-read.c
   lib/safe-read.h
@@ -2885,6 +2887,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/spawnp.c
   lib/stat-macros.h
   lib/stat-size.h
+  lib/stat-time.c
   lib/stat-time.h
   lib/stat.c
   lib/stdalign.in.h
@@ -2903,7 +2906,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/stpncpy.c
   lib/str-kmp.h
   lib/str-two-way.h
-  lib/strcasecmp.c
   lib/strchrnul.c
   lib/strchrnul.valgrind
   lib/strdup.c
@@ -2916,9 +2918,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/striconv.c
   lib/striconv.h
   lib/string.in.h
-  lib/strings.in.h
   lib/stripslash.c
-  lib/strncasecmp.c
   lib/strncat.c
   lib/strndup.c
   lib/strnlen.c
@@ -2950,9 +2950,11 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/termios.in.h
   lib/time.in.h
   lib/time_r.c
+  lib/timespec.c
   lib/timespec.h
   lib/trim.c
   lib/trim.h
+  lib/u64.c
   lib/u64.h
   lib/uinttostr.c
   lib/umaxtostr.c
@@ -3090,6 +3092,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/exponentf.m4
   m4/exponentl.m4
   m4/extensions.m4
+  m4/extern-inline.m4
   m4/faccessat.m4
   m4/fatal-signal.m4
   m4/fchdir.m4
@@ -3114,12 +3117,16 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/fpending.m4
   m4/fpieee.m4
   m4/fpurge.m4
+  m4/freadahead.m4
   m4/freading.m4
+  m4/freadptr.m4
+  m4/freadseek.m4
   m4/freopen.m4
   m4/frexp.m4
   m4/frexpl.m4
   m4/fseek.m4
   m4/fseeko.m4
+  m4/fseterr.m4
   m4/fstat.m4
   m4/fstatat.m4
   m4/fstypename.m4
@@ -3340,14 +3347,12 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/stdlib_h.m4
   m4/stpcpy.m4
   m4/stpncpy.m4
-  m4/strcase.m4
   m4/strchrnul.m4
   m4/strdup.m4
   m4/strerror.m4
   m4/strerror_r.m4
   m4/strftime.m4
   m4/string_h.m4
-  m4/strings_h.m4
   m4/strncat.m4
   m4/strndup.m4
   m4/strnlen.m4
@@ -3758,7 +3763,6 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-strftime.c
   tests/test-striconv.c
   tests/test-string.c
-  tests/test-strings.c
   tests/test-strncat.c
   tests/test-strnlen.c
   tests/test-strsignal.c

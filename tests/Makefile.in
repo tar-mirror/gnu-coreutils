@@ -93,6 +93,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/00gnulib.m4 \
 	$(top_srcdir)/m4/error.m4 $(top_srcdir)/m4/euidaccess.m4 \
 	$(top_srcdir)/m4/exponentd.m4 $(top_srcdir)/m4/exponentf.m4 \
 	$(top_srcdir)/m4/exponentl.m4 $(top_srcdir)/m4/extensions.m4 \
+	$(top_srcdir)/m4/extern-inline.m4 \
 	$(top_srcdir)/m4/faccessat.m4 $(top_srcdir)/m4/fatal-signal.m4 \
 	$(top_srcdir)/m4/fchdir.m4 $(top_srcdir)/m4/fchmodat.m4 \
 	$(top_srcdir)/m4/fchownat.m4 $(top_srcdir)/m4/fclose.m4 \
@@ -105,10 +106,12 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/00gnulib.m4 \
 	$(top_srcdir)/m4/flexmember.m4 $(top_srcdir)/m4/float_h.m4 \
 	$(top_srcdir)/m4/fnmatch.m4 $(top_srcdir)/m4/fopen.m4 \
 	$(top_srcdir)/m4/fpending.m4 $(top_srcdir)/m4/fpieee.m4 \
-	$(top_srcdir)/m4/fpurge.m4 $(top_srcdir)/m4/freading.m4 \
-	$(top_srcdir)/m4/freopen.m4 $(top_srcdir)/m4/frexp.m4 \
-	$(top_srcdir)/m4/frexpl.m4 $(top_srcdir)/m4/fseek.m4 \
-	$(top_srcdir)/m4/fseeko.m4 $(top_srcdir)/m4/fstat.m4 \
+	$(top_srcdir)/m4/fpurge.m4 $(top_srcdir)/m4/freadahead.m4 \
+	$(top_srcdir)/m4/freading.m4 $(top_srcdir)/m4/freadptr.m4 \
+	$(top_srcdir)/m4/freadseek.m4 $(top_srcdir)/m4/freopen.m4 \
+	$(top_srcdir)/m4/frexp.m4 $(top_srcdir)/m4/frexpl.m4 \
+	$(top_srcdir)/m4/fseek.m4 $(top_srcdir)/m4/fseeko.m4 \
+	$(top_srcdir)/m4/fseterr.m4 $(top_srcdir)/m4/fstat.m4 \
 	$(top_srcdir)/m4/fstatat.m4 $(top_srcdir)/m4/fstypename.m4 \
 	$(top_srcdir)/m4/fsusage.m4 $(top_srcdir)/m4/fsync.m4 \
 	$(top_srcdir)/m4/ftell.m4 $(top_srcdir)/m4/ftello.m4 \
@@ -150,9 +153,8 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/00gnulib.m4 \
 	$(top_srcdir)/m4/largefile.m4 $(top_srcdir)/m4/lchmod.m4 \
 	$(top_srcdir)/m4/lchown.m4 $(top_srcdir)/m4/lcmessage.m4 \
 	$(top_srcdir)/m4/ldexp.m4 $(top_srcdir)/m4/ldexpl.m4 \
-	$(top_srcdir)/m4/lib-check.m4 $(top_srcdir)/m4/lib-ignore.m4 \
-	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
-	$(top_srcdir)/m4/lib-prefix.m4 \
+	$(top_srcdir)/m4/lib-ignore.m4 $(top_srcdir)/m4/lib-ld.m4 \
+	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
 	$(top_srcdir)/m4/libunistring-base.m4 \
 	$(top_srcdir)/m4/link-follow.m4 $(top_srcdir)/m4/link.m4 \
 	$(top_srcdir)/m4/linkat.m4 $(top_srcdir)/m4/localcharset.m4 \
@@ -232,11 +234,10 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/00gnulib.m4 \
 	$(top_srcdir)/m4/stddef_h.m4 $(top_srcdir)/m4/stdint.m4 \
 	$(top_srcdir)/m4/stdint_h.m4 $(top_srcdir)/m4/stdio_h.m4 \
 	$(top_srcdir)/m4/stdlib_h.m4 $(top_srcdir)/m4/stpcpy.m4 \
-	$(top_srcdir)/m4/stpncpy.m4 $(top_srcdir)/m4/strcase.m4 \
-	$(top_srcdir)/m4/strchrnul.m4 $(top_srcdir)/m4/strdup.m4 \
-	$(top_srcdir)/m4/strerror.m4 $(top_srcdir)/m4/strerror_r.m4 \
-	$(top_srcdir)/m4/strftime.m4 $(top_srcdir)/m4/string_h.m4 \
-	$(top_srcdir)/m4/strings_h.m4 $(top_srcdir)/m4/strncat.m4 \
+	$(top_srcdir)/m4/stpncpy.m4 $(top_srcdir)/m4/strchrnul.m4 \
+	$(top_srcdir)/m4/strdup.m4 $(top_srcdir)/m4/strerror.m4 \
+	$(top_srcdir)/m4/strerror_r.m4 $(top_srcdir)/m4/strftime.m4 \
+	$(top_srcdir)/m4/string_h.m4 $(top_srcdir)/m4/strncat.m4 \
 	$(top_srcdir)/m4/strndup.m4 $(top_srcdir)/m4/strnlen.m4 \
 	$(top_srcdir)/m4/strnumcmp.m4 $(top_srcdir)/m4/strpbrk.m4 \
 	$(top_srcdir)/m4/strsignal.m4 $(top_srcdir)/m4/strstr.m4 \
@@ -290,12 +291,18 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/lib/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
+AM_V_P = $(am__v_P_@AM_V@)
+am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
+am__v_P_0 = false
+am__v_P_1 = :
 AM_V_GEN = $(am__v_GEN_@AM_V@)
 am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
 am__v_GEN_0 = @echo "  GEN     " $@;
+am__v_GEN_1 = 
 AM_V_at = $(am__v_at_@AM_V@)
 am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
 am__v_at_0 = @
+am__v_at_1 = 
 SOURCES =
 DIST_SOURCES =
 am__can_run_installinfo = \
@@ -303,6 +310,7 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
+am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 am__tty_colors_dummy = \
   mgn= red= grn= lgn= blu= brg= std=; \
   am__color_tests=no
@@ -619,7 +627,6 @@ GNULIB_FDATASYNC = @GNULIB_FDATASYNC@
 GNULIB_FDOPEN = @GNULIB_FDOPEN@
 GNULIB_FDOPENDIR = @GNULIB_FDOPENDIR@
 GNULIB_FFLUSH = @GNULIB_FFLUSH@
-GNULIB_FFS = @GNULIB_FFS@
 GNULIB_FFSL = @GNULIB_FFSL@
 GNULIB_FFSLL = @GNULIB_FFSLL@
 GNULIB_FGETC = @GNULIB_FGETC@
@@ -1051,7 +1058,6 @@ HAVE_DECL_SNPRINTF = @HAVE_DECL_SNPRINTF@
 HAVE_DECL_SQRTL = @HAVE_DECL_SQRTL@
 HAVE_DECL_STRDUP = @HAVE_DECL_STRDUP@
 HAVE_DECL_STRERROR_R = @HAVE_DECL_STRERROR_R@
-HAVE_DECL_STRNCASECMP = @HAVE_DECL_STRNCASECMP@
 HAVE_DECL_STRNDUP = @HAVE_DECL_STRNDUP@
 HAVE_DECL_STRNLEN = @HAVE_DECL_STRNLEN@
 HAVE_DECL_STRSIGNAL = @HAVE_DECL_STRSIGNAL@
@@ -1088,7 +1094,6 @@ HAVE_FCNTL = @HAVE_FCNTL@
 HAVE_FDATASYNC = @HAVE_FDATASYNC@
 HAVE_FDOPENDIR = @HAVE_FDOPENDIR@
 HAVE_FEATURES_H = @HAVE_FEATURES_H@
-HAVE_FFS = @HAVE_FFS@
 HAVE_FFSL = @HAVE_FFSL@
 HAVE_FFSLL = @HAVE_FFSLL@
 HAVE_FMA = @HAVE_FMA@
@@ -1233,10 +1238,8 @@ HAVE_SQRTL = @HAVE_SQRTL@
 HAVE_STDINT_H = @HAVE_STDINT_H@
 HAVE_STPCPY = @HAVE_STPCPY@
 HAVE_STPNCPY = @HAVE_STPNCPY@
-HAVE_STRCASECMP = @HAVE_STRCASECMP@
 HAVE_STRCASESTR = @HAVE_STRCASESTR@
 HAVE_STRCHRNUL = @HAVE_STRCHRNUL@
-HAVE_STRINGS_H = @HAVE_STRINGS_H@
 HAVE_STRPBRK = @HAVE_STRPBRK@
 HAVE_STRPTIME = @HAVE_STRPTIME@
 HAVE_STRSEP = @HAVE_STRSEP@
@@ -1337,7 +1340,6 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
-INSTALL_SU = @INSTALL_SU@
 INT32_MAX_LT_INTMAX_MAX = @INT32_MAX_LT_INTMAX_MAX@
 INT64_MAX_EQ_LONG_MAX = @INT64_MAX_EQ_LONG_MAX@
 INTLLIBS = @INTLLIBS@
@@ -1361,7 +1363,6 @@ LIBUNISTRING_UNIWIDTH_H = @LIBUNISTRING_UNIWIDTH_H@
 LIB_ACL = @LIB_ACL@
 LIB_CAP = @LIB_CAP@
 LIB_CLOCK_GETTIME = @LIB_CLOCK_GETTIME@
-LIB_CRYPT = @LIB_CRYPT@
 LIB_EACCESS = @LIB_EACCESS@
 LIB_FDATASYNC = @LIB_FDATASYNC@
 LIB_GETHRXTIME = @LIB_GETHRXTIME@
@@ -1417,7 +1418,6 @@ NEXT_AS_FIRST_DIRECTIVE_STDDEF_H = @NEXT_AS_FIRST_DIRECTIVE_STDDEF_H@
 NEXT_AS_FIRST_DIRECTIVE_STDINT_H = @NEXT_AS_FIRST_DIRECTIVE_STDINT_H@
 NEXT_AS_FIRST_DIRECTIVE_STDIO_H = @NEXT_AS_FIRST_DIRECTIVE_STDIO_H@
 NEXT_AS_FIRST_DIRECTIVE_STDLIB_H = @NEXT_AS_FIRST_DIRECTIVE_STDLIB_H@
-NEXT_AS_FIRST_DIRECTIVE_STRINGS_H = @NEXT_AS_FIRST_DIRECTIVE_STRINGS_H@
 NEXT_AS_FIRST_DIRECTIVE_STRING_H = @NEXT_AS_FIRST_DIRECTIVE_STRING_H@
 NEXT_AS_FIRST_DIRECTIVE_SYS_IOCTL_H = @NEXT_AS_FIRST_DIRECTIVE_SYS_IOCTL_H@
 NEXT_AS_FIRST_DIRECTIVE_SYS_RESOURCE_H = @NEXT_AS_FIRST_DIRECTIVE_SYS_RESOURCE_H@
@@ -1457,7 +1457,6 @@ NEXT_STDDEF_H = @NEXT_STDDEF_H@
 NEXT_STDINT_H = @NEXT_STDINT_H@
 NEXT_STDIO_H = @NEXT_STDIO_H@
 NEXT_STDLIB_H = @NEXT_STDLIB_H@
-NEXT_STRINGS_H = @NEXT_STRINGS_H@
 NEXT_STRING_H = @NEXT_STRING_H@
 NEXT_SYS_IOCTL_H = @NEXT_SYS_IOCTL_H@
 NEXT_SYS_RESOURCE_H = @NEXT_SYS_RESOURCE_H@
@@ -1823,6 +1822,7 @@ root_tests = \
   cp/capability					\
   cp/sparse-fiemap				\
   dd/skip-seek-past-dev				\
+  df/problematic-chars				\
   install/install-C-root			\
   ls/capability					\
   ls/nameless-uid				\
@@ -1942,7 +1942,6 @@ TESTS = \
   misc/pr					\
   misc/join					\
   pr/pr-tests					\
-  misc/df-P					\
   misc/pwd-option				\
   misc/chcon-fail				\
   misc/cut					\
@@ -1962,7 +1961,6 @@ TESTS = \
   misc/csplit-heap				\
   misc/date-sec					\
   misc/dircolors				\
-  misc/df					\
   misc/dirname					\
   misc/env-null					\
   misc/expand					\
@@ -2027,6 +2025,7 @@ TESTS = \
   misc/sort-merge				\
   misc/sort-merge-fdlimit			\
   misc/sort-month				\
+  misc/sort-exit-early				\
   misc/sort-rand				\
   misc/sort-spinlock-abuse			\
   misc/sort-stale-thread-mem			\
@@ -2044,6 +2043,7 @@ TESTS = \
   split/l-chunk					\
   split/r-chunk					\
   split/numeric					\
+  split/guard-input				\
   misc/stat-birthtime				\
   misc/stat-fmt					\
   misc/stat-hyphen				\
@@ -2056,7 +2056,6 @@ TESTS = \
   misc/stty-invalid				\
   misc/stty-pairs				\
   misc/stty-row-col				\
-  misc/su-fail					\
   misc/sum					\
   misc/sum-sysv					\
   misc/tac					\
@@ -2148,7 +2147,10 @@ TESTS = \
   cp/src-base-dot				\
   cp/symlink-slash				\
   cp/thru-dangling				\
+  df/header					\
+  df/df-P					\
   df/unreadable					\
+  df/total-unprocessed				\
   dd/direct					\
   dd/misc					\
   dd/nocache					\
@@ -2225,6 +2227,7 @@ TESTS = \
   ls/proc-selinux-segfault			\
   ls/readdir-mountpoint-inode			\
   ls/recursive					\
+  ls/root-rel-symlink-color			\
   ls/rt-1					\
   ls/slink-acl					\
   ls/stat-dtype					\
@@ -2584,6 +2587,12 @@ cscope cscopelist:
 	rm -f $< $@
 	$(MAKE) $(AM_MAKEFLAGS) $<
 
+# Leading 'am--fnord' is there to ensure the list of targets does not
+# exand to empty, as could happen e.g. with make check TESTS=''.
+am--fnord $(TEST_LOGS) $(TEST_LOGS:.log=.trs): $(am__force_recheck)
+am--force-recheck:
+	@:
+
 $(TEST_SUITE_LOG): $(TEST_LOGS)
 	@$(am__set_TESTS_bases); \
 	am__f_ok () { test -f "$$1" && test -r "$$1"; }; \
@@ -2690,30 +2699,27 @@ $(TEST_SUITE_LOG): $(TEST_LOGS)
 	fi;								\
 	$$success || exit 1
 
-check-TESTS recheck:
-	@if test $@ != recheck; then \
-	   list='$(RECHECK_LOGS)'; \
-	   test -z "$$list" || rm -f $$list; \
-	 fi
-	@if test $@ != recheck; then \
-	   list='$(RECHECK_LOGS:.log=.trs)'; \
-	   test -z "$$list" || rm -f $$list; \
-	 fi
+check-TESTS:
+	@list='$(RECHECK_LOGS)';           test -z "$$list" || rm -f $$list
+	@list='$(RECHECK_LOGS:.log=.trs)'; test -z "$$list" || rm -f $$list
 	@test -z "$(TEST_SUITE_LOG)" || rm -f $(TEST_SUITE_LOG)
-	@$(am__set_TESTS_bases); \
-	if test $@ = recheck; then \
-	  bases=`for i in $$bases; do echo $$i; done \
-	           | $(am__list_recheck_tests)` || exit 1; \
-	fi; \
+	@set +e; $(am__set_TESTS_bases); \
 	log_list=`for i in $$bases; do echo $$i.log; done`; \
 	trs_list=`for i in $$bases; do echo $$i.trs; done`; \
 	log_list=`echo $$log_list`; trs_list=`echo $$trs_list`; \
-	if test $@ != recheck || $(am__make_dryrun); then :; else \
-	  test -z "$$log_list" || rm -f $$log_list; \
-	  test -z "$$trs_list" || rm -f $$trs_list; \
-	fi; \
-	$(MAKE) $(AM_MAKEFLAGS) $(TEST_SUITE_LOG) TEST_LOGS="$$log_list"
+	$(MAKE) $(AM_MAKEFLAGS) $(TEST_SUITE_LOG) TEST_LOGS="$$log_list"; \
+	exit $$?;
 recheck: all 
+	@test -z "$(TEST_SUITE_LOG)" || rm -f $(TEST_SUITE_LOG)
+	@set +e; $(am__set_TESTS_bases); \
+	bases=`for i in $$bases; do echo $$i; done \
+	         | $(am__list_recheck_tests)` || exit 1; \
+	log_list=`for i in $$bases; do echo $$i.log; done`; \
+	log_list=`echo $$log_list`; \
+	$(MAKE) $(AM_MAKEFLAGS) $(TEST_SUITE_LOG) \
+	        am__force_recheck=am--force-recheck \
+	        TEST_LOGS="$$log_list"; \
+	exit $$?
 misc/help-version.log: misc/help-version
 	@p='misc/help-version'; \
 	b='misc/help-version'; \
@@ -3309,13 +3315,6 @@ pr/pr-tests.log: pr/pr-tests
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-misc/df-P.log: misc/df-P
-	@p='misc/df-P'; \
-	b='misc/df-P'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
 misc/pwd-option.log: misc/pwd-option
 	@p='misc/pwd-option'; \
 	b='misc/pwd-option'; \
@@ -3445,13 +3444,6 @@ misc/date-sec.log: misc/date-sec
 misc/dircolors.log: misc/dircolors
 	@p='misc/dircolors'; \
 	b='misc/dircolors'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-misc/df.log: misc/df
-	@p='misc/df'; \
-	b='misc/df'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -3904,6 +3896,13 @@ misc/sort-month.log: misc/sort-month
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+misc/sort-exit-early.log: misc/sort-exit-early
+	@p='misc/sort-exit-early'; \
+	b='misc/sort-exit-early'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 misc/sort-rand.log: misc/sort-rand
 	@p='misc/sort-rand'; \
 	b='misc/sort-rand'; \
@@ -4023,6 +4022,13 @@ split/numeric.log: split/numeric
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+split/guard-input.log: split/guard-input
+	@p='split/guard-input'; \
+	b='split/guard-input'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 misc/stat-birthtime.log: misc/stat-birthtime
 	@p='misc/stat-birthtime'; \
 	b='misc/stat-birthtime'; \
@@ -4103,13 +4109,6 @@ misc/stty-pairs.log: misc/stty-pairs
 misc/stty-row-col.log: misc/stty-row-col
 	@p='misc/stty-row-col'; \
 	b='misc/stty-row-col'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-misc/su-fail.log: misc/su-fail
-	@p='misc/su-fail'; \
-	b='misc/su-fail'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -4751,9 +4750,30 @@ cp/thru-dangling.log: cp/thru-dangling
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+df/header.log: df/header
+	@p='df/header'; \
+	b='df/header'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+df/df-P.log: df/df-P
+	@p='df/df-P'; \
+	b='df/df-P'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 df/unreadable.log: df/unreadable
 	@p='df/unreadable'; \
 	b='df/unreadable'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+df/total-unprocessed.log: df/total-unprocessed
+	@p='df/total-unprocessed'; \
+	b='df/total-unprocessed'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -5286,6 +5306,13 @@ ls/readdir-mountpoint-inode.log: ls/readdir-mountpoint-inode
 ls/recursive.log: ls/recursive
 	@p='ls/recursive'; \
 	b='ls/recursive'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+ls/root-rel-symlink-color.log: ls/root-rel-symlink-color
+	@p='ls/root-rel-symlink-color'; \
+	b='ls/root-rel-symlink-color'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -5979,6 +6006,13 @@ cp/sparse-fiemap.log: cp/sparse-fiemap
 dd/skip-seek-past-dev.log: dd/skip-seek-past-dev
 	@p='dd/skip-seek-past-dev'; \
 	b='dd/skip-seek-past-dev'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+df/problematic-chars.log: df/problematic-chars
+	@p='df/problematic-chars'; \
+	b='df/problematic-chars'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

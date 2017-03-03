@@ -1,5 +1,5 @@
 #! /bin/sh
-# Make sure all these programs work properly
+# Make sure all of these programs work properly
 # when invoked with --help or --version.
 
 # Copyright (C) 2000-2012 Free Software Foundation, Inc.
@@ -30,7 +30,6 @@ expected_failure_status_env=125
 expected_failure_status_nice=125
 expected_failure_status_nohup=125
 expected_failure_status_stdbuf=125
-expected_failure_status_su=125
 expected_failure_status_timeout=125
 expected_failure_status_printenv=2
 expected_failure_status_tty=3
@@ -208,7 +207,6 @@ nohup_setup () { args=--version; }
 printf_setup () { args=foo; }
 seq_setup () { args=10; }
 sleep_setup () { args=0; }
-su_setup () { args=--version; }
 stdbuf_setup () { args="-oL true"; }
 timeout_setup () { args=--version; }
 

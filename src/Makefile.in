@@ -104,6 +104,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/00gnulib.m4 \
 	$(top_srcdir)/m4/error.m4 $(top_srcdir)/m4/euidaccess.m4 \
 	$(top_srcdir)/m4/exponentd.m4 $(top_srcdir)/m4/exponentf.m4 \
 	$(top_srcdir)/m4/exponentl.m4 $(top_srcdir)/m4/extensions.m4 \
+	$(top_srcdir)/m4/extern-inline.m4 \
 	$(top_srcdir)/m4/faccessat.m4 $(top_srcdir)/m4/fatal-signal.m4 \
 	$(top_srcdir)/m4/fchdir.m4 $(top_srcdir)/m4/fchmodat.m4 \
 	$(top_srcdir)/m4/fchownat.m4 $(top_srcdir)/m4/fclose.m4 \
@@ -116,10 +117,12 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/00gnulib.m4 \
 	$(top_srcdir)/m4/flexmember.m4 $(top_srcdir)/m4/float_h.m4 \
 	$(top_srcdir)/m4/fnmatch.m4 $(top_srcdir)/m4/fopen.m4 \
 	$(top_srcdir)/m4/fpending.m4 $(top_srcdir)/m4/fpieee.m4 \
-	$(top_srcdir)/m4/fpurge.m4 $(top_srcdir)/m4/freading.m4 \
-	$(top_srcdir)/m4/freopen.m4 $(top_srcdir)/m4/frexp.m4 \
-	$(top_srcdir)/m4/frexpl.m4 $(top_srcdir)/m4/fseek.m4 \
-	$(top_srcdir)/m4/fseeko.m4 $(top_srcdir)/m4/fstat.m4 \
+	$(top_srcdir)/m4/fpurge.m4 $(top_srcdir)/m4/freadahead.m4 \
+	$(top_srcdir)/m4/freading.m4 $(top_srcdir)/m4/freadptr.m4 \
+	$(top_srcdir)/m4/freadseek.m4 $(top_srcdir)/m4/freopen.m4 \
+	$(top_srcdir)/m4/frexp.m4 $(top_srcdir)/m4/frexpl.m4 \
+	$(top_srcdir)/m4/fseek.m4 $(top_srcdir)/m4/fseeko.m4 \
+	$(top_srcdir)/m4/fseterr.m4 $(top_srcdir)/m4/fstat.m4 \
 	$(top_srcdir)/m4/fstatat.m4 $(top_srcdir)/m4/fstypename.m4 \
 	$(top_srcdir)/m4/fsusage.m4 $(top_srcdir)/m4/fsync.m4 \
 	$(top_srcdir)/m4/ftell.m4 $(top_srcdir)/m4/ftello.m4 \
@@ -161,9 +164,8 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/00gnulib.m4 \
 	$(top_srcdir)/m4/largefile.m4 $(top_srcdir)/m4/lchmod.m4 \
 	$(top_srcdir)/m4/lchown.m4 $(top_srcdir)/m4/lcmessage.m4 \
 	$(top_srcdir)/m4/ldexp.m4 $(top_srcdir)/m4/ldexpl.m4 \
-	$(top_srcdir)/m4/lib-check.m4 $(top_srcdir)/m4/lib-ignore.m4 \
-	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
-	$(top_srcdir)/m4/lib-prefix.m4 \
+	$(top_srcdir)/m4/lib-ignore.m4 $(top_srcdir)/m4/lib-ld.m4 \
+	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
 	$(top_srcdir)/m4/libunistring-base.m4 \
 	$(top_srcdir)/m4/link-follow.m4 $(top_srcdir)/m4/link.m4 \
 	$(top_srcdir)/m4/linkat.m4 $(top_srcdir)/m4/localcharset.m4 \
@@ -243,11 +245,10 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/00gnulib.m4 \
 	$(top_srcdir)/m4/stddef_h.m4 $(top_srcdir)/m4/stdint.m4 \
 	$(top_srcdir)/m4/stdint_h.m4 $(top_srcdir)/m4/stdio_h.m4 \
 	$(top_srcdir)/m4/stdlib_h.m4 $(top_srcdir)/m4/stpcpy.m4 \
-	$(top_srcdir)/m4/stpncpy.m4 $(top_srcdir)/m4/strcase.m4 \
-	$(top_srcdir)/m4/strchrnul.m4 $(top_srcdir)/m4/strdup.m4 \
-	$(top_srcdir)/m4/strerror.m4 $(top_srcdir)/m4/strerror_r.m4 \
-	$(top_srcdir)/m4/strftime.m4 $(top_srcdir)/m4/string_h.m4 \
-	$(top_srcdir)/m4/strings_h.m4 $(top_srcdir)/m4/strncat.m4 \
+	$(top_srcdir)/m4/stpncpy.m4 $(top_srcdir)/m4/strchrnul.m4 \
+	$(top_srcdir)/m4/strdup.m4 $(top_srcdir)/m4/strerror.m4 \
+	$(top_srcdir)/m4/strerror_r.m4 $(top_srcdir)/m4/strftime.m4 \
+	$(top_srcdir)/m4/string_h.m4 $(top_srcdir)/m4/strncat.m4 \
 	$(top_srcdir)/m4/strndup.m4 $(top_srcdir)/m4/strnlen.m4 \
 	$(top_srcdir)/m4/strnumcmp.m4 $(top_srcdir)/m4/strpbrk.m4 \
 	$(top_srcdir)/m4/strsignal.m4 $(top_srcdir)/m4/strstr.m4 \
@@ -305,18 +306,16 @@ LIBRARIES = $(noinst_LIBRARIES)
 AM_V_AR = $(am__v_AR_@AM_V@)
 am__v_AR_ = $(am__v_AR_@AM_DEFAULT_V@)
 am__v_AR_0 = @echo "  AR      " $@;
-AM_V_at = $(am__v_at_@AM_V@)
-am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
-am__v_at_0 = @
+am__v_AR_1 = 
 libver_a_AR = $(AR) $(ARFLAGS)
 libver_a_LIBADD =
 nodist_libver_a_OBJECTS = version.$(OBJEXT)
 libver_a_OBJECTS = $(nodist_libver_a_OBJECTS)
-am__EXEEXT_1 = arch$(EXEEXT) hostname$(EXEEXT) su$(EXEEXT)
+am__EXEEXT_1 = arch$(EXEEXT) hostname$(EXEEXT)
 am__EXEEXT_2 = chroot$(EXEEXT) df$(EXEEXT) hostid$(EXEEXT) \
 	libstdbuf.so$(EXEEXT) nice$(EXEEXT) pinky$(EXEEXT) \
-	stdbuf$(EXEEXT) stty$(EXEEXT) su$(EXEEXT) uptime$(EXEEXT) \
-	users$(EXEEXT) who$(EXEEXT)
+	stdbuf$(EXEEXT) stty$(EXEEXT) uptime$(EXEEXT) users$(EXEEXT) \
+	who$(EXEEXT)
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(pkglibexecdir)"
 PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS) $(pkglibexec_PROGRAMS)
 am___OBJECTS = lbracket.$(OBJEXT)
@@ -579,7 +578,7 @@ sleep_DEPENDENCIES = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1)
 sort_SOURCES = sort.c
 sort_OBJECTS = sort.$(OBJEXT)
 sort_DEPENDENCIES = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 split_SOURCES = split.c
 split_OBJECTS = split.$(OBJEXT)
 split_DEPENDENCIES = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1)
@@ -592,9 +591,6 @@ stdbuf_DEPENDENCIES = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1)
 stty_SOURCES = stty.c
 stty_OBJECTS = stty.$(OBJEXT)
 stty_DEPENDENCIES = $(am__DEPENDENCIES_2)
-su_SOURCES = su.c
-su_OBJECTS = su.$(OBJEXT)
-su_DEPENDENCIES = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1)
 sum_SOURCES = sum.c
 sum_OBJECTS = sum.$(OBJEXT)
 sum_DEPENDENCIES = $(am__DEPENDENCIES_2)
@@ -668,6 +664,18 @@ whoami_DEPENDENCIES = $(am__DEPENDENCIES_2)
 yes_SOURCES = yes.c
 yes_OBJECTS = yes.$(OBJEXT)
 yes_DEPENDENCIES = $(am__DEPENDENCIES_2)
+AM_V_P = $(am__v_P_@AM_V@)
+am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
+am__v_P_0 = false
+am__v_P_1 = :
+AM_V_GEN = $(am__v_GEN_@AM_V@)
+am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
+am__v_GEN_0 = @echo "  GEN     " $@;
+am__v_GEN_1 = 
+AM_V_at = $(am__v_at_@AM_V@)
+am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
+am__v_at_0 = @
+am__v_at_1 = 
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/lib
 depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
 am__depfiles_maybe = depfiles
@@ -675,19 +683,19 @@ am__mv = mv -f
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
+am__v_lt_1 = 
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 AM_V_CC = $(am__v_CC_@AM_V@)
 am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
 am__v_CC_0 = @echo "  CC      " $@;
+am__v_CC_1 = 
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
-AM_V_GEN = $(am__v_GEN_@AM_V@)
-am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
-am__v_GEN_0 = @echo "  GEN     " $@;
+am__v_CCLD_1 = 
 SOURCES = $(nodist_libver_a_SOURCES) $(__SOURCES) $(arch_SOURCES) \
 	base64.c basename.c cat.c chcon.c $(chgrp_SOURCES) chmod.c \
 	$(chown_SOURCES) chroot.c cksum.c comm.c $(cp_SOURCES) \
@@ -703,7 +711,7 @@ SOURCES = $(nodist_libver_a_SOURCES) $(__SOURCES) $(arch_SOURCES) \
 	$(rmdir_SOURCES) runcon.c seq.c setuidgid.c $(sha1sum_SOURCES) \
 	$(sha224sum_SOURCES) $(sha256sum_SOURCES) $(sha384sum_SOURCES) \
 	$(sha512sum_SOURCES) shred.c shuf.c sleep.c sort.c split.c \
-	$(stat_SOURCES) stdbuf.c stty.c su.c sum.c sync.c tac.c tail.c \
+	$(stat_SOURCES) stdbuf.c stty.c sum.c sync.c tac.c tail.c \
 	tee.c test.c $(timeout_SOURCES) touch.c tr.c true.c truncate.c \
 	tsort.c tty.c $(uname_SOURCES) unexpand.c uniq.c unlink.c \
 	uptime.c users.c $(vdir_SOURCES) wc.c who.c whoami.c yes.c
@@ -722,7 +730,7 @@ DIST_SOURCES = $(__SOURCES) $(arch_SOURCES) base64.c basename.c cat.c \
 	runcon.c seq.c setuidgid.c $(sha1sum_SOURCES) \
 	$(sha224sum_SOURCES) $(sha256sum_SOURCES) $(sha384sum_SOURCES) \
 	$(sha512sum_SOURCES) shred.c shuf.c sleep.c sort.c split.c \
-	$(stat_SOURCES) stdbuf.c stty.c su.c sum.c sync.c tac.c tail.c \
+	$(stat_SOURCES) stdbuf.c stty.c sum.c sync.c tac.c tail.c \
 	tee.c test.c $(timeout_SOURCES) touch.c tr.c true.c truncate.c \
 	tsort.c tty.c $(uname_SOURCES) unexpand.c uniq.c unlink.c \
 	uptime.c users.c $(vdir_SOURCES) wc.c who.c whoami.c yes.c
@@ -732,6 +740,7 @@ am__can_run_installinfo = \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
 HEADERS = $(noinst_HEADERS)
+am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -851,7 +860,6 @@ GNULIB_FDATASYNC = @GNULIB_FDATASYNC@
 GNULIB_FDOPEN = @GNULIB_FDOPEN@
 GNULIB_FDOPENDIR = @GNULIB_FDOPENDIR@
 GNULIB_FFLUSH = @GNULIB_FFLUSH@
-GNULIB_FFS = @GNULIB_FFS@
 GNULIB_FFSL = @GNULIB_FFSL@
 GNULIB_FFSLL = @GNULIB_FFSLL@
 GNULIB_FGETC = @GNULIB_FGETC@
@@ -1283,7 +1291,6 @@ HAVE_DECL_SNPRINTF = @HAVE_DECL_SNPRINTF@
 HAVE_DECL_SQRTL = @HAVE_DECL_SQRTL@
 HAVE_DECL_STRDUP = @HAVE_DECL_STRDUP@
 HAVE_DECL_STRERROR_R = @HAVE_DECL_STRERROR_R@
-HAVE_DECL_STRNCASECMP = @HAVE_DECL_STRNCASECMP@
 HAVE_DECL_STRNDUP = @HAVE_DECL_STRNDUP@
 HAVE_DECL_STRNLEN = @HAVE_DECL_STRNLEN@
 HAVE_DECL_STRSIGNAL = @HAVE_DECL_STRSIGNAL@
@@ -1320,7 +1327,6 @@ HAVE_FCNTL = @HAVE_FCNTL@
 HAVE_FDATASYNC = @HAVE_FDATASYNC@
 HAVE_FDOPENDIR = @HAVE_FDOPENDIR@
 HAVE_FEATURES_H = @HAVE_FEATURES_H@
-HAVE_FFS = @HAVE_FFS@
 HAVE_FFSL = @HAVE_FFSL@
 HAVE_FFSLL = @HAVE_FFSLL@
 HAVE_FMA = @HAVE_FMA@
@@ -1465,10 +1471,8 @@ HAVE_SQRTL = @HAVE_SQRTL@
 HAVE_STDINT_H = @HAVE_STDINT_H@
 HAVE_STPCPY = @HAVE_STPCPY@
 HAVE_STPNCPY = @HAVE_STPNCPY@
-HAVE_STRCASECMP = @HAVE_STRCASECMP@
 HAVE_STRCASESTR = @HAVE_STRCASESTR@
 HAVE_STRCHRNUL = @HAVE_STRCHRNUL@
-HAVE_STRINGS_H = @HAVE_STRINGS_H@
 HAVE_STRPBRK = @HAVE_STRPBRK@
 HAVE_STRPTIME = @HAVE_STRPTIME@
 HAVE_STRSEP = @HAVE_STRSEP@
@@ -1569,7 +1573,6 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = $(cu_install_program)
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
-INSTALL_SU = @INSTALL_SU@
 INT32_MAX_LT_INTMAX_MAX = @INT32_MAX_LT_INTMAX_MAX@
 INT64_MAX_EQ_LONG_MAX = @INT64_MAX_EQ_LONG_MAX@
 INTLLIBS = @INTLLIBS@
@@ -1593,7 +1596,6 @@ LIBUNISTRING_UNIWIDTH_H = @LIBUNISTRING_UNIWIDTH_H@
 LIB_ACL = @LIB_ACL@
 LIB_CAP = @LIB_CAP@
 LIB_CLOCK_GETTIME = @LIB_CLOCK_GETTIME@
-LIB_CRYPT = @LIB_CRYPT@
 LIB_EACCESS = @LIB_EACCESS@
 LIB_FDATASYNC = @LIB_FDATASYNC@
 LIB_GETHRXTIME = @LIB_GETHRXTIME@
@@ -1649,7 +1651,6 @@ NEXT_AS_FIRST_DIRECTIVE_STDDEF_H = @NEXT_AS_FIRST_DIRECTIVE_STDDEF_H@
 NEXT_AS_FIRST_DIRECTIVE_STDINT_H = @NEXT_AS_FIRST_DIRECTIVE_STDINT_H@
 NEXT_AS_FIRST_DIRECTIVE_STDIO_H = @NEXT_AS_FIRST_DIRECTIVE_STDIO_H@
 NEXT_AS_FIRST_DIRECTIVE_STDLIB_H = @NEXT_AS_FIRST_DIRECTIVE_STDLIB_H@
-NEXT_AS_FIRST_DIRECTIVE_STRINGS_H = @NEXT_AS_FIRST_DIRECTIVE_STRINGS_H@
 NEXT_AS_FIRST_DIRECTIVE_STRING_H = @NEXT_AS_FIRST_DIRECTIVE_STRING_H@
 NEXT_AS_FIRST_DIRECTIVE_SYS_IOCTL_H = @NEXT_AS_FIRST_DIRECTIVE_SYS_IOCTL_H@
 NEXT_AS_FIRST_DIRECTIVE_SYS_RESOURCE_H = @NEXT_AS_FIRST_DIRECTIVE_SYS_RESOURCE_H@
@@ -1689,7 +1690,6 @@ NEXT_STDDEF_H = @NEXT_STDDEF_H@
 NEXT_STDINT_H = @NEXT_STDINT_H@
 NEXT_STDIO_H = @NEXT_STDIO_H@
 NEXT_STDLIB_H = @NEXT_STDLIB_H@
-NEXT_STRINGS_H = @NEXT_STRINGS_H@
 NEXT_STRING_H = @NEXT_STRING_H@
 NEXT_SYS_IOCTL_H = @NEXT_SYS_IOCTL_H@
 NEXT_SYS_RESOURCE_H = @NEXT_SYS_RESOURCE_H@
@@ -2044,7 +2044,7 @@ top_srcdir = @top_srcdir@
 # Hence, if you want to install programs from this list anyway, say A and B,
 # use --enable-install-program=A,B
 no_install__progs = \
-  arch hostname su
+  arch hostname
 
 build_if_possible__progs = \
   chroot	\
@@ -2055,7 +2055,6 @@ build_if_possible__progs = \
   pinky		\
   stdbuf	\
   stty		\
-  su		\
   uptime	\
   users		\
   who
@@ -2091,7 +2090,7 @@ BUILT_SOURCES = dircolors.h wheel-size.h wheel.h fs-is-local.h fs.h \
 
 # Also remove these sometimes-built programs.
 # For example, even when excluded, they're built via _sc_check-AUTHORS.
-CLEANFILES = $(SCRIPTS) su $(no_install__progs) fs-def fs-magic \
+CLEANFILES = $(SCRIPTS) $(no_install__progs) fs-def fs-magic \
 	fs-kernel-magic
 AM_CPPFLAGS = -I$(top_srcdir)/lib
 noinst_LIBRARIES = libver.a
@@ -2209,14 +2208,11 @@ shuf_LDADD = $(LDADD)
 sleep_LDADD = $(LDADD) $(LIB_NANOSLEEP)
 
 # for pthread
-sort_LDADD = $(LDADD) $(LIB_NANOSLEEP) $(LIB_PTHREAD)
+sort_LDADD = $(LDADD) $(LIB_EACCESS) $(LIB_NANOSLEEP) $(LIB_PTHREAD)
 split_LDADD = $(LDADD) $(LIBICONV)
 stat_LDADD = $(LDADD) $(LIB_SELINUX)
 stdbuf_LDADD = $(LDADD) $(LIBICONV)
 stty_LDADD = $(LDADD)
-
-# for crypt
-su_LDADD = $(LDADD) $(LIB_CRYPT)
 sum_LDADD = $(LDADD)
 sync_LDADD = $(LDADD)
 tac_LDADD = $(LDADD)
@@ -2266,21 +2262,6 @@ remove_LDADD = $(LIB_EACCESS)
 RELEASE_YEAR = \
   `sed -n '/.*COPYRIGHT_YEAR = \([0-9][0-9][0-9][0-9]\) };/s//\1/p' \
     $(top_srcdir)/lib/version-etc.c`
-
-installed_su = $(DESTDIR)$(bindir)/`echo su|sed '$(transform)'`
-setuid_root_mode = a=rx,u+s
-install_su = \
-  if test "$(INSTALL_SU)" = yes; then			\
-    p=su;						\
-    echo " $(INSTALL_PROGRAM) $$p $(installed_su)";	\
-    $(INSTALL_PROGRAM) $$p $(installed_su);		\
-    echo " chown root $(installed_su)";			\
-    chown root $(installed_su);				\
-    echo " chmod $(setuid_root_mode) $(installed_su)";	\
-    chmod $(setuid_root_mode) $(installed_su);		\
-  else							\
-    :;							\
-  fi
 
 copy_sources = copy.c cp-hash.c extent-scan.c extent-scan.h
 ginstall_SOURCES = install.c prog-fprintf.c $(copy_sources)
@@ -2434,10 +2415,11 @@ install-binPROGRAMS: $(bin_PROGRAMS)
 	fi; \
 	for p in $$list; do echo "$$p $$p"; done | \
 	sed 's/$(EXEEXT)$$//' | \
-	while read p p1; do if test -f $$p; \
-	  then echo "$$p"; echo "$$p"; else :; fi; \
+	while read p p1; do if test -f $$p \
+	  ; then echo "$$p"; echo "$$p"; else :; fi; \
 	done | \
-	sed -e 'p;s,.*/,,;n;h' -e 's|.*|.|' \
+	sed -e 'p;s,.*/,,;n;h' \
+	    -e 's|.*|.|' \
 	    -e 'p;x;s,.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/' | \
 	sed 'N;N;N;s,\n, ,g' | \
 	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1 } \
@@ -2458,7 +2440,8 @@ uninstall-binPROGRAMS:
 	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
 	files=`for p in $$list; do echo "$$p"; done | \
 	  sed -e 'h;s,^.*/,,;s/$(EXEEXT)$$//;$(transform)' \
-	      -e 's/$$/$(EXEEXT)/' `; \
+	      -e 's/$$/$(EXEEXT)/' \
+	`; \
 	test -n "$$list" || exit 0; \
 	echo " ( cd '$(DESTDIR)$(bindir)' && rm -f" $$files ")"; \
 	cd "$(DESTDIR)$(bindir)" && rm -f $$files
@@ -2477,10 +2460,11 @@ install-pkglibexecPROGRAMS: $(pkglibexec_PROGRAMS)
 	fi; \
 	for p in $$list; do echo "$$p $$p"; done | \
 	sed 's/$(EXEEXT)$$//' | \
-	while read p p1; do if test -f $$p; \
-	  then echo "$$p"; echo "$$p"; else :; fi; \
+	while read p p1; do if test -f $$p \
+	  ; then echo "$$p"; echo "$$p"; else :; fi; \
 	done | \
-	sed -e 'p;s,.*/,,;n;h' -e 's|.*|.|' \
+	sed -e 'p;s,.*/,,;n;h' \
+	    -e 's|.*|.|' \
 	    -e 'p;x;s,.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/' | \
 	sed 'N;N;N;s,\n, ,g' | \
 	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1 } \
@@ -2501,7 +2485,8 @@ uninstall-pkglibexecPROGRAMS:
 	@list='$(pkglibexec_PROGRAMS)'; test -n "$(pkglibexecdir)" || list=; \
 	files=`for p in $$list; do echo "$$p"; done | \
 	  sed -e 'h;s,^.*/,,;s/$(EXEEXT)$$//;$(transform)' \
-	      -e 's/$$/$(EXEEXT)/' `; \
+	      -e 's/$$/$(EXEEXT)/' \
+	`; \
 	test -n "$$list" || exit 0; \
 	echo " ( cd '$(DESTDIR)$(pkglibexecdir)' && rm -f" $$files ")"; \
 	cd "$(DESTDIR)$(pkglibexecdir)" && rm -f $$files
@@ -2757,9 +2742,6 @@ stdbuf$(EXEEXT): $(stdbuf_OBJECTS) $(stdbuf_DEPENDENCIES) $(EXTRA_stdbuf_DEPENDE
 stty$(EXEEXT): $(stty_OBJECTS) $(stty_DEPENDENCIES) $(EXTRA_stty_DEPENDENCIES) 
 	@rm -f stty$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(stty_OBJECTS) $(stty_LDADD) $(LIBS)
-su$(EXEEXT): $(su_OBJECTS) $(su_DEPENDENCIES) $(EXTRA_su_DEPENDENCIES) 
-	@rm -f su$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(su_OBJECTS) $(su_LDADD) $(LIBS)
 sum$(EXEEXT): $(sum_OBJECTS) $(sum_DEPENDENCIES) $(EXTRA_sum_DEPENDENCIES) 
 	@rm -f sum$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(sum_OBJECTS) $(sum_LDADD) $(LIBS)
@@ -2937,7 +2919,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stdbuf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stty.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/su.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sum.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sync.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tac.Po@am__quote@
@@ -3147,8 +3128,8 @@ sha512sum-md5sum.obj: md5sum.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sha512sum_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sha512sum-md5sum.obj `if test -f 'md5sum.c'; then $(CYGPATH_W) 'md5sum.c'; else $(CYGPATH_W) '$(srcdir)/md5sum.c'; fi`
 
-ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
-	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
+ID: $(am__tagged_files)
+	list='$(am__tagged_files)'; \
 	unique=`for i in $$list; do \
 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
 	  done | \
@@ -3157,11 +3138,10 @@ ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	mkid -fID $$unique
 tags: TAGS
 
-TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
-		$(TAGS_FILES) $(LISP)
+TAGS:  $(TAGS_DEPENDENCIES) $(am__tagged_files)
 	set x; \
 	here=`pwd`; \
-	list='$(SOURCES) $(HEADERS)  $(LISP) $(TAGS_FILES)'; \
+	list='$(am__tagged_files)'; \
 	unique=`for i in $$list; do \
 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
 	  done | \
@@ -3179,9 +3159,8 @@ TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
 	  fi; \
 	fi
 ctags: CTAGS
-CTAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) \
-		$(TAGS_FILES) $(LISP)
-	list='$(SOURCES) $(HEADERS)  $(LISP) $(TAGS_FILES)'; \
+CTAGS:  $(TAGS_DEPENDENCIES) $(am__tagged_files)
+	list='$(am__tagged_files)'; \
 	unique=`for i in $$list; do \
 	    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
 	  done | \
@@ -3196,8 +3175,8 @@ GTAGS:
 	  && $(am__cd) $(top_srcdir) \
 	  && gtags -i $(GTAGS_ARGS) "$$here"
 
-cscopelist:  $(HEADERS) $(SOURCES) $(LISP)
-	list='$(SOURCES) $(HEADERS) $(LISP)'; \
+cscopelist:  $(am__tagged_files)
+	list='$(am__tagged_files)'; \
 	case "$(srcdir)" in \
 	  [\\/]* | ?:[\\/]*) sdir="$(srcdir)" ;; \
 	  *) sdir=$(subdir)/$(srcdir) ;; \
@@ -3249,7 +3228,7 @@ distdir: $(DISTFILES)
 check-am: all-am
 check: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) check-am
-all-am: Makefile $(LIBRARIES) $(PROGRAMS) $(HEADERS) all-local
+all-am: Makefile $(LIBRARIES) $(PROGRAMS) $(HEADERS)
 installdirs:
 	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(pkglibexecdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
@@ -3319,8 +3298,7 @@ install-dvi: install-dvi-am
 install-dvi-am:
 
 install-exec-am: install-binPROGRAMS install-pkglibexecPROGRAMS
-	@$(NORMAL_INSTALL)
-	$(MAKE) $(AM_MAKEFLAGS) install-exec-hook
+
 install-html: install-html-am
 
 install-html-am:
@@ -3358,64 +3336,28 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-local \
+uninstall-am: uninstall-binPROGRAMS uninstall-pkglibexecPROGRAMS
+
+.MAKE: all check install install-am install-strip
+
+.PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
+	clean-generic clean-noinstLIBRARIES clean-noinstPROGRAMS \
+	clean-pkglibexecPROGRAMS cscopelist ctags dist-hook distclean \
+	distclean-compile distclean-generic distclean-tags distdir dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-binPROGRAMS install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-pkglibexecPROGRAMS \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
+	uninstall-am uninstall-binPROGRAMS \
 	uninstall-pkglibexecPROGRAMS
-
-.MAKE: all check install install-am install-exec-am install-strip
-
-.PHONY: CTAGS GTAGS all all-am all-local check check-am clean \
-	clean-binPROGRAMS clean-generic clean-noinstLIBRARIES \
-	clean-noinstPROGRAMS clean-pkglibexecPROGRAMS cscopelist ctags \
-	dist-hook distclean distclean-compile distclean-generic \
-	distclean-tags distdir dvi dvi-am html html-am info info-am \
-	install install-am install-binPROGRAMS install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-exec-hook install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-pkglibexecPROGRAMS install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic pdf pdf-am \
-	ps ps-am tags uninstall uninstall-am uninstall-binPROGRAMS \
-	uninstall-local uninstall-pkglibexecPROGRAMS
 
 
 $(PROGRAMS): ../lib/libcoreutils.a
-
-all-local: su$(EXEEXT)
-
-install-root: su$(EXEEXT)
-	@$(install_su)
-
-install-exec-hook: su$(EXEEXT)
-	@if test "$(INSTALL_SU)" = yes; then			\
-	  TMPFILE=$(DESTDIR)$(bindir)/.su-$$$$;			\
-	  rm -f $$TMPFILE;					\
-	  echo > $$TMPFILE;					\
-	  can_create_suid_root_executable=no;			\
-	  chown root $$TMPFILE > /dev/null 2>&1			\
-	    && chmod $(setuid_root_mode) $$TMPFILE > /dev/null 2>&1 \
-	    && can_create_suid_root_executable=yes;		\
-	  rm -f $$TMPFILE;					\
-	  if test $$can_create_suid_root_executable = yes; then \
-	    $(install_su);					\
-	  else							\
-	    echo "WARNING: insufficient access; not installing su"; \
-	    echo "NOTE: to install su, run 'make install-root' as root"; \
-	    rm -f $(installed_su);				\
-	  fi;							\
-	else :;							\
-	fi
-
-uninstall-local:
-# Remove su only if it's one we installed.
-	@if test "$(INSTALL_SU)" = yes; then			\
-	  if grep '$(PACKAGE_NAME)' $(installed_su) > /dev/null 2>&1; then \
-	    echo "  rm -f $(installed_su)"; \
-	    rm -f $(installed_su); \
-	  else :; \
-	  fi; \
-	fi
 dircolors.h: dcgen dircolors.hin
 	$(AM_V_GEN)rm -f $@ $@-t
 	$(AM_V_at)$(PERL) -w -- $(srcdir)/dcgen $(srcdir)/dircolors.hin > $@-t

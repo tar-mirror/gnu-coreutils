@@ -244,7 +244,6 @@ main (int argc, char **argv)
   off_t size IF_LINT ( = 0);
   off_t rsize = -1;
   rel_mode_t rel_mode = rm_abs;
-  mode_t omode;
   int c, fd = -1, oflags;
   char const *fname;
 
@@ -371,8 +370,15 @@ main (int argc, char **argv)
           if (0 <= ref_fd)
             {
               off_t file_end = lseek (ref_fd, 0, SEEK_END);
-              if (0 <= file_end && close (ref_fd) == 0)
+              int saved_errno = errno;
+              close (ref_fd); /* ignore failure */
+              if (0 <= file_end)
                 file_size = file_end;
+              else
+                {
+                  /* restore, in case close clobbered it. */
+                  errno = saved_errno;
+                }
             }
         }
       if (file_size < 0)
@@ -385,11 +391,10 @@ main (int argc, char **argv)
     }
 
   oflags = O_WRONLY | (no_create ? 0 : O_CREAT) | O_NONBLOCK;
-  omode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH;
 
   while ((fname = *argv++) != NULL)
     {
-      if ((fd = open (fname, oflags, omode)) == -1)
+      if ((fd = open (fname, oflags, MODE_RW_UGO)) == -1)
         {
           /* 'truncate -s0 -c no-such-file'  shouldn't gen error
              'truncate -s0 no-such-dir/file' should gen ENOENT error

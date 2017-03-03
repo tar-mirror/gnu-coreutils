@@ -13,8 +13,8 @@
 
 m4_ifndef([AC_AUTOCONF_VERSION],
   [m4_copy([m4_PACKAGE_VERSION], [AC_AUTOCONF_VERSION])])dnl
-m4_if(m4_defn([AC_AUTOCONF_VERSION]), [2.69.1-2d4eb],,
-[m4_warning([this file was generated for autoconf 2.69.1-2d4eb.
+m4_if(m4_defn([AC_AUTOCONF_VERSION]), [2.69.7-e8d3],,
+[m4_warning([this file was generated for autoconf 2.69.7-e8d3.
 You have another version of autoconf.  It may work, but is not guaranteed to.
 If you have problems, you may need to regenerate the build system entirely.
 To do so, use the procedure documented by the package, typically 'autoreconf'.])])
@@ -422,22 +422,13 @@ AC_DEFUN([AM_OUTPUT_DEPENDENCY_COMMANDS],
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
 
-# serial 20
+# serial 22
 
 # This macro actually does too much.  Some checks are only needed if
 # your package does certain things.  But this isn't really a big deal.
 
-# AM_INIT_AUTOMAKE(PACKAGE, VERSION, [NO-DEFINE])
 # AM_INIT_AUTOMAKE([OPTIONS])
-# -----------------------------------------------
-# The call with PACKAGE and VERSION arguments is the old style
-# call (pre autoconf-2.50), which is being phased out.  PACKAGE
-# and VERSION should now be passed to AC_INIT and removed from
-# the call to AM_INIT_AUTOMAKE.
-# We support both call styles for the transition.  After
-# the next Automake release, Autoconf can make the AC_INIT
-# arguments mandatory, and then we can depend on a new Autoconf
-# release and drop the old call support.
+# ---------------------------
 AC_DEFUN([AM_INIT_AUTOMAKE],
 [AC_PREREQ([2.65])dnl
 dnl Autoconf wants to disallow AM_ names.  We explicitly allow
@@ -466,22 +457,18 @@ fi
 AC_SUBST([CYGPATH_W])
 
 # Define the identity of the package.
-dnl Distinguish between old-style and new-style calls.
-m4_ifval([$2],
-[AC_DIAGNOSE([obsolete],
-[$0: two- and three-arguments forms are deprecated.  For more info, see:
-http://www.gnu.org/software/automake/manual/automake.html#Modernize-AM_INIT_AUTOMAKE-invocation])
-m4_ifval([$3], [_AM_SET_OPTION([no-define])])dnl
- AC_SUBST([PACKAGE], [$1])dnl
- AC_SUBST([VERSION], [$2])],
-[_AM_SET_OPTIONS([$1])dnl
+dnl Error out on old-style AM_INIT_AUTOMAKE calls.
+m4_ifval([$2], [m4_fatal(
+[$0: old-style two- and three-arguments forms are now unsupported.  For more info:
+http://www.gnu.org/software/automake/manual/automake.html#Modernize-AM_INIT_AUTOMAKE-invocation])])
+_AM_SET_OPTIONS([$1])dnl
 dnl Diagnose old-style AC_INIT with new-style AM_AUTOMAKE_INIT.
 m4_if(
   m4_ifdef([AC_PACKAGE_NAME], [ok]):m4_ifdef([AC_PACKAGE_VERSION], [ok]),
   [ok:ok],,
   [m4_fatal([AC_INIT should be called with package and version arguments])])dnl
  AC_SUBST([PACKAGE], ['AC_PACKAGE_TARNAME'])dnl
- AC_SUBST([VERSION], ['AC_PACKAGE_VERSION'])])dnl
+ AC_SUBST([VERSION], ['AC_PACKAGE_VERSION'])dnl
 
 _AM_IF_OPTION([no-define],,
 [AC_DEFINE_UNQUOTED([PACKAGE], ["$PACKAGE"], [Name of package])
@@ -498,6 +485,11 @@ AM_MISSING_PROG([MAKEINFO], [makeinfo])
 AC_REQUIRE([AM_PROG_INSTALL_SH])dnl
 AC_REQUIRE([AM_PROG_INSTALL_STRIP])dnl
 AC_REQUIRE([AC_PROG_MKDIR_P])dnl
+# For better backward compatibility.  To be removed once Automake 1.9.x
+# dies out for good.  For more background, see:
+# <http://lists.gnu.org/archive/html/automake/2012-07/msg00001.html>
+# <http://lists.gnu.org/archive/html/automake/2012-07/msg00014.html>
+AC_SUBST([mkdir_p], ['$(MKDIR_P)'])
 # We need awk for the "check" target.  The system "awk" is bad on
 # some platforms.
 AC_REQUIRE([AC_PROG_AWK])dnl
@@ -525,9 +517,9 @@ AC_PROVIDE_IFELSE([AC_PROG_OBJCXX],
 			     m4_defn([AC_PROG_OBJCXX])[_AM_DEPENDENCIES([OBJCXX])])])dnl
 ])
 AC_REQUIRE([AM_SILENT_RULES])dnl
-dnl The 'parallel-tests' driver may need to know about EXEEXT, so add the
-dnl 'am__EXEEXT' conditional if _AM_COMPILER_EXEEXT was seen.  This macro
-dnl is hooked onto _AC_COMPILER_EXEEXT early, see below.
+dnl The testsuite driver may need to know about EXEEXT, so add the
+dnl 'am__EXEEXT' conditional if _AM_COMPILER_EXEEXT was seen.  This
+dnl macro is hooked onto _AC_COMPILER_EXEEXT early, see below.
 AC_CONFIG_COMMANDS_PRE(dnl
 [m4_provide_if([_AM_COMPILER_EXEEXT],
   [AM_CONDITIONAL([am__EXEEXT], [test -n "$EXEEXT"])])])dnl
@@ -699,7 +691,7 @@ m4_define([AC_PROG_CC],
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
 
-# serial 7
+# serial 8
 
 # AM_MISSING_PROG(NAME, PROGRAM)
 # ------------------------------
@@ -711,8 +703,8 @@ AC_SUBST($1)])
 
 # AM_MISSING_HAS_RUN
 # ------------------
-# Define MISSING if not defined so far and test if it supports --run.
-# If it does, set am_missing_run to use it, otherwise, to nothing.
+# Define MISSING if not defined so far and test if it is modern enough.
+# If it is, set am_missing_run to use it, otherwise, to nothing.
 AC_DEFUN([AM_MISSING_HAS_RUN],
 [AC_REQUIRE([AM_AUX_DIR_EXPAND])dnl
 AC_REQUIRE_AUX_FILE([missing])dnl
@@ -725,8 +717,8 @@ if test x"${MISSING+set}" != xset; then
   esac
 fi
 # Use eval to expand $SHELL
-if eval "$MISSING --run true"; then
-  am_missing_run="$MISSING --run "
+if eval "$MISSING --is-lightweight"; then
+  am_missing_run="$MISSING "
 else
   am_missing_run=
   AC_MSG_WARN(['missing' script is too old or missing])
@@ -1134,6 +1126,7 @@ m4_include([m4/exponentd.m4])
 m4_include([m4/exponentf.m4])
 m4_include([m4/exponentl.m4])
 m4_include([m4/extensions.m4])
+m4_include([m4/extern-inline.m4])
 m4_include([m4/faccessat.m4])
 m4_include([m4/fatal-signal.m4])
 m4_include([m4/fchdir.m4])
@@ -1159,12 +1152,16 @@ m4_include([m4/fopen.m4])
 m4_include([m4/fpending.m4])
 m4_include([m4/fpieee.m4])
 m4_include([m4/fpurge.m4])
+m4_include([m4/freadahead.m4])
 m4_include([m4/freading.m4])
+m4_include([m4/freadptr.m4])
+m4_include([m4/freadseek.m4])
 m4_include([m4/freopen.m4])
 m4_include([m4/frexp.m4])
 m4_include([m4/frexpl.m4])
 m4_include([m4/fseek.m4])
 m4_include([m4/fseeko.m4])
+m4_include([m4/fseterr.m4])
 m4_include([m4/fstat.m4])
 m4_include([m4/fstatat.m4])
 m4_include([m4/fstypename.m4])
@@ -1240,7 +1237,6 @@ m4_include([m4/lchown.m4])
 m4_include([m4/lcmessage.m4])
 m4_include([m4/ldexp.m4])
 m4_include([m4/ldexpl.m4])
-m4_include([m4/lib-check.m4])
 m4_include([m4/lib-ignore.m4])
 m4_include([m4/lib-ld.m4])
 m4_include([m4/lib-link.m4])
@@ -1396,14 +1392,12 @@ m4_include([m4/stdio_h.m4])
 m4_include([m4/stdlib_h.m4])
 m4_include([m4/stpcpy.m4])
 m4_include([m4/stpncpy.m4])
-m4_include([m4/strcase.m4])
 m4_include([m4/strchrnul.m4])
 m4_include([m4/strdup.m4])
 m4_include([m4/strerror.m4])
 m4_include([m4/strerror_r.m4])
 m4_include([m4/strftime.m4])
 m4_include([m4/string_h.m4])
-m4_include([m4/strings_h.m4])
 m4_include([m4/strncat.m4])
 m4_include([m4/strndup.m4])
 m4_include([m4/strnlen.m4])

@@ -126,7 +126,11 @@ statfs (char const *filename, struct fs_info *buf)
 # else
 #  define STRUCT_STATVFS struct statfs
 #  define STRUCT_STATXFS_F_FSID_IS_INTEGER STRUCT_STATFS_F_FSID_IS_INTEGER
-#  define STATFS_FRSIZE(S) 0
+#  if HAVE_STRUCT_STATFS_F_FRSIZE
+#   define STATFS_FRSIZE(S) ((S)->f_frsize)
+#  else
+#   define STATFS_FRSIZE(S) 0
+#  endif
 # endif
 #endif
 
@@ -245,6 +249,11 @@ human_fstype (STRUCT_STATVFS const *statfsbuf)
       return "afs";
     case S_MAGIC_ANON_INODE_FS: /* 0x09041934 local */
       return "anon-inode FS";
+    case S_MAGIC_AUFS: /* 0x61756673 remote */
+      /* FIXME: change syntax or add an optional attribute like "inotify:no".
+         The above is labeled as "remote" so that tail always uses polling,
+         but this isn't really a remote file system type.  */
+      return "aufs";
     case S_MAGIC_AUTOFS: /* 0x0187 local */
       return "autofs";
     case S_MAGIC_BEFS: /* 0x42465331 local */
@@ -353,6 +362,8 @@ human_fstype (STRUCT_STATVFS const *statfsbuf)
       return "openprom";
     case S_MAGIC_OCFS2: /* 0x7461636f remote */
       return "ocfs2";
+    case S_MAGIC_PANFS: /* 0xAAD7AAEA remote */
+      return "panfs";
     case S_MAGIC_PIPEFS: /* 0x50495045 remote */
       /* FIXME: change syntax or add an optional attribute like "inotify:no".
          The above is labeled as "remote" so that tail always uses polling,

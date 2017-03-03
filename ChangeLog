@@ -1,4 +1,659 @@
+2012-08-12  Jim Meyering  <meyering@redhat.com>
+
+	version 8.18
+	* NEWS: Record release date.
+
+2012-08-08  Pádraig Brady  <P@draigBrady.com>
+
+	tests: fix validation of local file systems
+	* tests/init.cfg (require_mount_list_): A new function
+	to ensure we can read the list of file systems.
+	(require_local_dir_): Call the above function, as otherwise
+	the check is invalid.
+	* tests/df/total-unprocessed: Ensure df can read the
+	list of mounted file systems so that --local can be honored.
+
+2012-08-06  Jim Meyering  <meyering@redhat.com>
+
+	build: update gnulib submodule to latest
+
+	tests: printf-surprise: avoid unwarranted failure on FreeBSD 9.0
+	* tests/misc/printf-surprise: A VM size of 10,000KiB was too
+	little in which to run "env printf ..." on FreeBSD 9.0-p3.
+	Increase it to 15,000.
+
+2012-08-05  Jim Meyering  <meyering@redhat.com>
+
+	build: avoid sort link failure on Solaris 10
+	* src/Makefile.am (sort_LDADD): Sort uses euidaccess, which may require
+	whatever library configure deemed necessary to resolve the eaccess
+	function, but no one told sort to link with that library.
+	(sort_LDADD): Add $(LIB_EACCESS).
+
+2012-08-04  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	df: fix exit code and error messages with --total
+	When the combination of the file system options with given files or
+	devices does not lead to output, "df --total" would exit successfully
+	although it should not.
+
+	Examples:
+	  $ df --total --type=xfs /          # when / is not an XFS file system
+	  $ df --total --local -t nfs  DIR   # nfs is remote per se ...
+	  $ df --total -t qwerty /dev/sdb5   # typo in file system type
+
+	Furthermore, "df --total" would not print the error message "no file
+	systems processed" when the file argument does not exist or is otherwise
+	not accessible.
+
+	Example:
+	  $ df --total __not_exist__
+
+	These 2 bugs are present since --total was added by commit
+	v6.12-166-gea2887b.
+
+	* src/df.c (get_dev): Do not set file_systems_processed to true when
+	force_fsu is true, i.e. when the row for the "total" line is processed.
+	(main): Don't print totals unless we've processed a file system.
+	Also only print the "no FS processed" message if there was no
+	preceding diagnostic.
+	* tests/df/total-unprocessed: Add a new test.
+	* tests/Makefile.am: Reference the new test.
+	* NEWS: Mention the fix.
+
+	Improved-by: Jim Meyering
+
+2012-08-04  Jim Meyering  <meyering@redhat.com>
+
+	truncate: don't leak a file descriptor with --ref=PIPE
+	* src/truncate.c (main): For a user who makes the mistake of
+	using a non-seekable file as a reference for the desired length,
+	truncate would open that file, attempt to seek to its end, but
+	upon seek failure would neglect to close the file descriptor.
+	Close the file descriptor even when lseek fails.
+	In addition, ignore failure to close that reference FD, since as
+	long as the lseek succeeds, a close failure doesn't matter.
+	Coverity spotted the potential FD leak.
+
+	Improved-by: Pádraig Brady.
+
+2012-08-04  Jim Meyering  <meyering@redhat.com>
+
+	tests: avoid FP ulimit failure with valgrind-wrapped tools
+	* tests/init.cfg (require_ulimit_): Raise VM limit from 10MiB to
+	20MiB, to accommodate overhead of a valgrind-wrapped date program.
+	Also declare this function's local variables "local".
+
+2012-08-04  Jim Meyering  <meyering@redhat.com>
+
+	split: plug nominal leaks
+	* src/split.c (lines_rr) [IF_LINT]: Plug a harmless leak.
+	(main) [IF_LINT]: Free a usually-small (~70KB) buffer
+	just before exit, mainly to take this off the radar of
+	leak-detecting tools.
+
+	Improved-by: Pádraig Brady.
+
+2012-08-03  Jim Meyering  <meyering@redhat.com>
+
+	tail: avoid rare error-path FD leak
+	* src/tail.c (tail_forever): Close FD to avoid leak after a
+	failed fstat.
+
+2012-07-27  Jim Meyering  <meyering@redhat.com>
+
+	maint: refresh stale local gnulib patch files
+	We carry local adjustments for a few gnulib modules via the
+	patches in gl/.  Nearly all of those patches had become stale
+	due to evolution of the originals in gnulib.
+
+	To refresh them, first make sure you have no local changes in gl/
+	or in the gnulib submodule, then run "make refresh-gnulib-patches".
+
+2012-07-25  Jim Meyering  <meyering@redhat.com>
+
+	tail: avoid misleading diagnostic upon fstat failure
+	* src/tail.c (check_fspec): Save fstat-induced errno *before*
+	calling close_fd, not after.  Otherwise, the close could well
+	clobber the global errno, making tail print an invalid diagnostic.
+	This could happen only with tail -f, and even then, only when
+	a valid file descriptor were to provoke fstat failure.
+
+2012-07-23  Pádraig Brady  <P@draigBrady.com>
+
+	tests: add a test for a previously fixed output format bug in join
+	Add a test and NEWS entry for a bug inadvertently fixed in
+	a refactoring in commit v8.9-32-gd4db0cb
+
+	* tests/misc/join (v2-format): Add a new test.
+	* THANKS.in: Add the reporter.
+	* NEWS: Mention the old bug.
+	* cfg.mk (old_NEWS_hash): Update.
+
+	Reported-by: Jean-Pierre Tosoni
+
+2012-07-22  Pádraig Brady  <P@draigBrady.com>
+
+	doc: mention gethostid(3) in hostid(1)
+	* man/hostid.x: Add gethostid(3) to SEE ALSO section.
+	Addresses http://bugs.gnu.org/12023
+
+2012-07-22  Erik Auerswald  <auerswal@unix-ag.uni-kl.de>
+
+	doc: mention uniq(1) in sort(1) man-page and vice versa
+	* man/sort.x: Add SEE ALSO section with entry uniq(1).
+	* man/uniq.x: Add sort(1) to SEE ALSO section.
+
+2012-07-21  Jim Meyering  <meyering@redhat.com>
+
+	maint: stzncpy: restrict pointer parameters
+	* src/system.h (stzncpy): Add "restrict" attribute to each pointer
+	parameter and note in the comment that the buffers must not overlap.
+
+2012-07-20  Joachim Schmitz  <jojo@schmitz-digital.de>
+
+	maint: rm: remove two more unused static inline functions
+	* src/remove.c (cache_stat_ok, is_nondir_lstat): Remove unused
+	functions.
+
+2012-07-20  Jim Meyering  <meyering@redhat.com>
+
+	maint: adjust exemption to track renamed test script
+	* cfg.mk (exclude_file_name_regexp--sc_file_system): Sync this
+	exemption regexp to match renamed tests/df/df-P.  This avoids
+	a "make syntax-check" failure.
+
+2012-07-20  Joachim Schmitz  <jojo@schmitz-digital.de>  (tiny change)
+
+	maint: rm: remove unused static-inlined functions
+	* src/remove.c (cache_statted, is_dir_lstat): Remove unused
+	static-inlined functions.
+	* THANKS.in: Remove my name from this list, now that (with this
+	commit) it is included automatically.
+
+2012-07-18  Andrew D Warshall  <warshall@99main.com>
+
+	tests: fiemap-perf: avoid a false failure on ext2
+	* tests/cp/fiemap-perf: Skip the test on ext2 file systems,
+	as we do for ext3.  Also skip the test if we can't create
+	a 1TiB file, which might not be supported on certain file systems.
+
+2012-07-16  Pádraig Brady  <P@draigBrady.com>
+
+	maint: move two df tests from tests/misc to tests/df
+	* test/Makefile.am: Reference the moved tests.
+
+2012-07-16  Pádraig Brady  <P@draigBrady.com>
+
+	df: don't output control characters in a mount point name
+	It's awkward to read and problematic for scripts when
+	control characters like '\n' are output.
+
+	Note other fields are already handled with mbsalign,
+	which converts non printable chars to the replacement char.
+	A caveat to note with that, is the replacement char takes
+	a place in the field and so possibly truncates the field
+	if it was the widest field in the records.
+
+	Note a more general replacement function, that
+	handles all printable, or non white space characters,
+	would require more sophisticated support for various
+	encodings, and the complexity vs benefit was not
+	deemed beneficial enough at present.
+	Perhaps in future a more general replacement function
+	could be shared between the various utilities.
+
+	Note <space> is unaffected in any field,
+	which could impact scripts processing the output.
+	However any of the number fields at least could have
+	spaces considering `LANG=fr_FR df -B\'1`, so it's
+	probably best to leave spaces, which also allows
+	scripts to handle mount points with spaces without change.
+
+	* src/df.c (hide_problematic_chars): Replace control chars with '?'.
+	* tests/df/problematic-chars: Add a new root only test.
+	* tests/Makefile.am: Reference the new test.
+	* NEWS: Mention the fix.
+
+2012-07-15  Jim Meyering  <meyering@redhat.com>
+
+	pinky,who: fix bug in latest change
+	* src/system.h (stzncpy): New function.
+	* src/pinky.c (print_entry): Use stzncpy, not stpncpy.
+	The latter does not NUL-terminate.  I assumed that strncpy was
+	the only function with such a horrible API.  Today I learned that
+	stpncpy also may not NUL-terminate its result.
+	The bugs were introduced in commit v8.17-48-gf79263d.
+	* src/who.c (print_user): Likewise.
+	Thanks to Erik Auerswald for spotting my error.
+
+	build: update gnulib submodule to latest
+
+	maint: remove unwarranted uses of strncpy
+	* src/pinky.c (print_entry): Remove unwarranted uses of strncpy.
+	Instead, use stpcpy and stpncpy.
+	* src/who.c (print_user): Likewise.
+	* cfg.mk: Remove strncpy exemptions.
+
+	build: shred.c: avoid i686-specific gcc -Wstrict-overflow warning
+	* src/shred.c: Avoid gcc -Wstrict-overflow warning.
+	Addresses http://bugs.gnu.org/11927
+
+2012-07-13  Bruno Haible  <bruno@clisp.org>
+
+	doc: clarify meaning of '-parodd' in stty help
+	* src/stty.c (usage): Disambiguate explanation of -parodd.
+	* THANKS.in: Add reporter.
+	Reported by Michael Stummvoll
+
+2012-07-13  Pádraig Brady  <P@draigBrady.com>
+
+	doc: mention the improved sort memory allocation
+	* NEWS: Mention the improvement.
+
+2012-07-12  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	doc: fix errors and warnings with Texinfo 5
+	Or rather, with the development version 4.13.90, which will eventually
+	become Texinfo 5.0.
+
+	* doc/coreutils.texi: Use '@item' instead of '@itemx' in several places,
+	as Texinfo 5 refuses to process an '@itemx' that is not preceded by an
+	'@item'.  Ensure that node extended names in menus and sectioning are
+	consistent, and that ordering and presence of nodes in menus and in the
+	actual text are consistent as well.
+
+	Fixes http://bugs.gnu.org/11828
+
+2012-07-11  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	df: warn if soon-to-be-removed --megabyte option is used
+	* src/df.c (MEGABYTES_OPTION): Add enum and mark it for removal
+	in August 2013.
+	(long_options): Use MEGABYTES_OPTION for --megabytes option.
+	(main): Add a case for it and issue a deprecation warning if
+	the long form is used.  Document the short -m option to
+	exist only for BSD compatibility.
+
+2012-07-11  Paul Eggert  <eggert@cs.ucla.edu>
+
+	sort: by default, do not exceed 3/4 of physical memory
+	* src/sort.c (default_sort_size): Do not exceed 3/4 of total memory.
+	See Jeff Janes's bug report in
+	<http://lists.gnu.org/archive/html/coreutils/2012-06/msg00018.html>.
+
+2012-07-06  Pádraig Brady  <P@draigBrady.com>
+
+	tests: sort-merge-fdlimit: reduce the limit by one
+	* tests/misc/sort-merge-fdlimit: As a consequence of commit
+	v8.17-34-g59daf05, we can reduce the descriptor limit by one.
+
+2012-07-06  Paul Eggert  <eggert@cs.ucla.edu>
+
+	doc: document leap seconds better
+	* doc/coreutils.texi (touch invocation, Time conversion specifiers)
+	(Options for date, Examples of date): Index "leap seconds" and
+	improve their documentation a bit.
+
+	doc: fix spacing
+	* doc/coreutils.texi: Use right amount of spacing after punctuation.
+
+2012-07-04  Jim Meyering  <meyering@redhat.com>
+
+	date: fails to diagnose invalid input
+	date -d "$(printf '\xb0')" would print 00:00:00 with today's date
+	rather than diagnosing the invalid input.  Now it reports this:
+	date: invalid date '\260'
+	* gnulib: Update submodule to latest for fixed parse-datetime.y.
+	* tests/misc/date [invalid-high-bit-set]: New test.
+	* NEWS (Bug fixes): Mention it.
+	* bootstrap, tests/init.sh: Also update to latest.
+	Reported by Peter Evans in http://bugs.gnu.org/11843
+
+2012-07-03  Jim Meyering  <meyering@redhat.com>
+
+	maint: add syntax-check rule to help avoid misuse of EXIT_FAILURE
+	* cfg.mk (sc_some_programs_must_avoid_exit_failure): New rule,
+	to help us avoid using EXIT_FAILURE in programs like sort, ls, nohup,
+	timeout, env, etc. that use different exit codes in many cases.
+
+	maint: fix minor bugs in helper program, setuidgid
+	* src/setuidgid.c (main): Fix two error-before-usage calls not to exit.
+	Exit with status SETUIDGID_FAILURE (not EXIT_FAILURE) consistently.
+
+2012-07-03  Paul Eggert  <eggert@cs.ucla.edu>
+
+	sort: fix exit-status typo
+	* src/sort.c (stream_open): EXIT_FAILURE -> SORT_FAILURE.
+	Suggested by Pádraig Brady in <http://bugs.gnu.org/11816#34>.
+
+	sort: simplify -o handling to avoid fdopen, assert
+	* src/sort.c (outfd): Remove.  All uses replaced by STDOUT_FILENO.
+	(stream_open): When writing, use stdout rather than fdopen.
+	(move_fd_or_die): Renamed from dup2_or_die, with the added functionality
+	of closing its first argument.  All uses changed.
+	(avoid_trashing_input): Special case for !outfile no longer needed.
+	(check_output): Arrange for standard output to go to the file,
+	rather than storing the fd in outfd.
+
+2012-07-02  Pádraig Brady  <P@draigBrady.com>
+
+	sort: avoid redundant processing with inaccessible inputs or output
+	* src/sort.c (check_inputs): A new function to verify all inputs
+	are accessible before further processing.
+	(check_output): A new function to open or create a specified
+	output file, before futher processing.
+	(stream_open): Adjust to truncating the previously opened
+	output file rather than opening directly.
+	(avoid_trashing_input): Optimize to stat the output file
+	descriptor, rather than the file name.
+	(main): Call the new functions to check accessibility of
+	inputs and output, before processing starts.
+	* tests/misc/sort: Adjust to the changed error message.
+	* tests/misc/sort-merge-fdlimit: Account for the earlier opened
+	file descriptor of the specified output file.
+	* tests/misc/sort-exit-early: A new test to exercise the improvements.
+	* tests/Makefile.am: Reference the new test.
+	* NEWS: Mention the improvement.
+
+	Suggested-by: Bernhard Voelker
+
+2012-07-02  Pádraig Brady  <P@draigBrady.com>
+
+	maint: sc_prohibit_fail_0: update a stale comment
+	* cfg.mk (sc_prohibit_fail_0): Following on from
+	commit v8.0-79-g71c2f88, update the comment to match.
+
+	maint: avoid a -Wunsed-but-set warning on some systems
+	* src/stty.c (main): Mark speed_was_set as possibly unused,
+	as is the case when CIBAUD is undefined (on ppc64 GNU/Linux
+	for example).
+	Reported-by: Stefano Lattarini
+
+2012-06-30  Jim Meyering  <meyering@redhat.com>
+
+	maint: avoid false-positive syntax-check failure due to fail=0 in .texi
+	* cfg.mk (exclude_file_name_regexp--sc_prohibit_fail_0): Exempt
+	all .texi files.
+
+	stat,tail: recognize new file system type: aufs
+	* src/stat.c (human_fstype) [__linux__]: Add a 'case' for the new
+	remote file system type: aufs (0x61756673).
+	* NEWS (New features): Mention stat -f.
+	(Bug fixes): Mention it for tail -f.
+	Reported by Michael Mol in http://bugs.gnu.org/11823
+
+2012-06-30  Jim Meyering  <meyering@redhat.com>
+
+	doc: improve sample backup script
+	* doc/coreutils.texi (cp invocation): Make the backup script exit
+	with an accurate reflection of any failure.
+	Also, add --preserve=all.
+
+	Improved-by: Bernhard Voelker
+
+2012-06-26  Pádraig Brady  <P@draigBrady.com>
+
+	maint: avoid a static analysis warning in csplit
+	The Canalyze static code analyzer correctly surmised
+	that there is a use-after-free bug in free_buffer()
+	at the line "struct line *n = l->next", if that
+	function is called multiple times.
+
+	This is not a runtime issue since a list of lines
+	will not be present in the !lines_found case.
+
+	* src/csplit.c (free_buffer): Set list head to NULL so
+	that this function can be called multiple times.
+	(load_buffer): Remove a redundant call to free_buffer().
+
+	Reported-by: Xu Zhongxing
+
+2012-06-22  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	doc: document multiplier for dd number options like count=N
+	* src/dd.c (usage): Add "N" to the description of multipliers.
+	* doc/coreutils.texi (dd invocation): Likewise.
+
+2012-06-22  Pádraig Brady  <P@draigBrady.com>
+
+	split: ensure output doesn't overwrite input
+	* src/split.c (create): Check if output file is the
+	same inode as the input file.
+	* tests/split/guard-input: New test case.
+	* tests/Makefile.am: Reference new test case.
+	* NEWS: Mention the fix.
+
+	Improved-by: Jim Meyering
+	Reported-by: François Pinard
+
+2012-06-22  Pádraig Brady  <P@draigBrady.com>
+
+	maint: refactor common mode bits used to create files
+	* src/system.h (MODE_RW_UGO): The new refactored define (666).
+	* src/mkfifo.c: Use the new define.
+	* src/mknod.c: Likewise.
+	* src/split.c: Likewise.
+	* src/system.h: Likewise.
+	* src/touch.c: Likewise.
+	* src/truncate.c: Likewise.
+
+	Suggested-by: Jim Meyering
+
+2012-06-22  Pádraig Brady  <P@draigBrady.com>
+
+	maint: suppress echoing of sc_THANKS_in_duplicates implementation
+	* cfg.mk (sc_THANKS_in_duplicates): Suppress the echoing of these
+	commands run during `make syntax-check`
+
+2012-06-20  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	maint: sort: style adjustment to help clarify size determination
+	* src/sort.c (default_sort_size): Move physmem code "down" to first use.
+
+2012-06-12  Jim Meyering  <meyering@redhat.com>
+
+	stty: portability: accommodate CIL
+	* src/stty.c (main): Declare locals "mode" and "new_mode" to be static
+	to ensure that each is initialized to zero, *including* all padding.
+	While gcc clears padding of a local automatic initialized to "{ 0, }",
+	CIL does not, and the C99 standard is not clear on this issue.
+	Reported by Edward Schwartz.  See http://bugs.gnu.org/11675 for details.
+
+2012-06-10  Sami Kerola  <kerolasa@iki.fi>
+
+	maint: remove su testing artifact
+	* tests/misc/help-version: Remove expected su exit code.
+
+2012-06-10  Jim Meyering  <meyering@redhat.com>
+
+	build: update gnulib to latest; correct comment grammar
+	* tests/misc/help-version: Fix comment grammar:
+	s/all these/all of these/
+	* gl/lib/tempname.c.diff: Likewise.
+
+	maint: migrate strncpy-prohibiting rule to gnulib
+	* cfg.mk (sc_prohibit_strncpy): Remove rule.
+	Now it's in gnulib.
+
+	maint: prohibit use of strncpy
+	* cfg.mk (sc_prohibit_strncpy): New syntax-check rule.
+	Exempt pinky.c and who.c, at least for now.
+
+2012-06-06  Jim Meyering  <meyering@redhat.com>
+
+	su: remove program (util-linux is now the best source for it)
+	* README: Omit "su" from list of programs.
+	* src/su.c: Remove file.
+	* src/Makefile.am: Remove su-related rules and variables.
+	* tests/misc/su-fail: Remove test.
+	* tests/Makefile.am (TESTS): Remove misc/su-fail.
+	* tests/misc/invalid-opt: Remove su-related code.
+	* src/.gitignore: Remove su.
+	* man/su.x: Remove file.
+	* man/Makefile.am (su.1): Remove rule.
+	* po/POTFILES.in: Remove su.c from the list.
+	* TODO: Remove ancient entry.
+	* NEWS (Changes in behavior): Mention it.
+	* doc/coreutils.texi: Remove su-related description.
+	* AUTHORS: Remove su.
+	* m4/lib-check.m4 (cu_LIB_CHECK): Remove file/macro.
+	* configure.ac: Remove su-related code and sole use of cu_LIB_CHECK.
+	* scripts/git-hooks/commit-msg: Remove su from this list, too.
+
+	maint: detect a new type of duplicate in THANKS.in
+	* cfg.mk (sc_THANKS_in_duplicates): New rule.
+
+2012-06-05  Jim Meyering  <meyering@redhat.com>
+
+	maint: mark new diagnostic for translation
+	* src/head.c (elide_tail_lines_seekable): Mark new diagnostic.
+	I will look at the results of "make syntax-check", I will look...
+
+2012-06-05  Jim Meyering  <meyering@redhat.com>
+
+	head: with --lines=-N (-n-N) reset file pointer on seekable input
+	* src/head.c (elide_tail_lines_seekable): Reset file pointer
+	after printing up to an end-relative line-counted offset.
+	Anoop Sharma reported the problem and suggested the fix.
+	* tests/misc/head-pos: Add coverage via a very similar, existing test.
+	Also add coverage for a previously untested block of code.
+	* tests/misc/head-elide-tail ($READ_BUFSIZE): Update to 8192, to
+	match the value of BUFSIZ I see today on Fedora 17/x86_64 (unrelated
+	to this fix).
+	* NEWS (Bug fixes): Mention it.
+
+	Improved-by: Pádraig Brady
+
+2012-06-01  Jim Meyering  <meyering@redhat.com>
+
+	stat,tail: recognize new file system type: panfs
+	* src/stat.c (human_fstype) [__linux__]: Add a 'case' for the new
+	remote file system type: panfs (0xAAD7AAEA).
+	* NEWS (New features): Mention stat -f.
+	(Bug fixes): Mention it for tail -f.
+	Reported by Travis Gummels in http://bugzilla.redhat.com/827199
+
+2012-05-31  Jim Meyering  <meyering@redhat.com>
+
+	maint: fix typos in test comments and old ChangeLog files
+	Culprits identified and fixed automatically using these commands:
+	git ls-files|misspellings -f -|perl -nl \
+	  -e '/^(.*?)\[(\d+)\]: (\w+) -> "(.*?)"$/ or next;' \
+	  -e '($file,$n,$l,$r)=($1,$2,$3,$4); $q="'\''"; $r=~s/$q/$q\\$q$q/g;'\
+	  -e 'print "sed -i $q${n}s!$l!$r!$q $file"' | bash
+	using http://github.com/lyda/misspell-check
+	* old/fileutils/ChangeLog: Fix typos.
+	* old/textutils/ChangeLog: Likewise.
+	* tests/misc/truncate-fail-diag: Likewise.
+
+2012-05-28  Pádraig Brady  <P@draigBrady.com>
+
+	cksum: line-buffer the printed checksums
+	This utility was inadvertently omitted from commit v8.0-34-g710fe41
+	* src/cksum.c (main): Set stdout to line buffered mode, to ensure
+	parallel running instances don't intersperse their output.
+	* NEWS: Mention the fix.
+	* THANKS.in: Add Anoop.
+	Reported by Anoop Sharma.
+
+2012-05-21  Jim Meyering  <meyering@redhat.com>
+
+	maint: remove comment that suggested to remove support for mktemp -V
+	* src/mktemp.c (main): Don't suggest to remove support for -V, an
+	undocumented alias for --version, since that would introduce a
+	gratuitous incompatibility with the original mktemp program.
+
+2012-05-21  Mike Frysinger  <vapier@gentoo.org>
+
+	dircolors: add st/st-256color terminal types
+	See http://st.suckless.org/
+	* src/dircolors.hin: Add st and st-256color.
+	Reported-by: Jeroen Roovers <jer@gentoo.org>, via
+	Mike Frysinger <vapier@gentoo.org> in http://bugs.gnu.org/11498
+
+2012-05-20  Jim Meyering  <meyering@redhat.com>
+
+	id,groups: use gidtostr/uidtostr to avoid casts
+	* src/id.c (gidtostr, uidtostr): Define macros.
+	(gidtostr_ptr, uidtostr_ptr): Define safer functions.
+	Use gidtostr and uidtostr to print GID and UID without
+	need/risk of casts.
+	* src/group-list.c: Likewise.
+
+2012-05-16  Jim Meyering  <meyering@redhat.com>
+
+	tests: use $AWK, not awk
+	* tests/cp/sparse-fiemap: Don't hard-code "awk".  Use $AWK.
+	* tests/init.cfg: Likewise.
+	* tests/misc/sort-rand: Likewise.
+
+	maint: tell xgettext that fputs arg "93% of..." is not a C format string
+	* src/fmt.c (usage): Add a comment to tell
+	xgettext that the "% o" in fputs argument string of "...93% of..."
+	is not a C format string.  Reported by Toomas Soome, Göran Uddeborg,
+	Petr Pisar, Primoz PETERLIN and Chusslove Illich via
+	http://bugs.gnu.org/11470
+
+	maint: add assertions to placate static analysis tools
+	A static analysis tool (http://labs.oracle.com/projects/parfait/)
+	produced some false positive diagnostics.  Add assertions to help
+	it understand that the code is correct.
+	* src/stty.c: Include <assert.h>.
+	(display_changed): Add an assertion to placate parfait.
+	(display_all): Likewise.
+	* src/sort.c: Include <assert.h>.
+	(main): Add an assertion to placate parfait.
+	* src/fmt.c: Include <assert.h>.
+	(get_paragraph): Add an assertion to placate parfait.
+
+2012-05-16  Pádraig Brady  <P@draigBrady.com>
+
+	stat: report the correct block size for file system usage
+	struct statfs has the f_frsize member since Linux 2.6,
+	so use that rather than f_bsize which can be different.
+	Note the related df change mentioned in NEWS is handled
+	in gnulib by using statvfs() rather than statfs()
+	on Linux > 2.6.36 (where statvfs doesn't hang) and the
+	same method as stat for Linux 2.6 kernels earlier than that.
+	stat(1) doesn't use statvfs() on GNU/Linux as the f_type
+	member isn't available there.
+	Note the change to not use statvfs() on GNU/Linux was introduced
+	in gnulib commit eda39b8 16-08-2003.
+
+	* m4/stat-prog.m4 (cu_PREREQ_STAT_PROG): Check for the f_frsize
+	member in the statfs structure.
+	* src/stat.c: Use (struct statfs).f_frsize if available.
+	* NEWS (Bug fixes): Mention this stat fix, and the related df fix
+	coming in the next gnulib update.
+	* THANKS.in: Add Nikolaus.
+
+	Reported and Tested by Nikolaus Rath
+
+2012-05-12  Jim Meyering  <meyering@redhat.com>
+
+	ls: color each symlink-to-relative-name in / properly
+	In order for ls --color to color each symlink, it must form the name
+	of each referent and then stat it to see if the link is dangling, to
+	a directory, to a file, etc.  When the symlink is to a relative name,
+	ls must concatenate the starting directory name and that relative name.
+	When, in addition, the starting directory was "/" or "/some-name",
+	the result was ill-formed, and the subsequent stat would usually fail,
+	making the caller color it as a dangling symlink.
+	* src/ls.c (make_link_name): Don't botch the case in which
+	dir_name(NAME) == "/" and LINKNAME is relative.
+	* tests/ls/root-rel-symlink-color: New file.  Test for the above.
+	* tests/Makefile.am (TESTS): Add it.
+	* NEWS (Bug fixes): Mention it.
+	Reported by Mike Frysinger in http://bugs.gnu.org/11453
+	Bug introduced by commit v8.16-23-gbcb9078.
+
 2012-05-10  Jim Meyering  <meyering@redhat.com>
+
+	maint: post-release administrivia
+	* NEWS: Add header line for next release.
+	* .prev-version: Record previous version.
+	* cfg.mk (old_NEWS_hash): Auto-update.
 
 	version 8.17
 	* NEWS: Record release date.

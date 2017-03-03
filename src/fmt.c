@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <getopt.h>
+#include <assert.h>
 
 /* Redefine.  Otherwise, systems (Unicos for one) with headers that define
    it to be a type get syntax errors for the variable declaration below.  */
@@ -282,6 +283,8 @@ Mandatory arguments to long options are mandatory for short options too.\n\
   -s, --split-only          split long lines, but do not refill\n\
 "),
              stdout);
+      /* Tell xgettext that the "% o" below is not a printf-style
+         format string:  xgettext:no-c-format */
       fputs (_("\
   -t, --tagged-paragraph    indentation of first line different from second\n\
   -u, --uniform-spacing     one space between words, two after sentences\n\
@@ -610,6 +613,11 @@ get_paragraph (FILE *f)
       while (same_para (c) && in_column == other_indent)
         c = get_line (f, c);
     }
+
+  /* Tell static analysis tools that using word_limit[-1] is ok.
+     word_limit is guaranteed to have been incremented by get_line.  */
+  assert (word < word_limit);
+
   (word_limit - 1)->period = (word_limit - 1)->final = true;
   next_char = c;
   return true;

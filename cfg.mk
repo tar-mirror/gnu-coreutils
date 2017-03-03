@@ -45,7 +45,7 @@ export VERBOSE = yes
 # 4914152 9e
 export XZ_OPT = -8e
 
-old_NEWS_hash = d2ba572c2f1135b74e24ea3fb20e674e
+old_NEWS_hash = 38cad4d11c6ce866fc52213e3a4dc437
 
 # Add an exemption for sc_makefile_at_at_check.
 _makefile_at_at_check_exceptions = ' && !/^cu_install_program =/'
@@ -263,9 +263,7 @@ sc_prohibit_emacs__indent_tabs_mode__setting:
 	halt='use of emacs indent-tabs-mode: setting'			\
 	  $(_sc_search_regexp)
 
-# Ensure that each file that contains fail=1 also contains fail=0.
-# Otherwise, setting file=1 in the environment would make tests fail
-# unexpectedly.
+# Ensure that tests don't include a redundant fail=0.
 sc_prohibit_fail_0:
 	@prohibit='\<fail=0\>'						\
 	halt='fail=0 initialization'					\
@@ -320,6 +318,16 @@ sc_prohibit_test_backticks:
 	@prohibit='`' in_vc_files='^tests/'				\
 	halt='use $$(...), not `...` in tests/'				\
 	  $(_sc_search_regexp)
+
+# Programs like sort, ls, expr use PROG_FAILURE in place of EXIT_FAILURE.
+# Others, use the EXIT_CANCELED, EXIT_ENOENT, etc. macros defined in system.h.
+# In those programs, ensure that EXIT_FAILURE is not used by mistake.
+sc_some_programs_must_avoid_exit_failure:
+	@grep -nw EXIT_FAILURE						\
+	    $$(git grep -El '[^T]_FAILURE|EXIT_CANCELED' src)		\
+	  | grep -vE '= EXIT_FAILURE|exit \(.* \?' | grep .		\
+	    && { echo '$(ME): do not use EXIT_FAILURE in the above'	\
+		  1>&2; exit 1; } || :
 
 # Exempt the contents of any usage function from the following.
 _continued_string_col_1 = \
@@ -413,6 +421,19 @@ sc_preprocessor_indentation:
 	  echo '$(ME): skipping test $@: cppi not installed' 1>&2;	\
 	fi
 
+# THANKS.in is a list of name/email pairs for people who are mentioned in
+# commit logs (and generated ChangeLog), but who are not also listed as an
+# author of a commit.  Name/email pairs of commit authors are automatically
+# extracted from the repository.  As a very minor factorization, when
+# someone who was initially listed only in THANKS.in later authors a commit,
+# this rule detects that their pair may now be removed from THANKS.in.
+sc_THANKS_in_duplicates:
+	@{ git log --pretty=format:%aN | sort -u;			\
+	    cut -b-36 THANKS.in | sed '/^$$/d;s/  *$$//'; }		\
+	  | sort | uniq -d | grep .					\
+	    && { echo '$(ME): remove the above names from THANKS.in'	\
+		  1>&2; exit 1; } || :
+
 # Override the default Cc: used in generating an announcement.
 announcement_Cc_ = $(translation_project_), \
   coreutils@gnu.org, coreutils-announce@gnu.org
@@ -446,11 +467,11 @@ exclude_file_name_regexp--sc_prohibit_always-defined_macros = \
 exclude_file_name_regexp--sc_prohibit_empty_lines_at_EOF = ^tests/pr/
 exclude_file_name_regexp--sc_program_name = ^(gl/.*|lib/euidaccess-stat)\.c$$
 exclude_file_name_regexp--sc_file_system = \
-  NEWS|^(tests/init\.cfg|src/df\.c|tests/misc/df-P)$$
+  NEWS|^(tests/init\.cfg|src/df\.c|tests/df/df-P)$$
 exclude_file_name_regexp--sc_prohibit_always_true_header_tests = \
   ^m4/stat-prog\.m4$$
 exclude_file_name_regexp--sc_prohibit_fail_0 = \
-  (^scripts/git-hooks/commit-msg|^tests/init\.sh|Makefile\.am|\.mk)$$
+  (^.*/git-hooks/commit-msg|^tests/init\.sh|Makefile\.am|\.mk|.*\.texi)$$
 exclude_file_name_regexp--sc_prohibit_atoi_atof = ^lib/euidaccess-stat\.c$$
 
 tbi_1 = ^tests/pr/|(^gl/lib/reg.*\.c\.diff|Makefile(\.am)?|\.mk|^man/help2man)$$

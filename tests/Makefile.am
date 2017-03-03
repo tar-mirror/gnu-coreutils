@@ -31,6 +31,7 @@ root_tests =					\
   cp/capability					\
   cp/sparse-fiemap				\
   dd/skip-seek-past-dev				\
+  df/problematic-chars				\
   install/install-C-root			\
   ls/capability					\
   ls/nameless-uid				\
@@ -166,7 +167,6 @@ TESTS =						\
   misc/pr					\
   misc/join					\
   pr/pr-tests					\
-  misc/df-P					\
   misc/pwd-option				\
   misc/chcon-fail				\
   misc/cut					\
@@ -186,7 +186,6 @@ TESTS =						\
   misc/csplit-heap				\
   misc/date-sec					\
   misc/dircolors				\
-  misc/df					\
   misc/dirname					\
   misc/env-null					\
   misc/expand					\
@@ -251,6 +250,7 @@ TESTS =						\
   misc/sort-merge				\
   misc/sort-merge-fdlimit			\
   misc/sort-month				\
+  misc/sort-exit-early				\
   misc/sort-rand				\
   misc/sort-spinlock-abuse			\
   misc/sort-stale-thread-mem			\
@@ -268,6 +268,7 @@ TESTS =						\
   split/l-chunk					\
   split/r-chunk					\
   split/numeric					\
+  split/guard-input				\
   misc/stat-birthtime				\
   misc/stat-fmt					\
   misc/stat-hyphen				\
@@ -280,7 +281,6 @@ TESTS =						\
   misc/stty-invalid				\
   misc/stty-pairs				\
   misc/stty-row-col				\
-  misc/su-fail					\
   misc/sum					\
   misc/sum-sysv					\
   misc/tac					\
@@ -372,7 +372,10 @@ TESTS =						\
   cp/src-base-dot				\
   cp/symlink-slash				\
   cp/thru-dangling				\
+  df/header					\
+  df/df-P					\
   df/unreadable					\
+  df/total-unprocessed				\
   dd/direct					\
   dd/misc					\
   dd/nocache					\
@@ -449,6 +452,7 @@ TESTS =						\
   ls/proc-selinux-segfault			\
   ls/readdir-mountpoint-inode			\
   ls/recursive					\
+  ls/root-rel-symlink-color			\
   ls/rt-1					\
   ls/slink-acl					\
   ls/stat-dtype					\

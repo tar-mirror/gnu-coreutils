@@ -1,5 +1,71 @@
 GNU coreutils NEWS                                    -*- outline -*-
 
+* Noteworthy changes in release 8.18 (2012-08-12) [stable]
+
+** Bug fixes
+
+  cksum now prints checksums atomically so that concurrent
+  processes will not intersperse their output.
+  [the bug dates back to the initial implementation]
+
+  date -d "$(printf '\xb0')" would print 00:00:00 with today's date
+  rather than diagnosing the invalid input.  Now it reports this:
+  date: invalid date '\260'
+  [This bug was present in "the beginning".]
+
+  df no longer outputs control characters present in the mount point name.
+  Such characters are replaced with '?', so for example, scripts consuming
+  lines output by df, can work reliably.
+  [This bug was present in "the beginning".]
+
+  df --total now exits with an appropriate diagnostic and error code, when
+  file system --type options do not lead to a processed file system.
+  [This bug dates back to when --total was added in coreutils-7.0]
+
+  head --lines=-N (-n-N) now resets the read pointer of a seekable input file.
+  This means that "head -n-3" no longer consumes all of its input, and lines
+  not output by head may be processed by other programs.  For example, this
+  command now prints the final line, 2, while before it would print nothing:
+    seq 2 > k; (head -n-1 > /dev/null; cat) < k
+  [This bug was present in "the beginning".]
+
+  ls --color would mis-color relative-named symlinks in /
+  [bug introduced in coreutils-8.17]
+
+  split now ensures it doesn't overwrite the input file with generated output.
+  [the bug dates back to the initial implementation]
+
+  stat and df now report the correct file system usage,
+  in all situations on GNU/Linux, by correctly determining the block size.
+  [df bug since coreutils-5.0.91, stat bug since the initial implementation]
+
+  tail -f no longer tries to use inotify on AUFS or PanFS file systems
+  [you might say this was introduced in coreutils-7.5, along with inotify
+   support, but even now, its magic number isn't in the usual place.]
+
+** New features
+
+  stat -f recognizes the new remote file system types: aufs, panfs.
+
+** Changes in behavior
+
+  su: this program has been removed.  We stopped installing "su" by
+  default with the release of coreutils-6.9.90 on 2007-12-01.  Now,
+  that the util-linux package has the union of the Suse and Fedora
+  patches as well as enough support to build on the Hurd, we no longer
+  have any reason to include it here.
+
+** Improvements
+
+  sort avoids redundant processing in the presence of inaccessible inputs,
+  or unwritable output.  Sort now diagnoses certain errors at start-up,
+  rather than after potentially expensive processing.
+
+  sort now allocates no more than 75% of physical memory by default,
+  to better share system resources, and thus operate more efficiently.
+  [The default max memory usage changed from 50% to 100% in coreutils-8.16]
+
+
 * Noteworthy changes in release 8.17 (2012-05-10) [stable]
 
 ** Bug fixes
@@ -414,6 +480,10 @@ GNU coreutils NEWS                                    -*- outline -*-
 
   join --header now skips the ordering check for the first line
   even if the other file is empty.  [bug introduced in coreutils-8.5]
+
+  join -v2 now ensures the default output format prints the match field
+  at the start of the line when it is different to the match field for
+  the first file. [bug present in "the beginning".]
 
   rm -f no longer fails for EINVAL or EILSEQ on file systems that
   reject file names invalid for that file system.
