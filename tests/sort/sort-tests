@@ -2034,6 +2034,78 @@ else
   esac
 fi
 test -s o2.E || rm -f o2.E
+_POSIX2_VERSION=199209 $xx -in $srcdir/incompat1.I > incompat1.O 2> incompat1.E
+code=$?
+if test $code != 2; then
+  $echo "Test incompat1(_POSIX2_VERSION=199209) failed: $xx return code $code differs from expected value 2" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp incompat1.O $srcdir/incompat1.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed incompat1(_POSIX2_VERSION=199209)"; fi;;
+    1) $echo "Test incompat1(_POSIX2_VERSION=199209) failed: files incompat1.O and $srcdir/incompat1.X differ" 1>&2
+       (diff -c incompat1.O $srcdir/incompat1.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test incompat1(_POSIX2_VERSION=199209) may have failed." 1>&2
+       $echo The command "cmp incompat1.O $srcdir/incompat1.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s incompat1.E || rm -f incompat1.E
+_POSIX2_VERSION=199209 $xx -fR $srcdir/incompat2.I > incompat2.O 2> incompat2.E
+code=$?
+if test $code != 2; then
+  $echo "Test incompat2(_POSIX2_VERSION=199209) failed: $xx return code $code differs from expected value 2" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp incompat2.O $srcdir/incompat2.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed incompat2(_POSIX2_VERSION=199209)"; fi;;
+    1) $echo "Test incompat2(_POSIX2_VERSION=199209) failed: files incompat2.O and $srcdir/incompat2.X differ" 1>&2
+       (diff -c incompat2.O $srcdir/incompat2.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test incompat2(_POSIX2_VERSION=199209) may have failed." 1>&2
+       $echo The command "cmp incompat2.O $srcdir/incompat2.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s incompat2.E || rm -f incompat2.E
+_POSIX2_VERSION=199209 $xx -dfgiMnR $srcdir/incompat3.I > incompat3.O 2> incompat3.E
+code=$?
+if test $code != 2; then
+  $echo "Test incompat3(_POSIX2_VERSION=199209) failed: $xx return code $code differs from expected value 2" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp incompat3.O $srcdir/incompat3.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed incompat3(_POSIX2_VERSION=199209)"; fi;;
+    1) $echo "Test incompat3(_POSIX2_VERSION=199209) failed: files incompat3.O and $srcdir/incompat3.X differ" 1>&2
+       (diff -c incompat3.O $srcdir/incompat3.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test incompat3(_POSIX2_VERSION=199209) may have failed." 1>&2
+       $echo The command "cmp incompat3.O $srcdir/incompat3.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s incompat3.E || rm -f incompat3.E
+_POSIX2_VERSION=199209 $xx -c -o /dev/null $srcdir/incompat4.I > incompat4.O 2> incompat4.E
+code=$?
+if test $code != 2; then
+  $echo "Test incompat4(_POSIX2_VERSION=199209) failed: $xx return code $code differs from expected value 2" 1>&2
+  errors=`expr $errors + 1`
+else
+  cmp incompat4.O $srcdir/incompat4.X > /dev/null 2>&1
+  case $? in
+    0) if test "$VERBOSE"; then $echo "passed incompat4(_POSIX2_VERSION=199209)"; fi;;
+    1) $echo "Test incompat4(_POSIX2_VERSION=199209) failed: files incompat4.O and $srcdir/incompat4.X differ" 1>&2
+       (diff -c incompat4.O $srcdir/incompat4.X) 2> /dev/null
+       errors=`expr $errors + 1`;;
+    2) $echo "Test incompat4(_POSIX2_VERSION=199209) may have failed." 1>&2
+       $echo The command "cmp incompat4.O $srcdir/incompat4.X" failed. 1>&2
+       errors=`expr $errors + 1`;;
+  esac
+fi
+test -s incompat4.E || rm -f incompat4.E
 _POSIX2_VERSION=199209 $xx -k2,2 -t '\0' $srcdir/nul-tab.I > nul-tab.O 2> nul-tab.E
 code=$?
 if test $code != 0; then
@@ -2053,7 +2125,7 @@ else
 fi
 test -s nul-tab.E || rm -f nul-tab.E
 if test $errors = 0; then
-  $echo Passed all 113 tests. 1>&2
+  $echo Passed all 117 tests. 1>&2
 else
   $echo Failed $errors tests. 1>&2
 fi

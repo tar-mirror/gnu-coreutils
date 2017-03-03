@@ -2052,24 +2052,24 @@ else
   esac
 fi
 test -s n-5b.E || rm -f n-5b.E
-cat $srcdir/f-1.I | $xx -f -n 1 > f-1.O 2> f-1.E
+cat $srcdir/f-pipe-1.I | POSIXLY_CORRECT=1 $xx -f -n 1 > f-pipe-1.O 2> f-pipe-1.E
 code=$?
 if test $code != 0; then
-  $echo "Test f-1 failed: $xx return code $code differs from expected value 0" 1>&2
+  $echo "Test f-pipe-1(POSIXLY_CORRECT=1) failed: $xx return code $code differs from expected value 0" 1>&2
   errors=`expr $errors + 1`
 else
-  cmp f-1.O $srcdir/f-1.X > /dev/null 2>&1
+  cmp f-pipe-1.O $srcdir/f-pipe-1.X > /dev/null 2>&1
   case $? in
-    0) if test "$VERBOSE"; then $echo "passed f-1"; fi;;
-    1) $echo "Test f-1 failed: files f-1.O and $srcdir/f-1.X differ" 1>&2
-       (diff -c f-1.O $srcdir/f-1.X) 2> /dev/null
+    0) if test "$VERBOSE"; then $echo "passed f-pipe-1(POSIXLY_CORRECT=1)"; fi;;
+    1) $echo "Test f-pipe-1(POSIXLY_CORRECT=1) failed: files f-pipe-1.O and $srcdir/f-pipe-1.X differ" 1>&2
+       (diff -c f-pipe-1.O $srcdir/f-pipe-1.X) 2> /dev/null
        errors=`expr $errors + 1`;;
-    2) $echo "Test f-1 may have failed." 1>&2
-       $echo The command "cmp f-1.O $srcdir/f-1.X" failed. 1>&2
+    2) $echo "Test f-pipe-1(POSIXLY_CORRECT=1) may have failed." 1>&2
+       $echo The command "cmp f-pipe-1.O $srcdir/f-pipe-1.X" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
 fi
-test -s f-1.E || rm -f f-1.E
+test -s f-pipe-1.E || rm -f f-pipe-1.E
 if test $errors = 0; then
   $echo Passed all 114 tests. 1>&2
 else

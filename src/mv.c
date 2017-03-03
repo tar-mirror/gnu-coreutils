@@ -1,5 +1,5 @@
 /* mv -- move or rename files
-   Copyright (C) 86, 89, 90, 91, 1995-2005 Free Software Foundation, Inc.
+   Copyright (C) 86, 89, 90, 91, 1995-2006 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@
 #include "backupfile.h"
 #include "copy.h"
 #include "cp-hash.h"
-#include "dirname.h"
 #include "error.h"
 #include "filenamecat.h"
 #include "quote.h"
@@ -92,7 +91,6 @@ static struct option const long_options[] =
 static void
 rm_option_init (struct rm_options *x)
 {
-  x->unlink_dirs = false;
   x->ignore_missing_files = false;
   x->root_dev_ino = NULL;
   x->recursive = true;
@@ -135,12 +133,6 @@ cp_option_init (struct cp_options *x)
   x->mode = 0;
   x->stdin_tty = isatty (STDIN_FILENO);
 
-  /* Find out the current file creation mask, to knock the right bits
-     when using chmod.  The creation mask is set to be liberal, so
-     that created directories can be written, even if it would not
-     have been allowed with the mask this process was started with.  */
-  x->umask_kill = ~ umask (0);
-
   x->update = false;
   x->verbose = false;
   x->dest_info = NULL;
@@ -148,23 +140,17 @@ cp_option_init (struct cp_options *x)
 }
 
 /* FILE is the last operand of this command.  Return true if FILE is a
-   directory.  But report an error there is a problem accessing FILE,
-   or if FILE does not exist but would have to refer to an existing
-   directory if it referred to anything at all.  */
+   directory.  But report an error if there is a problem accessing FILE, other
+   than nonexistence (errno == ENOENT).  */
 
 static bool
 target_directory_operand (char const *file)
 {
-  char const *b = base_name (file);
-  size_t blen = strlen (b);
-  bool looks_like_a_dir = (blen == 0 || ISSLASH (b[blen - 1]));
   struct stat st;
   int err = (stat (file, &st) == 0 ? 0 : errno);
   bool is_a_dir = !err && S_ISDIR (st.st_mode);
   if (err && err != ENOENT)
     error (EXIT_FAILURE, err, _("accessing %s"), quote (file));
-  if (is_a_dir < looks_like_a_dir)
-    error (EXIT_FAILURE, err, _("target %s is not a directory"), quote (file));
   return is_a_dir;
 }
 
@@ -266,14 +252,13 @@ movefile (char *source, char *dest, bool dest_is_dir,
      function that ignores a trailing slash.  I believe the Linux
      rename semantics are POSIX and susv2 compliant.  */
 
-  strip_trailing_slashes (dest);
   if (remove_trailing_slashes)
     strip_trailing_slashes (source);
 
   if (dest_is_dir)
     {
       /* Treat DEST as a directory; build the full filename.  */
-      char const *src_basename = base_name (source);
+      char const *src_basename = last_component (source);
       char *new_dest = file_name_concat (dest, src_basename, NULL);
       strip_trailing_slashes (new_dest);
       ok = do_move (source, new_dest, x);
@@ -315,7 +300,7 @@ Mandatory arguments to long options are mandatory for short options too.\n\
   -i, --interactive            prompt before overwrite\n\
 "), stdout);
       fputs (_("\
-      --strip-trailing-slashes remove any trailing slashes from each SOURCE\n\
+      --strip-trailing-slashes  remove any trailing slashes from each SOURCE\n\
                                  argument\n\
   -S, --suffix=SUFFIX          override the usual backup suffix\n\
 "), stdout);
@@ -461,7 +446,8 @@ main (int argc, char **argv)
     }
   else if (!target_directory)
     {
-      if (2 <= n_files && target_directory_operand (file[n_files - 1]))
+      assert (2 <= n_files);
+      if (target_directory_operand (file[n_files - 1]))
 	target_directory = file[--n_files];
       else if (2 < n_files)
 	error (EXIT_FAILURE, 0, _("target %s is not a directory"),

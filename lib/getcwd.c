@@ -16,11 +16,8 @@
    with this program; if not, write to the Free Software Foundation,
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
-
 #if !_LIBC
+# include <config.h>
 # include "getcwd.h"
 #endif
 
@@ -36,25 +33,9 @@
 # define __set_errno(val) (errno = (val))
 #endif
 
-#if HAVE_DIRENT_H || _LIBC
-# include <dirent.h>
-# ifndef _D_EXACT_NAMLEN
-#  define _D_EXACT_NAMLEN(d) strlen ((d)->d_name)
-# endif
-#else
-# define dirent direct
-# if HAVE_SYS_NDIR_H
-#  include <sys/ndir.h>
-# endif
-# if HAVE_SYS_DIR_H
-#  include <sys/dir.h>
-# endif
-# if HAVE_NDIR_H
-#  include <ndir.h>
-# endif
-#endif
+#include <dirent.h>
 #ifndef _D_EXACT_NAMLEN
-# define _D_EXACT_NAMLEN(d) ((d)->d_namlen)
+# define _D_EXACT_NAMLEN(d) strlen ((d)->d_name)
 #endif
 #ifndef _D_ALLOC_NAMLEN
 # define _D_ALLOC_NAMLEN(d) (_D_EXACT_NAMLEN (d) + 1)

@@ -1,5 +1,5 @@
 /* provide a replacement openat function
-   Copyright (C) 2004-2006 Free Software Foundation, Inc.
+   Copyright (C) 2004, 2005, 2006 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <unistd.h>
+#include <stdbool.h>
 
 #ifndef __attribute__
 # if __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 8) || __STRICT_ANSI__
@@ -57,12 +58,15 @@
 #endif
 
 #ifdef __OPENAT_PREFIX
+
 # undef openat
 # define __OPENAT_CONCAT(x, y) x ## y
 # define __OPENAT_XCONCAT(x, y) __OPENAT_CONCAT (x, y)
 # define __OPENAT_ID(y) __OPENAT_XCONCAT (__OPENAT_PREFIX, y)
 # define openat __OPENAT_ID (openat)
 int openat (int fd, char const *file, int flags, /* mode_t mode */ ...);
+int openat_permissive (int fd, char const *file, int flags, mode_t mode,
+		       int *cwd_errno);
 # if ! HAVE_FDOPENDIR
 #  define fdopendir __OPENAT_ID (fdopendir)
 # endif
@@ -71,9 +75,45 @@ DIR *fdopendir (int fd);
 int fstatat (int fd, char const *file, struct stat *st, int flag);
 # define unlinkat __OPENAT_ID (unlinkat)
 int unlinkat (int fd, char const *file, int flag);
+bool openat_needs_fchdir (void);
+
+#else
+
+# define openat_permissive(Fd, File, Flags, Mode, Cwd_errno) \
+    openat (Fd, File, Flags, Mode)
+# define openat_needs_fchdir() false
+
+#endif
+
+int mkdirat (int fd, char const *file, mode_t mode);
 void openat_restore_fail (int) ATTRIBUTE_NORETURN;
 void openat_save_fail (int) ATTRIBUTE_NORETURN;
-#else
-# define openat_restore_fail(Errno) /* empty */
-# define openat_save_fail(Errno) /* empty */
-#endif
+int fchmodat (int fd, char const *file, mode_t mode, int flag);
+int fchownat (int fd, char const *file, uid_t owner, gid_t group, int flag);
+
+/* Using these function names makes application code
+   slightly more readable than it would be with
+   fchownat (..., 0) or fchownat (..., AT_SYMLINK_NOFOLLOW).  */
+static inline int
+chownat (int fd, char const *file, uid_t owner, gid_t group)
+{
+  return fchownat (fd, file, owner, group, 0);
+}
+
+static inline int
+lchownat (int fd, char const *file, uid_t owner, gid_t group)
+{
+  return fchownat (fd, file, owner, group, AT_SYMLINK_NOFOLLOW);
+}
+
+static inline int
+chmodat (int fd, char const *file, mode_t mode)
+{
+  return fchmodat (fd, file, mode, 0);
+}
+
+static inline int
+lchmodat (int fd, char const *file, mode_t mode)
+{
+  return fchmodat (fd, file, mode, AT_SYMLINK_NOFOLLOW);
+}

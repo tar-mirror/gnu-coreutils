@@ -1,5 +1,5 @@
-# gethrxtime.m4 serial 2
-dnl Copyright (C) 2005 Free Software Foundation, Inc.
+# gethrxtime.m4 serial 6
+dnl Copyright (C) 2005, 2006 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
@@ -8,7 +8,6 @@ dnl Written by Paul Eggert.
 
 AC_DEFUN([gl_GETHRXTIME],
 [
-  AC_LIBSOURCES([gethrxtime.c, gethrxtime.h, xtime.h])
   AC_REQUIRE([gl_ARITHMETIC_HRTIME_T])
   AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
   AC_REQUIRE([gl_XTIME])
@@ -43,32 +42,31 @@ AC_DEFUN([gl_ARITHMETIC_HRTIME_T],
 AC_DEFUN([gl_XTIME],
 [
   AC_REQUIRE([AC_C_INLINE])
-  AC_REQUIRE([gl_AC_TYPE_LONG_LONG])
+  AC_REQUIRE([AC_TYPE_LONG_LONG_INT])
   :
 ])
 
 # Prerequisites of lib/gethrxtime.c.
 AC_DEFUN([gl_PREREQ_GETHRXTIME],
 [
-  AC_REQUIRE([AC_HEADER_TIME])
   AC_REQUIRE([gl_CLOCK_TIME])
   AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
-  AC_CHECK_FUNCS_ONCE(gettimeofday microuptime nanouptime)
+  AC_CHECK_FUNCS_ONCE(microuptime nanouptime)
 
   if test $ac_cv_func_nanouptime != yes; then
     LIB_GETHRXTIME=
-    AC_CACHE_CHECK([whether CLOCK_MONOTONIC is defined],
-      gl_cv_have_CLOCK_MONOTONIC,
-      [AC_EGREP_CPP([have_CLOCK_MONOTONIC],
+    AC_CACHE_CHECK([whether CLOCK_MONOTONIC or CLOCK_REALTIME is defined],
+      gl_cv_have_clock_gettime_macro,
+      [AC_EGREP_CPP([have_clock_gettime_macro],
 	[
 #        include <time.h>
-#        ifdef CLOCK_MONOTONIC
-	  have_CLOCK_MONOTONIC
+#        if defined CLOCK_MONOTONIC || defined CLOCK_REALTIME
+	  have_clock_gettime_macro
 #        endif
 	],
-	gl_cv_have_CLOCK_MONOTONIC=yes,
-	gl_cv_have_CLOCK_MONOTONIC=no)])
-    if test $gl_cv_have_CLOCK_MONOTONIC = yes; then
+	gl_cv_have_clock_gettime_macro=yes,
+	gl_cv_have_clock_gettime_macro=no)])
+    if test $gl_cv_have_clock_gettime_macro = yes; then
       LIB_GETHRXTIME=$LIB_CLOCK_GETTIME
     fi
     AC_SUBST([LIB_GETHRXTIME])

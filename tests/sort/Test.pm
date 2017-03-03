@@ -1,4 +1,24 @@
 # -*-perl-*-
+# Test "sort".
+
+# Copyright (C) 1996, 1997, 1998, 1999, 2001, 2002, 2003, 2004, 2005,
+# 2006 Free Software Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301, USA.
+
 package Test;
 require 5.002;
 use strict;
@@ -246,6 +266,12 @@ my @tv = (
 
 # Specifying two -o options should evoke a failure
 ["o2", '-o x -o y', '', '', 2],
+
+# Specifying incompatible options should evoke a failure.
+["incompat1", '-in', '', '', 2],
+["incompat2", '-fR', '', '', 2],
+["incompat3", '-dfgiMnR', '', '', 2],
+["incompat4", '-c -o /dev/null', '', '', 2],
 
 # -t '\0' is accepted, as of coreutils-5.0.91
 ['nul-tab', "-k2,2 -t '\\0'", "a\0z\01\nb\0y\02\n", "b\0y\02\na\0z\01\n", 0],

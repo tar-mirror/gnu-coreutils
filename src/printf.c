@@ -1,5 +1,5 @@
 /* printf - format and print data
-   Copyright (C) 1990-2005 Free Software Foundation, Inc.
+   Copyright (C) 1990-2006 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -57,13 +57,6 @@
 #include "long-options.h"
 #include "quote.h"
 #include "unicodeio.h"
-
-#if ! (HAVE_DECL_STRTOIMAX || defined strtoimax)
-intmax_t strtoimax ();
-#endif
-#if ! (HAVE_DECL_STRTOUMAX || defined strtoumax)
-uintmax_t strtoumax ();
-#endif
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "printf"
@@ -250,7 +243,7 @@ print_esc (const char *escstart, bool octal_0)
     {
       /* A hexadecimal \xhh escape sequence must have 1 or 2 hex. digits.  */
       for (esc_length = 0, ++p;
-	   esc_length < 2 && ISXDIGIT (*p);
+	   esc_length < 2 && isxdigit (to_uchar (*p));
 	   ++esc_length, ++p)
 	esc_value = esc_value * 16 + hextobin (*p);
       if (esc_length == 0)
@@ -280,7 +273,7 @@ print_esc (const char *escstart, bool octal_0)
 	   esc_length > 0;
 	   --esc_length, ++p)
 	{
-	  if (!ISXDIGIT (*p))
+	  if (! isxdigit (to_uchar (*p)))
 	    error (EXIT_FAILURE, 0, _("missing hexadecimal number in escape"));
 	  uni_value = uni_value * 16 + hextobin (*p);
 	}
@@ -524,6 +517,9 @@ print_formatted (const char *format, int argc, char **argv)
 	  for (;; f++, direc_length++)
 	    switch (*f)
 	      {
+#if (__GLIBC__ == 2 && 2 <= __GLIBC_MINOR__) || 3 <= __GLIBC__
+	      case 'I':
+#endif
 	      case '\'':
 		ok['a'] = ok['A'] = ok['c'] = ok['e'] = ok['E'] =
 		  ok['o'] = ok['s'] = ok['x'] = ok['X'] = 0;

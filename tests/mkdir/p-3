@@ -3,6 +3,23 @@
 # causes immediate failure.  Also, ensure that we don't create
 # subsequent, relative command-line arguments in the wrong place.
 
+# Copyright (C) 2005, 2006 Free Software Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301, USA.
+
 if test "$VERBOSE" = yes; then
   set -x
   mkdir --version
@@ -20,7 +37,7 @@ mkdir -p $tmp || framework_failure=1
 cd $tmp || framework_failure=1
 mkdir no-access || framework_failure=1
 mkdir no-acce2s || framework_failure=1
-mkdir no-acce3s || framework_failure=1
+mkdir -p no-acce3s/d || framework_failure=1
 
 if test $framework_failure = 1; then
   echo "$0: failure in testing framework" 1>&2
@@ -28,26 +45,21 @@ if test $framework_failure = 1; then
 fi
 
 p=$pwd/$tmp
-(cd no-access; chmod 0 . && mkdir -p $p/a/b u/v) 2> /dev/null && fail=1
+(cd no-access && chmod 0 . && mkdir -p $p/a/b u/v) 2> /dev/null && fail=1
 test -d $p/a/b || fail=1
 
 # Same as above, but with a following *absolute* name, it should succeed
-(cd no-acce2s; chmod 0 . && mkdir -p $p/b/b $p/z) || fail=1
+(cd no-acce2s && chmod 0 . && mkdir -p $p/b/b $p/z) || fail=1
+test -d $p/b/b && test -d $p/z || fail=1
 
-test -d $p/z || fail=1
+# Same as above, but a trailing relative name in an unreadable directory
+# whose parent is inaccessible.  coreutils 5.97 fails this test.
+(cd no-acce3s/d && chmod a-rx .. && chmod a-r . && mkdir -p a/b $p/b/c d/e &&
+ test -d a/b && test -d d/e) || fail=1
+test -d $p/b/c || fail=1
 
 b=`ls $p/a|tr -d '\n'`
 # With coreutils-5.3.0, this would fail with $b=bu.
 test "x$b" = xb || fail=1
-
-# Ensure that the re_protect code is run on absolute names, even
-# after failure to return to the initial working directory.
-# This is actually a test of the underlying mkdir-p.c code.
-# The part in question cannot be tested via mkdir(1) because that
-# program cannot create leading directories that lack u=wx permissions,
-# so we have to test with install (aka ginstall in the build directory).
-(cd no-acce3s; chmod 0 . && ginstall -m 0 -d $p/c/b $p/y/z) || fail=1
-p=`ls -ld $p/y|sed 's/ .*//'`
-case $p in d---------);; *) fail=1;; esac
 
 exit $fail

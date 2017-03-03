@@ -1,3 +1,5 @@
+/* -*- buffer-read-only: t -*- vi: set ro: */
+/* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 /* getline.c --- Implementation of replacement getline function.
    Copyright (C) 2005 Free Software Foundation, Inc.
 
@@ -18,7 +20,7 @@
 
 /* Written by Simon Josefsson. */
 
-#ifdef HAVE_CONFIG_H
+#if 1
 # include <config.h>
 #endif
 

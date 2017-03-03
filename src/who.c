@@ -1,5 +1,5 @@
 /* GNU's who.
-   Copyright (C) 1992-2005 Free Software Foundation, Inc.
+   Copyright (C) 1992-2006 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -46,10 +46,6 @@
 
 #ifndef MAXHOSTNAMELEN
 # define MAXHOSTNAMELEN 64
-#endif
-
-#ifndef S_IWGRP
-# define S_IWGRP 020
 #endif
 
 #ifdef RUN_LVL
@@ -418,7 +414,7 @@ print_user (const STRUCT_UTMP *utmp_ent, time_t boottime)
 	  hostlen = 1;
 	  hoststr = xrealloc (hoststr, hostlen);
 	}
-      stpcpy (hoststr, "");
+      *hoststr = '\0';
     }
 #endif
 

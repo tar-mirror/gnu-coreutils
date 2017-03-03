@@ -32,9 +32,7 @@
 /* FIXME: Check for arithmetic overflow in all cases, not just
    some of them.  */
 
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
+#include <config.h>
 
 #include "getdate.h"
 
@@ -68,19 +66,10 @@
 #include "setenv.h"
 #include "xalloc.h"
 
-#if STDC_HEADERS || (! defined isascii && ! HAVE_ISASCII)
-# define IN_CTYPE_DOMAIN(c) 1
-#else
-# define IN_CTYPE_DOMAIN(c) isascii (c)
-#endif
-
-#define ISSPACE(c) (IN_CTYPE_DOMAIN (c) && isspace (c))
-#define ISALPHA(c) (IN_CTYPE_DOMAIN (c) && isalpha (c))
-#define ISLOWER(c) (IN_CTYPE_DOMAIN (c) && islower (c))
 
 /* ISDIGIT differs from isdigit, as follows:
-   - Its arg may be any int or unsigned int; it need not be an unsigned char.
-   - It's guaranteed to evaluate its argument exactly once.
+   - Its arg may be any int or unsigned int; it need not be an unsigned char
+     or EOF.
    - It's typically faster.
    POSIX says that only '0' through '9' are digits.  Prefer ISDIGIT to
    isdigit unless it's important to use the locale's definition
@@ -896,8 +885,7 @@ lookup_word (parser_control const *pc, char *word)
   for (p = word; *p; p++)
     {
       unsigned char ch = *p;
-      if (ISLOWER (ch))
-	*p = toupper (ch);
+      *p = toupper (ch);
     }
 
   for (tp = meridian_table; tp->name; tp++)
@@ -962,7 +950,7 @@ yylex (YYSTYPE *lvalp, parser_control *pc)
 
   for (;;)
     {
-      while (c = *pc->input, ISSPACE (c))
+      while (c = *pc->input, isspace (c))
 	pc->input++;
 
       if (ISDIGIT (c) || c == '-' || c == '+')
@@ -973,7 +961,7 @@ yylex (YYSTYPE *lvalp, parser_control *pc)
 	  if (c == '-' || c == '+')
 	    {
 	      sign = c == '-' ? -1 : 1;
-	      while (c = *++pc->input, ISSPACE (c))
+	      while (c = *++pc->input, isspace (c))
 		continue;
 	      if (! ISDIGIT (c))
 		/* skip the '-' sign */
@@ -1077,7 +1065,7 @@ yylex (YYSTYPE *lvalp, parser_control *pc)
 	    }
 	}
 
-      if (ISALPHA (c))
+      if (isalpha (c))
 	{
 	  char buff[20];
 	  char *p = buff;
@@ -1089,7 +1077,7 @@ yylex (YYSTYPE *lvalp, parser_control *pc)
 		*p++ = c;
 	      c = *++pc->input;
 	    }
-	  while (ISALPHA (c) || c == '.');
+	  while (isalpha (c) || c == '.');
 
 	  *p = '\0';
 	  tp = lookup_word (pc, buff);
@@ -1201,7 +1189,7 @@ get_date (struct timespec *result, char const *p, struct timespec const *now)
   if (! tmp)
     return false;
 
-  while (c = *p, ISSPACE (c))
+  while (c = *p, isspace (c))
     p++;
 
   if (strncmp (p, "TZ=\"", 4) == 0)

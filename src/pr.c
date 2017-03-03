@@ -1,5 +1,5 @@
 /* pr -- convert text files for printing.
-   Copyright (C) 88, 91, 1995-2005 Free Software Foundation, Inc.
+   Copyright (C) 88, 91, 1995-2006 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -2326,7 +2326,7 @@ print_char (char c)
 	print_white_space ();
 
       /* Nonprintables are assumed to have width 0, except '\b'. */
-      if (!ISPRINT (to_uchar (c)))
+      if (! isprint (to_uchar (c)))
 	{
 	  if (c == '\b')
 	    --output_position;
@@ -2685,7 +2685,7 @@ char_to_clump (char c)
 	}
 
     }
-  else if (!ISPRINT (uc))
+  else if (! isprint (uc))
     {
       if (use_esc_sequence)
 	{
@@ -2848,7 +2848,7 @@ Mandatory arguments to long options are mandatory for short options too.\n\
                     separate columns by STRING,\n\
                     without -S: Default separator <TAB> with -J and <space>\n\
                     otherwise (same as -S\" \"), no effect on column options\n\
-  -t, --omit-header omit page headers and trailers\n\
+  -t, --omit-header  omit page headers and trailers\n\
 "), stdout);
       fputs (_("\
   -T, --omit-pagination\n\

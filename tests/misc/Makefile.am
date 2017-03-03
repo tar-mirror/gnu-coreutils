@@ -1,4 +1,22 @@
-## Process this file with automake to produce Makefile.in -*-Makefile-*-.
+# Make miscellaneous coreutils tests.			-*-Makefile-*-
+
+# Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006 Free Software
+# Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301, USA.
 
 EXTRA_DIST = $(TESTS)
 
@@ -8,7 +26,7 @@ TESTS_ENVIRONMENT = \
   PACKAGE_VERSION=$(PACKAGE_VERSION) \
   PERL="$(PERL)" \
   BUILD_SRC_DIR="`pwd`/../../src" \
-  PATH="`pwd`/../../src$(PATH_SEPARATOR)$$PATH" \
+  PATH="$(VG_PATH_PREFIX)`pwd`/../../src$(PATH_SEPARATOR)$$PATH" \
   PROG=`../../src/basename -- "$$tst"`
 
 # Do not choose a name that is a shell keyword like 'if', or a
@@ -18,21 +36,44 @@ TESTS_ENVIRONMENT = \
 # will execute the test script rather than the standard utility.
 
 TESTS = \
+  wc-files0-from \
+  wc-files0 \
   cat-proc \
-  stat-printf \
-  stat-fmt \
-  date \
-  tac-continue \
+  base64 \
+  basename \
   close-stdout \
-  pwd-long \
+  csplit \
+  date \
   date-sec \
-  paste-no-nl \
+  df \
+  dirname \
   expand \
-  fold \
-  nohup \
-  head-elide-tail \
-  split-fail \
   false-status \
-  tty-eof \
+  fold \
+  head-c \
+  head-elide-tail \
+  head-pos \
+  mknod \
+  nice \
+  nl \
+  nohup \
+  paste-no-nl \
+  pathchk1 \
+  printf \
   printf-hex \
-  nl split-l printf split-a head-pos sort-merge head-c csplit nice pathchk1
+  pwd-long \
+  sha224sum \
+  sha256sum \
+  sha384sum \
+  sha512sum \
+  shuf \
+  sort-merge \
+  sort-rand \
+  split-a \
+  split-fail \
+  split-l \
+  stat-fmt \
+  stat-printf \
+  tac-continue \
+  test-diag \
+  tty-eof

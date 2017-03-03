@@ -1,5 +1,5 @@
 /* chgrp -- change group ownership of files
-   Copyright (C) 89, 90, 91, 1995-2005 Free Software Foundation, Inc.
+   Copyright (C) 89, 90, 91, 1995-2006 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -120,8 +120,8 @@ Change the group of each FILE to GROUP.\n\
 With --reference, change the group of each FILE to that of RFILE.\n\
 \n\
   -c, --changes          like verbose but report only when a change is made\n\
-      --dereference      affect the referent of each symbolic link, rather\n\
-                         than the symbolic link itself (this is the default)\n\
+      --dereference      affect the referent of each symbolic link (this is\n\
+                         the default), rather than the symbolic link itself\n\
 "), stdout);
       fputs (_("\
   -h, --no-dereference   affect each symbolic link instead of any referenced\n\
@@ -129,12 +129,12 @@ With --reference, change the group of each FILE to that of RFILE.\n\
                          ownership of a symlink)\n\
 "), stdout);
       fputs (_("\
-      --no-preserve-root do not treat `/' specially (the default)\n\
+      --no-preserve-root  do not treat `/' specially (the default)\n\
       --preserve-root    fail to operate recursively on `/'\n\
 "), stdout);
       fputs (_("\
   -f, --silent, --quiet  suppress most error messages\n\
-      --reference=RFILE  use RFILE's group rather than the specifying\n\
+      --reference=RFILE  use RFILE's group rather than specifying a\n\
                          GROUP value\n\
   -R, --recursive        operate on files and directories recursively\n\
   -v, --verbose          output a diagnostic for every file processed\n\

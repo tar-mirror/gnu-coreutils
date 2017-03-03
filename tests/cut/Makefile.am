@@ -1,4 +1,22 @@
-## Process this file with automake to produce Makefile.in -*-Makefile-*-.
+# Make coreutils tests.					-*-Makefile-*-
+
+# Copyright (C) 1997, 1998, 2000, 2003, 2004, 2006 Free Software
+# Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301, USA.
 
 ##test-files-begin
 x = cut
@@ -34,7 +52,7 @@ od-overlap4.E od-overlap5.O od-overlap5.E
 EXTRA_DIST = Test.pm $x-tests $(explicit) $(maint_gen)
 noinst_SCRIPTS = $x-tests
 TESTS_ENVIRONMENT = \
-  PATH="`pwd`/../../src$(PATH_SEPARATOR)$$PATH"
+  PATH="$(VG_PATH_PREFIX)`pwd`/../../src$(PATH_SEPARATOR)$$PATH"
 
 editpl = sed -e 's,@''PERL''@,$(PERL),g' -e 's,@''srcdir''@,$(srcdir),g'
 
@@ -59,4 +77,5 @@ $(srcdir)/Makefile.am: ../Makefile.am.in Test.pm $(mk_script)
 	  echo "x = $$tool" >> $@t
 	$(PERL) -I$(srcdir) -w -- $(mk_script) $(srcdir) --list >> $@t
 	sed -n '/^##test-files-end/,$$p' $(srcdir)/../Makefile.am.in >> $@t
+	chmod -w $@t
 	mv $@t $@

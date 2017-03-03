@@ -1,3 +1,5 @@
+/* -*- buffer-read-only: t -*- vi: set ro: */
+/* DO NOT EDIT! GENERATED AUTOMATICALLY! */
 /* Duplicate a bounded initial segment of a string, with out-of-memory
    checking.
    Copyright (C) 2003 Free Software Foundation, Inc.
@@ -16,7 +18,7 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
 
-#ifdef HAVE_CONFIG_H
+#if 1
 # include <config.h>
 #endif
 

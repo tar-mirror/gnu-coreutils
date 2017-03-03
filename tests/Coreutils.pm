@@ -1,6 +1,24 @@
 package Coreutils;
 # This is a testing framework.
 
+# Copyright (C) 1998, 2000, 2001, 2002, 2004, 2005, 2006 Free Software
+# Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301, USA.
+
 require 5.003;
 use strict;
 use vars qw($VERSION @ISA @EXPORT);
@@ -9,12 +27,13 @@ use FileHandle;
 use File::Compare qw(compare);
 
 @ISA = qw(Exporter);
-($VERSION = '$Revision: 1.2 $ ') =~ tr/[0-9].//cd;
+($VERSION = '$Revision: 1.5 $ ') =~ tr/[0-9].//cd;
 @EXPORT = qw (run_tests);
 
 my $debug = $ENV{DEBUG};
 
-my @Types = qw (IN OUT ERR AUX CMP EXIT PRE POST OUT_SUBST ERR_SUBST ENV ENV_DEL);
+my @Types = qw (IN IN_PIPE OUT ERR AUX CMP EXIT PRE POST OUT_SUBST
+		ERR_SUBST ENV ENV_DEL);
 my %Types = map {$_ => 1} @Types;
 my %Zero_one_type = map {$_ => 1}
    qw (OUT ERR EXIT PRE POST OUT_SUBST ERR_SUBST ENV);
@@ -261,6 +280,7 @@ sub run_tests ($$$$$)
       my %seen_type;
       my @env_delete;
       my $env_prefix = '';
+      my $input_pipe_cmd;
       foreach $io_spec (@$t)
 	{
 	  if (!ref $io_spec)
@@ -363,9 +383,20 @@ sub run_tests ($$$$$)
 	  my $file = _process_file_spec ($program_name, $test_name, $val,
 					 $type, \@junk_files);
 
-	  if ($type eq 'IN')
+	  if ($type eq 'IN' || $type eq 'IN_PIPE')
 	    {
-	      push @args, _shell_quote $file;
+	      my $quoted_file = _shell_quote $file;
+	      if ($type eq 'IN_PIPE')
+		{
+		  defined $input_pipe_cmd
+		    and die "$program_name: $test_name: only one input"
+		      . " may be specified with IN_PIPE\n";
+		  $input_pipe_cmd = "cat $quoted_file |";
+		}
+	      else
+		{
+		  push @args, $quoted_file;
+		}
 	    }
 	  elsif ($type eq 'AUX' || $type eq 'OUT' || $type eq 'ERR')
 	    {
@@ -410,6 +441,8 @@ sub run_tests ($$$$$)
       $actual{ERR} = "$test_name.E";
       push @junk_files, $actual{OUT}, $actual{ERR};
       my @cmd = ($prog, @args, "> $actual{OUT}", "2> $actual{ERR}");
+      defined $input_pipe_cmd
+	and unshift @cmd, $input_pipe_cmd;
       my $cmd_str = $env_prefix . join (' ', @cmd);
 
       # Delete from the environment any symbols specified by syntax
@@ -455,7 +488,7 @@ sub run_tests ($$$$$)
 	      my $out = $actual{$eo};
 	      my $orig = "$out.orig";
 
-	      # Move $out aside (to $orig), then then recreate $out
+	      # Move $out aside (to $orig), then recreate $out
 	      # by transforming each line of $orig via $subst_expr.
 	      rename $out, $orig
 		or (warn "$program_name: cannot rename $out to $orig: $!\n"),

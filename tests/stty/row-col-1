@@ -1,4 +1,25 @@
 #! /bin/sh
+# Test "stty" with rows and columns.
+
+# Copyright (C) 1998, 1999, 2000, 2001, 2003, 2004, 2005, 2006 Free
+# Software Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301, USA.
+
+
 # This script takes no arguments.
 
 if test "$VERBOSE" = yes; then
@@ -38,9 +59,7 @@ NA LAST NA
 '
 set $tests
 
-saved_size=.saved-size
-
-stty size > $saved_size \
+saved_size=`stty size` && test -n "$saved_size" \
   || { echo "$0: skipping this test: can't get window size" 1>&2;
        exit 77; exit; }
 
@@ -63,7 +82,7 @@ while :; do
   shift; shift; shift
 done
 
-stty `cat $saved_size|sed 's/ / columns /;s/^/rows /'` || exit 1
-rm -f $saved_size
+set x $saved_size
+stty rows $2 columns $3 || exit 1
 
 exit $fail

@@ -2,6 +2,23 @@
 # Make sure chmod gives the right diagnostic for a readable,
 # but inaccessible directory.
 
+# Copyright (C) 2003, 2006 Free Software Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301, USA.
+
 if test "$VERBOSE" = yes; then
   set -x
   chmod --version
@@ -30,11 +47,27 @@ fail=0
 
 # This must exit nonzero.
 chmod -R o=r d >/dev/null 2>out && fail=1
+
 cat <<\EOF > exp
 chmod: `d/no-x': Permission denied
 EOF
 
-cmp out exp || fail=1
+# With native fdopendir, du uses a different code path.
+cat <<\EOF > exp-native-fdopendir
+chmod: cannot access `d/no-x/y': Permission denied
+chmod: fts_read failed: Permission denied
+EOF
+
+if cmp out exp >/dev/null 2>&1; then
+  :
+else
+  if cmp out exp-native-fdopendir; then
+    :
+  else
+    fail=1
+  fi
+fi
+
 test $fail = 1 && diff out exp 2> /dev/null
 
 mkdir -p a/b

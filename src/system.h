@@ -1,5 +1,5 @@
 /* system-dependent definitions for coreutils
-   Copyright (C) 1989, 1991-2005 Free Software Foundation, Inc.
+   Copyright (C) 1989, 1991-2006 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -55,7 +55,8 @@ you must include <sys/types.h> before including this file
 #include <limits.h>
 
 #include "pathmax.h"
-#include "localedir.h"
+
+#include "configmake.h"
 
 #if TIME_WITH_SYS_TIME
 # include <sys/time.h>
@@ -96,16 +97,22 @@ you must include <sys/types.h> before including this file
    memcpy otherwise.  */
 
 #include <string.h>
+#include "mempcpy.h"
 #include "memrchr.h"
+#include "stpcpy.h"
+#include "strpbrk.h"
 
 #include <errno.h>
 
 /* Some systems don't define the following symbols.  */
-#ifndef ENOSYS
-# define ENOSYS (-1)
+#ifndef EDQUOT
+# define EDQUOT (-1)
 #endif
 #ifndef EISDIR
 # define EISDIR (-1)
+#endif
+#ifndef ENOSYS
+# define ENOSYS (-1)
 #endif
 
 #include <stdbool.h>
@@ -144,11 +151,6 @@ initialize_exit_failure (int status)
 
 #include <fcntl.h>
 
-#if !defined SEEK_SET
-# define SEEK_SET 0
-# define SEEK_CUR 1
-# define SEEK_END 2
-#endif
 #ifndef F_OK
 # define F_OK 0
 # define X_OK 1
@@ -156,79 +158,21 @@ initialize_exit_failure (int status)
 # define R_OK 4
 #endif
 
-#if !defined O_DIRECT
-# define O_DIRECT 0
+#include <dirent.h>
+#ifndef _D_EXACT_NAMLEN
+# define _D_EXACT_NAMLEN(dp) strlen ((dp)->d_name)
 #endif
 
-#if !defined O_DSYNC
-# define O_DSYNC 0
-#endif
+enum
+{
+  NOT_AN_INODE_NUMBER = 0
+};
 
-#if !defined O_NDELAY
-# define O_NDELAY 0
-#endif
-
-#if !defined O_NONBLOCK
-# define O_NONBLOCK O_NDELAY
-#endif
-
-#if !defined O_NOCTTY
-# define O_NOCTTY 0
-#endif
-
-#if !defined O_NOFOLLOW
-# define O_NOFOLLOW 0
-#endif
-
-#if !defined O_RSYNC
-# define O_RSYNC 0
-#endif
-
-#if !defined O_SYNC
-# define O_SYNC 0
-#endif
-
-/* For systems that distinguish between text and binary I/O.
-   O_BINARY is usually declared in fcntl.h  */
-#if !defined O_BINARY && defined _O_BINARY
-  /* For MSC-compatible compilers.  */
-# define O_BINARY _O_BINARY
-# define O_TEXT _O_TEXT
-#endif
-
-#ifdef __BEOS__
-  /* BeOS 5 has O_BINARY and O_TEXT, but they have no effect.  */
-# undef O_BINARY
-# undef O_TEXT
-#endif
-
-#ifndef O_BINARY
-# define O_BINARY 0
-# define O_TEXT 0
-#endif
-
-#if HAVE_DIRENT_H
-# include <dirent.h>
-# define NLENGTH(direct) (strlen((direct)->d_name))
-#else /* not HAVE_DIRENT_H */
-# define dirent direct
-# define NLENGTH(direct) ((direct)->d_namlen)
-# if HAVE_SYS_NDIR_H
-#  include <sys/ndir.h>
-# endif /* HAVE_SYS_NDIR_H */
-# if HAVE_SYS_DIR_H
-#  include <sys/dir.h>
-# endif /* HAVE_SYS_DIR_H */
-# if HAVE_NDIR_H
-#  include <ndir.h>
-# endif /* HAVE_NDIR_H */
-#endif /* HAVE_DIRENT_H */
-
-#if CLOSEDIR_VOID
-/* Fake a return value. */
-# define CLOSEDIR(d) (closedir (d), 0)
+#ifdef D_INO_IN_DIRENT
+# define D_INO(dp) (dp)->d_ino
 #else
-# define CLOSEDIR(d) closedir (d)
+/* Some systems don't have inodes, so fake them to avoid lots of ifdefs.  */
+# define D_INO(dp) NOT_AN_INODE_NUMBER
 #endif
 
 /* Get or fake the disk device blocksize.
@@ -309,103 +253,20 @@ initialize_exit_failure (int status)
 
 #include "timespec.h"
 
-#if HAVE_INTTYPES_H
-# include <inttypes.h>
-#endif
-#if HAVE_STDINT_H
-# include <stdint.h>
-#endif
-
-#if ULONG_MAX_LT_ULLONG_MAX
-# define LONGEST_MODIFIER "ll"
-#else
-# define LONGEST_MODIFIER "l"
-#endif
-#if PRI_MACROS_BROKEN
-# undef PRIdMAX
-# undef PRIoMAX
-# undef PRIuMAX
-# undef PRIxMAX
-#endif
-#ifndef PRIdMAX
-# define PRIdMAX LONGEST_MODIFIER "d"
-#endif
-#ifndef PRIoMAX
-# define PRIoMAX LONGEST_MODIFIER "o"
-#endif
-#ifndef PRIuMAX
-# define PRIuMAX LONGEST_MODIFIER "u"
-#endif
-#ifndef PRIxMAX
-# define PRIxMAX LONGEST_MODIFIER "x"
-#endif
+#include <inttypes.h>
 
 #include <ctype.h>
 
-/* Jim Meyering writes:
-
-   "... Some ctype macros are valid only for character codes that
-   isascii says are ASCII (SGI's IRIX-4.0.5 is one such system --when
-   using /bin/cc or gcc but without giving an ansi option).  So, all
-   ctype uses should be through macros like ISPRINT...  If
-   STDC_HEADERS is defined, then autoconf has verified that the ctype
-   macros don't need to be guarded with references to isascii. ...
-   Defining isascii to 1 should let any compiler worth its salt
-   eliminate the && through constant folding."
-
-   Bruno Haible adds:
-
-   "... Furthermore, isupper(c) etc. have an undefined result if c is
-   outside the range -1 <= c <= 255. One is tempted to write isupper(c)
-   with c being of type `char', but this is wrong if c is an 8-bit
-   character >= 128 which gets sign-extended to a negative value.
-   The macro ISUPPER protects against this as well."  */
-
-#if STDC_HEADERS || (!defined isascii && !HAVE_ISASCII)
-# define IN_CTYPE_DOMAIN(c) 1
-#else
-# define IN_CTYPE_DOMAIN(c) isascii(c)
+#if ! (defined isblank || HAVE_DECL_ISBLANK)
+# define isblank(c) ((c) == ' ' || (c) == '\t')
 #endif
 
-#ifdef isblank
-# define ISBLANK(c) (IN_CTYPE_DOMAIN (c) && isblank (c))
-#else
-# define ISBLANK(c) ((c) == ' ' || (c) == '\t')
-#endif
-#ifdef isgraph
-# define ISGRAPH(c) (IN_CTYPE_DOMAIN (c) && isgraph (c))
-#else
-# define ISGRAPH(c) (IN_CTYPE_DOMAIN (c) && isprint (c) && !isspace (c))
-#endif
-
-/* This is defined in <sys/euc.h> on at least Solaris2.6 systems.  */
-#undef ISPRINT
-
-#define ISPRINT(c) (IN_CTYPE_DOMAIN (c) && isprint (c))
-#define ISALNUM(c) (IN_CTYPE_DOMAIN (c) && isalnum (c))
-#define ISALPHA(c) (IN_CTYPE_DOMAIN (c) && isalpha (c))
-#define ISCNTRL(c) (IN_CTYPE_DOMAIN (c) && iscntrl (c))
-#define ISLOWER(c) (IN_CTYPE_DOMAIN (c) && islower (c))
-#define ISPUNCT(c) (IN_CTYPE_DOMAIN (c) && ispunct (c))
-#define ISSPACE(c) (IN_CTYPE_DOMAIN (c) && isspace (c))
-#define ISUPPER(c) (IN_CTYPE_DOMAIN (c) && isupper (c))
-#define ISXDIGIT(c) (IN_CTYPE_DOMAIN (c) && isxdigit (c))
-#define ISDIGIT_LOCALE(c) (IN_CTYPE_DOMAIN (c) && isdigit (c))
-
-#if STDC_HEADERS
-# define TOLOWER(Ch) tolower (Ch)
-# define TOUPPER(Ch) toupper (Ch)
-#else
-# define TOLOWER(Ch) (ISUPPER (Ch) ? tolower (Ch) : (Ch))
-# define TOUPPER(Ch) (ISLOWER (Ch) ? toupper (Ch) : (Ch))
-#endif
-
-/* ISDIGIT differs from ISDIGIT_LOCALE, as follows:
-   - Its arg may be any int or unsigned int; it need not be an unsigned char.
-   - It's guaranteed to evaluate its argument exactly once.
+/* ISDIGIT differs from isdigit, as follows:
+   - Its arg may be any int or unsigned int; it need not be an unsigned char
+     or EOF.
    - It's typically faster.
    POSIX says that only '0' through '9' are digits.  Prefer ISDIGIT to
-   ISDIGIT_LOCALE unless it's important to use the locale's definition
+   isdigit unless it's important to use the locale's definition
    of `digit' even when the host does not conform to POSIX.  */
 #define ISDIGIT(c) ((unsigned int) (c) - '0' <= 9)
 
@@ -429,6 +290,17 @@ static inline unsigned char to_uchar (char ch) { return ch; }
 #define _(msgid) gettext (msgid)
 #define N_(msgid) msgid
 
+/* Return a value that pluralizes the same way that N does, in all
+   languages we know of.  */
+static inline unsigned long int
+select_plural (uintmax_t n)
+{
+  /* Reduce by a power of ten, but keep it away from zero.  The
+     gettext manual says 1000000 should be safe.  */
+  enum { PLURAL_REDUCER = 1000000 };
+  return (n <= ULONG_MAX ? n : n % PLURAL_REDUCER + PLURAL_REDUCER);
+}
+
 #define STREQ(a, b) (strcmp ((a), (b)) == 0)
 
 #if !HAVE_DECL_FREE
@@ -447,31 +319,12 @@ char *memchr ();
 char *realloc ();
 #endif
 
-#if !HAVE_DECL_STPCPY
-# ifndef stpcpy
-char *stpcpy ();
-# endif
-#endif
-
-#if !HAVE_DECL_STRNDUP
-char *strndup ();
-#endif
-
-#if !HAVE_DECL_STRSTR
-char *strstr ();
-#endif
-
 #if !HAVE_DECL_GETENV
 char *getenv ();
 #endif
 
 #if !HAVE_DECL_LSEEK
 off_t lseek ();
-#endif
-
-/* This is needed on some AIX systems.  */
-#if !HAVE_DECL_STRTOUL
-unsigned long strtoul ();
 #endif
 
 #if !HAVE_DECL_GETLOGIN
@@ -505,30 +358,32 @@ uid_t getuid ();
    the third argument to x2nrealloc would be `sizeof *(P)'.
    Ensure that sizeof *(P) is *not* 1.  In that case, it'd be
    better to use X2REALLOC, although not strictly necessary.  */
-#define X2NREALLOC(P, PN) (verify_expr (sizeof *(P) != 1), \
+#define X2NREALLOC(P, PN) ((void) verify_true (sizeof *(P) != 1), \
 			   x2nrealloc (P, PN, sizeof *(P)))
 
 /* Using x2realloc (when appropriate) usually makes your code more
    readable than using x2nrealloc, but it also makes it so your
    code will malfunction if sizeof *(P) ever becomes 2 or greater.
    So use this macro instead of using x2realloc directly.  */
-#define X2REALLOC(P, PN) (verify_expr (sizeof *(P) == 1), x2realloc (P, PN))
+#define X2REALLOC(P, PN) ((void) verify_true (sizeof *(P) == 1), \
+                          x2realloc (P, PN))
 
-#if ! defined HAVE_MEMPCPY && ! defined mempcpy
-/* Be CAREFUL that there are no side effects in N.  */
-# define mempcpy(D, S, N) ((void *) ((char *) memcpy (D, S, N) + (N)))
-#endif
-
-/* Include automatically-generated macros for unlocked I/O.  */
 #include "unlocked-io.h"
+#include "same-inode.h"
 
-#define SAME_INODE(Stat_buf_1, Stat_buf_2) \
-  ((Stat_buf_1).st_ino == (Stat_buf_2).st_ino \
-   && (Stat_buf_1).st_dev == (Stat_buf_2).st_dev)
+#include "dirname.h"
 
-#define DOT_OR_DOTDOT(Basename) \
-  (Basename[0] == '.' && (Basename[1] == '\0' \
-			  || (Basename[1] == '.' && Basename[2] == '\0')))
+static inline bool
+dot_or_dotdot (char const *file_name)
+{
+  if (file_name[0] == '.')
+    {
+      char sep = file_name[(file_name[1] == '.') + 1];
+      return (! sep || ISSLASH (sep));
+    }
+  else
+    return false;
+}
 
 /* A wrapper for readdir so that callers don't see entries for `.' or `..'.  */
 static inline struct dirent const *
@@ -537,7 +392,7 @@ readdir_ignoring_dot_and_dotdot (DIR *dirp)
   while (1)
     {
       struct dirent const *dp = readdir (dirp);
-      if (dp == NULL || ! DOT_OR_DOTDOT (dp->d_name))
+      if (dp == NULL || ! dot_or_dotdot (dp->d_name))
 	return dp;
     }
 }
@@ -604,72 +459,8 @@ enum
 
 #include "intprops.h"
 
-#ifndef CHAR_MIN
-# define CHAR_MIN TYPE_MINIMUM (char)
-#endif
-
-#ifndef CHAR_MAX
-# define CHAR_MAX TYPE_MAXIMUM (char)
-#endif
-
-#ifndef SCHAR_MIN
-# define SCHAR_MIN (-1 - SCHAR_MAX)
-#endif
-
-#ifndef SCHAR_MAX
-# define SCHAR_MAX (CHAR_MAX == UCHAR_MAX ? CHAR_MAX / 2 : CHAR_MAX)
-#endif
-
-#ifndef UCHAR_MAX
-# define UCHAR_MAX TYPE_MAXIMUM (unsigned char)
-#endif
-
-#ifndef SHRT_MIN
-# define SHRT_MIN TYPE_MINIMUM (short int)
-#endif
-
-#ifndef SHRT_MAX
-# define SHRT_MAX TYPE_MAXIMUM (short int)
-#endif
-
-#ifndef INT_MAX
-# define INT_MAX TYPE_MAXIMUM (int)
-#endif
-
-#ifndef INT_MIN
-# define INT_MIN TYPE_MINIMUM (int)
-#endif
-
-#ifndef INTMAX_MAX
-# define INTMAX_MAX TYPE_MAXIMUM (intmax_t)
-#endif
-
-#ifndef INTMAX_MIN
-# define INTMAX_MIN TYPE_MINIMUM (intmax_t)
-#endif
-
-#ifndef UINT_MAX
-# define UINT_MAX TYPE_MAXIMUM (unsigned int)
-#endif
-
-#ifndef LONG_MAX
-# define LONG_MAX TYPE_MAXIMUM (long int)
-#endif
-
-#ifndef ULONG_MAX
-# define ULONG_MAX TYPE_MAXIMUM (unsigned long int)
-#endif
-
-#ifndef SIZE_MAX
-# define SIZE_MAX TYPE_MAXIMUM (size_t)
-#endif
-
 #ifndef SSIZE_MAX
 # define SSIZE_MAX TYPE_MAXIMUM (ssize_t)
-#endif
-
-#ifndef UINTMAX_MAX
-# define UINTMAX_MAX TYPE_MAXIMUM (uintmax_t)
 #endif
 
 #ifndef OFF_T_MIN
@@ -738,6 +529,10 @@ enum
 			  : (errno = EOVERFLOW, -1))
 #endif
 
+#if ! HAVE_SYNC
+# define sync() /* empty */
+#endif
+
 /* Compute the greatest common divisor of U and V using Euclid's
    algorithm.  U and V must be nonzero.  */
 
@@ -792,8 +587,8 @@ ptr_align (void const *ptr, size_t alignment)
 #define DECIMAL_DIGIT_ACCUMULATE(Accum, Digit_val, Type)		\
   (									\
    (void) (&(Accum) == (Type *) NULL),  /* The type matches.  */	\
-   verify_expr (! TYPE_SIGNED (Type)),  /* The type is unsigned.  */	\
-   verify_expr (sizeof (Accum) == sizeof (Type)),  /* Added check.  */	\
+   (void) verify_true (! TYPE_SIGNED (Type)), /* The type is unsigned.  */ \
+   (void) verify_true (sizeof (Accum) == sizeof (Type)), /* Added check.  */ \
    (((Type) -1 / 10 < (Accum)						\
      || (Type) ((Accum) * 10 + (Digit_val)) < (Accum))			\
     ? false : (((Accum) = (Accum) * 10 + (Digit_val)), true))		\

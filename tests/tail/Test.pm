@@ -1,3 +1,23 @@
+# Test "tail".
+
+# Copyright (C) 1997, 1998, 2002, 2004, 2005, 2006 Free Software
+# Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301, USA.
+
 package Test;
 require 5.002;
 use strict;
@@ -77,8 +97,7 @@ my @tv = (
 ['n-5b', '-n  0', "y\n" x 5, '', 0],
 
 # With textutils-1.22, this failed.
-['f-1', '-f -n 1', "a\nb\n", "b\n", 0],
-#['f-2', '-f -n 1 -', "a\nb\n", "b\n", 0],
+['f-pipe-1', '-f -n 1', "a\nb\n", "b\n", 0],
 );
 
 sub test_vector
@@ -95,6 +114,10 @@ sub test_vector
       if ($test_name =~ /^(err-6|c-2)$/)
         {
 	  $Test::env{$test_name} = ['_POSIX2_VERSION=200112'];
+        }
+      if ($test_name =~ /^f-pipe-/)
+        {
+	  $Test::env{$test_name} = ['POSIXLY_CORRECT=1'];
         }
 
       # If you run the minus* tests with a FILE arg they'd hang.

@@ -1,10 +1,42 @@
 #!/bin/sh
+# -*- perl -*-
+
+# Copyright (C) 1998, 2000, 2001, 2002, 2003, 2004, 2005, 2006 Free
+# Software Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301, USA.
 
 : ${PERL=perl}
 : ${srcdir=.}
 
 $PERL -e 1 > /dev/null 2>&1 || {
   echo 1>&2 "$0: configure didn't find a usable version of Perl," \
+    "so can't run this test"
+  exit 77
+}
+
+# Set up files used by the setuid-etc tests; skip this entire test if
+# that cannot be done for some reason.
+test=../../src/test
+touch setuid && chmod u+s setuid && $test -u setuid &&
+touch setgid && chmod g+s setgid && $test -g setgid &&
+mkdir sticky && chmod +t sticky  && $test -k sticky &&
+mkdir owt    && chmod +t,o+w owt && $test -k owt &&
+mkdir owr    && chmod o+w owr || {
+  echo 1>&2 "$0: cannot create setuid/setgid/sticky files," \
     "so can't run this test"
   exit 77
 }
@@ -30,6 +62,11 @@ my $slink_d = {PRE => sub {symlink '/', 'd' or die "d: $!\n";
                            $ENV{LS_COLORS}='ln=01;36:di=01;34:or=40;31;01'
                            }};
 my $unlink_d = {POST => sub {unlink 'd' or die "d: $!\n"}};
+
+my $mkdir_d_slink = {PRE => sub {mkdir 'd',0755 or die "d: $!\n";
+				 symlink '/', 'd/s' or die "d/s: $!\n" }};
+my $rmdir_d_slink = {POST => sub {unlink 'd/s' or die "d/s: $!\n";
+				  rmdir 'd' or die "d: $!\n" }};
 
 sub make_j_d ()
 {
@@ -93,7 +130,7 @@ my @Tests =
      # From Stéphane Chazelas.
      ['no-a-isdir-b', 'no-dir d',
 	 {OUT => "d:\n"},
-	 {ERR => "ls: no-dir: No such file or directory\n"},
+	 {ERR => "ls: cannot access no-dir: No such file or directory\n"},
 	 $mkdir, $rmdir, {EXIT => 2}],
 
      ['recursive-2', '-R d', {OUT => "d:\ne\n\nd/e:\n"}, $mkdir2, $rmdir2],
@@ -108,24 +145,14 @@ my @Tests =
 	    . "\e[m"
 	 },
 
-	# This is a kludge to work around the fact that on some systems
-	# the files we've just created have a `group ID' that is not one
-	# of those associated with the current user.  Hence, attempting
-	# to do `chmod g+s setgid' fails.  This substitution maps the
-	# non-highlight 0m code to the expected one.
-	{OUT_SUBST => 's/\[0msetgid/[30;43msetgid/'},
-
-	{PRE => sub {
-	 system
-	   "touch setuid && chmod u+s setuid;"
-	  ."touch setgid && chmod g+s setgid;"
-	  ."mkdir sticky && chmod +t sticky;"
-	  ."mkdir owt    && chmod +t,o+w owt;"
-	  ."mkdir owr    && chmod o+w owr" }},
 	{POST => sub {
          unlink qw(setuid setgid);
 	 foreach my $dir (qw(owr owt sticky)) {rmdir $dir} }},
 	 ],
+
+     # For 5.97 and earlier, --file-type acted like --indicator-style=slash.
+     ['file-type', '--file-type d', {OUT => "s@\n"},
+      $mkdir_d_slink, $rmdir_d_slink],
     );
 
 my $save_temps = $ENV{SAVE_TEMPS};

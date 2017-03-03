@@ -41,7 +41,7 @@ AC_DEFUN([gl_PREREQ_EUIDACCESS], [
     AC_SEARCH_LIBS(eaccess, [gen],
                    [test "$ac_cv_search_eaccess" = "none required" ||
                     LIB_EACCESS=$ac_cv_search_eaccess])
-    AC_SUBST(LIB_EACCESS)
+    AC_SUBST([LIB_EACCESS])
     AC_CHECK_FUNCS(eaccess)
   LIBS=$gl_saved_libs
 ])
