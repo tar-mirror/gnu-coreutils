@@ -82,6 +82,7 @@
 #include <sys/types.h>
 
 #include "system.h"
+#include "argmatch.h"
 #include "xstrtol.h"
 #include "error.h"
 #include "fcntl--.h"
@@ -104,12 +105,30 @@ enum { SECTOR_SIZE = 512 };
 enum { SECTOR_MASK = SECTOR_SIZE - 1 };
 verify (0 < SECTOR_SIZE && (SECTOR_SIZE & SECTOR_MASK) == 0);
 
+enum remove_method
+{
+  remove_none = 0,      /* the default: only wipe data.  */
+  remove_unlink,        /* don't obfuscate name, just unlink.  */
+  remove_wipe,          /* obfuscate name before unlink.  */
+  remove_wipesync       /* obfuscate name, syncing each byte, before unlink.  */
+};
+
+static char const *const remove_args[] =
+{
+  "unlink", "wipe", "wipesync", NULL
+};
+
+static enum remove_method const remove_methods[] =
+{
+  remove_unlink, remove_wipe, remove_wipesync
+};
+
 struct Options
 {
   bool force;		/* -f flag: chmod files if necessary */
   size_t n_iterations;	/* -n flag: Number of iterations */
   off_t size;		/* -s flag: size of file */
-  bool remove_file;	/* -u flag: remove file after shredding */
+  enum remove_method remove_file; /* -u flag: remove file after shredding */
   bool verbose;		/* -v flag: Print progress */
   bool exact;		/* -x flag: Do not round up file size */
   bool zero_fill;	/* -z flag: Add a final zero pass */
@@ -129,7 +148,7 @@ static struct option const long_opts[] =
   {"iterations", required_argument, NULL, 'n'},
   {"size", required_argument, NULL, 's'},
   {"random-source", required_argument, NULL, RANDOM_SOURCE_OPTION},
-  {"remove", no_argument, NULL, 'u'},
+  {"remove", optional_argument, NULL, 'u'},
   {"verbose", no_argument, NULL, 'v'},
   {"zero", no_argument, NULL, 'z'},
   {GETOPT_HELP_OPTION_DECL},
@@ -159,7 +178,7 @@ for even very expensive hardware probing to recover the data.\n\
   -s, --size=N   shred this many bytes (suffixes like K, M, G accepted)\n\
 "), DEFAULT_PASSES);
       fputs (_("\
-  -u, --remove   truncate and remove file after overwriting\n\
+  -u, --remove[=HOW]  truncate and remove file after overwriting; See below\n\
   -v, --verbose  show progress\n\
   -x, --exact    do not round file sizes up to the next full block;\n\
                    this is the default for non-regular files\n\
@@ -173,8 +192,12 @@ If FILE is -, shred standard output.\n\
 \n\
 Delete FILE(s) if --remove (-u) is specified.  The default is not to remove\n\
 the files because it is common to operate on device files like /dev/hda,\n\
-and those files usually should not be removed.  When operating on regular\n\
-files, most people use the --remove option.\n\
+and those files usually should not be removed.\n\
+The optional HOW parameter indicates how to remove a directory entry:\n\
+'unlink' => use a standard unlink call.\n\
+'wipe' => also first obfuscate bytes in the name.\n\
+'wipesync' => also sync each obfuscated byte to disk.\n\
+The default mode is 'wipesync', but note it can be expensive.\n\
 \n\
 "), stdout);
       fputs (_("\
@@ -222,6 +245,25 @@ to be recovered later.\n\
   exit (status);
 }
 
+/*
+ * Determine if pattern type is periodic or not.
+ */
+static bool
+periodic_pattern (int type)
+{
+  if (type <= 0)
+    return false;
+
+  unsigned char r[3];
+  unsigned int bits = type & 0xfff;
+
+  bits |= bits << 12;
+  r[0] = (bits >> 4) & 255;
+  r[1] = (bits >> 8) & 255;
+  r[2] = bits & 255;
+
+  return (r[0] != r[1]) || (r[0] != r[2]);
+}
 
 /*
  * Fill a buffer with a fixed pattern.
@@ -359,20 +401,27 @@ dopass (int fd, char const *qname, off_t *sizep, int type,
   size_t soff;			/* Offset into buffer for next write */
   ssize_t ssize;		/* Return value from write */
 
-  /* Fill pattern buffer.  Aligning it to a 32-bit boundary speeds up randread
-     in some cases.  */
-  typedef uint32_t fill_pattern_buffer[3 * 1024];
-  union
-  {
-    fill_pattern_buffer buffer;
-    char c[sizeof (fill_pattern_buffer)];
-    unsigned char u[sizeof (fill_pattern_buffer)];
-  } r;
+  /* Do nothing for --size=0 or regular empty files with --exact.  */
+  if (size == 0)
+    return 0;
 
-  off_t sizeof_r = sizeof r;
+  /* Fill pattern buffer.  Aligning it to a page so we can do direct I/O.  */
+  size_t page_size = getpagesize ();
+#define PERIODIC_OUTPUT_SIZE (60 * 1024)
+#define NONPERIODIC_OUTPUT_SIZE (64 * 1024)
+  verify (PERIODIC_OUTPUT_SIZE % 3 == 0);
+  size_t output_size = periodic_pattern (type)
+                       ? PERIODIC_OUTPUT_SIZE : NONPERIODIC_OUTPUT_SIZE;
+#define PAGE_ALIGN_SLOP (page_size - 1)                /* So directio works */
+#define FILLPATTERN_SIZE (((output_size + 2) / 3) * 3) /* Multiple of 3 */
+#define PATTERNBUF_SIZE (PAGE_ALIGN_SLOP + FILLPATTERN_SIZE)
+  void *fill_pattern_mem = xmalloc (PATTERNBUF_SIZE);
+  unsigned char *pbuf = ptr_align (fill_pattern_mem, page_size);
+
   char pass_string[PASS_NAME_SIZE];	/* Name of current pass */
   bool write_error = false;
-  bool first_write = true;
+  bool other_error = false;
+  bool tried_without_directio = false;
 
   /* Printable previous offset into the file */
   char previous_offset_buf[LONGEST_HUMAN_READABLE + 1];
@@ -381,15 +430,16 @@ dopass (int fd, char const *qname, off_t *sizep, int type,
   if (lseek (fd, 0, SEEK_SET) == -1)
     {
       error (0, errno, _("%s: cannot rewind"), qname);
-      return -1;
+      other_error = true;
+      goto free_pattern_mem;
     }
 
   /* Constant fill patterns need only be set up once. */
   if (type >= 0)
     {
-      lim = (0 <= size && size < sizeof_r ? size : sizeof_r);
-      fillpattern (type, r.u, lim);
-      passname (r.u, pass_string);
+      lim = (0 <= size && size < FILLPATTERN_SIZE ? size : FILLPATTERN_SIZE);
+      fillpattern (type, pbuf, lim);
+      passname (pbuf, pass_string);
     }
   else
     {
@@ -408,8 +458,8 @@ dopass (int fd, char const *qname, off_t *sizep, int type,
   while (true)
     {
       /* How much to write this time? */
-      lim = sizeof r;
-      if (0 <= size && size - offset < sizeof_r)
+      lim = output_size;
+      if (0 <= size && size - offset < output_size)
         {
           if (size < offset)
             break;
@@ -418,11 +468,11 @@ dopass (int fd, char const *qname, off_t *sizep, int type,
             break;
         }
       if (type < 0)
-        randread (s, &r, lim);
+        randread (s, pbuf, lim);
       /* Loop to retry partial writes. */
-      for (soff = 0; soff < lim; soff += ssize, first_write = false)
+      for (soff = 0; soff < lim; soff += ssize)
         {
-          ssize = write (fd, r.c + soff, lim - soff);
+          ssize = write (fd, pbuf + soff, lim - soff);
           if (ssize <= 0)
             {
               if (size < 0 && (ssize == 0 || errno == ENOSPC))
@@ -436,17 +486,15 @@ dopass (int fd, char const *qname, off_t *sizep, int type,
                   int errnum = errno;
                   char buf[INT_BUFSIZE_BOUND (uintmax_t)];
 
-                  /* If the first write of the first pass for a given file
-                     has just failed with EINVAL, turn off direct mode I/O
-                     and try again.  This works around a bug in Linux kernel
-                     2.4 whereby opening with O_DIRECT would succeed for some
-                     file system types (e.g., ext3), but any attempt to
-                     access a file through the resulting descriptor would
-                     fail with EINVAL.  */
-                  if (k == 1 && first_write && errno == EINVAL)
+                  /* Retry without direct I/O since this may not be supported
+                     at all on some (file) systems, or with the current size.
+                     I.E. a specified --size that is not aligned, or when
+                     dealing with slop at the end of a file with --exact.  */
+                  if (k == 1 && !tried_without_directio && errno == EINVAL)
                     {
                       direct_mode (fd, false);
                       ssize = 0;
+                      tried_without_directio = true;
                       continue;
                     }
                   error (0, errnum, _("%s: error writing at offset %s"),
@@ -455,8 +503,10 @@ dopass (int fd, char const *qname, off_t *sizep, int type,
                   /* 'shred' is often used on bad media, before throwing it
                      out.  Thus, it shouldn't give up on bad blocks.  This
                      code works because lim is always a multiple of
-                     SECTOR_SIZE, except at the end.  */
-                  verify (sizeof r % SECTOR_SIZE == 0);
+                     SECTOR_SIZE, except at the end.  This size constraint
+                     also enables direct I/O on some (file) systems.  */
+                  verify (PERIODIC_OUTPUT_SIZE % SECTOR_SIZE == 0);
+                  verify (NONPERIODIC_OUTPUT_SIZE % SECTOR_SIZE == 0);
                   if (errnum == EIO && 0 <= size && (soff | SECTOR_MASK) < lim)
                     {
                       size_t soff1 = (soff | SECTOR_MASK) + 1;
@@ -469,7 +519,8 @@ dopass (int fd, char const *qname, off_t *sizep, int type,
                         }
                       error (0, errno, _("%s: lseek failed"), qname);
                     }
-                  return -1;
+                  other_error = true;
+                  goto free_pattern_mem;
                 }
             }
         }
@@ -479,7 +530,8 @@ dopass (int fd, char const *qname, off_t *sizep, int type,
       if (offset > OFF_T_MAX - (off_t) soff)
         {
           error (0, 0, _("%s: file too large"), qname);
-          return -1;
+          other_error = true;
+          goto free_pattern_mem;
         }
 
       offset += soff;
@@ -536,7 +588,10 @@ dopass (int fd, char const *qname, off_t *sizep, int type,
               if (dosync (fd, qname) != 0)
                 {
                   if (errno != EIO)
-                    return -1;
+                    {
+                      other_error = true;
+                      goto free_pattern_mem;
+                    }
                   write_error = true;
                 }
             }
@@ -547,11 +602,18 @@ dopass (int fd, char const *qname, off_t *sizep, int type,
   if (dosync (fd, qname) != 0)
     {
       if (errno != EIO)
-        return -1;
+        {
+          other_error = true;
+          goto free_pattern_mem;
+        }
       write_error = true;
     }
 
-  return write_error;
+free_pattern_mem:
+  memset (pbuf, 0, FILLPATTERN_SIZE);
+  free (fill_pattern_mem);
+
+  return other_error ? -1 : write_error;
 }
 
 /*
@@ -926,8 +988,8 @@ incname (char *name, size_t len)
 
 /*
  * Repeatedly rename a file with shorter and shorter names,
- * to obliterate all traces of the file name on any system that
- * adds a trailing delimiter to on-disk file names and reuses
+ * to obliterate all traces of the file name (and length) on any system
+ * that adds a trailing delimiter to on-disk file names and reuses
  * the same directory slot.  Finally, unlink it.
  * The passed-in filename is modified in place to the new filename.
  * (Which is unlinked if this function succeeds, but is still present if
@@ -960,13 +1022,15 @@ wipename (char *oldname, char const *qoldname, struct Options const *flags)
   char *qdir = xstrdup (quotearg_colon (dir));
   bool first = true;
   bool ok = true;
+  int dir_fd = -1;
 
-  int dir_fd = open (dir, O_RDONLY | O_DIRECTORY | O_NOCTTY | O_NONBLOCK);
+  if (flags->remove_file == remove_wipesync)
+    dir_fd = open (dir, O_RDONLY | O_DIRECTORY | O_NOCTTY | O_NONBLOCK);
 
   if (flags->verbose)
     error (0, 0, _("%s: removing"), qoldname);
 
-  while (len)
+  while ((flags->remove_file != remove_unlink) && len)
     {
       memset (base, nameset[0], len);
       base[len] = 0;
@@ -1136,7 +1200,11 @@ main (int argc, char **argv)
           break;
 
         case 'u':
-          flags.remove_file = true;
+          if (optarg == NULL)
+            flags.remove_file = remove_wipesync;
+          else
+            flags.remove_file = XARGMATCH ("--remove", optarg,
+                                           remove_args, remove_methods);
           break;
 
         case 's':

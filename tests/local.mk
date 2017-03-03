@@ -77,7 +77,6 @@ TESTS_ENVIRONMENT =				\
   EGREP='$(EGREP)'				\
   EXEEXT='$(EXEEXT)'				\
   MAKE=$(MAKE)					\
-  PACKAGE_BUGREPORT='$(PACKAGE_BUGREPORT)'	\
   PACKAGE_VERSION=$(PACKAGE_VERSION)		\
   PERL='$(PERL)'				\
   PREFERABLY_POSIX_SHELL='$(PREFERABLY_POSIX_SHELL)' \
@@ -117,12 +116,12 @@ all_root_tests =				\
   tests/dd/skip-seek-past-dev.sh		\
   tests/df/problematic-chars.sh			\
   tests/du/bind-mount-dir-cycle.sh		\
+  tests/id/setgid.sh				\
   tests/install/install-C-root.sh		\
   tests/ls/capability.sh			\
   tests/ls/nameless-uid.sh			\
   tests/misc/chcon.sh				\
   tests/misc/chroot-credentials.sh		\
-  tests/misc/id-setgid.sh			\
   tests/misc/selinux.sh				\
   tests/misc/truncate-owned-by-other.sh		\
   tests/mkdir/writable-under-readonly.sh	\
@@ -202,6 +201,7 @@ all_tests =					\
   tests/rm/r-2.sh				\
   tests/rm/r-3.sh				\
   tests/rm/r-4.sh				\
+  tests/rm/r-root.sh				\
   tests/rm/readdir-bug.sh			\
   tests/rm/rm1.sh				\
   tests/touch/empty-file.sh			\
@@ -246,7 +246,7 @@ all_tests =					\
   tests/misc/pwd-option.sh			\
   tests/misc/chcon-fail.sh			\
   tests/misc/cut.pl				\
-  tests/misc/cut-huge-to-eol-range.sh		\
+  tests/misc/cut-huge-range.sh			\
   tests/misc/wc.pl				\
   tests/misc/wc-files0-from.pl			\
   tests/misc/wc-files0.sh			\
@@ -261,6 +261,7 @@ all_tests =					\
   tests/misc/csplit.sh				\
   tests/misc/csplit-1000.sh			\
   tests/misc/csplit-heap.sh			\
+  tests/misc/csplit-suppress-matched.pl		\
   tests/misc/date-sec.sh			\
   tests/misc/dircolors.pl			\
   tests/misc/dirname.pl				\
@@ -274,9 +275,6 @@ all_tests =					\
   tests/misc/groups-version.sh			\
   tests/misc/head-c.sh				\
   tests/misc/head-pos.sh			\
-  tests/misc/id-context.sh			\
-  tests/misc/id-groups.sh			\
-  tests/misc/id-setgid.sh			\
   tests/misc/md5sum.pl				\
   tests/misc/md5sum-bsd.sh			\
   tests/misc/md5sum-newline.pl			\
@@ -314,6 +312,7 @@ all_tests =					\
   tests/misc/shred-passes.sh			\
   tests/misc/shred-remove.sh			\
   tests/misc/shuf.sh				\
+  tests/misc/shuf-reservoir.sh			\
   tests/misc/sort.pl				\
   tests/misc/sort-benchmark-random.sh		\
   tests/misc/sort-compress.sh			\
@@ -344,6 +343,7 @@ all_tests =					\
   tests/split/b-chunk.sh			\
   tests/split/fail.sh				\
   tests/split/lines.sh				\
+  tests/split/line-bytes.sh			\
   tests/split/l-chunk.sh			\
   tests/split/r-chunk.sh			\
   tests/split/numeric.sh			\
@@ -389,6 +389,8 @@ all_tests =					\
   tests/misc/uniq-perf.sh			\
   tests/misc/xattr.sh				\
   tests/tail-2/wait.sh				\
+  tests/tail-2/retry.sh				\
+  tests/tail-2/symlink.sh				\
   tests/chmod/c-option.sh			\
   tests/chmod/equal-x.sh			\
   tests/chmod/equals.sh				\
@@ -427,6 +429,7 @@ all_tests =					\
   tests/cp/file-perm-race.sh			\
   tests/cp/into-self.sh				\
   tests/cp/link.sh				\
+  tests/cp/link-deref.sh			\
   tests/cp/link-no-deref.sh			\
   tests/cp/link-preserve.sh			\
   tests/cp/link-symlink.sh			\
@@ -457,6 +460,7 @@ all_tests =					\
   tests/df/header.sh				\
   tests/df/df-P.sh				\
   tests/df/df-output.sh				\
+  tests/df/df-symlink.sh			\
   tests/df/unreadable.sh			\
   tests/df/total-unprocessed.sh			\
   tests/df/no-mtab-status.sh			\
@@ -464,6 +468,7 @@ all_tests =					\
   tests/df/skip-rootfs.sh			\
   tests/dd/direct.sh				\
   tests/dd/misc.sh				\
+  tests/dd/no-allocate.sh				\
   tests/dd/nocache.sh				\
   tests/dd/not-rewound.sh			\
   tests/dd/reblock.sh				\
@@ -490,6 +495,7 @@ all_tests =					\
   tests/du/inacc-dest.sh			\
   tests/du/inacc-dir.sh				\
   tests/du/inaccessible-cwd.sh			\
+  tests/du/inodes.sh				\
   tests/du/long-from-unreadable.sh		\
   tests/du/long-sloop.sh			\
   tests/du/max-depth.sh				\
@@ -504,6 +510,10 @@ all_tests =					\
   tests/du/two-args.sh				\
   tests/id/gnu-zero-uids.sh			\
   tests/id/no-context.sh			\
+  tests/id/context.sh				\
+  tests/id/uid.sh				\
+  tests/id/setgid.sh				\
+  tests/id/zero.sh				\
   tests/install/basic-1.sh			\
   tests/install/create-leading.sh		\
   tests/install/d-slashdot.sh			\
@@ -552,12 +562,14 @@ all_tests =					\
   tests/mkdir/p-1.sh				\
   tests/mkdir/p-2.sh				\
   tests/mkdir/p-3.sh				\
+  tests/mkdir/p-acl.sh				\
   tests/mkdir/p-slashdot.sh			\
   tests/mkdir/p-thru-slink.sh			\
   tests/mkdir/p-v.sh				\
   tests/mkdir/parents.sh			\
   tests/mkdir/perm.sh				\
   tests/mkdir/selinux.sh			\
+  tests/mkdir/restorecon.sh			\
   tests/mkdir/special-1.sh			\
   tests/mkdir/t-slash.sh			\
   tests/mv/acl.sh				\
@@ -650,7 +662,7 @@ $(factor_tests): $(tf)/run.sh $(tf)/create-test.sh
 	$(AM_V_at)$(SHELL) $(srcdir)/$(tf)/create-test.sh $@ \
 	  $(srcdir)/$(tf)/run.sh > $@-t
 	$(AM_V_at)chmod a+x $@-t
-	$(AM_V_at)mv $@-t $@
+	$(AM_V_at)mv -f $@-t $@
 
 CLEANFILES += $(factor_tests)
 

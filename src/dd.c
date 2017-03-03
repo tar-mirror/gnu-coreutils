@@ -136,9 +136,7 @@ enum
 enum
   {
     STATUS_NOXFER = 01,
-    STATUS_NOCOUNTS = 02,
-    STATUS_LAST = STATUS_NOCOUNTS,
-    STATUS_NONE = STATUS_LAST | (STATUS_LAST - 1)
+    STATUS_NONE = 02
   };
 
 /* The name of the input file, or NULL for the standard input. */
@@ -235,6 +233,9 @@ static uintmax_t r_truncate = 0;
    They change if we're converting to EBCDIC.  */
 static char newline_character = '\n';
 static char space_character = ' ';
+
+/* Input buffer. */
+static char *ibuf;
 
 /* Output buffer. */
 static char *obuf;
@@ -646,6 +647,65 @@ Options are:\n\
   exit (status);
 }
 
+static char *
+human_size (size_t n)
+{
+  static char hbuf[LONGEST_HUMAN_READABLE + 1];
+  int human_opts =
+    (human_autoscale | human_round_to_nearest | human_base_1024
+     | human_space_before_unit | human_SI | human_B);
+  return human_readable (n, hbuf, human_opts, 1, 1);
+}
+
+/* Ensure input buffer IBUF is allocated.  */
+
+static void
+alloc_ibuf (void)
+{
+  if (ibuf)
+    return;
+
+  char *real_buf = malloc (input_blocksize + INPUT_BLOCK_SLOP);
+  if (!real_buf)
+    error (EXIT_FAILURE, 0,
+           _("memory exhausted by input buffer of size %zu bytes (%s)"),
+           input_blocksize, human_size (input_blocksize));
+
+  real_buf += SWAB_ALIGN_OFFSET;	/* allow space for swab */
+
+  ibuf = ptr_align (real_buf, page_size);
+}
+
+/* Ensure output buffer OBUF is allocated/initialized.  */
+
+static void
+alloc_obuf (void)
+{
+  if (obuf)
+    return;
+
+  if (conversions_mask & C_TWOBUFS)
+    {
+      /* Page-align the output buffer, too.  */
+      char *real_obuf = malloc (output_blocksize + OUTPUT_BLOCK_SLOP);
+      if (!real_obuf)
+        error (EXIT_FAILURE, 0,
+               _("memory exhausted by output buffer of size %zu bytes (%s)"),
+               output_blocksize, human_size (output_blocksize));
+      obuf = ptr_align (real_obuf, page_size);
+    }
+  else
+    {
+      alloc_ibuf ();
+      obuf = ibuf;
+    }
+
+  /* Write a sentinel to the slop after the buffer,
+   to allow efficient checking for NUL blocks.  */
+  assert (sizeof (uintptr_t) <= OUTPUT_BLOCK_SLOP);
+  memset (obuf + output_blocksize, 1, sizeof (uintptr_t));
+}
+
 static void
 translate_charset (char const *new_trans)
 {
@@ -676,7 +736,7 @@ print_stats (void)
   double delta_s;
   char const *bytes_per_second;
 
-  if ((status_flags & STATUS_NONE) == STATUS_NONE)
+  if (status_flags & STATUS_NONE)
     return;
 
   fprintf (stderr,
@@ -969,12 +1029,13 @@ iread (int fd, char *buf, size_t size)
       if (0 < prev_nread && prev_nread < size)
         {
           uintmax_t prev = prev_nread;
-          error (0, 0, ngettext (("warning: partial read (%"PRIuMAX" byte); "
-                                  "suggest iflag=fullblock"),
-                                 ("warning: partial read (%"PRIuMAX" bytes); "
-                                  "suggest iflag=fullblock"),
-                                 select_plural (prev)),
-                 prev);
+          if (!(status_flags & STATUS_NONE))
+            error (0, 0, ngettext (("warning: partial read (%"PRIuMAX" byte); "
+                                    "suggest iflag=fullblock"),
+                                   ("warning: partial read (%"PRIuMAX" bytes); "
+                                    "suggest iflag=fullblock"),
+                                   select_plural (prev)),
+                   prev);
           warn_partial_read = false;
         }
 
@@ -1018,7 +1079,8 @@ iwrite (int fd, char const *buf, size_t size)
   if ((output_flags & O_DIRECT) && size < output_blocksize)
     {
       int old_flags = fcntl (STDOUT_FILENO, F_GETFL);
-      if (fcntl (STDOUT_FILENO, F_SETFL, old_flags & ~O_DIRECT) != 0)
+      if (fcntl (STDOUT_FILENO, F_SETFL, old_flags & ~O_DIRECT) != 0
+          && !(status_flags & STATUS_NONE))
         error (0, errno, _("failed to turn off O_DIRECT: %s"),
                quote (output_file));
 
@@ -1511,9 +1573,11 @@ skip_via_lseek (char const *filename, int fdesc, off_t offset, int whence)
       && ioctl (fdesc, MTIOCGET, &s2) == 0
       && MT_SAME_POSITION (s1, s2))
     {
-      error (0, 0, _("warning: working around lseek kernel bug for file (%s)\n\
-  of mt_type=0x%0lx -- see <sys/mtio.h> for the list of types"),
-             filename, s2.mt_type);
+      if (!(status_flags & STATUS_NONE))
+        error (0, 0, _("warning: working around lseek kernel bug for file "
+                       "(%s)\n  of mt_type=0x%0lx -- "
+                       "see <sys/mtio.h> for the list of types"),
+               filename, s2.mt_type);
       errno = 0;
       new_position = -1;
     }
@@ -1526,7 +1590,7 @@ skip_via_lseek (char const *filename, int fdesc, off_t offset, int whence)
 
 /* Throw away RECORDS blocks of BLOCKSIZE bytes plus BYTES bytes on
    file descriptor FDESC, which is open with read permission for FILE.
-   Store up to BLOCKSIZE bytes of the data at a time in BUF, if
+   Store up to BLOCKSIZE bytes of the data at a time in IBUF or OBUF, if
    necessary. RECORDS or BYTES must be nonzero. If FDESC is
    STDIN_FILENO, advance the input offset. Return the number of
    records remaining, i.e., that were not skipped because EOF was
@@ -1535,7 +1599,7 @@ skip_via_lseek (char const *filename, int fdesc, off_t offset, int whence)
 
 static uintmax_t
 skip (int fdesc, char const *file, uintmax_t records, size_t blocksize,
-      size_t *bytes, char *buf)
+      size_t *bytes)
 {
   uintmax_t offset = records * blocksize + *bytes;
 
@@ -1607,6 +1671,18 @@ skip (int fdesc, char const *file, uintmax_t records, size_t blocksize,
         }
       /* else file_size && offset > OFF_T_MAX or file ! seekable */
 
+      char *buf;
+      if (fdesc == STDIN_FILENO)
+        {
+          alloc_ibuf ();
+          buf = ibuf;
+        }
+      else
+        {
+          alloc_obuf ();
+          buf = obuf;
+        }
+
       do
         {
           ssize_t nread = iread_fnc (fdesc, buf, records ? blocksize : *bytes);
@@ -1671,7 +1747,7 @@ advance_input_after_read_error (size_t nbytes)
           if (offset == input_offset)
             return true;
           diff = input_offset - offset;
-          if (! (0 <= diff && diff <= nbytes))
+          if (! (0 <= diff && diff <= nbytes) && !(status_flags & STATUS_NONE))
             error (0, 0, _("warning: invalid file offset after failed read"));
           if (0 <= skip_via_lseek (input_file, STDIN_FILENO, diff, SEEK_CUR))
             return true;
@@ -1823,26 +1899,12 @@ set_fd_flags (int fd, int add_flags, char const *name)
     }
 }
 
-static char *
-human_size (size_t n)
-{
-  static char hbuf[LONGEST_HUMAN_READABLE + 1];
-  int human_opts =
-    (human_autoscale | human_round_to_nearest | human_base_1024
-     | human_space_before_unit | human_SI | human_B);
-  return human_readable (n, hbuf, human_opts, 1, 1);
-}
-
 /* The main loop.  */
 
 static int
 dd_copy (void)
 {
-  char *ibuf, *bufstart;	/* Input buffer. */
-  /* These are declared static so that even though we don't free the
-     buffers, valgrind will recognize that there is no "real" leak.  */
-  static char *real_buf;	/* real buffer address before alignment */
-  static char *real_obuf;
+  char *bufstart;		/* Input buffer. */
   ssize_t nread;		/* Bytes read in the current block.  */
 
   /* If nonzero, then the previously read block was partial and
@@ -1869,45 +1931,12 @@ dd_copy (void)
      It is necessary when accessing raw (i.e. character special) disk
      devices on Unixware or other SVR4-derived system.  */
 
-  real_buf = malloc (input_blocksize + INPUT_BLOCK_SLOP);
-  if (!real_buf)
-    error (EXIT_FAILURE, 0,
-           _("memory exhausted by input buffer of size %zu bytes (%s)"),
-           input_blocksize, human_size (input_blocksize));
-
-  ibuf = real_buf;
-  ibuf += SWAB_ALIGN_OFFSET;	/* allow space for swab */
-
-  ibuf = ptr_align (ibuf, page_size);
-
-  if (conversions_mask & C_TWOBUFS)
-    {
-      /* Page-align the output buffer, too.  */
-      real_obuf = malloc (output_blocksize + OUTPUT_BLOCK_SLOP);
-      if (!real_obuf)
-        error (EXIT_FAILURE, 0,
-               _("memory exhausted by output buffer of size %zu bytes (%s)"),
-               output_blocksize, human_size (output_blocksize));
-      obuf = ptr_align (real_obuf, page_size);
-    }
-  else
-    {
-      real_obuf = NULL;
-      obuf = ibuf;
-    }
-
-  /* Write a sentinel to the slop after the buffer,
-     to allow efficient checking for NUL blocks.  */
-  assert (sizeof (uintptr_t) <= OUTPUT_BLOCK_SLOP);
-  memset (obuf + output_blocksize, 1, sizeof (uintptr_t));
-
   if (skip_records != 0 || skip_bytes != 0)
     {
       uintmax_t us_bytes = input_offset + (skip_records * input_blocksize)
                            + skip_bytes;
       uintmax_t us_blocks = skip (STDIN_FILENO, input_file,
-                                  skip_records, input_blocksize, &skip_bytes,
-                                  ibuf);
+                                  skip_records, input_blocksize, &skip_bytes);
       us_bytes -= input_offset;
 
       /* POSIX doesn't say what to do when dd detects it has been
@@ -1916,7 +1945,8 @@ dd_copy (void)
              1. file is too small
              2. pipe has not enough data
              3. partial reads  */
-      if (us_blocks || (!input_offset_overflow && us_bytes))
+      if ((us_blocks || (!input_offset_overflow && us_bytes))
+          && !(status_flags & STATUS_NONE))
         {
           error (0, 0,
                  _("%s: cannot skip to specified offset"), quote (input_file));
@@ -1927,8 +1957,7 @@ dd_copy (void)
     {
       size_t bytes = seek_bytes;
       uintmax_t write_records = skip (STDOUT_FILENO, output_file,
-                                      seek_records, output_blocksize, &bytes,
-                                      obuf);
+                                      seek_records, output_blocksize, &bytes);
 
       if (write_records != 0 || bytes != 0)
         {
@@ -1954,6 +1983,9 @@ dd_copy (void)
 
   if (max_records == 0 && max_bytes == 0)
     return exit_status;
+
+  alloc_ibuf ();
+  alloc_obuf ();
 
   while (1)
     {
@@ -1981,7 +2013,9 @@ dd_copy (void)
 
       if (nread < 0)
         {
-          error (0, errno, _("error reading %s"), quote (input_file));
+          if (!(conversions_mask & C_NOERROR) || !(status_flags & STATUS_NONE))
+            error (0, errno, _("error reading %s"), quote (input_file));
+
           if (conversions_mask & C_NOERROR)
             {
               print_stats ();

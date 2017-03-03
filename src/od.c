@@ -316,18 +316,18 @@ suffixes may be . for octal and b for multiply by 512.\n\
       emit_mandatory_arg_note ();
 
       fputs (_("\
-  -A, --address-radix=RADIX   output format for file offsets.  RADIX is one\n\
+  -A, --address-radix=RADIX   output format for file offsets; RADIX is one\n\
                                 of [doxn], for Decimal, Octal, Hex or None\n\
   -j, --skip-bytes=BYTES      skip BYTES input bytes first\n\
 "), stdout);
       fputs (_("\
   -N, --read-bytes=BYTES      limit dump to BYTES input bytes\n\
-  -S BYTES, --strings[=BYTES]  output strings of at least BYTES graphic chars.\
+  -S BYTES, --strings[=BYTES]  output strings of at least BYTES graphic chars;\
 \n\
                                 3 is implied when BYTES is not specified\n\
   -t, --format=TYPE           select output format or formats\n\
   -v, --output-duplicates     do not use * to mark line suppression\n\
-  -w[BYTES], --width[=BYTES]  output BYTES bytes per output line.\n\
+  -w[BYTES], --width[=BYTES]  output BYTES bytes per output line;\n\
                                 32 is implied when BYTES is not specified\n\
       --traditional           accept arguments in third form above\n\
 "), stdout);
@@ -339,7 +339,7 @@ suffixes may be . for octal and b for multiply by 512.\n\
 Traditional format specifications may be intermixed; they accumulate:\n\
   -a   same as -t a,  select named characters, ignoring high-order bit\n\
   -b   same as -t o1, select octal bytes\n\
-  -c   same as -t c,  select ASCII characters or backslash escapes\n\
+  -c   same as -t c,  select printable characters or backslash escapes\n\
   -d   same as -t u2, select unsigned decimal 2-byte units\n\
 "), stdout);
       fputs (_("\
@@ -355,7 +355,7 @@ Traditional format specifications may be intermixed; they accumulate:\n\
 \n\
 TYPE is made up of one or more of these specifications:\n\
   a          named character, ignoring high-order bit\n\
-  c          ASCII character or backslash escape\n\
+  c          printable character or backslash escape\n\
 "), stdout);
       fputs (_("\
   d[SIZE]    signed decimal, SIZE bytes per integer\n\
@@ -400,7 +400,7 @@ N (size_t fields, size_t blank, void const *block,                      \
    char const *FMT_STRING, int width, int pad)                          \
 {                                                                       \
   T const *p = block;                                                   \
-  size_t i;                                                             \
+  uintmax_t i;                                                             \
   int pad_remaining = pad;                                              \
   for (i = fields; blank < i; i--)                                      \
     {                                                                   \
@@ -416,7 +416,7 @@ N (size_t fields, size_t blank, void const *block,                      \
   PRINT_FIELDS (N, T, fmt_string, xprintf (fmt_string, adjusted_width, x))
 
 #define PRINT_FLOATTYPE(N, T, FTOASTR, BUFSIZE)                         \
-  PRINT_FIELDS (N, T, fmt_string ATTRIBUTE_UNUSED,                      \
+  PRINT_FIELDS (N, T, fmt_string _GL_UNUSED,                      \
                 char buf[BUFSIZE];                                      \
                 FTOASTR (buf, sizeof buf, 0, 0, x);                     \
                 xprintf ("%*s", adjusted_width, buf))
@@ -452,11 +452,11 @@ dump_hexl_mode_trailer (size_t n_bytes, const char *block)
 
 static void
 print_named_ascii (size_t fields, size_t blank, void const *block,
-                   const char *unused_fmt_string ATTRIBUTE_UNUSED,
+                   const char *unused_fmt_string _GL_UNUSED,
                    int width, int pad)
 {
   unsigned char const *p = block;
-  size_t i;
+  uintmax_t i;
   int pad_remaining = pad;
   for (i = fields; blank < i; i--)
     {
@@ -483,11 +483,11 @@ print_named_ascii (size_t fields, size_t blank, void const *block,
 
 static void
 print_ascii (size_t fields, size_t blank, void const *block,
-             const char *unused_fmt_string ATTRIBUTE_UNUSED, int width,
+             const char *unused_fmt_string _GL_UNUSED, int width,
              int pad)
 {
   unsigned char const *p = block;
-  size_t i;
+  uintmax_t i;
   int pad_remaining = pad;
   for (i = fields; blank < i; i--)
     {
@@ -1056,8 +1056,8 @@ skip (uintmax_t n_skip)
 }
 
 static void
-format_address_none (uintmax_t address ATTRIBUTE_UNUSED,
-                     char c ATTRIBUTE_UNUSED)
+format_address_none (uintmax_t address _GL_UNUSED,
+                     char c _GL_UNUSED)
 {
 }
 

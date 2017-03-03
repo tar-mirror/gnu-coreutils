@@ -196,7 +196,7 @@ copy_fd (int src_fd, FILE *o_stream, uintmax_t n_bytes)
   return COPY_FD_OK;
 }
 
-/* Print all but the last N_ELIDE lines from the input available via
+/* Print all but the last N_ELIDE bytes from the input available via
    the non-seekable file descriptor FD.  Return true upon success.
    Give a diagnostic and return false upon error.  */
 static bool
@@ -313,18 +313,34 @@ elide_tail_bytes_pipe (const char *filename, int fd, uintmax_t n_elide_0)
       size_t n_read;
       bool buffered_enough;
       size_t i, i_next;
-      char **b;
+      char **b = NULL;
       /* Round n_elide up to a multiple of READ_BUFSIZE.  */
       size_t rem = READ_BUFSIZE - (n_elide % READ_BUFSIZE);
       size_t n_elide_round = n_elide + rem;
       size_t n_bufs = n_elide_round / READ_BUFSIZE + 1;
-      b = xcalloc (n_bufs, sizeof *b);
+      size_t n_alloc = 0;
+      size_t n_array_alloc = 0;
 
       buffered_enough = false;
       for (i = 0, i_next = 1; !eof; i = i_next, i_next = (i_next + 1) % n_bufs)
         {
-          if (b[i] == NULL)
-            b[i] = xmalloc (READ_BUFSIZE);
+          if (n_array_alloc == i)
+            {
+              /* reallocate between 16 and n_bufs entries.  */
+              if (n_array_alloc == 0)
+                n_array_alloc = MIN (n_bufs, 16);
+              else if (n_array_alloc <= n_bufs / 2)
+                n_array_alloc *= 2;
+              else
+                n_array_alloc = n_bufs;
+              b = xnrealloc (b, n_array_alloc, sizeof *b);
+            }
+
+          if (! buffered_enough)
+            {
+              b[i] = xmalloc (READ_BUFSIZE);
+              n_alloc = i + 1;
+            }
           n_read = full_read (fd, b[i], READ_BUFSIZE);
           if (n_read < READ_BUFSIZE)
             {
@@ -388,7 +404,7 @@ elide_tail_bytes_pipe (const char *filename, int fd, uintmax_t n_elide_0)
         }
 
     free_mem:
-      for (i = 0; i < n_bufs; i++)
+      for (i = 0; i < n_alloc; i++)
         free (b[i]);
       free (b);
 
@@ -723,18 +739,17 @@ elide_tail_lines_file (const char *filename, int fd, uintmax_t n_elide)
 
       off_t start_pos = lseek (fd, 0, SEEK_CUR);
       off_t end_pos = lseek (fd, 0, SEEK_END);
-      if (0 <= start_pos && start_pos < end_pos)
+      if (0 <= start_pos && 0 <= end_pos)
         {
-          /* If the file is empty, we're done.  */
-          if (end_pos == 0)
+          /* If no data to read we're done.  */
+          if (start_pos >= end_pos)
             return true;
 
           return elide_tail_lines_seekable (filename, fd, n_elide,
                                             start_pos, end_pos);
         }
 
-      /* lseek failed or the end offset precedes start.
-         Fall through.  */
+      /* lseek failed, Fall through...  */
     }
 
   return elide_tail_lines_pipe (filename, fd, n_elide);

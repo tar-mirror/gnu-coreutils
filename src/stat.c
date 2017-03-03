@@ -179,7 +179,6 @@ enum
 
 static struct option const long_options[] =
 {
-  {"context", no_argument, 0, 'Z'},
   {"dereference", no_argument, NULL, 'L'},
   {"file-system", no_argument, NULL, 'f'},
   {"format", required_argument, NULL, 'c'},
@@ -288,14 +287,20 @@ human_fstype (STRUCT_STATVFS const *statfsbuf)
       return "devpts";
     case S_MAGIC_ECRYPTFS: /* 0xF15F local */
       return "ecryptfs";
+    case S_MAGIC_EFIVARFS: /* 0xDE5E81E4 local */
+      return "efivarfs";
     case S_MAGIC_EFS: /* 0x00414A53 local */
       return "efs";
+    case S_MAGIC_EXOFS: /* 0x5DF5 local */
+      return "exofs";
     case S_MAGIC_EXT: /* 0x137D local */
       return "ext";
     case S_MAGIC_EXT2: /* 0xEF53 local */
       return "ext2/ext3";
     case S_MAGIC_EXT2_OLD: /* 0xEF51 local */
       return "ext2";
+    case S_MAGIC_F2FS: /* 0xF2F52010 local */
+      return "f2fs";
     case S_MAGIC_FAT: /* 0x4006 local */
       return "fat";
     case S_MAGIC_FHGFS: /* 0x19830326 remote */
@@ -312,6 +317,8 @@ human_fstype (STRUCT_STATVFS const *statfsbuf)
       return "gpfs";
     case S_MAGIC_HFS: /* 0x4244 local */
       return "hfs";
+    case S_MAGIC_HOSTFS: /* 0xC0FFEE local */
+      return "hostfs";
     case S_MAGIC_HPFS: /* 0xF995E849 local */
       return "hpfs";
     case S_MAGIC_HUGETLBFS: /* 0x958458F6 local */
@@ -391,8 +398,12 @@ human_fstype (STRUCT_STATVFS const *statfsbuf)
       return "securityfs";
     case S_MAGIC_SELINUX: /* 0xF97CFF8C local */
       return "selinux";
+    case S_MAGIC_SMACK: /* 0x43415D53 local */
+      return "smackfs";
     case S_MAGIC_SMB: /* 0x517B remote */
       return "smb";
+    case S_MAGIC_SNFS: /* 0xBEEFDEAD remote */
+      return "snfs";
     case S_MAGIC_SOCKFS: /* 0x534F434B local */
       return "sockfs";
     case S_MAGIC_SQUASHFS: /* 0x73717368 local */
@@ -405,6 +416,8 @@ human_fstype (STRUCT_STATVFS const *statfsbuf)
       return "sysv4";
     case S_MAGIC_TMPFS: /* 0x01021994 local */
       return "tmpfs";
+    case S_MAGIC_UBIFS: /* 0x24051905 local */
+      return "ubifs";
     case S_MAGIC_UDF: /* 0x15013346 local */
       return "udf";
     case S_MAGIC_UFS: /* 0x00011954 local */
@@ -583,7 +596,7 @@ out_minus_zero (char *pformat, size_t prefix_len)
    acts like printf's %f format.  */
 static void
 out_epoch_sec (char *pformat, size_t prefix_len,
-               struct stat const *statbuf ATTRIBUTE_UNUSED,
+               struct stat const *statbuf _GL_UNUSED,
                struct timespec arg)
 {
   char *dot = memchr (pformat, '.', prefix_len);
@@ -955,7 +968,6 @@ print_stat (char *pformat, size_t prefix_len, unsigned int m,
       out_uint (pformat, prefix_len, statbuf->st_uid);
       break;
     case 'U':
-      setpwent ();
       pw_ent = getpwuid (statbuf->st_uid);
       out_string (pformat, prefix_len,
                   pw_ent ? pw_ent->pw_name : "UNKNOWN");
@@ -964,7 +976,6 @@ print_stat (char *pformat, size_t prefix_len, unsigned int m,
       out_uint (pformat, prefix_len, statbuf->st_gid);
       break;
     case 'G':
-      setgrent ();
       gw_ent = getgrgid (statbuf->st_gid);
       out_string (pformat, prefix_len,
                   gw_ent ? gw_ent->gr_name : "UNKNOWN");
@@ -1361,8 +1372,8 @@ Display file or file system status.\n\
   -c  --format=FORMAT   use the specified FORMAT instead of the default;\n\
                           output a newline after each use of FORMAT\n\
       --printf=FORMAT   like --format, but interpret backslash escapes,\n\
-                          and do not output a mandatory trailing newline.\n\
-                          If you want a newline, include \\n in FORMAT\n\
+                          and do not output a mandatory trailing newline;\n\
+                          if you want a newline, include \\n in FORMAT\n\
   -t, --terse           print the information in terse form\n\
 "), stdout);
       fputs (HELP_OPTION_DESCRIPTION, stdout);
@@ -1393,8 +1404,8 @@ The valid format sequences for files (without --file-system):\n\
   %N   quoted file name with dereference if symbolic link\n\
   %o   optimal I/O transfer size hint\n\
   %s   total size, in bytes\n\
-  %t   major device type in hex\n\
-  %T   minor device type in hex\n\
+  %t   major device type in hex, for character/block device special files\n\
+  %T   minor device type in hex, for character/block device special files\n\
 "), stdout);
       fputs (_("\
   %u   user ID of owner\n\

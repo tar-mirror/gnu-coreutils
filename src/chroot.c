@@ -57,7 +57,7 @@ static struct option const long_opts[] =
    always-successful replacement to avoid checking for setgroups
    availability everywhere, just to support broken platforms. */
 static int
-setgroups (size_t size ATTRIBUTE_UNUSED, gid_t const *list ATTRIBUTE_UNUSED)
+setgroups (size_t size _GL_UNUSED, gid_t const *list _GL_UNUSED)
 {
   return 0;
 }
@@ -229,15 +229,10 @@ main (int argc, char **argv)
     {
       uid_t uid = -1;
       gid_t gid = -1;
-      char *user;
-      char *group;
-      char const *err = parse_user_spec (userspec, &uid, &gid, &user, &group);
+      char const *err = parse_user_spec (userspec, &uid, &gid, NULL, NULL);
 
       if (err)
         error (EXIT_CANCELED, errno, "%s", err);
-
-      free (user);
-      free (group);
 
       if (groups && set_additional_groups (groups))
         fail = true;

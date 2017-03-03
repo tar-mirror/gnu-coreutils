@@ -228,10 +228,15 @@ copy_ldadd += $(LIB_SELINUX)
 src_chcon_LDADD += $(LIB_SELINUX)
 src_ginstall_LDADD += $(LIB_SELINUX)
 src_id_LDADD += $(LIB_SELINUX)
+src_id_LDADD += $(LIB_SMACK)
 src_ls_LDADD += $(LIB_SELINUX)
+src_ls_LDADD += $(LIB_SMACK)
 src_mkdir_LDADD += $(LIB_SELINUX)
+src_mkdir_LDADD += $(LIB_SMACK)
 src_mkfifo_LDADD += $(LIB_SELINUX)
+src_mkfifo_LDADD += $(LIB_SMACK)
 src_mknod_LDADD += $(LIB_SELINUX)
+src_mknod_LDADD += $(LIB_SMACK)
 src_runcon_LDADD += $(LIB_SELINUX)
 src_stat_LDADD += $(LIB_SELINUX)
 
@@ -288,6 +293,15 @@ src_stdbuf_LDADD += $(LIBICONV)
 src_timeout_LDADD += $(LIBICONV)
 src_truncate_LDADD += $(LIBICONV)
 
+# for libcrypto hash routines
+src_md5sum_LDADD += $(LIB_CRYPTO)
+src_sort_LDADD += $(LIB_CRYPTO)
+src_sha1sum_LDADD += $(LIB_CRYPTO)
+src_sha224sum_LDADD += $(LIB_CRYPTO)
+src_sha256sum_LDADD += $(LIB_CRYPTO)
+src_sha384sum_LDADD += $(LIB_CRYPTO)
+src_sha512sum_LDADD += $(LIB_CRYPTO)
+
 # for canon_host
 src_pinky_LDADD += $(GETADDRINFO_LIB)
 src_who_LDADD += $(GETADDRINFO_LIB)
@@ -307,6 +321,10 @@ RELEASE_YEAR = \
   `sed -n '/.*COPYRIGHT_YEAR = \([0-9][0-9][0-9][0-9]\) };/s//\1/p' \
     $(top_srcdir)/lib/version-etc.c`
 
+selinux_sources = \
+  src/selinux.c \
+  src/selinux.h
+
 copy_sources = \
   src/copy.c \
   src/cp-hash.c \
@@ -318,12 +336,13 @@ copy_sources = \
 # to install before applying any user-specified name transformations.
 
 transform = s/ginstall/install/; $(program_transform_name)
-src_ginstall_SOURCES = src/install.c src/prog-fprintf.c $(copy_sources)
+src_ginstall_SOURCES = src/install.c src/prog-fprintf.c $(copy_sources) \
+		       $(selinux_sources)
 
 # This is for the '[' program.  Automake transliterates '[' and '/' to '_'.
 src___SOURCES = src/lbracket.c
 
-src_cp_SOURCES = src/cp.c $(copy_sources)
+src_cp_SOURCES = src/cp.c $(copy_sources) $(selinux_sources)
 src_dir_SOURCES = src/ls.c src/ls-dir.c
 src_vdir_SOURCES = src/ls.c src/ls-vdir.c
 src_id_SOURCES = src/id.c src/group-list.c
@@ -336,11 +355,14 @@ src_kill_SOURCES = src/kill.c src/operand2sig.c
 src_realpath_SOURCES = src/realpath.c src/relpath.c src/relpath.h
 src_timeout_SOURCES = src/timeout.c src/operand2sig.c
 
-src_mv_SOURCES = src/mv.c src/remove.c $(copy_sources)
+src_mv_SOURCES = src/mv.c src/remove.c $(copy_sources) $(selinux_sources)
 src_rm_SOURCES = src/rm.c src/remove.c
 
-src_mkdir_SOURCES = src/mkdir.c src/prog-fprintf.c
+src_mkdir_SOURCES = src/mkdir.c src/prog-fprintf.c $(selinux_sources)
 src_rmdir_SOURCES = src/rmdir.c src/prog-fprintf.c
+
+src_mkfifo_SOURCES = src/mkfifo.c $(selinux_sources)
+src_mknod_SOURCES = src/mknod.c $(selinux_sources)
 
 src_df_SOURCES = src/df.c src/find-mount-point.c
 src_stat_SOURCES = src/stat.c src/find-mount-point.c
@@ -403,8 +425,8 @@ AM_INSTALLCHECK_STD_OPTIONS_EXEMPT = src/false src/test
 # Also compare against /usr/include/linux/magic.h
 .PHONY: src/fs-magic-compare
 src/fs-magic-compare: src/fs-magic src/fs-kernel-magic src/fs-def
-	join -v1 -t@ src/fs-magic src/fs-def
-	join -v1 -t@ src/fs-kernel-magic src/fs-def
+	@join -v1 -t@ src/fs-magic src/fs-def
+	@join -v1 -t@ src/fs-kernel-magic src/fs-def
 
 CLEANFILES += src/fs-def
 src/fs-def: src/fs.h
@@ -434,7 +456,7 @@ fs_normalize_perl_subst =			\
 
 CLEANFILES += src/fs-magic
 src/fs-magic: Makefile
-	man statfs \
+	@MANPAGER= man statfs \
 	  |perl -ne '/File system types:/.../Nobody kno/ and print'	\
 	  |grep 0x | perl -p						\
 	    $(fs_normalize_perl_subst)					\
@@ -442,13 +464,23 @@ src/fs-magic: Makefile
 	  | $(ASSORT)							\
 	  > $@-t && mv $@-t $@
 
+DISTCLEANFILES += src/fs-latest-magic.h
+# This rule currently gets the latest header, but probably isn't general
+# enough to enable by default.
+#	@kgit='https://git.kernel.org/cgit/linux/kernel/git'; \
+#	wget -q $$kgit/torvalds/linux.git/plain/include/uapi/linux/magic.h \
+#	  -O $@
+src/fs-latest-magic.h:
+	@touch $@
+
 CLEANFILES += src/fs-kernel-magic
-src/fs-kernel-magic: Makefile
-	perl -ne '/^#define.*0x/ and print' /usr/include/linux/magic.h	\
+src/fs-kernel-magic: Makefile src/fs-latest-magic.h
+	@perl -ne '/^#define.*0x/ and print'				\
+	  /usr/include/linux/magic.h src/fs-latest-magic.h		\
 	  | perl -p							\
 	    $(fs_normalize_perl_subst)					\
 	  | grep -Ev 'S_MAGIC_EXT[34]|STACK_END'			\
-	  | $(ASSORT)							\
+	  | $(ASSORT) -u						\
 	  > $@-t && mv $@-t $@
 
 BUILT_SOURCES += src/fs-is-local.h

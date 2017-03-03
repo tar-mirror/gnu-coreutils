@@ -45,7 +45,7 @@ export VERBOSE = yes
 # 4914152 9e
 export XZ_OPT = -8e
 
-old_NEWS_hash = b93e7e43dd35f32961c354e41211b86e
+old_NEWS_hash = 6ae04dc3907ea1290f12e6b1507cc42c
 
 # Add an exemption for sc_makefile_at_at_check.
 _makefile_at_at_check_exceptions = ' && !/^cu_install_program =/'
@@ -115,6 +115,14 @@ sc_tests_list_consistency:
 	    | $(EGREP) "$$test_extensions_rx\$$";			\
 	} | sort | uniq -u | grep . && exit 1; :
 
+# Ensure that all version-controlled test scripts are executable.
+sc_tests_executable:
+	@test_extensions_rx=`echo $(TEST_EXTENSIONS)			\
+	  | sed -e "s/ / -o -name */g" -e "s/^/-name */"`; \
+	find tests/ \( $$test_extensions_rx \) \! -perm -111 -print \
+	  | sed -e "s/^/$(ME): Please make test executable: /" | grep . \
+	    && exit 1; :
+
 # Create a list of regular expressions matching the names
 # of files included from system.h.  Exclude a couple.
 .re-list:
@@ -142,6 +150,14 @@ sc_system_h_headers: .re-list
 	    && { echo '$(ME): the above are already included via system.h'\
 		  1>&2;  exit 1; } || :;				\
 	fi
+
+# Files in src/ should not use '%s' notation in format strings,
+# i.e., single quotes around %s (or similar) should be avoided.
+sc_prohibit_quotes_notation:
+	@cd $(srcdir)/src && GIT_PAGER= git grep -n "\".*[\`']%s'.*\"" *.c \
+	  && { echo '$(ME): '"Use quote() to avoid quoted '%s' notation" 1>&2; \
+	       exit 1; }  \
+	  || :
 
 sc_sun_os_names:
 	@grep -nEi \
@@ -173,7 +189,7 @@ sc_check-AUTHORS: $(all_programs)
 	    exe='[';					\
 	  fi;						\
 	  LC_ALL=$$locale ./src/$$exe --version		\
-	    | perl -0 -pi -e 's/,\n/, /gm'		\
+	    | perl -0 -p -e 's/,\n/, /gm'		\
 	    | sed -n -e '/Written by /{ s//'"$$i"': /;'	\
 		  -e 's/,* and /, /; s/\.$$//; p; }';	\
 	done > $(au_actual) &&				\
@@ -201,13 +217,25 @@ sc_prohibit-j-printf-format:
 	  && { echo '$(ME): Use PRI*MAX instead of %j' 1>&2; exit 1; }  \
 	  || :
 
+# Ensure the alternative __attribute (keyword) form isn't used as
+# that form is not elided where required.  Also ensure that we don't
+# directly use attributes already defined by gnulib.
+# TODO: move the check for _GL... attributes to gnulib.
+sc_prohibit-gl-attributes:
+	@cd $(srcdir) && GIT_PAGER= git grep -En			\
+	    "__attribute |__(unused|pure|const)__" src gl/lib/*.[ch]	\
+	  && { echo '$(ME): Use _GL... attribute macros' 1>&2; exit 1; }  \
+	  || :
+
 # Look for lines longer than 80 characters, except omit:
 # - program-generated long lines in diff headers,
+# - the help2man script copied from upstream,
 # - tests involving long checksum lines, and
 # - the 'pr' test cases.
 LINE_LEN_MAX = 80
 FILTER_LONG_LINES =						\
   /^[^:]*\.diff:[^:]*:@@ / d;					\
+  \|^[^:]*man/help2man:| d;			\
   \|^[^:]*tests/misc/sha[0-9]*sum.*\.pl[-:]| d;			\
   \|^[^:]*tests/pr/|{ \|^[^:]*tests/pr/pr-tests:| !d; };
 sc_long_lines:
@@ -398,6 +426,13 @@ sc_some_programs_must_avoid_exit_failure:
 	    && { echo '$(ME): do not use EXIT_FAILURE in the above'	\
 		  1>&2; exit 1; } || :
 
+# Ensure that tests call the require_ulimit_v_ function if using ulimit -v
+sc_prohibit_test_ulimit_without_require_:
+	@(git grep -l require_ulimit_v_ tests;				\
+	  git grep -l 'ulimit -v' tests)				\
+	  | sort | uniq -u | grep . && { echo "$(ME): the above test(s)"\
+	  " should match require_ulimit_v_ with ulimit -v" 1>&2; exit 1; } || :
+
 # Ensure that tests call the print_ver_ function for programs which are
 # actually used in that test.
 sc_prohibit_test_calls_print_ver_with_irrelevant_argument:
@@ -541,10 +576,10 @@ update-copyright-env = \
 
 # List syntax-check exemptions.
 exclude_file_name_regexp--sc_space_tab = \
-  ^(tests/pr/|tests/misc/nl\.sh$$|gl/.*\.diff$$)
+  ^(tests/pr/|tests/misc/nl\.sh$$|gl/.*\.diff$$|man/help2man$$)
 exclude_file_name_regexp--sc_bindtextdomain = \
   ^(gl/.*|lib/euidaccess-stat|src/make-prime-list)\.c$$
-exclude_file_name_regexp--sc_trailing_blank = ^tests/pr/
+exclude_file_name_regexp--sc_trailing_blank = ^(tests/pr/|man/help2man)
 exclude_file_name_regexp--sc_system_h_headers = \
   ^src/((system|copy)\.h|libstdbuf\.c|make-prime-list\.c)$$
 
@@ -554,7 +589,7 @@ exclude_file_name_regexp--sc_require_config_h_first = \
 exclude_file_name_regexp--sc_require_config_h = \
   $(exclude_file_name_regexp--sc_require_config_h_first)
 
-exclude_file_name_regexp--sc_po_check = ^gl/
+exclude_file_name_regexp--sc_po_check = ^(gl/|man/help2man)
 exclude_file_name_regexp--sc_prohibit_always-defined_macros = \
   ^src/(seq|remove)\.c$$
 exclude_file_name_regexp--sc_prohibit_empty_lines_at_EOF = ^tests/pr/
@@ -586,7 +621,7 @@ exclude_file_name_regexp--sc_prohibit_stat_st_blocks = \
   ^(src/system\.h|tests/du/2g\.sh)$$
 
 exclude_file_name_regexp--sc_prohibit_continued_string_alpha_in_column_1 = \
-  ^src/(system\.h|od\.c|printf\.c)$$
+  ^src/(system\.h|od\.c|printf\.c|getlimits\.c)$$
 
 exclude_file_name_regexp--sc_prohibit_test_backticks = \
   ^tests/(local\.mk|(init|misc/stdbuf|factor/create-test)\.sh)$$
