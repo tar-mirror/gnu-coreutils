@@ -302,7 +302,8 @@ Mandatory arguments to long options are mandatory for short options too.\n\
      fputs (_("\
   -s, --sleep-interval=N   with -f, sleep for approximately N seconds\n\
                              (default 1.0) between iterations.\n\
-                             With inotify, this option is rarely useful.\n\
+                             With inotify and --pid=P, check process P at\n\
+                             least once every N seconds.\n\
   -v, --verbose            always output headers giving file names\n\
 "), stdout);
      fputs (HELP_OPTION_DESCRIPTION, stdout);
@@ -1422,13 +1423,24 @@ tail_forever_inotify (int wd, struct File_spec *f, size_t n_files,
   evlen += sizeof (struct inotify_event) + 1;
   evbuf = xmalloc (evlen);
 
-  /* Wait for inotify events and handle them.  Events on directories make sure
-     that watched files can be re-added when -F is used.
-     This loop sleeps on the `safe_read' call until a new event is notified.  */
+  /* Wait for inotify events and handle them.  Events on directories
+     ensure that watched files can be re-added when following by name.
+     This loop blocks on the `safe_read' call until a new event is notified.
+     But when --pid=P is specified, tail usually waits via the select.  */
   while (1)
     {
       struct File_spec *fspec;
       struct inotify_event *ev;
+
+      /* When following by name without --retry, and the last file has
+         been unlinked or renamed-away, diagnose it and return.  */
+      if (follow_mode == Follow_name
+          && ! reopen_inaccessible_files
+          && hash_get_n_entries (wd_to_name) == 0)
+        {
+          error (0, 0, _("no files remaining"));
+          return false;
+        }
 
       /* When watching a PID, ensure that a read from WD will not block
          indefinitely.  */

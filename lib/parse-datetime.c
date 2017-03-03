@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 2.4.559-6769-dirty.  */
+/* A Bison parser, made by GNU Bison 2.4.588-2f658-dirty.  */
 
 /* Bison implementation for Yacc-like parsers in C
 
@@ -44,7 +44,7 @@
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "2.4.559-6769-dirty"
+#define YYBISON_VERSION "2.4.588-2f658-dirty"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"

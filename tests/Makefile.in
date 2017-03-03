@@ -317,9 +317,11 @@ am__text_box = $(AWK) '{				\
 am__sh_e_setup = case $$- in *e*) set +e;; esac
 # To be inserted before the command running the test.  Creates the
 # directory for the log if needed.  Stores in $dir the directory
-# containing $f, in $tst the test, in $log the log, and passes
-# TESTS_ENVIRONMENT.  Save and restore TERM around use of
-# TESTS_ENVIRONMENT, in case that unsets it.
+# containing $f, in $tst the test, in $log the log.  Executes the
+# developer- defined test setup AM_TESTS_SETUP (if any), and passes
+# TESTS_ENVIRONMENT.  Saves and restores TERM around uses of
+# TESTS_ENVIRONMENT and AM_TESTS_SETUP, in case any of them unsets
+# it.
 am__check_pre = \
 $(am__sh_e_setup);					\
 $(am__vpath_adj_setup) $(am__vpath_adj)			\
@@ -334,6 +336,7 @@ if test -f "./$$f"; then dir=./;			\
 elif test -f "$$f"; then dir=;				\
 else dir="$(srcdir)/"; fi;				\
 tst=$$dir$$f; log='$@'; __SAVED_TERM=$$TERM;		\
+$(AM_TESTS_SETUP)					\
 $(TESTS_ENVIRONMENT)
 # To be appended to the command running the test.  Handle the stdout
 # and stderr redirection, and catch the exit status.
@@ -1839,6 +1842,7 @@ TESTS = \
   tail-2/assert-2				\
   tail-2/big-4gb				\
   tail-2/flush-initial				\
+  tail-2/follow-name				\
   tail-2/follow-stdin				\
   tail-2/pipe-f					\
   tail-2/pipe-f2				\
@@ -3073,6 +3077,8 @@ tail-2/big-4gb.log: tail-2/big-4gb
 	@p='tail-2/big-4gb'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 tail-2/flush-initial.log: tail-2/flush-initial
 	@p='tail-2/flush-initial'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
+tail-2/follow-name.log: tail-2/follow-name
+	@p='tail-2/follow-name'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 tail-2/follow-stdin.log: tail-2/follow-stdin
 	@p='tail-2/follow-stdin'; $(am__check_pre) $(LOG_COMPILE) "$$tst" $(am__check_post)
 tail-2/pipe-f.log: tail-2/pipe-f

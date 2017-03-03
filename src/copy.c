@@ -398,7 +398,10 @@ extent_copy (int src_fd, int dest_fd, char *buf, size_t buf_size,
           /* Treat an unwritten but allocated extent much like a hole.
              I.E. don't read, but don't convert to a hole in the destination,
              unless SPARSE_ALWAYS.  */
-          if (scan.ext_info[i].ext_flags & FIEMAP_EXTENT_UNWRITTEN)
+          /* For now, do not treat FIEMAP_EXTENT_UNWRITTEN specially,
+             because that (in combination with no sync) would lead to data
+             loss at least on XFS and ext4 when using 2.6.39-rc3 kernels.  */
+          if (0 && (scan.ext_info[i].ext_flags & FIEMAP_EXTENT_UNWRITTEN))
             {
               empty_extent = true;
               last_ext_len = 0;
@@ -761,6 +764,23 @@ fchmod_or_lchmod (int desc, char const *name, mode_t mode)
   return lchmod (name, mode);
 }
 
+#ifndef HAVE_STRUCT_STAT_ST_BLOCKS
+# define HAVE_STRUCT_STAT_ST_BLOCKS 0
+#endif
+
+/* Use a heuristic to determine whether stat buffer SB comes from a file
+   with sparse blocks.  If the file has fewer blocks than would normally
+   be needed for a file of its size, then at least one of the blocks in
+   the file is a hole.  In that case, return true.  */
+static bool
+is_probably_sparse (struct stat const *sb)
+{
+  return (HAVE_STRUCT_STAT_ST_BLOCKS
+          && S_ISREG (sb->st_mode)
+          && ST_NBLOCKS (*sb) < sb->st_size / ST_NBLOCKSIZE);
+}
+
+
 /* Copy a regular file from SRC_NAME to DST_NAME.
    If the source file contains holes, copies holes and blocks of zeros
    in the source file as holes in the destination file.
@@ -954,7 +974,8 @@ copy_reg (char const *src_name, char const *dst_name,
         {
           if (!clone_ok)
             {
-              error (0, errno, _("failed to clone %s"), quote (dst_name));
+              error (0, errno, _("failed to clone %s from %s"),
+                     quote (dst_name), quote (src_name));
               return_val = false;
               goto close_src_and_dst_desc;
             }
@@ -973,6 +994,7 @@ copy_reg (char const *src_name, char const *dst_name,
 
       /* Deal with sparse files.  */
       bool make_holes = false;
+      bool sparse_src = false;
 
       if (S_ISREG (sb.st_mode))
         {
@@ -981,15 +1003,13 @@ copy_reg (char const *src_name, char const *dst_name,
           if (x->sparse_mode == SPARSE_ALWAYS)
             make_holes = true;
 
-#if HAVE_STRUCT_STAT_ST_BLOCKS
           /* Use a heuristic to determine whether SRC_NAME contains any sparse
              blocks.  If the file has fewer blocks than would normally be
              needed for a file of its size, then at least one of the blocks in
              the file is a hole.  */
-          if (x->sparse_mode == SPARSE_AUTO && S_ISREG (src_open_sb.st_mode)
-              && ST_NBLOCKS (src_open_sb) < src_open_sb.st_size / ST_NBLOCKSIZE)
+          sparse_src = is_probably_sparse (&src_open_sb);
+          if (x->sparse_mode == SPARSE_AUTO && sparse_src)
             make_holes = true;
-#endif
         }
 
       /* If not making a sparse file, try to use a more-efficient
@@ -1020,21 +1040,25 @@ copy_reg (char const *src_name, char const *dst_name,
       buf_alloc = xmalloc (buf_size + buf_alignment_slop);
       buf = ptr_align (buf_alloc, buf_alignment);
 
-      bool normal_copy_required;
-      /* Perform an efficient extent-based copy, falling back to the
-         standard copy only if the initial extent scan fails.  If the
-         '--sparse=never' option is specified, write all data but use
-         any extents to read more efficiently.  */
-      if (extent_copy (source_desc, dest_desc, buf, buf_size,
-                       src_open_sb.st_size,
-                       S_ISREG (sb.st_mode) ? x->sparse_mode : SPARSE_NEVER,
-                       src_name, dst_name, &normal_copy_required))
-        goto preserve_metadata;
-
-      if (! normal_copy_required)
+      if (sparse_src)
         {
-          return_val = false;
-          goto close_src_and_dst_desc;
+          bool normal_copy_required;
+
+          /* Perform an efficient extent-based copy, falling back to the
+             standard copy only if the initial extent scan fails.  If the
+             '--sparse=never' option is specified, write all data but use
+             any extents to read more efficiently.  */
+          if (extent_copy (source_desc, dest_desc, buf, buf_size,
+                           src_open_sb.st_size,
+                           S_ISREG (sb.st_mode) ? x->sparse_mode : SPARSE_NEVER,
+                           src_name, dst_name, &normal_copy_required))
+            goto preserve_metadata;
+
+          if (! normal_copy_required)
+            {
+              return_val = false;
+              goto close_src_and_dst_desc;
+            }
         }
 
       off_t n_read;

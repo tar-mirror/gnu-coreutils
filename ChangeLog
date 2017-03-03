@@ -1,4 +1,143 @@
+2011-04-26  Jim Meyering  <meyering@redhat.com>
+
+	version 8.12
+	* NEWS: Record release date.
+
+	maint: tweak sc_tight_scope rule
+	* src/Makefile.am (sc_tight_scope): Remove useless quotes,
+	change 1>&2 to >&2, and combine a few short lines.
+
+	dd: work around compilation failure on AIX 5.1 and 5.2
+	* src/dd.c (O_NOCACHE): Undefine.  This symbol is defined
+	via AIX's <fcntl.h>, yet used as an enum name in dd.c.
+	Reported by Gary V. Vaughan in http://debbugs.gnu.org/8555
+	* NEWS (Portability): Mention this.
+
+	maint: move two small functions, so we can remove a fwd decl
+	* src/dd.c (cleanup, quit): Move the definition of quit to follow the
+	definition of process_signals, so we can remove the declaration of
+	the latter.
+
+2011-04-25  Jim Meyering  <meyering@redhat.com>
+
+	maint: change some leading 8-space sequences to TABs in a Makefile.am
+	src/Makefile.am (fs-magic, fs-kernel-magic): Change some leading
+	8-space sequences to TABs.
+
+	stat: recognize V9FS and ECRYPTFS file systems
+	* src/stat.c (human_fstype): Add magic numbers for V9FS and ECRYPTFS.
+
+	tail --follow=name no longer implies --retry
+	* src/tail.c (tail_forever_inotify): Just as without inotify,
+	tail --follow=name now terminates when the last tailed-by-name file
+	is unlinked or moved aside.  This bug was introduced on 2009-06-15
+	via commit ae494d4b, "tail: use inotify if it is available".
+	Reported by Tim Underwood in
+	http://thread.gmane.org/gmane.comp.gnu.coreutils.bugs/22286
+	* NEWS (Bug fixes): Mention this.
+	* tests/tail-2/follow-name: Test for this.
+	* tests/Makefile.am (TESTS): Add it.
+
+2011-04-25  Jeff Liu  <jeff.liu@oracle.com>
+
+	copy: include both src and dest names in clone failure diagnostic
+	* src/copy.c (copy_reg): Upon btrfs clone failure, print not just
+	the destination file name, but also the source file name.
+	That may be useful upon failure of a cross-device clone attempt.
+
+2011-04-25  Jim Meyering  <meyering@redhat.com>
+
+	tests: tail-2/pipe-f2: avoid false-positive failure
+	Otherwise, this would fail (albeit rarely) on a "make -j24 check" run.
+	* tests/tail-2/pipe-f2: Increase timeout from 1 second to 10,
+	to avoid false positive failure.
+
+	maint: explicitly list full-read and full-write module names
+	* bootstrap.conf (gnulib_modules): Include full-read and full-write
+	explicitly.  Before, we'd get them via safe-read, but with newer
+	gnulib, that is no longer enough: link failure due to undefined
+	references to full_write.
+
+	doc: tail/inotify does use --sleep-interval=S, with --pid=P
+	* doc/coreutils.texi (tail invocation): Mention it.
+	* src/tail.c (usage): Likewise.
+	(tail_forever_inotify): Clarify comment.
+
+2011-04-22  Alan Curry  <pacman-cu@kosh.dhis.org>
+
+	tests: sparse-fiemap: adjust syntax to accommodate older awk
+	* tests/cp/sparse-fiemap: Parenthesize ternary expression used
+	as an argument to awk's printf.  Otherwise, gawk 3.0.1 and the
+	one from debian stable's original-awk would get a syntax error.
+	Reported by Dennis Clarke.
+
+	Copyright note: tiny change
+
+2011-04-21  Jim Meyering  <meyering@redhat.com>
+
+	tests: sparse-fiemap: with root/ext3, do not create an ext4 FS
+	* tests/cp/sparse-fiemap: When this test was run as root on an ext3
+	file system, (ext3 had known problems), it would trickily create and
+	mount a loopback ext4 file system and use that instead.  However, due
+	to a bug in 2.6.39-rc1..rc3, this loopback test (when run in another
+	loopback FS) exposed a bug with 1k-blocksize ext4 whereby non-NUL
+	data would be read from a hole.  For details, see this:
+	http://thread.gmane.org/gmane.comp.file-systems.ext4/24495
+
+	tests: sparse-fiemap: report more detail upon failure; ignore an FP
+	* tests/cp/sparse-fiemap: Fail right away with details, when cmp fails.
+	When extent maps are found to differ, display them and merely warn.
+
+2011-04-20  Jim Meyering  <meyering@redhat.com>
+
+	copy: use FIEMAP (extent_copy) only for apparently-sparse files,
+	to avoid the expense of extent_copy's unconditional use of
+	FIEMAP_FLAG_SYNC.
+	* src/copy.c (copy_reg): Do not attempt extent_copy on a file
+	that appears to have no holes.
+	* NEWS (Changes in behavior): Document this.  At first I labeled this
+	as a bug fix, but that would be inaccurate, considering there is no
+	documentation of FIEMAP semantics, nor even consensus among kernel
+	FS developers.  Here's hoping SEEK_HOLE/SEEK_DATA support will soon
+	make it into the linux kernel.
+
+	copy: factor out a tiny sparse-testing function
+	* src/copy.c (HAVE_STRUCT_STAT_ST_BLOCKS): Define to 0 if undefined,
+	so we can use it in the return expression, here:
+	(is_probably_sparse): New function, factored out of...
+	(copy_reg): ...here.  Use the new function.
+
+	copy: do not treat unwritten extents specially: avoid XFS/ext4 data loss
+	* src/copy.c (extent_copy): Do not treat "unwritten extents" specially.
+	Otherwise, with a release-candidate 2.6.39-rc3 kernel, XFS or ext4,
+	when using gold as your linker, and if you forget to run "make check",
+	you could end up installing files full of zeros instead of the expected
+	binaries.  For a lot of discussion, see
+	http://thread.gmane.org/gmane.comp.file-systems.xfs.general/37895
+	* tests/cp/fiemap-empty: Disable this test.
+
+	copy: always use FIEMAP_FLAG_SYNC, for now
+	* src/extent-scan.c (extent_need_sync): Always return true,
+	to make the sole caller always use FIEMAP_FLAG_SYNC.
+	This will doubtless have an undesirable performance impact,
+	but we'll mitigate that shortly, by using extent_copy only on
+	files with holes.
+
+	tests: remove spurious syntax from a perl snippet
+	* tests/cp/sparse-fiemap: Remove spurious BEGIN {...} block.
+
+2011-04-17  Ondřej Vašík  <ovasik@redhat.com>
+
+	dircolors: add .ear, .war, .sar, for Java jar-like archives
+	* src/dircolors.hin: Add .ear, .war, .sar, for Java jar-like archives
+	Suggested by Ville Skyttä in https://bugzilla.redhat.com/616497.
+
 2011-04-13  Jim Meyering  <meyering@redhat.com>
+
+	post-release administrivia
+	* NEWS: Add header line for next release.
+	* .prev-version: Record previous version.
+	* cfg.mk (old_NEWS_hash): Auto-update.
 
 	version 8.11
 	* NEWS: Record release date.

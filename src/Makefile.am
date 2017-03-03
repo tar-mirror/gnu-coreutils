@@ -579,21 +579,21 @@ fs_normalize_perl_subst =			\
 CLEANFILES += fs-magic
 fs-magic: Makefile
 	man statfs \
-          |perl -ne '/File system types:/.../Nobody kno/ and print'	\
-          |grep 0x | perl -p						\
-            $(fs_normalize_perl_subst)					\
-          | grep -Ev 'S_MAGIC_EXT[34]|STACK_END'			\
-          | LC_ALL=C sort						\
-          > $@-t && mv $@-t $@
+	  |perl -ne '/File system types:/.../Nobody kno/ and print'	\
+	  |grep 0x | perl -p						\
+	    $(fs_normalize_perl_subst)					\
+	  | grep -Ev 'S_MAGIC_EXT[34]|STACK_END'			\
+	  | LC_ALL=C sort						\
+	  > $@-t && mv $@-t $@
 
 CLEANFILES += fs-kernel-magic
 fs-kernel-magic: Makefile
 	perl -ne '/^#define.*0x/ and print' /usr/include/linux/magic.h	\
-          | perl -p							\
-            $(fs_normalize_perl_subst)					\
-          | grep -Ev 'S_MAGIC_EXT[34]|STACK_END'			\
-          | LC_ALL=C sort						\
-          > $@-t && mv $@-t $@
+	  | perl -p							\
+	    $(fs_normalize_perl_subst)					\
+	  | grep -Ev 'S_MAGIC_EXT[34]|STACK_END'			\
+	  | LC_ALL=C sort						\
+	  > $@-t && mv $@-t $@
 
 BUILT_SOURCES += fs.h
 fs.h: stat.c extract-magic
@@ -730,21 +730,17 @@ sc_tight_scope: $(bin_PROGRAMS)
 	  perl -lne '/^extern (?:enum )?\S+ \**(\S*) \(/ and print $$1' \
 		$$hdr;							\
 	) | $(ASSORT) -u | sed 's/^/^/;s/$$/$$/' > $$t;			\
-	nm -e *.$(OBJEXT)						\
-	    | sed -n 's/.* T //p'					\
-	    | sed 's/^_//'						\
-	    | grep -Ev -f $$t &&					\
-	  { echo 'the above functions should have static scope' 1>&2;	\
-	    exit 1; } || : ;						\
+	nm -e *.$(OBJEXT) | sed -n 's/.* T //p'				\
+	    | sed 's/^_//' | grep -Ev -f $$t				\
+	  && { echo the above functions should have static scope >&2;	\
+	       exit 1; } || : ;						\
 	( printf '^program_name$$\n';					\
 	  perl -lne '/^extern .*?\**(\w+);/ and print "^$$1\$$"'	\
 	    $$hdr *.h ) | $(ASSORT) -u > $$t;				\
-	nm -e *.$(OBJEXT)						\
-	    | sed -n 's/.* [BD] //p'					\
-	    | sed 's/^_//'						\
-	    | grep -Ev -f $$t &&					\
-	  { echo 'the above variables should have static scope' 1>&2;	\
-	    exit 1; } || :
+	nm -e *.$(OBJEXT) | sed -n 's/.* [BD] //p'			\
+	    | sed 's/^_//' | grep -Ev -f $$t				\
+	  && { echo the above variables should have static scope >&2;	\
+	       exit 1; } || :
 
 # Use the just-built ./ginstall, when not cross-compiling.
 if CROSS_COMPILING

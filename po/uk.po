@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coreutils 7.1\n"
 "Report-Msgid-Bugs-To: bug-coreutils@gnu.org\n"
-"POT-Creation-Date: 2011-04-13 21:25+0200\n"
+"POT-Creation-Date: 2011-04-26 16:10+0200\n"
 "PO-Revision-Date: 2009-03-18 15:12+0300\n"
 "Last-Translator: Maxim V. Dziumanenko <dziumanenko@gmail.com>\n"
 "Language-Team: Ukrainian <translation-team-uk@lists.sourceforge.net>\n"
@@ -43,14 +43,14 @@ msgstr "помилка при закритті файлу"
 #: src/cksum.c:251 src/expand.c:332 src/expand.c:357 src/head.c:300
 #: src/head.c:350 src/head.c:758 src/head.c:799 src/mktemp.c:348 src/od.c:915
 #: src/paste.c:160 src/shuf.c:370 src/split.c:505 src/split.c:719
-#: src/split.c:724 src/tail.c:349 src/tail.c:1199 src/tail.c:1305
-#: src/tail.c:2191 src/tr.c:1621 src/tr.c:1846 src/tr.c:1940
+#: src/split.c:724 src/tail.c:350 src/tail.c:1200 src/tail.c:1306
+#: src/tail.c:2203 src/tr.c:1621 src/tr.c:1846 src/tr.c:1940
 #: src/unexpand.c:429 src/unexpand.c:445
 #, c-format
 msgid "write error"
 msgstr "помилка запису"
 
-#: lib/copy-acl.c:610 src/copy.c:1126 src/copy.c:2474
+#: lib/copy-acl.c:610 src/copy.c:1150 src/copy.c:2498
 #, c-format
 msgid "preserving permissions for %s"
 msgstr "збереження прав доступу для %s"
@@ -59,8 +59,8 @@ msgstr "збереження прав доступу для %s"
 msgid "Unknown system error"
 msgstr "Невідома системна помилка"
 
-#: lib/euidaccess-stat.c:129 src/copy.c:1510 src/copy.c:1562 src/copy.c:2145
-#: src/copy.c:2461 src/find-mount-point.c:84 src/install.c:661 src/stat.c:1191
+#: lib/euidaccess-stat.c:129 src/copy.c:1534 src/copy.c:1586 src/copy.c:2169
+#: src/copy.c:2485 src/find-mount-point.c:84 src/install.c:661 src/stat.c:1195
 #: src/truncate.c:353
 #, c-format
 msgid "cannot stat %s"
@@ -254,7 +254,7 @@ msgstr "%s: ключ `%s' має використовуватись з аргу�
 msgid "cannot change permissions of %s"
 msgstr "Не вдається змінити права доступу до %s"
 
-#: lib/mkdir-p.c:206 src/copy.c:2134 src/install.c:692 src/install.c:705
+#: lib/mkdir-p.c:206 src/copy.c:2158 src/install.c:692 src/install.c:705
 #, c-format
 msgid "cannot create directory %s"
 msgstr "Не вдається створити каталог %s"
@@ -415,7 +415,7 @@ msgstr "^[yY]"
 msgid "^[nN]"
 msgstr "^[nN]"
 
-#: lib/set-mode-acl.c:636 src/copy.c:2157 src/cp.c:519
+#: lib/set-mode-acl.c:636 src/copy.c:2181 src/cp.c:519
 #, c-format
 msgid "setting permissions for %s"
 msgstr "встановлення прав доступу для %s"
@@ -850,7 +850,7 @@ msgstr "Simon Josefsson"
 #: src/base64.c:57 src/basename.c:46 src/cat.c:84 src/chcon.c:348
 #: src/chgrp.c:106 src/chmod.c:360 src/chown.c:76 src/chroot.c:118
 #: src/cksum.c:260 src/comm.c:101 src/cp.c:153 src/csplit.c:1446 src/cut.c:186
-#: src/date.c:120 src/dd.c:472 src/df.c:810 src/dircolors.c:94
+#: src/date.c:120 src/dd.c:474 src/df.c:810 src/dircolors.c:94
 #: src/dirname.c:41 src/du.c:256 src/echo.c:39 src/env.c:49 src/expand.c:101
 #: src/expr.c:200 src/factor.c:490 src/fmt.c:266 src/fold.c:63
 #: src/getlimits.c:62 src/groups.c:50 src/head.c:103 src/hostid.c:39
@@ -862,7 +862,7 @@ msgstr "Simon Josefsson"
 #: src/pinky.c:499 src/pr.c:2766 src/printenv.c:59 src/printf.c:85
 #: src/ptx.c:1814 src/pwd.c:53 src/readlink.c:59 src/rm.c:131 src/rmdir.c:161
 #: src/runcon.c:80 src/seq.c:65 src/setuidgid.c:46 src/shred.c:154
-#: src/shuf.c:45 src/sleep.c:42 src/sort.c:389 src/split.c:150 src/stat.c:1303
+#: src/shuf.c:45 src/sleep.c:42 src/sort.c:389 src/split.c:150 src/stat.c:1307
 #: src/stdbuf.c:88 src/stty.c:506 src/su.c:365 src/sum.c:56 src/sync.c:37
 #: src/tac.c:129 src/tail.c:254 src/tee.c:59 src/test.c:683 src/timeout.c:124
 #: src/touch.c:213 src/tr.c:283 src/truncate.c:93 src/tsort.c:79 src/tty.c:61
@@ -956,7 +956,7 @@ msgstr "закривається стандартний потік вводу"
 #. This is a proper name. See the gettext manual, section Names.
 #: src/basename.c:40 src/chgrp.c:38 src/chmod.c:39 src/chown.c:36
 #: src/comm.c:39 src/cp.c:57 src/csplit.c:42 src/cut.c:45 src/date.c:39
-#: src/dd.c:47 src/df.c:42 src/dirname.c:34 src/du.c:53 src/env.c:33
+#: src/dd.c:45 src/df.c:42 src/dirname.c:34 src/du.c:53 src/env.c:33
 #: src/expand.c:50 src/fold.c:36 src/groups.c:35 src/head.c:46 src/id.c:39
 #: src/install.c:50 src/ln.c:40 src/ls.c:118 src/mkdir.c:36 src/mkfifo.c:33
 #: src/mknod.c:34 src/mv.c:42 src/nice.c:39 src/nl.c:41 src/paste.c:53
@@ -1006,7 +1006,7 @@ msgstr ""
 #: src/mkdir.c:184 src/mkfifo.c:109 src/mknod.c:147 src/nohup.c:112
 #: src/pathchk.c:154 src/printf.c:675 src/readlink.c:147 src/rm.c:315
 #: src/rmdir.c:224 src/seq.c:403 src/setuidgid.c:138 src/sleep.c:121
-#: src/stat.c:1453 src/stdbuf.c:349 src/tr.c:1783 src/unlink.c:76
+#: src/stat.c:1457 src/stdbuf.c:349 src/tr.c:1783 src/unlink.c:76
 #, c-format
 msgid "missing operand"
 msgstr "відсутній операнд"
@@ -1081,7 +1081,7 @@ msgstr ""
 msgid "cannot do ioctl on %s"
 msgstr "помилка ioctl на %s"
 
-#: src/cat.c:637 src/dd.c:2050 src/sort.c:381 src/tee.c:166 src/yes.c:88
+#: src/cat.c:637 src/dd.c:2052 src/sort.c:381 src/tee.c:166 src/yes.c:88
 #, c-format
 msgid "standard output"
 msgstr "стандартний вивід"
@@ -1115,8 +1115,8 @@ msgstr "не вдається створити контексту безпеки
 msgid "failed to set %s security context component to %s"
 msgstr "не вдається встановити %s контекст безпеки компоненту %s"
 
-#: src/chcon.c:156 src/chcon.c:533 src/copy.c:2095 src/runcon.c:218
-#: src/stat.c:654
+#: src/chcon.c:156 src/chcon.c:533 src/copy.c:2119 src/runcon.c:218
+#: src/stat.c:658
 #, c-format
 msgid "failed to get security context of %s"
 msgstr "не вдається встановити контекст безпеки %s"
@@ -1131,7 +1131,7 @@ msgstr "не вдається застосувати частковий конт
 msgid "failed to change context of %s to %s"
 msgstr "не вдається змінити контекст %s на %s"
 
-#: src/chcon.c:255 src/chmod.c:208 src/chown-core.c:301 src/copy.c:593
+#: src/chcon.c:255 src/chmod.c:208 src/chown-core.c:301 src/copy.c:596
 #: src/du.c:443 src/ls.c:2829
 #, c-format
 msgid "cannot access %s"
@@ -1791,7 +1791,7 @@ msgstr "задано декілька розділювачів"
 msgid "empty %s not allowed"
 msgstr "порожній рядок %s є неприпустимим"
 
-#: src/copy.c:165 src/dd.c:1497 src/dd.c:1844
+#: src/copy.c:165 src/dd.c:1499 src/dd.c:1846
 #, c-format
 msgid "reading %s"
 msgstr "читання %s"
@@ -1801,7 +1801,7 @@ msgstr "читання %s"
 msgid "cannot lseek %s"
 msgstr "не вдається виконати lseek для %s"
 
-#: src/copy.c:222 src/dd.c:1907 src/dd.c:1970
+#: src/copy.c:222 src/dd.c:1909 src/dd.c:1972
 #, c-format
 msgid "writing %s"
 msgstr "запис %s"
@@ -1816,261 +1816,261 @@ msgstr "помилка при отриманні поточного контек
 msgid "%s: write failed"
 msgstr "запис завершився помилкою"
 
-#: src/copy.c:454 src/copy.c:1049
+#: src/copy.c:457 src/copy.c:1073
 #, fuzzy, c-format
 msgid "failed to extend %s"
 msgstr "не вдається відкрити %s"
 
-#: src/copy.c:674
+#: src/copy.c:677
 #, c-format
 msgid "clearing permissions for %s"
 msgstr "очищення прав доступу для %s"
 
-#: src/copy.c:709 src/copy.c:2342 src/cp.c:332
+#: src/copy.c:712 src/copy.c:2366 src/cp.c:332
 #, c-format
 msgid "failed to preserve ownership for %s"
 msgstr "не вдається зберегти власника %s"
 
-#: src/copy.c:735
+#: src/copy.c:738
 #, c-format
 msgid "failed to lookup file %s"
 msgstr "не вдається найти файл %s"
 
-#: src/copy.c:740
+#: src/copy.c:743
 #, c-format
 msgid "failed to preserve authorship for %s"
 msgstr "не вдається зберегти автора %s"
 
-#: src/copy.c:799 src/csplit.c:638 src/du.c:888 src/fmt.c:428 src/head.c:849
-#: src/sort.c:4477 src/split.c:1015 src/tac.c:544 src/tail.c:1743 src/wc.c:677
+#: src/copy.c:819 src/csplit.c:638 src/du.c:888 src/fmt.c:428 src/head.c:849
+#: src/sort.c:4477 src/split.c:1015 src/tac.c:544 src/tail.c:1755 src/wc.c:677
 #, c-format
 msgid "cannot open %s for reading"
 msgstr "не вдається відкрити %s для читання"
 
-#: src/copy.c:805 src/copy.c:944 src/dd.c:1437 src/dd.c:2093 src/tail.c:1579
-#: src/tail.c:1645 src/truncate.c:142
+#: src/copy.c:825 src/copy.c:964 src/dd.c:1439 src/dd.c:2095 src/tail.c:1591
+#: src/tail.c:1657 src/truncate.c:142
 #, c-format
 msgid "cannot fstat %s"
 msgstr "не вдається виконати fstat для %s"
 
-#: src/copy.c:815
+#: src/copy.c:835
 #, c-format
 msgid "skipping file %s, as it was replaced while being copied"
 msgstr "пропущено файл %s, оскільки він був замінений під час копіювання"
 
-#: src/copy.c:843
+#: src/copy.c:863
 #, c-format
 msgid "failed to get file system create context"
 msgstr "не вдається отримати контекст файлової системи для створення файлів"
 
-#: src/copy.c:857
+#: src/copy.c:877
 #, c-format
 msgid "failed to set the security context of %s to %s"
 msgstr "не вдається встановити контекст безпеки %s на %s"
 
-#: src/copy.c:874 src/copy.c:1631 src/copy.c:1785 src/copy.c:1935 src/ln.c:277
+#: src/copy.c:894 src/copy.c:1655 src/copy.c:1809 src/copy.c:1959 src/ln.c:277
 #: src/remove.c:294 src/remove.c:320 src/remove.c:471 src/remove.c:492
 #, c-format
 msgid "cannot remove %s"
 msgstr "не вдається видалити %s"
 
-#: src/copy.c:879 src/copy.c:1626 src/copy.c:1790 src/copy.c:1939
+#: src/copy.c:899 src/copy.c:1650 src/copy.c:1814 src/copy.c:1963
 #: src/remove.c:445
 #, c-format
 msgid "removed %s\n"
 msgstr "видалено %s\n"
 
-#: src/copy.c:917
+#: src/copy.c:937
 #, c-format
 msgid "not writing through dangling symlink %s"
 msgstr "запис через через висяче символьне посилання %s не виконується"
 
-#: src/copy.c:936
+#: src/copy.c:956
 #, c-format
 msgid "cannot create regular file %s"
 msgstr "не вдається створити звичайний файл %s"
 
-#: src/copy.c:957
+#: src/copy.c:977
 #, fuzzy, c-format
-msgid "failed to clone %s"
+msgid "failed to clone %s from %s"
 msgstr "не вдається відкрити %s"
 
-#: src/copy.c:1064 src/copy.c:2403
+#: src/copy.c:1088 src/copy.c:2427
 #, c-format
 msgid "preserving times for %s"
 msgstr "збереження відмітки про час %s"
 
-#: src/copy.c:1136 src/copy.c:1142 src/head.c:857 src/touch.c:176
+#: src/copy.c:1160 src/copy.c:1166 src/head.c:857 src/touch.c:176
 #: src/truncate.c:389
 #, c-format
 msgid "closing %s"
 msgstr "закриття %s"
 
-#: src/copy.c:1376
+#: src/copy.c:1400
 #, c-format
 msgid "%s: try to overwrite %s, overriding mode %04lo (%s)? "
 msgstr "%s: намагатись переписати %s, незважаючи на права доступу %04lo (%s)? "
 
-#: src/copy.c:1383
+#: src/copy.c:1407
 #, c-format
 msgid "%s: overwrite %s? "
 msgstr "%s: переписати %s? "
 
-#: src/copy.c:1452
+#: src/copy.c:1476
 #, c-format
 msgid " (backup: %s)"
 msgstr " (резервна копія: %s)"
 
-#: src/copy.c:1462
+#: src/copy.c:1486
 #, c-format
 msgid "failed to restore the default file creation context"
 msgstr "помилка при відновленні типового контексту при створенні файлу"
 
-#: src/copy.c:1518
+#: src/copy.c:1542
 #, c-format
 msgid "omitting directory %s"
 msgstr "пропуск каталогу %s"
 
-#: src/copy.c:1532
+#: src/copy.c:1556
 #, c-format
 msgid "warning: source file %s specified more than once"
 msgstr "попередження: вхідний файл %s вказаний більше одного разу"
 
-#: src/copy.c:1580 src/ln.c:212
+#: src/copy.c:1604 src/ln.c:212
 #, c-format
 msgid "%s and %s are the same file"
 msgstr "%s та %s - один і той самий файл"
 
-#: src/copy.c:1660
+#: src/copy.c:1684
 #, c-format
 msgid "cannot overwrite non-directory %s with directory %s"
 msgstr "не можна перезаписати файл %s, що не є каталогом, каталогом %s"
 
-#: src/copy.c:1678 src/ln.c:180
+#: src/copy.c:1702 src/ln.c:180
 #, c-format
 msgid "will not overwrite just-created %s with %s"
 msgstr "не переписується щойно створений %s %s"
 
-#: src/copy.c:1696
+#: src/copy.c:1720
 #, c-format
 msgid "cannot overwrite directory %s with non-directory"
 msgstr "не можна перезаписувати каталог %s файлом, що не є каталогом"
 
-#: src/copy.c:1710
+#: src/copy.c:1734
 #, c-format
 msgid "cannot move directory onto non-directory: %s -> %s"
 msgstr "не можна перейменувати каталог на файл, що не є каталогом: %s -> %s"
 
-#: src/copy.c:1740
+#: src/copy.c:1764
 #, c-format
 msgid "backing up %s would destroy source;  %s not moved"
 msgstr "збереження запасної копії %s знищить оригінал; %s не перенесений"
 
-#: src/copy.c:1741
+#: src/copy.c:1765
 #, c-format
 msgid "backing up %s would destroy source;  %s not copied"
 msgstr "збереження запасної копії %s знищить оригінал; %s не скопійовано"
 
-#: src/copy.c:1760 src/ln.c:242
+#: src/copy.c:1784 src/ln.c:242
 #, c-format
 msgid "cannot backup %s"
 msgstr "не вдається створити резервну копію для %s"
 
-#: src/copy.c:1824
+#: src/copy.c:1848
 #, c-format
 msgid "will not copy %s through just-created symlink %s"
 msgstr "не буде копіюватися %s через щойно створене символьне посилання %s"
 
-#: src/copy.c:1901
+#: src/copy.c:1925
 #, c-format
 msgid "cannot copy a directory, %s, into itself, %s"
 msgstr "не вдається скопіювати каталог, %s, у самого себе, %s"
 
-#: src/copy.c:1918
+#: src/copy.c:1942
 #, c-format
 msgid "will not create hard link %s to directory %s"
 msgstr "жорстке посилання %s на каталог %s не буде створено"
 
-#: src/copy.c:1946
+#: src/copy.c:1970
 #, c-format
 msgid "cannot create hard link %s to %s"
 msgstr "не вдається створити жорстке посилання %s на %s"
 
-#: src/copy.c:1991
+#: src/copy.c:2015
 #, c-format
 msgid "cannot move %s to a subdirectory of itself, %s"
 msgstr "не вдається перенести %s у свій власний підкаталог, %s"
 
-#: src/copy.c:2034
+#: src/copy.c:2058
 #, c-format
 msgid "cannot move %s to %s"
 msgstr "не вдається перемістити %s у %s"
 
-#: src/copy.c:2046
+#: src/copy.c:2070
 #, c-format
 msgid "inter-device move failed: %s to %s; unable to remove target"
 msgstr ""
 "помилка при переміщенні з пристрою %s на пристрій %s: не вдається видалити "
 "цільовий файл"
 
-#: src/copy.c:2080 src/install.c:888 src/mkdir.c:190 src/mkfifo.c:115
+#: src/copy.c:2104 src/install.c:888 src/mkdir.c:190 src/mkfifo.c:115
 #: src/mknod.c:168
 #, c-format
 msgid "failed to set default file creation context to %s"
 msgstr "помилка встановлення типового контексту для створення файлів %s"
 
-#: src/copy.c:2114
+#: src/copy.c:2138
 #, c-format
 msgid "cannot copy cyclic symbolic link %s"
 msgstr "не вдається скопіювати циклічне символьне посилання %s"
 
-#: src/copy.c:2219
+#: src/copy.c:2243
 #, c-format
 msgid "%s: can make relative symbolic links only in current directory"
 msgstr ""
 "%s: відносні символьні посилання можна створювати лише у поточному каталозі"
 
-#: src/copy.c:2226
+#: src/copy.c:2250
 #, c-format
 msgid "cannot create symbolic link %s to %s"
 msgstr "не вдається створити символьне посилання %s на %s"
 
-#: src/copy.c:2253
+#: src/copy.c:2277
 #, c-format
 msgid "cannot create link %s"
 msgstr "не вдається створити посилання %s"
 
-#: src/copy.c:2278 src/mkfifo.c:134
+#: src/copy.c:2302 src/mkfifo.c:134
 #, c-format
 msgid "cannot create fifo %s"
 msgstr "не вдається створити чергу %s"
 
-#: src/copy.c:2287
+#: src/copy.c:2311
 #, c-format
 msgid "cannot create special file %s"
 msgstr "не вдається створити спеціальній файл %s"
 
-#: src/copy.c:2298 src/ls.c:3041 src/stat.c:873
+#: src/copy.c:2322 src/ls.c:3041 src/stat.c:877
 #, c-format
 msgid "cannot read symbolic link %s"
 msgstr "не вдається прочитати символьне посилання %s"
 
-#: src/copy.c:2325
+#: src/copy.c:2349
 #, c-format
 msgid "cannot create symbolic link %s"
 msgstr "не вдається створити символьне посилання %s"
 
-#: src/copy.c:2357
+#: src/copy.c:2381
 #, c-format
 msgid "%s has unknown file type"
 msgstr "%s має невідомий тип файлу"
 
-#: src/copy.c:2501 src/ln.c:320
+#: src/copy.c:2525 src/ln.c:320
 #, c-format
 msgid "cannot un-backup %s"
 msgstr "не вдається відновити %s з резервної копії"
 
-#: src/copy.c:2505
+#: src/copy.c:2529
 #, c-format
 msgid "%s -> %s (unbackup)\n"
 msgstr "%s -> %s (відновлення)\n"
@@ -2405,7 +2405,7 @@ msgstr ""
 "не вдається зберегти розширені атрибути, cp зібрано без підтримки xattr"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/csplit.c:41 src/dd.c:48
+#: src/csplit.c:41 src/dd.c:46
 msgid "Stuart Kemp"
 msgstr "Stuart Kemp"
 
@@ -2974,9 +2974,9 @@ msgstr ""
 "E -- якщо можливо, вживати альтернативне представлення для поточної локалі\n"
 "O -- якщо можливо, використовувати альтернативні числові символи локалі.\n"
 
-#: src/date.c:260 src/dd.c:2034 src/head.c:840 src/md5sum.c:450
+#: src/date.c:260 src/dd.c:2036 src/head.c:840 src/md5sum.c:450
 #: src/md5sum.c:758 src/od.c:859 src/od.c:1911 src/pr.c:1177 src/pr.c:1373
-#: src/pr.c:1495 src/stty.c:843 src/tac.c:535 src/tail.c:342 src/tee.c:127
+#: src/pr.c:1495 src/stty.c:843 src/tac.c:535 src/tail.c:343 src/tee.c:127
 #: src/tr.c:1946 src/tsort.c:531 src/wc.c:195
 #, c-format
 msgid "standard input"
@@ -3026,12 +3026,12 @@ msgid "time %s is out of range"
 msgstr "час %s поза допустимим діапазоном"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/dd.c:46 src/factor.c:43 src/rm.c:41 src/tail.c:68 src/touch.c:42
+#: src/dd.c:44 src/factor.c:43 src/rm.c:41 src/tail.c:68 src/touch.c:42
 #: src/wc.c:50
 msgid "Paul Rubin"
 msgstr "Paul Rubin"
 
-#: src/dd.c:476
+#: src/dd.c:478
 #, c-format
 msgid ""
 "Usage: %s [OPERAND]...\n"
@@ -3040,7 +3040,7 @@ msgstr ""
 "Використання: %s [ОПЕРАНД]...\n"
 "       або:    %s КЛЮЧ\n"
 
-#: src/dd.c:481
+#: src/dd.c:483
 #, fuzzy
 msgid ""
 "Copy a file, converting and formatting according to the operands.\n"
@@ -3060,7 +3060,7 @@ msgstr ""
 "  count=ЧИСЛО     копіювати лише вказане ЧИСЛО вхідних блоків\n"
 "  ibs=ЧИСЛО       читати вказане ЧИСЛО байт за раз\n"
 
-#: src/dd.c:490
+#: src/dd.c:492
 #, fuzzy
 msgid ""
 "  if=FILE         read from FILE instead of stdin\n"
@@ -3083,7 +3083,7 @@ msgstr ""
 "  skip=ЧИСЛО      пропустити з початку вводу ЧИСЛО блоків розміром ibs\n"
 "  status=noxfer   не виводити статистику передачі\n"
 
-#: src/dd.c:500
+#: src/dd.c:502
 #, fuzzy
 msgid ""
 "\n"
@@ -3102,7 +3102,7 @@ msgstr ""
 "Кожен елемент СПИСКУ для conv може бути:\n"
 "\n"
 
-#: src/dd.c:509
+#: src/dd.c:511
 msgid ""
 "  ascii     from EBCDIC to ASCII\n"
 "  ebcdic    from ASCII to EBCDIC\n"
@@ -3128,7 +3128,7 @@ msgstr ""
 "  sync      доповнювати кожен вхідний блок нулями до розміру ibs; якщо\n"
 "              вживається разом з block або unblock, доповнювати пробілами\n"
 
-#: src/dd.c:521
+#: src/dd.c:523
 msgid ""
 "  excl      fail if the output file already exists\n"
 "  nocreat   do not create the output file\n"
@@ -3144,7 +3144,7 @@ msgstr ""
 "  fdatasync фізично записати файл виводу перед завершенням\n"
 "  fsync     аналогічно, але записати також метадані\n"
 
-#: src/dd.c:529
+#: src/dd.c:531
 msgid ""
 "\n"
 "Each FLAG symbol may be:\n"
@@ -3158,64 +3158,64 @@ msgstr ""
 "  append    режим додавання (має сенс для виводу; рекомендується  "
 "conv=notrunc)\n"
 
-#: src/dd.c:536
+#: src/dd.c:538
 #, fuzzy
 msgid "  cio       use concurrent I/O for data\n"
 msgstr "  text      використовувати текстовий ввід/вивід для даних\n"
 
-#: src/dd.c:538
+#: src/dd.c:540
 msgid "  direct    use direct I/O for data\n"
 msgstr "  direct    використовувати прямий ввід/вивід для даних\n"
 
-#: src/dd.c:540
+#: src/dd.c:542
 msgid "  directory  fail unless a directory\n"
 msgstr "  directory  помилка, якщо не є каталогом\n"
 
-#: src/dd.c:542
+#: src/dd.c:544
 msgid "  dsync     use synchronized I/O for data\n"
 msgstr "  dsync     використовувати синхронізований ввід/вивід для даних\n"
 
-#: src/dd.c:544
+#: src/dd.c:546
 msgid "  sync      likewise, but also for metadata\n"
 msgstr "  sync      те саме, але також для метаданих\n"
 
-#: src/dd.c:545
+#: src/dd.c:547
 msgid "  fullblock  accumulate full blocks of input (iflag only)\n"
 msgstr "  fullblock  акумулювати повні блоки вводу (лише iflag)\n"
 
-#: src/dd.c:548
+#: src/dd.c:550
 msgid "  nonblock  use non-blocking I/O\n"
 msgstr "  nonblock  використовувати ввід/вивід без блокування\n"
 
-#: src/dd.c:550
+#: src/dd.c:552
 msgid "  noatime   do not update access time\n"
 msgstr "  noatime   не оновлювати час останнього доступу\n"
 
-#: src/dd.c:553
+#: src/dd.c:555
 msgid "  nocache   discard cached data\n"
 msgstr ""
 
-#: src/dd.c:556
+#: src/dd.c:558
 msgid "  noctty    do not assign controlling terminal from file\n"
 msgstr "  noctty    не призначати керуючий термінал з файлу\n"
 
-#: src/dd.c:559
+#: src/dd.c:561
 msgid "  nofollow  do not follow symlinks\n"
 msgstr "  nofollow  не слідувати за символьним посиланням\n"
 
-#: src/dd.c:561
+#: src/dd.c:563
 msgid "  nolinks   fail if multiply-linked\n"
 msgstr "  nolinks   помилка, якщо знайдено декілька посилань\n"
 
-#: src/dd.c:563
+#: src/dd.c:565
 msgid "  binary    use binary I/O for data\n"
 msgstr "  binary    використовувати двійковий ввід/вивід для даних\n"
 
-#: src/dd.c:565
+#: src/dd.c:567
 msgid "  text      use text I/O for data\n"
 msgstr "  text      використовувати текстовий ввід/вивід для даних\n"
 
-#: src/dd.c:569
+#: src/dd.c:571
 #, c-format
 msgid ""
 "\n"
@@ -3245,7 +3245,7 @@ msgstr ""
 "Ключі:\n"
 "\n"
 
-#: src/dd.c:625
+#: src/dd.c:627
 #, c-format
 msgid ""
 "%<PRIuMAX>+%<PRIuMAX> records in\n"
@@ -3254,7 +3254,7 @@ msgstr ""
 "%<PRIuMAX>+%<PRIuMAX> записів прочитано\n"
 "%<PRIuMAX>+%<PRIuMAX> записів записано\n"
 
-#: src/dd.c:631
+#: src/dd.c:633
 #, c-format
 msgid "%<PRIuMAX> truncated record\n"
 msgid_plural "%<PRIuMAX> truncated records\n"
@@ -3262,7 +3262,7 @@ msgstr[0] "%<PRIuMAX> обрізаний запис\n"
 msgstr[1] "%<PRIuMAX> обрізані записи\n"
 msgstr[2] "%<PRIuMAX> обрізаних записів\n"
 
-#: src/dd.c:643
+#: src/dd.c:645
 #, c-format
 msgid "%<PRIuMAX> byte (%s) copied"
 msgid_plural "%<PRIuMAX> bytes (%s) copied"
@@ -3270,7 +3270,7 @@ msgstr[0] " скопійовано %<PRIuMAX> байт (%s)"
 msgstr[1] " скопійовано %<PRIuMAX> байти (%s)"
 msgstr[2] " скопійовано %<PRIuMAX> байтів (%s)"
 
-#: src/dd.c:661
+#: src/dd.c:663
 msgid "Infinity B"
 msgstr "Нескінченість"
 
@@ -3284,83 +3284,83 @@ msgstr "Нескінченість"
 #. but that was incorrect for languages like Polish.  To fix this
 #. bug we now use SI symbols even though they're a bit more
 #. confusing in English.
-#: src/dd.c:674
+#: src/dd.c:676
 #, c-format
 msgid ", %g s, %s/s\n"
 msgstr ", %g с, %s/s\n"
 
-#: src/dd.c:682
+#: src/dd.c:758
 #, c-format
 msgid "closing input file %s"
 msgstr "закриття вхідного файлу %s"
 
-#: src/dd.c:689
+#: src/dd.c:765
 #, c-format
 msgid "closing output file %s"
 msgstr "закриття файлу виводу %s"
 
-#: src/dd.c:966
+#: src/dd.c:968
 #, fuzzy, c-format
 msgid "failed to turn off O_DIRECT: %s"
 msgstr "помилка зміни каталогу на %s"
 
-#: src/dd.c:1018 src/dd.c:1811
+#: src/dd.c:1020 src/dd.c:1813
 #, c-format
 msgid "writing to %s"
 msgstr "запис у %s"
 
-#: src/dd.c:1129 src/dd.c:1183
+#: src/dd.c:1131 src/dd.c:1185
 #, c-format
 msgid "unrecognized operand %s"
 msgstr "операнд %s не розпізнаний"
 
-#: src/dd.c:1140
+#: src/dd.c:1142
 msgid "invalid conversion"
 msgstr "неприпустиме перетворення"
 
-#: src/dd.c:1143
+#: src/dd.c:1145
 msgid "invalid input flag"
 msgstr "неприпустима ознака входу"
 
-#: src/dd.c:1146 src/dd.c:1213
+#: src/dd.c:1148 src/dd.c:1215
 msgid "invalid output flag"
 msgstr "неприпустимий ознака виводу"
 
-#: src/dd.c:1149
+#: src/dd.c:1151
 msgid "invalid status flag"
 msgstr "неприпустимий ознака статусу"
 
-#: src/dd.c:1188 src/truncate.c:300
+#: src/dd.c:1190 src/truncate.c:300
 #, c-format
 msgid "invalid number %s"
 msgstr "неправильний номер %s"
 
-#: src/dd.c:1233
+#: src/dd.c:1235
 #, c-format
 msgid "cannot combine any two of {ascii,ebcdic,ibm}"
 msgstr "не можна одночасно використовувати будь-які два з {ascii,ebcdic,ibm}"
 
-#: src/dd.c:1235
+#: src/dd.c:1237
 #, c-format
 msgid "cannot combine block and unblock"
 msgstr "не можна одночасно використовувати block та unblock"
 
-#: src/dd.c:1237
+#: src/dd.c:1239
 #, c-format
 msgid "cannot combine lcase and ucase"
 msgstr "не можна одночасно використовувати lcase та ucase"
 
-#: src/dd.c:1239
+#: src/dd.c:1241
 #, c-format
 msgid "cannot combine excl and nocreat"
 msgstr "не можна одночасно використовувати excl та nocreat"
 
-#: src/dd.c:1242
+#: src/dd.c:1244
 #, fuzzy, c-format
 msgid "cannot combine direct and nocache"
 msgstr "не можна одночасно використовувати excl та nocreat"
 
-#: src/dd.c:1399
+#: src/dd.c:1401
 #, c-format
 msgid ""
 "warning: working around lseek kernel bug for file (%s)\n"
@@ -3369,67 +3369,67 @@ msgstr ""
 "попередження: обходиться помилка lseek у ядрі для файлу (%s)\n"
 "  mt_type=0x%0lx -- см. <sys/mtio.h> для списку типів"
 
-#: src/dd.c:1481
+#: src/dd.c:1483
 #, c-format
 msgid "%s: cannot skip"
 msgstr "%s: не вдається пропустити"
 
-#: src/dd.c:1483 src/dd.c:1505 src/dd.c:1562
+#: src/dd.c:1485 src/dd.c:1507 src/dd.c:1564
 #, c-format
 msgid "%s: cannot seek"
 msgstr "%s: не вдається зсунути вказівник файлу"
 
-#: src/dd.c:1542
+#: src/dd.c:1544
 #, c-format
 msgid "offset overflow while reading file %s"
 msgstr "переповнення зсуву при читанні файлу %s"
 
-#: src/dd.c:1554
+#: src/dd.c:1556
 #, c-format
 msgid "warning: invalid file offset after failed read"
 msgstr "попередження: некоректний зсув файлу після помилки читання"
 
-#: src/dd.c:1558
+#: src/dd.c:1560
 #, c-format
 msgid "cannot work around kernel bug after all"
 msgstr "не вдається обійти помилку ядра"
 
-#: src/dd.c:1701
+#: src/dd.c:1703
 #, c-format
 msgid "setting flags for %s"
 msgstr "встановлення ознак для %s"
 
-#: src/dd.c:1754
+#: src/dd.c:1756
 #, c-format
 msgid "memory exhausted by input buffer of size %zu bytes (%s)"
 msgstr ""
 
-#: src/dd.c:1768
+#: src/dd.c:1770
 #, c-format
 msgid "memory exhausted by output buffer of size %zu bytes (%s)"
 msgstr ""
 
-#: src/dd.c:1794
+#: src/dd.c:1796
 #, c-format
 msgid "%s: cannot skip to specified offset"
 msgstr "%s: не вдається перемістити вказівник позиції на вказану кількість"
 
-#: src/dd.c:1979
+#: src/dd.c:1981
 #, c-format
 msgid "fdatasync failed for %s"
 msgstr "операція fdatasync для %s завершилась помилкою"
 
-#: src/dd.c:1989
+#: src/dd.c:1991
 #, c-format
 msgid "fsync failed for %s"
 msgstr "операція fsync для %s завершилась помилкою"
 
-#: src/dd.c:2040 src/dd.c:2069
+#: src/dd.c:2042 src/dd.c:2071
 #, c-format
 msgid "opening %s"
 msgstr "відкриття %s"
 
-#: src/dd.c:2078
+#: src/dd.c:2080
 #, c-format
 msgid ""
 "offset too large: cannot truncate to a length of seek=%<PRIuMAX> (%lu-byte) "
@@ -3438,12 +3438,12 @@ msgstr ""
 "зсув надто великий: не вдається обрізати до величини seek=%<PRIuMAX> (%lu-"
 "байтних) блоків"
 
-#: src/dd.c:2099
+#: src/dd.c:2101
 #, fuzzy, c-format
 msgid "failed to truncate to %<PRIuMAX> bytes in output file %s"
 msgstr "відсікання на %<PRIuMAX> байт у файлі виводу %s"
 
-#: src/dd.c:2115 src/dd.c:2121
+#: src/dd.c:2117 src/dd.c:2123
 #, fuzzy, c-format
 msgid "failed to discard cache for: %s"
 msgstr "помилка зміни каталогу на %s"
@@ -3582,7 +3582,7 @@ msgstr "файлова система типа %s і вибрана, і викл
 msgid "Warning: "
 msgstr "Попередження: "
 
-#: src/df.c:1045 src/stat.c:766
+#: src/df.c:1045 src/stat.c:770
 msgid "cannot read table of mounted file systems"
 msgstr "%помилка при читані змонтованих файлових систем"
 
@@ -3880,9 +3880,9 @@ msgid "invalid zero-length file name"
 msgstr "неправильна назва файлу нульової довжини"
 
 #: src/du.c:994 src/head.c:151 src/head.c:264 src/head.c:336 src/head.c:540
-#: src/head.c:622 src/head.c:694 src/head.c:752 src/head.c:776 src/tail.c:411
-#: src/tail.c:499 src/tail.c:548 src/tail.c:641 src/tail.c:769 src/tail.c:817
-#: src/tail.c:856 src/tail.c:1769 src/tail.c:1799 src/uniq.c:396
+#: src/head.c:622 src/head.c:694 src/head.c:752 src/head.c:776 src/tail.c:412
+#: src/tail.c:500 src/tail.c:549 src/tail.c:642 src/tail.c:770 src/tail.c:818
+#: src/tail.c:857 src/tail.c:1781 src/tail.c:1811 src/uniq.c:396
 #, c-format
 msgid "error reading %s"
 msgstr "помилка читання %s"
@@ -4501,7 +4501,7 @@ msgstr "%s: число байт надто великий"
 msgid "%s: cannot lseek back to original position"
 msgstr "ю%s: не вдається вернуть вказівник файлу на початкову позицію"
 
-#: src/head.c:615 src/head.c:686 src/tail.c:449
+#: src/head.c:615 src/head.c:686 src/tail.c:450
 #, c-format
 msgid "%s: cannot seek to offset %s"
 msgstr "%s: не вдається перейти до позиції %s"
@@ -4524,11 +4524,11 @@ msgstr "число рядків"
 msgid "number of bytes"
 msgstr "число байт"
 
-#: src/head.c:888 src/tail.c:1934
+#: src/head.c:888 src/tail.c:1946
 msgid "invalid number of lines"
 msgstr "неправильна кількість рядків"
 
-#: src/head.c:889 src/tail.c:1935
+#: src/head.c:889 src/tail.c:1947
 msgid "invalid number of bytes"
 msgstr "неправильна кількість байт"
 
@@ -7632,7 +7632,7 @@ msgstr ""
 msgid "Try `%s ./%s' to remove the file %s.\n"
 msgstr "Спробуйте `%s ./%s', щоб видалити файл %s.\n"
 
-#: src/rm.c:135 src/shred.c:158 src/stat.c:1307 src/touch.c:217
+#: src/rm.c:135 src/shred.c:158 src/stat.c:1311 src/touch.c:217
 #, c-format
 msgid "Usage: %s [OPTION]... FILE...\n"
 msgstr "Використання: %s [КЛЮЧ]... ФАЙЛ...\n"
@@ -8389,7 +8389,7 @@ msgstr ""
 msgid "invalid time interval %s"
 msgstr "неправильний інтервал часу %s"
 
-#: src/sleep.c:148 src/tail.c:1217
+#: src/sleep.c:148 src/tail.c:1218
 #, c-format
 msgid "cannot read realtime clock"
 msgstr "не вдається прочитати значення таймеру реального часу"
@@ -8986,44 +8986,44 @@ msgstr "не вдається визначити назву машини"
 msgid "Michael Meskes"
 msgstr "Michael Meskes"
 
-#: src/stat.c:809
+#: src/stat.c:813
 #, fuzzy, c-format
 msgid "failed to canonicalize %s"
 msgstr "не вдається відкрити %s"
 
-#: src/stat.c:1021
+#: src/stat.c:1025
 #, c-format
 msgid "warning: unrecognized escape `\\%c'"
 msgstr "попередження: керуюча послідовність `\\%c' не розпізнана"
 
-#: src/stat.c:1076
+#: src/stat.c:1080
 #, c-format
 msgid "%s: invalid directive"
 msgstr "%s: неправильна директива"
 
-#: src/stat.c:1122
+#: src/stat.c:1126
 #, c-format
 msgid "warning: backslash at end of format"
 msgstr "попередження: зворотна похила риска наприкінці формату"
 
-#: src/stat.c:1153
+#: src/stat.c:1157
 #, c-format
 msgid "using %s to denote standard input does not work in file system mode"
 msgstr ""
 
-#: src/stat.c:1160
+#: src/stat.c:1164
 #, c-format
 msgid "cannot read file system information for %s"
 msgstr "не вдається прочитати інформацію файлової системи для %s"
 
-#: src/stat.c:1180
+#: src/stat.c:1184
 #, fuzzy, c-format
 msgid "cannot stat standard input"
 msgstr "закривається стандартний потік вводу"
 
 #. TRANSLATORS: This string uses format specifiers from
 #. 'stat --help' with --file-system, and NOT from printf.
-#: src/stat.c:1216
+#: src/stat.c:1220
 msgid ""
 "  File: \"%n\"\n"
 "    ID: %-8i Namelen: %-7l Type: %T\n"
@@ -9034,7 +9034,7 @@ msgstr ""
 
 #. TRANSLATORS: This string uses format specifiers from
 #. 'stat --help' without --file-system, and NOT from printf.
-#: src/stat.c:1241
+#: src/stat.c:1245
 msgid ""
 "  File: %N\n"
 "  Size: %-10s\tBlocks: %-10b IO Block: %-6o %F\n"
@@ -9042,32 +9042,32 @@ msgstr ""
 
 #. TRANSLATORS: This string uses format specifiers from
 #. 'stat --help' without --file-system, and NOT from printf.
-#: src/stat.c:1251
+#: src/stat.c:1255
 msgid "Device: %Dh/%dd\tInode: %-10i  Links: %-5h Device type: %t,%T\n"
 msgstr ""
 
 #. TRANSLATORS: This string uses format specifiers from
 #. 'stat --help' without --file-system, and NOT from printf.
-#: src/stat.c:1259
+#: src/stat.c:1263
 msgid "Device: %Dh/%dd\tInode: %-10i  Links: %h\n"
 msgstr ""
 
 #. TRANSLATORS: This string uses format specifiers from
 #. 'stat --help' without --file-system, and NOT from printf.
-#: src/stat.c:1268
+#: src/stat.c:1272
 msgid "Access: (%04a/%10.10A)  Uid: (%5u/%8U)   Gid: (%5g/%8G)\n"
 msgstr ""
 
 #. TRANSLATORS: This string uses format specifiers from
 #. 'stat --help' without --file-system, and NOT from printf.
-#: src/stat.c:1278
+#: src/stat.c:1282
 #, fuzzy, c-format
 msgid "Context: %C\n"
 msgstr " контекст=%s"
 
 #. TRANSLATORS: This string uses format specifiers from
 #. 'stat --help' without --file-system, and NOT from printf.
-#: src/stat.c:1287
+#: src/stat.c:1291
 msgid ""
 "Access: %x\n"
 "Modify: %y\n"
@@ -9075,7 +9075,7 @@ msgid ""
 " Birth: %w\n"
 msgstr ""
 
-#: src/stat.c:1308
+#: src/stat.c:1312
 msgid ""
 "Display file or file system status.\n"
 "\n"
@@ -9087,7 +9087,7 @@ msgstr ""
 "  -L, --dereference     слідувати за посиланням\n"
 "  -f, --file-system     показати стан файлової системи, а не файлу\n"
 
-#: src/stat.c:1314
+#: src/stat.c:1318
 #, fuzzy
 msgid ""
 "  -c  --format=FORMAT   use the specified FORMAT instead of the default;\n"
@@ -9106,7 +9106,7 @@ msgstr ""
 "\\n.\n"
 "  -t, --terse           виводити інформацію у компактній формі\n"
 
-#: src/stat.c:1325
+#: src/stat.c:1329
 msgid ""
 "\n"
 "The valid format sequences for files (without --file-system):\n"
@@ -9126,7 +9126,7 @@ msgstr ""
 "  %B   Розмір блоку, що повідомляється %b, у байтах\n"
 "  %C   рядок з контекстом безпеки SELinux\n"
 
-#: src/stat.c:1334
+#: src/stat.c:1338
 msgid ""
 "  %d   Device number in decimal\n"
 "  %D   Device number in hex\n"
@@ -9142,7 +9142,7 @@ msgstr ""
 "  %g   ID групи-власника\n"
 "  %G   Назва групи-власника\n"
 
-#: src/stat.c:1342
+#: src/stat.c:1346
 #, fuzzy
 msgid ""
 "  %h   Number of hard links\n"
@@ -9164,7 +9164,7 @@ msgstr ""
 "  %t   Основний тип пристрою, шістнадцятковий\n"
 "  %T   Другорядний тип пристрою, шістнадцятковий\n"
 
-#: src/stat.c:1353
+#: src/stat.c:1357
 #, fuzzy
 msgid ""
 "  %u   User ID of owner\n"
@@ -9189,7 +9189,7 @@ msgstr ""
 "  %Z   Час останньої зміни у секундах з початку Епохи\n"
 "\n"
 
-#: src/stat.c:1367
+#: src/stat.c:1371
 #, fuzzy
 msgid ""
 "Valid format sequences for file systems:\n"
@@ -9209,7 +9209,7 @@ msgstr ""
 "  %f   Число вільних блоків у файловій системі\n"
 "  %C   рядок з контекстом безпеки SELinux\n"
 
-#: src/stat.c:1376
+#: src/stat.c:1380
 msgid ""
 "  %i   File System ID in hex\n"
 "  %l   Maximum length of filenames\n"
@@ -10128,7 +10128,8 @@ msgstr ""
 msgid ""
 "  -s, --sleep-interval=N   with -f, sleep for approximately N seconds\n"
 "                             (default 1.0) between iterations.\n"
-"                             With inotify, this option is rarely useful.\n"
+"                             With inotify and --pid=P, check process P at\n"
+"                             least once every N seconds.\n"
 "  -v, --verbose            always output headers giving file names\n"
 msgstr ""
 "      --pid=PID            з ключем -f, перерватися, коли процес PID\n"
@@ -10138,7 +10139,7 @@ msgstr ""
 "                           приблизно кожні З секунд (типово 1)\n"
 "  -v, --verbose            завжди виводити заголовки з назвами файлів\n"
 
-#: src/tail.c:310
+#: src/tail.c:311
 #, fuzzy
 msgid ""
 "\n"
@@ -10157,7 +10158,7 @@ msgstr ""
 "GB 1000*1000*1000, G 1024*1024*1024, та таке інше для T, P, E, Z, Y.\n"
 "\n"
 
-#: src/tail.c:319
+#: src/tail.c:320
 #, fuzzy
 msgid ""
 "With --follow (-f), tail defaults to following the file descriptor, which\n"
@@ -10174,161 +10175,161 @@ msgstr ""
 "відкриваючи його періодично, щоб дізнатись, чи не був він видалений та\n"
 "заново створений іншою програмою.\n"
 
-#: src/tail.c:378
+#: src/tail.c:379
 #, c-format
 msgid "closing %s (fd=%d)"
 msgstr "закриття %s (fd=%d)"
 
-#: src/tail.c:453
+#: src/tail.c:454
 #, c-format
 msgid "%s: cannot seek to relative offset %s"
 msgstr "%s: не вдається перемістити вказівник позиції на %s"
 
-#: src/tail.c:457
+#: src/tail.c:458
 #, c-format
 msgid "%s: cannot seek to end-relative offset %s"
 msgstr "%s: не вдається перемістити вказівник позиції на %s відносно кінця"
 
-#: src/tail.c:893
+#: src/tail.c:894
 #, c-format
 msgid "cannot determine location of %s. reverting to polling"
 msgstr ""
 
-#: src/tail.c:962
+#: src/tail.c:963
 #, c-format
 msgid "%s has become inaccessible"
 msgstr "%s став недоступний"
 
-#: src/tail.c:979
+#: src/tail.c:980
 #, c-format
 msgid "%s has been replaced with an untailable file; giving up on this name"
 msgstr ""
 "%s був замінений файлом, для якого tail незастосовний; кінець виводу для "
 "цієї назви"
 
-#: src/tail.c:988
+#: src/tail.c:989
 #, fuzzy, c-format
 msgid "%s has been replaced with a remote file. giving up on this name"
 msgstr ""
 "%s був замінений файлом, для якого tail незастосовний; кінець виводу для "
 "цієї назви"
 
-#: src/tail.c:1009
+#: src/tail.c:1010
 #, c-format
 msgid "%s has become accessible"
 msgstr "%s став доступний"
 
-#: src/tail.c:1017
+#: src/tail.c:1018
 #, c-format
 msgid "%s has appeared;  following end of new file"
 msgstr "%s з'явився; початий вивід для нового файлу"
 
-#: src/tail.c:1028
+#: src/tail.c:1029
 #, c-format
 msgid "%s has been replaced;  following end of new file"
 msgstr "%s був заміщений; вивід продовжується для нового файлу"
 
-#: src/tail.c:1129
+#: src/tail.c:1130
 #, c-format
 msgid "%s: cannot change nonblocking mode"
 msgstr "%s: не вдається змінити неблокуючий режим"
 
-#: src/tail.c:1170 src/tail.c:1285
+#: src/tail.c:1171 src/tail.c:1286
 #, c-format
 msgid "%s: file truncated"
 msgstr "%s: файл обрізаний"
 
-#: src/tail.c:1194
+#: src/tail.c:1195 src/tail.c:1441
 #, c-format
 msgid "no files remaining"
 msgstr "більше немає файлів"
 
-#: src/tail.c:1367
+#: src/tail.c:1368
 #, fuzzy, c-format
 msgid "cannot watch parent directory of %s"
 msgstr "не вдається виконати stat для поточного каталогу (наразі %s)"
 
-#: src/tail.c:1370 src/tail.c:1385
+#: src/tail.c:1371 src/tail.c:1386
 #, fuzzy, c-format
 msgid "inotify resources exhausted"
 msgstr "Вичерпані суфікси для вихідних файлів"
 
-#: src/tail.c:1388 src/tail.c:1506
+#: src/tail.c:1389 src/tail.c:1518
 #, fuzzy, c-format
 msgid "cannot watch %s"
 msgstr "не вдається виконати touch для %s"
 
-#: src/tail.c:1460
+#: src/tail.c:1472
 #, c-format
 msgid "error monitoring inotify event"
 msgstr ""
 
-#: src/tail.c:1480
+#: src/tail.c:1492
 #, fuzzy, c-format
 msgid "error reading inotify event"
 msgstr "помилка читання %s"
 
-#: src/tail.c:1773
+#: src/tail.c:1785
 #, c-format
 msgid "%s: cannot follow end of this type of file; giving up on this name"
 msgstr ""
 "%s: не можна стежити за кінцем файлу такого типу; вивід продовжується для "
 "нового файлу"
 
-#: src/tail.c:1890
+#: src/tail.c:1902
 #, c-format
 msgid "number in %s is too large"
 msgstr "число у %s надто велике"
 
-#: src/tail.c:1962
+#: src/tail.c:1974
 #, c-format
 msgid "%s: invalid maximum number of unchanged stats between opens"
 msgstr ""
 "%s: неправильна максимальна кількість не змінених параметрів між відкриттями"
 
-#: src/tail.c:1978
+#: src/tail.c:1990
 #, c-format
 msgid "%s: invalid PID"
 msgstr "%s: неправильний PID"
 
-#: src/tail.c:1997
+#: src/tail.c:2009
 #, c-format
 msgid "%s: invalid number of seconds"
 msgstr "%s: неправильне число секунд"
 
-#: src/tail.c:2013
+#: src/tail.c:2025
 #, c-format
 msgid "option used in invalid context -- %c"
 msgstr "параметр використовує неправильний контекст -- %c"
 
-#: src/tail.c:2021
+#: src/tail.c:2033
 #, c-format
 msgid "warning: --retry is useful mainly when following by name"
 msgstr ""
 "попередження: ключ --retry корисний лише при слідуванні за назвою файлу"
 
-#: src/tail.c:2025
+#: src/tail.c:2037
 #, c-format
 msgid "warning: PID ignored; --pid=PID is useful only when following"
 msgstr ""
 "попередження: PID ігнорований; ключ --pid=PID корисний лише при слідуванні"
 
-#: src/tail.c:2028
+#: src/tail.c:2040
 #, c-format
 msgid "warning: --pid=PID is not supported on this system"
 msgstr "попередження: --pid=PID не підтримується на цій системі"
 
-#: src/tail.c:2129
+#: src/tail.c:2141
 #, c-format
 msgid "cannot follow %s by name"
 msgstr "не вдається слідувати за %s за назвою"
 
-#: src/tail.c:2135
+#: src/tail.c:2147
 #, c-format
 msgid "warning: following standard input indefinitely is ineffective"
 msgstr "попередження: нескінченне стеження за стандартним вводом неефективне"
 
-#: src/tail.c:2196
+#: src/tail.c:2208
 #, c-format
 msgid "inotify cannot be used, reverting to polling"
 msgstr ""
