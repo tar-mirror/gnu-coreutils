@@ -23,28 +23,4 @@
 
 #include <fcntl.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-
-#define ASSERT(expr) \
-  do									     \
-    {									     \
-      if (!(expr))							     \
-        {								     \
-          fprintf (stderr, "%s:%d: assertion failed\n", __FILE__, __LINE__); \
-          fflush (stderr);						     \
-          abort ();							     \
-        }								     \
-    }									     \
-  while (0)
-
-int
-main ()
-{
-  ASSERT (open ("nonexist.ent/", O_CREAT | O_RDONLY, 0600) < 0);
-  ASSERT (open ("/dev/null/", O_RDONLY) < 0);
-
-  ASSERT (open ("/dev/null", O_RDONLY) >= 0);
-
-  return 0;
-}
+#include "test-open.h"

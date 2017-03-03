@@ -97,6 +97,8 @@ AC_DEFUN([gl_INIT],
   gl_CHECK_TYPE_STRUCT_DIRENT_D_INO
   gl_CHECK_TYPE_STRUCT_DIRENT_D_TYPE
   gl_DIRENT_H
+  gl_DIRENT_SAFER
+  gl_MODULE_INDICATOR([dirent-safer])
   gl_FUNC_DIRFD
   gl_DIRENT_MODULE_INDICATOR([dirfd])
   gl_DIRNAME
@@ -121,6 +123,8 @@ AC_DEFUN([gl_INIT],
   gl_FCNTL_H
   gl_FCNTL_SAFER
   gl_MODULE_INDICATOR([fcntl-safer])
+  gl_FUNC_FDOPENDIR
+  gl_DIRENT_MODULE_INDICATOR([fdopendir])
   gl_FUNC_FFLUSH
   gl_STDIO_MODULE_INDICATOR([fflush])
   gl_FILE_TYPE
@@ -131,6 +135,8 @@ AC_DEFUN([gl_INIT],
   gl_FLOAT_H
   gl_FUNC_FNMATCH_POSIX
   gl_FUNC_FNMATCH_GNU
+  gl_FUNC_FOPEN
+  gl_STDIO_MODULE_INDICATOR([fopen])
   gl_FOPEN_SAFER
   gl_MODULE_INDICATOR([fopen-safer])
   gl_FUNC_FPENDING
@@ -220,7 +226,9 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_LCHOWN
   gl_UNISTD_MODULE_INDICATOR([lchown])
   gl_IGNORE_UNUSED_LIBRARIES
-  gl_AC_FUNC_LINK_FOLLOWS_SYMLINK
+  gl_FUNC_LINK
+  gl_UNISTD_MODULE_INDICATOR([link])
+  gl_FUNC_LINK_FOLLOWS_SYMLINK
   gl_LOCALCHARSET
   LOCALCHARSET_TESTS_ENVIRONMENT="CHARSETALIASDIR=\"\$(top_builddir)/$gl_source_base\""
   AC_SUBST([LOCALCHARSET_TESTS_ENVIRONMENT])
@@ -283,6 +291,8 @@ AC_DEFUN([gl_INIT],
   gl_MODULE_INDICATOR([open])
   gl_FCNTL_MODULE_INDICATOR([open])
   gl_FUNC_OPENAT
+  gl_OPENAT_SAFER
+  gl_MODULE_INDICATOR([openat-safer])
   gl_PATHMAX
   gl_PERL
   gl_PHYSMEM
@@ -293,6 +303,7 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_PRINTF_FREXPL
   m4_divert_text([INIT_PREPARE], [gl_printf_safe=yes])
   gl_PRIV_SET
+  AC_CHECK_DECLS([program_invocation_name], [], [], [#include <errno.h>])
   m4_ifdef([AM_XGETTEXT_OPTION],
     [AM_][XGETTEXT_OPTION([--keyword='proper_name:1,\"This is a proper name. See the gettext manual, section Names.\"'])
      AM_][XGETTEXT_OPTION([--keyword='proper_name_utf8:1,\"This is a proper name. See the gettext manual, section Names.\"'])])
@@ -311,6 +322,7 @@ AC_DEFUN([gl_INIT],
   gl_STDLIB_MODULE_INDICATOR([realloc-posix])
   gl_REGEX
   gl_FUNC_RENAME
+  gl_STDIO_MODULE_INDICATOR([rename])
   gl_FUNC_RENAME_TRAILING_DEST_SLASH
   gl_FUNC_RMDIR
   gl_FUNC_RMDIR_NOTEMPTY
@@ -357,6 +369,7 @@ AC_DEFUN([gl_INIT],
   gl_STDIO_H
   gl_STDLIB_H
   gl_STDLIB_SAFER
+  gl_MODULE_INDICATOR([stdlib-safer])
   gl_FUNC_STPCPY
   gl_STRING_MODULE_INDICATOR([stpcpy])
   gl_FUNC_STPNCPY
@@ -412,6 +425,7 @@ AC_DEFUN([gl_INIT],
   gl_UNICODEIO
   gl_UNISTD_H
   gl_UNISTD_SAFER
+  gl_MODULE_INDICATOR([unistd-safer])
   gl_MODULE_INDICATOR([unistr/u8-uctomb])
   gl_FUNC_UNLINK_BUSY_TEXT
   gl_UNLINKDIR
@@ -521,6 +535,9 @@ AC_DEFUN([gl_INIT],
   gt_LOCALE_FR_UTF8
   gt_LOCALE_FR
   gt_LOCALE_TR_UTF8
+  AC_CHECK_FUNCS_ONCE([symlink])
+  HAVE_SYMLINK=$ac_cv_func_symlink
+  AC_SUBST([HAVE_SYMLINK])
   AC_REQUIRE([gl_HEADER_SYS_SOCKET])
   if test "$ac_cv_header_winsock2_h" = yes; then
     AC_LIBOBJ([connect])
@@ -783,6 +800,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/diacrit.h
   lib/dirchownmod.c
   lib/dirchownmod.h
+  lib/dirent--.h
+  lib/dirent-safer.h
   lib/dirent.in.h
   lib/dirfd.c
   lib/dirname.c
@@ -806,6 +825,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/fcntl-safer.h
   lib/fcntl.in.h
   lib/fd-safer.c
+  lib/fdopendir.c
   lib/fflush.c
   lib/file-has-acl.c
   lib/file-set.c
@@ -825,6 +845,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/fnmatch.in.h
   lib/fnmatch_loop.c
   lib/fopen-safer.c
+  lib/fopen.c
   lib/fpending.c
   lib/fpending.h
   lib/fprintftime.c
@@ -902,6 +923,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/iconv_open-hpux.gperf
   lib/iconv_open-irix.gperf
   lib/iconv_open-osf.gperf
+  lib/iconv_open-solaris.gperf
   lib/iconv_open.c
   lib/idcache.c
   lib/idcache.h
@@ -924,6 +946,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/lchown.c
   lib/linebuffer.c
   lib/linebuffer.h
+  lib/link.c
   lib/localcharset.c
   lib/localcharset.h
   lib/long-options.c
@@ -998,8 +1021,10 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/openat-die.c
   lib/openat-priv.h
   lib/openat-proc.c
+  lib/openat-safer.c
   lib/openat.c
   lib/openat.h
+  lib/opendir-safer.c
   lib/pathmax.h
   lib/physmem.c
   lib/physmem.h
@@ -1259,6 +1284,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/cycle-check.m4
   m4/d-ino.m4
   m4/d-type.m4
+  m4/dirent-safer.m4
   m4/dirent_h.m4
   m4/dirfd.m4
   m4/dirname.m4
@@ -1280,6 +1306,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/fclose.m4
   m4/fcntl-safer.m4
   m4/fcntl_h.m4
+  m4/fdopendir.m4
   m4/fflush.m4
   m4/file-type.m4
   m4/fileblocks.m4
@@ -1288,6 +1315,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/flexmember.m4
   m4/float_h.m4
   m4/fnmatch.m4
+  m4/fopen.m4
   m4/fpending.m4
   m4/fpieee.m4
   m4/fprintftime.m4
@@ -1365,6 +1393,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/lib-link.m4
   m4/lib-prefix.m4
   m4/link-follow.m4
+  m4/link.m4
   m4/localcharset.m4
   m4/locale-fr.m4
   m4/locale-ja.m4
@@ -1582,6 +1611,7 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-closein.sh
   tests/test-copy-acl.c
   tests/test-copy-acl.sh
+  tests/test-dirent-safer.c
   tests/test-dirname.c
   tests/test-dup2.c
   tests/test-environ.c
@@ -1594,7 +1624,10 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-exclude5.sh
   tests/test-exclude6.sh
   tests/test-exclude7.sh
-  tests/test-fcntl.c
+  tests/test-fchdir.c
+  tests/test-fcntl-h.c
+  tests/test-fcntl-safer.c
+  tests/test-fdopendir.c
   tests/test-fflush.c
   tests/test-fflush2.c
   tests/test-fflush2.sh
@@ -1603,6 +1636,9 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-filenamecat.c
   tests/test-filevercmp.c
   tests/test-fnmatch.c
+  tests/test-fopen-safer.c
+  tests/test-fopen.c
+  tests/test-fopen.h
   tests/test-fpending.c
   tests/test-fpending.sh
   tests/test-fprintf-posix.h
@@ -1626,6 +1662,7 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-ftello.sh
   tests/test-ftello2.sh
   tests/test-getaddrinfo.c
+  tests/test-getcwd.c
   tests/test-getdate.c
   tests/test-getdelim.c
   tests/test-gethostname.c
@@ -1645,6 +1682,7 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-isnanf.h
   tests/test-isnanl-nolibm.c
   tests/test-isnanl.h
+  tests/test-link.c
   tests/test-lseek.c
   tests/test-lseek.sh
   tests/test-lstat.c
@@ -1677,6 +1715,8 @@ AC_DEFUN([gl_FILE_LIST], [
   tests/test-netdb.c
   tests/test-netinet_in.c
   tests/test-open.c
+  tests/test-open.h
+  tests/test-openat-safer.c
   tests/test-perror.c
   tests/test-perror.sh
   tests/test-printf-frexp.c

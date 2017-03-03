@@ -190,7 +190,7 @@ EXTRA_DIST += test-c-strcase.sh test-c-strcasecmp.c test-c-strncasecmp.c
 ## begin gnulib module canonicalize-tests
 
 TESTS += test-canonicalize.sh
-TESTS_ENVIRONMENT += EXEEXT='@EXEEXT@'
+TESTS_ENVIRONMENT += EXEEXT='@EXEEXT@' HAVE_SYMLINK='$(HAVE_SYMLINK)'
 check_PROGRAMS += test-canonicalize
 test_canonicalize_LDADD = $(LDADD) @LIBINTL@
 EXTRA_DIST += test-canonicalize.sh test-canonicalize.c
@@ -231,6 +231,14 @@ check_PROGRAMS += test-sha1
 EXTRA_DIST += test-sha1.c
 
 ## end   gnulib module crypto/sha1-tests
+
+## begin gnulib module dirent-safer-tests
+
+TESTS += test-dirent-safer
+check_PROGRAMS += test-dirent-safer
+EXTRA_DIST += test-dirent-safer.c
+
+## end   gnulib module dirent-safer-tests
 
 ## begin gnulib module dirname-tests
 
@@ -285,14 +293,39 @@ EXTRA_DIST += test-exclude.c test-exclude1.sh test-exclude2.sh test-exclude3.sh 
 
 ## end   gnulib module exclude-tests
 
-## begin gnulib module fcntl-tests
+## begin gnulib module fchdir-tests
 
-TESTS += test-fcntl
-check_PROGRAMS += test-fcntl
+TESTS += test-fchdir
+check_PROGRAMS += test-fchdir
+EXTRA_DIST += test-fchdir.c
 
-EXTRA_DIST += test-fcntl.c
+## end   gnulib module fchdir-tests
 
-## end   gnulib module fcntl-tests
+## begin gnulib module fcntl-h-tests
+
+TESTS += test-fcntl-h
+check_PROGRAMS += test-fcntl-h
+
+EXTRA_DIST += test-fcntl-h.c
+
+## end   gnulib module fcntl-h-tests
+
+## begin gnulib module fcntl-safer-tests
+
+TESTS += test-fcntl-safer
+check_PROGRAMS += test-fcntl-safer
+EXTRA_DIST += test-open.h test-fcntl-safer.c
+
+## end   gnulib module fcntl-safer-tests
+
+## begin gnulib module fdopendir-tests
+
+TESTS += test-fdopendir
+check_PROGRAMS += test-fdopendir
+test_fdopendir_LDADD = $(LDADD) @LIBINTL@
+EXTRA_DIST += test-fdopendir.c
+
+## end   gnulib module fdopendir-tests
 
 ## begin gnulib module fflush-tests
 
@@ -328,6 +361,23 @@ check_PROGRAMS += test-fnmatch
 EXTRA_DIST += test-fnmatch.c
 
 ## end   gnulib module fnmatch-tests
+
+## begin gnulib module fopen-safer-tests
+
+TESTS += test-fopen-safer
+check_PROGRAMS += test-fopen-safer
+EXTRA_DIST += test-fopen.h test-fopen-safer.c
+
+## end   gnulib module fopen-safer-tests
+
+## begin gnulib module fopen-tests
+
+TESTS += test-fopen
+check_PROGRAMS += test-fopen
+
+EXTRA_DIST += test-fopen.h test-fopen.c
+
+## end   gnulib module fopen-tests
 
 ## begin gnulib module fpending-tests
 
@@ -441,6 +491,14 @@ EXTRA_DIST += test-getaddrinfo.c
 
 ## end   gnulib module getaddrinfo-tests
 
+## begin gnulib module getcwd-tests
+
+TESTS += test-getcwd
+check_PROGRAMS += test-getcwd
+EXTRA_DIST += test-getcwd.c
+
+## end   gnulib module getcwd-tests
+
 ## begin gnulib module getdate-tests
 
 TESTS += test-getdate
@@ -490,6 +548,7 @@ EXTRA_DIST += test-getndelim2.c
 
 TESTS += test-getopt
 check_PROGRAMS += test-getopt
+test_getopt_LDADD = $(LDADD) $(LIBINTL)
 EXTRA_DIST += test-getopt.c test-getopt.h test-getopt_long.h
 
 ## end   gnulib module getopt-posix-tests
@@ -583,6 +642,14 @@ check_PROGRAMS += test-isnanl-nolibm
 EXTRA_DIST += test-isnanl-nolibm.c test-isnanl.h nan.h
 
 ## end   gnulib module isnanl-nolibm-tests
+
+## begin gnulib module link-tests
+
+TESTS += test-link
+check_PROGRAMS += test-link
+EXTRA_DIST += test-link.c
+
+## end   gnulib module link-tests
 
 ## begin gnulib module listen
 
@@ -743,9 +810,18 @@ EXTRA_DIST += test-netinet_in.c
 TESTS += test-open
 check_PROGRAMS += test-open
 
-EXTRA_DIST += test-open.c
+EXTRA_DIST += test-open.h test-open.c
 
 ## end   gnulib module open-tests
+
+## begin gnulib module openat-safer-tests
+
+TESTS += test-openat-safer
+check_PROGRAMS += test-openat-safer
+test_openat_safer_LDADD = $(LDADD) @LIBINTL@
+EXTRA_DIST += test-openat-safer.c
+
+## end   gnulib module openat-safer-tests
 
 ## begin gnulib module perror
 
@@ -1017,8 +1093,8 @@ BUILT_SOURCES += $(SYS_IOCTL_H)
 # We need the following in order to create <sys/ioctl.h> when the system
 # does not have a complete one.
 sys/ioctl.h: sys_ioctl.in.h
-	@MKDIR_P@ sys
-	rm -f $@-t $@
+	$(AM_V_at)$(MKDIR_P) sys
+	$(AM_V_GEN)rm -f $@-t $@ && \
 	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
 	  sed -e 's|@''HAVE_SYS_IOCTL_H''@|$(HAVE_SYS_IOCTL_H)|g' \
 	      -e 's|@''INCLUDE_NEXT''@|$(INCLUDE_NEXT)|g' \
@@ -1029,7 +1105,7 @@ sys/ioctl.h: sys_ioctl.in.h
 	      -e 's|@''SYS_IOCTL_H_HAVE_WINSOCK2_H_AND_USE_SOCKETS''@|$(SYS_IOCTL_H_HAVE_WINSOCK2_H_AND_USE_SOCKETS)|g' \
 	      -e '/definition of GL_LINK_WARNING/r $(LINK_WARNING_H)' \
 	      < $(srcdir)/sys_ioctl.in.h; \
-	} > $@-t
+	} > $@-t && \
 	mv $@-t $@
 MOSTLYCLEANFILES += sys/ioctl.h sys/ioctl.h-t
 MOSTLYCLEANDIRS += sys
