@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: coreutils 8.11-pre1\n"
 "Report-Msgid-Bugs-To: bug-coreutils@gnu.org\n"
-"POT-Creation-Date: 2012-08-20 08:22+0200\n"
+"POT-Creation-Date: 2012-10-23 16:59+0100\n"
 "PO-Revision-Date: 2011-03-28 00:26+0800\n"
 "Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -52,7 +52,7 @@ msgstr "关闭文件时出错"
 msgid "write error"
 msgstr "写入错误"
 
-#: lib/copy-acl.c:611 src/copy.c:1160 src/copy.c:2602
+#: lib/copy-acl.c:611 src/copy.c:1165 src/copy.c:2612
 #, c-format
 msgid "preserving permissions for %s"
 msgstr "%s 的保留权限"
@@ -244,12 +244,12 @@ msgstr "%s：选项\"-W %s\"不允许带参数\n"
 msgid "%s: option '-W %s' requires an argument\n"
 msgstr "%s：选项\"-W %s\"必需带参数\n"
 
-#: lib/mkdir-p.c:196 src/install.c:483
+#: lib/mkdir-p.c:196 src/install.c:484
 #, c-format
 msgid "cannot change permissions of %s"
 msgstr "无法更改%s 的权限"
 
-#: lib/mkdir-p.c:206 src/copy.c:2261 src/install.c:709 src/install.c:722
+#: lib/mkdir-p.c:206 src/copy.c:2266 src/install.c:710 src/install.c:723
 #, c-format
 msgid "cannot create directory %s"
 msgstr "无法创建目录%s"
@@ -411,7 +411,7 @@ msgstr "^[yY]"
 msgid "^[nN]"
 msgstr "^[nN]"
 
-#: lib/set-mode-acl.c:695 src/copy.c:2284 src/cp.c:518
+#: lib/set-mode-acl.c:697 src/copy.c:2289 src/cp.c:518
 #, c-format
 msgid "setting permissions for %s"
 msgstr "设置%s 的权限"
@@ -931,14 +931,14 @@ msgid "invalid wrap size: %s"
 msgstr "无效的换行字符数：%s"
 
 #: src/base64.c:283 src/basename.c:173 src/comm.c:435 src/cp.c:607
-#: src/date.c:441 src/dircolors.c:447 src/du.c:894 src/hostid.c:74
-#: src/hostname.c:111 src/id.c:169 src/install.c:929 src/join.c:961
-#: src/link.c:85 src/ln.c:563 src/logname.c:71 src/mknod.c:157 src/mv.c:448
-#: src/od.c:1802 src/ptx.c:2081 src/readlink.c:154 src/seq.c:408
-#: src/shuf.c:320 src/shuf.c:339 src/sort.c:4532 src/split.c:1327
-#: src/tr.c:1797 src/tsort.c:555 src/tty.c:112 src/uname.c:251 src/uniq.c:454
-#: src/uniq.c:471 src/unlink.c:81 src/uptime.c:250 src/users.c:146
-#: src/wc.c:666 src/who.c:827 src/whoami.c:79
+#: src/date.c:441 src/dircolors.c:447 src/du.c:937 src/hostid.c:74
+#: src/hostname.c:111 src/id.c:169 src/install.c:930 src/join.c:961
+#: src/link.c:85 src/ln.c:563 src/logname.c:71 src/mknod.c:157 src/mv.c:449
+#: src/nproc.c:119 src/od.c:1802 src/ptx.c:2081 src/readlink.c:154
+#: src/seq.c:519 src/shuf.c:320 src/shuf.c:339 src/sort.c:4532
+#: src/split.c:1327 src/tr.c:1797 src/tsort.c:555 src/tty.c:112
+#: src/uname.c:251 src/uniq.c:454 src/uniq.c:471 src/unlink.c:81
+#: src/uptime.c:250 src/users.c:146 src/wc.c:666 src/who.c:827 src/whoami.c:79
 #, c-format
 msgid "extra operand %s"
 msgstr "额外的操作数 %s"
@@ -951,7 +951,7 @@ msgstr "关闭标准输入"
 #. This is a proper name. See the gettext manual, section Names.
 #: src/basename.c:29 src/chgrp.c:37 src/chmod.c:39 src/chown.c:36
 #: src/comm.c:38 src/cp.c:57 src/csplit.c:42 src/cut.c:45 src/date.c:39
-#: src/dd.c:45 src/df.c:43 src/dirname.c:32 src/du.c:53 src/env.c:33
+#: src/dd.c:45 src/df.c:43 src/dirname.c:32 src/du.c:54 src/env.c:33
 #: src/expand.c:49 src/fold.c:36 src/groups.c:35 src/head.c:45 src/id.c:39
 #: src/install.c:50 src/ln.c:42 src/ls.c:124 src/mkdir.c:36 src/mkfifo.c:33
 #: src/mknod.c:34 src/mv.c:42 src/nice.c:39 src/nl.c:41 src/paste.c:53
@@ -1005,15 +1005,16 @@ msgstr ""
 #: src/dirname.c:116 src/expr.c:326 src/join.c:1147 src/link.c:77
 #: src/mkdir.c:183 src/mkfifo.c:108 src/mknod.c:146 src/nohup.c:111
 #: src/pathchk.c:148 src/printf.c:674 src/readlink.c:146 src/realpath.c:236
-#: src/rm.c:321 src/rmdir.c:223 src/seq.c:402 src/setuidgid.c:137
-#: src/sleep.c:119 src/stat.c:1487 src/stdbuf.c:346 src/tr.c:1782
+#: src/rm.c:321 src/rmdir.c:223 src/seq.c:513 src/setuidgid.c:137
+#: src/sleep.c:119 src/stat.c:1493 src/stdbuf.c:346 src/tr.c:1782
 #: src/unlink.c:75
 #, c-format
 msgid "missing operand"
 msgstr "缺少操作数"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/cat.c:48 src/cp.c:56 src/df.c:42 src/du.c:52 src/split.c:49
+#: src/cat.c:48 src/cp.c:56 src/df.c:42 src/du.c:53 src/factor.c:110
+#: src/split.c:49
 msgid "Torbjorn Granlund"
 msgstr "Torbjorn Granlund"
 
@@ -1023,8 +1024,8 @@ msgstr "Torbjorn Granlund"
 msgid "Richard M. Stallman"
 msgstr "Richard M. Stallman"
 
-#: src/cat.c:88 src/df.c:870 src/expand.c:103 src/fold.c:66 src/head.c:105
-#: src/ls.c:4727 src/nl.c:182 src/paste.c:435 src/pr.c:2768 src/sum.c:58
+#: src/cat.c:88 src/df.c:872 src/expand.c:103 src/fold.c:66 src/head.c:105
+#: src/ls.c:4720 src/nl.c:182 src/paste.c:435 src/pr.c:2768 src/sum.c:58
 #: src/tac.c:133 src/tail.c:258 src/tee.c:62 src/unexpand.c:113
 #, c-format
 msgid "Usage: %s [OPTION]... [FILE]...\n"
@@ -1080,7 +1081,7 @@ msgstr ""
 msgid "cannot do ioctl on %s"
 msgstr "无法在 %s 上执行 ioctrl"
 
-#: src/cat.c:637 src/dd.c:2209 src/sort.c:383 src/tee.c:165 src/yes.c:86
+#: src/cat.c:637 src/dd.c:2217 src/sort.c:383 src/tee.c:165 src/yes.c:86
 #, c-format
 msgid "standard output"
 msgstr "标准输出"
@@ -1097,7 +1098,7 @@ msgstr "Russell Coker"
 
 #. This is a proper name. See the gettext manual, section Names.
 #: src/chcon.c:37 src/chgrp.c:38 src/chmod.c:40 src/chown.c:37 src/cp.c:58
-#: src/cut.c:46 src/dirname.c:33 src/du.c:55 src/head.c:46 src/hostid.c:33
+#: src/cut.c:46 src/dirname.c:33 src/du.c:56 src/head.c:46 src/hostid.c:33
 #: src/hostname.c:33 src/mktemp.c:36 src/mv.c:43 src/nohup.c:37 src/od.c:36
 #: src/pathchk.c:34 src/pwd.c:31 src/rm.c:44 src/setuidgid.c:38 src/sleep.c:34
 #: src/sync.c:31 src/tail.c:72 src/tr.c:37 src/true.c:33
@@ -1114,8 +1115,8 @@ msgstr "创建安全环境失败：%s"
 msgid "failed to set %s security context component to %s"
 msgstr "设置%s 安全环境组件到%s 失败"
 
-#: src/chcon.c:156 src/chcon.c:540 src/copy.c:2222 src/runcon.c:217
-#: src/stat.c:694
+#: src/chcon.c:156 src/chcon.c:540 src/copy.c:2227 src/runcon.c:217
+#: src/stat.c:700
 #, c-format
 msgid "failed to get security context of %s"
 msgstr "无法取得%s 的安全环境"
@@ -1131,12 +1132,12 @@ msgid "failed to change context of %s to %s"
 msgstr "改变%s 的环境到%s 失败"
 
 #: src/chcon.c:255 src/chmod.c:216 src/chown-core.c:325 src/copy.c:581
-#: src/du.c:446 src/ls.c:2981
+#: src/du.c:451 src/ls.c:2981
 #, c-format
 msgid "cannot access %s"
 msgstr "无法访问%s"
 
-#: src/chcon.c:265 src/chmod.c:229 src/chown-core.c:338 src/du.c:426
+#: src/chcon.c:265 src/chmod.c:229 src/chown-core.c:338 src/du.c:431
 #, c-format
 msgid "cannot read directory %s"
 msgstr "无法读取目录%s"
@@ -1146,13 +1147,13 @@ msgstr "无法读取目录%s"
 msgid "changing security context of %s\n"
 msgstr "正在更改%s 的安全环境\n"
 
-#: src/chcon.c:326 src/chmod.c:346 src/chown-core.c:539 src/remove.c:559
+#: src/chcon.c:326 src/chmod.c:346 src/chown-core.c:539 src/remove.c:562
 #, c-format
 msgid "fts_read failed"
 msgstr "fts_read 失败"
 
-#: src/chcon.c:337 src/chmod.c:357 src/chown-core.c:551 src/du.c:618
-#: src/remove.c:573
+#: src/chcon.c:337 src/chmod.c:357 src/chown-core.c:551 src/du.c:629
+#: src/remove.c:576
 #, c-format
 msgid "fts_close failed"
 msgstr "fts_close 失败"
@@ -1579,7 +1580,7 @@ msgstr ""
 msgid "Roland McGrath"
 msgstr "Roland McGrath"
 
-#: src/chroot.c:97 src/install.c:575 src/setuidgid.c:110 src/setuidgid.c:120
+#: src/chroot.c:97 src/install.c:576 src/setuidgid.c:110 src/setuidgid.c:120
 #, c-format
 msgid "invalid group %s"
 msgstr "无效的组%s"
@@ -1649,7 +1650,7 @@ msgid "failed to set user-ID"
 msgstr "设置用户ID 失败"
 
 #: src/chroot.c:275 src/nohup.c:236 src/setuidgid.c:212 src/stdbuf.c:366
-#: src/timeout.c:402
+#: src/timeout.c:428
 #, c-format
 msgid "failed to run command %s"
 msgstr "无法运行命令%s"
@@ -1765,7 +1766,7 @@ msgstr "已定义多重分隔符"
 msgid "empty %s not allowed"
 msgstr "不允许空的%s"
 
-#: src/copy.c:168 src/dd.c:1609 src/dd.c:1976
+#: src/copy.c:168 src/dd.c:1617 src/dd.c:1984
 #, c-format
 msgid "reading %s"
 msgstr "正在读入%s"
@@ -1775,7 +1776,7 @@ msgstr "正在读入%s"
 msgid "cannot lseek %s"
 msgstr "无法lseek %s"
 
-#: src/copy.c:206 src/dd.c:2039 src/dd.c:2102
+#: src/copy.c:206 src/dd.c:2047 src/dd.c:2110
 #, c-format
 msgid "writing %s"
 msgstr "正在写入%s"
@@ -1800,7 +1801,7 @@ msgstr "扩展%s 失败"
 msgid "clearing permissions for %s"
 msgstr "清除%s 的权限"
 
-#: src/copy.c:697 src/copy.c:2470 src/cp.c:331
+#: src/copy.c:697 src/copy.c:2475 src/cp.c:331
 #, c-format
 msgid "failed to preserve ownership for %s"
 msgstr "无法保留%s 的所有者"
@@ -1815,13 +1816,13 @@ msgstr "查阅文件%s 失败"
 msgid "failed to preserve authorship for %s"
 msgstr "保留%s 的作者失败"
 
-#: src/copy.c:804 src/csplit.c:640 src/du.c:901 src/fmt.c:452 src/head.c:855
+#: src/copy.c:804 src/csplit.c:640 src/du.c:944 src/fmt.c:452 src/head.c:855
 #: src/sort.c:4544 src/split.c:1343 src/tail.c:1757 src/wc.c:678
 #, c-format
 msgid "cannot open %s for reading"
 msgstr "无法打开%s 读取数据"
 
-#: src/copy.c:810 src/copy.c:972 src/dd.c:1546 src/dd.c:2114 src/dd.c:2252
+#: src/copy.c:810 src/copy.c:972 src/dd.c:1554 src/dd.c:2122 src/dd.c:2260
 #: src/tail.c:1593 src/tail.c:1659 src/truncate.c:141
 #, c-format
 msgid "cannot fstat %s"
@@ -1842,14 +1843,14 @@ msgstr "获取文件系统创建环境失败"
 msgid "failed to set the security context of %s to %s"
 msgstr "设置%s 的安全环境为%s 失败"
 
-#: src/copy.c:881 src/copy.c:1574 src/copy.c:1777 src/copy.c:1935 src/ln.c:314
-#: src/remove.c:253 src/remove.c:279 src/remove.c:400 src/remove.c:425
+#: src/copy.c:881 src/copy.c:1579 src/copy.c:1782 src/copy.c:1940 src/ln.c:314
+#: src/remove.c:263 src/remove.c:280 src/remove.c:405 src/remove.c:431
 #, c-format
 msgid "cannot remove %s"
 msgstr "无法删除%s"
 
-#: src/copy.c:886 src/copy.c:1578 src/copy.c:1772 src/copy.c:1940
-#: src/remove.c:374
+#: src/copy.c:886 src/copy.c:1583 src/copy.c:1777 src/copy.c:1945
+#: src/remove.c:375
 #, c-format
 msgid "removed %s\n"
 msgstr "已删除%s\n"
@@ -1869,186 +1870,186 @@ msgstr "无法创建普通文件%s"
 msgid "failed to clone %s from %s"
 msgstr "克隆%s 失败"
 
-#: src/copy.c:1098 src/copy.c:2531
+#: src/copy.c:1098 src/copy.c:2536
 #, c-format
 msgid "preserving times for %s"
 msgstr "正在保留 %s 的时间"
 
-#: src/copy.c:1170 src/copy.c:1176 src/head.c:863 src/touch.c:172
+#: src/copy.c:1175 src/copy.c:1181 src/head.c:863 src/touch.c:172
 #: src/truncate.c:418
 #, c-format
 msgid "closing %s"
 msgstr "正在关闭 %s"
 
-#: src/copy.c:1466
+#: src/copy.c:1471
 #, c-format
 msgid "%s: try to overwrite %s, overriding mode %04lo (%s)? "
 msgstr "%s：是否覆盖%s，而不理会权限模式%04lo (%s)？ "
 
-#: src/copy.c:1473
+#: src/copy.c:1478
 #, c-format
 msgid "%s: overwrite %s? "
 msgstr "%s：是否覆盖%s？ "
 
-#: src/copy.c:1542
+#: src/copy.c:1547
 #, c-format
 msgid " (backup: %s)"
 msgstr " (备份：%s)"
 
-#: src/copy.c:1552
+#: src/copy.c:1557
 #, c-format
 msgid "failed to restore the default file creation context"
 msgstr "恢复默认文件创建环境失败"
 
-#: src/copy.c:1584
+#: src/copy.c:1589
 #, c-format
 msgid "cannot create hard link %s to %s"
 msgstr "无法创建指向%2$s 的硬链接%1$s"
 
-#: src/copy.c:1637 src/copy.c:1689 src/copy.c:2272 src/copy.c:2589
-#: src/find-mount-point.c:84 src/install.c:678 src/realpath.c:145
-#: src/stat.c:1231 src/truncate.c:364
+#: src/copy.c:1642 src/copy.c:1694 src/copy.c:2277 src/copy.c:2599
+#: src/find-mount-point.c:84 src/install.c:679 src/realpath.c:145
+#: src/stat.c:1237 src/truncate.c:364
 #, c-format
 msgid "cannot stat %s"
 msgstr "无法获取%s 的文件状态(stat)"
 
-#: src/copy.c:1645
+#: src/copy.c:1650
 #, c-format
 msgid "omitting directory %s"
 msgstr "略过目录%s"
 
-#: src/copy.c:1659
+#: src/copy.c:1664
 #, c-format
 msgid "warning: source file %s specified more than once"
 msgstr "警告：指定来源文件%s 多于一次"
 
-#: src/copy.c:1707 src/ln.c:246
+#: src/copy.c:1712 src/ln.c:246
 #, c-format
 msgid "%s and %s are the same file"
 msgstr "%s 与%s 为同一文件"
 
-#: src/copy.c:1806
+#: src/copy.c:1811
 #, c-format
 msgid "cannot overwrite non-directory %s with directory %s"
 msgstr "无法以目录%2$s 来覆盖非目录%1$s"
 
-#: src/copy.c:1824 src/ln.c:214
+#: src/copy.c:1829 src/ln.c:214
 #, c-format
 msgid "will not overwrite just-created %s with %s"
 msgstr "不会以%2$s 覆盖刚创建的%1$s"
 
-#: src/copy.c:1842
+#: src/copy.c:1847
 #, c-format
 msgid "cannot overwrite directory %s with non-directory"
 msgstr "无法以非目录来覆盖目录%s"
 
-#: src/copy.c:1856
+#: src/copy.c:1861
 #, c-format
 msgid "cannot move directory onto non-directory: %s -> %s"
 msgstr "无法将目录移动至非目录：%s -> %s"
 
-#: src/copy.c:1886
+#: src/copy.c:1891
 #, c-format
 msgid "backing up %s would destroy source;  %s not moved"
 msgstr "备份%s 会破坏源文件；未移动%s"
 
-#: src/copy.c:1887
+#: src/copy.c:1892
 #, c-format
 msgid "backing up %s would destroy source;  %s not copied"
 msgstr "备份%s 会破坏源文件；未复制%s"
 
-#: src/copy.c:1910 src/ln.c:276
+#: src/copy.c:1915 src/ln.c:276
 #, c-format
 msgid "cannot backup %s"
 msgstr "无法备份%s"
 
-#: src/copy.c:1974
+#: src/copy.c:1979
 #, c-format
 msgid "will not copy %s through just-created symlink %s"
 msgstr "不会以%s 覆盖刚创建的%s"
 
-#: src/copy.c:2051
+#: src/copy.c:2056
 #, c-format
 msgid "cannot copy a directory, %s, into itself, %s"
 msgstr "无法将目录%s 复制到自己%s"
 
-#: src/copy.c:2068
+#: src/copy.c:2073
 #, c-format
 msgid "will not create hard link %s to directory %s"
 msgstr "不会创建指向目录%2$s 的硬链接%1$s"
 
-#: src/copy.c:2118
+#: src/copy.c:2123
 #, c-format
 msgid "cannot move %s to a subdirectory of itself, %s"
 msgstr "无法将目录%s 移动至自身的子目录%s 下"
 
-#: src/copy.c:2161
+#: src/copy.c:2166
 #, c-format
 msgid "cannot move %s to %s"
 msgstr "无法将%s 移动至%s"
 
-#: src/copy.c:2173
+#: src/copy.c:2178
 #, c-format
 msgid "inter-device move failed: %s to %s; unable to remove target"
 msgstr "无法进行跨设备的移动：%s 至%s；无法删除目标"
 
-#: src/copy.c:2207 src/install.c:905 src/mkdir.c:189 src/mkfifo.c:114
+#: src/copy.c:2212 src/install.c:906 src/mkdir.c:189 src/mkfifo.c:114
 #: src/mknod.c:167
 #, c-format
 msgid "failed to set default file creation context to %s"
 msgstr "无法取得%s 的创建环境"
 
-#: src/copy.c:2241
+#: src/copy.c:2246
 #, c-format
 msgid "cannot copy cyclic symbolic link %s"
 msgstr "无法复制循环的符号链接%s"
 
-#: src/copy.c:2350
+#: src/copy.c:2355
 #, c-format
 msgid "%s: can make relative symbolic links only in current directory"
 msgstr "%s：只能于当前目录中创建相对的符号链接"
 
-#: src/copy.c:2357
+#: src/copy.c:2362
 #, c-format
 msgid "cannot create symbolic link %s to %s"
 msgstr "无法创建指向%2$s 的符号链接%1$s"
 
-#: src/copy.c:2406 src/mkfifo.c:133
+#: src/copy.c:2411 src/mkfifo.c:133
 #, c-format
 msgid "cannot create fifo %s"
 msgstr "无法创建先进先出文件%s"
 
-#: src/copy.c:2415
+#: src/copy.c:2420
 #, c-format
 msgid "cannot create special file %s"
 msgstr "无法创建特殊文件%s"
 
-#: src/copy.c:2426 src/ls.c:3191 src/stat.c:913
+#: src/copy.c:2431 src/ls.c:3185 src/stat.c:919
 #, c-format
 msgid "cannot read symbolic link %s"
 msgstr "无法读取符号链接%s"
 
-#: src/copy.c:2453
+#: src/copy.c:2458
 #, c-format
 msgid "cannot create symbolic link %s"
 msgstr "无法创建符号链接%s"
 
-#: src/copy.c:2485
+#: src/copy.c:2490
 #, c-format
 msgid "%s has unknown file type"
 msgstr "%s 的文件类型不详"
 
-#: src/copy.c:2629 src/ln.c:358
+#: src/copy.c:2639 src/ln.c:358
 #, c-format
 msgid "cannot un-backup %s"
 msgstr "无法将%s 的备份还原"
 
-#: src/copy.c:2633
+#: src/copy.c:2643
 #, c-format
 msgid "%s -> %s (unbackup)\n"
 msgstr "%s -> %s (还原备份)\n"
 
-#: src/cp.c:156 src/mv.c:285
+#: src/cp.c:156 src/mv.c:286
 #, c-format
 msgid ""
 "Usage: %s [OPTION]... [-T] SOURCE DEST\n"
@@ -2067,10 +2068,10 @@ msgstr ""
 "将源文件复制至目标文件，或将多个源文件复制至目标目录。\n"
 "\n"
 
-#: src/cp.c:166 src/csplit.c:1460 src/cut.c:197 src/df.c:876 src/du.c:268
+#: src/cp.c:166 src/csplit.c:1460 src/cut.c:197 src/df.c:878 src/du.c:273
 #: src/expand.c:112 src/fmt.c:276 src/fold.c:75 src/head.c:115
-#: src/install.c:612 src/kill.c:86 src/ln.c:392 src/ls.c:4733 src/mkdir.c:61
-#: src/mkfifo.c:56 src/mknod.c:58 src/mv.c:295 src/nl.c:191 src/paste.c:445
+#: src/install.c:613 src/kill.c:86 src/ln.c:392 src/ls.c:4726 src/mkdir.c:61
+#: src/mkfifo.c:56 src/mknod.c:58 src/mv.c:296 src/nl.c:191 src/paste.c:445
 #: src/pr.c:2777 src/ptx.c:1825 src/shred.c:153 src/shuf.c:58 src/sort.c:403
 #: src/split.c:214 src/stdbuf.c:95 src/tac.c:142 src/tail.c:268
 #: src/touch.c:223 src/truncate.c:107 src/unexpand.c:122 src/uniq.c:145
@@ -2229,7 +2230,7 @@ msgstr ""
 "情况下才复制。如果复制失败或者同时指定了--reflink=auto，则返回标准复制模"
 "式。\n"
 
-#: src/cp.c:247 src/install.c:649 src/ln.c:421 src/mv.c:322
+#: src/cp.c:247 src/install.c:650 src/ln.c:421 src/mv.c:323
 #, fuzzy
 msgid ""
 "\n"
@@ -2245,7 +2246,7 @@ msgstr ""
 "变量来选择。以下是可用的变量值：\n"
 "\n"
 
-#: src/cp.c:254 src/install.c:656 src/mv.c:329
+#: src/cp.c:254 src/install.c:657 src/mv.c:330
 msgid ""
 "  none, off       never make backups (even if --backup is given)\n"
 "  numbered, t     make numbered backups\n"
@@ -2289,31 +2290,31 @@ msgstr "无法创建目录%s"
 msgid "%s exists but is not a directory"
 msgstr "%s 存在但并非目录"
 
-#: src/cp.c:572 src/cp.c:1068 src/install.c:401 src/install.c:844 src/ln.c:123
-#: src/ln.c:181 src/ln.c:202 src/ln.c:516 src/mv.c:153 src/mv.c:400
+#: src/cp.c:572 src/cp.c:1071 src/install.c:402 src/install.c:845 src/ln.c:123
+#: src/ln.c:181 src/ln.c:202 src/ln.c:516 src/mv.c:154 src/mv.c:401
 #, c-format
 msgid "accessing %s"
 msgstr "正在访问%s"
 
-#: src/cp.c:592 src/install.c:914 src/ln.c:546 src/mv.c:433 src/shred.c:1182
+#: src/cp.c:592 src/install.c:915 src/ln.c:546 src/mv.c:434 src/shred.c:1182
 #: src/touch.c:430 src/truncate.c:355
 #, c-format
 msgid "missing file operand"
 msgstr "缺少了文件操作数"
 
-#: src/cp.c:594 src/install.c:916 src/ln.c:560 src/mv.c:435
+#: src/cp.c:594 src/install.c:917 src/ln.c:560 src/mv.c:436
 #, c-format
 msgid "missing destination file operand after %s"
 msgstr "在%s 后缺少了要操作的目标文件"
 
-#: src/cp.c:603 src/install.c:925 src/mv.c:444
+#: src/cp.c:603 src/install.c:926 src/mv.c:445
 #, c-format
 msgid "cannot combine --target-directory (-t) and --no-target-directory (-T)"
 msgstr "无法同时使用--target-directory (-t) 和--no-target-directory (-T) 选项"
 
-#: src/cp.c:619 src/cp.c:1070 src/install.c:403 src/install.c:846
-#: src/install.c:938 src/ln.c:125 src/ln.c:518 src/ln.c:574 src/mv.c:402
-#: src/mv.c:458
+#: src/cp.c:619 src/cp.c:1073 src/install.c:404 src/install.c:847
+#: src/install.c:939 src/ln.c:125 src/ln.c:518 src/ln.c:574 src/mv.c:403
+#: src/mv.c:459
 #, c-format
 msgid "target %s is not a directory"
 msgstr "目标%s 不是目录"
@@ -2323,36 +2324,36 @@ msgstr "目标%s 不是目录"
 msgid "with --parents, the destination must be a directory"
 msgstr "当跟随--parents 选项时，目的地必须是目录"
 
-#: src/cp.c:1063 src/install.c:839 src/ln.c:511 src/mv.c:395
+#: src/cp.c:1066 src/install.c:840 src/ln.c:511 src/mv.c:396
 #, c-format
 msgid "multiple target directories specified"
 msgstr "指定了多个目标目录"
 
-#: src/cp.c:1108
+#: src/cp.c:1111
 #, c-format
 msgid "cannot make both hard and symbolic links"
 msgstr "无法同时创建硬链接及符号链接"
 
-#: src/cp.c:1115 src/mv.c:465
+#: src/cp.c:1118 src/mv.c:466
 #, c-format
 msgid "options --backup and --no-clobber are mutually exclusive"
 msgstr "选项--backup 和 --no-clobber 互斥"
 
-#: src/cp.c:1121
+#: src/cp.c:1124
 #, c-format
 msgid "--reflink can be used only with --sparse=auto"
 msgstr "--reflink 只能与--sparse=auto 一起用"
 
-#: src/cp.c:1129 src/install.c:899 src/ln.c:582 src/mv.c:473
+#: src/cp.c:1132 src/install.c:900 src/ln.c:582 src/mv.c:474
 msgid "backup type"
 msgstr "备份方式"
 
-#: src/cp.c:1154
+#: src/cp.c:1157
 #, c-format
 msgid "cannot preserve security context without an SELinux-enabled kernel"
 msgstr "无法在未启用SELinux 支持的内核上使用安全环境"
 
-#: src/cp.c:1160
+#: src/cp.c:1163
 #, c-format
 msgid "cannot preserve extended attributes, cp is built without xattr support"
 msgstr "无法保留扩展属性，当前使用的 cp 副本编译时没有启用 xattr 支持"
@@ -2930,8 +2931,8 @@ msgid ""
 "  $ date --date='TZ=\"America/Los_Angeles\" 09:00 next Fri'\n"
 msgstr ""
 
-#: src/date.c:275 src/dd.c:2193 src/head.c:846 src/md5sum.c:477
-#: src/md5sum.c:798 src/od.c:863 src/od.c:1914 src/pr.c:1176 src/pr.c:1372
+#: src/date.c:275 src/dd.c:2201 src/head.c:846 src/md5sum.c:498
+#: src/md5sum.c:862 src/od.c:863 src/od.c:1914 src/pr.c:1176 src/pr.c:1372
 #: src/pr.c:1494 src/stty.c:843 src/tac.c:563 src/tail.c:343 src/tee.c:126
 #: src/tr.c:1945 src/tsort.c:530 src/wc.c:196
 #, c-format
@@ -2973,18 +2974,18 @@ msgstr ""
 msgid "cannot set date"
 msgstr "无法设置日期"
 
-#: src/date.c:554 src/du.c:360
+#: src/date.c:554 src/du.c:365
 #, c-format
 msgid "time %s is out of range"
 msgstr "时间%s 超出范围"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/dd.c:44 src/factor.c:43 src/rm.c:41 src/tail.c:69 src/touch.c:41
+#: src/dd.c:44 src/factor.c:109 src/rm.c:41 src/tail.c:69 src/touch.c:41
 #: src/wc.c:50
 msgid "Paul Rubin"
 msgstr "Paul Rubin"
 
-#: src/dd.c:517
+#: src/dd.c:521
 #, c-format
 msgid ""
 "Usage: %s [OPERAND]...\n"
@@ -2993,7 +2994,7 @@ msgstr ""
 "用法：%s [操作数] ...\n"
 "　或：%s 选项\n"
 
-#: src/dd.c:522
+#: src/dd.c:526
 #, fuzzy
 msgid ""
 "Copy a file, converting and formatting according to the operands.\n"
@@ -3012,7 +3013,7 @@ msgstr ""
 "  count=块数\t只将指定个块数复制到块\n"
 "  ibs=比特数\t一次读取的比特数(默认：512)\n"
 
-#: src/dd.c:531
+#: src/dd.c:535
 #, fuzzy
 msgid ""
 "  if=FILE         read from FILE instead of stdin\n"
@@ -3022,7 +3023,8 @@ msgid ""
 "  oflag=FLAGS     write as per the comma separated symbol list\n"
 "  seek=N          skip N obs-sized blocks at start of output\n"
 "  skip=N          skip N ibs-sized blocks at start of input\n"
-"  status=noxfer   suppress transfer statistics\n"
+"  status=WHICH    WHICH info to suppress outputting to stderr;\n"
+"                  'noxfer' suppresses transfer stats, 'none' suppresses all\n"
 msgstr ""
 "  if=文件\t从指定文件中读取\n"
 "  iflag=符号\t按照以逗号分隔的符号列表指定的方式读取\n"
@@ -3033,12 +3035,11 @@ msgstr ""
 "  skip=块数\t在输入开始处跳过指定的块数\n"
 "  status=noxfer\t禁止传输统计\n"
 
-#: src/dd.c:541
+#: src/dd.c:546
 #, fuzzy
 msgid ""
 "\n"
-"N, BLOCKS and BYTES may be followed by the following multiplicative "
-"suffixes:\n"
+"N and BYTES may be followed by the following multiplicative suffixes:\n"
 "c =1, w =2, b =512, kB =1000, K =1024, MB =1000*1000, M =1024*1024, xM =M\n"
 "GB =1000*1000*1000, G =1024*1024*1024, and so on for T, P, E, Z, Y.\n"
 "\n"
@@ -3053,7 +3054,7 @@ msgstr ""
 "每个 CONV 符号可能为：\n"
 "\n"
 
-#: src/dd.c:550
+#: src/dd.c:555
 #, fuzzy
 msgid ""
 "  ascii     from EBCDIC to ASCII\n"
@@ -3079,7 +3080,7 @@ msgstr ""
 "  sync\t\t将每个输入数据块以NUL 字符填满至ibs 的大小；当配合block\n"
 "\t\t或unblock 时，会以空格代替NUL 字符填充\n"
 
-#: src/dd.c:563
+#: src/dd.c:568
 msgid ""
 "  excl      fail if the output file already exists\n"
 "  nocreat   do not create the output file\n"
@@ -3095,7 +3096,7 @@ msgstr ""
 "  fdatasync\t结束前将输出文件数据写入磁盘\n"
 "  fsync\t类似上面，但是元数据也一同写入\n"
 
-#: src/dd.c:571
+#: src/dd.c:576
 msgid ""
 "\n"
 "Each FLAG symbol may be:\n"
@@ -3108,75 +3109,75 @@ msgstr ""
 "\n"
 "  append\t追加模式(仅对输出有意义；隐含了conv=notrunc)\n"
 
-#: src/dd.c:578
+#: src/dd.c:583
 msgid "  cio       use concurrent I/O for data\n"
 msgstr "  cio\t使用并行I/O 存取模式\n"
 
-#: src/dd.c:580
+#: src/dd.c:585
 msgid "  direct    use direct I/O for data\n"
 msgstr "  direct\t使用直接I/O 存取模式\n"
 
-#: src/dd.c:582
+#: src/dd.c:587
 msgid "  directory  fail unless a directory\n"
 msgstr "  directory\t除非是目录，否则 directory 失败\n"
 
-#: src/dd.c:584
+#: src/dd.c:589
 msgid "  dsync     use synchronized I/O for data\n"
 msgstr "  dsync\t\t使用同步I/O 存取模式\n"
 
-#: src/dd.c:586
+#: src/dd.c:591
 msgid "  sync      likewise, but also for metadata\n"
 msgstr "  sync\t\t与上者类似，但同时也对元数据生效\n"
 
-#: src/dd.c:587
+#: src/dd.c:592
 msgid "  fullblock  accumulate full blocks of input (iflag only)\n"
 msgstr "  fullblock\t为输入积累完整块(仅iflag)\n"
 
-#: src/dd.c:590
+#: src/dd.c:595
 msgid "  nonblock  use non-blocking I/O\n"
 msgstr "  nonblock\t使用无阻塞I/O 存取模式\n"
 
-#: src/dd.c:592
+#: src/dd.c:597
 msgid "  noatime   do not update access time\n"
 msgstr "  noatime\t不更新存取时间\n"
 
-#: src/dd.c:595
+#: src/dd.c:600
 msgid "  nocache   discard cached data\n"
 msgstr "  nocache\t丢弃缓存数据\n"
 
-#: src/dd.c:598
+#: src/dd.c:603
 msgid "  noctty    do not assign controlling terminal from file\n"
 msgstr "  noctty\t不根据文件指派控制终端\n"
 
-#: src/dd.c:601
+#: src/dd.c:606
 msgid "  nofollow  do not follow symlinks\n"
 msgstr "  nofollow\t不跟随链接文件\n"
 
-#: src/dd.c:603
+#: src/dd.c:608
 msgid "  nolinks   fail if multiply-linked\n"
 msgstr "  nolinks\t如果有多重链接，则nolinks 失败\n"
 
-#: src/dd.c:605
+#: src/dd.c:610
 msgid "  binary    use binary I/O for data\n"
 msgstr "  binary\t使用二进制I/O 存取模式\n"
 
-#: src/dd.c:607
+#: src/dd.c:612
 msgid "  text      use text I/O for data\n"
 msgstr "  text\t使用文本I/O 存取模式\n"
 
-#: src/dd.c:609
+#: src/dd.c:614
 msgid "  count_bytes  treat 'count=N' as a byte count (iflag only)\n"
 msgstr ""
 
-#: src/dd.c:612
+#: src/dd.c:617
 msgid "  skip_bytes  treat 'skip=N' as a byte count (iflag only)\n"
 msgstr ""
 
-#: src/dd.c:615
+#: src/dd.c:620
 msgid "  seek_bytes  treat 'seek=N' as a byte count (oflag only)\n"
 msgstr ""
 
-#: src/dd.c:620
+#: src/dd.c:625
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -3205,7 +3206,7 @@ msgstr ""
 "可用选项有：\n"
 "\n"
 
-#: src/dd.c:676
+#: src/dd.c:683
 #, c-format
 msgid ""
 "%<PRIuMAX>+%<PRIuMAX> records in\n"
@@ -3214,19 +3215,19 @@ msgstr ""
 "记录了%<PRIuMAX>+%<PRIuMAX> 的读入\n"
 "记录了%<PRIuMAX>+%<PRIuMAX> 的写出\n"
 
-#: src/dd.c:682
+#: src/dd.c:689
 #, c-format
 msgid "%<PRIuMAX> truncated record\n"
 msgid_plural "%<PRIuMAX> truncated records\n"
 msgstr[0] "%<PRIuMAX> 个被截断了的块\n"
 
-#: src/dd.c:694
+#: src/dd.c:701
 #, c-format
 msgid "%<PRIuMAX> byte (%s) copied"
 msgid_plural "%<PRIuMAX> bytes (%s) copied"
 msgstr[0] "%<PRIuMAX>字节(%s)已复制"
 
-#: src/dd.c:712
+#: src/dd.c:720
 msgid "Infinity B"
 msgstr "无穷量 B"
 
@@ -3240,83 +3241,83 @@ msgstr "无穷量 B"
 #. but that was incorrect for languages like Polish.  To fix this
 #. bug we now use SI symbols even though they're a bit more
 #. confusing in English.
-#: src/dd.c:725
+#: src/dd.c:733
 #, c-format
 msgid ", %g s, %s/s\n"
 msgstr "，%g 秒，%s/秒\n"
 
-#: src/dd.c:804
+#: src/dd.c:812
 #, c-format
 msgid "closing input file %s"
 msgstr "正在关闭输入文件%s"
 
-#: src/dd.c:811
+#: src/dd.c:819
 #, c-format
 msgid "closing output file %s"
 msgstr "正在关闭输出文件%s"
 
-#: src/dd.c:1014
+#: src/dd.c:1022
 #, c-format
 msgid "failed to turn off O_DIRECT: %s"
 msgstr "无法关闭O_DIRECT：%s"
 
-#: src/dd.c:1085 src/dd.c:1934
+#: src/dd.c:1093 src/dd.c:1942
 #, c-format
 msgid "writing to %s"
 msgstr "正在写入%s"
 
-#: src/dd.c:1199 src/dd.c:1253
+#: src/dd.c:1207 src/dd.c:1261
 #, c-format
 msgid "unrecognized operand %s"
 msgstr "无法识别的操作数%s"
 
-#: src/dd.c:1210
+#: src/dd.c:1218
 msgid "invalid conversion"
 msgstr "转换无效"
 
-#: src/dd.c:1213 src/dd.c:1289
+#: src/dd.c:1221 src/dd.c:1297
 msgid "invalid input flag"
 msgstr "输入标志无效"
 
-#: src/dd.c:1216 src/dd.c:1283 src/dd.c:1295
+#: src/dd.c:1224 src/dd.c:1291 src/dd.c:1303
 msgid "invalid output flag"
 msgstr "输出标志无效"
 
-#: src/dd.c:1219
+#: src/dd.c:1227
 msgid "invalid status flag"
 msgstr "状态标志无效"
 
-#: src/dd.c:1258 src/truncate.c:311
+#: src/dd.c:1266 src/truncate.c:311
 #, c-format
 msgid "invalid number %s"
 msgstr "无效的数字%s"
 
-#: src/dd.c:1340
+#: src/dd.c:1348
 #, c-format
 msgid "cannot combine any two of {ascii,ebcdic,ibm}"
 msgstr "不可将{ascii、ebcdic、idm}中的任意两个结合使用"
 
-#: src/dd.c:1342
+#: src/dd.c:1350
 #, c-format
 msgid "cannot combine block and unblock"
 msgstr "不可将block 和unblock 结合使用"
 
-#: src/dd.c:1344
+#: src/dd.c:1352
 #, c-format
 msgid "cannot combine lcase and ucase"
 msgstr "不可将lcase 和ucase 结合使用"
 
-#: src/dd.c:1346
+#: src/dd.c:1354
 #, c-format
 msgid "cannot combine excl and nocreat"
 msgstr "不可将excl 和nocreat 结合使用"
 
-#: src/dd.c:1349
+#: src/dd.c:1357
 #, c-format
 msgid "cannot combine direct and nocache"
 msgstr "不可将direct 和nocreat 结合使用"
 
-#: src/dd.c:1506
+#: src/dd.c:1514
 #, c-format
 msgid ""
 "warning: working around lseek kernel bug for file (%s)\n"
@@ -3325,85 +3326,85 @@ msgstr ""
 "警告：暂时避免有关文件%s 的lseek 内核错误\n"
 "  错误地址在mt_type=0x%0lx -- 有关mt_type 类型的列表请参考<sys/mtio.h>"
 
-#: src/dd.c:1593
+#: src/dd.c:1601
 #, c-format
 msgid "%s: cannot skip"
 msgstr "%s：无法跳过"
 
-#: src/dd.c:1595 src/dd.c:1614 src/dd.c:1675
+#: src/dd.c:1603 src/dd.c:1622 src/dd.c:1683
 #, c-format
 msgid "%s: cannot seek"
 msgstr "%s：无法搜索"
 
-#: src/dd.c:1655
+#: src/dd.c:1663
 #, c-format
 msgid "offset overflow while reading file %s"
 msgstr "读入文件%s 时偏移量溢出"
 
-#: src/dd.c:1667
+#: src/dd.c:1675
 #, c-format
 msgid "warning: invalid file offset after failed read"
 msgstr "警告：文件读取失败后偏移错误"
 
-#: src/dd.c:1671
+#: src/dd.c:1679
 #, c-format
 msgid "cannot work around kernel bug after all"
 msgstr "无法避免内核的错误"
 
-#: src/dd.c:1814
+#: src/dd.c:1822
 #, c-format
 msgid "setting flags for %s"
 msgstr "正在设置%s 的标记"
 
-#: src/dd.c:1867
+#: src/dd.c:1875
 #, c-format
 msgid "memory exhausted by input buffer of size %zu bytes (%s)"
 msgstr "%zu 字节的输入缓冲导致内存耗尽(%s)"
 
-#: src/dd.c:1881
+#: src/dd.c:1889
 #, c-format
 msgid "memory exhausted by output buffer of size %zu bytes (%s)"
 msgstr "%zu 字节的输出缓冲导致内存耗尽(%s)"
 
-#: src/dd.c:1914
+#: src/dd.c:1922
 #, c-format
 msgid "%s: cannot skip to specified offset"
 msgstr "%s：无法跳至指定偏移量"
 
-#: src/dd.c:2125 src/dd.c:2258
+#: src/dd.c:2133 src/dd.c:2266
 #, c-format
 msgid "failed to truncate to %<PRIuMAX> bytes in output file %s"
 msgstr "无法针对输出文件%2$s 的%1$<PRIuMAX> 字节处实施截断"
 
-#: src/dd.c:2138
+#: src/dd.c:2146
 #, c-format
 msgid "fdatasync failed for %s"
 msgstr "%s 的fdatasync 失败"
 
-#: src/dd.c:2148
+#: src/dd.c:2156
 #, c-format
 msgid "fsync failed for %s"
 msgstr "%s 的fsync 失败"
 
-#: src/dd.c:2199 src/dd.c:2228
+#: src/dd.c:2207 src/dd.c:2236
 #, c-format
 msgid "opening %s"
 msgstr "正在打开%s"
 
-#: src/dd.c:2237
+#: src/dd.c:2245
 #, c-format
 msgid ""
 "offset too large: cannot truncate to a length of seek=%<PRIuMAX> (%lu-byte) "
 "blocks"
 msgstr "偏移量过大：无法在seek=%<PRIuMAX> (%lu-字节) 块的长度上实施截断"
 
-#: src/dd.c:2274 src/dd.c:2280
+#: src/dd.c:2282 src/dd.c:2288
 #, c-format
 msgid "failed to discard cache for: %s"
 msgstr "无法丢弃缓存：%s"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/df.c:44 src/du.c:54 src/expr.c:153 src/kill.c:33 src/pathchk.c:32
+#: src/df.c:44 src/du.c:55 src/expr.c:153 src/kill.c:33 src/pathchk.c:32
 #: src/shuf.c:39 src/sleep.c:35 src/sort.c:67
 msgid "Paul Eggert"
 msgstr "Paul Eggert"
@@ -3465,7 +3466,14 @@ msgstr "配额"
 msgid "Mounted on"
 msgstr "挂载点"
 
-#: src/df.c:871
+#. TRANSLATORS: this is the "1K-blocks" header in "df" output.
+#. TRANSLATORS: this is the "1024-blocks" header in "df -P".
+#: src/df.c:319 src/df.c:328
+#, c-format
+msgid "%s-%s"
+msgstr ""
+
+#: src/df.c:873
 msgid ""
 "Show information about the file system on which each FILE resides,\n"
 "or all file systems by default.\n"
@@ -3474,7 +3482,7 @@ msgstr ""
 "显示每个文件所在的文件系统的信息，默认是显示所有文件系统。\n"
 "\n"
 
-#: src/df.c:879
+#: src/df.c:881
 #, fuzzy
 msgid ""
 "  -a, --all             include dummy file systems\n"
@@ -3492,7 +3500,7 @@ msgstr ""
 "  -h, --human-readable\t以可读性较好的格式显示尺寸(例如：1K 234M 2G)\n"
 "  -H, --si\t\t计算时使用1000 为基底而非1024\n"
 
-#: src/df.c:889
+#: src/df.c:891
 msgid ""
 "  -i, --inodes          list inode information instead of block usage\n"
 "  -k                    like --block-size=1K\n"
@@ -3505,7 +3513,7 @@ msgstr ""
 "  -l, --local\t\t只显示本机的文件系统\n"
 "      --no-sync\t\t取得使用量数据前不进行同步动作(默认)\n"
 
-#: src/df.c:896
+#: src/df.c:898
 msgid ""
 "  -P, --portability     use the POSIX output format\n"
 "      --sync            invoke sync before getting usage info\n"
@@ -3521,29 +3529,29 @@ msgstr ""
 "  -x, --exclude-type=类型\t只显示文件系统不是指定类型信息\n"
 "  -v\t\t\t(忽略)\n"
 
-#: src/df.c:982
+#: src/df.c:984
 #, fuzzy
 msgid "warning: "
 msgstr "警告："
 
-#: src/df.c:983
+#: src/df.c:985
 msgid "long option '--megabytes' is deprecated and will soon be removed"
 msgstr ""
 
-#: src/df.c:1058
+#: src/df.c:1060
 #, c-format
 msgid "file system type %s both selected and excluded"
 msgstr "不能同时选择和排除文件系统类型%s"
 
-#: src/df.c:1115
+#: src/df.c:1117
 msgid "Warning: "
 msgstr "警告："
 
-#: src/df.c:1117 src/stat.c:806
+#: src/df.c:1119 src/stat.c:812
 msgid "cannot read table of mounted file systems"
 msgstr "%s 无法读取已挂载上的文件系统的目录"
 
-#: src/df.c:1149
+#: src/df.c:1151
 #, c-format
 msgid "no file systems processed"
 msgstr "未处理文件系统"
@@ -3655,7 +3663,7 @@ msgstr ""
 "  %s /usr/bin/\t输出\"/usr\"。\n"
 "  %s stdio.h\t\t输出\".\"。\n"
 
-#: src/du.c:260 src/sort.c:394 src/wc.c:112
+#: src/du.c:265 src/sort.c:394 src/wc.c:112
 #, c-format
 msgid ""
 "Usage: %s [OPTION]... [FILE]...\n"
@@ -3664,7 +3672,7 @@ msgstr ""
 "用法：%s [选项]... [文件]...\n"
 "　或：%s [选项]... --files0-from=F\n"
 
-#: src/du.c:264
+#: src/du.c:269
 msgid ""
 "Summarize disk usage of each FILE, recursively for directories.\n"
 "\n"
@@ -3672,7 +3680,7 @@ msgstr ""
 "计算每个文件的磁盘用量，目录则取总用量。\n"
 "\n"
 
-#: src/du.c:271
+#: src/du.c:276
 #, fuzzy
 msgid ""
 "  -a, --all             write counts for all files, not just directories\n"
@@ -3687,7 +3695,7 @@ msgstr ""
 "\t\t\t小一些，但有时它会因为稀疏文件间的\"洞\"、内部碎\n"
 "\t\t\t片、非直接引用的块等原因而变大。\n"
 
-#: src/du.c:279
+#: src/du.c:284
 #, fuzzy
 msgid ""
 "  -B, --block-size=SIZE  scale sizes by SIZE before printing them.  E.g.,\n"
@@ -3704,7 +3712,7 @@ msgstr ""
 "  -c, --total\t\t显示总计信息\n"
 "  -D, --dereference-args\t解除命令行中列出的符号连接\n"
 
-#: src/du.c:288
+#: src/du.c:293
 msgid ""
 "      --files0-from=F   summarize disk usage of the NUL-terminated file\n"
 "                          names specified in file F;\n"
@@ -3720,7 +3728,7 @@ msgstr ""
 "  -h, --human-readable\t以可读性较好的方式显示尺寸(例如：1K 234M 2G)\n"
 "      --si\t\t类似-h，但在计算时使用1000 为基底而非1024\n"
 
-#: src/du.c:297
+#: src/du.c:302
 msgid ""
 "  -k                    like --block-size=1K\n"
 "  -l, --count-links     count sizes many times if hard linked\n"
@@ -3730,7 +3738,7 @@ msgstr ""
 "  -l, --count-links\t如果是硬连接，就多次计算其尺寸\n"
 "  -m\t\t\t等于--block-size=1M\n"
 
-#: src/du.c:302
+#: src/du.c:307
 msgid ""
 "  -L, --dereference     dereference all symbolic links\n"
 "  -P, --no-dereference  don't follow any symbolic links (this is the "
@@ -3746,7 +3754,7 @@ msgstr ""
 "  -S, --separate-dirs\t不包括子目录的占用量\n"
 "  -s, --summarize\t只分别计算命令列中每个参数所占的总用量\n"
 
-#: src/du.c:309
+#: src/du.c:314
 msgid ""
 "  -x, --one-file-system    skip directories on different file systems\n"
 "  -X, --exclude-from=FILE  exclude files that match any pattern in FILE\n"
@@ -3764,7 +3772,7 @@ msgstr ""
 "\t\t\t当N 为指定数值时计算深度为N；\n"
 "\t\t\t--max-depth=0 等于--summarize\n"
 
-#: src/du.c:318
+#: src/du.c:323
 #, fuzzy
 msgid ""
 "      --time            show time of the last modification of any file in "
@@ -3782,56 +3790,61 @@ msgstr ""
 "      --time-style=样式\t按照指定样式显示时间(样式解释规则同\"date\"命令)：\n"
 "\t\t\tfull-iso，long-iso，iso，+FORMAT\n"
 
-#: src/du.c:375
+#: src/du.c:380
 #, fuzzy
 msgid "Infinity"
 msgstr "无穷量 B"
 
-#: src/du.c:600
+#: src/du.c:501
+#, c-format
+msgid "mount point %s already traversed"
+msgstr ""
+
+#: src/du.c:611
 #, c-format
 msgid "fts_read failed: %s"
 msgstr "fts_read 失败：%s"
 
-#: src/du.c:724
+#: src/du.c:767
 #, c-format
 msgid "invalid maximum depth %s"
 msgstr "目录最大深度%s 无效"
 
-#: src/du.c:817
+#: src/du.c:860
 #, c-format
 msgid "cannot both summarize and show all entries"
 msgstr "不能既显示总用量，同时又显示每个项目"
 
-#: src/du.c:824
+#: src/du.c:867
 #, c-format
 msgid "warning: summarizing is the same as using --max-depth=0"
 msgstr "警告：显示总用量等价于使用--max-depth=0"
 
-#: src/du.c:830
+#: src/du.c:873
 #, c-format
 msgid "warning: summarizing conflicts with --max-depth=%lu"
 msgstr "警告：显示总用量的选项和--max-depth=%lu 互斥"
 
-#: src/du.c:896 src/sort.c:4534 src/wc.c:668
+#: src/du.c:939 src/sort.c:4534 src/wc.c:668
 msgid "file operands cannot be combined with --files0-from"
 msgstr "文件操作数不能于--files0-from 参数一起使用"
 
-#: src/du.c:949 src/md5sum.c:587 src/od.c:903 src/tac.c:239 src/tac.c:350
+#: src/du.c:999 src/md5sum.c:608 src/od.c:903 src/tac.c:239 src/tac.c:350
 #: src/tac.c:506 src/tac.c:586 src/wc.c:733
 #, c-format
 msgid "%s: read error"
 msgstr "%s：读取出错"
 
-#: src/du.c:963 src/sort.c:4563 src/wc.c:747
+#: src/du.c:1013 src/sort.c:4563 src/wc.c:747
 #, c-format
 msgid "when reading file names from stdin, no file name of %s allowed"
 msgstr "当从标准输入读取时，不允许指定文件名%s"
 
-#: src/du.c:980 src/du.c:988 src/wc.c:760 src/wc.c:768
+#: src/du.c:1030 src/du.c:1038 src/wc.c:760 src/wc.c:768
 msgid "invalid zero-length file name"
 msgstr "无效的零长度文件名"
 
-#: src/du.c:1007 src/head.c:149 src/head.c:262 src/head.c:334 src/head.c:538
+#: src/du.c:1058 src/head.c:149 src/head.c:262 src/head.c:334 src/head.c:538
 #: src/head.c:620 src/head.c:700 src/head.c:758 src/head.c:782 src/tail.c:412
 #: src/tail.c:500 src/tail.c:549 src/tail.c:642 src/tail.c:770 src/tail.c:818
 #: src/tail.c:855 src/tail.c:1783 src/tail.c:1813 src/uniq.c:395
@@ -3839,7 +3852,7 @@ msgstr "无效的零长度文件名"
 msgid "error reading %s"
 msgstr "读取%s 时出错"
 
-#: src/du.c:1010 src/ls.c:2649 src/wc.c:791
+#: src/du.c:1061 src/ls.c:2649 src/wc.c:791
 msgid "total"
 msgstr "总用量"
 
@@ -4192,25 +4205,40 @@ msgstr "请设置LC_ALL='C' 以避免出现问题。"
 msgid "the strings compared were %s and %s"
 msgstr "已比较的字符串为%s 和%s"
 
-#: src/factor.c:449
-msgid "using arbitrary-precision arithmetic"
-msgstr "使用任意精度运算"
+#. This is a proper name. See the gettext manual, section Names.
+#: src/factor.c:111
+msgid "Niels Moller"
+msgstr ""
 
-#: src/factor.c:460
+#: src/factor.c:1252 src/factor.c:1352 src/factor.c:1428
+#, c-format
+msgid "Lucas prime test failure.  This should not happen"
+msgstr ""
+
+#: src/factor.c:2061
+#, c-format
+msgid "squfof queue overflow"
+msgstr ""
+
+#: src/factor.c:2377
 msgid "using single-precision arithmetic"
 msgstr "使用单精度运算"
 
-#: src/factor.c:465 src/od.c:1640 src/od.c:1709
-#, c-format
-msgid "%s is too large"
-msgstr "%s 太大"
-
-#: src/factor.c:469
+#: src/factor.c:2388
 #, c-format
 msgid "%s is not a valid positive integer"
 msgstr "%s 不是有效的正整数"
 
-#: src/factor.c:494
+#: src/factor.c:2393
+msgid "using arbitrary-precision arithmetic"
+msgstr "使用任意精度运算"
+
+#: src/factor.c:2411 src/od.c:1640 src/od.c:1709
+#, c-format
+msgid "%s is too large"
+msgstr "%s 太大"
+
+#: src/factor.c:2423
 #, c-format
 msgid ""
 "Usage: %s [NUMBER]...\n"
@@ -4219,7 +4247,7 @@ msgstr ""
 "用法：%s [数字]...\n"
 "　或：%s 选项\n"
 
-#: src/factor.c:499
+#: src/factor.c:2428
 msgid ""
 "Print the prime factors of each specified integer NUMBER.  If none\n"
 "are specified on the command line, read them from standard input.\n"
@@ -4324,7 +4352,7 @@ msgid "invalid number of columns: %s"
 msgstr "无效的列数：%s"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/getlimits.c:29 src/realpath.c:33 src/stdbuf.c:37 src/timeout.c:75
+#: src/getlimits.c:29 src/realpath.c:33 src/stdbuf.c:37 src/timeout.c:78
 #: src/truncate.c:37
 msgid "Padraig Brady"
 msgstr "Padraig Brady"
@@ -4646,52 +4674,52 @@ msgstr " 组="
 msgid " context=%s"
 msgstr " 环境=%s"
 
-#: src/install.c:372
+#: src/install.c:373
 #, c-format
 msgid "warning: %s: failed to change context to %s"
 msgstr "警告：%s：切换到%s 用户环境失败"
 
-#: src/install.c:413
+#: src/install.c:414
 #, c-format
 msgid "creating directory %s"
 msgstr "正在创建目录%s"
 
-#: src/install.c:481
+#: src/install.c:482
 #, c-format
 msgid "cannot change ownership of %s"
 msgstr "无法更改%s 的所有权"
 
-#: src/install.c:505
+#: src/install.c:506
 #, c-format
 msgid "cannot set time stamps for %s"
 msgstr "无法设置%s 的时间戳"
 
-#: src/install.c:526 src/split.c:427 src/timeout.c:387
+#: src/install.c:527 src/split.c:427 src/timeout.c:413
 #, c-format
 msgid "fork system call failed"
 msgstr "创建系统进程(fork)出错"
 
-#: src/install.c:530
+#: src/install.c:531
 #, c-format
 msgid "cannot run %s"
 msgstr "无法运行%s"
 
-#: src/install.c:534
+#: src/install.c:535
 #, c-format
 msgid "waiting for strip"
 msgstr "等待拆解"
 
-#: src/install.c:536
+#: src/install.c:537
 #, c-format
 msgid "strip process terminated abnormally"
 msgstr "拆解过程非正常中止"
 
-#: src/install.c:557
+#: src/install.c:558
 #, c-format
 msgid "invalid user %s"
 msgstr "无效的用户%s"
 
-#: src/install.c:593
+#: src/install.c:594
 #, c-format
 msgid ""
 "Usage: %s [OPTION]... [-T] SOURCE DEST\n"
@@ -4704,7 +4732,7 @@ msgstr ""
 "　或：%s [选项]... -t 目录 源文件...\n"
 "　或：%s [选项]... -d 目录...\n"
 
-#: src/install.c:600
+#: src/install.c:601
 msgid ""
 "\n"
 "This install program copies files (often just compiled) into destination\n"
@@ -4728,7 +4756,7 @@ msgstr ""
 "件。\n"
 "\n"
 
-#: src/install.c:615
+#: src/install.c:616
 msgid ""
 "      --backup[=CONTROL]  make a backup of each existing destination file\n"
 "  -b                  like --backup but does not accept an argument\n"
@@ -4745,7 +4773,7 @@ msgstr ""
 "  -C, --compare\t\t比较每组源文件和目标文件，在一些情况下不修改目标文件\n"
 "  -d, --directory\t将所有参数视为目录名称；为指定的目录创建所有组件\n"
 
-#: src/install.c:624
+#: src/install.c:625
 msgid ""
 "  -D                  create all leading components of DEST except the "
 "last,\n"
@@ -4761,7 +4789,7 @@ msgstr ""
 "  -m, --mode=模式\t自行设置权限模式(像chmod)，而不是rwxr-xr-x\n"
 "  -o, --owner=所有者\t自行设置所有者(只适用于超级用户)\n"
 
-#: src/install.c:631
+#: src/install.c:632
 msgid ""
 "  -p, --preserve-timestamps   apply access/modification times of SOURCE "
 "files\n"
@@ -4782,7 +4810,7 @@ msgstr ""
 "  -T, --no-target-directory\t将目标文件视为普通文件\n"
 "  -v, --verbose\t\t\t创建目录时显示其名称\n"
 
-#: src/install.c:641
+#: src/install.c:642
 msgid ""
 "      --preserve-context  preserve SELinux security context\n"
 "  -Z, --context=CONTEXT  set SELinux security context of files and "
@@ -4791,53 +4819,53 @@ msgstr ""
 "      --preserve-context\t保持SELinux 的安全环境\n"
 "  -Z, --context=CONTEXT\t\t设置文件和目录的SELinux 安全环境\n"
 
-#: src/install.c:858
+#: src/install.c:859
 #, c-format
 msgid ""
 "WARNING: ignoring --preserve-context; this kernel is not SELinux-enabled"
 msgstr "警告：忽略--preserve-context 参数，当前运行的内核没有启用SELinux 支持"
 
-#: src/install.c:868
+#: src/install.c:869
 #, c-format
 msgid "WARNING: ignoring --context (-Z); this kernel is not SELinux-enabled"
 msgstr "警告：忽略--context (-Z) 参数，当前运行的内核没有启用SELinux 支持"
 
-#: src/install.c:885
+#: src/install.c:886
 #, c-format
 msgid "the strip option may not be used when installing a directory"
 msgstr "安装目录时不能用strip 选项"
 
-#: src/install.c:888
+#: src/install.c:889
 #, c-format
 msgid "target directory not allowed when installing a directory"
 msgstr "安装目录时不能用目标目录选项"
 
-#: src/install.c:892
+#: src/install.c:893
 #, c-format
 msgid "cannot force target context to %s and preserve it"
 msgstr "无法对%s 强制为目标环境，保持原样"
 
-#: src/install.c:946 src/mkdir.c:202 src/stdbuf.c:327
+#: src/install.c:947 src/mkdir.c:202 src/stdbuf.c:327
 #, c-format
 msgid "invalid mode %s"
 msgstr "无效模式%s"
 
-#: src/install.c:953
+#: src/install.c:954
 #, c-format
 msgid "WARNING: ignoring --strip-program option as -s option was not specified"
 msgstr "警告：忽略--strip-program 选项，因为-s 选项没有指明"
 
-#: src/install.c:958
+#: src/install.c:959
 #, c-format
 msgid "options --compare (-C) and --preserve-timestamps are mutually exclusive"
 msgstr "选项--compare (-C) 和--preserve-timestamps 是互斥的"
 
-#: src/install.c:965
+#: src/install.c:966
 #, c-format
 msgid "options --compare (-C) and --strip are mutually exclusive"
 msgstr "选项--compare (-C) 和--strip 是互斥的"
 
-#: src/install.c:971
+#: src/install.c:972
 #, c-format
 msgid ""
 "the --compare (-C) option is ignored when you specify a mode with non-"
@@ -5373,12 +5401,12 @@ msgstr "正在读取目录%s"
 msgid "closing directory %s"
 msgstr "关闭目录%s"
 
-#: src/ls.c:3308
+#: src/ls.c:3302
 #, c-format
 msgid "cannot compare file names %s and %s"
 msgstr "无法比较文件名%s 和 %s"
 
-#: src/ls.c:4728
+#: src/ls.c:4721
 #, fuzzy
 msgid ""
 "List information about the FILEs (the current directory by default).\n"
@@ -5389,7 +5417,7 @@ msgstr ""
 "如果不指定-cftuvSUX 或--sort 选项，则根据字母大小排序。\n"
 "\n"
 
-#: src/ls.c:4736
+#: src/ls.c:4729
 msgid ""
 "  -a, --all                  do not ignore entries starting with .\n"
 "  -A, --almost-all           do not list implied . and ..\n"
@@ -5402,7 +5430,7 @@ msgstr ""
 "      --author\t\t\t与-l 同时使用时列出每个文件的作者\n"
 "  -b, --escape\t\t\t以八进制溢出序列表示不可打印的字符\n"
 
-#: src/ls.c:4742
+#: src/ls.c:4735
 #, fuzzy
 msgid ""
 "      --block-size=SIZE      scale sizes by SIZE before printing them.  E."
@@ -5423,7 +5451,7 @@ msgstr ""
 "\t\t\t\t状态最后更改的时间)\n"
 "\t\t\t\t配合-l：显示ctime 但根据名称排序\t\t\t\t其他情况：按ctime 排序\n"
 
-#: src/ls.c:4752
+#: src/ls.c:4745
 #, fuzzy
 msgid ""
 "  -C                         list entries by columns\n"
@@ -5441,7 +5469,7 @@ msgstr ""
 "  -d, --directory\t\t当遇到目录时列出目录本身而非目录内的文件\n"
 "  -D, --dired\t\t\t产生适合Emacs 的dired 模式使用的结果\n"
 
-#: src/ls.c:4760
+#: src/ls.c:4753
 #, fuzzy
 msgid ""
 "  -f                         do not sort, enable -aU, disable -ls --color\n"
@@ -5457,11 +5485,11 @@ msgstr ""
 "\t\t\t\t单栏-1，详细-l，垂直-C\n"
 "      --full-time\t\t即-l --time-style=full-iso\n"
 
-#: src/ls.c:4768
+#: src/ls.c:4761
 msgid "  -g                         like -l, but do not list owner\n"
 msgstr "  -g\t\t\t\t类似-l，但不列出所有者\n"
 
-#: src/ls.c:4771
+#: src/ls.c:4764
 msgid ""
 "      --group-directories-first\n"
 "                             group directories before files.\n"
@@ -5472,7 +5500,7 @@ msgstr ""
 "\t\t\t在文件前分组目录。此选项可与--sort 一起使用，\n"
 "\t\t\t但是一旦使用--sort=none (-U)将禁用分组\n"
 
-#: src/ls.c:4777
+#: src/ls.c:4770
 msgid ""
 "  -G, --no-group             in a long listing, don't print group names\n"
 "  -h, --human-readable       with -l, print sizes in human readable format\n"
@@ -5484,7 +5512,7 @@ msgstr ""
 "\t\t\t\t(例如 1K 234M 2G)\n"
 "      --si\t\t\t同上面类似，但是使用1000 为基底而非1024\n"
 
-#: src/ls.c:4783
+#: src/ls.c:4776
 msgid ""
 "  -H, --dereference-command-line\n"
 "                             follow symbolic links listed on the command "
@@ -5503,7 +5531,7 @@ msgstr ""
 "      --hide=PATTERN         \t隐藏符合PATTERN 模式的项目\n"
 "\t\t\t\t(-a 或 -A 将覆盖此选项)\n"
 
-#: src/ls.c:4793
+#: src/ls.c:4786
 #, fuzzy
 msgid ""
 "      --indicator-style=WORD  append indicator with style WORD to entry "
@@ -5521,7 +5549,7 @@ msgstr ""
 "  -I, --ignore=PATTERN\t\t不显示任何符合指定shell PATTERN 的项目\n"
 "  -k\t\t\t\t即--block-size=1K\n"
 
-#: src/ls.c:4803
+#: src/ls.c:4796
 msgid ""
 "  -l                         use a long listing format\n"
 "  -L, --dereference          when showing file information for a symbolic\n"
@@ -5535,7 +5563,7 @@ msgstr ""
 "\t\t\t\t的对象而并非符号链接本身的信息\n"
 "  -m\t\t\t\t所有项目以逗号分隔，并填满整行行宽\n"
 
-#: src/ls.c:4811
+#: src/ls.c:4804
 msgid ""
 "  -n, --numeric-uid-gid      like -l, but list numeric user and group IDs\n"
 "  -N, --literal              print raw entry names (don't treat e.g. "
@@ -5550,7 +5578,7 @@ msgstr ""
 "  -o\t\t\t\t类似 -l，但不列出有关组的信息\n"
 "  -p,  --indicator-style=slash\t对目录加上表示符号\"/\"\n"
 
-#: src/ls.c:4819
+#: src/ls.c:4812
 #, fuzzy
 msgid ""
 "  -q, --hide-control-chars   print ? instead of non graphic characters\n"
@@ -5569,7 +5597,7 @@ msgstr ""
 "      --quoting-style=方式\t使用指定的quoting 方式显示条目的名称：\n"
 "\t\t\t\tliteral、locale、shell、shell-always、c、escape\n"
 
-#: src/ls.c:4828
+#: src/ls.c:4821
 msgid ""
 "  -r, --reverse              reverse order while sorting\n"
 "  -R, --recursive            list subdirectories recursively\n"
@@ -5580,7 +5608,7 @@ msgstr ""
 "  -R, --recursive\t\t递归显示子目录\n"
 "  -s, --size\t\t\t以块数形式显示每个文件分配的尺寸\n"
 
-#: src/ls.c:4833
+#: src/ls.c:4826
 msgid ""
 "  -S                         sort by file size\n"
 "      --sort=WORD            sort by WORD instead of name: none -U,\n"
@@ -5602,7 +5630,7 @@ msgstr ""
 "\t\t\t\t间：atime、access、use、ctime 或status；加上\n"
 "\t\t\t\t--sort=time 选项时会以指定时间作为排序关键字\n"
 
-#: src/ls.c:4843
+#: src/ls.c:4836
 #, fuzzy
 msgid ""
 "      --time-style=STYLE     with -l, show times using style STYLE:\n"
@@ -5624,7 +5652,7 @@ msgstr ""
 "  -t\t\t\t\t根据修改时间排序\n"
 "  -T, --tabsize=宽度\t指定制表符(Tab)的宽度，而非8 个字符\n"
 
-#: src/ls.c:4852
+#: src/ls.c:4845
 #, fuzzy
 msgid ""
 "  -t                         sort by modification time, newest first\n"
@@ -5633,7 +5661,7 @@ msgstr ""
 "  -t\t\t\t按修改时间排序\n"
 "  -T, --tabsize=COLS\t指定制表符(Tab)的宽度，而非8个字符\n"
 
-#: src/ls.c:4856
+#: src/ls.c:4849
 msgid ""
 "  -u                         with -lt: sort by, and show, access time\n"
 "                               with -l: show access time and sort by name\n"
@@ -5647,7 +5675,7 @@ msgstr ""
 "  -U\t\t\t不进行排序；按照目录顺序列出项目\n"
 "  -v\t\t\t在文本中进行数字(版本)的自然排序\n"
 
-#: src/ls.c:4863
+#: src/ls.c:4856
 msgid ""
 "  -w, --width=COLS           assume screen width instead of current value\n"
 "  -x                         list entries by lines instead of by columns\n"
@@ -5661,7 +5689,7 @@ msgstr ""
 "  -X\t\t\t根据扩展名排序\n"
 "  -1\t\t\t每行只列出一个文件\n"
 
-#: src/ls.c:4873
+#: src/ls.c:4866
 msgid ""
 "\n"
 "Using color to distinguish file types is disabled both by default and\n"
@@ -5676,7 +5704,7 @@ msgstr ""
 "LS_COLORS 环境变量可改变此设置，可使用 dircolors 命令来设置。\n"
 "\n"
 
-#: src/ls.c:4880
+#: src/ls.c:4873
 msgid ""
 "\n"
 "Exit status:\n"
@@ -5705,7 +5733,7 @@ msgstr "Scott Miller"
 msgid "David Madore"
 msgstr "David Madore"
 
-#: src/md5sum.c:162
+#: src/md5sum.c:164
 #, c-format
 msgid ""
 "Usage: %s [OPTION]... [FILE]...\n"
@@ -5718,31 +5746,35 @@ msgstr ""
 "若没有文件选项，或者文件处为\"-\"，则从标准输入读取。\n"
 "\n"
 
-#: src/md5sum.c:172
+#: src/md5sum.c:174
 msgid ""
 "  -b, --binary         read in binary mode (default unless reading tty "
 "stdin)\n"
 msgstr "  -b, --binary\t\t以二进制模式读取(除非从tty 标准输入读取否则为默认)\n"
 
-#: src/md5sum.c:176
+#: src/md5sum.c:178
 msgid "  -b, --binary         read in binary mode\n"
 msgstr "  -b, --binary\t\t以二进制模式读取\n"
 
-#: src/md5sum.c:179
+#: src/md5sum.c:181
 #, c-format
 msgid "  -c, --check          read %s sums from the FILEs and check them\n"
 msgstr "  -c, --check\t\t从文件中读取%s 的校验值并予以检查\n"
 
-#: src/md5sum.c:183
+#: src/md5sum.c:184
+msgid "      --tag            create a BSD-style checksum\n"
+msgstr ""
+
+#: src/md5sum.c:188
 msgid ""
 "  -t, --text           read in text mode (default if reading tty stdin)\n"
 msgstr "  -t, --text\t\t以纯文本模式读取(从tty 标准输入读取时为默认)\n"
 
-#: src/md5sum.c:187
+#: src/md5sum.c:192
 msgid "  -t, --text           read in text mode (default)\n"
 msgstr "  -t, --text\t\t以纯文本模式读取(默认)\n"
 
-#: src/md5sum.c:190
+#: src/md5sum.c:195
 msgid ""
 "\n"
 "The following three options are useful only when verifying checksums:\n"
@@ -5758,12 +5790,12 @@ msgstr ""
 "  -w, --warn\t\t对格式不准确的校验和行进行警告\n"
 "\n"
 
-#: src/md5sum.c:198
+#: src/md5sum.c:203
 msgid ""
 "      --strict         with --check, exit non-zero for any invalid input\n"
 msgstr ""
 
-#: src/md5sum.c:203
+#: src/md5sum.c:208
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -5777,74 +5809,84 @@ msgstr ""
 "样板格式相同。默认的输出模式时输出一行校验和的校验结果，并有一个字符来\n"
 "表示文件类型(\"*\"代表二进制，\" \"代表纯文本)，并同时显示每个文件的名称。\n"
 
-#: src/md5sum.c:502
+#: src/md5sum.c:523
 #, c-format
 msgid "%s: too many checksum lines"
 msgstr "%s：校验和的行数过多"
 
-#: src/md5sum.c:526
+#: src/md5sum.c:547
 #, c-format
 msgid "%s: %<PRIuMAX>: improperly formatted %s checksum line"
 msgstr "%s：%<PRIuMAX>：%s 的校验和行目格式不适当"
 
-#: src/md5sum.c:551
+#: src/md5sum.c:572
 #, c-format
 msgid "%s: FAILED open or read\n"
 msgstr "%s：打开或读取失败\n"
 
-#: src/md5sum.c:574
+#: src/md5sum.c:595
 msgid "FAILED"
 msgstr "失败"
 
-#: src/md5sum.c:576
+#: src/md5sum.c:597
 msgid "OK"
 msgstr "确定"
 
-#: src/md5sum.c:600
+#: src/md5sum.c:621
 #, c-format
 msgid "%s: no properly formatted %s checksum lines found"
 msgstr "%s：找不到格式适用的%s 校验和"
 
-#: src/md5sum.c:610
+#: src/md5sum.c:631
 #, c-format
 msgid "WARNING: %<PRIuMAX> line is improperly formatted"
 msgid_plural "WARNING: %<PRIuMAX> lines are improperly formatted"
 msgstr[0] "警告：%<PRIuMAX> 行的格式不适当"
 
-#: src/md5sum.c:618
+#: src/md5sum.c:639
 #, c-format
 msgid "WARNING: %<PRIuMAX> listed file could not be read"
 msgid_plural "WARNING: %<PRIuMAX> listed files could not be read"
 msgstr[0] "警告：%<PRIuMAX> 个列出的文件无法读取"
 
-#: src/md5sum.c:626
+#: src/md5sum.c:647
 #, c-format
 msgid "WARNING: %<PRIuMAX> computed checksum did NOT match"
 msgid_plural "WARNING: %<PRIuMAX> computed checksums did NOT match"
 msgstr[0] "警告：%<PRIuMAX> 个校验和不匹配"
 
-#: src/md5sum.c:704
+#: src/md5sum.c:760
+#, c-format
+msgid "--tag does not support --text mode"
+msgstr ""
+
+#: src/md5sum.c:766
+#, fuzzy, c-format
+msgid "the --tag option is meaningless when verifying checksums"
+msgstr "只有在校验时--status 选项才有意义"
+
+#: src/md5sum.c:773
 #, c-format
 msgid ""
 "the --binary and --text options are meaningless when verifying checksums"
 msgstr "在校验时--binary 和--text 选项是无意义的"
 
-#: src/md5sum.c:712
+#: src/md5sum.c:781
 #, c-format
 msgid "the --status option is meaningful only when verifying checksums"
 msgstr "只有在校验时--status 选项才有意义"
 
-#: src/md5sum.c:719
+#: src/md5sum.c:788
 #, c-format
 msgid "the --warn option is meaningful only when verifying checksums"
 msgstr "只有在校验时--warn 选项才有意义"
 
-#: src/md5sum.c:726
+#: src/md5sum.c:795
 #, c-format
 msgid "the --quiet option is meaningful only when verifying checksums"
 msgstr "只有在校验时--quiet 选项才有意义"
 
-#: src/md5sum.c:733
+#: src/md5sum.c:802
 #, fuzzy, c-format
 msgid "the --strict option is meaningful only when verifying checksums"
 msgstr "只有在校验时--status 选项才有意义"
@@ -6113,7 +6155,7 @@ msgstr "无法通过模板%s 创建目录"
 msgid "failed to create file via template %s"
 msgstr "无法通过模板%s 创建文件"
 
-#: src/mv.c:291
+#: src/mv.c:292
 msgid ""
 "Rename SOURCE to DEST, or move SOURCE(s) to DIRECTORY.\n"
 "\n"
@@ -6121,7 +6163,7 @@ msgstr ""
 "将源文件重命名为目标文件，或将源文件移动至指定目录。\n"
 "\n"
 
-#: src/mv.c:298
+#: src/mv.c:299
 msgid ""
 "      --backup[=CONTROL]       make a backup of each existing destination "
 "file\n"
@@ -6140,7 +6182,7 @@ msgstr ""
 "  -n, --no-clobber             不覆盖已存在文件\n"
 "如果您指定了-i、-f、-n 中的多个，仅最后一个生效。\n"
 
-#: src/mv.c:307
+#: src/mv.c:308
 msgid ""
 "      --strip-trailing-slashes  remove any trailing slashes from each "
 "SOURCE\n"
@@ -6150,7 +6192,7 @@ msgstr ""
 "      --strip-trailing-slashes\t去掉每个源文件参数尾部的斜线\n"
 "  -S, --suffix=SUFFIX\t\t替换常用的备份文件后缀\n"
 
-#: src/mv.c:312
+#: src/mv.c:313
 msgid ""
 "  -t, --target-directory=DIRECTORY  move all SOURCE arguments into "
 "DIRECTORY\n"
@@ -6173,11 +6215,11 @@ msgid "Usage: %s [OPTION] [COMMAND [ARG]...]\n"
 msgstr "用法：%s [选项] [命令 [参数]...]\n"
 
 #: src/nice.c:73
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Run COMMAND with an adjusted niceness, which affects process scheduling.\n"
-"With no COMMAND, print the current niceness.  Nicenesses range from\n"
-"%d (most favorable scheduling) to %d (least favorable).\n"
+"With no COMMAND, print the current niceness.  Niceness values range from\n"
+"%d (most favorable to the process) to %d (least favorable to the process).\n"
 "\n"
 "  -n, --adjustment=N   add integer N to the niceness (default 10)\n"
 msgstr ""
@@ -6429,16 +6471,16 @@ msgid "failed to redirect standard error"
 msgstr "重定向标准错误失败"
 
 #. This is a proper name. See the gettext manual, section Names.
-#: src/nproc.c:32
+#: src/nproc.c:33
 msgid "Giuseppe Scrivano"
 msgstr "Giuseppe Scrivano"
 
-#: src/nproc.c:56 src/pwd.c:56 src/tty.c:64 src/uname.c:120 src/whoami.c:44
+#: src/nproc.c:57 src/pwd.c:56 src/tty.c:64 src/uname.c:120 src/whoami.c:44
 #, c-format
 msgid "Usage: %s [OPTION]...\n"
 msgstr "用法：%s [选项]...\n"
 
-#: src/nproc.c:57
+#: src/nproc.c:58
 msgid ""
 "Print the number of processing units available to the current process,\n"
 "which may be less than the number of online processors\n"
@@ -6448,7 +6490,7 @@ msgstr ""
 "此数目可能小于实际工作数\n"
 "\n"
 
-#: src/nproc.c:62
+#: src/nproc.c:63
 msgid ""
 "     --all       print the number of installed processors\n"
 "     --ignore=N  if possible, exclude N processing units\n"
@@ -6456,7 +6498,7 @@ msgstr ""
 "     --all       打印所拥有的处理器数目\n"
 "     --ignore=N  如果有可能，忽略 N 个处理器\n"
 
-#: src/nproc.c:106
+#: src/nproc.c:107
 #, c-format
 msgid "%s: invalid number to ignore"
 msgstr "%s：无效的忽略数"
@@ -7482,7 +7524,7 @@ msgstr ""
 "  -s, --silent\t\t缩减大多数的错误消息\n"
 "  -v, --verbose\t\t报告所有错误消息\n"
 
-#: src/realpath.c:71 src/rm.c:135 src/shred.c:147 src/stat.c:1341
+#: src/realpath.c:71 src/rm.c:135 src/shred.c:147 src/stat.c:1347
 #: src/touch.c:212
 #, c-format
 msgid "Usage: %s [OPTION]... FILE...\n"
@@ -7513,12 +7555,12 @@ msgstr ""
 msgid "generating relative path"
 msgstr ""
 
-#: src/remove.c:272
+#: src/remove.c:273
 #, c-format
 msgid "%s: descend into write-protected directory %s? "
 msgstr "%s：是否进入有写保护的目录%s ？"
 
-#: src/remove.c:273
+#: src/remove.c:274
 #, c-format
 msgid "%s: descend into directory %s? "
 msgstr "%s：是否进入目录%s? "
@@ -7527,37 +7569,37 @@ msgstr "%s：是否进入目录%s? "
 #. translate "%s: remove %s (write-protected) %s? "
 #. instead.  It should avoid grammatical problems
 #. with the output of file_type.
-#: src/remove.c:289
+#: src/remove.c:290
 #, c-format
 msgid "%s: remove write-protected %s %s? "
 msgstr "%s：是否删除有写保护的%s %s？"
 
-#: src/remove.c:290
+#: src/remove.c:291
 #, c-format
 msgid "%s: remove %s %s? "
 msgstr "%s：是否删除%s %s？"
 
-#: src/remove.c:373
+#: src/remove.c:374
 #, c-format
 msgid "removed directory: %s\n"
 msgstr "已删除目录：%s\n"
 
-#: src/remove.c:441
+#: src/remove.c:444
 #, c-format
 msgid "cannot remove directory: %s"
 msgstr "无法删除目录：%s"
 
-#: src/remove.c:497
+#: src/remove.c:500
 #, c-format
 msgid "skipping %s, since it's on a different device"
 msgstr "跳过%s，因为它位于不同的设备上"
 
-#: src/remove.c:517
+#: src/remove.c:520
 #, c-format
 msgid "traversal failed: %s"
 msgstr "遍历失败：%s"
 
-#: src/remove.c:523
+#: src/remove.c:526
 #, c-format
 msgid ""
 "unexpected failure: fts_info=%d: %s\n"
@@ -7888,7 +7930,7 @@ msgstr "格式%s 中包含未知%%%c 指令"
 msgid "format %s has too many %% directives"
 msgstr "格式%s 中%% 指令过多"
 
-#: src/seq.c:431
+#: src/seq.c:528
 #, c-format
 msgid "format string may not be specified when printing equal width strings"
 msgstr "当输出等宽字符串时不应再指定格式字符串"
@@ -8289,7 +8331,7 @@ msgstr ""
 "如果参数个数超过2 个，暂停的总时间为各个参数的值的和。\n"
 "\n"
 
-#: src/sleep.c:135 src/timeout.c:295
+#: src/sleep.c:135 src/timeout.c:298
 #, c-format
 msgid "invalid time interval %s"
 msgstr "无效的时间间隔%s"
@@ -8898,7 +8940,7 @@ msgstr ""
 msgid "with FILE=%s, exit %d from command: %s"
 msgstr ""
 
-#: src/split.c:490 src/timeout.c:449
+#: src/split.c:490 src/timeout.c:468
 #, c-format
 msgid "unknown status from command (0x%X)"
 msgstr "来自命令的未知状态 (0x%X)"
@@ -8968,44 +9010,44 @@ msgstr "%s：无法确定文件大小"
 msgid "Michael Meskes"
 msgstr "Michael Meskes"
 
-#: src/stat.c:849
+#: src/stat.c:855
 #, c-format
 msgid "failed to canonicalize %s"
 msgstr "标准化%s 失败"
 
-#: src/stat.c:1061
+#: src/stat.c:1067
 #, fuzzy, c-format
 msgid "warning: unrecognized escape '\\%c'"
 msgstr "警告：无法识别的转义字符\"\\%c\""
 
-#: src/stat.c:1116
+#: src/stat.c:1122
 #, c-format
 msgid "%s: invalid directive"
 msgstr "%s：无效指令"
 
-#: src/stat.c:1162
+#: src/stat.c:1168
 #, c-format
 msgid "warning: backslash at end of format"
 msgstr "警告：格式末尾出现反斜杠"
 
-#: src/stat.c:1193
+#: src/stat.c:1199
 #, c-format
 msgid "using %s to denote standard input does not work in file system mode"
 msgstr "用 %s 进行标准输入在文件系统模式下无法工作"
 
-#: src/stat.c:1200
+#: src/stat.c:1206
 #, c-format
 msgid "cannot read file system information for %s"
 msgstr "无法为 %s 读取文件系统信息"
 
-#: src/stat.c:1220
+#: src/stat.c:1226
 #, c-format
 msgid "cannot stat standard input"
 msgstr "无法从标准输入获取文件信息(stat)"
 
 #. TRANSLATORS: This string uses format specifiers from
 #. 'stat --help' with --file-system, and NOT from printf.
-#: src/stat.c:1256
+#: src/stat.c:1262
 msgid ""
 "  File: \"%n\"\n"
 "    ID: %-8i Namelen: %-7l Type: %T\n"
@@ -9021,7 +9063,7 @@ msgstr ""
 
 #. TRANSLATORS: This string uses format specifiers from
 #. 'stat --help' without --file-system, and NOT from printf.
-#: src/stat.c:1279
+#: src/stat.c:1285
 msgid ""
 "  File: %N\n"
 "  Size: %-10s\tBlocks: %-10b IO Block: %-6o %F\n"
@@ -9031,30 +9073,30 @@ msgstr ""
 
 #. TRANSLATORS: This string uses format specifiers from
 #. 'stat --help' without --file-system, and NOT from printf.
-#: src/stat.c:1289
+#: src/stat.c:1295
 msgid "Device: %Dh/%dd\tInode: %-10i  Links: %-5h Device type: %t,%T\n"
 msgstr "设备：%Dh/%dd\tInode：%-10i  硬链接：%-5h 设备类型：%t,%T\n"
 
 #. TRANSLATORS: This string uses format specifiers from
 #. 'stat --help' without --file-system, and NOT from printf.
-#: src/stat.c:1297
+#: src/stat.c:1303
 msgid "Device: %Dh/%dd\tInode: %-10i  Links: %h\n"
 msgstr "设备：%Dh/%dd\tInode：%-10i  硬链接：%h\n"
 
 #. TRANSLATORS: This string uses format specifiers from
 #. 'stat --help' without --file-system, and NOT from printf.
-#: src/stat.c:1306
+#: src/stat.c:1312
 msgid "Access: (%04a/%10.10A)  Uid: (%5u/%8U)   Gid: (%5g/%8G)\n"
 msgstr "权限：(%04a/%10.10A)  Uid：(%5u/%8U)   Gid：(%5g/%8G)\n"
 
 #. TRANSLATORS: This string uses format specifiers from
 #. 'stat --help' without --file-system, and NOT from printf.
-#: src/stat.c:1316
+#: src/stat.c:1322
 #, c-format
 msgid "Context: %C\n"
 msgstr "环境：%C\n"
 
-#: src/stat.c:1324
+#: src/stat.c:1330
 msgid ""
 "Access: %x\n"
 "Modify: %y\n"
@@ -9066,7 +9108,7 @@ msgstr ""
 "最近改动：%z\n"
 "创建时间：%w\n"
 
-#: src/stat.c:1342
+#: src/stat.c:1348
 msgid ""
 "Display file or file system status.\n"
 "\n"
@@ -9078,7 +9120,7 @@ msgstr ""
 "  -L, --dereference\t跟随链接\n"
 "  -f, --file-system\t显示文件系统状态而非文件状态\n"
 
-#: src/stat.c:1348
+#: src/stat.c:1354
 msgid ""
 "  -c  --format=FORMAT   use the specified FORMAT instead of the default;\n"
 "                          output a newline after each use of FORMAT\n"
@@ -9093,7 +9135,7 @@ msgstr ""
 "\t\t\t\t加入\"\\n\"\n"
 "  -t, --terse\t\t使用简洁格式输出\n"
 
-#: src/stat.c:1359
+#: src/stat.c:1365
 #, fuzzy
 msgid ""
 "\n"
@@ -9114,7 +9156,7 @@ msgstr ""
 "  %B   以字节为单位输出%b 所报告的每个块的大小\n"
 "  %C   SELinux 安全环境字符串\n"
 
-#: src/stat.c:1368
+#: src/stat.c:1374
 #, fuzzy
 msgid ""
 "  %d   device number in decimal\n"
@@ -9131,7 +9173,7 @@ msgstr ""
 "  %g\t文件的属组ID\n"
 "  %G\t文件的属组组名\n"
 
-#: src/stat.c:1376
+#: src/stat.c:1382
 #, fuzzy
 msgid ""
 "  %h   number of hard links\n"
@@ -9154,7 +9196,7 @@ msgstr ""
 "  %t\t十六进制主设备类型\n"
 "  %T\t十六进制子设备类型\n"
 
-#: src/stat.c:1387
+#: src/stat.c:1393
 #, fuzzy
 msgid ""
 "  %u   user ID of owner\n"
@@ -9181,7 +9223,7 @@ msgstr ""
 "  %Z\t从UNIX 元年起以秒计的上次更改时间\n"
 "\n"
 
-#: src/stat.c:1401
+#: src/stat.c:1407
 #, fuzzy
 msgid ""
 "Valid format sequences for file systems:\n"
@@ -9200,7 +9242,7 @@ msgstr ""
 "  %d\t文件系统中空闲文件节点数\n"
 "  %f\t文件系统中空闲块数\n"
 
-#: src/stat.c:1410
+#: src/stat.c:1416
 #, fuzzy
 msgid ""
 "  %i   file system ID in hex\n"
@@ -10505,17 +10547,17 @@ msgstr "缺少\"]\""
 msgid "extra argument %s"
 msgstr "多余的参数%s"
 
-#: src/timeout.c:124
+#: src/timeout.c:127
 #, c-format
 msgid "warning: timer_settime"
 msgstr ""
 
-#: src/timeout.c:129
+#: src/timeout.c:132
 #, c-format
 msgid "warning: timer_create"
 msgstr ""
 
-#: src/timeout.c:204
+#: src/timeout.c:207
 #, c-format
 msgid ""
 "Usage: %s [OPTION] DURATION COMMAND [ARG]...\n"
@@ -10524,7 +10566,7 @@ msgstr ""
 "用法：%s [选项] 停留时间 命令 [参数]...\n"
 "　或：%s 选项\n"
 
-#: src/timeout.c:208
+#: src/timeout.c:211
 msgid ""
 "Start COMMAND, and kill it if still running after DURATION.\n"
 "\n"
@@ -10534,7 +10576,7 @@ msgstr ""
 "\n"
 "长选项必须使用的参数对于短选项时也是必需使用的。\n"
 
-#: src/timeout.c:213
+#: src/timeout.c:216
 #, fuzzy
 msgid ""
 "      --foreground\n"
@@ -10556,7 +10598,7 @@ msgstr ""
 "\t\t指定在超时时发送的信号。信号可以是类似\"HUP\"的信号名或是信号数。\n"
 "\t\t查看\"kill -l\"以获得信号列表\n"
 
-#: src/timeout.c:229
+#: src/timeout.c:232
 #, fuzzy
 msgid ""
 "\n"
@@ -10569,7 +10611,7 @@ msgstr ""
 "\"s\"代表秒(默认值)，\"m\"代表分，\"h\"代表小时，\"d\"代表天。\n"
 "\n"
 
-#: src/timeout.c:234
+#: src/timeout.c:237
 #, fuzzy
 msgid ""
 "\n"
@@ -10586,14 +10628,19 @@ msgstr ""
 "程。\n"
 "对于另一些进程可能需要使用KILL (9)信号，当然此信号不能被捕获。\n"
 
-#: src/timeout.c:419
+#: src/timeout.c:341
+#, c-format
+msgid "warning: disabling core dumps failed"
+msgstr ""
+
+#: src/timeout.c:445
 #, c-format
 msgid "error waiting for command"
 msgstr "等待命令出错"
 
-#: src/timeout.c:441
+#: src/timeout.c:456
 #, c-format
-msgid "warning: disabling core dumps failed"
+msgid "the monitored command dumped core"
 msgstr ""
 
 #. This is a proper name. See the gettext manual, section Names.
@@ -10664,10 +10711,11 @@ msgstr ""
 "  -m\t\t\t只更改修改时间\n"
 
 #: src/touch.c:238
+#, fuzzy
 msgid ""
 "  -r, --reference=FILE   use this file's times instead of current time\n"
 "  -t STAMP               use [[CC]YY]MMDDhhmm[.ss] instead of current time\n"
-"  --time=WORD            change the specified time:\n"
+"      --time=WORD        change the specified time:\n"
 "                           WORD is access, atime, or use: equivalent to -a\n"
 "                           WORD is modify or mtime: equivalent to -m\n"
 msgstr ""
@@ -11581,63 +11629,6 @@ msgstr ""
 "重复输出一行指定的字符串，或者重复输出\"y\"。\n"
 "\n"
 
-#~ msgid "Password:"
-#~ msgstr "密码："
-
-#~ msgid "getpass: cannot open /dev/tty"
-#~ msgstr "getpass：无法打开 /dev/tty"
-
-#~ msgid "cannot set groups"
-#~ msgstr "无法设置组"
-
-#~ msgid "cannot set group id"
-#~ msgstr "无法设置组ID"
-
-#~ msgid "cannot set user id"
-#~ msgstr "无法设置用户ID"
-
-#~ msgid "Usage: %s [OPTION]... [-] [USER [ARG]...]\n"
-#~ msgstr "用法：%s [选项]... [-] [用户 [参数]... ]\n"
-
-#~ msgid ""
-#~ "Change the effective user id and group id to that of USER.\n"
-#~ "\n"
-#~ "  -, -l, --login               make the shell a login shell\n"
-#~ "  -c, --command=COMMAND        pass a single COMMAND to the shell with -"
-#~ "c\n"
-#~ "  -f, --fast                   pass -f to the shell (for csh or tcsh)\n"
-#~ "  -m, --preserve-environment   do not reset environment variables\n"
-#~ "  -p                           same as -m\n"
-#~ "  -s, --shell=SHELL            run SHELL if /etc/shells allows it\n"
-#~ msgstr ""
-#~ "更改有效用户ID 和组ID 为指定用户。\n"
-#~ "\n"
-#~ "  -, -l, --login\t\t使该shell 成为登录shell\n"
-#~ "  -c, --command=命令\t\t向shell 传递单一命令\n"
-#~ "  -f, --fast                   针对csh 或tcsh 传递-f\n"
-#~ "  -m, --preserve-environment\t不重设环境变量\n"
-#~ "  -p\t\t\t\t等于-m\n"
-#~ "  -s, --shell=SHELL\t\t如果/etc/shells allows 则运行指定的SHELL\n"
-
-#~ msgid ""
-#~ "\n"
-#~ "A mere - implies -l.   If USER not given, assume root.\n"
-#~ msgstr ""
-#~ "\n"
-#~ "单独的\"-\"选项隐含了-l。如果不指定用户，则假设其为root。\n"
-
-#~ msgid "user %s does not exist"
-#~ msgstr "用户%s 不存在"
-
-#~ msgid "incorrect password"
-#~ msgstr "密码不正确"
-
-#~ msgid "using restricted shell %s"
-#~ msgstr "正在使用受限的shell %s"
-
-#~ msgid "warning: cannot change directory to %s"
-#~ msgstr "警告：无法切换到目录%s"
-
 #~ msgid ""
 #~ "\n"
 #~ "Examples:\n"
@@ -11763,6 +11754,60 @@ msgstr ""
 #~ msgid ""
 #~ "WARNING: --preserve_context is deprecated; use --preserve-context instead"
 #~ msgstr "警告：不推荐使用--preserve_context，请使用--preserve-context"
+
+#~ msgid "Password:"
+#~ msgstr "密码："
+
+#~ msgid "getpass: cannot open /dev/tty"
+#~ msgstr "getpass：无法打开 /dev/tty"
+
+#~ msgid "cannot set groups"
+#~ msgstr "无法设置组"
+
+#~ msgid "cannot set group id"
+#~ msgstr "无法设置组ID"
+
+#~ msgid "Usage: %s [OPTION]... [-] [USER [ARG]...]\n"
+#~ msgstr "用法：%s [选项]... [-] [用户 [参数]... ]\n"
+
+#~ msgid ""
+#~ "Change the effective user id and group id to that of USER.\n"
+#~ "\n"
+#~ "  -, -l, --login               make the shell a login shell\n"
+#~ "  -c, --command=COMMAND        pass a single COMMAND to the shell with -"
+#~ "c\n"
+#~ "  -f, --fast                   pass -f to the shell (for csh or tcsh)\n"
+#~ "  -m, --preserve-environment   do not reset environment variables\n"
+#~ "  -p                           same as -m\n"
+#~ "  -s, --shell=SHELL            run SHELL if /etc/shells allows it\n"
+#~ msgstr ""
+#~ "更改有效用户ID 和组ID 为指定用户。\n"
+#~ "\n"
+#~ "  -, -l, --login\t\t使该shell 成为登录shell\n"
+#~ "  -c, --command=命令\t\t向shell 传递单一命令\n"
+#~ "  -f, --fast                   针对csh 或tcsh 传递-f\n"
+#~ "  -m, --preserve-environment\t不重设环境变量\n"
+#~ "  -p\t\t\t\t等于-m\n"
+#~ "  -s, --shell=SHELL\t\t如果/etc/shells allows 则运行指定的SHELL\n"
+
+#~ msgid ""
+#~ "\n"
+#~ "A mere - implies -l.   If USER not given, assume root.\n"
+#~ msgstr ""
+#~ "\n"
+#~ "单独的\"-\"选项隐含了-l。如果不指定用户，则假设其为root。\n"
+
+#~ msgid "user %s does not exist"
+#~ msgstr "用户%s 不存在"
+
+#~ msgid "incorrect password"
+#~ msgstr "密码不正确"
+
+#~ msgid "using restricted shell %s"
+#~ msgstr "正在使用受限的shell %s"
+
+#~ msgid "warning: cannot change directory to %s"
+#~ msgstr "警告：无法切换到目录%s"
 
 #~ msgid ""
 #~ "\n"

@@ -1,5 +1,95 @@
 GNU coreutils NEWS                                    -*- outline -*-
 
+* Noteworthy changes in release 8.20 (2012-10-23) [stable]
+
+** New features
+
+  dd now accepts 'status=none' to suppress all informational output.
+
+  md5sum now accepts the --tag option to print BSD-style output with GNU
+  file name escaping.  This also affects sha1sum, sha224sum, sha256sum,
+  sha384sum and sha512sum.
+
+** Bug fixes
+
+  cp could read from freed memory and could even make corrupt copies.
+  This could happen with a very fragmented and sparse input file,
+  on GNU/Linux file systems supporting fiemap extent scanning.
+  This bug also affects mv when it resorts to copying, and install.
+  [bug introduced in coreutils-8.11]
+
+  cp --no-preserve=mode now no longer preserves the original file's
+  permissions but correctly sets mode specified by 0666 & ~umask
+
+  du no longer emits a "disk-corrupted"-style diagnostic when it detects
+  a directory cycle that is due to a bind-mounted directory.  Instead,
+  it detects this precise type of cycle, diagnoses it as such and
+  eventually exits nonzero.
+
+  factor (when using gmp) would mistakenly declare some composite numbers
+  to be prime, e.g., 465658903, 2242724851, 6635692801 and many more.
+  The fix makes factor somewhat slower (~25%) for ranges of consecutive
+  numbers, and up to 8 times slower for some worst-case individual numbers.
+  [bug introduced in coreutils-7.0, with GNU MP support]
+
+  ls now correctly colors dangling symlinks when listing their containing
+  directories, with orphaned symlink coloring disabled in LS_COLORS.
+  [bug introduced in coreutils-8.14]
+
+  rm -i -d now prompts the user then removes an empty directory, rather
+  than ignoring the -d option and failing with an 'Is a directory' error.
+  [bug introduced in coreutils-8.19, with the addition of --dir (-d)]
+
+  rm -r S/ (where S is a symlink-to-directory) no longer gives the invalid
+  "Too many levels of symbolic links" diagnostic.
+  [bug introduced in coreutils-8.6]
+
+  seq now handles arbitrarily long non-negative whole numbers when the
+  increment is 1 and when no format-changing option is specified.
+  Before, this would infloop:
+    b=100000000000000000000; seq $b $b
+  [the bug dates back to the initial implementation]
+
+** Changes in behavior
+
+  nproc now diagnoses with an error, non option command line parameters.
+
+** Improvements
+
+  factor's core has been rewritten for speed and increased range.
+  It can now factor numbers up to 2^128, even without GMP support.
+  Its speed is from a few times better (for small numbers) to over
+  10,000 times better (just below 2^64).  The new code also runs a
+  deterministic primality test for each prime factor, not just a
+  probabilistic test.
+
+  seq is now up to 70 times faster than it was in coreutils-8.19 and prior,
+  but only with non-negative whole numbers, an increment of 1, and no
+  format-changing options.
+
+  stat and tail know about ZFS, VZFS and VMHGFS.  stat -f --format=%T now
+  reports the file system type, and tail -f now uses inotify for files on
+  ZFS and VZFS file systems, rather than the default (for unknown file
+  system types) of issuing a warning and reverting to polling.  tail -f
+  still uses polling for files on VMHGFS file systems.
+
+** Build-related
+
+  root-only tests now check for permissions of our dummy user,
+  $NON_ROOT_USERNAME, before trying to run binaries from the build directory.
+  Before, we would get hard-to-diagnose reports of failing root-only tests.
+  Now, those tests are skipped with a useful diagnostic when the root tests
+  are run without following the instructions in README.
+
+  We now build most directories using non-recursive make rules.  I.e.,
+  rather than running make in man/, lib/, src/, tests/, instead, the top
+  level Makefile.am includes a $dir/local.mk that describes how to build
+  the targets in the corresponding directory.  Two directories remain
+  unconverted: po/, gnulib-tests/.  One nice side-effect is that the more
+  accurate dependencies have eliminated a nagging occasional failure that
+  was seen when running parallel "make syntax-check".
+
+
 * Noteworthy changes in release 8.19 (2012-08-20) [stable]
 
 ** Bug fixes

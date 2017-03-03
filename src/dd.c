@@ -135,7 +135,10 @@ enum
 /* Status bit masks.  */
 enum
   {
-    STATUS_NOXFER = 01
+    STATUS_NOXFER = 01,
+    STATUS_NOCOUNTS = 02,
+    STATUS_LAST = STATUS_NOCOUNTS,
+    STATUS_NONE = STATUS_LAST | (STATUS_LAST - 1)
   };
 
 /* The name of the input file, or NULL for the standard input. */
@@ -370,6 +373,7 @@ static struct symbol_value const flags[] =
 static struct symbol_value const statuses[] =
 {
   {"noxfer",	STATUS_NOXFER},
+  {"none",	STATUS_NONE},
   {"",		0}
 };
 
@@ -536,11 +540,12 @@ Copy a file, converting and formatting according to the operands.\n\
   oflag=FLAGS     write as per the comma separated symbol list\n\
   seek=N          skip N obs-sized blocks at start of output\n\
   skip=N          skip N ibs-sized blocks at start of input\n\
-  status=noxfer   suppress transfer statistics\n\
+  status=WHICH    WHICH info to suppress outputting to stderr;\n\
+                  'noxfer' suppresses transfer stats, 'none' suppresses all\n\
 "), stdout);
       fputs (_("\
 \n\
-N, BLOCKS and BYTES may be followed by the following multiplicative suffixes:\n\
+N and BYTES may be followed by the following multiplicative suffixes:\n\
 c =1, w =2, b =512, kB =1000, K =1024, MB =1000*1000, M =1024*1024, xM =M\n\
 GB =1000*1000*1000, G =1024*1024*1024, and so on for T, P, E, Z, Y.\n\
 \n\
@@ -664,13 +669,15 @@ multiple_bits_set (int i)
 static void
 print_stats (void)
 {
-  xtime_t now = gethrxtime ();
   char hbuf[LONGEST_HUMAN_READABLE + 1];
   int human_opts =
     (human_autoscale | human_round_to_nearest
      | human_space_before_unit | human_SI | human_B);
   double delta_s;
   char const *bytes_per_second;
+
+  if ((status_flags & STATUS_NONE) == STATUS_NONE)
+    return;
 
   fprintf (stderr,
            _("%"PRIuMAX"+%"PRIuMAX" records in\n"
@@ -697,6 +704,7 @@ print_stats (void)
            w_bytes,
            human_readable (w_bytes, hbuf, human_opts, 1, 1));
 
+  xtime_t now = gethrxtime ();
   if (start_time < now)
     {
       double XTIME_PRECISIONe0 = XTIME_PRECISION;

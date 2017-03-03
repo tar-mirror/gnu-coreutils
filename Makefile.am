@@ -17,7 +17,7 @@
 
 ALL_RECURSIVE_TARGETS =
 
-SUBDIRS = lib src doc man po tests gnulib-tests
+SUBDIRS = po . gnulib-tests
 
 changelog_etc =				\
   ChangeLog-2005			\
@@ -49,22 +49,29 @@ EXTRA_DIST =				\
   THANKStt.in				\
   bootstrap				\
   bootstrap.conf			\
-  build-aux/cvsu			\
+  build-aux/gen-lists-of-programs.sh	\
   cfg.mk				\
   dist-check.mk				\
   maint.mk				\
+  tests/GNUmakefile			\
   thanks-gen
 
-ALL_RECURSIVE_TARGETS += install-root
-install-root:
-	cd src && $(MAKE) $@
+gen_progs_lists = $(top_srcdir)/build-aux/gen-lists-of-programs.sh
+
+# Keep these in sync with bootstrap.conf:bootstrap_post_import_hook().
+# Use '$(top_srcdir)/m4' and '$(srcdir)/src' for the benefit of non-GNU
+# makes: it is with those directories that 'cu-progs.m4' and 'cu-progs.mk'
+# appear in our dependencies.
+$(top_srcdir)/m4/cu-progs.m4: $(gen_progs_lists)
+	$(AM_V_GEN)rm -f $@ $@-t \
+	  && $(SHELL) $(gen_progs_lists) --autoconf >$@-t \
+	  && chmod a-w $@-t && mv -f $@-t $@
+$(srcdir)/src/cu-progs.mk: $(gen_progs_lists)
+	$(AM_V_GEN)rm -f $@ $@-t \
+	  && $(SHELL) $(gen_progs_lists) --automake >$@-t \
+	  && chmod a-w $@-t && mv -f $@-t $@
 
 ACLOCAL_AMFLAGS = -I m4
-
-# Some tests always need root privileges, others need them only sometimes.
-ALL_RECURSIVE_TARGETS += check-root
-check-root:
-	cd tests && $(MAKE) $@ SUBDIRS=
 
 # Shortcut targets to make it easier to run (very) expensive tests.
 check-expensive:
@@ -86,13 +93,31 @@ BUILT_SOURCES = .version
 .version:
 	$(AM_V_GEN)echo $(VERSION) > $@-t && mv $@-t $@
 
+# In general, we run help2man to build a man page from the binary's --help
+# output, but when building from a just-unpacked distribution tarball, we
+# must not do that, since help2man uses perl.  We don't want to depend on
+# perl in that case.  In general, the .1 file does indeed depend on the
+# binary.  I.e., for cat, we have this Makefile dependency:
+#   man/cat.1: src/cat
+# That means that once we build src/cat, we would trigger the .x.1
+# rule which runs help2man.  The trick is simply to change the RHS to
+# "src/cat.c" in the $(distdir) that we're about to tar and compress.
+# Also handle the three exceptions corresponding to the three binaries
+# for which there is no like-named .c file: dir, vdir, ginstall.
+.PHONY: do-not-require-help2man
+do-not-require-help2man:
+	perl -pi -e 's,^(man/.+?\.1:\s*src/.+?)$$,$$1.c,;'		\
+	    -e  's,^(man/.+?\.1:\s*src)/ginstall\.c$$,$$1/install.c,;'	\
+	    -e  's,^(man/.+?\.1:\s*src)/v?dir\.c$$,$$1/ls.c,;'		\
+          $(distdir)/Makefile.in
+
 # Arrange so that .tarball-version appears only in the distribution
 # tarball, and never in a checked-out repository.
 # The perl substitution is to change some key uses of "rm" to "/bin/rm".
 # See the rm_subst comment for details.
-dist-hook: gen-ChangeLog
+dist-hook: gen-ChangeLog do-not-require-help2man
 	$(AM_V_GEN)echo $(VERSION) > $(distdir)/.tarball-version
-	$(AM_V_at)perl -pi -e '$(rm_subst)' $(distdir)/src/Makefile.in
+	$(AM_V_at)perl -pi -e '$(rm_subst)' $(distdir)/Makefile.in
 
 gen_start_date = 2008-02-08
 .PHONY: gen-ChangeLog
@@ -169,3 +194,16 @@ check-git-hook-script-sync:
 	     done;							\
 	rm -rf $$t;							\
 	test $$fail = 0
+
+noinst_LIBRARIES =
+MOSTLYCLEANFILES =
+CLEANFILES =
+MOSTLYCLEANDIRS =
+
+AM_CPPFLAGS = -Ilib -I$(top_srcdir)/lib -Isrc -I$(top_srcdir)/src
+
+include $(top_srcdir)/lib/local.mk
+include $(top_srcdir)/src/local.mk
+include $(top_srcdir)/doc/local.mk
+include $(top_srcdir)/man/local.mk
+include $(top_srcdir)/tests/local.mk

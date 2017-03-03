@@ -1,4 +1,1759 @@
+2012-10-23  Pádraig Brady  <P@draigBrady.com>
+
+	version 8.20
+	* NEWS: Record release date.
+
+2012-10-23  Jim Meyering  <jim@meyering.net>
+
+	factor: add comments
+	* src/factor.c (is_square): Use active voice in comment, not passive.
+	(factor): Add function-describing comment.
+	(mp_factor): Likewise.
+
+2012-10-23  Pádraig Brady  <P@draigBrady.com>
+
+	build: avoid warnings about unused variables and macros
+	src/factor.c (__GMP_DECLSPEC): Move back from longlong.h
+	to treat consistently with other stub macros.
+	(__GMP_GNUC_PREREQ): Reference to avoid -Wunused-macros warning.
+	(__GMP_DECLSPEC): Likewise.
+	(ASSERT): Likewise.
+	(__clz_tab): Likewise.
+	(factor_using_division): Mark a variable as unused.
+	(mulredc): Likewise.
+	(mulredc2): Likewise.
+	(divexact_21): Likewise.
+
+	build: avoid compile warnings in factor.c on some systems
+	* src/factor.c (factor_using_pollard_rho2): On some systems
+	(like sparc) we need to promote all addmod2() parameters
+	to uintmax_t to avoid warnings.
+
+	build: avoid build failure on some sparc systems
+	* src/longlong.h: Restrict some sparc assembly variants
+	to sparc V9. This was seen to be an issue with newer
+	sparc systems with default gcc CPU options.
+
+	tests: correctly restrict factor test without GMP
+	* tests/misc/factor.pl: Correct the precedence and
+	regular expression in the command to check for GMP.
+
+2012-10-21  Jim Meyering  <jim@meyering.net>
+
+	doc: NEWS: the cp bug affects mv and install, too
+	* NEWS (Bug fixes): Note that the copy-induced corruption but affects
+	mv (sometimes) and install, too.  Pointed out by Bernhard Voelker.
+
+2012-10-19  Benno Schulenberg  <bensberg@justemail.net>
+
+	doc: remove a stray parenthesis from 'cp --force' description
+	* doc/coreutils.texi (cp invocation): Remove Cheshire Cat.
+
+2012-10-17  Jim Meyering  <jim@meyering.net>
+
+	build: update gnulib submodule to latest
+
+	cp: avoid data-corrupting free-memory-read
+	* src/extent-scan.c (extent_scan_read): Reset our last_ei
+	pointer whenever the parent buffer might have just been freed.
+	* tests/cp/fiemap-extent-FMR.sh: New test.
+	* tests/local.mk (all_tests): Add it.
+	* NEWS (Bug fixes): Mention it.
+	Reported by Mike Gerth in http://bugs.gnu.org/12656, and with
+	help from Alan Curry.  Bug introduced in commit v8.10-60-g18f5a85.
+
+2012-10-13  Nikolas Kallis  <nik@nikolaskallis.com>  (tiny change)
+
+	doc: improve HACKING guidelines
+	* HACKING: Add "cd coreutils" after the git clone command.
+
+2012-10-09  Pádraig Brady  <P@draigBrady.com>
+
+	factor: fix integer validation and GMP fallback
+	In the recent factor rewrite, the GMP code
+	wasn't actually used; just an error was printed
+	on integer overflow.  While fixing that it was noticed
+	that correct input validation wasn't done in all cases
+	when falling back to the GMP code.
+
+	* src/factor.c (print_factors) Fallback to GMP on overflow.
+	(strto2uintmax): Scan the string for invalid characters,
+	so that case can be detected independently of overflow.
+	Return an error when an empty string is passed.
+	Also allow leading spaces and '+' in input numbers.
+	* tests/misc/factor.pl: Ensure the GMP code is exercised
+	when compiled in. Also add a test to verify leading
+	spaces and '+' are allowed.
+
+2012-10-08  Pádraig Brady  <P@draigBrady.com>
+
+	build: support older GMP versions
+	The new factor code introduced usage of mpz_inits() and
+	mpz_clears(), which are only available since GMP >= 5,
+	and will result in a compile error when missing.
+
+	* m4/gmp.m4 (cu_GMP): Define HAVE_DECL_MPZ_INITS appropriately.
+	* src/factor (mpz_inits): New function, defined where missing.
+	(mpz_clears): Likewise.
+
+2012-10-07  Jim Meyering  <meyering@redhat.com>
+
+	maint: avoid warning from gcc's -Wunused-macros
+	On some systems, -Wunused-macros would warn about two macros:
+	src/factor.c:148:0: warning: macro "__clz_tab" is not used
+	src/factor.c:126:0: warning: macro "UHWtype" is not used
+	* src/factor.c: Add a use to placate gcc.
+
+2012-10-05  Jim Meyering  <meyering@redhat.com>
+
+	build: avoid link failure when strerror is replaced
+	When building the new make-prime-list program on a system for which
+	strerror is defined to rpl_strerror, we'd get a link failure.
+	The problem is that we're including <config.h> for some definitions,
+	but do not want the rpl_ ones, since this particular program must
+	not be linked against gnulib (aka libcoreutils.a).  This did not
+	arise on Fedora 17 or 18, but did on Debian wheezy/sid.
+	* src/make-prime-list.c (strerror): #undef.
+	Build failure introduced by commit v8.19-152-gcf67e4c.
+
+2012-10-04  Jim Meyering  <meyering@redhat.com>
+
+	factor: 25% speed-up, on output
+	* src/factor.c (print_factors_single): Use fputs and umaxtostr
+	rather than printf with "%ju".  This reduced the time required
+	to compute and print the factors of the first 10^7 integers from
+	over 8 seconds to 5.75s.  Run this command:
+	seq $((10**7)) | env time factor > /dev/null
+
+2012-10-04  Jim Meyering  <meyering@redhat.com>
+
+	factor: merge with preexisting factor; integrate tests; avoid warnings
+	* src/factor.c: Renamed from factor-ng.c, with the following changes:
+	Adjust copyright header to be consistent with others.
+	Use xmalloc and xrealloc, to avoid segv upon OOM.
+	Switch back to using readtokens to handle input.
+	Diagnose invalid inputs.
+	s/fprintf+exit/error/
+	(print_factors): Add comments.
+	(strto2uintmax): Return strtol_error, not int.
+	(read_item): Remove, no longer used.
+	(main): Use atexit(close_stdout) so that we don't ignore failed write.
+	* cfg.mk: Exempt src/longlong.h from several tests.
+	Exempt run.sh from the test-list-consistency test.
+	Exempt make-prime-list.c from numerous tests, since we won't
+	be making it conform: it must not link with libcoreutils.a.
+	Exempt factor-ng.c from the no-upper-case error message test.
+	* AUTHORS (factor): Add Torbjörn and Niels.
+	* tests/local.mk (factor_tests): Encode the 37 tests.
+	($(factor_tests)): Rule to generate a test script for each test.
+	* tests/factor/run.sh: New script, marked as very expensive.
+	* .gitignore: Ignore new generated files.
+	* src/local.mk (src/primes.h): New rule.
+	(noinst_PROGRAMS): Add make-prime-list.
+	(noinst_HEADERS): Add longlong.h.
+	Remove all wheel-related rules and files.
+	* src/wheel-gen.pl: Remove file.
+
+	maint: mark set-but-not-used variables with ATTRIBUTE_UNUSED
+	* src/factor-ng.c (redcify, prime_p, isqrt2): Mark them, so we
+	don't have to disable -Wunused-but-set-variable.
+
+	maint: use __builtin_expect only if __GNUC__
+	* src/factor-ng.c (LIKELY, UNLIKELY) [__GNUC__]: Add #ifdef guard.
+
+	build: avoid warning about unused macro
+	* src/factor-ng.c (__GMP_DECLSPEC): Don't define here
+	* src/longlong.h (__GMP_DECLSPEC): Define if not already defined.
+
+2012-10-04  Niels Möller  <nisse@lysator.liu.se>
+	    Torbjörn Granlund  <tg@gmplib.org>
+
+	factor: more improvements
+	* src/factor-ng.c: Import some improvements from
+	http://gmplib.org:8000/factoring
+
+2012-10-04  Torbjörn Granlund  <tg@gmplib.org>
+	    Niels Möller
+
+	factor: new much-improved implementation; not yet integrated
+	* src/factor-ng.c: New file, from nt-factor.
+	* src/longlong.h: New file.
+	* NEWS (Improvements): Mention the upcoming improvements.
+
+2012-10-04  Jim Meyering  <meyering@redhat.com>
+
+	maint: make-prime-list: syntax conventions; be robust for large N
+	* src/make-prime-list.c: Insert spaces before parens.
+	(main): Abort if the 8-delta value ever exceeds 255.
+
+	maint: make-prime-list: do not ignore write failure
+	Even though this is just a helper program that is run solely to create
+	primes.h, it should not ignore a write failure.  Normally we would
+	simply call atexit (close_stdout), but we cannot do that from this
+	helper program, since it must be built before the generated header,
+	primes.h.  If we were to make the linking of make-prime-list depend
+	on libcoreutils.a, that would add all lib/*.o files to the list
+	of dependents of $(BUILT_HEADERS).  Then, since there is currently no
+	provision to ensure that a file like lib/stdio.h (another built header)
+	is built before the first lib/*.o file that also includes <stdio.h>,
+	some lib/*.o files would be built before lib/stdio.h and some after.
+	The former would provoke link failures due to undefined rpl_* functions.
+	* src/make-prime-list.c: Include <errno.h>.
+	(fclose): Undef, so that a definition to rpl_fclose does not
+	cause a link failure.
+	(main): Per the above, in this exceptional case, we check for fclose
+	and ferror failure manually, and don't worry about the ferror-only
+	failure case in which errno may not be relevant.
+
+	maint: make-prime-list: avoid -Wsuggest-attribute=const warning
+	* src/make-prime-list.c: Include <config.h>.
+	(binvert): Add _GL_ATTRIBUTE_CONST.
+
+2012-10-04  Torbjörn Granlund  <tg@gmplib.org>
+	    Niels Möller  <nisse@lysator.liu.se>
+
+	factor: prepare for the new factor program
+	* src/make-prime-list.c: New file, from nt-factor.
+
+2012-10-03  Jim Meyering  <meyering@redhat.com>
+
+	build: remove redundant dependency: $(PROGRAMS): lib/libcoreutils.a
+	* src/local.mk: Remove the above dependency.
+	A soon-to-be-added new program, make-prime-list, must not depend
+	on that, since it is used to create a BUILT_SOURCES file.
+	That dependency is already handled via the ..._LD_ADD variables,
+	and so that redundant dependency has so far been harmless.
+
+2012-09-30  Jim Meyering  <meyering@redhat.com>
+
+	du: avoid abort on systems for which ->me_type is not malloc'd
+	On some systems (notably, BSD-based, like at least OpenBSD 4.9),
+	the me_type member does not come from the heap.
+	* src/du.c (fill_mount_table): Free the ->me_type member only
+	when it was malloc'd, i.e., when ->me_type_malloced is nonzero.
+	Bug introduced via commit v8.19-2-gcf7e1b5.
+	Reported as http://bugs.gnu.org/12542.
+
+2012-09-29  Jim Meyering  <meyering@redhat.com>
+
+	doc: same correction, but now in texinfo documentation
+	* doc/coreutils.texi (nice invocation): s/nicenesses/niceness values/
+
+2012-09-28  Jim Meyering  <meyering@redhat.com>
+
+	doc: correct an old bit of ugliness in nice --help output
+	* src/nice.c (usage): s/Nicenesses/Niceness values/
+
+2012-09-28  Pádraig Brady  <P@draigBrady.com>
+
+	doc: disambiguate the niceness explanation in nice --help
+	* src/nice.c (usage): Specify the entity (process) that
+	that relative terms are referring to.
+	* THANKS: Update.
+	Reported-by: David Diggles
+
+2012-09-28  Ondrej Oprala  <ooprala@redhat.com>
+
+	cp: fix the --no-preserve=mode option
+	The --no-preserve=mode option did not do what its name implies:
+	it would mistakenly preserve permission mode bits.
+	* NEWS: Mention the fix.
+	* TODO: Remove an entry.
+	* src/copy.c (copy_reg): Add a condition to properly
+	handle the --no-preserve=mode option for files
+	(copy_internal): Add a condition to properly handle the
+	--no-preserve=mode option for directories.
+	* src/copy.h (struct cp_options): Add a new boolean.
+	* src/cp.c (cp_option_init,decode_preserve_arg): Set the
+	new boolean value according to specified options.
+	* src/install.c (struct cp_options): Initialize the new boolean.
+	* src/mv.c (struct cp_options): Initialize the new boolean.
+	* tests/cp/preserve-mode.sh: Add a new test.
+	* tests/cp/link-preserve.sh (-a --no-preserve=mode): Adjust the
+	expected perms: now, --no-preserve=mode overrides the --preserve=mode
+	that is inherent in -a, as it should.
+	* tests/local.mk: Add the new test to the list.
+
+2012-09-24  Pádraig Brady  <P@draigBrady.com>
+
+	timeout: handle signals more transparently
+	This was originally attempted in commit v8.12-117-g5a647a0,
+	but reverted before release because of the unreliability
+	of disabling core dumps using setrlimit() on Linux kernels.
+	This new version instead uses prctl() where available to
+	more reliably disable core dumps for the timeout process.
+
+	* m4/jm-macros.m4: Define HAVE_SETRLIMIT and HAVE_PRCTL.
+	* src/timeout.c (disable_core_dumps): A new function
+	that disables coredumps using prctl or setrlimit if available.
+	(main): If the child exited with a signal and we can
+	disable core dumps, then raise that signal to the timeout
+	process itself, so that callers may also see the signal status.
+	Also print a message indicating when the monitored command
+	dumped core, as that information is lost in the signal
+	propagation through timeout.
+
+2012-09-24  Pozsár Balázs  <pozsy@uhulinux.hu>
+
+	dd: new option, status=none to suppress output statistics
+	* src/dd.c (STATUS_NONE): A new bitmask combining all STATUS_
+	options, thus used to suppress all informational output.
+	(struct symbol_value statuses): Expose the "none" option,
+	corresponding to the STATUS_NONE bitmask above.
+	(print_stats): Return early if STATUS_NONE is specified.
+	Also move the call to gethrxtime() down so that it's only
+	called when needed.
+	(usage): Describe the new options.
+	* doc/coreutils.texi (dd invocation): Likewise.
+	* NEWS: Mention the new feature.
+	* tests/dd/misc.sh: Ensure the new option works.
+
+2012-09-23  Jim Meyering  <meyering@redhat.com>
+
+	tail,stat: improve support for vmhgfs
+	Teach tail -f that it must use polling on vmhgfs file systems, and
+	let stat -f --format=%T report the file system type name, "vmhgfs".
+	* src/stat.c (human_fstype): Add a case: vmhgfs, 0xbacbacbc, remote.
+	* NEWS (Improvements): Mention it.
+	* THANKS.in: Update.
+	Reported by Daniel Tschinder in http://bugs.gnu.org/12461.
+
+2012-09-20  Jim Meyering  <meyering@redhat.com>
+
+	build: move non-recursive-gnulib-prefix-hack to gnulib; update
+	I've moved the non-recursive-gnulib-prefix-hack module to
+	gnulib, with two small improvements, so remove it from here
+	and update gnulib to the latest.
+	* gl/build-aux/prefix-gnulib-mk: Remove file.
+	* gl/m4/non-recursive-gnulib-prefix-hack.m4: Remove file.
+	* gl/modules/non-recursive-gnulib-prefix-hack: Remove file.
+	* gnulib: Update to latest.
+
+2012-09-19  Jim Meyering  <meyering@redhat.com>
+
+	rm: be even more careful when using a replacement errno value
+	* src/remove.c (excise): The change in commit v8.19-107-gccbd3f3 made
+	the "rm -rf D" (for unreadable dir, D) diagnostic worse on Solaris 10:
+	  -rm: cannot remove 'D': Permission denied
+	  +rm: cannot remove 'D': File exists
+	That happened because unlinkat would fail with EEXIST there, given
+	an unreadable directory, which made the two tests, tests/rm/unread2
+	and tests/rm/unreadable fail.  Accommodate the EEXIST case, too.
+
+	maint: fix a comment typo
+	* cfg.mk: Fix comment typo: s/recursive/non-recursive/ make
+
+2012-09-18  Jim Meyering  <meyering@redhat.com>
+
+	tests: cp/link-heap: avoid new failure on rawhide
+	* tests/cp/link-heap.sh: Increase virtual memory limit by 2000KiB --
+	from 20,000 to 22,000 KiB -- to avoid a new failure on rawhide.
+
+	maint: make the tight-scope syntax-check rule work again
+	* cfg.mk: Configure a few variable to make the tight-scope rule work.
+	* gnulib: Update submodule to latest.
+
+2012-09-18  Benno Schulenberg  <bensberg@justemail.net>
+
+	dd: remove references to the word BLOCKS from help and texi docs
+	The renaming from BLOCKS to N was done in v8.15-38-g140eca1,
+	and documentation for N was added again in v8.17-26-g4f2e9d5
+	without noticing that.  Now, finally remove the word BLOCKS
+	from the documentation.
+
+	* src/dd.c (usage): Remove the word BLOCKS.
+	* doc/coreutils.texi (dd invocation): Likewise.
+
+	Improved by: Bernhard Voelker <mail@bernhard-voelker.de>
+
+2012-09-18  Jim Meyering  <meyering@redhat.com>
+
+	doc: NEWS: mention the conversion to non-recursive make
+	* NEWS (Build-related): Mention the non-recursive make improvement.
+	Improved by: Pádraig Brady
+
+2012-09-16  Pádraig Brady  <P@draigBrady.com>
+
+	ls: fix coloring of dangling symlinks in default listing mode
+	When listing a directory containing dangling symlinks,
+	and not outputting a long format listing, and orphaned links
+	are set to no coloring in LS_COLORS, then the symlinks
+	would get no color rather than reverting to the standard
+	symlink color.  The issue was introduced in v8.13-19-g84457c4
+
+	* src/ls.c (print_color_indicator): Use the standard method
+	to check if coloring is specified for orphaned symlinks.
+	The existing method would consider 'or=00' or 'or=0' as significant
+	in LS_COLORS. Even 'or=' was significant as in that case the
+	string='or=' and the length=0.  Also apply the same change
+	for missing symlinks for consistency.
+	(gobble_file): Remove the simulation of linkok, which is only
+	tested in print_color_indicator() which now handles this directly
+	by keying on the LS_COLORS values correctly.
+	* tests/misc/ls-misc.pl: Add a test case.
+	* THANKS: Add the reporter.
+	* NEWS: Mention the fix.
+	Reported-by: David Matei
+
+2012-09-15  Jim Meyering  <meyering@redhat.com>
+
+	doc: update seq description
+	* doc/coreutils.texi (seq invocation): Update an example and mention
+	that with the new constraints, seq can print arbitrarily large numbers.
+
+2012-09-14  Pádraig Brady  <P@draigBrady.com>
+
+	seq: enable the fast integer printing code in more cases
+	* src/seq.c (main): Adjust the initial arbitrary precision
+	seq_fast enablement checks to be more maintainable, and
+	a little more general, by allowing single character
+	separators to use seq_fast.
+	Also check again after the number arguments are processed,
+	to see if we can still use seq_fast, which while not
+	allowing arbitarly large integers, it will handle
+	integers of the form 10E10 etc.
+	(seq_fast): Use a specified separator character,
+	rather than hardcoding '\n'.
+
+2012-09-14  Jim Meyering  <meyering@redhat.com>
+
+	build: do not rely on automake's AM_TESTS_ENVIRONMENT
+	* tests/local.mk (TESTS_ENVIRONMENT): Rename from AM_TESTS_ENVIRONMENT,
+	since it is not honored in automake-1.11.3 after all.
+	This reverts commit v8.19-38-g34c9c8f.  For now, I'll leave
+	the following commit that made bootstrap.conf require 1.11.2.
+	Prompted by a report of test failure from Pádraig Brady.
+
+	build: don't prefix the RHS of "GPERF = ..." with "lib/"
+	* gl/build-aux/prefix-gnulib-mk (prefix_assignment): Exempt
+	the RHS of a "GPERF = ..." assignment from lib/ prefixing.
+
+2012-09-14  Jim Meyering  <meyering@redhat.com>
+
+	seq: 70x faster for non-negative whole numbers and incr==1
+	Handle non-negative whole numbers robustly and efficiently when
+	the increment is 1 and when no format-changing option is specified.
+	On the correctness front, for very large numbers, seq now works fine:
+
+	    $ b=1000000000000000000000000000
+	    $ src/seq ${b}09 ${b}11
+	    100000000000000000000000000009
+	    100000000000000000000000000010
+	    100000000000000000000000000011
+
+	while the old one would infloop, printing garbage:
+
+	    $ seq ${b}09 ${b}11 | head -2
+	    99999999999999999997315645440
+	    99999999999999999997315645440
+
+	The new code is much more efficient, too:
+	Old vs new: 55.81s vs 0.82s
+
+	  $ env time --f=%e seq $((10**8)) > /dev/null
+	  55.81
+	  $ env time --f=%e src/seq $((10**8)) > /dev/null
+	  0.82
+
+	* seq.c (incr): New function, inspired by the one in cat.c.
+	(cmp, seq_fast): New functions, inspired by code in nt-factor
+	by Torbjörn Granlund and Niels Möller.
+	(trim_leading_zeros): New function, without which cmp would malfunction.
+	(all_digits_p): New function.
+	(main): Hoist the format_str-vs-equal_width check to precede first
+	treatment of operands, and insert code to call seq_fast when possible.
+	* NEWS (Bug fixes): Mention the correctness fix.
+	(Improvements): Mention the speed-up.
+	* tests/misc/seq.pl: Exercise the new code.
+
+	Improved by: Bernhard Voelker.
+	http://thread.gmane.org/gmane.comp.gnu.coreutils.general/3340
+
+2012-09-14  Jim Meyering  <meyering@redhat.com>
+
+	tests: reenable "make -C tests ..." commands
+	The README-documented way to run individual tests was invalidated
+	by the conversion of tests/ to non-recursive make.  Add a GNUmakefile
+	shim to reenable that usage.
+	* tests/GNUmakefile: New file, so that "make -C tests ..." works
+	like it did before the conversion of tests/ to non-recursive build.
+	Reported by Bernhard Voelker.
+	* Makefile.am (EXTRA_DIST): Add it.
+	* cfg.mk (sc_prohibit_tab_based_indentation): Also exempt any
+	GNUmakefile from this syntax-check.
+
+2012-09-12  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	build: fixup: correctly recognize if perl is missing
+	* configure.ac: Here, by adding a missing '*' to the wildcard in
+	a 'case' construct over the contents of $PERL.  Introduced in
+	commit v8.19-41-g00f5ba1.
+
+2012-09-12  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	maint: mbsalign.h: fix typo from previous comment edit
+	* gl/lib/mbsalign.h: Fix comment typo.
+
+2012-09-11  Jim Meyering  <meyering@redhat.com>
+
+	build: build lib/ using non-recursive make
+	* bootstrap.conf (gnulib_modules): Use the new module.
+	(bootstrap_post_import_hook): Invoke prefix-gnulib-mk.
+	* configure.ac (AC_CONFIG_FILES): Remove lib/Makefile.
+	* lib/Makefile.am: Renamed...
+	* lib/local.mk: ...to this.
+	* src/local.mk (CLEANFILES): Append, don't set.
+	(noinst_LIBRARIES): Likewise.
+	(AM_CPPFLAGS): Don't set this here.
+	* Makefile.am (AM_CPPFLAGS): Define here instead.
+	(noinst_LIBRARIES, CLEANFILES, MOSTLYCLEANDIRS, MOSTLYCLEANFILES):
+	Initialize here, so we can append to them from each included local.mk
+	(SUBDIRS): Remove "lib".
+
+2012-09-11  Jim Meyering  <meyering@redhat.com>
+
+	build: handle @ALLOCA@-vs-non-recursive make problems
+	Here is a good reason to avoid alloca with non-recursive make.  These:
+
+	    $ grep @ALLOCA lib/gnulib.mk
+	    lib_libcoreutils_a_LIBADD += lib/@ALLOCA@
+	    lib_libcoreutils_a_DEPENDENCIES += lib/@ALLOCA@
+
+	would lead to this, when @ALLOCA@ expands to the empty string,
+	which is essentially "always", now:
+
+	    $ grep ' lib/$' Makefile
+	    lib_libcoreutils_a_LIBADD = $(gl_LIBOBJS) lib/
+	    lib_libcoreutils_a_DEPENDENCIES = $(gl_LIBOBJS) lib/
+
+	Tell the prefix-adding script not to add a prefix when the word it's
+	prefixing is "@ALLOCA@".  That is fine for most cases, but what about
+	when the expansion of @ALLOCA@ is nonempty?
+
+	* build-aux/prefix-gnulib-mk (prefix_word): Exclude @ALLOCA@.
+	* gl/m4/non-recursive-gnulib-prefix-hack.m4: Prefix non-empty
+	$ALLOCA with "lib/".  FIXME: I'm not sure this is required,
+	now that we...
+	Use AC_CONFIG_LIBOBJ_DIR([lib]).
+	Without using AC_CONFIG_LIBOBJ_DIR([lib]), automake (not autoconf)
+	would complain of failure to find aclocal.c, due to the use of
+	AC_LIBSOURCES(alloca.c).
+
+2012-09-11  Jim Meyering  <meyering@redhat.com>
+
+	build: new module to convert lib/ to non-recursive make
+	* gl/modules/non-recursive-gnulib-prefix-hack: New module.
+	* gl/m4/non-recursive-gnulib-prefix-hack.m4:
+	(gl_NON_RECURSIVE_GNULIB_PREFIX_HACK): This is the snippet
+	that this module inserts near the end of configure.
+	* gl/build-aux/prefix-gnulib-mk: New script, from bison.
+	Changes from the code in bison:
+	(prefix_assignment): Split a long line.
+	(prefix): Add trailing slashes to avoid a single false match.
+	Prefix imaxtostr.c and the other *tostr.c file names manually.
+	Also, use $prefix in place of hard-coded "lib/".
+
+2012-09-11  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	maint: gen-lists-of-programs.sh: fix typo from previous comment edit
+	* build-aux/gen-lists-of-programs.sh: Fix comment typo.
+
+2012-09-11  Pádraig Brady  <P@draigBrady.com>
+
+	maint: add more control flags to mbsalign
+	* gl/lib/mbsalign.h: Add MBA_UNIBYTE_ONLY (to allow
+	faster processing).  Also add MBA_NO_LEFT_PAD, MBA_NO_RIGHT_PAD
+	to give greater control of padding, useful with the first
+	or last fields on a line.
+	* gl/lib/mbsalign.c (mbsalign): Implement the new flags.
+	* gl/tests/test-mbsalign.c (main): Test combinations
+	of the new flags.
+
+2012-09-10  Jim Meyering  <meyering@redhat.com>
+
+	maint: allow per-directory CFLAGS settings with non-recursive make
+	* src/local.mk (AM_CFLAGS): Don't use $(WARN_CFLAGS) here.
+	* cfg.mk (src_CFLAGS, lib_CFLAGS, gnulib-tests_CFLAGS): Define here
+	instead.
+	(AM_CFLAGS): Augment using the above.
+	* configure.ac: Note that the configure-time option,
+	--enable-gcc-warnings now functions only when using GNU make.
+	Well, currently it does still work in gnulib-tests, but that should
+	soon be fixed.
+	Improved-by: Stefano Lattarini
+
+	maint: gen-lists-of-programs.sh: improve comments
+	* build-aux/gen-lists-of-programs.sh: Improve comments.
+
+	build: do not require help2man at build-from-tarball time
+	But do retain full dependencies when building from a git clone.
+	We do this by converting the full dependency (of the .1 file on
+	the binary we run with --help) into a dependency on the .c file.
+	* Makefile.am (do-not-require-help2man): New rule.
+	(dist-hook): depend on it.
+
+	build: fix a minor man-page generation dependency error
+	* man/local.mk (man/dir.1): Depend on src/dir, not src/ls.
+
+	maint: move the last coreutils-specific files from lib/ to gl/
+	Convert the few remaining coreutils-specific files in lib/ to
+	gnulib-style modules under gl/, removing their corresponding .m4
+	files, since the information recorded in those files is better
+	stored in module-description file in gl/modules/.
+	* bootstrap.conf (gnulib_modules): Add new modules:
+	fd-reopen, buffer-lcm, xfts, strnumcmp.
+	* gl/lib/buffer-lcm.c: Renamed from the file in lib/.
+	* gl/lib/buffer-lcm.h: Likewise.
+	* gl/lib/fd-reopen.c: Likewise.
+	* gl/lib/fd-reopen.h: Likewise.
+	* gl/lib/strintcmp.c: Likewise.
+	* gl/lib/strnumcmp-in.h: Likewise.
+	* gl/lib/strnumcmp.c: Likewise.
+	* gl/lib/strnumcmp.h: Likewise.
+	* gl/lib/xfts.c: Likewise.
+	* gl/lib/xfts.h: Likewise.
+	* gl/modules/buffer-lcm: New module-description file.
+	* gl/modules/fd-reopen: Likewise.
+	* gl/modules/strnumcmp: Likewise.
+	* gl/modules/xfts: Likewise.
+	* m4/fd-reopen.m4: Remove, no longer needed.
+	* m4/strnumcmp.m4: Likewise.
+	* m4/xfts.m4: Likewise.
+	* m4/prereq.m4: Do not AC_REQUIRE the m4 functions from
+	our just-removed m4/*.m4 files.
+
+	maint: move gl/m4/root-dev-ino.m4 contents into its module definition
+	We can get the same effect using the modules file.
+	* gl/m4/root-dev-ino.m4: Remove file.
+	* gl/modules/root-dev-ino (Depends-on): Add lstat.
+	(Files): Remove m4/root-dev-ino.m4.
+	(Makefile.am) [lib_SOURCES]: Add root-dev-ino.c and root-dev-ino.h.
+	(configure.ac): Remove reference to gl_ROOT_DEV_INO.
+
+2012-09-08  Jim Meyering  <meyering@redhat.com>
+
+	maint: adjust ChangeLog to correct Author
+	* build-aux/git-log-fix: Add an entry to correct the Author:
+	of v8.19-111-g51a4b04.  It should be Ondrej Oprala, not me.
+
+2012-09-07  Jim Meyering  <meyering@redhat.com>
+
+	factor: NEWS and tests
+	* NEWS (Bug fixes): Mention it.
+	* tests/misc/factor.pl: Add five of Torbjörn's tests.
+
+2012-09-07  Torbjörn Granlund  <tg@gmplib.org>
+
+	factor: don't ever declare composites to be prime
+	The multiple-precision factoring code (with HAVE_GMP) was copied from
+	a now-obsolete version of GMP that did not pass proper arguments to
+	the mpz_probab_prime_p function.  It makes that code perform no more
+	than 3 Miller-Rabin tests only, which is not sufficient.
+
+	A Miller-Rabin test will detect composites with at least a probability
+	of 3/4.  For a uniform random composite, the probability will actually
+	be much higher.
+
+	Or put another way, of the N-3 possible Miller-Rabin tests for checking
+	the composite N, there is no number N for which more than (N-3)/4 of the
+	tests will fail to detect the number as a composite.  For most numbers N
+	the number of "false witnesses" will be much, much lower.
+
+	Problem numbers are of the form N=pq, p,q prime and (p-1)/(q-1) = s,
+	where s is a small integer.  (There are other problem forms too,
+	involving 3 or more prime factors.)  When s = 2, we get the 3/4 factor.
+
+	It is easy to find numbers of that form that cause coreutils' factor to
+	fail:
+
+	  465658903
+	  2242724851
+	  6635692801
+	  17709149503
+	  17754345703
+	  20889169003
+	  42743470771
+	  54890944111
+	  72047131003
+	  85862644003
+	  98275842811
+	  114654168091
+	  117225546301
+	  ...
+
+	There are 9008992 composites of the form with s=2 below 2^64.  With 3
+	Miller-Rabin tests, one would expect about 9008992/64 = 140766 to be
+	invalidly recognized as primes in that range.
+
+	* src/factor.c (MR_REPS): Define to 25.
+	(factor_using_pollard_rho): Use MR_REPS, not 3.
+	(print_factors_multi): Likewise.
+	* THANKS.in: Remove my name, now that it will be automatically
+	included in the generated THANKS file.
+
+2012-09-07  Ondrej Oprala <ooprala@redhat.com>
+
+	tests: improve checks for setuidgid-using root-only tests
+	* init.cfg (setuidgid_has_perm_): New function.
+	(require_root_): Use it.
+	Improved-by: Bernhard Voelker
+	* NEWS (Build-related): Mention the improvement.
+
+2012-09-06  Eric Blake  <eblake@redhat.com>
+
+	build: default to --enable-gcc-warnings for git tree
+	Anyone developing on coreutils can be assumed to have a new enough
+	environment, such that enabling gcc warnings by default will be
+	useful.  Tarballs still default to no warnings, and the defaults
+	can still be overridden with --disable-gcc-warnings.
+
+	* configure.ac (gl_gcc_warnings): Set default based on environment.
+	Suggested by Bernhard Voelker.
+
+2012-09-06  Pádraig Brady  <P@draigBrady.com>
+
+	nproc: disallow non option command line parameters
+	* src/nproc.c (main): Error if any non option parameters.
+	* NEWS: Mention the change in behavior.
+
+2012-09-06  Jim Meyering  <meyering@redhat.com>
+
+	tail,stat: add support for VZFS
+	* src/stat.c (human_fstype): Add a case: vzfs, 0x565A4653 (local).
+	Reported by Jens Rosenboom in http://bugs.gnu.org/12356
+	* NEWS (Improvement): Mention it.
+
+2012-09-05  Jim Meyering  <meyering@redhat.com>
+
+	rm: be more careful when using a replacement errno value
+	* src/remove.c (excise): Tighten the test for when we defer to an
+	old errno value: instead of relying solely on an FTS_DNR (unreadable
+	directory) failure, also test current and replacement errno values.
+	This change would also have solved the problem addressed by commit
+	v8.19-106-g57dd067.  For more info, see http://bugs.gnu.org/12339#113
+
+	rm: avoid bogus diagnostic for a slash-decorated symlink-to-dir
+	These commands would evoke an invalid diagnostic:
+	    $ mkdir d && ln -s d s && env rm -r s/
+	    rm: cannot remove 's': Too many levels of symbolic links
+	remove.c was stripping trailing slashes from "s/" before passing
+	the name to "rm".  But a trailing slash may change the semantics,
+	and thus should not be stripped.
+	* src/remove.c (rm_fts): Do not strip trailing slashes.
+	* tests/rm/v-slash.sh: Adapt to new expected output.
+	* gnulib: Update to latest, for an improved fts.c that merely
+	normalizes trailing slashes.
+	Reported by Paul Eggert in discussion of http://bugs.gnu.org/12339
+
+	tests: depend on the programs we're testing
+	* tests/local.mk ($(TEST_LOGS)): Depend on $(PROGRAMS), so that
+	tests are rerun when any program is rebuilt.  Technically, we could
+	specify precisely which few programs are dependents of each test,
+	but that can come later, if deemed worth the trouble and maintenance
+	burden.  Also, there is the issue of the primary program(s) being
+	tested (i.e., those itemized via print_ver_) versus those that are
+	tested incidentally: for example, nearly every test exercises "rm"
+	when its clean-up code removes files.
+
+2012-09-05  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	maint: fix a spurious syntax-check failure
+	* cfg.mk (exclude_file_name_regexp--sc_file_system): Exempt
+	'init.cfg', not 'tests/init.cfg'.
+
+	tests: more resilient about tainted absolute srcdir path
+	* tests/init.cfg (stty_reversible_init_): Quote '$abs_top_srcdir'
+	properly.
+	(fiemap_capable_): Quote '$abs_srcdir' properly.
+	(require_dirent_d_type_): Likewise.
+
+	maint: fix syntax checks 'sc_root_tests'
+	* cfg.mk: Don't work by trying to parse the (now gone) file
+	'tests/Makefile.am'; rather, use the contents of the make variable,
+	$(all_root_tests), introduced few commits ago.
+	Fix a few unrelated cosmetic issues while at it.
+
+	maint: avoid a spurious syntax-check error
+	* cfg.mk (exclude_file_name_regexp--sc_prohibit_test_backticks): Exempt
+	'tests/local.mk' rather than 'tests/Makefile.am'.
+
+2012-09-05  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	maint: vc_exe_in_TESTS should actually be a syntax check
+	Because it requires the presence of the '.git' directory, that is,
+	can be run only for maintainers working from checked-out sources.
+
+	* tests/local.mk (vc_exe_in_TESTS): Rename and move ...
+	* cfg.mk (sc_tests_list_consistency): ... here, with minor adjustments.
+
+2012-09-05  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	build: remove two now-useless convenience targets
+	* src/local.mk (built_programs.list, all_programs.list): These.
+
+	tests: put test-suite.log back in 'tests/'
+	* tests/local.mk (TEST_SUITE_LOGS): Define to 'tests/test-suite.log'.
+
+	build: don't use recursive make for tests/ subdirectory
+	* Makefile.am (SUBDIRS): Remove 'tests'.
+	(include): The '$(top_srcdir)/tests/local.mk' file.
+	(check-root): Remove this convenience target, it's no longer needed
+	now that the "real" check-root target once in 'tests/Makefile' will
+	land in the top-level makefile.
+	* configure.ac (AC_CONFIG_FILES): Remove 'tests/Makefile'.
+	* tests/Makefile.am: Rename ...
+	* tests/local.mk: ... like this, with a lot of adjustments.
+	* tests/init.cfg: Move ...
+	* init.cfg: ... here.  This is necessary, for a limitation of the
+	gnulib-provided 'tests/init.sh', which unconditionally look for
+	'init.cfg' in the $(srcdir) directory.
+	* tests/*/*.sh: Adjust: expect init.sh to be in '$srcdir/tests',
+	not in '$srcdir', and extend $PATH with './src', not with '../src'.
+	* tests/Coreutils.pm: Adjust similarly.
+	* tests/pr/pr-tests.pl ($pfx): Likewise.
+
+2012-09-05  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	maint: list of names of built programs available in the Makefiles
+	This is just a preparatory refactoring in view of future changes.
+
+	* configure.ac (AC_SUBST): New 'built_programs'.
+	* tests/Makefile.am (AM_TESTS_ENVIRONMENT): Simply define the exported
+	variable 'built_programs' to the expansion of the '$(built_programs)'
+	AC_SUBST'd make variable.
+	(.built-programs): Remove this now-unneeded convenience target.
+	(CLEANFILES, check_DATA): Delete, no longer needed.
+
+2012-09-05  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	maint: remove anachronistic syntax-check
+	* cfg.mk (sc_no_exec_perl_coreutils): This.  Our new testsuite
+	layout (perl tests having '.pl' suffix, shell tests having '.sh'
+	suffix) makes it basically impossible to run into the issue this
+	check guarded against.
+
+	maint: remove duplicated declaration of the 'sc_check-AUTHORS' target
+	* cfg.mk: Here.
+
+2012-09-05  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	tests: remove the unused 'root-hint' target
+	* tests/Makefile.am (root-hint): Here.  The interested user can see
+	the reasons why some tests are skipped by looking at the messages
+	they display on the console; here's an excerpt:
+
+	    ...
+	    PASS: misc/id-groups.sh
+	    id-setgid.sh: skipped test: must be run as root
+	    SKIP: misc/id-setgid.sh
+	    PASS: misc/md5sum.pl
+	    ...
+	    PASS: df/total-verify.sh
+	    2g.sh: skipped test: very expensive: disabled by default
+	    SKIP: du/2g.sh
+	    ...
+
+	Clear enough, and more specific and precise that a generic "some tests
+	might need to be run as root" message.  And if that user is interested
+	in making those tests run anyway, he'll just take a look to the README
+	files to look for info.  So there's no reason to pollute the stdout
+	with another "hint" that is subsumed by those messages, and that might
+	go unnoticed anyway.
+
+	Moreover, and possibly more importantly, that hint wasn't being
+	displayed anyway, even before this change!  That's because the
+	'root-hint' target was listed as prerequisite for the 'check-recursive'
+	target, which however was not a dependency of the 'check' target in
+	'tests/Makefile.am', because that file contains no $(SUBDIRS)
+	definition.
+
+2012-09-05  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	tests: use suffix, not exec-bit, to tell which files are tests
+	* tests/Makefile.am (vc_exe_in_TESTS): Adjust to look, in the 'tests/'
+	subdirectory, for files that have one of the extensions listed in
+	$(TEST_EXTENSIONS), rather than for executable files.
+
+	maint: make vc_exe_in_TESTS also work in VPATH builds
+	* tests/Makefile.am (vc_exe_in_TESTS): It is easy to adjust this
+	recipe to also work in VPATH setups, also thanks to modifications
+	done by previous changes.
+
+	maint: remove useless dependency for vc_exe_in_TESTS
+	* tests/Makefile.am (vc_exe_in_TESTS): No need to depend on Makefile:
+	this target is .PHONY, so it is always run anyway.
+
+	maint: avoid parsing of Makefile.am from vc_exe_in_TESTS
+	* tests/Makefile.am (TESTS): Rename ...
+	(all_tests): ... like this, so that we'll still be able to know the
+	complete list of our tests even if the user overrides TESTS from the
+	command line (which he's allowed to do by the test harness API).
+	(root_tests): Rename ...
+	(all_root_tests): ... like this, for similar reasons.
+	(TESTS, root_tests): Redefine their defaults to to $(all_tests) and
+	$(all_root_tests) respectively.
+	(vc_exe_in_TESTS): It can now safely use $(all_tests) to get the
+	complete list of test cases according to the Makefile, instead of
+	having to resort to "parsing" of Makefile.am.
+	(EXTRA_DIST): Use $(all_tests), not $(TESTS).
+	(v_, w_): Delete, no longer needed.
+
+	build: use 'check-local' to extend the 'check' target
+	* tests/Makefile.am (check-local): Here, by making this depend
+	on 'vc_exe_in_TESTS' ...
+	(check): ... rather than making this depend on them.  While the old
+	usage worked, it relied on an implementation detail rather than on
+	documented behavior.
+	* src/local.mk (check-local): Similarly, make this depend on
+	'check-README' and 'check-duplicate-no-install' ...
+	(check): ... rather than on this.
+
+2012-09-02  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	scripts: autotools-install: allow user-specified make program
+	* scripts/autotools-install: Honor $MAKE.  This might be useful
+	on systems where the make implementation available in $PATH
+	by default is limited (Solaris) or broken (HP-UX).
+
+	scripts: autotools-install: style and portability fixes
+	* scripts/autotools-install: Here.
+
+2012-09-02  Benno Schulenberg  <bensberg@justemail.net>
+
+	touch: line up long option in --help text
+	* src/touch.c (usage): Indent --time=... to line up with all of the
+	other long options.
+
+2012-09-02  Jim Meyering  <meyering@redhat.com>
+
+	maint: disable sc_proper_name_utf8_requires_ICONV test
+	It would still pass, but would print many diagnostics like this:
+	  Can't open src/Makefile.am: No such file or directory.
+	* cfg.mk (local-checks-to-skip): Temporarily disable a test.
+	This test will need to be adapted to work with a non-recursive
+	build set-up, in which there is no Makefile.am alongside each program.
+	Reported by Bernhard Voelker.
+
+	maint: accommodate upcoming, expanded list of warnings from gnulib
+	* configure.ac: Disable a new gcc warning, -Wsuggest-attribute=format,
+	since it triggers on copy.c (which I'm not inclined to adjust) and
+	factor.c's use of vfprintf which would appear to require a change
+	to stdio.h.
+
+2012-09-01  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	maint: fix build_programs definition not to use "make -C src ..."
+	* dist-check.mk (built_programs): There's no need to issue recursive
+	make calls in 'src/' to define this (in fact, that works no longer
+	now that 'src/Makefile.am' is gone).  Simply define this to the sorted
+	contents of $(bin_PROGRAMS), with the 'src/' prefix and the $(EXEEXT)
+	suffix (if any) removed.  Reported by Jim Meyering.
+
+2012-09-01  Jim Meyering  <meyering@redhat.com>
+
+	build: restore handling of space-tainted build directory name
+	* man/local.mk: With commit v8.19-84-g08cf455, man page creation
+	would fail when using a build directory name containing e.g.,
+	spaces.
+
+	build: make each man/prog.1 depend on src/prog, not src/prog.c
+	* man/local.mk: Creating a prog.1 man page requires running
+	src/prog --help.
+	List the exceptions, e.g., install.1 depends on src/ginstall
+	and arch.1 depends on src/uname.
+
+	maint: check-programs-vs-x: avoid a new syntax-check failure
+	* cfg.mk (check-programs-vs-x): The new variable,
+	$(all-progs-but-lbracket) contains libstdbuf.so, and it does
+	not have a corresponding .x file, so exempt it.
+
+	maint: avoid distcheck failure by properly cleaning $(ALL_MANS)
+	* man/local.mk (distclean-local): Remove $(ALL_MANS) when doing
+	a VPATH build.  If it's not done, generated manpages can be left
+	around in the build directory after a "make distclean", causing
+	failures in "make distcheck".
+
+2012-09-01  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	maint: port manpages generation to VPATH builds
+	* man/local.mk (.x.1): Use '$(MKDIR_P)' rather than bare 'mkdir'
+	where appropriate.  Reported by Jim Meyering.
+
+2012-09-01  Jim Meyering  <meyering@redhat.com>
+
+	build: fix VPATH issues in C compilation
+	* src/local.mk (AM_CPPFLAGS): Add 'src' to the directories that
+	are searched for #include'd files.
+
+2012-09-01  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	maint: simplify declaration of "libexec" programs
+	* configure.ac: No need to use 'gl_ADD_PROG' and an indirection
+	variable '$optional_pkglib_progs' to declare the 'libstdbuf.so'
+	"libexec" program; the decision to whether compile that program
+	is not up to the user, but it only and simply depends on whether
+	the 'stdbuf' "bin" program is to be built or not.
+
+	build: $(mandeps): new, to factor out man pages dependencies
+	* man/local.mk (mandpep): Rename ...
+	(mandeps): ... like this.  Make $(ALL_MANS) depend on its
+	content.  List 'src/system.h' in here, instead of making
+	$(ALL_MANS) depend on it explicitly.
+	(man/*.1): No need to list $(mandep) among the dependencies
+	any longer.
+
+	build: enhance man pages cleaning and dependencies
+	* man/local.mk: All of the manpages should depend on 'src/system.h',
+	and all of them should be cleaned by "make maintainer-clean", that
+	is, added to MAINTAINERCLEANFILES.  Make it be so.
+	Some minor cosmetic tweakings and reorderings while at it.
+
+	build: simplify: get rid of yet some more indirection variables
+	* configure.ac: Adjust and improve few comments.
+	(MAN): Rename ...
+	(man1_MANS): ... to this.
+	Ensure it isn't initialized in all Makefiles (which would lead
+	to spurious errors), by calling AM_SUBST_NOTMAKE on it.
+	Also call AM_SUBST_NOTMAKE on 'EXTRA_MANS', for consistency.
+	* man/local.mk (man1_MANS): Simply define to '@man1_MANS@'.
+
+2012-09-01  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	build: rename dist_man1_MANS -> man1_MANS
+	And list $(man1_MANS) directly in $(EXTRA_DIST) instead.
+	This is similar to what is done for $(EXTRA_MANS), thus
+	improving consistency and readability.
+
+	* man/local.mk (dist_man1_MANS): Rename ...
+	(man1_MANS): ... like this.
+	(EXTRA_DIST): Add its contents.
+	* cfg.mk (check-x-vs-1): Fix a botched comment.
+
+2012-09-01  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	build: one less unneeded make variable
+	* man/local.mk (man_aux): This was used only once, so inline its
+	expansion at its sole point of use ...
+	(EXTRA_DIST): ... here.
+
+2012-09-01  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	build: simplify and make more portable to non-GNU make
+	The AC_SUBST'd variable '$(NO_INSTALL_PROGS_DEFAULT)' is only used in
+	makefile expressions expanding the list of manual pages that are not
+	built by default (but might need to be when a distribution tarball
+	is created). Such expressions exploited a feature of make variable
+	expansion -- namely, $(VAR:%=dir/%.x) -- that, while seemingly quite
+	portable in practice, is not POSIX-conforming, and could break on
+	lesser vendor make implementations.  So kill two birds with one stone,
+	by getting rid of the $(NO_INSTALL_PROGS_DEFAULT) intermediate variable
+	and improving makefile portability in the process.
+
+	While at it, we also clean up some other minor naming inconsistency
+	and useless indirection.
+
+	* configure.ac (NO_INSTALL_PROGS_DEFAULT): Don't define or AC_SUBST
+	anymore; instead ...
+	(EXTRA_MANS): ... define and AC_SUBST these.
+	* man/local.mk (extra_man_1): Rename ...
+	(EXTRA_MANS): ... like this, explicitly making clear it's AC_SUBST'd.
+	(extra_man_x): It's used only once, no need to define it; just inline
+	its only expansion where needed.
+	(EXTRA_DIST): Adjust.
+	(ALL_MANS): New, union of $(EXTRA_MANS) and $(dist_man1_MANS).
+	* cfg.mk (check-x-vs-1, sc_option_desc_uppercase): Rely on $(ALL_MANS)
+	rather than on $(NO_INSTALL_PROGS_DEFAULT) and $(dist_man1_MANS).
+
+2012-09-01  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	build: simplify: get rid of some indirection variables
+	The code deciding which coreutils programs to build (depending on
+	defaults, system capabilities, and user requests) is overly complex
+	and rather confusing.  Let's begin simplifying it by removing some
+	non-strictly-necessary indirection variables.
+
+	* configure.ac: Adjust and improve few comments.
+	(OPTIONAL_BIN_PROGS, OPTIONAL_PKGLIB_PROGS): Rename ...
+	(bin_PROGRAMS, pkglibexec_PROGRAMS): ... like these, respectively.
+	Ensure they aren't initialized in all Makefiles (which would lead
+	to spurious errors), by calling AM_SUBST_NOTMAKE on them.
+	* src/local.mk: Adjust and improve few comments.
+	(bin_PROGRAMS, pkglibexec_PROGRAMS): Simply define
+	to the corresponding '@substitution@'.
+
+2012-09-01  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	maint: update gitignore entries
+	* src/.gitignore: Here, adding the '.dirstamp' file generated
+	by the C compilation rules.
+
+	maint: fix one stray reference to src/Makefile.am
+	* build-aux/gen-lists-of-programs.sh: In heading comments here.
+
+2012-09-01  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	maint: fix and simplify maintainer checks
+	Some of them can be simplified after the previous changes, some
+	of them have been downright broken by them, and need fixing.
+
+	* src/local.mk: Adjust some comments.
+	(EXTRA_DIST): Avoid SPACE-TAB sequences.
+	(src/dircolors.h, src/fs.h src/fs-is-local.h): Avoid 8-SPACES
+	indentation.
+	(_sc_check-AUTHORS): Move ...
+	* cfg.mk (sc_check-AUTHORS): ... here (superseding the old rule
+	with the same name, that was just a recursive invocation to it).
+	Adjust the paths of the invoked coreutils programs, to account
+	for the fact that this rule now runs in the top-level build dir,
+	not in the 'src/' subdir.  Other minor cosmetic adjustments.
+	(ALL_RECURSIVE_TARGETS): Remove 'sc_option_desc_uppercase' and
+	'sc_man_file_correlation', since they no longer entail any
+	recursive make invocation.
+	(sc_option_desc_uppercase): Remove dependency from $(all_programs):
+	it isn't actually needed.
+	(check-programs-vs-x): Likewise.  Also, fix heading comments to
+	truly reflect what this check does.
+	(all-progs-but-lbracket): Strip the 'src/' prefix from each entry
+	in the list of programs; this avoids a spurious failure in the
+	'check-programs-vs-x' recipe.
+	(.PHONY): No need to list targets 'sc_man_file_correlation' and
+	'sc_option_desc_uppercase': they are automatically declared phony
+	by 'maint.mk', being recognized as syntax checks.
+
+2012-09-01  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	maint: remove unused target 'install-root'
+	It was unneeded and broken since the removal of 'su' from GNU
+	coreutils, in commit v8.17-16-g928dd73 of 2012-06-06, "su: remove
+	program (util-linux is now the best source for it)".
+
+	* Makefile.am (install-root): Remove.
+	(ALL_RECURSIVE_TARGETS): Update.
+
+2012-09-01  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	maint: improve remake rules for maintainers
+	This is a follow up on today's commit v8.19-60-g4f2e62b".
+
+	* Makefile.am ($(top_srcdir)/m4/cu-progs.m4,
+	$(srcdir)/src/cu-progs.mk): New, generate these files from the
+	'build-aux/gen-lists-of-programs.sh', the same way it's done
+	from the bootstrap script.
+	* bootstrap.conf (bootstrap_post_import_hook): Add comment about
+	the necessity to keep those new rules synced with the commands
+	here.  Enhance those commands so to that the generated files are
+	set read-only.
+
+2012-09-01  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	build: fix generation of manpages for programs not built by default
+	* src/local.mk (dist-hook): Don't use this to ensure all the
+	programs, even the ones disabled by default or by the user, are
+	built (doing so is required to ensure the distributed manpages
+	are properly built).  This would build those programs too late
+	anyway, causing errors like:
+
+	    $ make dist
+	    make  dist-xz am__post_remove_distdir='@:'
+	    make[1]: Entering directory `~/src/coreutils'
+	      GEN      man/arch.1
+	    help2man: can't get '--help' info from man/arch.td/arch
+	    make[1]: *** [man/arch.1] Error 127
+	    make[1]: Leaving directory `~/src/coreutils'
+	    make: *** [dist] Error 2
+
+	Instead, ...
+	* man/local.mk (extra_man_x, extra_man_1): define these ...
+	($(extra_man_1)): ... and make this depend on $(all_programs).
+	(EXTRA_DIST): Adjust.
+	Adjust some comments as well.
+
+2012-09-01  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	build: don't use recursive make to build the 'src' subdirectory
+	* Makefile.am (SUBDIRS): Remove 'src'.  Ensure '.' is listed before
+	'tests' and 'gnulib-tests'.
+	(dist-hook): Adjust: we must now tweak the top-level Makefile.in
+	in $(distdir), not the one in the 'src/' subdir (which is gone).
+	(include): The '$(top_srcdir)/src/local.mk' file.
+	* build-aux/gen-lists-of-programs.sh: Adjust the generation of the
+	automake input fragment.
+	* tests/Makefile.am (.built-programs): Adjust.
+	* cfg.mk (all_programs): Remove this convenience rule; it's no
+	longer needed, now that we can rely directly on the contents of
+	$(all_programs).
+	(sc_option_desc_uppercase, check-programs-vs-x:): Adjust lists
+	of prerequisites accordingly.
+	(all-progs-but-lbracket): Simplify definition accordingly.
+	* configure.ac ($OPTIONAL_BIN_PROGS): Adjust definition.
+	($OPTIONAL_PKGLIB_PROGS): Likewise.
+	($NO_INSTALL_PROGS_DEFAULT): Tweak definition, for consistency.
+	(AC_CONFIG_FILES): Remove 'src/Makefile'.
+	* src/Makefile.am: Rename ...
+	* src/local.mk: ... like this, with a lot of adjustments.  In
+	addition ...
+	(all_programs): ... remove this now-unneeded convenience target.
+
+2012-09-01  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	build: refactor how lists of coreutils programs are defined
+	This is in preparation of future changes.  Still, this patch
+	leaves the build system in a better shape; true, with more
+	indirections, but also with less convoluted and brittle hacks.
+
+	Unfortunately, this commit also makes some rebuild rules
+	incomplete; that will son be fixed by follow-up patches.
+
+	* build-aux/gen-lists-of-programs.sh: New, generates autoconf
+	and automake input fragments that define "lists" of all coreutils
+	programs, with further distinctions about how and when these
+	programs should be built (by default; if the system is capable
+	enough; only if the user asks for them explicitly).  This is
+	useful to avoid duplicating the definitions of these lists among
+	several files (at least 'configure.ac' 'src/Makefile.am'); such
+	duplication had proved a source of inconsistencies and bugs in
+	the past.  And the pre-existing way to avoid such duplication,
+	as implemented in 'configure.ac' before this patch, was overly
+	complex and brittle.
+	* Makefile.am (EXTRA_DIST): Distribute the new script.
+	* bootstrap.conf (bootstrap_post_import_hook): Run the new script
+	to generate 'm4/cu-progs.m4' and 'src/cu-progs.mk'.
+	* .gitignore: Ignore those files.
+	* configure.ac: Include 'm4/cu-progs.m4', and decidedly simplify
+	most of the program lists definition and processing accordingly.
+	* src/Makefile.am: Similarly include 'src/cu-progs.mk', containing
+	definition of variables $(default__progs), $(no_install__progs)
+	and $(build_if_possible__progs).  Accordingly ...
+	(no_install__progs, build_if_possible__progs): ... remove.
+	(EXTRA_DIST): Adjust definition.
+	Adjust a comment.
+
+2012-09-01  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	maint: add our 'bootstrap_post_import_hook' function
+	This is in preparation of future changes.
+
+	* bootstrap.conf (bootstrap_post_import_hook): New, will be executed
+	by bootstrap after gnulib-tool but before the autotools.
+	Move creation of dummy ChangeLog into it.
+
+2012-08-31  Eric Blake  <eblake@redhat.com>
+
+	build: work with new glibc when not optimizing
+	Starting with glibc 2.15, the system headers refuse to compile
+	unconditional use of FORTIFY_SOURCE if optimization is disabled
+	but -Werror is in effect.
+
+	* configure.ac (FORTIFY_SOURCE): Make conditional.
+
+2012-08-31  Jim Meyering  <meyering@redhat.com>
+
+	scripts: fix the Signed-off-by:-prohibiting hook to actually work
+	* scripts/git-hooks/commit-msg: Fix new test: we're searching a
+	multi-line buffer, so add the //m modifier.
+
+2012-08-31  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	maint: make required gettext version consistent
+	* bootstrap.conf ($buildreq): Require gettext >= 0.18.1, consistently
+	with the call to AM_GNU_GETTEXT_VERSION in configure.ac.
+
+2012-08-31  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	maint: get rid of obsolete script 'cvsu'
+	It was useful only back when coreutils used CVS as its version
+	control system.
+
+	* build-aux/cvsu: Delete.
+	* Makefile.am (EXTRA_DIST): Remove it.
+	* cfg.mk: Remove the two exemptions for this removed file.
+
+2012-08-31  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	build: don't use '$<' in non-suffix rules
+	* src/Makefile.am (fs-def): Here: it's not portable to some non-GNU
+	make implementations.
+
+	maint: more uses of $(ASSORT)
+	* src/Makefile.am (fs-kernel-magic, fs-magic): Here, instead of
+	inlining its expansion "LC_ALL=C sort".
+
+	maint: remove unused variable in src/Makefile.am
+	* src/Makefile.am (editpl): This.
+
+2012-08-31  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	build: don't use foo_LDADD if there's no foo program
+	For example, instead of factoring out the extra linker flags needed
+	by 'cp', 'mv' ind 'install' into a '$(copy_LDADD)' variable, factor
+	them out in a '$(copy_ldadd)' variable.
+
+	Partly a minor cleanup, partly a preparation for future changes.
+
+	* src/Makefile.am (copy_LDADD): Rename ...
+	(copy_ldadd): ... like this.
+	(remove_LDADD): Rename ...
+	(remove_ldadd): ... like this.
+	All uses adjusted.  Some comments updated.
+
+2012-08-31  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	build: some refactorings in cfg.mk
+	Partly a minor cleanup, partly a preparation for future changes.
+
+	* Makefile.am (all_programs): Rename ...
+	(all-progs-but-lbracket): ... like this, and re-define it to expand
+	at make time rather than only at recipe time (i.e., using $(shell ...)
+	instead of `...`).
+	(check-programs-vs-x): Adjust.
+
+2012-08-31  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	build: move definition of 'all_programs' in cfg.mk
+	* Makefile.am: Move definition of target 'all_programs' from here ...
+	* cfg.mk: ... to here, which is the only file where it is used.
+
+2012-08-31  Jim Meyering  <meyering@redhat.com>
+
+	build: reenable just-moved/broken syntax-check rule
+	* cfg.mk (sc_option_desc_uppercase): Now that this rule lives in cfg.mk,
+	we must search man/*.1, not "*.1".
+	Reported by Bernhard Voelker.
+
+2012-08-31  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	maint: fixup: don't try to distribute a now-removed file
+	* tests/Makefile.am (EXTRA_DIST): Drop 'check.mk', which has been
+	removed (being merged into 'tests/Makefile.am') by recent changes.
+
+2012-08-31  Erik Auerswald  <auerswal@unix-ag.uni-kl.de>
+
+	doc: escape double quotes in autotools-install --help
+	* scripts/autotools-install: Fix --help so that we actually print
+	the double quotes around "make check", in two places.
+
+2012-08-31  Jim Meyering  <meyering@redhat.com>
+
+	scripts: add autotools-install, for those stuck with outdated tools
+	* scripts/autotools-install: New script, so you can always build
+	from git-cloned sources, even when they require bleeding edge
+	m4, autoconf, automake, etc.
+
+2012-08-31  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	build: fix syntax-check rules broken by test-added .sh/pl suffixes
+	* cfg.mk: We exempt a few test files that would otherwise trigger
+	false-positive matches in syntax-check rules.  The recent change
+	that added a .sh or .pl suffix to each test script made it so
+	some of the exclusion regexps would no longer match.
+	Include the required \.sh suffix in each such regexp, too.
+
+2012-08-30  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	tests: get rid of the 'shell-or-perl' auxiliary script
+	It's now easier and faster to simply run the perl ans shell test
+	scripts directly with the appropriate interpreter and options.
+
+	* tests/shell-or-perl: Delete.
+	* tests/Makefile.am (EXTRA_DIST): Remove it.
+	(SH_LOG_COMPILER): Re-define to invoke the correct shell.
+	(PL_LOG_COMPILER): Re-define to invoke the correct perl
+	interpreter ...
+	(TESTSUITE_PERL_OPTIONS): ... with the correct options.
+	(XPL_LOG_COMPILER): Use those options instead of inlining
+	their expansion.
+	(LOG_COMPILER): Delete, no longer needed.
+
+2012-08-30  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	tests: add .sh and .pl suffixes to shell and perl tests, respectively
+	Not only this shrinks the size of the generated Makefile (from > 6300
+	lines to ~3000), but will allow further simplifications in future
+	changes.
+
+	* tests/Makefile.am (TEST_EXTENSIONS): Add '.sh' and '.pl'.
+	(PL_LOG_COMPILER, SH_LOG_COMPILER): New, still defined simply to
+	$(LOG_COMPILER) for the time being.
+	(TESTS, root_tests): Adjust as described.
+	* All tests: Rename as described.
+
+2012-08-30  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	tests: detect missing perl at configure runtime
+	* configure.ac (AM_CONDITIONAL): Set the conditional 'HAVE_PERL' to
+	true if the configure-time checks (as run by gl_PERL) have been able
+	to find a working perl.
+	* tests/no-perl: New script, report a diagnostic about "missing perl"
+	and exit with status 77.
+	* tests/Makefile.am (EXTRA_DIST): Distribute it.
+	(TESTSUITE_PERL): New, define to '$(PERL)' if a perl interpreter has
+	been found at configure time (i.e., if the 'HAVE_PERL' automake
+	conditional is true), and to '$(srcdir)/no-perl' otherwise.
+	(LOG_COMPILER): Use $(TESTSUITE_PERL) instead of $(PERL).
+	(XPL_LOG_COMPILER): Likewise.
+	* tests/shell-or-perl: Simplify: no need to actually check whether
+	perl is working.
+
+	tests: avoid use of '-T' in shebang line to enable perl taint mode
+	* tests/rm/fail-eperm: Rename ...
+	* tests/rm/fail-eperm.xpl: ... like this
+	* tests/Makefile.am (TESTS): Adjust.
+	(TEST_EXTENSIONS): New, list '.xpl'.
+	(XPL_TEST_LOGS): New, run a perl test in tainted mode.
+	* tests/shell-or-perl: Simplify this script: we no longer need to
+	parse the shebang line and adjust the flags in the perl invocation
+	accordingly.
+
+	build: require Automake >= 1.11.2
+	Now that we use AM_TESTS_ENVIRONMENT, we must require
+	Automake >= 1.11.2.
+	* configure.ac (AM_INIT_AUTOMAKE): Bump version requirement to 1.11.2.
+	* bootstrap.conf ($buildreq): Likewise.
+
+2012-08-30  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	tests: prefer AM_TESTS_ENVIRONMENT over TESTS_ENVIRONMENT
+	The latter should be reserved for user overrides.
+
+	* tests/Makefile.am (TESTS_ENVIRONMENT): Rename ...
+	(AM_TESTS_ENVIRONMENT): ... like this.
+
+2012-08-30  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	tests: merge tests/check.mk into tests/Makefile.am
+	The separation has become unnecessary after all the ancient
+	'tests/*/Makefile.am' makefiles have been merged into the
+	"more-top-level" one 'tests/Makefile.am'.
+
+	* tests/check.mk: Merge ...
+	* tests/Makefile.am: ... in here.  Some comments tweaking while
+	at it.
+
+2012-08-30  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	build: enable the 'subdir-objects' Automake option globally
+	This is not strictly required now (it will be once we make more
+	parts of the coreutils build system non-recursive), but enabling
+	it early helps to ensure that we don't unwittingly introduce any
+	incompatibility or subtle breakage later.
+
+	* configure.ac (AM_INIT_AUTOMAKE): Add  'subdir-objects'.
+
+2012-08-30  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	maint: update gitignore entries
+	* doc/.gitinore: Here, adding the '.dirstamp' file generated by
+	the Texinfo rules.
+
+2012-08-30  Jim Meyering  <meyering@redhat.com>
+
+	build: factor out a little more re list of *.texi files
+	We may well want to switch from checking all *.texi to
+	checking only version-controlled .texi files, so encapsulate
+	this concept in one place.
+
+	* doc/local.mk (doc_srcdir): Delete.  Use this instead:
+	(texi_files): Define.  All usages adjusted.
+
+2012-08-30  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	maint: adjust syntax check 'sc_option_desc_uppercase'
+	* cfg.mk (sc_option_desc_uppercase): Here, by grafting the 'man/'
+	prefix to the manpages obtained from $(NO_INSTALL_PROGS_DEFAULT)
+	and listed as prerequisites for this rule.
+
+	maint: adjust syntax check 'check-x-vs-1'
+	* cfg.mk (check-x-vs-1): Here, by stripping 'man/' prefix from
+	$(dist_man1_MANS) entries before comparing them with the list of
+	expected programs.
+
+2012-08-30  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	maint: move man-related syntax checks in cfg.mk
+	This is more natural, now that the top-level Makefile has access to
+	all the variables and rules once defined only in 'man/Makefile.am'
+
+	* man/local.mk (all_programs, sc_option_desc_uppercase,
+	sc_man_file_correlation check-x-vs-1, check-programs-vs-x): Move
+	from here ...
+	* cfg.mk: ... to here.  Adjust some comments in the process.
+
+2012-08-30  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	build: don't use recursive make to build the 'man' subdirectory
+	* Makefile.am: Include 'man/local.mk'.
+	(SUBDIRS): Remove 'man'.
+	* configure.ac ($MAN): Adjust so that each of its entries has a leading
+	'man/' component.
+	(AC_CONFIG_FILES): Remove 'man/Makefile'.
+	* man/Makefile.am: Rename ...
+	* man/local.mk: ... like this.  With further adjustments: each 'foo.1'
+	target renamed like 'man/foo.1', each '../src/foo.c' dependency as
+	'src/foo.c', and each '$(srcdir)' usage as '$(srcdir)/man'.  Also ...
+	(mandep): Adjust, removing the leading '../' component.
+	Several whitespace adjustments while at it.
+	(ASSORT): Remove, it's already defined in the top-level Makefile.am.
+	* cfg.mk (sc_option_desc_uppercase, sc_man_file_correlation): Remove
+	the associated recipes, they are now directly available from the
+	included 'man/local.mk'.  Actually, the other changes in this commit
+	have made these recipes instable and not completely correct, but that
+	will be fixed in later changes.
+
+2012-08-30  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	build: rework some recipes in man/Makefile.am, for future changes
+	This change is merely required to make future changes easier.
+
+	In particular, since we are going to merge the contents of
+	'man/Makefile.am' into the top-level Makefile, we need to avoid
+	conflicts with the rules and variables in 'dist-check.mk', and
+	to prepare for changes in the value of the '$*' variable as used
+	in the recipe of the '.x -> .1' suffix rule.
+
+	* man/Makefile.am (t, mapped_name): Delete, inlining their use ...
+	(.1.x): ... in the recipe of this suffix rule.  Other adjustments
+	to prepare to changes in the value of the '$*' automatic variable.
+	While at it, made more resilient about unlikely but possible failure.
+	Adjust and reorder few comments.
+
+2012-08-30  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	build: provide convenience target 'all_programs' also at top-level
+	This will be mostly useful in future changes.
+
+	* Makefile.am (all_programs): New, simply work by delegating to
+	the same-named target in the 'src/' subdirectory.
+	* cfg.mk (sc_option_desc_uppercase): Take advantage of it.
+	(sc_man_file_correlation): Likewise.
+
+2012-08-30  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	build: make a rule less dependent on exact source tree layout
+	This is mostly a preparatory change in view of future ones.
+
+	* man/Makefile.am (.x.1): Use '$(abs_top_builddir)/src' to access
+	the 'src' directory.
+
+2012-08-30  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	build: rely on VPATH capabilities in man/Makefile
+	* man/Makefile.am: In all the 'foo.1' targets, no need to depend
+	explicitly on '$(srcdir)/foo.x': the '.x.1' suffix rule takes care
+	of that automatically.
+
+	maint: typofix: s/it's/its/
+	* man/Makefile.am: Here.
+
+2012-08-30  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	build: rename common_dep -> mandep in man/Makefile
+	This is mostly a preparatory refactoring in view of future changes.
+
+	* man/Makefile.am (common_dep): Rename ...
+	(mandep): ... like this.
+	All usages adjusted.
+
+2012-08-30  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	build: fix a stray usage of uninitialized $(ME)
+	* man/Makefile.am (sc_option_desc_uppercase): Here.
+
+	build: add an explanatory comment
+	* man/Makefile.am (EXTRA_DIST): Describe portability issues of the
+	idiom we now use.  Reformat the definition a little while at it.
+
+	maint: simplify definition of $MAN in configure.ac
+	* configure.ac: Here, by making less use of 'sed' and 'tr' munging,
+	and relying on a smarter and simpler shell loop instead.
+
+	build: don't define $(SUFFIXES) explicitly
+	* man/Makefile.am (SUFFIXES): Remove definition: Automake is smart
+	enough to extract the list of suffixes from the '.x.1' suffix rule
+	automatically.
+
+	build: don't use recursive make to build the 'doc' subdirectory
+	* doc/Makefile.am: Rename ...
+	* doc/local.mk: ... like this.  With further adjustments ...
+	(info_TEXINFOS): Prepend 'doc/' to all '*.texi' files listed in
+	here.
+	(coreutils_TEXINFOS): Likewise, and rename ...
+	(doc_coreutils_TEXINFOS): ... like this.
+	(constants.texi): Rename ...
+	(doc/constants.texi): ... like this.  Adjust the recipe to avoid
+	spurious errors.
+	(MAINTAINERCLEANFILES): Adjust, and extend with '+=' rather than
+	setting it with '='.
+	(ME): Delete.
+	(find_upper_case_var): Use '$@', not '$(ME)', in error messages.
+	* Makefile.am: Include 'doc/local.mk'.
+	(SUBDIRS): Remove 'doc'.
+	* configure.ac (AC_CONFIG_FILES): Remove 'doc/Makefile'.
+
+	build: use 'check-local' to extend the 'check' target
+	* doc/Makefile.am (check-local): Here, by making this depend
+	on 'check-texinfo' ...
+	(check): ... rather than this.  While the old usage worked, it
+	did so for an implementation detail rather than a documented
+	behaviour, so relying on that was riskier a "unclean".
+
+2012-08-30  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	build: prefer '$(top_srcdir)/doc' over '$(srcdir)' in doc Makefile
+	This is just a preparatory refactoring that will become useful in
+	a future change (in which the doc/Makefile.am makefile will be merged
+	with the top-level one).
+
+	* doc/Makefile.am (doc_srcdir): New, define to '$(top_srcdir)/doc'.
+	Use it throughout instead of "bare" '$(srcdir)'.
+
+2012-08-30  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	build: add extra *.texi files to coreutils_TEXINFOS, not EXTRA_DIST
+	* doc/Makefile.am (coreutils_TEXINFO): List them here, instead of ...
+	(EXTRA_DIST): ... listing them here.  This ensures the rebuild rules
+	will be more faithful.
+	($(DVIS), $(INFO_DEPS)): No need to depend on $(EXTRA_DIST) now.
+
+	maint: slightly improve .gitignore
+	* .gitignore: Ignore '.deps' only when it's a directory.
+	Ignore '*.trs' only if they are in a subdirectory of the
+	'tests/' directory.
+
+	build: don't abuse Automake internals (with its 'check-am' rule)
+	* tests/check.mk (check-am): Remove; obtain the same effect by moving
+	its dependency '.built-programs' ...
+	(check_DATA): ... to this variable.
+
+2012-08-30  Jim Meyering  <meyering@redhat.com>
+
+	scripts: git commit message hook: prohibit use of "Signed-off-by:"
+	* scripts/git-hooks/commit-msg: Reject a commit log message that
+	contains "Signed-off-by:".
+
+2012-08-30  Stefano Lattarini  <stefano.lattarini@gmail.com>
+
+	tests: remove useless defn of REPLACE_GETCWD from TESTS_ENVIRONMENT
+	It's last use had been removed in commit v8.12-3-g3ed91fc of 2011-04-28,
+	"tests: remove useless test: misc/pwd-unreadable-parent".
+
+	* tests/check.mk (TESTS_ENVIRONMENT): Adjust.
+
+2012-08-30  Nick Alcock  <nick.alcock@oracle.com>
+
+	tests: fix misc/sort-exit-early to skip if root
+	* tests/misc/sort-exit-early: skip_if_root_ as this test
+	requires an unwritable input and an unreadable output.
+
+2012-08-29  Jim Meyering  <meyering@redhat.com>
+
+	tail,stat: improve support for ZFS
+	This change enables tail -f to use inotify and lets
+	stat -f --format=%T report the file system type name, "zfs".
+	* src/stat.c (human_fstype): Add a case: zfs, 0x2fc12fc1.
+	* NEWS (Improvements): Mention it.
+	* THANKS.in: Update.
+	Reported by Raimonds Miltins in http://bugs.gnu.org/12301.
+
+2012-08-26  Jim Meyering  <meyering@redhat.com>
+
+	build: update gnulib submodule to latest
+
+	maint: stop using @acronym{...} in texinfo sources
+	* doc/coreutils.texi: Remove all uses of @acronym{...},
+	per recommendation by Karl Berry.
+	* doc/perm.texi: Likewise.
+	* cfg.mk (local-checks-to-skip): Remove exemption, enabling
+	the @acronym{-prohibiting syntax-check rule.
+
+	tests: don't require @acronym{...} around POSIX
+	* doc/Makefile.am (check-texinfo): Remove POSIX-checking part.
+
+2012-08-26  Nguyễn Thái Ngọc Duy  <pclouds@gmail.com>
+
+	df: allow translators to reorder "1K-blocks" header
+	* src/df.c (get_header): Mark two "%s-%s" strings for translation
+	and give translators a hint what each is for.
+
+2012-08-24  Ondrej Oprala  <ooprala@redhat.com>
+
+	md5sum, sha*sum: add --tag to output a format indicating the algorithm
+	The format used is the BSD traditional format which looks like:
+	MD5 (/dev/null) = d41d8cd98f00b204e9800998ecf8427e
+
+	* NEWS: Add new feature info.
+	* doc/coreutils.texi (md5sum invocation): Add detailed information
+	about the new --tag option.
+	* src/md5sum.c: Add the new --tag option for BSD-style output.
+	(bsd_split_3): Add ESCAPED_FILENAME parameter.
+	(print_filename): New function refactored from main().
+	(filename_unescape): New function refactored from split_3().
+	* tests/misc/md5sum-bsd: Add tests for the new feature.
+
+2012-08-23  Rob Day  <robertkday@gmail.com>
+
+	rm: fix the new --dir (-d) option to work with -i
+	* src/remove.c (prompt): Hoist the computation of is_empty, since we'll
+	need it slightly earlier.
+	Before, this function would arrange to fail with EISDIR when processing
+	a directory without --recursive (-r).  Adjust the condition to exempt
+	an empty directory when --dir has been specified.
+	Improve comments.
+	* tests/rm/d-3: New file, to ensure that rm -d -i dir works.
+	* tests/Makefile.am (TESTS): Add it.
+	* NEWS (Bug fixes): Mention it.
+	* THANKS.in: Update.
+	Reported by Michael Price in http://bugs.gnu.org/12260
+
+2012-08-22  Bernhard Voelker  <mail@bernhard-voelker.de>
+
+	tests: correct print_ver_ arguments and add a rule to enforce this
+	We use print_ver_ to run "PROG --version" for each program under
+	test.  Some tests have been derived from others, while the
+	argument(s) to print_ver_ have not been adapted.
+	Add a new cfg.mk rule to prohibit this.
+
+	* cfg.mk (sc_prohibit_test_calls_print_ver_with_irrelevant_argument):
+	New rule, to prohibit a test script from calling print_env_ for a
+	program not actually used by that test.
+	* tests/chown/basic: s/\(print_ver_\) chgrp/\1 chown/
+	* tests/cp/acl: s/\(print_ver_\) mv/\1 cp/
+	* tests/cp/capability: s/\(print_ver_\) ls/\1 cp/
+	* tests/cp/cp-parents: s/(print_ver_\) mv/\1 cp/
+	* tests/du/bind-mount-dir-cycle: s/(print_ver_\) rm/\1 du/
+	* tests/misc/wc-parallel: s/(print_ver_\) md5sum/\1 wc/
+
+2012-08-21  Ondrej Oprala  <ooprala@redhat.com>
+
+	du: handle bind-mounted directory cycles gracefully
+	Before this change, a directory cycle induced by a bind mount
+	would be treated as a fatal error, i.e., probable disk corruption.
+	However, such cycles are relatively common, and can be detected
+	efficiently, so now du emits a descriptive warning and arranges
+	to exit nonzero.
+
+	* NEWS (Bug fixes): Mention it.
+	* src/du.c: Include "mountlist.h".
+	(di_mnt): New global set.
+	(di_files): Rename global from di_set, now that there are two.
+	(fill_mount_table): New function.
+	(hash_ins): Add DI_SET parameter.
+	(process_file): Look up each dir dev/ino pair in the new set.
+	(main): Allocate, initialize, and free the new set.
+	* tests/du/bind-mount-dir-cycle: Add a test for the fix.
+	* tests/Makefile.am (TESTS): Add it.
+	* THANKS.in: Update.
+	This implements the proposal in http://bugs.gnu.org/11844.
+	Originally reported in http://bugs.debian.org/563254 by Alan Jenkins
+	and more recently as http://bugzilla.redhat.com/836557
+
+	Improved by: Jim Meyering
+
 2012-08-20  Jim Meyering  <meyering@redhat.com>
+
+	maint: post-release administrivia
+	* NEWS: Add header line for next release.
+	* .prev-version: Record previous version.
+	* cfg.mk (old_NEWS_hash): Auto-update.
 
 	version 8.19
 	* NEWS: Record release date.
@@ -366,7 +2121,7 @@
 	* THANKS.in: Add reporter.
 	Reported by Michael Stummvoll
 
-2012-07-13  Pádraig Brady  <P@draigBrady.com>
+2012-07-12  Pádraig Brady  <P@draigBrady.com>
 
 	doc: mention the improved sort memory allocation
 	* NEWS: Mention the improvement.
@@ -1022,7 +2777,7 @@
 	Originally reported by Brynnen Owen as http://bugs.gnu.org/7320.
 	Raised again by Marc Mengel in http://bugzilla.redhat.com/816708.
 
-2012-04-23  Stefano Lattarini  <stefano.lattarini@gmail.com>
+2012-04-22  Stefano Lattarini  <stefano.lattarini@gmail.com>
 
 	maint: sync up required autoconf version in bootstrap.conf
 	* bootstrap.conf ($buildreq): Require autoconf 2.64, not 2.62.  This is
@@ -1589,7 +3344,7 @@
 	* test/misc/basename: Add new options test cases.
 	* NEWS (New features): Mention it.
 
-2012-03-07  Pádraig Brady  <P@draigBrady.com>
+2012-03-06  Pádraig Brady  <P@draigBrady.com>
 
 	maint: refactor copy to use is_nul()
 	* src/dd.c: Move is_nul() from here to ...
@@ -1895,6 +3650,8 @@
 	maint: remove some redundant automake _SOURCES
 	* src/Makefile.am: Remove auto generated entries.
 
+2012-01-25  Pádraig Brady  <P@draigBrady.com>
+
 	maint: cleanup an extraneous version output in a test
 	* test/misc/stdbuf: Fixup the minor copy & paste issue
 	introduced in commit ff7f0ff8
@@ -1939,7 +3696,7 @@
 	* tests/rm/ir-1: Likewise.
 	* tests/rm/r-1: Likewise.
 
-2012-01-23  Paul Eggert  <eggert@cs.ucla.edu>
+2012-01-22  Paul Eggert  <eggert@cs.ucla.edu>
 
 	maint: quote 'like this' or "like this", not `like this'
 	* doc/coreutils.texi (Formatting the file names):
@@ -2562,7 +4319,7 @@
 	* tests/mkdir/writable-under-readonly: Likewise.
 	* tests/rm/read-only: Likewise.
 
-2011-11-30  Eric Blake  <eblake@redhat.com>
+2011-11-29  Eric Blake  <eblake@redhat.com>
 
 	build: simplify warnings based on last gnulib update
 	We no longer need to exclude this warning.
@@ -2570,7 +4327,7 @@
 	* configure.ac (WARN_CFLAGS): Gnulib dropped
 	-Wunsuffixed-float-constants, as non-portable.
 
-2011-11-30  Eric Blake  <eblake@redhat.com>
+2011-11-29  Eric Blake  <eblake@redhat.com>
 
 	build: update gnulib for syntax-check improvement
 	Commit 5b3e538 proved useful enough to migrate to gnulib after
@@ -4130,6 +5887,8 @@
 	allow premature termination of cleanup.  Also, this ports better
 	to platforms like NonStop, which don't ahve SA_RESETHAND.
 
+2011-07-15  Paul Eggert  <eggert@cs.ucla.edu>
+
 	* src/dd.c: Remove obsolete comments re POSIX.
 
 2011-07-15  Pádraig Brady  <P@draigBrady.com>
@@ -4695,7 +6454,7 @@
 	* tests/split/r-chunk: Rename from tests/misc/split-rchunk.
 	* tests/Makefile.am (TESTS): Reflect renaming.
 
-2011-05-28  Pádraig Brady  <P@draigBrady.com>
+2011-05-27  Pádraig Brady  <P@draigBrady.com>
 
 	chown,chgrp: output the original ownership in -v messages
 	* src/chown-core.c (describe_change): Output the
@@ -4703,8 +6462,6 @@
 	(user_group_str): Handle the case when neither
 	owner or group are passed.
 	* NEWS: Mention the change in behavior.
-
-2011-05-27  Pádraig Brady  <P@draigBrady.com>
 
 	chown,chgrp: output the correct ownership in -v messages
 	* src/chown_core.c (describe_change): Accept the ownership of
@@ -4789,12 +6546,14 @@
 	the main split process to exit with a non zero status (141).
 	* test/split/filter: Add a test for this case.
 
+2011-05-25  Pádraig Brady  <P@draigBrady.com>
+
 	split: fix an edge case where -n l/... creates an extra file
 	* src/split.c (lines_bytes_chunk): Handle the edge case
 	where the file is truncated as we read.
 	* tests/misc/split-lchunk: Cleanup; no functional change.
 
-2011-05-26  Bernhard Voelker  <mail@bernhard-voelker.de>
+2011-05-25  Bernhard Voelker  <mail@bernhard-voelker.de>
 
 	chmod: output the original mode in verbose mode
 	* src/chmod.c (describe_change): Pass in the original mode,
@@ -5384,6 +7143,8 @@
 	* NEWS: Adjust to match commit 1c3654cb, 2011-04-02,
 	"copy: require fiemap sync also for 2.6.38 kernels"
 
+2011-04-06  Pádraig Brady  <P@draigBrady.com>
+
 	copy: handle mergeable extents across fiemap scans
 	* extent-scan.h (extent_scan_free): Init the pointer to NULL,
 	and reset the count to 0, so that we can realloc the buffer.
@@ -5628,7 +7389,7 @@
 	we remove their now-redundant name from THANKS.in.
 	* THANKS.in: Remove a now-duplicate name.
 
-2011-03-20  Pádraig Brady  <P@draigBrady.com>
+2011-03-19  Pádraig Brady  <P@draigBrady.com>
 
 	tests: fix the sparse-fiemap test
 	* tests/filefrag-extent-compare: Merge adjacent extents in
@@ -5701,7 +7462,7 @@
 	* .x-sc_unmarked_diagnostics: Likewise.
 	* .x-sc_useless_cpp_parens: Likewise.
 
-2011-03-14  Pádraig Brady  <P@draigBrady.com>
+2011-03-13  Pádraig Brady  <P@draigBrady.com>
 
 	maint: use wcswidth from gnulib
 	* gl/lib/mbsalign.c (rpl_wcswidth): Remove this in favor
@@ -5825,7 +7586,7 @@
 	since we don't test anything without it.  In the loop,
 	don't use skip_test_ as it exits the test completely.
 
-2011-02-20  Gilles Espinasse  <g.esp@free.fr>
+2011-02-19  Gilles Espinasse  <g.esp@free.fr>
 
 	maint: replace spaces with tab in tests/Makefile.am
 	* tests/Makefile.am: Replace spaces with tabs for consistency
@@ -6013,7 +7774,7 @@
 
 	build: update gnulib submodule to latest
 
-2011-02-01  Pádraig Brady  <P@draigBrady.com>
+2011-01-31  Pádraig Brady  <P@draigBrady.com>
 
 	cp: fix the buffer size used when writing zeros
 	* src/copy.c (write_zeros): This bug caused 4 or 8 bytes to
@@ -6257,7 +8018,7 @@
 	we will try to do FIEMAP-copy if the underlying file system
 	supports it, and fall back to a normal copy if it fails.
 
-2011-01-30  Pádraig Brady  <P@draigBrady.com>
+2011-01-29  Pádraig Brady  <P@draigBrady.com>
 
 	doc: add alternatives for field processing not supported by cut
 	* doc/coreutils.texi (cut invocation): Remove the tr -s '[:blank:]'
@@ -6266,7 +8027,7 @@
 	Also document a `join` hack, to achieve the same thing.  Note the
 	join options are ordered so as to be compatible with other systems.
 
-2011-01-30  Pádraig Brady  <P@draigBrady.com>
+2011-01-29  Pádraig Brady  <P@draigBrady.com>
 
 	join: don't report disorder against an empty file
 	This allows one to use join as a field extractor like:
@@ -6279,14 +8040,14 @@
 	* doc/coreutils.texi (join invocation): Document the change.
 	* NEWS: Likewise.
 
-2011-01-30  Pádraig Brady  <P@draigBrady.com>
+2011-01-29  Pádraig Brady  <P@draigBrady.com>
 
 	join: ensure --header skips the order check with empty files
 	* src/join.c: Skip the header even if one of the files is empty.
 	* tests/misc/join: Add a test case.
 	* NEWS: Mention the fix
 
-2011-01-30  Pádraig Brady  <P@draigBrady.com>
+2011-01-29  Pádraig Brady  <P@draigBrady.com>
 
 	join: add -o 'auto' to output a constant number of fields per line
 	Lines with a different number of fields than the first line,
@@ -6961,7 +8722,7 @@
 	* NEWS (Bug reports): Mention this.
 	Reported by DJ Lucas in http://debbugs.gnu.org/7489.
 
-2010-12-09  Pádraig Brady  <P@draigBrady.com>
+2010-12-08  Pádraig Brady  <P@draigBrady.com>
 
 	split: fix a case where --elide-empty causes invalid chunking
 	When -n l/N is used and long lines are present that both
@@ -7756,6 +9517,8 @@
 
 	build: update gnulib to latest, for memmem/strstr fix
 
+2010-10-05  Jim Meyering  <meyering@redhat.com>
+
 	maint: describe coreutils' policy on copyright year number ranges
 	* README: Mention coreutils' long-standing policy on use of M-N
 	ranges in copyright year lists.  Requested by Richard Stallman.
@@ -7942,6 +9705,8 @@
 
 	build: update gnulib submodule to latest
 
+2010-09-20  Paul Eggert  <eggert@cs.ucla.edu>
+
 	sort: destroy spin locks portably
 	* src/sort.c (sortlines, sort): Use pthread_spin_destroy when a
 	spin lock is no longer used.  This isn't needed on GNU/Linux or
@@ -8004,7 +9769,7 @@
 	* bootstrap.conf (gnulib_modules): Add fdutimensat.
 	* src/touch.c (touch): Use fdutimensat instead of gl_futimens.
 
-2010-09-14  Dmitry V. Levin  <ldv@altlinux.org>
+2010-09-13  Dmitry V. Levin  <ldv@altlinux.org>
 
 	dircolors: add rxvt-unicode-256color terminal type
 	rxvt-unicode introduced new terminal type:
@@ -8120,7 +9885,7 @@
 	* NEWS: Mention the new feature
 	* THANKS: Add the author
 
-2010-08-27  Eric Blake  <eblake@redhat.com>
+2010-08-26  Eric Blake  <eblake@redhat.com>
 
 	maint: update to latest gnulib
 	* gnulib: Update to latest, to avoid warnings with latest autoconf.git.
@@ -8128,7 +9893,7 @@
 	maint: avoid a hung 'make syntax-check' in VPATH build
 	* cfg.mk (sc_system_h_headers): Look for files in correct location.
 
-2010-08-26  Pádraig Brady  <P@draigBrady.com>
+2010-08-25  Pádraig Brady  <P@draigBrady.com>
 
 	df: always print the device name for bind mounted files
 	* src/df (show_point): Remove the optimization for comparing
@@ -8167,7 +9932,7 @@
 	reference the SHA-2 based alternatives.
 	Reported by Simon Josefsson
 
-2010-08-14  Paul Eggert  <eggert@cs.ucla.edu>
+2010-08-13  Paul Eggert  <eggert@cs.ucla.edu>
 
 	* tests/misc/sort (use-nl): Fix comment to match the test case.
 
@@ -8451,6 +10216,8 @@
 	checking for file descriptor exhaustion.  Also try plain -R, since
 	that implementation may change in the future too.
 
+2010-07-23  Paul R. Eggert  <eggert@cs.ucla.edu>
+
 	randread: run 2x faster on 64-bit hosts, don't assume no padding bits
 	* gl/lib/rand-isaac.c: 	Remove the I/O; this belongs elsewhere.
 	Add support for ISAAC64.  Port to hosts with padding bits.
@@ -8568,7 +10335,7 @@
 	(main): If -R is given, call random_md5_state_init rather than
 	going single-threaded.
 
-2010-07-17  Paul R. Eggert  <eggert@cs.ucla.edu>
+2010-07-16  Paul R. Eggert  <eggert@cs.ucla.edu>
 
 	randread: don't require -lrt
 	Programs like 'sort' were linking to -lrt in order to get
@@ -8583,8 +10350,6 @@
 	and not gethrxtime.
 	* src/Makefile.am (mktemp_LDADD, shred_LDADD, shuf_LDADD, sort_LDADD):
 	(tac_LDADD): Omit $(LIB_GETHRXTIME); no longer needed.
-
-2010-07-16  Paul R. Eggert  <eggert@cs.ucla.edu>
 
 	sort: add a test case for the sort -u bug
 	* tests/Makefile.am (TESTS): Add misc/sort-unique.
@@ -8829,7 +10594,7 @@
 	* tests/tail-2/wait: Likewise.
 	* test/dd/misc: Comment that delay is needed to trigger failure.
 
-2010-07-05  Paul Eggert  <eggert@cs.ucla.edu>
+2010-07-04  Paul Eggert  <eggert@cs.ucla.edu>
 
 	doc: Add advice about ChangeLogs and synchronizing submodules
 	* README-hacking: Update accordingly.
@@ -9240,7 +11005,7 @@
 	* tests/Makefile.am (TESTS): Add du/max-depth.
 	* tests/du/max-depth: New file.
 
-2010-05-19  Pádraig Brady  <P@draigBrady.com>
+2010-05-18  Pádraig Brady  <P@draigBrady.com>
 
 	tests: fix sort-debug-keys when fr_FR.utf8 not available
 	* tests/misc/sort-debug-keys: Correctly check for the absence
@@ -9426,7 +11191,7 @@
 	* src/operand2sig.c: Likewise.
 	* src/kill.c: Likewise.
 
-2010-05-02  Paul Eggert  <eggert@cs.ucla.edu>
+2010-05-01  Paul Eggert  <eggert@cs.ucla.edu>
 
 	sort: use long doubles only when effective
 	* src/sort.c (general_numcompare): Don't use long double if strtold
@@ -9563,7 +11328,7 @@
 	* NEWS: Mention the fix.
 	Reported by Santiago Rodríguez
 
-2010-04-17  Pádraig Brady  <P@draigBrady.com>
+2010-04-16  Pádraig Brady  <P@draigBrady.com>
 
 	cp: preserve "capabilities" when also preserving file ownership
 	* src/copy.c (copy_reg): Copy xattrs _after_ setting file ownership
@@ -9899,7 +11664,7 @@
 	(merge): Likewise.
 	* src/uptime.c (usage): Likewise.
 
-2010-03-17  Pádraig Brady  <P@draigBrady.com>
+2010-03-16  Pádraig Brady  <P@draigBrady.com>
 
 	timeout: add the --kill-after option
 	Based on a report from Kim Hansen who wanted to
@@ -9948,6 +11713,8 @@
 
 	maint: drop *.lzma suport
 	* .gitignore: Remove *.lzma lines.
+
+2010-03-10  Eric Blake  <eblake@redhat.com>
 
 	maint: ignore *.xz files
 	* .gitignore: Ignore *.xz created by 'make dist', now that we
@@ -10071,7 +11838,7 @@
 	* src/Makefile.am (sc_tight_scope): Don't annotate with "GEN".
 	(sc_check-AUTHORS): Likewise.
 
-2010-02-18  Moritz Orbach  <ml-coreutils@apfelboymchen.homeunix.net>
+2010-02-17  Moritz Orbach  <ml-coreutils@apfelboymchen.homeunix.net>
 
 	ls: fix a regression by honoring NORMAL attributes again
 	Output the NORMAL attribute before non file name text.
@@ -10117,6 +11884,8 @@
 	* tests/tail-2/inotify-hash-abuse2: Explicitly kill the process
 	by using cleanup_() rather than using a timeout which may trigger
 	a failure on very slow systems (< 20 iterations of the loop per second).
+
+2010-02-15  Pádraig Brady  <P@draigBrady.com>
 
 	doc: fix inconsistent capitalization in --help output
 	* src/base64.c (usage): Don't capitalize the first character
@@ -10321,7 +12090,7 @@
 	from $(VC_LIST) starts with "$(srcdir)/".  Fix that.
 	* gnulib: Update to latest, to pull in a required maint.mk change.
 
-2010-01-24  Pádraig Brady  <P@draigBrady.com>
+2010-01-23  Pádraig Brady  <P@draigBrady.com>
 
 	tests: make cp-mv-enotsup-xattr independent of the host file system
 	* tests/cp-mv-enotsup-xattr: Create a file system from which to copy
@@ -10332,8 +12101,6 @@
 	doc: add nproc to the texinfo overview menu
 	* doc/coreutils.texi: Add nproc to the System context
 	command list in the overview menu.
-
-2010-01-23  Pádraig Brady  <P@draigBrady.com>
 
 	maint: ensure test independence from config macro format
 	* tests/cp/acl: Support USE_ACL not being defined.
@@ -11787,7 +13554,7 @@
 	(main): Use it, rather than testing only errno == EPERM.
 	* NEWS (Bug fixes): Mention it.
 
-2009-10-26  Pádraig Brady  <P@draigBrady.com>
+2009-10-25  Pádraig Brady  <P@draigBrady.com>
 
 	timeout: don't orphan monitored programs if they ignore specified signals
 	* src/timeout.c (install_signal_handlers): Handle any user
@@ -11797,7 +13564,7 @@
 	timeout -sUSR1 1s dd if=/dev/zero of=/dev/null
 	* NEWS: Mention the fix.
 
-2009-10-24  Eric Blake  <ebb9@byu.net>
+2009-10-23  Eric Blake  <ebb9@byu.net>
 
 	tests: test recent status changes
 	* tests/misc/nice: Enhance test.
@@ -11843,8 +13610,6 @@
 
 	tests: accommodate BSD getopt
 	* tests/misc/invalid-opt (err_subst): Support alternate spelling.
-
-2009-10-23  Eric Blake  <ebb9@byu.net>
 
 	build: prohibit improper use of stat and lstat
 	* cfg.mk (sc_prohibit_stat_macro_address): New rule.
@@ -13059,6 +14824,8 @@
 	* tests/Makefile.am: Reference the new test.
 	* NEWS: Mention the new feature.
 
+2009-08-28  Pádraig Brady  <P@draigBrady.com>
+
 	stdbuf: fix a small typo in --help output
 	* src/stdbuf.c (usage): s/then/the/
 
@@ -13494,7 +15261,7 @@
 	Prompted by a report from Joel E. Denny.
 	Also, do not invoke localtime for each line we process.
 
-2009-07-29  Pádraig Brady  <P@draigBrady.com>
+2009-07-28  Pádraig Brady  <P@draigBrady.com>
 
 	doc: fix the generated HTML index
 	* doc/coreutils.texi: Move the "SELinux context" section
@@ -13736,6 +15503,8 @@
 	* README-hacking: Fix a typo.
 	Don't make building from a git-cloned tree sound so hard.
 
+2009-06-19  Jim Meyering  <meyering@redhat.com>
+
 	build: update from gnulib (hash module updates; maint.mk tweak)
 	* gnulib: Update submodule to latest.
 
@@ -13938,7 +15707,7 @@
 	(my-distcheck): Use configure with --enable-gcc-warnings and remove
 	use of $(warn_cflags).
 
-2009-05-30  Eric Blake  <ebb9@byu.net>
+2009-05-29  Eric Blake  <ebb9@byu.net>
 
 	head, tail: make --help less ambiguous
 	* src/head.c (usage): Use -n K, not -n N, to avoid confusion.
@@ -14147,7 +15916,7 @@
 	Otherwise, running some in parallel would cause failures, e.g.,
 	for rm/ext3-perf and tail-2/assert-2.
 
-2009-05-01  Eric Blake  <ebb9@byu.net>
+2009-04-30  Eric Blake  <ebb9@byu.net>
 
 	stdopen: remove unused code
 	* m4/stdopen.m4: Delete now-unused file.
@@ -15072,7 +16841,7 @@
 	policy: use git to help avoid trailing white space
 	* HACKING (Avoid trailing white space): Describe how git can help.
 
-2009-03-04  Andreas Schwab  <schwab@linux-m68k.org>
+2009-03-03  Andreas Schwab  <schwab@linux-m68k.org>
 
 	Update Andreas Schwab's email address
 	* THANKS: Update Andreas Schwab's email address.
@@ -15401,7 +17170,7 @@
 	from Brian M. Carlson in http://bugs.debian.org/514675
 	* man/id.x: Use a better one-liner, based on the one at top of id.c.
 
-2009-02-15  Pádraig Brady  <P@draigBrady.com>
+2009-02-14  Pádraig Brady  <P@draigBrady.com>
 
 	seq: Fix equal width calculation when '.' added to last number
 	Issue reported by Samuel Hapák.
@@ -15692,7 +17461,7 @@
 	"General help..." links, like the new function does.
 	Reported by Bob Proulx.
 
-2009-01-23  Pádraig Brady  <P@draigBrady.com>
+2009-01-22  Pádraig Brady  <P@draigBrady.com>
 
 	doc: shred: Correct docs on default number of overwrites.
 	* NEWS: Mention the change to the default number of passes.
@@ -15703,8 +17472,6 @@
 	of the --iterations option to have the correct default number,
 	while still conveying that there are 25 internal patterns
 	that may be useful.
-
-2009-01-22  Pádraig Brady  <P@draigBrady.com>
 
 	shred: change default number of overwrites from 25 to 3
 	* src/shred.c: The concensus is that a default of 3
@@ -16954,7 +18721,7 @@
 	* src/remove.c (compare_ino, dirent_count)
 	[!HAVE_STRUCT_DIRENT_D_TYPE]: Mask declaration when unused.
 
-2008-09-27  Jim Meyering  <meyering@redhat.com>
+2008-09-26  Jim Meyering  <meyering@redhat.com>
 
 	rm -r: avoid O(n^2) performance for a directory with very many entries
 	This enhancement works around a problem that is specific to at least
@@ -16968,7 +18735,7 @@
 	* tests/rm/ext3-perf: New file.  Test for the performance fix.
 	* NEWS: mention the new feature
 
-2008-09-27  Jim Meyering  <meyering@redhat.com>
+2008-09-26  Jim Meyering  <meyering@redhat.com>
 
 	remove.c: don't use xmalloc; don't let obstack call exit on failure
 	(obstack_chunk_alloc, obstack_chunk_free): Don't define.
@@ -16986,7 +18753,7 @@
 
 	step1
 
-2008-09-27  Jim Meyering  <meyering@redhat.com>
+2008-09-26  Jim Meyering  <meyering@redhat.com>
 
 	* maint.mk (my-distcheck): remove duplicate c99-related test code
 
@@ -17798,6 +19565,8 @@
 	mkfifo: correct misplaced -Z description in --help output
 	* src/mkfifo.c (usage): Put it *after* the "Mandatory arguments..." line.
 
+2008-06-27  Jim Meyering  <meyering@redhat.com>
+
 	uniq: remove redundant test
 	* src/uniq.c (find_field): Remove redundant test in outer loop-
 	termination expression. Also, add a "const" attribute.
@@ -17976,7 +19745,7 @@
 	* src/od.c (charname): Likewise.
 	* maint.mk (sc_redundant_const): Add rule to detect this.
 
-2008-06-17  Bo Borgerson  <gigabo@gmail.com>
+2008-06-16  Bo Borgerson  <gigabo@gmail.com>
 
 	join: improve memory management
 	* src/join.c (struct seq): Use a (struct line **) for `lines' rather than
@@ -19212,14 +20981,12 @@
 	option items.
 	(main): Remove unused 'q' from short options.
 
-2008-05-06  Jim Meyering  <meyering@redhat.com>
+2008-05-05  Jim Meyering  <meyering@redhat.com>
 
 	help2man: fix perl 5.10 problem properly
 	* man/help2man: Do pull LC_ALL via "use POSIX".
 	Instead, limit the importing of gettext-related symbols
 	to just those two we'll use: gettext and textdomain.
-
-2008-05-05  Jim Meyering  <meyering@redhat.com>
 
 	help2man: avoid failure with Debian unstable's Perl 5.10.0
 	Avoid failure that produced this diagnostic:
@@ -19442,6 +21209,8 @@
 	tests: skip (don't fail) rm/one-file-system when mount --bind fails
 	* tests/rm/one-file-system: Reported by Allen Hewes.
 
+2008-04-20  Jim Meyering  <meyering@redhat.com>
+
 	tests: convert umask-check to a function
 	* tests/test-lib.sh (working_umask_or_skip_): New function, from...
 	* tests/umask-check: ...here.  Remove file.
@@ -19461,7 +21230,7 @@
 	* maint.mk (sc_root_tests): Adapt rule to new syntax used
 	in tests/Makefile.am.
 
-2008-04-21  Jim Meyering  <meyering@redhat.com>
+2008-04-20  Jim Meyering  <meyering@redhat.com>
 
 	Revamp test-related Makefiles.
 	One side-effect of this change is that "make check" now works even if
@@ -19532,7 +21301,7 @@
 
 	* src/dircolors.hin: Add .flv.  Move .svgz to "image formats".
 
-2008-04-19  Jim Meyering  <meyering@redhat.com>
+2008-04-18  Jim Meyering  <meyering@redhat.com>
 
 	md5sum -c: ignore a line with a NUL byte among checksum hex digits
 	* src/md5sum.c (hex_digits): Require that all "digest_hex_bytes"
@@ -19759,10 +21528,10 @@
 	"Operation not supported".
 	* tests/mkdir/selinux: Accept both strings.  Factor out duplication.
 
+2008-03-28  Jim Meyering  <meyering@redhat.com>
+
 	Work around a recent glibc/getopt.c diagnostic change.
 	* tests/misc/factor: Map new "-- '1'" to expected "-- 1".
-
-2008-03-28  Jim Meyering  <meyering@redhat.com>
 
 	mknod, mkfifo: don't segfault when diagnosing invalid SELinux context
 	Identical to the bug fixed by 72d052896a9092b811961a8f3e6ca5d151a59be5.
@@ -19855,7 +21624,7 @@
 	* tests/mkdir/selinux: New file: test for today's fix.
 	* tests/mkdir/Makefile.am (TESTS): Add selinux.
 
-2008-03-26  Daniel Dunbar  <daniel@zuster.org>
+2008-03-25  Daniel Dunbar  <daniel@zuster.org>
 
 	mkdir -Z x d: don't segfault when diagnosing invalid context "x" (tiny change)
 	* src/mkdir.c (main): Use "scontext", not NULL optarg in diagnostic.
@@ -19938,9 +21707,9 @@
 
 	* src/seq.c (long_double_format): Add a comment.
 
-	* GNUmakefile: Update from gnulib.
-
 2008-03-20  Jim Meyering  <meyering@redhat.com>
+
+	* GNUmakefile: Update from gnulib.
 
 	Remove today's automake kludge, altogether.  Fix properly.
 	* man/Makefile.am: Use dist_man1_MANS instead of dist_man_MANS.
@@ -20520,11 +22289,9 @@
 
 	tests/touch/not-owner: Source test-lib.sh before using skip_test_.
 
-2008-02-12  Jim Meyering  <meyering@redhat.com>
+2008-02-11  Jim Meyering  <meyering@redhat.com>
 
 	* tests/Makefile.am (EXTRA_DIST): Remove strace.
-
-2008-02-11  Jim Meyering  <meyering@redhat.com>
 
 	tests: Migrate sourced strace file into a function, require_strace_.
 	* tests/strace: Remove file.

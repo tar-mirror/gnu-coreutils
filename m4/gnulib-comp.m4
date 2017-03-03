@@ -77,6 +77,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module bitrotate-tests:
   # Code from module btowc:
   # Code from module btowc-tests:
+  # Code from module buffer-lcm:
   # Code from module c-ctype:
   # Code from module c-ctype-tests:
   # Code from module c-strcase:
@@ -174,6 +175,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module fcntl-safer-tests:
   # Code from module fcntl-tests:
   # Code from module fd-hook:
+  # Code from module fd-reopen:
   # Code from module fd-safer-flag:
   # Code from module fdatasync:
   # Code from module fdatasync-tests:
@@ -452,6 +454,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module nl_langinfo:
   # Code from module nl_langinfo-tests:
   # Code from module nocrash:
+  # Code from module non-recursive-gnulib-prefix-hack:
   # Code from module nproc:
   # Code from module obstack:
   # Code from module open:
@@ -644,6 +647,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module strnlen:
   # Code from module strnlen-tests:
   # Code from module strnlen1:
+  # Code from module strnumcmp:
   # Code from module strpbrk:
   # Code from module strsignal:
   # Code from module strsignal-tests:
@@ -782,6 +786,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module xalloc-die-tests:
   # Code from module xalloc-oversized:
   # Code from module xfreopen:
+  # Code from module xfts:
   # Code from module xgetcwd:
   # Code from module xgetgroups:
   # Code from module xgethostname:
@@ -834,7 +839,6 @@ AC_DEFUN([gl_INIT],
   AC_LIBOBJ([openat-proc])
   gl_BACKUPFILE
   gl_FUNC_BASE64
-  AC_REQUIRE([AC_C_INLINE])
   AC_REQUIRE([AC_C_INLINE])
   gl_FUNC_BTOWC
   if test $HAVE_BTOWC = 0 || test $REPLACE_BTOWC = 1; then
@@ -959,14 +963,12 @@ AC_DEFUN([gl_INIT],
   if test $HAVE_FCHMODAT = 0; then
     AC_LIBOBJ([fchmodat])
   fi
-  AC_REQUIRE([AC_C_INLINE]) dnl because 'inline' is used in lib/openat.h
   gl_MODULE_INDICATOR([fchmodat]) dnl for lib/openat.h
   gl_SYS_STAT_MODULE_INDICATOR([fchmodat])
   gl_FUNC_FCHOWNAT
   if test $HAVE_FCHOWNAT = 0 || test $REPLACE_FCHOWNAT = 1; then
     AC_LIBOBJ([fchownat])
   fi
-  AC_REQUIRE([AC_C_INLINE]) dnl because 'inline' is used in lib/openat.h
   gl_MODULE_INDICATOR([fchownat]) dnl for lib/openat.h
   gl_UNISTD_MODULE_INDICATOR([fchownat])
   gl_FUNC_FCLOSE
@@ -1000,7 +1002,6 @@ AC_DEFUN([gl_INIT],
   fi
   gl_DIRENT_MODULE_INDICATOR([fdopendir])
   gl_MODULE_INDICATOR([fdopendir])
-  AC_REQUIRE([AC_C_INLINE]) dnl because 'inline' is used in lib/utimens.h
   gl_MODULE_INDICATOR([fdutimensat])
   gl_FUNC_FFLUSH
   if test $REPLACE_FFLUSH = 1; then
@@ -1106,7 +1107,6 @@ AC_DEFUN([gl_INIT],
   if test $HAVE_FSTATAT = 0 || test $REPLACE_FSTATAT = 1; then
     AC_LIBOBJ([fstatat])
   fi
-  AC_REQUIRE([AC_C_INLINE]) dnl because 'inline' is used in lib/openat.h
   gl_MODULE_INDICATOR([fstatat]) dnl for lib/openat.h
   gl_SYS_STAT_MODULE_INDICATOR([fstatat])
   gl_FSUSAGE
@@ -1293,7 +1293,6 @@ AC_DEFUN([gl_INIT],
     AC_LIBOBJ([iconv_close])
   fi
   gl_IDCACHE
-  AC_REQUIRE([AC_C_INLINE])
   gl_FUNC_INET_NTOP
   if test $HAVE_INET_NTOP = 0 || test $REPLACE_INET_NTOP = 1; then
     AC_LIBOBJ([inet_ntop])
@@ -1523,6 +1522,11 @@ AC_DEFUN([gl_INIT],
     AC_LIBOBJ([nl_langinfo])
   fi
   gl_LANGINFO_MODULE_INDICATOR([nl_langinfo])
+  dnl Run our hack near the end, just before config.status creation.
+  dnl It must happen late, i.e., after gl_LIBOBJS has been finalized.
+  AC_CONFIG_COMMANDS_PRE([
+    gl_NON_RECURSIVE_GNULIB_PREFIX_HACK([lib])
+    ])
   gl_NPROC
   AC_FUNC_OBSTACK
   dnl Note: AC_FUNC_OBSTACK does AC_LIBSOURCES([obstack.h, obstack.c]).
@@ -1700,7 +1704,6 @@ AC_DEFUN([gl_INIT],
     AC_LIBOBJ([rmdir])
   fi
   gl_UNISTD_MODULE_INDICATOR([rmdir])
-  gl_ROOT_DEV_INO
   gl_FUNC_RPMATCH
   if test $HAVE_RPMATCH = 0; then
     AC_LIBOBJ([rpmatch])
@@ -2109,12 +2112,10 @@ changequote([, ])dnl
   fi
   gl_SYS_SOCKET_MODULE_INDICATOR([connect])
   AC_CHECK_FUNCS_ONCE([getegid])
-  AC_REQUIRE([AC_C_INLINE])
   gl_FUNC_UNGETC_WORKS
   gl_FUNC_UNGETC_WORKS
   gl_FUNC_UNGETC_WORKS
   gl_FUNC_UNGETC_WORKS
-  AC_REQUIRE([AC_C_INLINE])
   AC_C_BIGENDIAN
   gl_FUNC_INET_PTON
   if test $HAVE_INET_PTON = 0 || test $REPLACE_INET_NTOP = 1; then
@@ -2260,8 +2261,6 @@ changequote([, ])dnl
     AC_LIBOBJ([usleep])
   fi
   gl_UNISTD_MODULE_INDICATOR([usleep])
-  AC_REQUIRE([AC_C_INLINE])
-  AC_REQUIRE([AC_C_INLINE])
   AC_REQUIRE([gl_LONG_DOUBLE_VS_DOUBLE])
   abs_aux_dir=`cd "$ac_aux_dir"; pwd`
   AC_SUBST([abs_aux_dir])
@@ -2386,6 +2385,7 @@ AC_DEFUN([gl_FILE_LIST], [
   build-aux/gitlog-to-changelog
   build-aux/gnu-web-doc-update
   build-aux/gnupload
+  build-aux/prefix-gnulib-mk
   build-aux/snippet/_Noreturn.h
   build-aux/snippet/arg-nonnull.h
   build-aux/snippet/c++defs.h
@@ -2425,9 +2425,12 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/base64.h
   lib/basename-lgpl.c
   lib/basename.c
+  lib/binary-io.c
   lib/binary-io.h
   lib/bitrotate.h
   lib/btowc.c
+  lib/buffer-lcm.c
+  lib/buffer-lcm.h
   lib/c-ctype.c
   lib/c-ctype.h
   lib/c-strcase.h
@@ -2446,7 +2449,9 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/careadlinkat.h
   lib/chdir-long.c
   lib/chdir-long.h
+  lib/chmodat.c
   lib/chown.c
+  lib/chownat.c
   lib/cloexec.c
   lib/cloexec.h
   lib/close-stream.c
@@ -2509,6 +2514,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/fcntl.in.h
   lib/fd-hook.c
   lib/fd-hook.h
+  lib/fd-reopen.c
+  lib/fd-reopen.h
   lib/fd-safer-flag.c
   lib/fd-safer.c
   lib/fdatasync.c
@@ -2682,6 +2689,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/math.in.h
   lib/mbchar.c
   lib/mbchar.h
+  lib/mbiter.c
   lib/mbiter.h
   lib/mbrlen.c
   lib/mbrtowc.c
@@ -2698,6 +2706,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/mbswidth.h
   lib/mbtowc-impl.h
   lib/mbtowc.c
+  lib/mbuiter.c
   lib/mbuiter.h
   lib/md5.c
   lib/md5.h
@@ -2890,6 +2899,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/stat-time.c
   lib/stat-time.h
   lib/stat.c
+  lib/statat.c
   lib/stdalign.in.h
   lib/stdarg.in.h
   lib/stdbool.in.h
@@ -2918,12 +2928,16 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/striconv.c
   lib/striconv.h
   lib/string.in.h
+  lib/strintcmp.c
   lib/stripslash.c
   lib/strncat.c
   lib/strndup.c
   lib/strnlen.c
   lib/strnlen1.c
   lib/strnlen1.h
+  lib/strnumcmp-in.h
+  lib/strnumcmp.c
+  lib/strnumcmp.h
   lib/strpbrk.c
   lib/strsignal.c
   lib/strstr.c
@@ -3014,6 +3028,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/xasprintf.c
   lib/xfreopen.c
   lib/xfreopen.h
+  lib/xfts.c
+  lib/xfts.h
   lib/xgetcwd.c
   lib/xgetcwd.h
   lib/xgetgroups.c
@@ -3028,6 +3044,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/xprintf.h
   lib/xreadlink.c
   lib/xreadlink.h
+  lib/xsize.c
   lib/xsize.h
   lib/xstriconv.c
   lib/xstriconv.h
@@ -3259,6 +3276,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/netinet_in_h.m4
   m4/nl_langinfo.m4
   m4/nocrash.m4
+  m4/non-recursive-gnulib-prefix-hack.m4
   m4/nproc.m4
   m4/off_t.m4
   m4/open.m4
@@ -3298,7 +3316,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/rename.m4
   m4/rewinddir.m4
   m4/rmdir.m4
-  m4/root-dev-ino.m4
   m4/rpmatch.m4
   m4/safe-read.m4
   m4/safe-write.m4

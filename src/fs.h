@@ -1,6 +1,6 @@
 /* Define the magic numbers as given by statfs(2).
    Please send additions to bug-coreutils@gnu.org and meskes@debian.org.
-   This file is generated automatically from ./stat.c. */
+   This file is generated automatically from ./src/stat.c. */
 
 #if defined __linux__
 # define S_MAGIC_ADFS 0xADF5
@@ -86,11 +86,14 @@
 # define S_MAGIC_UFS_BYTESWAPPED 0x54190100
 # define S_MAGIC_USBDEVFS 0x9FA2
 # define S_MAGIC_V9FS 0x01021997
+# define S_MAGIC_VMHGFS 0xBACBACBC
 # define S_MAGIC_VXFS 0xA501FCF5
+# define S_MAGIC_VZFS 0x565A4653
 # define S_MAGIC_XENFS 0xABBA1974
 # define S_MAGIC_XENIX 0x012FF7B4
 # define S_MAGIC_XFS 0x58465342
 # define S_MAGIC_XIAFS 0x012FD16D
+# define S_MAGIC_ZFS 0x2FC12FC1
 #elif defined __GNU__
 # include <hurd/hurd_types.h>
 #endif

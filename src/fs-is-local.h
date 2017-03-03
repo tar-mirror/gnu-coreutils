@@ -89,11 +89,14 @@ is_local_fs_type (unsigned long int magic)
       case S_MAGIC_UFS_BYTESWAPPED: return 1;
       case S_MAGIC_USBDEVFS: return 1;
       case S_MAGIC_V9FS: return 1;
+      case S_MAGIC_VMHGFS: return 0;
       case S_MAGIC_VXFS: return 1;
+      case S_MAGIC_VZFS: return 1;
       case S_MAGIC_XENFS: return 1;
       case S_MAGIC_XENIX: return 1;
       case S_MAGIC_XFS: return 1;
       case S_MAGIC_XIAFS: return 1;
+      case S_MAGIC_ZFS: return 1;
       default: return -1;
     }
 }

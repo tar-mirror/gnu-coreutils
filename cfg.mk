@@ -23,7 +23,7 @@ url_dir_list = http://ftp.gnu.org/gnu/$(PACKAGE)
 
 # Tests not to run as part of "make distcheck".
 local-checks-to-skip = \
-  sc_texinfo_acronym
+  sc_proper_name_utf8_requires_ICONV
 
 # Tools used to bootstrap this package, used for "announcement".
 bootstrap-tools = autoconf,automake,gnulib,bison
@@ -45,7 +45,7 @@ export VERBOSE = yes
 # 4914152 9e
 export XZ_OPT = -8e
 
-old_NEWS_hash = b081ffe4128201150126951b1d8263e1
+old_NEWS_hash = a99128b9985b2e76bdcabf3e5d95ca1a
 
 # Add an exemption for sc_makefile_at_at_check.
 _makefile_at_at_check_exceptions = ' && !/^cu_install_program =/'
@@ -95,21 +95,25 @@ sc_prohibit_jm_in_m4:
 
 # Ensure that each root-requiring test is run via the "check-root" rule.
 sc_root_tests:
-	@if test -d tests \
-	      && grep check-root tests/Makefile.am>/dev/null 2>&1; then \
-	t1=sc-root.expected; t2=sc-root.actual;				\
-	grep -nl '^ *require_root_$$'					\
-	  $$($(VC_LIST) tests) |sed s,tests/,, |sort > $$t1;		\
-	sed -n '/^root_tests =[	 ]*\\$$/,/[^\]$$/p'			\
-	  $(srcdir)/tests/Makefile.am					\
-	    | sed 's/^  *//;/^root_tests =/d'				\
-	    | tr -s '\012\\' '  ' | fmt -1 | sort > $$t2;		\
-	diff -u $$t1 $$t2 || diff=1 || diff=;				\
+	@t1=sc-root.expected; t2=sc-root.actual;			\
+	grep -nl '^ *require_root_$$' `$(VC_LIST) tests` | sort > $$t1;	\
+	for t in $(all_root_tests); do echo $$t; done | sort > $$t2;	\
+	st=0; diff -u $$t1 $$t2 || st=1;				\
 	rm -f $$t1 $$t2;						\
-	test "$$diff"							\
-	  && { echo 'tests/Makefile.am: missing check-root action'>&2;	\
-	       exit 1; } || :;						\
-	fi
+	exit $$st
+
+# Ensure that all version-controlled test cases are listed in $(all_tests).
+sc_tests_list_consistency:
+	@bs="\\";							\
+	test_extensions_rx=`echo $(TEST_EXTENSIONS)			\
+	  | sed -e "s/ /|/g" -e "s/$$bs./$$bs$$bs./g"`;			\
+	{								\
+	  for t in $(all_tests); do echo $$t; done;			\
+	  cd $(top_srcdir);						\
+	  $(SHELL) build-aux/vc-list-files tests			\
+	    | grep -Ev '^tests/(factor/run|init)\.sh$$'			\
+	    | $(EGREP) "$$test_extensions_rx\$$";			\
+	} | sort | uniq -u | grep . && exit 1; :
 
 # Create a list of regular expressions matching the names
 # of files included from system.h.  Exclude a couple.
@@ -146,9 +150,36 @@ sc_sun_os_names:
 	  { echo '$(ME): found misuse of Sun OS version numbers' 1>&2;	\
 	    exit 1; } || :
 
-ALL_RECURSIVE_TARGETS += sc_check-AUTHORS
-sc_check-AUTHORS:
-	@$(MAKE) -s -C src _sc_check-AUTHORS
+# Ensure that the list of programs and author names is accurate.
+# We need a UTF8 locale.  If a lack of locale support or a missing
+# translation inhibits printing of UTF-8 names, just skip this test.
+au_dotdot = authors-dotdot
+au_actual = authors-actual
+sc_check-AUTHORS: $(all_programs)
+	@locale=en_US.UTF-8;				\
+	LC_ALL=$$locale ./src/cat --version		\
+	    | grep ' Torbjorn '	> /dev/null		\
+	  && { echo "$@: skipping this check"; exit 0; }; \
+	rm -f $(au_actual) $(au_dotdot);		\
+	for i in `ls $(all_programs)			\
+	    | sed -e 's,^src/,,' -e 's,$(EXEEXT)$$,,'	\
+	    | sed /libstdbuf/d				\
+	    | $(ASSORT) -u`; do				\
+	  test "$$i" = '[' && continue;			\
+	  exe=$$i;					\
+	  if test "$$i" = install; then			\
+	    exe=ginstall;				\
+	  elif test "$$i" = test; then			\
+	    exe='[';					\
+	  fi;						\
+	  LC_ALL=$$locale ./src/$$exe --version		\
+	    | perl -0 -pi -e 's/,\n/, /gm'		\
+	    | sed -n -e '/Written by /{ s//'"$$i"': /;'	\
+		  -e 's/,* and /, /; s/\.$$//; p; }';	\
+	done > $(au_actual) &&				\
+	sed -n '/^[^ ][^ ]*:/p' $(srcdir)/AUTHORS > $(au_dotdot) \
+	  && diff $(au_actual) $(au_dotdot) \
+	  && rm -f $(au_actual) $(au_dotdot)
 
 # Look for lines longer than 80 characters, except omit:
 # - program-generated long lines in diff headers,
@@ -157,7 +188,7 @@ sc_check-AUTHORS:
 LINE_LEN_MAX = 80
 FILTER_LONG_LINES =						\
   /^[^:]*\.diff:[^:]*:@@ / d;					\
-  \|^[^:]*tests/misc/sha[0-9]*sum[-:]| d;			\
+  \|^[^:]*tests/misc/sha[0-9]*sum.*\.pl[-:]| d;			\
   \|^[^:]*tests/pr/|{ \|^[^:]*tests/pr/pr-tests:| !d; };
 sc_long_lines:
 	@files=$$($(VC_LIST_EXCEPT))					\
@@ -167,20 +198,49 @@ sc_long_lines:
 	  sed -e "s|^|$$file:|" -e '$(FILTER_LONG_LINES)';		\
 	done | grep . && { msg="$$halt" $(_sc_say_and_exit) } || :
 
-# Option descriptions should not start with a capital letter
+# Option descriptions should not start with a capital letter.
 # One could grep source directly as follows:
 # grep -E " {2,6}-.*[^.]  [A-Z][a-z]" $$($(VC_LIST_EXCEPT) | grep '\.c$$')
 # but that would miss descriptions not on the same line as the -option.
-ALL_RECURSIVE_TARGETS += sc_option_desc_uppercase
-sc_option_desc_uppercase:
-	@$(MAKE) -s -C src all_programs
-	@$(MAKE) -s -C man $@
+sc_option_desc_uppercase: $(ALL_MANS)
+	@grep '^\\fB\\-' -A1 man/*.1 | LC_ALL=C grep '\.1.[A-Z][a-z]'	\
+	  && { echo 1>&2 '$@: found initial capitals in --help'; exit 1; } || :
 
-# Ensure all man/*.[1x] files are present
-ALL_RECURSIVE_TARGETS += sc_man_file_correlation
-sc_man_file_correlation:
-	@$(MAKE) -s -C src all_programs
-	@$(MAKE) -s -C man $@
+# Ensure all man/*.[1x] files are present.
+sc_man_file_correlation: check-x-vs-1 check-programs-vs-x
+
+# Ensure that for each .x file in the 'man/' subdirectory, there is a
+# corresponding .1 file in the definition of $(EXTRA_MANS).
+# But since that expansion usually lacks programs like arch and hostname,
+# add them here manually.
+.PHONY: check-x-vs-1
+check-x-vs-1:
+	@PATH=./src$(PATH_SEPARATOR)$$PATH; export PATH;		\
+	t=$@-t;								\
+	(cd $(srcdir)/man && ls -1 *.x)					\
+	  | sed 's/\.x$$//' | $(ASSORT) > $$t;				\
+	(echo $(patsubst man/%,%,$(ALL_MANS))				\
+	  | tr -s ' ' '\n' | sed 's/\.1$$//')				\
+	  | $(ASSORT) -u | diff - $$t || { rm $$t; exit 1; };		\
+	rm $$t
+
+# Writing a portable rule to generate a manpage like '[.1' would be
+# a nightmare, so filter that out.
+all-progs-but-lbracket = $(filter-out [,$(patsubst src/%,%,$(all_programs)))
+
+# Ensure that for each coreutils program there is a corresponding
+# '.x' file in the 'man/' subdirectory.
+.PHONY: check-programs-vs-x
+check-programs-vs-x:
+	@status=0;					\
+	for p in dummy $(all-progs-but-lbracket); do	\
+	  case $$p in *.so) continue;; esac;		\
+	  test $$p = dummy && continue;			\
+	  test $$p = ginstall && p=install || : ;	\
+	  test -f $(srcdir)/man/$$p.x			\
+	    || { echo missing $$p.x 1>&2; status=1; };	\
+	done;						\
+	exit $$status
 
 # Ensure that the end of each release's section is marked by two empty lines.
 sc_NEWS_two_empty_lines:
@@ -188,17 +248,6 @@ sc_NEWS_two_empty_lines:
 	    | perl -n0e '/(^|\n)\n\n\* Noteworthy/ or exit 1'		\
 	  || { echo '$(ME): use two empty lines to separate NEWS sections' \
 		 1>&2; exit 1; } || :
-
-# Perl-based tests used to exec perl from a #!/bin/sh script.
-# Now they all start with #!/usr/bin/perl and the portability
-# infrastructure is in tests/Makefile.am.  Make sure no old-style
-# script sneaks back in.
-sc_no_exec_perl_coreutils:
-	@if test -f $(srcdir)/tests/Coreutils.pm; then			\
-	  grep '^exec  *\$$PERL.*MCoreutils' $$($(VC_LIST) tests) &&	\
-	    { echo 1>&2 '$(ME): found anachronistic Perl-based tests';	\
-	      exit 1; } || :;						\
-	fi
 
 # With split lines, don't leave an operator at end of line.
 # Instead, put it on the following line, where it is more apparent.
@@ -329,6 +378,24 @@ sc_some_programs_must_avoid_exit_failure:
 	    && { echo '$(ME): do not use EXIT_FAILURE in the above'	\
 		  1>&2; exit 1; } || :
 
+# Ensure that tests call the print_ver_ function for programs which are
+# actually used in that test.
+sc_prohibit_test_calls_print_ver_with_irrelevant_argument:
+	@git grep -w print_ver_ tests					\
+	  | sed 's#:print_ver_##'					\
+	  | { fail=0;							\
+	      while read file name; do					\
+		for i in $$name; do					\
+		  case "$$i" in install) i=ginstall;; esac;		\
+		  grep -w "$$i" $$file|grep -vw print_ver_|grep -q .	\
+		    || { fail=1;					\
+			 echo "*** Test: $$file, offending: $$i." 1>&2; };\
+		done;							\
+	      done;							\
+	      test $$fail = 0 || exit 1;				\
+	    } || { echo "$(ME): the above test(s) call print_ver_ for"	\
+		    "program(s) they don't use" 1>&2; exit 1; }
+
 # Exempt the contents of any usage function from the following.
 _continued_string_col_1 = \
 s/^usage .*?\n}//ms;/\\\n\w/ and print ("$$ARGV\n"),$$e=1;END{$$e||=0;exit $$e}
@@ -447,13 +514,12 @@ update-copyright-env = \
 
 # List syntax-check exemptions.
 exclude_file_name_regexp--sc_space_tab = \
-  ^(tests/pr/|tests/misc/nl$$|gl/.*\.diff$$)
-exclude_file_name_regexp--sc_bindtextdomain = ^(gl/.*|lib/euidaccess-stat)\.c$$
-exclude_file_name_regexp--sc_unmarked_diagnostics =    ^build-aux/cvsu$$
-exclude_file_name_regexp--sc_error_message_uppercase = ^build-aux/cvsu$$
+  ^(tests/pr/|tests/misc/nl\.sh$$|gl/.*\.diff$$)
+exclude_file_name_regexp--sc_bindtextdomain = \
+  ^(gl/.*|lib/euidaccess-stat|src/make-prime-list)\.c$$
 exclude_file_name_regexp--sc_trailing_blank = ^tests/pr/
 exclude_file_name_regexp--sc_system_h_headers = \
-  ^src/((system|copy)\.h|libstdbuf\.c)$$
+  ^src/((system|copy)\.h|libstdbuf\.c|make-prime-list\.c)$$
 
 _src = (false|lbracket|ls-(dir|ls|vdir)|tac-pipe|uname-(arch|uname))
 exclude_file_name_regexp--sc_require_config_h_first = \
@@ -465,31 +531,56 @@ exclude_file_name_regexp--sc_po_check = ^gl/
 exclude_file_name_regexp--sc_prohibit_always-defined_macros = \
   ^src/(seq|remove)\.c$$
 exclude_file_name_regexp--sc_prohibit_empty_lines_at_EOF = ^tests/pr/
-exclude_file_name_regexp--sc_program_name = ^(gl/.*|lib/euidaccess-stat)\.c$$
+exclude_file_name_regexp--sc_program_name = \
+  ^(gl/.*|lib/euidaccess-stat|src/make-prime-list)\.c$$
 exclude_file_name_regexp--sc_file_system = \
-  NEWS|^(tests/init\.cfg|src/df\.c|tests/df/df-P)$$
+  NEWS|^(init\.cfg|src/df\.c|tests/df/df-P\.sh)$$
 exclude_file_name_regexp--sc_prohibit_always_true_header_tests = \
   ^m4/stat-prog\.m4$$
 exclude_file_name_regexp--sc_prohibit_fail_0 = \
   (^.*/git-hooks/commit-msg|^tests/init\.sh|Makefile\.am|\.mk|.*\.texi)$$
 exclude_file_name_regexp--sc_prohibit_atoi_atof = ^lib/euidaccess-stat\.c$$
 
-tbi_1 = ^tests/pr/|(^gl/lib/reg.*\.c\.diff|Makefile(\.am)?|\.mk|^man/help2man)$$
+# longlong.h is maintained elsewhere.
+_ll = ^src/longlong\.h$$
+exclude_file_name_regexp--sc_useless_cpp_parens = $(_ll)
+exclude_file_name_regexp--sc_long_lines = $(_ll)
+exclude_file_name_regexp--sc_space_before_open_paren = $(_ll)
+
+tbi_1 = ^tests/pr/|(^gl/lib/reg.*\.c\.diff|\.mk|^man/help2man)$$
 tbi_2 = ^scripts/git-hooks/(pre-commit|pre-applypatch|applypatch-msg)$$
+tbi_3 = (GNU)?[Mm]akefile(\.am)?$$|$(_ll)
 exclude_file_name_regexp--sc_prohibit_tab_based_indentation = \
-  $(tbi_1)|$(tbi_2)
+  $(tbi_1)|$(tbi_2)|$(tbi_3)
 
 exclude_file_name_regexp--sc_preprocessor_indentation = \
-  ^(gl/lib/rand-isaac\.[ch]|gl/tests/test-rand-isaac\.c)$$
+  ^(gl/lib/rand-isaac\.[ch]|gl/tests/test-rand-isaac\.c)$$|$(__ll)
 exclude_file_name_regexp--sc_prohibit_stat_st_blocks = \
-  ^(src/system\.h|tests/du/2g)$$
+  ^(src/system\.h|tests/du/2g\.sh)$$
 
 exclude_file_name_regexp--sc_prohibit_continued_string_alpha_in_column_1 = \
   ^src/(system\.h|od\.c|printf\.c)$$
 
 exclude_file_name_regexp--sc_prohibit_test_backticks = \
-  ^tests/(init\.sh|check\.mk|misc/stdbuf)$$
+  ^tests/(init\.sh|local.mk|misc/stdbuf\.sh)$$
 
 # Exempt test.c, since it's nominally shared, and relatively static.
 exclude_file_name_regexp--sc_prohibit_operator_at_end_of_line = \
   ^src/(ptx|test|head)\.c$$
+
+exclude_file_name_regexp--sc_error_message_uppercase = ^src/factor\.c$$
+exclude_file_name_regexp--sc_prohibit_atoi_atof = ^src/make-prime-list\.c$$
+
+# Augment AM_CFLAGS to include our per-directory options:
+AM_CFLAGS += $($(@D)_CFLAGS)
+
+src_CFLAGS = $(WARN_CFLAGS)
+lib_CFLAGS = $(GNULIB_WARN_CFLAGS)
+gnulib-tests_CFLAGS = $(GNULIB_TEST_WARN_CFLAGS)
+
+# Configuration to make the tight-scope syntax-check rule work with
+# non-recursive make.
+export _gl_TS_headers = $(srcdir)/cfg.mk
+_gl_TS_dir = .
+_gl_TS_obj_files = src/*.$(OBJEXT)
+_gl_TS_other_headers = src/*.h
