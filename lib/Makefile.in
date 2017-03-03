@@ -29,6 +29,7 @@
 
 
 
+
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
@@ -206,8 +207,9 @@ am_libcoreutils_a_OBJECTS = allocsa.$(OBJEXT) base64.$(OBJEXT) \
 	version-etc-fsf.$(OBJEXT) xalloc-die.$(OBJEXT) \
 	xgethostname.$(OBJEXT) xmemcoll.$(OBJEXT) xstrndup.$(OBJEXT) \
 	xstrtoimax.$(OBJEXT) xstrtoumax.$(OBJEXT) buffer-lcm.$(OBJEXT) \
-	xmemcoll.$(OBJEXT) xmemxfrm.$(OBJEXT)
+	xmemxfrm.$(OBJEXT)
 libcoreutils_a_OBJECTS = $(am_libcoreutils_a_OBJECTS)
+LTLIBRARIES = $(noinst_LTLIBRARIES)
 PROGRAMS = $(noinst_PROGRAMS)
 t_fpending_SOURCES = t-fpending.c
 t_fpending_OBJECTS = t-fpending.$(OBJEXT)
@@ -413,66 +415,9 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = 1.5 gnits
-noinst_LIBRARIES = libcoreutils.a
-
-# This is for those projects which use "gettextize --intl" to put a source-code
-# copy of libintl into their package. In such projects, every Makefile.am needs
-# -I$(top_builddir)/intl, so that <libintl.h> can be found in this directory.
-# For the Makefile.ams in other directories it is the maintainer's
-# responsibility; for the one from gnulib we do it here.
-# This option has no effect when the user disables NLS (because then the intl
-# directory contains no libintl.h file) or when the project does not use
-# "gettextize --intl".
-#AM_CPPFLAGS += -I$(top_builddir)/intl
-libcoreutils_a_SOURCES = allocsa.h allocsa.c base64.h base64.c \
-	diacrit.h diacrit.c exit.h full-read.h full-read.c \
-	full-write.h full-write.c getdate.y gettext.h hash-pjw.h \
-	hash-pjw.c linebuffer.h linebuffer.c localcharset.h \
-	localcharset.c mbswidth.h mbswidth.c mbuiter.h readtokens0.h \
-	readtokens0.c savewd.h savewd.c strnlen1.h strnlen1.c \
-	unicodeio.h unicodeio.c verify.h version-etc.h version-etc.c \
-	version-etc-fsf.c wcwidth.h xalloc-die.c xgethostname.h \
-	xgethostname.c xmemcoll.h xmemcoll.c xstrndup.h xstrndup.c \
-	xstrtoimax.c xstrtoumax.c buffer-lcm.c buffer-lcm.h xmemcoll.c \
-	xmemcoll.h xmemxfrm.c xmemxfrm.h
-libcoreutils_a_LIBADD = $(gl_LIBOBJS) @ALLOCA@ $(LIBOBJS)
-libcoreutils_a_DEPENDENCIES = $(gl_LIBOBJS) @ALLOCA@ $(LIBOBJS)
-EXTRA_libcoreutils_a_SOURCES = acl.c alloca.c argmatch.c atexit.c \
-	backupfile.c c-strtod.c c-strtod.c c-strtold.c calloc.c \
-	canon-host.c canonicalize.c chdir-long.c chown.c fchown-stub.c \
-	cloexec.c close-stream.c closeout.c cycle-check.c dirfd.c \
-	basename.c dirname.c stripslash.c dup2.c error.c euidaccess.c \
-	exclude.c exitfail.c creat-safer.c open-safer.c file-type.c \
-	fileblocks.c filemode.c filenamecat.c fnmatch.c fnmatch_loop.c \
-	fopen-safer.c __fpending.c fprintftime.c free.c fsusage.c \
-	ftruncate.c fts-cycle.c fts.c gai_strerror.c getaddrinfo.c \
-	getcwd.c getdelim.c getgroups.c gethostname.c gethrxtime.c \
-	getline.c getloadavg.c getndelim2.c getopt.c getopt1.c \
-	getpass.c gettime.c gettimeofday.c getugroups.c getusershell.c \
-	group-member.c hard-locale.c hash.c human.c i-ring.c idcache.c \
-	inet_ntop.c imaxtostr.c inttostr.c offtostr.c uinttostr.c \
-	umaxtostr.c isapipe.c lchown.c long-options.c lstat.c malloc.c \
-	mbchar.c md5.c memcasecmp.c memchr.c memcmp.c memcoll.c \
-	memcpy.c memmove.c mempcpy.c memrchr.c memset.c mkancesdirs.c \
-	mkdir.c dirchownmod.c mkdir-p.c mkstemp.c mktime.c \
-	modechange.c mountlist.c nanosleep.c obstack.c at-func.c \
-	fchmodat.c fstatat.c mkdirat.c openat-die.c openat-proc.c \
-	openat.c physmem.c posixtm.c posixver.c putenv.c quote.c \
-	quotearg.c raise.c readlink.c readtokens.c readutmp.c \
-	realloc.c regcomp.c regex.c regex_internal.c regexec.c \
-	rename.c rename-dest-slash.c rmdir.c root-dev-ino.c rpmatch.c \
-	safe-read.c safe-write.c same.c save-cwd.c savedir.c setenv.c \
-	unsetenv.c settime.c sha1.c sig2str.c snprintf.c \
-	mkstemp-safer.c stpcpy.c strcasecmp.c strncasecmp.c strcspn.c \
-	strdup.c strftime.c strndup.c strnlen.c strpbrk.c strtod.c \
-	strtoimax.c strtol.c strtoll.c strtoul.c strtoull.c \
-	strtoumax.c strverscmp.c tempname.c time_r.c dup-safer.c \
-	fd-safer.c pipe-safer.c unlinkdir.c userspec.c utime.c \
-	utimecmp.c utimens.c asnprintf.c printf-args.c printf-parse.c \
-	vasnprintf.c asprintf.c vasprintf.c xmalloc.c xgetcwd.c \
-	xnanosleep.c xreadlink.c xstrtod.c xstrtol.c xstrtoul.c \
-	xstrtod.c xstrtold.c yesno.c
 noinst_HEADERS = 
+noinst_LIBRARIES = libcoreutils.a
+noinst_LTLIBRARIES = 
 EXTRA_DIST = acl.c acl.h alloca.c alloca_.h allocsa.valgrind \
 	argmatch.c argmatch.h atexit.c backupfile.c backupfile.h \
 	c-strtod.c c-strtod.h c-strtod.c c-strtod.h c-strtold.c \
@@ -551,6 +496,64 @@ CLEANFILES = configmake.h configmake.h-t charset.alias ref-add.sed \
 DISTCLEANFILES = 
 MAINTAINERCLEANFILES = getdate.c
 AM_CPPFLAGS = 
+
+# This is for those projects which use "gettextize --intl" to put a source-code
+# copy of libintl into their package. In such projects, every Makefile.am needs
+# -I$(top_builddir)/intl, so that <libintl.h> can be found in this directory.
+# For the Makefile.ams in other directories it is the maintainer's
+# responsibility; for the one from gnulib we do it here.
+# This option has no effect when the user disables NLS (because then the intl
+# directory contains no libintl.h file) or when the project does not use
+# "gettextize --intl".
+#AM_CPPFLAGS += -I$(top_builddir)/intl
+libcoreutils_a_SOURCES = allocsa.h allocsa.c base64.h base64.c \
+	diacrit.h diacrit.c exit.h full-read.h full-read.c \
+	full-write.h full-write.c getdate.y gettext.h hash-pjw.h \
+	hash-pjw.c linebuffer.h linebuffer.c localcharset.h \
+	localcharset.c mbswidth.h mbswidth.c mbuiter.h readtokens0.h \
+	readtokens0.c savewd.h savewd.c strnlen1.h strnlen1.c \
+	unicodeio.h unicodeio.c verify.h version-etc.h version-etc.c \
+	version-etc-fsf.c wcwidth.h xalloc-die.c xgethostname.h \
+	xgethostname.c xmemcoll.h xmemcoll.c xstrndup.h xstrndup.c \
+	xstrtoimax.c xstrtoumax.c buffer-lcm.c buffer-lcm.h xmemxfrm.c \
+	xmemxfrm.h
+libcoreutils_a_LIBADD = $(gl_LIBOBJS) @ALLOCA@ $(LIBOBJS)
+libcoreutils_a_DEPENDENCIES = $(gl_LIBOBJS) @ALLOCA@ $(LIBOBJS)
+EXTRA_libcoreutils_a_SOURCES = acl.c alloca.c argmatch.c atexit.c \
+	backupfile.c c-strtod.c c-strtod.c c-strtold.c calloc.c \
+	canon-host.c canonicalize.c chdir-long.c chown.c fchown-stub.c \
+	cloexec.c close-stream.c closeout.c cycle-check.c dirfd.c \
+	basename.c dirname.c stripslash.c dup2.c error.c euidaccess.c \
+	exclude.c exitfail.c creat-safer.c open-safer.c file-type.c \
+	fileblocks.c filemode.c filenamecat.c fnmatch.c fnmatch_loop.c \
+	fopen-safer.c __fpending.c fprintftime.c free.c fsusage.c \
+	ftruncate.c fts-cycle.c fts.c gai_strerror.c getaddrinfo.c \
+	getcwd.c getdelim.c getgroups.c gethostname.c gethrxtime.c \
+	getline.c getloadavg.c getndelim2.c getopt.c getopt1.c \
+	getpass.c gettime.c gettimeofday.c getugroups.c getusershell.c \
+	group-member.c hard-locale.c hash.c human.c i-ring.c idcache.c \
+	inet_ntop.c imaxtostr.c inttostr.c offtostr.c uinttostr.c \
+	umaxtostr.c isapipe.c lchown.c long-options.c lstat.c malloc.c \
+	mbchar.c md5.c memcasecmp.c memchr.c memcmp.c memcoll.c \
+	memcpy.c memmove.c mempcpy.c memrchr.c memset.c mkancesdirs.c \
+	mkdir.c dirchownmod.c mkdir-p.c mkstemp.c mktime.c \
+	modechange.c mountlist.c nanosleep.c obstack.c at-func.c \
+	fchmodat.c fstatat.c mkdirat.c openat-die.c openat-proc.c \
+	openat.c physmem.c posixtm.c posixver.c putenv.c quote.c \
+	quotearg.c raise.c readlink.c readtokens.c readutmp.c \
+	realloc.c regcomp.c regex.c regex_internal.c regexec.c \
+	rename.c rename-dest-slash.c rmdir.c root-dev-ino.c rpmatch.c \
+	safe-read.c safe-write.c same.c save-cwd.c savedir.c setenv.c \
+	unsetenv.c settime.c sha1.c sig2str.c snprintf.c \
+	mkstemp-safer.c stpcpy.c strcasecmp.c strncasecmp.c strcspn.c \
+	strdup.c strftime.c strndup.c strnlen.c strpbrk.c strtod.c \
+	strtoimax.c strtol.c strtoll.c strtoul.c strtoull.c \
+	strtoumax.c strverscmp.c tempname.c time_r.c dup-safer.c \
+	fd-safer.c pipe-safer.c unlinkdir.c userspec.c utime.c \
+	utimecmp.c utimens.c asnprintf.c printf-args.c printf-parse.c \
+	vasnprintf.c asprintf.c vasprintf.c xmalloc.c xgetcwd.c \
+	xnanosleep.c xreadlink.c xstrtod.c xstrtol.c xstrtoul.c \
+	xstrtod.c xstrtold.c yesno.c
 charset_alias = $(DESTDIR)$(libdir)/charset.alias
 charset_tmp = $(DESTDIR)$(libdir)/charset.tmp
 AM_CFLAGS = $(WARNING_CFLAGS) $(WERROR_CFLAGS)
@@ -613,6 +616,15 @@ libcoreutils.a: $(libcoreutils_a_OBJECTS) $(libcoreutils_a_DEPENDENCIES)
 	-rm -f libcoreutils.a
 	$(libcoreutils_a_AR) libcoreutils.a $(libcoreutils_a_OBJECTS) $(libcoreutils_a_LIBADD)
 	$(RANLIB) libcoreutils.a
+
+clean-noinstLTLIBRARIES:
+	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
+	@list='$(noinst_LTLIBRARIES)'; for p in $$list; do \
+	  dir="`echo $$p | sed -e 's|/[^/]*$$||'`"; \
+	  test "$$dir" != "$$p" || dir=.; \
+	  echo "rm -f \"$${dir}/so_locations\""; \
+	  rm -f "$${dir}/so_locations"; \
+	done
 
 clean-noinstPROGRAMS:
 	-test -z "$(noinst_PROGRAMS)" || rm -f $(noinst_PROGRAMS)
@@ -938,8 +950,8 @@ distdir: $(DISTFILES)
 check-am: all-am
 check: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) check-am
-all-am: Makefile $(LIBRARIES) $(PROGRAMS) $(HEADERS) config.h \
-		all-local
+all-am: Makefile $(LIBRARIES) $(LTLIBRARIES) $(PROGRAMS) $(HEADERS) \
+		config.h all-local
 installdirs:
 install: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) install-am
@@ -974,8 +986,8 @@ maintainer-clean-generic:
 	-test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
 clean: clean-am
 
-clean-am: clean-generic clean-noinstLIBRARIES clean-noinstPROGRAMS \
-	mostlyclean-am
+clean-am: clean-generic clean-noinstLIBRARIES clean-noinstLTLIBRARIES \
+	clean-noinstPROGRAMS mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf $(DEPDIR) ./$(DEPDIR)
@@ -1034,18 +1046,18 @@ uninstall-am: uninstall-local
 .MAKE: install-am install-strip
 
 .PHONY: CTAGS GTAGS all all-am all-local check check-am clean \
-	clean-generic clean-noinstLIBRARIES clean-noinstPROGRAMS ctags \
-	distclean distclean-compile distclean-generic distclean-hdr \
-	distclean-tags distdir dvi dvi-am html html-am info info-am \
-	install install-am install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-exec-local \
-	install-html install-html-am install-info install-info-am \
-	install-man install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
-	mostlyclean-local pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-local
+	clean-generic clean-noinstLIBRARIES clean-noinstLTLIBRARIES \
+	clean-noinstPROGRAMS ctags distclean distclean-compile \
+	distclean-generic distclean-hdr distclean-tags distdir dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-data install-data-am install-dvi install-dvi-am \
+	install-exec install-exec-am install-exec-local install-html \
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-local pdf \
+	pdf-am ps ps-am tags uninstall uninstall-am uninstall-local
 
 
 # We need the following in order to create <alloca.h> when the system

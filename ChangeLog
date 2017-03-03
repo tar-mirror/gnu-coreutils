@@ -1,4 +1,181 @@
+2006-12-07  Jim Meyering  jim@meyering.net
+
+	Version 6.7.
+	* NEWS: Record release date.  Remove '-pre' suffix.
+	* configure.ac (AC_INIT): Remove version string suffix.
+
+2006-12-07  Jim Meyering  <jim@meyering.net>
+
+	Make the output of "make check" more reproducible.
+	* tests/touch/empty-file: Use envvar-check, so "make check" doesn't
+	evoke diagnostics like this when COLUMNS=0 in the environment:
+	ls: ignoring invalid width in environment variable COLUMNS: 0
+	* tests/touch/no-rights: Likewise.
+	* tests/help-version: Likewise.
+	* tests/uniq/Test.pm: Don't perform the pipe-reading version of test
+	118, since it emits "cat: write error: Broken pipe" on some systems.
+
+2006-12-06  Paul Eggert  <eggert@cs.ucla.edu>
+
+	* NEWS: Document the cp -p fix for special bits.
+	* src/copy.c (set_owner): Now returns a three-way result, so
+	that the caller can clear the special bits.  All callers changed.
+	(copy_reg): Don't set the special bits if chown failed.
+	(copy_internal): Likewise.
+	* tests/cp/special-bits: Test this fix.
+
+2006-12-06  Paul Eggert  <eggert@cs.ucla.edu>
+
+	* NEWS: Document the cp --preserve=ownership fix.
+	* m4/jm-macros.m4 (coreutils_MACROS): Check for fchmod.
+	* src/copy.c (fchmod_or_lchmod): New function.
+	(copy_reg): New arg OMITTED_PERMISSIONS.  All uses changed.
+	Omit confusing and unused ", dst_mode" arg to 'open' without O_CREAT.
+	When creating a file, use O_EXCL, so we're more likely to detect
+	funny business by other processes.  At the end, if permissions
+	were omitted, chmod them back in.
+	(copy_internal): If the ownership might change, omit some permissions
+	at first, then restore them after chowning the file.
+	* src/cp.c (make_dir_parents_private): Likewise.
+	* src/copy.c (cached_umask): New function.
+	* src/copy.h (cached_umask): New decl.
+
+2006-12-06  Jim Meyering  <jim@meyering.net>
+
+	Make the output of "make check" more reproducible.
+	* tests/misc/date-sec: Don't emit any diagnostic about sleeping.
+
+2006-12-03  Paul Eggert  <eggert@cs.ucla.edu>
+
+	* src/install.c (install_file_in_file): Preserve time stamps
+	before changing owner or file mode bits, for consistency with
+	other coreutils programs.
+
+2006-12-03  Jim Meyering  <jim@meyering.net>
+
+	* tests/misc/date-sec: Output a fixed string.
+
+	* NEWS: du --one-file-system (-x) would skip subdirectories of any
+	directory listed as second or subsequent command line argument.
+	* tests/du/one-file-system: New file.  Test for today's fts.c fix.
+	* tests/du/Makefile.am (TESTS): Add one-file-system.
+	Reported by Mike Frysinger.
+
+2006-12-02  Jim Meyering  <jim@meyering.net>
+
+	* tests/du/basic: Generate 4KB file simply using printf, rather than
+	seq+head.  This avoids a spurious "Broken pipe" diagnostic from seq.
+
+2006-11-28  Jim Meyering  <jim@meyering.net>
+
+	* tests/mv/no-target-dir: Detect a buggy rename syscall.  If found,
+	skip this test.  This happens at least on ia64 linux-2.4.19 w/ext3.
+	Reported by Matthew Woehlke.
+
+	* tests/mv/dir2dir: Also accept EBUSY.
+	Reported by Matthew Woehlke.
+
+2006-11-27  Jim Meyering  <jim@meyering.net>
+
+	* Makefile.maint (patch-check): Rewrite to diagnose failure.
+	* src/c99-to-c89.diff: Adjust shred.c offsets.
+
+2006-11-26  Paul Eggert  <eggert@cs.ucla.edu>
+
+	Improve the check for departures from C89, and fix the departures
+	I found.
+	* Makefile.maint (my-distcheck): Also check for C89 compatibility
+	as best we can with GCC.
+	* src/stat.c (PRINTF_OPTION): Omit comma before } in enum
+	declaration; C89 doesn't allow this.
+	* src/dcgen: Don't generate string literals longer than
+	what C89 requires support for.
+	* src/cut.c (usage): Don't use string literals longer than
+	what C89 requires support for.
+	* src/date.c (usage): Likewise.
+	* src/dd.c (usage): Likewise.
+	* src/du.c (usage): Likewise.
+	* src/ls.c (usage): Likewise.
+	* src/od.c (usage): Likewise.
+	* src/readlink.c (usage): Likewise.
+	* src/seq.c (usage): Likewise.
+	* src/shred.c (usage): Likewise.
+
+2006-11-26  Mike Frysinger  <vapier@gentoo.org>
+
+	Recognize new archive, audio and image formats.
+	Give audio files a separate color.
+	* src/dircolors.hin: Add comments for common .sh and .csh scripts.
+	Add .bz2, .tbz2, .tz, .rar, .ace, .zoo, .cpio, .7z, .rz as archive
+	suffixes.  Add .mng, .pcx, .m2v, .mkv, .ogm, .mp4, .m4v, .mp4v, .vob,
+	.qt, .nuv, .wmv, .asf, .rm, .rmvb, .flc, .yuv as image formats.
+	Add .aac, .au, .mid, .midi, .mka, .ra as audio suffixes.  Change
+	audio color to 00;36 to differentiate from image/video color.
+
+2006-11-26  Jim Meyering  <jim@meyering.net>
+
+	* Makefile.maint (patch-check): Compile patched sources with
+	CFLAGS='-Wdeclaration-after-statement -Werror', to ensure that
+	no violations remain.
+
+	* src/c99-to-c89.diff: Remove 3 bogus hunks.
+
+	* src/remove.c (fd_to_subdirp): Remove unused parameter, ds.
+	Update callers.
+
+	* src/c99-to-c89.diff: Adjust for changes in rm.c and in remove.c.
+
+	* src/rm.c (main): Remove unnecessary (assuming C99) braces.
+
+2006-11-26  Paul Eggert  <eggert@cs.ucla.edu>
+
+	Port parts of the code to C89 to minimize the need for c99-to-c89.diff,
+	while trying to retain the readability of C99 as much as possible.
+	* src/remove.c (rm_1): Remove decl of local, fd_cwd.
+	Replace each of two uses with literal AT_FDCWD.
+	(cache_stat_init): Return its argument, for convenience.
+	Update the caller in remove_dir.
+	(AD_pop_and_chdir): Return prev_dir rather than storing through
+	a pointer argument.  All uses changed.
+	(AD_ensure_initialized): New function.
+	(AD_mark_helper): Use it, to avoid the need for declaration
+	after statement.
+	(rm): Move cycle_check_init call into callee...
+	(rm_1): ...here.
+	Use an else clause in place of a "continue" statement.
+	(close_preserve_errno): Remove.
+	(fd_to_subdirp): Rewrite to avoid the need for decl after statement.
+
+2006-11-25  Jim Meyering  <jim@meyering.net>
+
+	* Makefile.am (EXTRA_DIST): Remove announce-gen from here, too.
+
+2006-11-24  Theodoros V. Kalamatianos  <thkala@softlab.ece.ntua.gr> (tiny change)
+
+	* tests/du/inacc-dest: Skip this test when running as root.
+
+2006-11-23  Jim Meyering  <jim@meyering.net>
+
+	* announce-gen: Remove file.  It's moving to gnulib.
+	* bootstrap: Pull it from gnulib/build-aux instead.
+	* Makefile.maint (announcement): Reflect move to ./build-aux.
+
+	* tests/du/deref-args: Use "printf %65536s x" to create a 64KB file,
+	rather than a pipeline that would sometimes evoke a diagnostic
+	like "seq: write error: Broken pipe".
+
+	* tests/help-version: Suppress dd transfer rate output.
+
+	* configure.ac (AC_INIT): Bump to 6.7-pre, not 6.6-pre.
+
 2006-11-22  Jim Meyering  <jim@meyering.net>
+
+	* announce-gen (print_news_deltas): Fix silly, but harmless typo:
+	change "(:?..." to "(?:..." in regexps.
+
+	Post-release version change.
+	* NEWS: Add a line for 6.7-pre.
+	* configure.ac (AC_INIT): Bump to 6.7 and add "-pre" suffix.
 
 	Version 6.6.
 	* NEWS: Record release date.  Remove "-pre" suffix.

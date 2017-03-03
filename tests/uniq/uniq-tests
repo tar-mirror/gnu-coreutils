@@ -2142,37 +2142,19 @@ else
   esac
 fi
 test -s 118.E || rm -f 118.E
-cat $srcdir/119.I | $xx --all-repeated=badoption > 119.O 2> 119.E
-code=$?
-if test $code != 1; then
-  $echo "Test 119(|) failed: $xx return code $code differs from expected value 1" 1>&2
-  errors=`expr $errors + 1`
-else
-  cmp 119.O $srcdir/119.X > /dev/null 2>&1
-  case $? in
-    0) if test "$VERBOSE"; then $echo "passed 119(|)"; fi;;
-    1) $echo "Test 119(|) failed: files 119.O and $srcdir/119.X differ" 1>&2
-       (diff -c 119.O $srcdir/119.X) 2> /dev/null
-       errors=`expr $errors + 1`;;
-    2) $echo "Test 119(|) may have failed." 1>&2
-       $echo The command "cmp 119.O $srcdir/119.X" failed. 1>&2
-       errors=`expr $errors + 1`;;
-  esac
-fi
-test -s 119.E || rm -f 119.E
 $xx --all-repeated=badoption < $srcdir/119.I > 119.O 2> 119.E
 code=$?
 if test $code != 1; then
-  $echo "Test 119(<) failed: $xx return code $code differs from expected value 1" 1>&2
+  $echo "Test 119 failed: $xx return code $code differs from expected value 1" 1>&2
   errors=`expr $errors + 1`
 else
   cmp 119.O $srcdir/119.X > /dev/null 2>&1
   case $? in
-    0) if test "$VERBOSE"; then $echo "passed 119(<)"; fi;;
-    1) $echo "Test 119(<) failed: files 119.O and $srcdir/119.X differ" 1>&2
+    0) if test "$VERBOSE"; then $echo "passed 119"; fi;;
+    1) $echo "Test 119 failed: files 119.O and $srcdir/119.X differ" 1>&2
        (diff -c 119.O $srcdir/119.X) 2> /dev/null
        errors=`expr $errors + 1`;;
-    2) $echo "Test 119(<) may have failed." 1>&2
+    2) $echo "Test 119 may have failed." 1>&2
        $echo The command "cmp 119.O $srcdir/119.X" failed. 1>&2
        errors=`expr $errors + 1`;;
   esac
@@ -2215,7 +2197,7 @@ else
 fi
 test -s 120.E || rm -f 120.E
 if test $errors = 0; then
-  $echo Passed all 122 tests. 1>&2
+  $echo Passed all 121 tests. 1>&2
 else
   $echo Failed $errors tests. 1>&2
 fi

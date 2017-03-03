@@ -92,7 +92,7 @@ static char sccsid[] = "@(#)fts.c	8.6 (Berkeley) 8/14/94";
 # define DT_MUST_BE(d, t) false
 #endif
 
-enum
+enum Fts_stat
 {
   FTS_NO_STAT_REQUIRED = 1,
   FTS_STAT_REQUIRED = 2
@@ -516,7 +516,6 @@ fts_load (FTS *sp, register FTSENT *p)
 		p->fts_namelen = len;
 	}
 	p->fts_accpath = p->fts_path = sp->fts_path;
-	sp->fts_dev = p->fts_statp->st_dev;
 }
 
 int
@@ -731,7 +730,8 @@ name:		t = sp->fts_path + NAPPEND(p->fts_parent);
 check_for_dir:
 		if (p->fts_info == FTS_NSOK)
 		  {
-		    switch (p->fts_statp->st_size)
+		    enum Fts_stat need_stat = p->fts_statp->st_size;
+		    switch (need_stat)
 		      {
 		      case FTS_STAT_REQUIRED:
 			p->fts_info = fts_stat(sp, p, false);
@@ -742,9 +742,15 @@ check_for_dir:
 			abort ();
 		      }
 		  }
+
 		sp->fts_cur = p;
 		if (p->fts_info == FTS_D)
 		  {
+		    /* Now that P->fts_statp is guaranteed to be valid,
+		       if this is a command-line directory, record its
+		       device number, to be used for FTS_XDEV.  */
+		    if (p->fts_level == FTS_ROOTLEVEL)
+		      sp->fts_dev = p->fts_statp->st_dev;
 		    Dprintf (("  entering: %s\n", p->fts_path));
 		    if (! enter_dir (sp, p))
 		      {

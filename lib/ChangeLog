@@ -1,3 +1,15 @@
+2006-12-03  Jim Meyering  <jim@meyering.net>
+
+	* Makefile.am (libcoreutils_a_SOURCES): Remove xmemcoll.c and
+	xmemcoll.h.  Now, they're handled by the gnulib xmemcoll module.
+
+2006-11-22  Paul Eggert  <eggert@cs.ucla.edu>
+
+	* randread.c (__attribute__): Don't define if __attribute__ is
+	already defined.  Otherwise, the code won't conform to C99, since
+	the macro arg is spelled differently by some include file, and the
+	compilation fails with pedantic GCC.
+
 2006-11-22  Jim Meyering  <jim@meyering.net>
 
 	* .cvsignore, .gitignore: Add fstat.c.

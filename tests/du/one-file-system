@@ -1,6 +1,6 @@
 #!/bin/sh
-# Prior to coreutils-6.5, an inaccessible destination dir (chmod a-x)
-# would cause du to exit prematurely on systems with native openat support.
+# Test for a bug in fts's handling of FTS_XDEV, the flag behind
+# du's --one-file-system (-x) option.
 
 # Copyright (C) 2006 Free Software Foundation, Inc.
 
@@ -25,8 +25,6 @@ if test "$VERBOSE" = yes; then
 fi
 
 . $srcdir/../envvar-check
-. $srcdir/../lang-default
-PRIV_CHECK_ARG=require-non-root . $srcdir/../priv-check
 
 pwd=`pwd`
 t0=`echo "$0"|sed 's,.*/,,'`.tmp; tmp=$t0/$$
@@ -36,9 +34,7 @@ trap '(exit $?); exit $?' 1 2 13 15
 framework_failure=0
 mkdir -p $tmp || framework_failure=1
 cd $tmp || framework_failure=1
-
-mkdir f && cd f && mkdir a b c d e && touch c/j && chmod a-x c \
-    || framework_failure=1
+mkdir -p b/c y/z || framework_failure=1
 
 if test $framework_failure = 1; then
   echo "$0: failure in testing framework" 1>&2
@@ -47,37 +43,19 @@ fi
 
 fail=0
 
-du > ../t 2>&1 && fail=1
-
-# Accept either of the following outputs.
-# You get the first from a system with openat _emulation_ (via /proc),
-# the second from a system with native openat support.
-# FIXME: there may well be a third output, for systems with neither
-# /proc support, nor native openat support.
-
-sed 's/^[0-9][0-9]*	//' ../t | sort -u > out
+# Due to a used-uninitialized variable, the "du -x" from coreutils-6.6
+# would not traverse into second and subsequent directories listed
+# on the command line.
+du -ax b y > t || fail=1
+sed 's/^[0-9][0-9]*	//' t > out
 cat <<\EOF > exp || fail=1
-.
-./a
-./b
-./d
-./e
-du: `./c': Permission denied
+b/c
+b
+y/z
+y
 EOF
 
-cat <<\EOF > exp2 || fail=1
-.
-./a
-./b
-./c
-./d
-./e
-du: cannot access `./c/j': Permission denied
-EOF
-
-cmp out exp > /dev/null 2>&1 || {
-  cmp out exp2 || fail=1
-  }
+cmp out exp || fail=1
 test $fail = 1 && diff out exp 2> /dev/null
 
 (exit $fail); exit $fail

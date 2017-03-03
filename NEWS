@@ -1,5 +1,31 @@
 GNU coreutils NEWS                                    -*- outline -*-
 
+* Noteworthy changes in release 6.7 (2006-12-08) [stable]
+
+** Bug fixes
+
+  When cp -p copied a file with special mode bits set, the same bits
+  were set on the copy even when ownership could not be preserved.
+  This could result in files that were setuid to the wrong user.
+  To fix this, special mode bits are now set in the copy only if its
+  ownership is successfully preserved.  Similar problems were fixed
+  with mv when copying across file system boundaries.  This problem
+  affects all versions of coreutils through 6.6.
+
+  cp --preserve=ownership would create output files that temporarily
+  had too-generous permissions in some cases.  For example, when
+  copying a file with group A and mode 644 into a group-B sticky
+  directory, the output file was briefly readable by group B.
+  Fix similar problems with cp options like -p that imply
+  --preserve=ownership, with install -d when combined with either -o
+  or -g, and with mv when copying across file system boundaries.
+  This bug affects coreutils 6.0 through 6.6.
+
+  du --one-file-system (-x) would skip subdirectories of any directory
+  listed as second or subsequent command line argument.  This bug affects
+  coreutils-6.4, 6.5 and 6.6.
+
+
 * Noteworthy changes in release 6.6 (2006-11-22) [stable]
 
 ** Bug fixes

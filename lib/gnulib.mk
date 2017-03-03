@@ -13,13 +13,9 @@
 
 AUTOMAKE_OPTIONS = 1.5 gnits
 
-noinst_LIBRARIES = libcoreutils.a
-
-libcoreutils_a_SOURCES =
-libcoreutils_a_LIBADD = $(gl_LIBOBJS)
-libcoreutils_a_DEPENDENCIES = $(gl_LIBOBJS)
-EXTRA_libcoreutils_a_SOURCES =
 noinst_HEADERS =
+noinst_LIBRARIES =
+noinst_LTLIBRARIES =
 EXTRA_DIST =
 BUILT_SOURCES =
 SUFFIXES =
@@ -30,6 +26,13 @@ DISTCLEANFILES =
 MAINTAINERCLEANFILES =
 
 AM_CPPFLAGS =
+
+noinst_LIBRARIES += libcoreutils.a
+
+libcoreutils_a_SOURCES =
+libcoreutils_a_LIBADD = $(gl_LIBOBJS)
+libcoreutils_a_DEPENDENCIES = $(gl_LIBOBJS)
+EXTRA_libcoreutils_a_SOURCES =
 
 ## begin gnulib module acl
 

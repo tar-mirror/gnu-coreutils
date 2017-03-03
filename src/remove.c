@@ -148,16 +148,6 @@ struct dirstack_state
 };
 typedef struct dirstack_state Dirstack_state;
 
-/* Just like close(fd), but don't modify errno. */
-static inline int
-close_preserve_errno (int fd)
-{
-  int saved_errno = errno;
-  int result = close (fd);
-  errno = saved_errno;
-  return result;
-}
-
 /* Like fstatat, but cache the result.  If ST->st_size is -1, the
    status has not been gotten yet.  If less than -1, fstatat failed
    with errno == -1 - ST->st_size.  Otherwise, the status has already
@@ -173,11 +163,12 @@ cache_fstatat (int fd, char const *file, struct stat *st, int flag)
   return -1;
 }
 
-/* Initialize a fstatat cache *ST.  */
-static inline void
+/* Initialize a fstatat cache *ST.  Return ST for convenience.  */
+static inline struct stat *
 cache_stat_init (struct stat *st)
 {
   st->st_size = -1;
+  return st;
 }
 
 /* Return true if *ST has been statted.  */
@@ -437,11 +428,11 @@ ds_free (Dirstack_state *ds)
    that the post-chdir dev/ino numbers for `.' match the saved ones.
    If any system call fails or if dev/ino don't match then give a
    diagnostic and longjump out.
-   Set *PREV_DIR to the name (in malloc'd storage) of the
+   Return the name (in malloc'd storage) of the
    directory (usually now empty) from which we're coming, and which
    corresponds to the input value of *DIRP.  */
-static void
-AD_pop_and_chdir (DIR **dirp, Dirstack_state *ds, char **prev_dir)
+static char *
+AD_pop_and_chdir (DIR **dirp, Dirstack_state *ds)
 {
   struct AD_ent *leaf_dir_ent = AD_stack_top(ds);
   struct dev_ino leaf_dev_ino = leaf_dir_ent->dev_ino;
@@ -450,7 +441,7 @@ AD_pop_and_chdir (DIR **dirp, Dirstack_state *ds, char **prev_dir)
 
   /* Get the name of the current (but soon to be `previous') directory
      from the top of the stack.  */
-  *prev_dir = top_dir (ds);
+  char *prev_dir = top_dir (ds);
 
   AD_stack_pop (ds);
   pop_dir (ds);
@@ -478,7 +469,7 @@ AD_pop_and_chdir (DIR **dirp, Dirstack_state *ds, char **prev_dir)
       if (closedir (*dirp) != 0)
 	{
 	  error (0, errno, _("FATAL: failed to close directory %s"),
-		 quote (full_filename (*prev_dir)));
+		 quote (full_filename (prev_dir)));
 	  goto next_cmdline_arg;
 	}
 
@@ -491,7 +482,7 @@ AD_pop_and_chdir (DIR **dirp, Dirstack_state *ds, char **prev_dir)
       if (fd < 0)
 	{
 	  error (0, errno, _("FATAL: cannot open .. from %s"),
-		 quote (full_filename (*prev_dir)));
+		 quote (full_filename (prev_dir)));
 	  goto next_cmdline_arg;
 	}
 
@@ -521,7 +512,7 @@ AD_pop_and_chdir (DIR **dirp, Dirstack_state *ds, char **prev_dir)
 	  close (fd);
 
 	next_cmdline_arg:;
-	  free (*prev_dir);
+	  free (prev_dir);
 	  longjmp (ds->current_arg_jumpbuf, 1);
 	}
     }
@@ -530,17 +521,18 @@ AD_pop_and_chdir (DIR **dirp, Dirstack_state *ds, char **prev_dir)
       if (closedir (*dirp) != 0)
 	{
 	  error (0, errno, _("FATAL: failed to close directory %s"),
-		 quote (full_filename (*prev_dir)));
+		 quote (full_filename (prev_dir)));
 	  goto next_cmdline_arg;
 	}
       *dirp = NULL;
     }
+
+  return prev_dir;
 }
 
-/* Initialize *HT if it is NULL.
-   Insert FILENAME into HT.  */
-static void
-AD_mark_helper (Hash_table **ht, char *filename)
+/* Initialize *HT if it is NULL.  Return *HT.  */
+static Hash_table *
+AD_ensure_initialized (Hash_table **ht)
 {
   if (*ht == NULL)
     {
@@ -549,7 +541,16 @@ AD_mark_helper (Hash_table **ht, char *filename)
       if (*ht == NULL)
 	xalloc_die ();
     }
-  void *ent = hash_insert (*ht, filename);
+
+  return *ht;
+}
+
+/* Initialize *HT if it is NULL.
+   Insert FILENAME into HT.  */
+static void
+AD_mark_helper (Hash_table **ht, char *filename)
+{
+  void *ent = hash_insert (AD_ensure_initialized (ht), filename);
   if (ent == NULL)
     xalloc_die ();
   else
@@ -557,7 +558,6 @@ AD_mark_helper (Hash_table **ht, char *filename)
       if (ent != filename)
 	free (filename);
     }
-
 }
 
 /* Mark FILENAME (in current directory) as unremovable.  */
@@ -1106,37 +1106,33 @@ remove_entry (int fd_cwd, Dirstack_state const *ds, char const *filename,
 static DIR *
 fd_to_subdirp (int fd_cwd, char const *f,
 	       struct rm_options const *x, int prev_errno,
-	       struct stat *subdir_sb, Dirstack_state *ds,
+	       struct stat *subdir_sb,
 	       int *cwd_errno ATTRIBUTE_UNUSED)
 {
   int open_flags = O_RDONLY | O_NOCTTY | O_NOFOLLOW | O_NONBLOCK;
   int fd_sub = openat_permissive (fd_cwd, f, open_flags, 0, cwd_errno);
+  int saved_errno;
 
   /* Record dev/ino of F.  We may compare them against saved values
      to thwart any attempt to subvert the traversal.  They are also used
      to detect directory cycles.  */
-  if (fd_sub < 0 || fstat (fd_sub, subdir_sb) != 0)
+  if (fd_sub < 0)
+    return NULL;
+  else if (fstat (fd_sub, subdir_sb) != 0)
+    saved_errno = errno;
+  else if (S_ISDIR (subdir_sb->st_mode))
     {
-      if (0 <= fd_sub)
-	close_preserve_errno (fd_sub);
-      return NULL;
+      DIR *subdir_dirp = fdopendir (fd_sub);
+      if (subdir_dirp)
+	return subdir_dirp;
+      saved_errno = errno;
     }
+  else
+    saved_errno = (prev_errno ? prev_errno : ENOTDIR);
 
-  if (! S_ISDIR (subdir_sb->st_mode))
-    {
-      errno = prev_errno ? prev_errno : ENOTDIR;
-      close_preserve_errno (fd_sub);
-      return NULL;
-    }
-
-  DIR *subdir_dirp = fdopendir (fd_sub);
-  if (subdir_dirp == NULL)
-    {
-      close_preserve_errno (fd_sub);
-      return NULL;
-    }
-
-  return subdir_dirp;
+  close (fd_sub);
+  errno = saved_errno;
+  return NULL;
 }
 
 /* Remove entries in the directory open on DIRP
@@ -1220,7 +1216,7 @@ remove_cwd_entries (DIR **dirp,
 	case RM_NONEMPTY_DIR:
 	  {
 	    DIR *subdir_dirp = fd_to_subdirp (dirfd (*dirp), f,
-					      x, errno, subdir_sb, ds, NULL);
+					      x, errno, subdir_sb, NULL);
 	    if (subdir_dirp == NULL)
 	      {
 		status = RM_ERROR;
@@ -1308,7 +1304,7 @@ remove_dir (int fd_cwd, Dirstack_state *ds, char const *dir,
      fd_to_subdirp's fstat, along with the `fstat' and the dev/ino
      comparison in AD_push ensure that we detect it and fail.  */
 
-  DIR *dirp = fd_to_subdirp (fd_cwd, dir, x, 0, dir_st, ds, cwd_errno);
+  DIR *dirp = fd_to_subdirp (fd_cwd, dir, x, 0, dir_st, cwd_errno);
 
   if (dirp == NULL)
     {
@@ -1388,9 +1384,7 @@ remove_dir (int fd_cwd, Dirstack_state *ds, char const *dir,
       {
 	/* The name of the directory that we have just processed,
 	   nominally removing all of its contents.  */
-	char *empty_dir;
-
-	AD_pop_and_chdir (&dirp, ds, &empty_dir);
+	char *empty_dir = AD_pop_and_chdir (&dirp, ds);
 	int fd = (dirp != NULL ? dirfd (dirp) : AT_FDCWD);
 	assert (dirp != NULL || AD_stack_height (ds) == 1);
 
@@ -1403,8 +1397,8 @@ remove_dir (int fd_cwd, Dirstack_state *ds, char const *dir,
 	       But that's no big deal since we're interactive.  */
 	    struct stat empty_st;
 	    Ternary is_empty;
-	    cache_stat_init (&empty_st);
-	    enum RM_status s = prompt (fd, ds, empty_dir, &empty_st, x,
+	    enum RM_status s = prompt (fd, ds, empty_dir,
+				       cache_stat_init (&empty_st), x,
 				       PA_REMOVE_DIR, &is_empty);
 
 	    if (s != RM_OK)
@@ -1471,6 +1465,7 @@ rm_1 (Dirstack_state *ds, char const *filename,
 
   struct stat st;
   cache_stat_init (&st);
+  cycle_check_init (&ds->cycle_check_state);
   if (x->root_dev_ino)
     {
       if (cache_fstatat (AT_FDCWD, filename, &st, AT_SYMLINK_NOFOLLOW) != 0)
@@ -1490,8 +1485,7 @@ rm_1 (Dirstack_state *ds, char const *filename,
   AD_push_initial (ds);
   AD_INIT_OTHER_MEMBERS ();
 
-  int fd_cwd = AT_FDCWD;
-  enum RM_status status = remove_entry (fd_cwd, ds, filename, &st, x, NULL);
+  enum RM_status status = remove_entry (AT_FDCWD, ds, filename, &st, x, NULL);
   if (status == RM_NONEMPTY_DIR)
     {
       /* In the event that remove_dir->remove_cwd_entries detects
@@ -1500,13 +1494,12 @@ rm_1 (Dirstack_state *ds, char const *filename,
       if (setjmp (ds->current_arg_jumpbuf))
 	status = RM_ERROR;
       else
-	status = remove_dir (fd_cwd, ds, filename, &st, x, cwd_errno);
+	status = remove_dir (AT_FDCWD, ds, filename, &st, x, cwd_errno);
 
       AD_stack_clear (ds);
     }
 
   ds_clear (ds);
-
   return status;
 }
 
@@ -1526,13 +1519,13 @@ rm (size_t n_files, char const *const *file, struct rm_options const *x)
 	{
 	  error (0, 0, _("cannot remove relative-named %s"), quote (file[i]));
 	  status = RM_ERROR;
-	  continue;
 	}
-
-      cycle_check_init (&ds->cycle_check_state);
-      enum RM_status s = rm_1 (ds, file[i], x, &cwd_errno);
-      assert (VALID_STATUS (s));
-      UPDATE_STATUS (status, s);
+      else
+	{
+	  enum RM_status s = rm_1 (ds, file[i], x, &cwd_errno);
+	  assert (VALID_STATUS (s));
+	  UPDATE_STATUS (status, s);
+	}
     }
 
   if (x->require_restore_cwd && cwd_errno)

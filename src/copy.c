@@ -175,22 +175,22 @@ copy_dir (char const *src_name_in, char const *dst_name_in, bool new_dst,
    st_gid fields of SRC_SB.  If DEST_DESC is undefined (-1), set
    the owner and owning group of DST_NAME instead.  DEST_DESC must
    refer to the same file as DEST_NAME if defined.
-   Return true if the syscall succeeds, or if it's ok not to
-   preserve ownership.  */
+   Return 1 if the syscall succeeds, 0 if it fails but it's OK
+   not to preserve ownership, -1 otherwise.  */
 
-static bool
+static int
 set_owner (const struct cp_options *x, char const *dst_name, int dest_desc,
 	   uid_t uid, gid_t gid)
 {
   if (HAVE_FCHOWN && dest_desc != -1)
     {
       if (fchown (dest_desc, uid, gid) == 0)
-	return true;
+	return 1;
     }
   else
     {
       if (chown (dst_name, uid, gid) == 0)
-	return true;
+	return 1;
     }
 
   if (! chown_failure_ok (x))
@@ -198,10 +198,10 @@ set_owner (const struct cp_options *x, char const *dst_name, int dest_desc,
       error (0, errno, _("failed to preserve ownership for %s"),
 	     quote (dst_name));
       if (x->require_preserve)
-	return false;
+	return -1;
     }
 
-  return true;
+  return 0;
 }
 
 /* Set the st_author field of DEST_DESC to the st_author field of
@@ -230,11 +230,26 @@ set_author (const char *dst_name, int dest_desc, const struct stat *src_sb)
 #endif
 }
 
+/* Change the file mode bits of the file identified by DESC or NAME to MODE.
+   Use DESC if DESC is valid and fchmod is available, NAME otherwise.  */
+
+static int
+fchmod_or_lchmod (int desc, char const *name, mode_t mode)
+{
+#if HAVE_FCHMOD
+  if (0 <= desc)
+    return fchmod (desc, mode);
+#endif
+  return lchmod (name, mode);
+}
+
 /* Copy a regular file from SRC_NAME to DST_NAME.
    If the source file contains holes, copies holes and blocks of zeros
    in the source file as holes in the destination file.
    (Holes are read as zeroes by the `read' system call.)
-   Use DST_MODE as the 3rd argument in the call to open.
+   When creating the destination, use DST_MODE & ~OMITTED_PERMISSIONS
+   as the third argument in the call to open, adding
+   OMITTED_PERMISSIONS after copying as needed.
    X provides many option settings.
    Return true if successful.
    *NEW_DST is as in copy_internal.
@@ -242,13 +257,15 @@ set_author (const char *dst_name, int dest_desc, const struct stat *src_sb)
 
 static bool
 copy_reg (char const *src_name, char const *dst_name,
-	  const struct cp_options *x, mode_t dst_mode, bool *new_dst,
+	  const struct cp_options *x,
+	  mode_t dst_mode, mode_t omitted_permissions, bool *new_dst,
 	  struct stat const *src_sb)
 {
   char *buf;
   char *buf_alloc = NULL;
   int dest_desc;
   int source_desc;
+  mode_t src_mode = src_sb->st_mode;
   struct stat sb;
   struct stat src_open_sb;
   bool return_val = true;
@@ -282,7 +299,7 @@ copy_reg (char const *src_name, char const *dst_name,
      The if-block will be taken in move_mode.  */
   if (! *new_dst)
     {
-      dest_desc = open (dst_name, O_WRONLY | O_TRUNC | O_BINARY, dst_mode);
+      dest_desc = open (dst_name, O_WRONLY | O_TRUNC | O_BINARY);
 
       if (dest_desc < 0 && x->unlink_dest_after_failed_open)
 	{
@@ -301,7 +318,10 @@ copy_reg (char const *src_name, char const *dst_name,
     }
 
   if (*new_dst)
-    dest_desc = open (dst_name, O_WRONLY | O_CREAT | O_BINARY, dst_mode);
+    dest_desc = open (dst_name, O_WRONLY | O_CREAT | O_EXCL | O_BINARY,
+		      dst_mode & ~omitted_permissions);
+  else
+    omitted_permissions = 0;
 
   if (dest_desc < 0)
     {
@@ -500,10 +520,16 @@ copy_reg (char const *src_name, char const *dst_name,
 
   if (x->preserve_ownership && ! SAME_OWNER_AND_GROUP (*src_sb, sb))
     {
-      if (! set_owner (x, dst_name, dest_desc, src_sb->st_uid, src_sb->st_gid))
-        {
+      switch (set_owner (x, dst_name, dest_desc,
+			 src_sb->st_uid, src_sb->st_gid))
+	{
+	case -1:
 	  return_val = false;
 	  goto close_src_and_dst_desc;
+
+	case 0:
+	  src_mode &= ~ (S_ISUID | S_ISGID | S_ISVTX);
+	  break;
 	}
     }
 
@@ -511,14 +537,26 @@ copy_reg (char const *src_name, char const *dst_name,
 
   if (x->preserve_mode || x->move_mode)
     {
-      if (copy_acl (src_name, source_desc, dst_name, dest_desc,
-		    src_sb->st_mode) != 0 && x->require_preserve)
+      if (copy_acl (src_name, source_desc, dst_name, dest_desc, src_mode) != 0
+	  && x->require_preserve)
 	return_val = false;
     }
   else if (x->set_mode)
     {
       if (set_acl (dst_name, dest_desc, x->mode) != 0)
 	return_val = false;
+    }
+  else if (omitted_permissions)
+    {
+      omitted_permissions &= ~ cached_umask ();
+      if (omitted_permissions
+	  && fchmod_or_lchmod (dest_desc, dst_name, dst_mode) != 0)
+	{
+	  error (0, errno, _("preserving permissions for %s"),
+		 quote (dst_name));
+	  if (x->require_preserve)
+	    return_val = false;
+	}
     }
 
 close_src_and_dst_desc:
@@ -967,6 +1005,7 @@ copy_internal (char const *src_name, char const *dst_name,
   struct stat dst_sb;
   mode_t src_mode;
   mode_t dst_mode IF_LINT (= 0);
+  mode_t omitted_permissions;
   bool restore_dst_mode = false;
   char *earlier_file = NULL;
   char *dst_backup = NULL;
@@ -1465,6 +1504,14 @@ copy_internal (char const *src_name, char const *dst_name,
       new_dst = true;
     }
 
+  /* If the ownership might change, omit some permissions at first, so
+     unauthorized users cannot nip in before the file has the right
+     ownership.  */
+  omitted_permissions =
+    (x->preserve_ownership
+     ? (x->set_mode ? x->mode : src_mode) & (S_IRWXG | S_IRWXO)
+     : 0);
+
   delayed_ok = true;
 
   /* In certain modes (cp's --symbolic-link), and for certain file types
@@ -1502,7 +1549,10 @@ copy_internal (char const *src_name, char const *dst_name,
 	     (src_mode & ~S_IRWXUGO) != 0.  However, common practice is
 	     to ask mkdir to copy all the CHMOD_MODE_BITS, letting mkdir
 	     decide what to do with S_ISUID | S_ISGID | S_ISVTX.  */
-	  if (mkdir (dst_name, src_mode & CHMOD_MODE_BITS) != 0)
+	  mode_t mkdir_mode =
+	    ((x->set_mode ? x->mode : src_mode)
+	     & CHMOD_MODE_BITS & ~omitted_permissions);
+	  if (mkdir (dst_name, mkdir_mode) != 0)
 	    {
 	      error (0, errno, _("cannot create directory %s"),
 		     quote (dst_name));
@@ -1629,7 +1679,7 @@ copy_internal (char const *src_name, char const *dst_name,
 	 practice passed all the source mode bits to 'open', but the extra
 	 bits were ignored, so it should be the same either way.  */
       if (! copy_reg (src_name, dst_name, x, src_mode & S_IRWXUGO,
-		      &new_dst, &src_sb))
+		      omitted_permissions, &new_dst, &src_sb))
 	goto un_backup;
     }
   else if (S_ISFIFO (src_mode))
@@ -1637,7 +1687,7 @@ copy_internal (char const *src_name, char const *dst_name,
       /* Use mknod, rather than mkfifo, because the former preserves
 	 the special mode bits of a fifo on Solaris 10, while mkfifo
 	 does not.  */
-      if (mknod (dst_name, src_mode, 0) != 0)
+      if (mknod (dst_name, src_mode & ~omitted_permissions, 0) != 0)
 	{
 	  error (0, errno, _("cannot create fifo %s"), quote (dst_name));
 	  goto un_backup;
@@ -1645,7 +1695,8 @@ copy_internal (char const *src_name, char const *dst_name,
     }
   else if (S_ISBLK (src_mode) || S_ISCHR (src_mode) || S_ISSOCK (src_mode))
     {
-      if (mknod (dst_name, src_mode, src_sb.st_rdev) != 0)
+      if (mknod (dst_name, src_mode & ~omitted_permissions, src_sb.st_rdev)
+	  != 0)
 	{
 	  error (0, errno, _("cannot create special file %s"),
 		 quote (dst_name));
@@ -1757,8 +1808,15 @@ copy_internal (char const *src_name, char const *dst_name,
   if (x->preserve_ownership
       && (new_dst || !SAME_OWNER_AND_GROUP (src_sb, dst_sb)))
     {
-      if (! set_owner (x, dst_name, -1, src_sb.st_uid, src_sb.st_gid))
-	return false;
+      switch (set_owner (x, dst_name, -1, src_sb.st_uid, src_sb.st_gid))
+	{
+	case -1:
+	  return false;
+
+	case 0:
+	  src_mode &= ~ (S_ISUID | S_ISGID | S_ISVTX);
+	  break;
+	}
     }
 
   set_author (dst_name, -1, &src_sb);
@@ -1774,14 +1832,40 @@ copy_internal (char const *src_name, char const *dst_name,
       if (set_acl (dst_name, -1, x->mode) != 0)
 	return false;
     }
-  else if (restore_dst_mode)
+  else
     {
-      if (lchmod (dst_name, dst_mode) != 0)
+      if (omitted_permissions)
 	{
-	  error (0, errno, _("preserving permissions for %s"),
-		 quote (dst_name));
-	  if (x->require_preserve)
-	    return false;
+	  omitted_permissions &= ~ cached_umask ();
+
+	  if (omitted_permissions && !restore_dst_mode)
+	    {
+	      /* Permissions were deliberately omitted when the file
+		 was created due to security concerns.  See whether
+		 they need to be re-added now.  It'd be faster to omit
+		 the lstat, but deducing the current destination mode
+		 is tricky in the presence of implementation-defined
+		 rules for special mode bits.  */
+	      if (new_dst && lstat (dst_name, &dst_sb) != 0)
+		{
+		  error (0, errno, _("cannot stat %s"), quote (dst_name));
+		  return false;
+		}
+	      dst_mode = dst_sb.st_mode;
+	      if (omitted_permissions & ~dst_mode)
+		restore_dst_mode = true;
+	    }
+	}
+
+      if (restore_dst_mode)
+	{
+	  if (lchmod (dst_name, dst_mode | omitted_permissions) != 0)
+	    {
+	      error (0, errno, _("preserving permissions for %s"),
+		     quote (dst_name));
+	      if (x->require_preserve)
+		return false;
+	    }
 	}
     }
 
@@ -1884,4 +1968,18 @@ chown_failure_ok (struct cp_options const *x)
      or if the target system doesn't support file ownership.  */
 
   return ((errno == EPERM || errno == EINVAL) && !x->chown_privileges);
+}
+
+/* Return the user's umask, caching the result.  */
+
+extern mode_t
+cached_umask (void)
+{
+  static mode_t mask = -1;
+  if (mask == (mode_t) -1)
+    {
+      mask = umask (0);
+      umask (mask);
+    }
+  return mask;
 }
